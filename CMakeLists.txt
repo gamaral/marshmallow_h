@@ -41,7 +41,7 @@ elseif(WIN32)
 	    ${PROJECT_SOURCE_DIR}/include/core/win32_environment.h
 	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
 	)
-endif(WIN32)
+endif(UNIX)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)

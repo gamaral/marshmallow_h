@@ -37,9 +37,7 @@
 #ifndef EVENT_EVENTTYPE_H
 #define EVENT_EVENTTYPE_H 1
 
-#include <sstream>
 #include <stdint.h>
-#include <unistd.h>
 
 #include "core/global.h"
 

@@ -39,7 +39,7 @@
 
 #include <stdint.h>
 #include <time.h>
-#include <unistd.h>
+#include <windows.h>
 
 #define CHAR   char
 #define INT16  int16_t
@@ -52,7 +52,5 @@
 #define UINT64 uint64_t
 #define UINT8  uint8_t
 #define WCHAR  wchar_t
-
-#define INFINITE ~((TIME)0)
 
 #endif
