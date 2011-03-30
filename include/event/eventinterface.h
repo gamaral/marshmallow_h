@@ -55,7 +55,7 @@ namespace Event
 		/*!
 		 * @brief VIRTUAL Event timestamp
 		 */
-		virtual const TIME timeStamp(void) const = 0;
+		virtual TIME timeStamp(void) const = 0;
 
 		/*!
 		 * @brief VIRTUAL Event type

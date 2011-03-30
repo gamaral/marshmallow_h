@@ -62,7 +62,7 @@ namespace Event
 
 	public: /* virtual */
 
-		VIRTUAL const TIME timeStamp(void) const
+		VIRTUAL TIME timeStamp(void) const
 		    { return(m_timestamp); }
 
 		VIRTUAL const EventType & type(void) const

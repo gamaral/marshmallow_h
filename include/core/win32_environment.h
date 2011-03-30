@@ -26,83 +26,33 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
-
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_EVENTTYPE_H
-#define EVENT_EVENTTYPE_H 1
+#pragma once
 
-#include <sstream>
+#ifndef CORE_ENVIRONMENT_H
+#define CORE_ENVIRONMENT_H 1
+
 #include <stdint.h>
+#include <time.h>
 #include <unistd.h>
 
-#include "core/global.h"
+#define CHAR   char
+#define INT16  int16_t
+#define INT32  int32_t
+#define INT64  int64_t
+#define INT8   int8_t
+#define TIME   uint32_t
+#define UINT16 uint16_t
+#define UINT32 uint32_t
+#define UINT64 uint64_t
+#define UINT8  uint8_t
+#define WCHAR  wchar_t
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Event
-{
-
-	/*! @brief Unique-Event-ID type */
-	typedef UINT32 UID;
-
-	/*! @brief Event type class */
-	class EventType
-	{
-		char *m_name;
-		UID m_uid;
-
-	public:
-
-		/*!
-		 * @brief Event type constructor
-		 * @param name Event type name
-		 */
-		EventType(const char *name);
-		EventType(const EventType &copy);
-		virtual ~EventType(void);
-
-		/*! @brief Unique ID */
-		UID uid(void) const
-		    { return(m_uid); }
-
-		/*! @brief Event type name */
-		const char * name(void) const
-		    { return(m_name); }
-
-	public: /* operator */
-
-		/*! @brief Equal comparison operator */
-		bool operator ==(const EventType &rhs) const
-		    { return(m_uid == rhs.m_uid); }
-
-		/*! @brief Less comparison operator */
-		bool operator <(const EventType &rhs) const
-		    { return(m_uid < rhs.m_uid); }
-
-		/*! @brief Name cast operator */
-		operator const char *() const
-		    { return(m_name); }
-
-		/*! @brief UID cast operator */
-		operator UID() const
-		    { return(m_uid); }
-
-	public: /* static */
-
-		/*! @brief Hash used to calculate uid
-		 * One-at-a-Time Hash
-		 */
-		static UID Hash(const char *data, size_t len, UID mask);
-	};
-
-}
-
-MARSHMALLOW_NAMESPACE_END
+#define INFINITE ~((TIME)0)
 
 #endif

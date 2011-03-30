@@ -5,9 +5,9 @@ if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-include_directories(AFTER SYSTEM ${EASTL_SOURCE_DIR}/include)
-include_directories(AFTER SYSTEM ${PROJECT_BINARY_DIR}/include)
-include_directories(AFTER SYSTEM ${PROJECT_SOURCE_DIR}/include)
+include_directories(${EASTL_SOURCE_DIR}/include)
+include_directories(${PROJECT_BINARY_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Global Options
 set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Engine Namespace")
@@ -36,7 +36,12 @@ if(UNIX)
 	    ${PROJECT_SOURCE_DIR}/include/core/unix_environment.h
 	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
 	)
-endif(UNIX)
+elseif(WIN32)
+	configure_file(
+	    ${PROJECT_SOURCE_DIR}/include/core/win32_environment.h
+	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
+	)
+endif(WIN32)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
