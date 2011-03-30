@@ -57,7 +57,7 @@ namespace Event
 	class Manager : public ManagerInterface
 	{
 		typedef list<SharedListenerInterface> EventListenerList;
-		typedef hash_map<uid_t, EventListenerList> EventListenerMap;
+		typedef hash_map<UID, EventListenerList> EventListenerMap;
 
 		typedef list<SharedEventInterface> EventList;
 
