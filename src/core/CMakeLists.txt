@@ -4,6 +4,10 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
 	set(MARSHMALLOW_CORE_SRCS ${MARSHMALLOW_CORE_SRCS} platform/linux.cpp)
 endif("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
 
+if(APPLE)
+	set(MARSHMALLOW_CORE_SRCS ${MARSHMALLOW_CORE_SRCS} platform/macosx.cpp)
+endif(APPLE)
+
 add_library(marshmallow_core STATIC
     ${MARSHMALLOW_CORE_SRCS}
 )

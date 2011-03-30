@@ -15,7 +15,7 @@ set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Engine Namespace")
 # Global Overrides (DEVELOPMENT)
 set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)
 set(CMAKE_C_FLAGS_DEBUG "-g -Wall -W -pedantic -Wshadow -Wcast-qual -Wwrite-strings -Wconversion -ansi" CACHE STRING "" FORCE)
-set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -W -pedantic -Wshadow -Wcast-qual -Wwrite-strings -Wconversion -std=c++98" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -W -pedantic -Wshadow -Wcast-qual -Wwrite-strings -Wconversion -Wno-long-long -std=c++98" CACHE STRING "" FORCE)
 
 if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
 	set(DEBUG ON CACHE INTERNAL "")
