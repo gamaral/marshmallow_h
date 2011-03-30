@@ -43,10 +43,10 @@ using namespace Core;
 
 Engine *Engine::s_instance = 0;
 
-Engine::Engine(float fps, float ups)
+Engine::Engine(float f, float u)
     : m_manager("main"),
-      m_fps(fps),
-      m_ups(ups),
+      m_fps(f),
+      m_ups(u),
       m_frame_rate(0),
       m_running(false)
 {
@@ -95,13 +95,13 @@ Engine::run(void)
 	 */
 	TIME l_tick;
 	TIME l_lasttick = Platform::TimeStamp();
-	TIME l_tick_target = (1000/m_fps) * 500;
+	TIME l_tick_target = (TIME)(floor(1000/m_fps)) * 500;
 
 	TIME l_render = 0;
-	TIME l_render_target = 1000/m_fps;
+	TIME l_render_target = (TIME)(floor(1000/m_fps));
 
 	TIME l_update = 0;
-	TIME l_update_target = 1000/m_ups;
+	TIME l_update_target = (TIME)(floor(1000/m_ups));
 
 	TIME l_second = 0;
 	TIME l_second_target = 1000;

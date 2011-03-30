@@ -41,9 +41,9 @@ using namespace Event;
 int
 main(void)
 {
-	EventBase event1(0);
-	EventBase event2(time(0));
-	SharedEventInterface event3(new EventBase(time(0)));
+	EventBase event1;
+	EventBase event2;
+	SharedEventInterface event3(new EventBase);
 	SharedEventInterface event4(event3);
 	SharedEventInterface event5;
 	event5 = event4;
