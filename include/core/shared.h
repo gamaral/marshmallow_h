@@ -107,6 +107,7 @@ namespace Core
 		clear();
 		m_data = rhs.m_data;
 		++m_data->refs;
+		return(*this);
 	}
 
 	template <class T>
