@@ -20,20 +20,18 @@ include_directories(${PROJECT_SOURCE_DIR}/contrib/eastl/include)
 # Global Options
 set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Engine Namespace")
 
-# Configuration file
-configure_file(
-	${PROJECT_SOURCE_DIR}/include/config.in.h
-	${PROJECT_BINARY_DIR}/include/config.h
-)
-
 # Overrides (DEVELOPMENT)
 set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)
 if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
 	set(DEBUG ON CACHE INTERNAL "")
 	set(DEBUG_VERBOSITY "2" CACHE STRING "Debug verbosity")
-else("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
-	set(DEBUG OFF CACHE INTERNAL "")
 endif("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+
+# Configuration file
+configure_file(
+	${PROJECT_SOURCE_DIR}/include/config.in.h
+	${PROJECT_BINARY_DIR}/include/config.h
+)
 
 # Platform specific environment defenitions
 if(UNIX)
