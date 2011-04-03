@@ -2,15 +2,14 @@
 
 CMAKE=`which cmake`
 
-if [[ ${CMAKE} == "" ]]; then
+if [ ${CMAKE} == "" ]; then
 	echo "You need to have CMake installed (and in your PATH)."
 	echo "Abort."
 	exit -1
 fi
 
-pushd build
+cd build
 cmake ..
-make rebuild_cache
 make
-popd
+cd ..
 
