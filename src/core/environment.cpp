@@ -27,6 +27,7 @@
  */
 
 #include "core/global.h"
+#include "core/platform.h"
 
 /*!
  * @file

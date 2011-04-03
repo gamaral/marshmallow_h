@@ -34,34 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
-
 MARSHMALLOW_NAMESPACE_BEGIN
 
-using namespace Core;
-
-const TimeStampData
-TimeStampToData(TIME timestamp)
-{
-	TimeStampData l_ts;
-	struct tm l_time;
-
-	l_ts.internal = (timestamp == INFINITE ? Platform::TimeStamp() : timestamp);
-	l_ts.system =
-	    static_cast<time_t>(Platform::StartTime()+(l_ts.internal/1000));
-
-	gmtime_r(&l_ts.system, &l_time);
-
-	sprintf(l_ts.string, "%04d-%02d-%02dT%02d:%02d:%02dZ",
-		l_time.tm_year+1900,
-		l_time.tm_mon+1,
-		l_time.tm_mday,
-		l_time.tm_hour,
-		l_time.tm_min,
-		l_time.tm_sec);
-
-	return(l_ts);
-}
 
 MARSHMALLOW_NAMESPACE_END
 

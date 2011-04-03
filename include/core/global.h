@@ -55,16 +55,16 @@
 #endif
 
 #if defined(DEBUG) && DEBUG_VERBOSITY >= 1
-#   define WARNING(x,...) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", TimeStampToData().string, __FILE__, __LINE__, __VA_ARGS__)
-#   define WARNING1(x) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", TimeStampToData().string, __FILE__, __LINE__)
+#   define WARNING(x,...) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData().string, __FILE__, __LINE__, __VA_ARGS__)
+#   define WARNING1(x) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData().string, __FILE__, __LINE__)
 #else
 #   define WARNING(x,...) (void)0
 #   define WARNING1(x) (void)0
 #endif
 
 #if defined(DEBUG) && DEBUG_VERBOSITY >= 2
-#   define INFO(x,...) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", TimeStampToData().string, __FILE__, __LINE__, __VA_ARGS__)
-#   define INFO1(x) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", TimeStampToData().string, __FILE__, __LINE__)
+#   define INFO(x,...) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData().string, __FILE__, __LINE__, __VA_ARGS__)
+#   define INFO1(x) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData().string, __FILE__, __LINE__)
 #else
 #   define INFO(...) (void)0
 #   define INFO1(...) (void)0
@@ -76,14 +76,13 @@
 /******************************************************************** global */
 
 MARSHMALLOW_NAMESPACE_BEGIN
-/*! @brief Timestamp data struct */
-struct TimeStampData {
+
+struct TimeData {
     char string[18];
     time_t system;
     TIME internal;
 };
-/*! @brief Convert internal timestamp into a common system timestamp */
-const TimeStampData TimeStampToData(TIME timestamp = INFINITE);
+
 MARSHMALLOW_NAMESPACE_END
 
 #endif

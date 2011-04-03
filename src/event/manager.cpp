@@ -36,6 +36,8 @@
 
 #include "EASTL/algorithm.h"
 
+#include "core/platform.h"
+
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Event;
 using namespace eastl;

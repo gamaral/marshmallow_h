@@ -81,6 +81,13 @@ namespace Core
 		 * @brief Milliseconds since StartTime()
 		 */
 		static TIME TimeStamp(void);
+
+		/*!
+		 * @brief Reinterpret an internal timestampa
+		 * @return Internal timestamp in system timestamp and string
+		 *         formats.
+		 */
+		static TimeData TimeStampToTimeData(TIME timestamp = INFINITE);
 	};
 
 }
