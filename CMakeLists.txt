@@ -40,12 +40,12 @@ if(UNIX)
 	set(CMAKE_C_FLAGS_DEBUG "-g -Wall -W -pedantic -Wshadow -Wcast-qual -Wwrite-strings -Wconversion -Wno-variadic-macros -ansi" CACHE STRING "" FORCE)
 	set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -W -pedantic -Wshadow -Wcast-qual -Wwrite-strings -Wconversion -Wno-variadic-macros -Wno-long-long -std=c++98" CACHE STRING "" FORCE)
 	configure_file(
-	    ${PROJECT_SOURCE_DIR}/include/core/unix_environment.h
+	    ${PROJECT_SOURCE_DIR}/include/core/environment/unix.h
 	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
 	)
 elseif(WIN32)
 	configure_file(
-	    ${PROJECT_SOURCE_DIR}/include/core/win32_environment.h
+	    ${PROJECT_SOURCE_DIR}/include/core/environment/win32.h
 	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
 	)
 endif(UNIX)
