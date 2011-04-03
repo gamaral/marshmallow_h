@@ -34,8 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <ctime>
 #include <sys/time.h>
+
+#include <ctime>
+#include <unistd.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -108,6 +110,12 @@ void
 Platform::PostUpdate(TIME timeout)
 {
 	UNUSED(timeout);
+}
+
+void
+Platform::Sleep(TIME timeout)
+{
+	usleep(timeout * 1000);
 }
 
 time_t

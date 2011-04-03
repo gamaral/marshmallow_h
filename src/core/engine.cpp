@@ -91,24 +91,27 @@ Engine::run(void)
 	/*
 	 * XXX: I got this idea a while back, worth try I always say 
 	 */
+	const TIME l_mpf = (TIME)floor(1000/m_fps); // milliseconds per frame
+	const TIME l_mpu = (TIME)floor(1000/m_ups); // milliseconds per update
+
 	TIME l_tick;
-	TIME l_lasttick = Platform::TimeStamp();
-	TIME l_tick_target = (TIME)(floor(1000/m_fps)) * 500;
+	TIME l_tick_target = MIN(l_mpu, l_mpf) / 2;
 
 	TIME l_render = 0;
-	TIME l_render_target = (TIME)(floor(1000/m_fps));
+	TIME l_render_target = l_mpf;
 
 	TIME l_update = 0;
-	TIME l_update_target = (TIME)(floor(1000/m_ups));
+	TIME l_update_target = l_mpu;
 
 	TIME l_second = 0;
 	TIME l_second_target = 1000;
 
+	TIME l_lasttick = Platform::TimeStamp();
+
 	m_delta_time = 0;
+	m_running = true;
 
 	initialize();
-
-	m_running = true;
 
 	/* main game loop */
 	do
@@ -145,11 +148,11 @@ Engine::run(void)
 		}
 
 		if (l_second >= l_second_target) {
-			if (m_frame_rate < m_fps && l_tick_target > 1000) {
-				l_tick_target -= 1000;
+			if (m_frame_rate < m_fps && l_tick_target > 1) {
+				l_tick_target -= 1;
 				INFO("Framerate dropping! adjusting tick target (%d).", (int)l_tick_target);
 			} else if (m_frame_rate > m_fps * 1.10) {
-				l_tick_target += 250;
+				l_tick_target += 2;
 				INFO("Framerate accelerated! adjusting tick target (%d).", (int)l_tick_target);
 			}
 
@@ -163,7 +166,7 @@ Engine::run(void)
 
 		l_lasttick = l_tick;
 
-		usleep(l_tick_target); //XXX: move to platform
+		Platform::Sleep(l_tick_target);
 	} while (m_running);
 
 	finalize();

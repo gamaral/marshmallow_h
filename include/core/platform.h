@@ -59,18 +59,12 @@ namespace Core
 		 */
 		static void Finalize(void);
 
-		/* flow */
+		/****************************************************** time */
 
-		static void PreRender(TIME timeout = INFINITE);
-		static void PostRender(TIME timeout = INFINITE);
-		static void PreSecond(TIME timeout = INFINITE);
-		static void PostSecond(TIME timeout = INFINITE);
-		static void PreTick(TIME timeout = INFINITE);
-		static void PostTick(TIME timeout = INFINITE);
-		static void PreUpdate(TIME timeout = INFINITE);
-		static void PostUpdate(TIME timeout = INFINITE);
-
-		/* time */
+		/*!
+		 * @brief Sleep in milliseconds
+		 */
+		static void Sleep(TIME timeout);
 
 		/*!
 		 * @brief Start system time
@@ -88,6 +82,17 @@ namespace Core
 		 *         formats.
 		 */
 		static TimeData TimeStampToTimeData(TIME timestamp = INFINITE);
+
+		/****************************************************** flow */
+
+		static void PreRender(TIME timeout = INFINITE);
+		static void PostRender(TIME timeout = INFINITE);
+		static void PreSecond(TIME timeout = INFINITE);
+		static void PostSecond(TIME timeout = INFINITE);
+		static void PreTick(TIME timeout = INFINITE);
+		static void PostTick(TIME timeout = INFINITE);
+		static void PreUpdate(TIME timeout = INFINITE);
+		static void PostUpdate(TIME timeout = INFINITE);
 	};
 
 }
