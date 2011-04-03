@@ -41,6 +41,8 @@
 #include <time.h>
 #include <unistd.h>
 
+/********************************************************************** types */
+
 #define CHAR   char
 #define INT16  int16_t
 #define INT32  int32_t
@@ -53,6 +55,14 @@
 #define UINT8  uint8_t
 #define WCHAR  wchar_t
 
+/******************************************************************** defines */
+
 #define INFINITE ~((TIME)0)
+#define SNPRINTF snprintf
+
+/******************************************************************** unused */
+
+#define CORE_EXPORT
+#define EVENT_EXPORT
 
 #endif

@@ -47,7 +47,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event
 {
 	/*! @brief Event manager interface */
-	struct ManagerInterface
+	struct EVENT_EXPORT ManagerInterface
 	{
 		virtual ~ManagerInterface(void) {};
 

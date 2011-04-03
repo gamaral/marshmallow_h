@@ -54,7 +54,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event
 {
 	/*! @brief Event manager base */
-	class Manager : public ManagerInterface
+	class EVENT_EXPORT Manager : public ManagerInterface
 	{
 		typedef list<SharedListenerInterface> EventListenerList;
 		typedef hash_map<UID, EventListenerList> EventListenerMap;

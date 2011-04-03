@@ -48,7 +48,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event
 {
 	/*! @brief Base event class */
-	class EventBase : public EventInterface
+	class EVENT_EXPORT EventBase : public EventInterface
 	{
 		TIME m_timestamp;
 

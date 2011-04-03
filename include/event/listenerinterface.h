@@ -46,7 +46,7 @@ namespace Event
 {
 
 	/*! @brief Event listener interface */
-	struct ListenerInterface
+	struct EVENT_EXPORT ListenerInterface
 	{
 		virtual ~ListenerInterface(void) {};
 

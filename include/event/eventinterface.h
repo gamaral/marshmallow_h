@@ -48,7 +48,7 @@ namespace Event
 	class EventType;
 
 	/*! @brief Event interface */
-	struct EventInterface
+	struct EVENT_EXPORT EventInterface
 	{
 		virtual ~EventInterface(void) {};
 

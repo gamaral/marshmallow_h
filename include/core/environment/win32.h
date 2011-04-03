@@ -53,4 +53,23 @@
 #define UINT8  uint8_t
 #define WCHAR  wchar_t
 
+#define SNPRINTF _snprintf_s
+
+/******************************************************************** exports */
+
+#define DLL_EXPORT __declspec(dllexport)
+#define DLL_IMPORT __declspec(dllimport)
+
+#ifdef CORE_LIBRARY
+#   define CORE_EXPORT DLL_EXPORT
+#else
+#   define CORE_EXPORT DLL_IMPORT
+#endif
+
+#ifdef EVENT_LIBRARY
+#   define EVENT_EXPORT DLL_EXPORT
+#else
+#   define EVENT_EXPORT DLL_IMPORT
+#endif
+
 #endif

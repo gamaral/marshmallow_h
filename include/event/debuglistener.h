@@ -47,7 +47,7 @@ namespace Event
 {
 
 	/*! @brief Debug event listener class */
-	class DebugListener : public ListenerBase
+	class EVENT_EXPORT DebugListener : public ListenerBase
 	{
 		static const char *s_name;
 		std::ofstream m_filestream;

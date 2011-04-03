@@ -46,7 +46,7 @@ namespace Core
 {
 
 	/*! @brief Engine class */
-	class Engine
+	class CORE_EXPORT Engine
 	{
 		static Engine *s_instance;
 		Event::Manager m_manager;

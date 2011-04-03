@@ -47,7 +47,7 @@ namespace Event
 {
 
 	/*! @brief Base event class */
-	class ListenerBase : public ListenerInterface
+	class EVENT_EXPORT ListenerBase : public ListenerInterface
 	{
 		static const char *s_name;
 

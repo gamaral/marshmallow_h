@@ -50,7 +50,7 @@ namespace Event
 	typedef UINT32 UID;
 
 	/*! @brief Event type class */
-	class EventType
+	class EVENT_EXPORT EventType
 	{
 		char *m_name;
 		UID m_uid;

@@ -62,7 +62,7 @@ DebugListener::handle(const EventInterface &event)
 	const char  *l_name = event.type().name();
 	const UID l_uid = event.type().uid();
 
-	snprintf(l_msg, DL_MSGMAX-1, "%s: Event (%p) received of type %u [%s]",
+	SNPRINTF(l_msg, DL_MSGMAX-1, "%s: Event (%p) received of type %u [%s]",
 		Platform::TimeStampToTimeData(event.timeStamp()).string,
 		(void *)&event,
 		l_uid,

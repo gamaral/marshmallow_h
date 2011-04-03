@@ -44,7 +44,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core
 {
 	/*! @brief Platform specific class */
-	struct Platform
+	struct CORE_EXPORT Platform
 	{
 		/*! @brief Platform internal structure */
 		struct Internal;

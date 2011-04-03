@@ -1,3 +1,5 @@
+add_definitions(-DCORE_LIBRARY)
+
 file(GLOB MARSHMALLOW_CORE_SRCS *.cpp)
 
 if(UNIX)
