@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <unistd.h>
-
 #include "core/platform.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -165,7 +163,7 @@ Engine::run(void)
 
 		l_lasttick = l_tick;
 
-		usleep(l_tick_target);
+		usleep(l_tick_target); //XXX: move to platform
 	} while (m_running);
 
 	finalize();

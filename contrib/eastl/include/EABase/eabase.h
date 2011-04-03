@@ -102,6 +102,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // some compilers masquerade as MSVC but don't implement all features.
 #if defined(EA_COMPILER_MSVC) || defined(EA_COMPILER_METROWERKS)
     #pragma once
+    #include <yvals.h>
 #endif
 
 
@@ -717,7 +718,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // in -std=c++0x and -std=gnu++0x modes, as char16_t and char32_t too.
 
 #if !defined(EA_CHAR16_NATIVE)
-    #if defined(_MSC_VER) && (_MSC_VER >= 1600) && defined(_HAS_CHAR16_T_LANGUAGE_SUPPORT) && _HAS_CHAR16_T_LANGUAGE_SUPPORT // VS2010+
+    #if defined(_MSC_VER) && (_MSC_VER >= 1600) && defined(_CHAR16T) || (defined(_HAS_CHAR16_T_LANGUAGE_SUPPORT) && _HAS_CHAR16_T_LANGUAGE_SUPPORT) // VS2010+
         #define EA_CHAR16_NATIVE 1
     #elif defined(__GNUC__) && ((__GNUC__ * 100 + __GNUC_MINOR__) >= 404) && (defined(__GXX_EXPERIMENTAL_CXX0X__) || defined(__STDC_VERSION__)) // g++ (C++ compiler) 4.4+ with -std=c++0x or gcc (C compiler) 4.4+ with -std=gnu99
         #define EA_CHAR16_NATIVE 1
