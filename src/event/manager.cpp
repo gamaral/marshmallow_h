@@ -79,16 +79,28 @@ Manager::connect(const SharedListenerInterface &handler, const EventType &type)
 
 	INFO("Connected! Current listener count is: %d", l_listeners.size());
 
-	return(false);
+	return(true);
 }
 
 bool
 Manager::disconnect(const SharedListenerInterface &handler, const EventType &type)
 {
-	UNUSED(handler);
-	UNUSED(type);
-	
-	return(false);
+	INFO("Disconnecting `%p` handler from event type `%s`", (void *)&handler, type.name());
+
+	EventListenerMap::const_iterator l_elmapi =
+	    m_elmap.find(type.uid());
+
+	/* if this is a new type, assign a new SharedListenerInterfaceList */
+	if (l_elmapi == m_elmap.end()) {
+		WARNING1("Failed! Event type not in registry.");
+		return(false);
+	}
+
+	EventListenerList &l_listeners = m_elmap[type.uid()];
+	l_listeners.remove(handler);
+	INFO("Disconnected! Current listener count is: %d", l_listeners.size());
+
+	return(true);
 }
 
 bool

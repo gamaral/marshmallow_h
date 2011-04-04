@@ -50,7 +50,20 @@ public:
 	  m_stop_timer(0),
 	  m_debugListener(new Event::DebugListener("log.txt"))
 	{
+	}
+
+	VIRTUAL void initialize(void)
+	{
+		EngineBase::initialize();
+
 		manager().connect(m_debugListener, Event::EventBase::Type);
+	}
+
+	VIRTUAL void finalize(void)
+	{
+		manager().disconnect(m_debugListener, Event::EventBase::Type);
+		
+		EngineBase::finalize();
 	}
 
 	VIRTUAL void second(void)
