@@ -1,10 +1,10 @@
 add_definitions(-DEVENT_LIBRARY)
 
-file(GLOB MARSHMALLOW_EVENTS_SRCS *.cpp)
+file(GLOB MARSHMALLOW_EVENT_SRCS *.cpp)
 
-add_library(marshmallow_events STATIC
-	${MARSHMALLOW_EVENTS_SRCS}
+add_library(marshmallow_event STATIC
+	${MARSHMALLOW_EVENT_SRCS}
 )
 
-target_link_libraries(marshmallow_events marshmallow_core)
+target_link_libraries(marshmallow_event marshmallow_core)
 

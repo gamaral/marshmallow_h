@@ -62,6 +62,8 @@ namespace Event
 		typedef list<SharedEventInterface> EventList;
 
 		EventListenerMap m_elmap;
+		EventList m_queue[2];
+		UINT8 m_active_queue;
 
 	public:
 

@@ -64,5 +64,6 @@
 
 #define CORE_EXPORT
 #define EVENT_EXPORT
+#define ENGINE_EXPORT
 
 #endif

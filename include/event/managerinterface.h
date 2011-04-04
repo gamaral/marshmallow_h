@@ -87,6 +87,7 @@ namespace Event
 		/*!
 		 * @brief VIRTUAL Dispatch shared event immediately
 		 * @param event Event
+		 * @return Returns true if message was consumed
 		 */
 		virtual bool dispatch(const SharedEventInterface &event) const = 0;
 
@@ -99,6 +100,8 @@ namespace Event
 		/*!
 		 * @brief VIRTUAL Tick handler
 		 * @param timeout Timeout
+		 * @return Returns true if all messages in active queue where
+		 *         dispatched
 		 */
 		virtual bool tick(TIME timeout = INFINITE) = 0;
 

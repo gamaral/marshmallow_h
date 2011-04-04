@@ -72,4 +72,10 @@
 #   define EVENT_EXPORT DLL_IMPORT
 #endif
 
+#ifdef ENGINE_LIBRARY
+#   define ENGINE_EXPORT DLL_EXPORT
+#else
+#   define ENGINE_EXPORT DLL_IMPORT
+#endif
+
 #endif

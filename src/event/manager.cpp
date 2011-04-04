@@ -39,10 +39,12 @@
 #include "core/platform.h"
 
 MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
 using namespace Event;
 using namespace eastl;
 
 Manager::Manager(const char *name)
+    : m_active_queue(0)
 {
 	UNUSED(name);
 }
@@ -114,16 +116,30 @@ Manager::dispatch(const EventInterface &event) const
 bool
 Manager::dequeue(const SharedEventInterface &event, bool all)
 {
-	UNUSED(event);
-	UNUSED(all);
-	return(false);
+	EventList &l_queue = m_queue[m_active_queue == 0 ? 1 : 0];
+
+	if (all) {
+		const UID type = event->type();
+		const EventList::reverse_iterator l_c = l_queue.rend();
+		EventList::reverse_iterator l_i;
+
+		for (l_i = l_queue.rbegin(); l_i != l_c; ++l_i) {
+			if (type == (*l_i)->type())
+				l_queue.erase(l_i);
+		}
+	} else {
+		l_queue.remove(event);
+	}
+
+	return(true);
 }
 
 bool
 Manager::queue(const SharedEventInterface &event)
 {
-	UNUSED(event);
-	return(false);
+	EventList &l_queue = m_queue[m_active_queue == 0 ? 1 : 0];
+	l_queue.push_back(event);
+	return(true);
 }
 
 bool
@@ -136,8 +152,23 @@ Manager::render(TIME timeout)
 bool
 Manager::tick(TIME timeout)
 {
-	UNUSED(timeout);
-	return(false);
+	const TIME l_start_time = Platform::TimeStamp();
+	bool l_abort = false;
+
+	/* dispatch messages in active queue */
+	EventList &l_queue = m_queue[m_active_queue];
+	while (!l_queue.empty() && !l_abort) {
+		dispatch(l_queue.front());
+		l_queue.pop_front();
+		l_abort = ((Platform::TimeStamp() - l_start_time) >= timeout);
+	}
+
+	if (!l_abort) {
+		/* switch queues */
+		m_active_queue = (m_active_queue == 0 ? 1 : 0);
+	}
+
+	return(!l_abort);
 }
 
 bool

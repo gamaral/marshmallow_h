@@ -48,7 +48,7 @@ main(void)
 	SharedEventInterface event5;
 	event5 = event4;
 
-	DebugListener listener1("/tmp/log.txt");
+	DebugListener listener1("log.txt");
 
 	printf(" Event%d: %s (%u)\n", 1, event1.type().name(), event1.type().uid());
 	printf(" Event%d: %s (%u)\n", 2, event2.type().name(), event2.type().uid());
