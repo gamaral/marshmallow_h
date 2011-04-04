@@ -75,6 +75,9 @@
 #define MIN(x,y) (x < y ? x : y)
 #define MAX(x,y) (x > y ? x : y)
 
+#define TIMEOUT_INIT const TIME l_start_time = Platform::TimeStamp()
+#define TIMEOUT_DEC(x) (x -= (Core::Platform::TimeStamp() - l_start_time))
+
 /******************************************************************** global */
 
 MARSHMALLOW_NAMESPACE_BEGIN

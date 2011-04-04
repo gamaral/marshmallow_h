@@ -26,66 +26,32 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include <cstdio>
+#include <iostream>
 
-/*!
- * @file
- *
- * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
- */
+#include "core/platform.h"
+#include "core/shared.h"
+#include "event/debuglistener.h"
+#include "event/eventbase.h"
+#include "event/manager.h"
+#include "engine/enginebase.h"
 
-#ifndef EVENT_MANAGER_H
-#define EVENT_MANAGER_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
+using namespace Engine;
 
-#include "event/managerinterface.h"
-
-#include "EASTL/hash_map.h"
-#include "EASTL/list.h"
-#include "EASTL/set.h"
-
-#include "event/eventinterface.h"
-#include "event/eventtype.h"
-#include "event/listenerinterface.h"
-
-using namespace eastl;
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Event
+int
+main(void)
 {
-	/*! @brief Event manager base */
-	class EVENT_EXPORT Manager : public ManagerInterface
-	{
-		typedef list<SharedListenerInterface> EventListenerList;
-		typedef hash_map<UID, EventListenerList> EventListenerMap;
-
-		typedef list<SharedEventInterface> EventList;
-
-		EventListenerMap m_elmap;
-		EventList m_queue[2];
-		UINT8 m_active_queue;
-
-	public:
-
-		Manager(const char *name = "");
-		virtual ~Manager(void);
-
-	public: /* virtual */
-
-		VIRTUAL bool connect(const SharedListenerInterface &handler, const EventType &type);
-		VIRTUAL bool disconnect(const SharedListenerInterface &handler, const EventType &type);
-
-		VIRTUAL bool dequeue(const SharedEventInterface &event, bool all = false);
-		VIRTUAL bool queue(const SharedEventInterface &event);
-
-		VIRTUAL bool dispatch(const EventInterface &event) const;
-		VIRTUAL bool dispatch(const SharedEventInterface &event) const
-		    { return(dispatch(*event)); }
-
-		VIRTUAL bool tick(TIME &timeout);
-	};
+	EngineBase demo;
+	Event::EventBase event1;
+	Event::SharedEventInterface event2(new Event::EventBase);
+	Event::SharedListenerInterface dl(new Event::DebugListener("log.txt"));
+	demo.manager().connect(dl, Event::EventBase::Type);
+	demo.manager().connect(dl, Event::EventBase::Type);
+	demo.manager().dispatch(event1);
+	demo.manager().dispatch(event2);
+	demo.manager().disconnect(dl, Event::EventBase::Type);
+	return(0);
 }
 
-MARSHMALLOW_NAMESPACE_END
-
-#endif

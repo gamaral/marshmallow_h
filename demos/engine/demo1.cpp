@@ -26,66 +26,52 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include <cstdio>
+#include <iostream>
 
-/*!
- * @file
- *
- * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
- */
+#include "core/platform.h"
+#include "core/shared.h"
+#include "event/debuglistener.h"
+#include "event/eventbase.h"
+#include "event/manager.h"
+#include "engine/enginebase.h"
 
-#ifndef EVENT_MANAGER_H
-#define EVENT_MANAGER_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
 
-#include "event/managerinterface.h"
-
-#include "EASTL/hash_map.h"
-#include "EASTL/list.h"
-#include "EASTL/set.h"
-
-#include "event/eventinterface.h"
-#include "event/eventtype.h"
-#include "event/listenerinterface.h"
-
-using namespace eastl;
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Event
+class DemoEngine : public Engine::EngineBase
 {
-	/*! @brief Event manager base */
-	class EVENT_EXPORT Manager : public ManagerInterface
+	int m_stop_timer;
+	Event::SharedListenerInterface m_debugListener;
+
+public:
+	DemoEngine(void)
+	: EngineBase(),
+	  m_stop_timer(0),
+	  m_debugListener(new Event::DebugListener("log.txt"))
 	{
-		typedef list<SharedListenerInterface> EventListenerList;
-		typedef hash_map<UID, EventListenerList> EventListenerMap;
+		manager().connect(m_debugListener, Event::EventBase::Type);
+	}
 
-		typedef list<SharedEventInterface> EventList;
+	VIRTUAL void second(void)
+	{
+		Event::SharedEventInterface event(new Event::EventBase);
+		Event::SharedEventInterface event2(new Event::EventBase);
+		manager().queue(event);
+		manager().queue(event2);
 
-		EventListenerMap m_elmap;
-		EventList m_queue[2];
-		UINT8 m_active_queue;
+		/*
+		 * Dequeue all on odd seconds
+		 */
+		manager().dequeue(event, m_stop_timer % 2);
+		if (++m_stop_timer == 10)
+			stop();
+	}
+};
 
-	public:
-
-		Manager(const char *name = "");
-		virtual ~Manager(void);
-
-	public: /* virtual */
-
-		VIRTUAL bool connect(const SharedListenerInterface &handler, const EventType &type);
-		VIRTUAL bool disconnect(const SharedListenerInterface &handler, const EventType &type);
-
-		VIRTUAL bool dequeue(const SharedEventInterface &event, bool all = false);
-		VIRTUAL bool queue(const SharedEventInterface &event);
-
-		VIRTUAL bool dispatch(const EventInterface &event) const;
-		VIRTUAL bool dispatch(const SharedEventInterface &event) const
-		    { return(dispatch(*event)); }
-
-		VIRTUAL bool tick(TIME &timeout);
-	};
+int
+main(void)
+{
+	return(DemoEngine().run());
 }
 
-MARSHMALLOW_NAMESPACE_END
-
-#endif

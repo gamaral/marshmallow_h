@@ -120,12 +120,12 @@ Manager::dequeue(const SharedEventInterface &event, bool all)
 
 	if (all) {
 		const UID type = event->type();
-		const EventList::reverse_iterator l_c = l_queue.rend();
-		EventList::reverse_iterator l_i;
+		EventList::reverse_iterator l_i = l_queue.rbegin();
 
-		for (l_i = l_queue.rbegin(); l_i != l_c; ++l_i) {
+		while (l_i != l_queue.rend()) {
 			if (type == (*l_i)->type())
-				l_queue.erase(l_i);
+			    l_i = l_queue.erase(l_i);
+			else ++l_i;
 		}
 	} else {
 		l_queue.remove(event);
@@ -143,16 +143,9 @@ Manager::queue(const SharedEventInterface &event)
 }
 
 bool
-Manager::render(TIME timeout)
+Manager::tick(TIME &timeout)
 {
-	UNUSED(timeout);
-	return(false);
-}
-
-bool
-Manager::tick(TIME timeout)
-{
-	const TIME l_start_time = Platform::TimeStamp();
+	TIMEOUT_INIT;
 	bool l_abort = false;
 
 	/* dispatch messages in active queue */
@@ -160,7 +153,7 @@ Manager::tick(TIME timeout)
 	while (!l_queue.empty() && !l_abort) {
 		dispatch(l_queue.front());
 		l_queue.pop_front();
-		l_abort = ((Platform::TimeStamp() - l_start_time) >= timeout);
+		l_abort = (TIMEOUT_DEC(timeout) <= 0);
 	}
 
 	if (!l_abort) {
@@ -169,12 +162,5 @@ Manager::tick(TIME timeout)
 	}
 
 	return(!l_abort);
-}
-
-bool
-Manager::update(TIME timeout)
-{
-	UNUSED(timeout);
-	return(false);
 }
 

@@ -34,71 +34,105 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_IMANAGER_H
-#define EVENT_IMANAGER_H 1
+#ifndef ENGINE_ENGINE_H
+#define ENGINE_ENGINE_H 1
 
 #include "core/global.h"
-#include "core/shared.h"
-#include "event/eventtype.h"
-#include "event/listenerinterface.h"
+#include "event/manager.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Event
+namespace Engine
 {
-	/*! @brief Event manager interface */
-	struct EVENT_EXPORT ManagerInterface
+
+	/*! @brief Engine base class */
+	class ENGINE_EXPORT EngineBase
 	{
-		virtual ~ManagerInterface(void) {};
+		static EngineBase *s_instance;
+		Event::Manager m_manager;
+		float  m_fps;
+		float  m_ups;
+		TIME   m_delta_time;
+		int    m_exit_code;
+		int    m_frame_rate;
+		bool   m_running;
+
+	public:
+
+		EngineBase(float fps = 60.0, float ups = 30.0);
+		virtual ~EngineBase(void);
 
 		/*!
-		 * @brief VIRTUAL Connect an event listener to a specific event type
-		 * @param handler Shared event handler
-		 * @param type Event type
+		 * @brief Start engine
 		 */
-		virtual bool connect(const SharedListenerInterface &handler, const EventType &type) = 0;
+		int run(void);
 
 		/*!
-		 * @brief VIRTUAL Disconnect an event listener from a specific event type
-		 * @param handler Shared event handler
-		 * @param type Event type
+		 * @brief Stop engine
+		 * @param exit_code Exit code
 		 */
-		virtual bool disconnect(const SharedListenerInterface &handler, const EventType &type) = 0;
+		void stop(int exit_code = 0)
+		    { m_exit_code = exit_code; m_running = false; }
 
 		/*!
-		 * @brief VIRTUAL Dequeue an already queued event
-		 * @param event Event
-		 * @param all Remove all events of the same type
+		 * @brief Main event manager
 		 */
-		virtual bool dequeue(const SharedEventInterface &event, bool all = false) = 0;
+		Event::Manager &manager(void)
+		    { return(m_manager); }
 
 		/*!
-		 * @brief VIRTUAL Queue an event
-		 * @param event Event
+		 * @brief Target frames per second
 		 */
-		virtual bool queue(const SharedEventInterface &event) = 0;
+		float fps(void) const
+		    { return(m_fps); }
 
 		/*!
-		 * @brief VIRTUAL Dispatch event immediately
-		 * @param event Event
+		 * @brief Target updates per second
 		 */
-		virtual bool dispatch(const EventInterface &event) const = 0;
+		float ups(void) const
+		    { return(m_ups); }
 
 		/*!
-		 * @brief VIRTUAL Dispatch shared event immediately
-		 * @param event Event
-		 * @return Returns true if message was consumed
+		 * @brief Time that has elapsed since last tick
 		 */
-		virtual bool dispatch(const SharedEventInterface &event) const = 0;
+		TIME deltaTime(void) const
+		    { return(m_delta_time); }
 
 		/*!
-		 * @brief VIRTUAL Tick handler
-		 * @param timeout Timeout
-		 * @return Returns true if all messages in active queue where
-		 *         dispatched
+		 * @brief Actual frame rate achieved
 		 */
-		virtual bool tick(TIME &timeout) = 0;
+		int frameRate(void)
+		    { return(m_frame_rate); }
+
+	public: /* virtual */
+
+		virtual void initialize(void);
+		virtual void finalize(void);
+
+		virtual void render(void) {};
+		virtual void second(void) {};
+		virtual void tick(TIME &timeout)
+		    { UNUSED(timeout); };
+		virtual void update(TIME &timeout)
+		    { UNUSED(timeout); };
+
+	public: /* static */
+
+		static EngineBase * Instance(void)
+		    { return(s_instance); }
+
+	protected:
+
+		void preRender(void);
+		void postRender(void);
+		void preSecond(void);
+		void postSecond(void);
+		void preTick(TIME &timeout);
+		void postTick(TIME &timeout);
+		void preUpdate(TIME &timeout);
+		void postUpdate(TIME &timeout);
 	};
+
 }
 
 MARSHMALLOW_NAMESPACE_END
