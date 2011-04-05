@@ -8,8 +8,16 @@ if [ ${CMAKE} == "" ]; then
 	exit -1
 fi
 
+CFLAGS="-O0 -g -Wall -W -pedantic -Wshadow -Wcast-qual -Wwrite-strings -Wconversion -Wno-variadic-macros -Wno-long-long"
+CXXFLAGS="${CFLAGS} -std=c++98"
+CFLAGS="${CFLAGS} -ansi"
+
 cd build
-cmake ..
+cmake .. \
+    -DCMAKE_BUILD_TYPE:STRING="Debug" \
+    -DCMAKE_C_FLAGS_DEBUG:STRING="${CFLAGS}" \
+    -DCMAKE_CXX_FLAGS_DEBUG:STRING="${CXXFLAGS}"
+
 make
 cd ..
 

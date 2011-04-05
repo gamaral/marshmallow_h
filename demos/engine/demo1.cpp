@@ -26,14 +26,8 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include <cstdio>
-#include <iostream>
-
-#include "core/platform.h"
-#include "core/shared.h"
 #include "event/debuglistener.h"
 #include "event/eventbase.h"
-#include "event/manager.h"
 #include "engine/enginebase.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -70,6 +64,7 @@ public:
 	{
 		Event::SharedEventInterface event(new Event::EventBase);
 		Event::SharedEventInterface event2(new Event::EventBase);
+
 		manager().queue(event);
 		manager().queue(event2);
 
@@ -77,6 +72,7 @@ public:
 		 * Dequeue all on odd seconds
 		 */
 		manager().dequeue(event, m_stop_timer % 2);
+
 		if (++m_stop_timer == 10)
 			stop();
 	}

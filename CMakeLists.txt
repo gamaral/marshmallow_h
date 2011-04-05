@@ -35,8 +35,6 @@ configure_file(
 
 # Platform specific environment defenitions
 if(UNIX)
-	set(CMAKE_C_FLAGS_DEBUG "-g -Wall -W -pedantic -Wshadow -Wcast-qual -Wwrite-strings -Wconversion -Wno-variadic-macros -ansi" CACHE STRING "" FORCE)
-	set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -W -pedantic -Wshadow -Wcast-qual -Wwrite-strings -Wconversion -Wno-variadic-macros -Wno-long-long -std=c++98" CACHE STRING "" FORCE)
 	configure_file(
 	    ${PROJECT_SOURCE_DIR}/include/core/environment/unix.h
 	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
