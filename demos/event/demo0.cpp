@@ -26,45 +26,29 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include <cstdio>
-#include <iostream>
-
+#include "core/platform.h"
 #include "core/shared.h"
 #include "event/debuglistener.h"
 #include "event/eventbase.h"
-#include "event/eventtype.h"
+#include "event/managerbase.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
-using namespace Event;
 
 int
 main(void)
 {
-	EventBase event1;
-	EventBase event2;
-	SharedEventInterface event3(new EventBase);
-	SharedEventInterface event4(event3);
-	SharedEventInterface event5;
-	event5 = event4;
+	Event::ManagerBase event_manager;
+	Event::EventBase event1;
+	Event::SharedEventInterface event2(new Event::EventBase);
+	Event::SharedListenerInterface dl(new Event::DebugListener("log.txt"));
 
-	DebugListener listener1("log.txt");
-
-	printf(" Event%d: %s (%u)\n", 1, event1.type().name(), event1.type().uid());
-	printf(" Event%d: %s (%u)\n", 2, event2.type().name(), event2.type().uid());
-	printf(" Event%d: %s (%u)\n", 3, event3->type().name(), event3->type().uid());
-	printf(" Event%d: %s (%u)\n", 4, event4->type().name(), event4->type().uid());
-	printf(" Event%d: %s (%u)\n", 5, event5->type().name(), event5->type().uid());
-
-	bool same = (event1.type() == event2.type());
-
-	listener1.handle(event1);
-	listener1.handle(event2);
-	listener1.handle(*event3);
-	listener1.handle(*event4);
-	listener1.handle(*event5);
-
-	std::cout << "Are events the same? " << same << std::endl;
-	return 0;
+	event_manager.connect(dl, Event::EventBase::Type);
+	event_manager.connect(dl, Event::EventBase::Type);
+	event_manager.dispatch(event1);
+	event_manager.queue(event2);
+	event_manager.dequeue(event2);
+	event_manager.disconnect(dl, Event::EventBase::Type);
+	return(0);
 }
 

@@ -102,7 +102,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // some compilers masquerade as MSVC but don't implement all features.
 #if defined(EA_COMPILER_MSVC) || defined(EA_COMPILER_METROWERKS)
     #pragma once
-    #include <yvals.h>
 #endif
 
 

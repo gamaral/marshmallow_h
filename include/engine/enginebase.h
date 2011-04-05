@@ -38,9 +38,13 @@
 #define ENGINE_ENGINE_H 1
 
 #include "core/global.h"
-#include "event/manager.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Event
+{
+	class ManagerInterface;
+}
 
 namespace Engine
 {
@@ -49,7 +53,7 @@ namespace Engine
 	class ENGINE_EXPORT EngineBase
 	{
 		static EngineBase *s_instance;
-		Event::Manager m_manager;
+		Event::ManagerInterface *m_event_manager;
 		float  m_fps;
 		float  m_ups;
 		TIME   m_delta_time;
@@ -77,8 +81,14 @@ namespace Engine
 		/*!
 		 * @brief Main event manager
 		 */
-		Event::Manager &manager(void)
-		    { return(m_manager); }
+		Event::ManagerInterface *eventManager(void) const
+		    { return(m_event_manager); }
+
+		/*!
+		 * @brief Main event manager
+		 */
+		void setEventManager(Event::ManagerInterface *m)
+		    { m_event_manager = m; }
 
 		/*!
 		 * @brief Target frames per second

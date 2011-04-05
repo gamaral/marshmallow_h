@@ -35,6 +35,9 @@
  */
 
 #include "core/platform.h"
+#include "event/managerinterface.h"
+
+#include <math.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -44,7 +47,7 @@ using namespace Engine;
 EngineBase *EngineBase::s_instance = 0;
 
 EngineBase::EngineBase(float f, float u)
-    : m_manager("main"),
+    : m_event_manager(0),
       m_fps(f),
       m_ups(u),
       m_frame_rate(0),
@@ -211,7 +214,7 @@ EngineBase::preTick(TIME &timeout)
 {
 	TIMEOUT_INIT;
 	Platform::PreTick(TIMEOUT_DEC(timeout));
-	m_manager.tick(TIMEOUT_DEC(timeout));
+	m_event_manager->tick(TIMEOUT_DEC(timeout));
 }
 
 void

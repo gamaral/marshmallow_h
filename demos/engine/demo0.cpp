@@ -26,32 +26,64 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include <cstdio>
-#include <iostream>
-
-#include "core/platform.h"
-#include "core/shared.h"
 #include "event/debuglistener.h"
 #include "event/eventbase.h"
-#include "event/manager.h"
+#include "event/managerbase.h"
 #include "engine/enginebase.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
-using namespace Engine;
+
+class DemoEngine : public Engine::EngineBase
+{
+	int m_stop_timer;
+	Event::ManagerBase m_event_manager;
+	Event::SharedListenerInterface m_debugListener;
+
+public:
+	DemoEngine(void)
+	: EngineBase(),
+	  m_stop_timer(0),
+	  m_debugListener(new Event::DebugListener("log.txt"))
+	{
+		setEventManager(&m_event_manager);
+	}
+
+	VIRTUAL void initialize(void)
+	{
+		EngineBase::initialize();
+
+		eventManager()->connect(m_debugListener, Event::EventBase::Type);
+	}
+
+	VIRTUAL void finalize(void)
+	{
+		eventManager()->disconnect(m_debugListener, Event::EventBase::Type);
+		
+		EngineBase::finalize();
+	}
+
+	VIRTUAL void second(void)
+	{
+		Event::SharedEventInterface event(new Event::EventBase);
+		Event::SharedEventInterface event2(new Event::EventBase);
+
+		eventManager()->queue(event);
+		eventManager()->queue(event2);
+
+		/*
+		 * Dequeue all on odd seconds
+		 */
+		eventManager()->dequeue(event, m_stop_timer % 2);
+
+		if (++m_stop_timer == 10)
+			stop();
+	}
+};
 
 int
 main(void)
 {
-	EngineBase demo;
-	Event::EventBase event1;
-	Event::SharedEventInterface event2(new Event::EventBase);
-	Event::SharedListenerInterface dl(new Event::DebugListener("log.txt"));
-	demo.manager().connect(dl, Event::EventBase::Type);
-	demo.manager().connect(dl, Event::EventBase::Type);
-	demo.manager().dispatch(event1);
-	demo.manager().dispatch(event2);
-	demo.manager().disconnect(dl, Event::EventBase::Type);
-	return(0);
+	return(DemoEngine().run());
 }
 

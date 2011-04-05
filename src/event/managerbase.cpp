@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/manager.h"
+#include "event/managerbase.h"
 
 /*!
  * @file
@@ -43,18 +43,18 @@ using namespace Core;
 using namespace Event;
 using namespace eastl;
 
-Manager::Manager(const char *name)
+ManagerBase::ManagerBase(const char *name)
     : m_active_queue(0)
 {
 	UNUSED(name);
 }
 
-Manager::~Manager(void)
+ManagerBase::~ManagerBase(void)
 {
 }
 
 bool
-Manager::connect(const SharedListenerInterface &handler, const EventType &type)
+ManagerBase::connect(const SharedListenerInterface &handler, const EventType &type)
 {
 	INFO("Connecting `%p` handler to event type `%s`", (void *)&handler, type.name());
 
@@ -83,7 +83,7 @@ Manager::connect(const SharedListenerInterface &handler, const EventType &type)
 }
 
 bool
-Manager::disconnect(const SharedListenerInterface &handler, const EventType &type)
+ManagerBase::disconnect(const SharedListenerInterface &handler, const EventType &type)
 {
 	INFO("Disconnecting `%p` handler from event type `%s`", (void *)&handler, type.name());
 
@@ -104,7 +104,7 @@ Manager::disconnect(const SharedListenerInterface &handler, const EventType &typ
 }
 
 bool
-Manager::dispatch(const EventInterface &event) const
+ManagerBase::dispatch(const EventInterface &event) const
 {
 	bool l_handled = false;
 
@@ -126,7 +126,7 @@ Manager::dispatch(const EventInterface &event) const
 }
 
 bool
-Manager::dequeue(const SharedEventInterface &event, bool all)
+ManagerBase::dequeue(const SharedEventInterface &event, bool all)
 {
 	EventList &l_queue = m_queue[m_active_queue == 0 ? 1 : 0];
 
@@ -147,7 +147,7 @@ Manager::dequeue(const SharedEventInterface &event, bool all)
 }
 
 bool
-Manager::queue(const SharedEventInterface &event)
+ManagerBase::queue(const SharedEventInterface &event)
 {
 	EventList &l_queue = m_queue[m_active_queue == 0 ? 1 : 0];
 	l_queue.push_back(event);
@@ -155,7 +155,7 @@ Manager::queue(const SharedEventInterface &event)
 }
 
 bool
-Manager::tick(TIME &timeout)
+ManagerBase::tick(TIME &timeout)
 {
 	TIMEOUT_INIT;
 	bool l_abort = false;
