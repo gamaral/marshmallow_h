@@ -77,7 +77,7 @@ namespace Core
 		static TIME TimeStamp(void);
 
 		/*!
-		 * @brief Reinterpret an internal timestampa
+		 * @brief Reinterpret an internal timestamp
 		 * @return Internal timestamp in system timestamp and string
 		 *         formats.
 		 */

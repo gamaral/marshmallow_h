@@ -54,6 +54,8 @@
 #   define MARSHMALLOW_NAMESPACE_USE
 #endif
 
+/********************************************************************** debug */
+
 #if defined(DEBUG) && DEBUG_VERBOSITY >= 1
 #   define WARNING(x,...) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
 #   define WARNING1(x) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
@@ -70,7 +72,7 @@
 #   define INFO1(...) (void)0
 #endif
 
-#define UID UINT32
+/********************************************************************* helpers */
 
 #define VIRTUAL
 #define UNUSED(x) (void)x
@@ -85,7 +87,8 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-struct TimeData {
+struct TimeData
+{
     char string[21];
     time_t system;
     TIME internal;

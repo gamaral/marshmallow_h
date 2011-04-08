@@ -41,15 +41,11 @@
 
 #include "EASTL/hash_map.h"
 #include "EASTL/list.h"
-#include "EASTL/set.h"
 using namespace eastl;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core
-{
-	class Type;
-}
+namespace Core { class Type; }
 
 namespace Event
 {

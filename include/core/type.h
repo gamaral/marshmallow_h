@@ -37,8 +37,6 @@
 #ifndef CORE_TYPE_H
 #define CORE_TYPE_H 1
 
-#include <stdint.h>
-
 #include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -66,27 +64,27 @@ namespace Core
 		UID uid(void) const
 		    { return(m_uid); }
 
-		/*! @brief Event type name */
+		/*! @brief Event Type Name */
 		const char * name(void) const
 		    { return(m_name); }
 
 	public: /* operator */
 
-		/*! @brief Equal comparison operator */
-		bool operator ==(const Type &rhs) const
-		    { return(m_uid == rhs.m_uid); }
-
-		/*! @brief Less comparison operator */
-		bool operator <(const Type &rhs) const
-		    { return(m_uid < rhs.m_uid); }
-
-		/*! @brief Name cast operator */
+		/*! @brief Cast to name */
 		operator const char *() const
 		    { return(m_name); }
 
-		/*! @brief UID cast operator */
+		/*! @brief Cast to UID */
 		operator UID() const
 		    { return(m_uid); }
+
+		/*! @brief Equal Comparison Operator */
+		bool operator ==(const Type &rhs) const
+		    { return(m_uid == rhs.m_uid); }
+
+		/*! @brief LessThan Comparison Operator */
+		bool operator <(const Type &rhs) const
+		    { return(m_uid < rhs.m_uid); }
 
 	public: /* static */
 

@@ -37,8 +37,6 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Event;
 
-const char *ListenerBase::s_name = "ListenerBase";
-
 ListenerBase::ListenerBase(void)
 {
 }

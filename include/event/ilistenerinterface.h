@@ -37,7 +37,6 @@
 #ifndef EVENT_ILISTENERINTERFACE_H
 #define EVENT_ILISTENERINTERFACE_H 1
 
-#include "core/global.h"
 #include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN

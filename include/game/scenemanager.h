@@ -34,33 +34,38 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_LISTENERBASE_H
-#define EVENT_LISTENERBASE_H 1
+#ifndef GAME_SCENEMANAGER_H
+#define GAME_SCENEMANAGER_H 1
 
-#include "ilistenerinterface.h"
+#include "EASTL/list.h"
+using namespace eastl;
 
 #include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Event
+namespace Game
 {
 
-	/*! @brief Base event class */
-	class EVENT_EXPORT ListenerBase : public IListenerInterface
+	class ISceneInterface;
+
+	/*! @brief Game Scene Manager */
+	class GAME_EXPORT SceneManager
 	{
+		typedef Core::Shared<ISceneInterface> SharedScene;
+		typedef list<SharedScene> SceneStack;
+
+		SceneStack  m_stack;
+		SharedScene m_active;
 	public:
+		SceneManager(SharedScene init = SharedScene());
+		virtual ~SceneManager(void);
 
-		ListenerBase(void);
-		virtual ~ListenerBase(void);
+		void push(SharedScene &scene);
+		void pop(void);
 
-	public: /* virtual */
-
-		VIRTUAL bool handle(const IEventInterface &)
-		    { return(false); }
-
-		VIRTUAL const char * name(void) const
-		    { return("ListenerBase"); }
+		SharedScene active(void) const
+		    { return(m_active); }
 	};
 
 }

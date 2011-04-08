@@ -45,6 +45,7 @@ using namespace Event;
 DebugListener::DebugListener(const char *filename)
 {
 	m_filestream.open(filename, std::ios_base::app);
+	m_filestream << std::hex;
 }
 
 DebugListener::~DebugListener(void)
@@ -55,18 +56,12 @@ DebugListener::~DebugListener(void)
 bool
 DebugListener::handle(const IEventInterface &event)
 {
-#define DL_MSGMAX 255
-	char l_msg[DL_MSGMAX];
-	const char  *l_name = event.type().name();
-	const UID l_uid = event.type().uid();
-
-	SNPRINTF(l_msg, DL_MSGMAX-1, "%s: Event (%p) received of type %u [%s]",
-		Platform::TimeStampToTimeData(event.timeStamp()).string,
-		(void *)&event,
-		l_uid,
-		l_name);
-
-	m_filestream << l_msg << std::endl;
+	m_filestream
+	    << Platform::TimeStampToTimeData(event.timeStamp()).string
+	    << ": MS " << event.timeStamp()
+	    << ": Event " << (void *)&event
+	    << ": Type (" << event.type().uid() << ")" << event.type().name()
+	    << std::endl;
 
 	return false;
 }

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/scenemanager.h"
 
 /*!
  * @file
@@ -34,37 +34,45 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_LISTENERBASE_H
-#define EVENT_LISTENERBASE_H 1
+#include "core/platform.h"
+#include "game/isceneinterface.h"
 
-#include "ilistenerinterface.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
+using namespace Game;
 
-#include "core/shared.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Event
+SceneManager::SceneManager(SharedScene init)
 {
-
-	/*! @brief Base event class */
-	class EVENT_EXPORT ListenerBase : public IListenerInterface
-	{
-	public:
-
-		ListenerBase(void);
-		virtual ~ListenerBase(void);
-
-	public: /* virtual */
-
-		VIRTUAL bool handle(const IEventInterface &)
-		    { return(false); }
-
-		VIRTUAL const char * name(void) const
-		    { return("ListenerBase"); }
-	};
-
+	push(init);
 }
 
-MARSHMALLOW_NAMESPACE_END
+SceneManager::~SceneManager(void)
+{
+}
 
-#endif
+void
+SceneManager::push(SharedScene &scene)
+{
+	if (!scene) return;
+
+	if (m_active) {
+		m_active->deactivate();
+		m_stack.push_front(m_active);
+	}
+
+	m_active = scene;
+	m_active->activate();
+}
+
+void
+SceneManager::pop(void)
+{
+	if (m_active)
+		m_active->deactivate();
+
+	if (!m_stack.empty()) {
+		m_active = m_stack.front();
+		m_stack.pop_front();
+	} else WARNING1("Scene stack is empty!");
+}
+

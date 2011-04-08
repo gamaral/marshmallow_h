@@ -44,20 +44,28 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core
 {
 
+	/*! @brief Shared Data Struct */
+	struct CORE_EXPORT SharedData {
+	    void * ptr;
+	    INT16 refs;
+	};
+
 	/*! @brief Shared class */
 	template <class T>
 	class Shared
 	{
 	public:
-		Shared(void);
-		Shared(T *ptr);
+		Shared(T *ptr = 0);
 		Shared(const Shared &copy);
 		~Shared(void)
 		    { clear(); }
 
-		bool isValid(void) const
-		    { return(m_data != 0); }
 		void clear(void);
+
+	public: /* operator */
+
+		operator bool(void) const
+		    { return(m_data != 0); }
 
 		T & operator *(void) const
 		    { return(*reinterpret_cast<T *>(m_data->ptr)); }
@@ -71,33 +79,25 @@ namespace Core
 		    { return(m_data && m_data == rhs.m_data); }
 
 	private:
-		struct Data {
-		    void *ptr;
-		    INT16 refs;
-		};
-
-		Data *m_data;
+		SharedData *m_data;
 	};
 
 	template <class T>
-	Shared<T>::Shared(void)
+	Shared<T>::Shared(T *ptr)
 	    : m_data(0)
 	{
-	}
-
-	template <class T>
-	Shared<T>::Shared(T *ptr)
-	    : m_data(new Data)
-	{
-		m_data->ptr  = ptr;
-		m_data->refs = 1;
+		if (ptr) {
+			m_data = new SharedData;
+			m_data->ptr  = ptr;
+			m_data->refs = 1;
+		}
 	}
 
 	template <class T>
 	Shared<T>::Shared(const Shared &copy)
 	    : m_data(copy.m_data)
 	{
-		++m_data->refs;
+		if (m_data) ++m_data->refs;
 	}
 
 	template <class T>
@@ -105,8 +105,12 @@ namespace Core
 	Shared<T>::operator =(const Shared<T> &rhs)
 	{
 		clear();
-		m_data = rhs.m_data;
-		++m_data->refs;
+
+		if (rhs) {
+			m_data = rhs.m_data;
+			++m_data->refs;
+		}
+
 		return(*this);
 	}
 

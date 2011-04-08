@@ -52,8 +52,8 @@
 #define UINT64 uint64_t
 #define UINT8  uint8_t
 #define WCHAR  wchar_t
+#define UID    uint32_t
 
-#define SNPRINTF _snprintf_s
 #define STRDUP _strdup
 
 /******************************************************************** exports */

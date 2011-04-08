@@ -37,15 +37,11 @@
 #ifndef EVENT_IEVENTINTERFACE_H
 #define EVENT_IEVENTINTERFACE_H 1
 
-#include "core/global.h"
 #include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core
-{
-	class Type;
-}
+namespace Core { class Type; }
 
 namespace Event
 {

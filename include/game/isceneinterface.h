@@ -34,34 +34,28 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_LISTENERBASE_H
-#define EVENT_LISTENERBASE_H 1
-
-#include "ilistenerinterface.h"
+#ifndef GAME_SCENE_H
+#define GAME_SCENE_H 1
 
 #include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Event
+namespace Core { class Type; }
+
+namespace Game
 {
 
-	/*! @brief Base event class */
-	class EVENT_EXPORT ListenerBase : public IListenerInterface
+	/*! @brief Game Scene Interface */
+	struct GAME_EXPORT ISceneInterface
 	{
-	public:
+		virtual Core::Type type(void) const = 0;
 
-		ListenerBase(void);
-		virtual ~ListenerBase(void);
-
-	public: /* virtual */
-
-		VIRTUAL bool handle(const IEventInterface &)
-		    { return(false); }
-
-		VIRTUAL const char * name(void) const
-		    { return("ListenerBase"); }
+		virtual void activate(void) = 0;
+		virtual void deactivate(void) = 0;
+		virtual void update(void) = 0;
 	};
+	typedef Core::Shared<ISceneInterface> SharedScene;
 
 }
 

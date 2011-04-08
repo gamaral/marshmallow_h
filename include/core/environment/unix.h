@@ -54,11 +54,11 @@
 #define UINT64 uint64_t
 #define UINT8  uint8_t
 #define WCHAR  wchar_t
+#define UID    uint32_t
 
 /******************************************************************** defines */
 
 #define INFINITE ~((TIME)0)
-#define SNPRINTF snprintf
 #define STRDUP strdup
 
 /******************************************************************** unused */
