@@ -45,8 +45,8 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-	class IEventInterface;
-	class IListenerInterface;
+	struct IEventInterface;
+	struct IListenerInterface;
 
 	/*! @brief Event manager interface */
 	struct EVENT_EXPORT IManagerInterface
