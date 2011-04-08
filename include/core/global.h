@@ -84,7 +84,7 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 
 struct TimeData {
-    char string[18];
+    char string[21];
     time_t system;
     TIME internal;
 };

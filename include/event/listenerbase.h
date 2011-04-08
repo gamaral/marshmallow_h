@@ -58,8 +58,8 @@ namespace Event
 
 	public: /* virtual */
 
-		VIRTUAL bool handle(const IEventInterface &event)
-		    { return((void) event, false); }
+		VIRTUAL bool handle(const IEventInterface &)
+		    { return(false); }
 
 		VIRTUAL const char * name(void) const
 		    { return(s_name); }

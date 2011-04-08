@@ -34,10 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <sys/time.h>
-
-#include <ctime>
-#include <unistd.h>
+#include <windows.h>
+#include <Mmsystem.h>
+#include <time.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -111,7 +110,7 @@ Platform::PostUpdate(TIME timeout)
 void
 Platform::Sleep(TIME timeout)
 {
-	usleep(timeout * 1000);
+	UNUSED(timeout);
 }
 
 time_t
@@ -123,10 +122,7 @@ Platform::StartTime(void)
 TIME
 Platform::TimeStamp(void)
 {
-	struct timeval time;
-	gettimeofday(&time, 0);
-	return((TIME)(((double)(time.tv_sec - platform_internal.start_time) * 1000)
-	    + ((double)time.tv_usec / 1000) + 0.5));
+	return(timeGetTime());
 }
 
 TimeData
@@ -139,9 +135,9 @@ Platform::TimeStampToTimeData(TIME timestamp)
 	l_ts.system =
 	    static_cast<time_t>(Platform::StartTime()+(l_ts.internal/1000));
 
-	gmtime_r(&l_ts.system, &l_time);
+	_gmtime64_s(&l_time, &l_ts.system);
 
-	sprintf(l_ts.string, "%04d-%02d-%02dT%02d:%02d:%02dZ",
+	sprintf_s(l_ts.string, "%04d-%02d-%02dT%02d:%02d:%02dZ",
 		l_time.tm_year+1900,
 		l_time.tm_mon+1,
 		l_time.tm_mday,

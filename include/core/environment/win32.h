@@ -59,24 +59,23 @@
 /******************************************************************** exports */
 
 #define DLL_EXPORT __declspec(dllexport)
-#define DLL_IMPORT __declspec(dllimport)
 
 #ifdef CORE_LIBRARY
 #   define CORE_EXPORT DLL_EXPORT
 #else
-#   define CORE_EXPORT DLL_IMPORT
+#   define CORE_EXPORT
 #endif
 
 #ifdef EVENT_LIBRARY
 #   define EVENT_EXPORT DLL_EXPORT
 #else
-#   define EVENT_EXPORT DLL_IMPORT
+#   define EVENT_EXPORT
 #endif
 
 #ifdef GAME_LIBRARY
 #   define GAME_EXPORT DLL_EXPORT
 #else
-#   define GAME_EXPORT DLL_IMPORT
+#   define GAME_EXPORT
 #endif
 
 #endif

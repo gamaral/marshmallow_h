@@ -46,7 +46,7 @@ namespace Core
 
 	/*! @brief Shared class */
 	template <class T>
-	class CORE_EXPORT Shared
+	class Shared
 	{
 	public:
 		Shared(void);

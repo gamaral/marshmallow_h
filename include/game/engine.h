@@ -43,7 +43,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-	class IManagerInterface;
+	struct IManagerInterface;
 }
 
 namespace Game

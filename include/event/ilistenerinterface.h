@@ -44,7 +44,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-	class IEventInterface;
+	struct IEventInterface;
 
 	/*! @brief Event Listener Interface */
 	struct EVENT_EXPORT IListenerInterface
