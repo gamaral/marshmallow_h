@@ -59,11 +59,12 @@
 
 #define INFINITE ~((TIME)0)
 #define SNPRINTF snprintf
+#define STRDUP strdup
 
 /******************************************************************** unused */
 
 #define CORE_EXPORT
 #define EVENT_EXPORT
-#define ENGINE_EXPORT
+#define GAME_EXPORT
 
 #endif

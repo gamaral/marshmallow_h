@@ -55,16 +55,16 @@
 #endif
 
 #if defined(DEBUG) && DEBUG_VERBOSITY >= 1
-#   define WARNING(x,...) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData().string, __FILE__, __LINE__, __VA_ARGS__)
-#   define WARNING1(x) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData().string, __FILE__, __LINE__)
+#   define WARNING(x,...) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
+#   define WARNING1(x) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
 #else
 #   define WARNING(x,...) (void)0
 #   define WARNING1(x) (void)0
 #endif
 
 #if defined(DEBUG) && DEBUG_VERBOSITY >= 2
-#   define INFO(x,...) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData().string, __FILE__, __LINE__, __VA_ARGS__)
-#   define INFO1(x) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData().string, __FILE__, __LINE__)
+#   define INFO(x,...) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
+#   define INFO1(x) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
 #else
 #   define INFO(...) (void)0
 #   define INFO1(...) (void)0
@@ -74,9 +74,10 @@
 #define UNUSED(x) (void)x
 #define MIN(x,y) (x < y ? x : y)
 #define MAX(x,y) (x > y ? x : y)
+#define NOW Core::Platform::TimeStamp
 
 #define TIMEOUT_INIT const TIME l_start_time = Platform::TimeStamp()
-#define TIMEOUT_DEC(x) (x -= (Core::Platform::TimeStamp() - l_start_time))
+#define TIMEOUT_DEC(x) (x -= (NOW() - l_start_time))
 
 /******************************************************************** global */
 

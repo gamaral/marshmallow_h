@@ -43,9 +43,10 @@ using namespace Event;
 
 const EventType EventBase::Type("EventBase");
 
-EventBase::EventBase(TIME timestamp)
+EventBase::EventBase(TIME t, UINT8 p)
+    : m_timestamp(t == 0 ? NOW() : t),
+      m_priority(p)
 {
-	m_timestamp = (timestamp == INFINITE ? Platform::TimeStamp() : timestamp);
 }
 
 EventBase::~EventBase(void)

@@ -30,24 +30,57 @@
 #include "core/shared.h"
 #include "event/debuglistener.h"
 #include "event/eventbase.h"
-#include "event/managerbase.h"
+#include "event/manager.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
+class CustomEvent : public Event::EventBase
+{
+	public:
+		CustomEvent(void)
+#define PRIORITY_HIGH 1
+		    : Event::EventBase(NOW(), PRIORITY_HIGH)
+		    {}
+
+	public: /* virtual */
+
+		VIRTUAL const Event::EventType & type(void) const
+		    { return(Type); }
+
+	public: /* static */
+
+		static const Event::EventType Type;
+};
+const Event::EventType CustomEvent::Type("CustomEvent");
+
 int
 main(void)
 {
-	Event::ManagerBase event_manager;
+	Event::Manager event_manager;
 	Event::EventBase event1;
-	Event::SharedEventInterface event2(new Event::EventBase);
-	Event::SharedListenerInterface dl(new Event::DebugListener("log.txt"));
+	Event::SharedEvent event2(new CustomEvent);
+	Event::SharedEvent event3(new Event::EventBase);
+	Event::SharedEvent event4(new Event::EventBase(NOW()+1000));
+	Event::SharedListener dl(new Event::DebugListener("log.txt"));
 
 	event_manager.connect(dl, Event::EventBase::Type);
-	event_manager.connect(dl, Event::EventBase::Type);
-	event_manager.dispatch(event1);
+	event_manager.connect(dl, CustomEvent::Type);
+	event_manager.connect(dl, CustomEvent::Type);
+
+	event_manager.queue(event4);
+	event_manager.queue(event3);
 	event_manager.queue(event2);
-	event_manager.dequeue(event2);
+
+	event_manager.execute(0); // SWITCH QUEUE
+	while(!event_manager.execute(INFINITE)) {
+		INFO1("WAITING FOR FUTURE STAMPED EVENT!");
+		Platform::Sleep(100);
+	}
+
+	event_manager.dispatch(event1);
+
+	event_manager.disconnect(dl, CustomEvent::Type);
 	event_manager.disconnect(dl, Event::EventBase::Type);
 	return(0);
 }

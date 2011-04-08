@@ -54,6 +54,7 @@
 #define WCHAR  wchar_t
 
 #define SNPRINTF _snprintf_s
+#define STRDUP _strdup
 
 /******************************************************************** exports */
 
@@ -72,10 +73,10 @@
 #   define EVENT_EXPORT DLL_IMPORT
 #endif
 
-#ifdef ENGINE_LIBRARY
-#   define ENGINE_EXPORT DLL_EXPORT
+#ifdef GAME_LIBRARY
+#   define GAME_EXPORT DLL_EXPORT
 #else
-#   define ENGINE_EXPORT DLL_IMPORT
+#   define GAME_EXPORT DLL_IMPORT
 #endif
 
 #endif

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/managerbase.h"
+#include "event/manager.h"
 
 /*!
  * @file
@@ -37,31 +37,35 @@
 #include "EASTL/algorithm.h"
 
 #include "core/platform.h"
+#include "event/ieventinterface.h"
+#include "event/ilistenerinterface.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Event;
 using namespace eastl;
 
-ManagerBase::ManagerBase(const char *name)
+static bool SortSharedEvent(const SharedEvent& lhs, const SharedEvent& rhs);
+
+Manager::Manager(const char *name)
     : m_active_queue(0)
 {
 	UNUSED(name);
 }
 
-ManagerBase::~ManagerBase(void)
+Manager::~Manager(void)
 {
 }
 
 bool
-ManagerBase::connect(const SharedListenerInterface &handler, const EventType &type)
+Manager::connect(const SharedListener &handler, const EventType &type)
 {
 	INFO("Connecting `%p` handler to event type `%s`", (void *)&handler, type.name());
 
 	EventListenerMap::const_iterator l_elmapi =
 	    m_elmap.find(type.uid());
 
-	/* if this is a new type, assign a new SharedListenerInterfaceList */
+	/* if this is a new type, assign a new EventListenerList */
 	if (l_elmapi == m_elmap.end())
 		m_elmap[type.uid()] = EventListenerList();
 
@@ -83,14 +87,14 @@ ManagerBase::connect(const SharedListenerInterface &handler, const EventType &ty
 }
 
 bool
-ManagerBase::disconnect(const SharedListenerInterface &handler, const EventType &type)
+Manager::disconnect(const SharedListener &handler, const EventType &type)
 {
 	INFO("Disconnecting `%p` handler from event type `%s`", (void *)&handler, type.name());
 
 	EventListenerMap::const_iterator l_elmapi =
 	    m_elmap.find(type.uid());
 
-	/* if this is a new type, assign a new SharedListenerInterfaceList */
+	/* if this is a new type, assign a new EventListenerList */
 	if (l_elmapi == m_elmap.end()) {
 		WARNING1("Failed! Event type not in registry.");
 		return(false);
@@ -104,7 +108,7 @@ ManagerBase::disconnect(const SharedListenerInterface &handler, const EventType 
 }
 
 bool
-ManagerBase::dispatch(const EventInterface &event) const
+Manager::dispatch(const IEventInterface &event) const
 {
 	bool l_handled = false;
 
@@ -126,7 +130,7 @@ ManagerBase::dispatch(const EventInterface &event) const
 }
 
 bool
-ManagerBase::dequeue(const SharedEventInterface &event, bool all)
+Manager::dequeue(const SharedEvent &event, bool all)
 {
 	EventList &l_queue = m_queue[m_active_queue == 0 ? 1 : 0];
 
@@ -147,7 +151,7 @@ ManagerBase::dequeue(const SharedEventInterface &event, bool all)
 }
 
 bool
-ManagerBase::queue(const SharedEventInterface &event)
+Manager::queue(const SharedEvent &event)
 {
 	EventList &l_queue = m_queue[m_active_queue == 0 ? 1 : 0];
 	l_queue.push_back(event);
@@ -155,24 +159,41 @@ ManagerBase::queue(const SharedEventInterface &event)
 }
 
 bool
-ManagerBase::tick(TIME &timeout)
+Manager::execute(TIME timeout)
 {
-	TIMEOUT_INIT;
-	bool l_abort = false;
+	const TIME l_start_time = NOW();
 
-	/* dispatch messages in active queue */
+	/* fetch and sort active queue */
 	EventList &l_queue = m_queue[m_active_queue];
-	while (!l_queue.empty() && !l_abort) {
-		dispatch(l_queue.front());
-		l_queue.pop_front();
-		l_abort = (TIMEOUT_DEC(timeout) <= 0);
+	l_queue.sort(SortSharedEvent);
+
+	/* dispatch events in active queue
+	 *
+	 * stop only if:
+	 *     we ran out of messages
+	 *     we timed out
+	 *     event timestamp is in the future
+	 */
+	SharedEvent event;
+	while (!l_queue.empty()
+	    && (timeout == INFINITE || timeout < (NOW() - l_start_time))
+	    && (event = l_queue.front())->timeStamp() <= NOW()) {
+		dispatch(*event); l_queue.pop_front();
 	}
 
-	if (!l_abort) {
-		/* switch queues */
+	if (l_queue.empty()) {
+		/* switch active queues */
 		m_active_queue = (m_active_queue == 0 ? 1 : 0);
+		return(true);
 	}
+	return(false);
+}
 
-	return(!l_abort);
+/******************************************************************** helpers */
+
+bool
+SortSharedEvent(const SharedEvent& lhs, const SharedEvent& rhs) {
+	return(lhs->priority() > rhs->priority() ||
+	    lhs->timeStamp() < rhs->timeStamp());
 }
 

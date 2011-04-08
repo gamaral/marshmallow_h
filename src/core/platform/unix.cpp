@@ -65,27 +65,23 @@ Platform::Finalize(void)
 }
 
 void
-Platform::PreRender(TIME timeout)
+Platform::PreRender(void)
 {
-	UNUSED(timeout);
 }
 
 void
-Platform::PostRender(TIME timeout)
+Platform::PostRender(void)
 {
-	UNUSED(timeout);
 }
 
 void
-Platform::PreSecond(TIME timeout)
+Platform::PreSecond(void)
 {
-	UNUSED(timeout);
 }
 
 void
-Platform::PostSecond(TIME timeout)
+Platform::PostSecond(void)
 {
-	UNUSED(timeout);
 }
 
 void

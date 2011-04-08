@@ -81,18 +81,18 @@ namespace Core
 		 * @return Internal timestamp in system timestamp and string
 		 *         formats.
 		 */
-		static TimeData TimeStampToTimeData(TIME timestamp = INFINITE);
+		static TimeData TimeStampToTimeData(TIME timestamp);
 
 		/****************************************************** flow */
 
-		static void PreRender(TIME timeout = INFINITE);
-		static void PostRender(TIME timeout = INFINITE);
-		static void PreSecond(TIME timeout = INFINITE);
-		static void PostSecond(TIME timeout = INFINITE);
-		static void PreTick(TIME timeout = INFINITE);
-		static void PostTick(TIME timeout = INFINITE);
-		static void PreUpdate(TIME timeout = INFINITE);
-		static void PostUpdate(TIME timeout = INFINITE);
+		static void PreRender(void);
+		static void PostRender(void);
+		static void PreSecond(void);
+		static void PostSecond(void);
+		static void PreTick(TIME timeout);
+		static void PostTick(TIME timeout);
+		static void PreUpdate(TIME timeout);
+		static void PostUpdate(TIME timeout);
 	};
 
 }

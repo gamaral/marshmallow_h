@@ -34,46 +34,59 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_BASEEVENT_H
-#define EVENT_BASEEVENT_H 1
+#ifndef EVENT_MANAGER_H
+#define EVENT_MANAGER_H 1
 
-#include "ieventinterface.h"
+#include "event/imanagerinterface.h"
+
+#include "EASTL/hash_map.h"
+#include "EASTL/list.h"
+#include "EASTL/set.h"
+using namespace eastl;
+
+#include "event/eventtype.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-	/*! @brief Base event class */
-	class EVENT_EXPORT EventBase : public IEventInterface
+	class IListenerInterface;
+
+	/*! @brief Event manager base */
+	class EVENT_EXPORT Manager : public IManagerInterface
 	{
-		TIME m_timestamp;
-		UINT8 m_priority;
+		typedef Core::Shared<IEventInterface> SharedEvent;
+		typedef Core::Shared<IListenerInterface> SharedListener;
+
+		typedef list<SharedListener> EventListenerList;
+		typedef hash_map<UID, EventListenerList> EventListenerMap;
+
+		typedef list<SharedEvent> EventList;
+
+		EventListenerMap m_elmap;
+		EventList m_queue[2];
+		UINT8 m_active_queue;
 
 	public:
 
-		/*!
-		 * @brief Base event constructor
-		 */
-		EventBase(TIME t = 0, UINT8 p = 0);
-		virtual ~EventBase(void);
+		Manager(const char *name = "");
+		virtual ~Manager(void);
+
+		bool dispatch(const SharedEvent &event) const
+		    { return(dispatch(*event)); }
 
 	public: /* virtual */
 
-		VIRTUAL UINT8 priority(void) const
-		    { return(m_priority); }
+		VIRTUAL bool connect(const SharedListener &handler, const EventType &type);
+		VIRTUAL bool disconnect(const SharedListener &handler, const EventType &type);
 
-		VIRTUAL TIME timeStamp(void) const
-		    { return(m_timestamp); }
+		VIRTUAL bool dequeue(const SharedEvent &event, bool all = false);
+		VIRTUAL bool queue(const SharedEvent &event);
 
-		VIRTUAL const EventType & type(void) const
-		    { return(Type); }
+		VIRTUAL bool dispatch(const IEventInterface &event) const;
 
-	public: /* static */
-
-		static const Event::EventType Type;
+		VIRTUAL bool execute(TIME timeout);
 	};
-	typedef Core::Shared<EventBase> SharedEventBase;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

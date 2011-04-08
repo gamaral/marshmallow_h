@@ -35,14 +35,12 @@
  */
 
 #include "core/platform.h"
-#include "event/eventinterface.h"
 #include "event/eventtype.h"
+#include "event/ieventinterface.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Event;
-
-const char *DebugListener::s_name = "DebugListener";
 
 DebugListener::DebugListener(const char *filename)
 {
@@ -55,7 +53,7 @@ DebugListener::~DebugListener(void)
 }
 
 bool
-DebugListener::handle(const EventInterface &event)
+DebugListener::handle(const IEventInterface &event)
 {
 #define DL_MSGMAX 255
 	char l_msg[DL_MSGMAX];

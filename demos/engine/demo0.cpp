@@ -28,21 +28,21 @@
 
 #include "event/debuglistener.h"
 #include "event/eventbase.h"
-#include "event/managerbase.h"
-#include "engine/enginebase.h"
+#include "event/manager.h"
+#include "game/engine.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
-class DemoEngine : public Engine::EngineBase
+class Demo : public Game::Engine
 {
 	int m_stop_timer;
-	Event::ManagerBase m_event_manager;
-	Event::SharedListenerInterface m_debugListener;
+	Event::Manager m_event_manager;
+	Event::SharedListener m_debugListener;
 
 public:
-	DemoEngine(void)
-	: EngineBase(),
+	Demo(void)
+	: Engine(),
 	  m_stop_timer(0),
 	  m_debugListener(new Event::DebugListener("log.txt"))
 	{
@@ -51,7 +51,7 @@ public:
 
 	VIRTUAL void initialize(void)
 	{
-		EngineBase::initialize();
+		Engine::initialize();
 
 		eventManager()->connect(m_debugListener, Event::EventBase::Type);
 	}
@@ -60,13 +60,13 @@ public:
 	{
 		eventManager()->disconnect(m_debugListener, Event::EventBase::Type);
 		
-		EngineBase::finalize();
+		Engine::finalize();
 	}
 
 	VIRTUAL void second(void)
 	{
-		Event::SharedEventInterface event(new Event::EventBase);
-		Event::SharedEventInterface event2(new Event::EventBase);
+		Event::SharedEvent event(new Event::EventBase);
+		Event::SharedEvent event2(new Event::EventBase);
 
 		eventManager()->queue(event);
 		eventManager()->queue(event2);
@@ -84,6 +84,6 @@ public:
 int
 main(void)
 {
-	return(DemoEngine().run());
+	return(Demo().run());
 }
 

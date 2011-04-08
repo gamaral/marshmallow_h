@@ -40,14 +40,14 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Event;
 
 EventType::EventType(const char *n)
-    : m_name(strdup(n)),
+    : m_name(STRDUP(n)),
       m_uid(0)
 {
 	m_uid = Hash(m_name, strlen(m_name), ~((UID)0));
 }
 
 EventType::EventType(const EventType &copy)
-    : m_name(strdup(copy.m_name)),
+    : m_name(STRDUP(copy.m_name)),
       m_uid(copy.m_uid)
 {
 }

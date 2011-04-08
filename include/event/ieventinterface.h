@@ -34,56 +34,42 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_MANAGERBASE_H
-#define EVENT_MANAGERBASE_H 1
+#ifndef EVENT_IEVENTINTERFACE_H
+#define EVENT_IEVENTINTERFACE_H 1
 
-#include "event/managerinterface.h"
-
-#include "EASTL/hash_map.h"
-#include "EASTL/list.h"
-#include "EASTL/set.h"
-
-#include "event/eventinterface.h"
-#include "event/eventtype.h"
-#include "event/listenerinterface.h"
-
-using namespace eastl;
+#include "core/global.h"
+#include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-	/*! @brief Event manager base */
-	class EVENT_EXPORT ManagerBase : public ManagerInterface
+
+	class EventType;
+
+	/*! @brief Event Interface */
+	struct EVENT_EXPORT IEventInterface
 	{
-		typedef list<SharedListenerInterface> EventListenerList;
-		typedef hash_map<UID, EventListenerList> EventListenerMap;
+		virtual ~IEventInterface(void) {};
 
-		typedef list<SharedEventInterface> EventList;
+		/*!
+		 * @brief Event Priority
+		 */
+		virtual UINT8 priority(void) const = 0;
 
-		EventListenerMap m_elmap;
-		EventList m_queue[2];
-		UINT8 m_active_queue;
+		/*!
+		 * @brief Event TimeStamp
+		 */
+		virtual TIME timeStamp(void) const = 0;
 
-	public:
+		/*!
+		 * @brief Event Type
+		 */
+		virtual const EventType & type(void) const = 0;
 
-		ManagerBase(const char *name = "");
-		virtual ~ManagerBase(void);
-
-	public: /* virtual */
-
-		VIRTUAL bool connect(const SharedListenerInterface &handler, const EventType &type);
-		VIRTUAL bool disconnect(const SharedListenerInterface &handler, const EventType &type);
-
-		VIRTUAL bool dequeue(const SharedEventInterface &event, bool all = false);
-		VIRTUAL bool queue(const SharedEventInterface &event);
-
-		VIRTUAL bool dispatch(const EventInterface &event) const;
-		VIRTUAL bool dispatch(const SharedEventInterface &event) const
-		    { return(dispatch(*event)); }
-
-		VIRTUAL bool tick(TIME &timeout);
 	};
+	typedef Core::Shared<IEventInterface> SharedEvent;
+
 }
 
 MARSHMALLOW_NAMESPACE_END

@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_EVENTINTERFACE_H
-#define EVENT_EVENTINTERFACE_H 1
+#ifndef EVENT_ILISTENERINTERFACE_H
+#define EVENT_ILISTENERINTERFACE_H 1
 
 #include "core/global.h"
 #include "core/shared.h"
@@ -44,25 +44,20 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
+	class IEventInterface;
 
-	class EventType;
-
-	/*! @brief Event interface */
-	struct EVENT_EXPORT EventInterface
+	/*! @brief Event Listener Interface */
+	struct EVENT_EXPORT IListenerInterface
 	{
-		virtual ~EventInterface(void) {};
+		virtual ~IListenerInterface(void) {};
 
 		/*!
-		 * @brief VIRTUAL Event timestamp
+		 * @brief VIRTUAL Event handler
+		 * @param event Event
 		 */
-		virtual TIME timeStamp(void) const = 0;
-
-		/*!
-		 * @brief VIRTUAL Event type
-		 */
-		virtual const EventType & type(void) const = 0;
+		virtual bool handle(const IEventInterface &event) = 0;
 	};
-	typedef Core::Shared<EventInterface> SharedEventInterface;
+	typedef Core::Shared<IListenerInterface> SharedListener;
 
 }
 

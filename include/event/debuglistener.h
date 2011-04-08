@@ -46,10 +46,9 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event
 {
 
-	/*! @brief Debug event listener class */
+	/*! @brief Debug Event Listener */
 	class EVENT_EXPORT DebugListener : public ListenerBase
 	{
-		static const char *s_name;
 		std::ofstream m_filestream;
 
 	public:
@@ -59,10 +58,10 @@ namespace Event
 
 	public: /* virtual */
 
-		VIRTUAL bool handle(const EventInterface &event);
+		VIRTUAL bool handle(const IEventInterface &event);
 
 		VIRTUAL const char * name(void) const
-		    { return(s_name); }
+		    { return("DebugListener"); }
 	};
 
 }

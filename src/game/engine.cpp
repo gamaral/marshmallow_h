@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "engine/enginebase.h"
+#include "game/engine.h"
 
 /*!
  * @file
@@ -35,18 +35,18 @@
  */
 
 #include "core/platform.h"
-#include "event/managerinterface.h"
+#include "event/imanagerinterface.h"
 
 #include <math.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Event;
-using namespace Engine;
+using namespace Game;
 
-EngineBase *EngineBase::s_instance = 0;
+Engine *Engine::s_instance = 0;
 
-EngineBase::EngineBase(float f, float u)
+Engine::Engine(float f, float u)
     : m_event_manager(0),
       m_fps(f),
       m_ups(u),
@@ -59,14 +59,14 @@ EngineBase::EngineBase(float f, float u)
 		WARNING1("Warning: Started a second engine!");
 }
 
-EngineBase::~EngineBase(void)
+Engine::~Engine(void)
 {
 	if (this == s_instance)
 		s_instance = 0;
 }
 
 void
-EngineBase::initialize(void)
+Engine::initialize(void)
 {
 	Platform::Initialize();
 
@@ -85,13 +85,13 @@ EngineBase::initialize(void)
 }
 
 void
-EngineBase::finalize(void)
+Engine::finalize(void)
 {
 	Platform::Finalize();
 }
 
 int
-EngineBase::run(void)
+Engine::run(void)
 {
 	/*************************************************** hybrid-busy-wait */
 	/*
@@ -183,25 +183,25 @@ EngineBase::run(void)
 }
 
 void
-EngineBase::preRender(void)
+Engine::preRender(void)
 {
 	Platform::PreRender();
 }
 
 void
-EngineBase::postRender(void)
+Engine::postRender(void)
 {
 	Platform::PostRender();
 }
 
 void
-EngineBase::preSecond(void)
+Engine::preSecond(void)
 {
 	Platform::PreSecond();
 }
 
 void
-EngineBase::postSecond(void)
+Engine::postSecond(void)
 {
 	INFO("FPS %d!", m_frame_rate);
 	m_frame_rate = 0;
@@ -210,29 +210,29 @@ EngineBase::postSecond(void)
 }
 
 void
-EngineBase::preTick(TIME &timeout)
+Engine::preTick(TIME &timeout)
 {
 	TIMEOUT_INIT;
 	Platform::PreTick(TIMEOUT_DEC(timeout));
-	m_event_manager->tick(TIMEOUT_DEC(timeout));
 }
 
 void
-EngineBase::postTick(TIME &timeout)
+Engine::postTick(TIME &timeout)
 {
 	TIMEOUT_INIT;
 	Platform::PostTick(TIMEOUT_DEC(timeout));
 }
 
 void
-EngineBase::preUpdate(TIME &timeout)
+Engine::preUpdate(TIME &timeout)
 {
 	TIMEOUT_INIT;
 	Platform::PreUpdate(TIMEOUT_DEC(timeout));
+	m_event_manager->execute(TIMEOUT_DEC(timeout));
 }
 
 void
-EngineBase::postUpdate(TIME &timeout)
+Engine::postUpdate(TIME &timeout)
 {
 	TIMEOUT_INIT;
 	Platform::PostUpdate(TIMEOUT_DEC(timeout));

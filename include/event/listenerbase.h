@@ -37,7 +37,7 @@
 #ifndef EVENT_LISTENERBASE_H
 #define EVENT_LISTENERBASE_H 1
 
-#include "listenerinterface.h"
+#include "ilistenerinterface.h"
 
 #include "core/shared.h"
 
@@ -47,7 +47,7 @@ namespace Event
 {
 
 	/*! @brief Base event class */
-	class EVENT_EXPORT ListenerBase : public ListenerInterface
+	class EVENT_EXPORT ListenerBase : public IListenerInterface
 	{
 		static const char *s_name;
 
@@ -58,13 +58,12 @@ namespace Event
 
 	public: /* virtual */
 
-		VIRTUAL bool handle(const EventInterface &event)
+		VIRTUAL bool handle(const IEventInterface &event)
 		    { return((void) event, false); }
 
 		VIRTUAL const char * name(void) const
 		    { return(s_name); }
 	};
-	typedef Core::Shared<ListenerBase> SharedListenerBase;
 
 }
 

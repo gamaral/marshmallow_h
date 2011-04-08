@@ -1,4 +1,4 @@
-set makeprg=make\ -Cbuild
+set makeprg=make\ -C$PWD/build
 set noet
 set sw=4
 set ts=8
