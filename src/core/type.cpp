@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "core/type.h"
 
 /*!
  * @file
@@ -34,73 +34,45 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_EVENTTYPE_H
-#define EVENT_EVENTTYPE_H 1
+#include <cstring>
 
-#include <stdint.h>
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
 
-#include "core/global.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Event
+Type::Type(const char *n)
+    : m_name(STRDUP(n)),
+      m_uid(0)
 {
-
-	/*! @brief Unique-Event-ID type */
-	typedef UINT32 UID;
-
-	/*! @brief Event type class */
-	class EVENT_EXPORT EventType
-	{
-		char *m_name;
-		UID m_uid;
-
-	public:
-
-		/*!
-		 * @brief Event type constructor
-		 * @param name Event type name
-		 */
-		EventType(const char *name);
-		EventType(const EventType &copy);
-		virtual ~EventType(void);
-
-		/*! @brief Unique ID */
-		UID uid(void) const
-		    { return(m_uid); }
-
-		/*! @brief Event type name */
-		const char * name(void) const
-		    { return(m_name); }
-
-	public: /* operator */
-
-		/*! @brief Equal comparison operator */
-		bool operator ==(const EventType &rhs) const
-		    { return(m_uid == rhs.m_uid); }
-
-		/*! @brief Less comparison operator */
-		bool operator <(const EventType &rhs) const
-		    { return(m_uid < rhs.m_uid); }
-
-		/*! @brief Name cast operator */
-		operator const char *() const
-		    { return(m_name); }
-
-		/*! @brief UID cast operator */
-		operator UID() const
-		    { return(m_uid); }
-
-	public: /* static */
-
-		/*! @brief Hash used to calculate uid
-		 * One-at-a-Time Hash
-		 */
-		static UID Hash(const char *data, size_t len, UID mask);
-	};
-
+	m_uid = Hash(m_name, strlen(m_name), ~((UID)0));
 }
 
-MARSHMALLOW_NAMESPACE_END
+Type::Type(const Type &copy)
+    : m_name(STRDUP(copy.m_name)),
+      m_uid(copy.m_uid)
+{
+}
 
-#endif
+Type::~Type(void)
+{
+	free(m_name);
+}
+
+UID
+Type::Hash(const char *data, size_t length, UID mask)
+{
+	UID l_hash, l_i;
+
+	for(l_hash = l_i = 0; l_i < length; ++l_i)
+	{
+		l_hash += data[l_i];
+		l_hash += (l_hash << 0x0A);
+		l_hash ^= (l_hash >> 0x06);
+	}
+
+	l_hash += (l_hash << 0x03);
+	l_hash ^= (l_hash >> 0x0B);
+	l_hash += (l_hash << 0x0F);
+
+	return(l_hash & mask);
+}
+

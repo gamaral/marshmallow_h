@@ -28,6 +28,7 @@
 
 #include "core/platform.h"
 #include "core/shared.h"
+#include "core/type.h"
 #include "event/debuglistener.h"
 #include "event/eventbase.h"
 #include "event/manager.h"
@@ -45,14 +46,14 @@ class CustomEvent : public Event::EventBase
 
 	public: /* virtual */
 
-		VIRTUAL const Event::EventType & type(void) const
+		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
 	public: /* static */
 
-		static const Event::EventType Type;
+		static const Core::Type Type;
 };
-const Event::EventType CustomEvent::Type("CustomEvent");
+const Core::Type CustomEvent::Type("CustomEvent");
 
 int
 main(void)

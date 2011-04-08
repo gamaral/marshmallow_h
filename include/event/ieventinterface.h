@@ -42,11 +42,13 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+namespace Core
+{
+	class Type;
+}
+
 namespace Event
 {
-
-	class EventType;
-
 	/*! @brief Event Interface */
 	struct EVENT_EXPORT IEventInterface
 	{
@@ -65,7 +67,7 @@ namespace Event
 		/*!
 		 * @brief Event Type
 		 */
-		virtual const EventType & type(void) const = 0;
+		virtual const Core::Type & type(void) const = 0;
 
 	};
 	typedef Core::Shared<IEventInterface> SharedEvent;

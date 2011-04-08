@@ -39,9 +39,13 @@
 
 #include "core/global.h"
 #include "core/shared.h"
-#include "event/eventtype.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Core
+{
+	class Type;
+}
 
 namespace Event
 {
@@ -65,7 +69,7 @@ namespace Event
 		 * @param type Event type
 		 */
 		virtual bool connect(const SharedListener &handler,
-		    const EventType &type) = 0;
+		    const Core::Type &type) = 0;
 
 		/*!
 		 * @brief Event Listener Disconnector
@@ -76,7 +80,7 @@ namespace Event
 		 * @param type Event type
 		 */
 		virtual bool disconnect(const SharedListener &handler,
-		    const EventType &type) = 0;
+		    const Core::Type &type) = 0;
 
 		/*!
 		 * @brief Event Dequeue

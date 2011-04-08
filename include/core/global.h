@@ -70,6 +70,8 @@
 #   define INFO1(...) (void)0
 #endif
 
+#define UID UINT32
+
 #define VIRTUAL
 #define UNUSED(x) (void)x
 #define MIN(x,y) (x < y ? x : y)

@@ -44,9 +44,12 @@
 #include "EASTL/set.h"
 using namespace eastl;
 
-#include "event/eventtype.h"
-
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Core
+{
+	class Type;
+}
 
 namespace Event
 {
@@ -77,8 +80,8 @@ namespace Event
 
 	public: /* virtual */
 
-		VIRTUAL bool connect(const SharedListener &handler, const EventType &type);
-		VIRTUAL bool disconnect(const SharedListener &handler, const EventType &type);
+		VIRTUAL bool connect(const SharedListener &handler, const Core::Type &type);
+		VIRTUAL bool disconnect(const SharedListener &handler, const Core::Type &type);
 
 		VIRTUAL bool dequeue(const SharedEvent &event, bool all = false);
 		VIRTUAL bool queue(const SharedEvent &event);

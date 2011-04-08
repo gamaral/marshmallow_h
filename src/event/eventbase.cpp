@@ -35,13 +35,13 @@
  */
 
 #include "core/platform.h"
-#include "event/eventtype.h"
+#include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Event;
 
-const EventType EventBase::Type("EventBase");
+const Type EventBase::Type("EventBase");
 
 EventBase::EventBase(TIME t, UINT8 p)
     : m_timestamp(t == 0 ? NOW() : t),

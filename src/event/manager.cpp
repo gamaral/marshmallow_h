@@ -37,6 +37,7 @@
 #include "EASTL/algorithm.h"
 
 #include "core/platform.h"
+#include "core/type.h"
 #include "event/ieventinterface.h"
 #include "event/ilistenerinterface.h"
 
@@ -58,7 +59,7 @@ Manager::~Manager(void)
 }
 
 bool
-Manager::connect(const SharedListener &handler, const EventType &type)
+Manager::connect(const SharedListener &handler, const Core::Type &type)
 {
 	INFO("Connecting `%p` handler to event type `%s`", (void *)&handler, type.name());
 
@@ -87,7 +88,7 @@ Manager::connect(const SharedListener &handler, const EventType &type)
 }
 
 bool
-Manager::disconnect(const SharedListener &handler, const EventType &type)
+Manager::disconnect(const SharedListener &handler, const Core::Type &type)
 {
 	INFO("Disconnecting `%p` handler from event type `%s`", (void *)&handler, type.name());
 

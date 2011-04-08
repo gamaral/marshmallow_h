@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/eventtype.h"
+#pragma once
 
 /*!
  * @file
@@ -34,45 +34,70 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cstring>
+#ifndef CORE_TYPE_H
+#define CORE_TYPE_H 1
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Event;
+#include <stdint.h>
 
-EventType::EventType(const char *n)
-    : m_name(STRDUP(n)),
-      m_uid(0)
+#include "core/global.h"
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Core
 {
-	m_uid = Hash(m_name, strlen(m_name), ~((UID)0));
-}
 
-EventType::EventType(const EventType &copy)
-    : m_name(STRDUP(copy.m_name)),
-      m_uid(copy.m_uid)
-{
-}
-
-EventType::~EventType(void)
-{
-	free(m_name);
-}
-
-UID
-EventType::Hash(const char *data, size_t length, UID mask)
-{
-	UID l_hash, l_i;
-
-	for(l_hash = l_i = 0; l_i < length; ++l_i)
+	/*! @brief Event type class */
+	class CORE_EXPORT Type
 	{
-		l_hash += data[l_i];
-		l_hash += (l_hash << 0x0A);
-		l_hash ^= (l_hash >> 0x06);
-	}
+		char *m_name;
+		UID m_uid;
 
-	l_hash += (l_hash << 0x03);
-	l_hash ^= (l_hash >> 0x0B);
-	l_hash += (l_hash << 0x0F);
+	public:
 
-	return(l_hash & mask);
+		/*!
+		 * @brief Event type constructor
+		 * @param name Event type name
+		 */
+		Type(const char *name);
+		Type(const Type &copy);
+		virtual ~Type(void);
+
+		/*! @brief Unique ID */
+		UID uid(void) const
+		    { return(m_uid); }
+
+		/*! @brief Event type name */
+		const char * name(void) const
+		    { return(m_name); }
+
+	public: /* operator */
+
+		/*! @brief Equal comparison operator */
+		bool operator ==(const Type &rhs) const
+		    { return(m_uid == rhs.m_uid); }
+
+		/*! @brief Less comparison operator */
+		bool operator <(const Type &rhs) const
+		    { return(m_uid < rhs.m_uid); }
+
+		/*! @brief Name cast operator */
+		operator const char *() const
+		    { return(m_name); }
+
+		/*! @brief UID cast operator */
+		operator UID() const
+		    { return(m_uid); }
+
+	public: /* static */
+
+		/*! @brief Hash used to calculate uid
+		 * One-at-a-Time Hash
+		 */
+		static UID Hash(const char *data, size_t len, UID mask);
+	};
+
 }
 
+MARSHMALLOW_NAMESPACE_END
+
+#endif

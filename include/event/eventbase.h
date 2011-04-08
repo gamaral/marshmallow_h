@@ -65,12 +65,12 @@ namespace Event
 		VIRTUAL TIME timeStamp(void) const
 		    { return(m_timestamp); }
 
-		VIRTUAL const EventType & type(void) const
+		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
 	public: /* static */
 
-		static const Event::EventType Type;
+		static const Core::Type Type;
 	};
 	typedef Core::Shared<EventBase> SharedEventBase;
 
