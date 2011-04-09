@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_SCENE_H
-#define GAME_SCENE_H 1
+#ifndef GAME_ISCENEINTERFACE_H
+#define GAME_ISCENEINTERFACE_H 1
 
 #include "core/shared.h"
 
@@ -49,7 +49,9 @@ namespace Game
 	/*! @brief Game Scene Interface */
 	struct GAME_EXPORT ISceneInterface
 	{
-		virtual Core::Type type(void) const = 0;
+		virtual ~ISceneInterface(void) {};
+
+		virtual const Core::Type & type(void) const = 0;
 
 		virtual void activate(void) = 0;
 		virtual void deactivate(void) = 0;

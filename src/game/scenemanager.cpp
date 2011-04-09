@@ -42,6 +42,8 @@ using namespace Core;
 using namespace Game;
 
 SceneManager::SceneManager(SharedScene init)
+    : m_stack(),
+      m_active()
 {
 	push(init);
 }
@@ -74,5 +76,11 @@ SceneManager::pop(void)
 		m_active = m_stack.front();
 		m_stack.pop_front();
 	} else WARNING1("Scene stack is empty!");
+}
+
+SharedScene
+SceneManager::active(void) const
+{
+	return(m_active);
 }
 

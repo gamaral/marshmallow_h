@@ -58,15 +58,15 @@ namespace Game
 		SceneStack  m_stack;
 		SharedScene m_active;
 	public:
-		SceneManager(SharedScene init = SharedScene());
+		SceneManager(SharedScene init);
 		virtual ~SceneManager(void);
 
 		void push(SharedScene &scene);
 		void pop(void);
 
-		SharedScene active(void) const
-		    { return(m_active); }
+		SharedScene active(void) const;
 	};
+	typedef Core::Shared<SceneManager> SharedSceneManager;
 
 }
 

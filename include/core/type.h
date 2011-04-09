@@ -78,12 +78,15 @@ namespace Core
 		operator UID() const
 		    { return(m_uid); }
 
+		/*! @brief Assignment Operator */
+		Marshmallow::Core::Type & operator=(const Marshmallow::Core::Type &rhs);
+
 		/*! @brief Equal Comparison Operator */
-		bool operator ==(const Type &rhs) const
+		bool operator==(const Type &rhs) const
 		    { return(m_uid == rhs.m_uid); }
 
 		/*! @brief LessThan Comparison Operator */
-		bool operator <(const Type &rhs) const
+		bool operator<(const Type &rhs) const
 		    { return(m_uid < rhs.m_uid); }
 
 	public: /* static */

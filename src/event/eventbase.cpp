@@ -41,7 +41,7 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Event;
 
-const Type EventBase::Type("EventBase");
+const Type EventBase::Type("Event::EventBase");
 
 EventBase::EventBase(TIME t, UINT8 p)
     : m_timestamp(t == 0 ? NOW() : t),

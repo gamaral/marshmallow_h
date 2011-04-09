@@ -58,7 +58,7 @@
 
 /******************************************************************** defines */
 
-#define INFINITE ~((TIME)0)
+#define INFINITE ~(static_cast<TIME>(0))
 #define STRDUP strdup
 
 /******************************************************************** unused */

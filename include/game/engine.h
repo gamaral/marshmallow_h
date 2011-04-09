@@ -37,23 +37,26 @@
 #ifndef GAME_ENGINE_H
 #define GAME_ENGINE_H 1
 
-#include "core/global.h"
+#include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Event
-{
-	struct IManagerInterface;
-}
+namespace Event { struct IManagerInterface; }
 
 namespace Game
 {
 
+	class SceneManager;
+
 	/*! @brief Game Engine Class */
 	class GAME_EXPORT Engine
 	{
+		typedef Core::Shared<Event::IManagerInterface> SharedEventManager;
+		typedef Core::Shared<SceneManager> SharedSceneManager;
+
 		static Engine *s_instance;
-		Event::IManagerInterface *m_event_manager;
+		SharedEventManager m_event_manager;
+		SharedSceneManager m_scene_manager;
 		float  m_fps;
 		float  m_ups;
 		TIME   m_delta_time;
@@ -67,28 +70,36 @@ namespace Game
 		virtual ~Engine(void);
 
 		/*!
-		 * @brief Start engine
+		 * @brief Start Engine
 		 */
 		int run(void);
 
 		/*!
-		 * @brief Stop engine
+		 * @brief Stop Engine
 		 * @param exit_code Exit code
 		 */
 		void stop(int exit_code = 0)
 		    { m_exit_code = exit_code; m_running = false; }
 
 		/*!
-		 * @brief Main event manager
+		 * @brief Event Manager
 		 */
-		Event::IManagerInterface *eventManager(void) const
-		    { return(m_event_manager); }
+		SharedEventManager eventManager(void) const;
 
 		/*!
-		 * @brief Main event manager
+		 * @brief Scene Manager
 		 */
-		void setEventManager(Event::IManagerInterface *m)
-		    { m_event_manager = m; }
+		SharedSceneManager sceneManager(void) const;
+
+		/*!
+		 * @brief Set Event Manager
+		 */
+		void setEventManager(SharedEventManager &m);
+
+		/*!
+		 * @brief Set Scene Manager
+		 */
+		void setSceneManager(SharedSceneManager &m);
 
 		/*!
 		 * @brief Target frames per second

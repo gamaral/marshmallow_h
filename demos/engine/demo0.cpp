@@ -30,6 +30,8 @@
 #include "event/eventbase.h"
 #include "event/manager.h"
 #include "game/engine.h"
+#include "game/scenemanager.h"
+#include "game/scenebase.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -37,21 +39,26 @@ using namespace Core;
 class Demo : public Game::Engine
 {
 	int m_stop_timer;
-	Event::Manager m_event_manager;
+	Event::SharedEventManager m_event_manager;
+	Game::SharedSceneManager m_scene_manager;
 	Event::SharedListener m_debugListener;
 
 public:
 	Demo(void)
 	: Engine(),
 	  m_stop_timer(0),
+	  m_event_manager(new Event::Manager("main")),
+	  m_scene_manager(new Game::SceneManager(0)),
 	  m_debugListener(new Event::DebugListener("log.txt"))
 	{
-		setEventManager(&m_event_manager);
 	}
 
 	VIRTUAL void initialize(void)
 	{
 		Engine::initialize();
+
+		setEventManager(m_event_manager);
+		setSceneManager(m_scene_manager);
 
 		eventManager()->connect(m_debugListener, Event::EventBase::Type);
 	}

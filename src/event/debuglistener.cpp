@@ -43,8 +43,8 @@ using namespace Core;
 using namespace Event;
 
 DebugListener::DebugListener(const char *filename)
+    : m_filestream(filename, std::ios_base::app)
 {
-	m_filestream.open(filename, std::ios_base::app);
 	m_filestream << std::hex;
 }
 
@@ -59,7 +59,7 @@ DebugListener::handle(const IEventInterface &event)
 	m_filestream
 	    << Platform::TimeStampToTimeData(event.timeStamp()).string
 	    << ": MS " << event.timeStamp()
-	    << ": Event " << (void *)&event
+	    << ": Event " << static_cast<const void *>(&event)
 	    << ": Type (" << event.type().uid() << ")" << event.type().name()
 	    << std::endl;
 

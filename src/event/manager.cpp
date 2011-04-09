@@ -49,7 +49,8 @@ using namespace eastl;
 static bool SortSharedEvent(const SharedEvent& lhs, const SharedEvent& rhs);
 
 Manager::Manager(const char *name)
-    : m_active_queue(0)
+    : m_elmap(),
+      m_active_queue(0)
 {
 	UNUSED(name);
 }
@@ -61,7 +62,7 @@ Manager::~Manager(void)
 bool
 Manager::connect(const SharedListener &handler, const Core::Type &type)
 {
-	INFO("Connecting `%p` handler to event type `%s`", (void *)&handler, type.name());
+	INFO("Connecting `%p` handler to event type `%s`", static_cast<const void *>(&handler), type.name());
 
 	EventListenerMap::const_iterator l_elmapi =
 	    m_elmap.find(type.uid());
@@ -90,7 +91,7 @@ Manager::connect(const SharedListener &handler, const Core::Type &type)
 bool
 Manager::disconnect(const SharedListener &handler, const Core::Type &type)
 {
-	INFO("Disconnecting `%p` handler from event type `%s`", (void *)&handler, type.name());
+	INFO("Disconnecting `%p` handler from event type `%s`", static_cast<const void *>(&handler), type.name());
 
 	EventListenerMap::const_iterator l_elmapi =
 	    m_elmap.find(type.uid());

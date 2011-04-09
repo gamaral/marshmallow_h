@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "core/type.h"
+#include "game/scenebase.h"
 
 /*!
  * @file
@@ -34,54 +34,38 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cstring>
+#include <string.h>
+
+#include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
+using namespace Game;
 
-Type::Type(const char *n)
-    : m_name(STRDUP(n)),
-      m_uid(0)
-{
-	m_uid = Hash(m_name, strlen(m_name), ~(static_cast<UID>(0)));
-}
+Type SceneBase::Type("Game::SceneBase");
 
-Type::Type(const Type &copy)
-    : m_name(STRDUP(copy.m_name)),
-      m_uid(copy.m_uid)
+SceneBase::SceneBase(const char *name)
+    : m_name(STRDUP(name))
 {
 }
 
-Type::~Type(void)
+SceneBase::~SceneBase(void)
 {
 	free(m_name);
 }
 
-Type &
-Type::operator=(const Marshmallow::Core::Type &rhs)
+void
+SceneBase::activate(void)
 {
-	delete m_name;
-	m_name = STRDUP(rhs.m_name);
-	m_uid = rhs.m_uid;
-	return(*this);
 }
 
-UID
-Type::Hash(const char *data, size_t length, UID mask)
+void
+SceneBase::deactivate(void)
 {
-	UID l_hash, l_i;
+}
 
-	for(l_hash = l_i = 0; l_i < length; ++l_i)
-	{
-		l_hash += data[l_i];
-		l_hash += (l_hash << 0x0A);
-		l_hash ^= (l_hash >> 0x06);
-	}
-
-	l_hash += (l_hash << 0x03);
-	l_hash ^= (l_hash >> 0x0B);
-	l_hash += (l_hash << 0x0F);
-
-	return(l_hash & mask);
+void
+SceneBase::update(void)
+{
 }
 

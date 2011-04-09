@@ -36,6 +36,7 @@
 
 #include "core/platform.h"
 #include "event/imanagerinterface.h"
+#include "game/scenemanager.h"
 
 #include <math.h>
 
@@ -47,9 +48,12 @@ using namespace Game;
 Engine *Engine::s_instance = 0;
 
 Engine::Engine(float f, float u)
-    : m_event_manager(0),
+    : m_event_manager(),
+      m_scene_manager(),
       m_fps(f),
       m_ups(u),
+      m_delta_time(0),
+      m_exit_code(0),
       m_frame_rate(0),
       m_running(false)
 {
@@ -69,19 +73,6 @@ void
 Engine::initialize(void)
 {
 	Platform::Initialize();
-
-	TIME l_timeout = INFINITE;
-	preTick(l_timeout);
-	tick(l_timeout);
-	postTick(l_timeout);
-
-	preUpdate(l_timeout);
-	update(l_timeout);
-	postUpdate(l_timeout);
-
-	preRender();
-	render();
-	postRender();
 }
 
 void
@@ -97,8 +88,8 @@ Engine::run(void)
 	/*
 	 * XXX: I got this idea a while back, worth try I always say 
 	 */
-	const TIME l_mpf = (TIME)floor(1000/m_fps); // milliseconds per frame
-	const TIME l_mpu = (TIME)floor(1000/m_ups); // milliseconds per update
+	const TIME l_mpf = static_cast<TIME>(floor(1000/m_fps)); // milliseconds per frame
+	const TIME l_mpu = static_cast<TIME>(floor(1000/m_ups)); // milliseconds per update
 
 	TIME l_tick;
 	TIME l_tick_target = MIN(l_mpu, l_mpf) / 2;
@@ -119,10 +110,25 @@ Engine::run(void)
 
 	initialize();
 
+	/* start us off */
+	TIME l_timeout = INFINITE;
+
+	preTick(l_timeout);
+	tick(l_timeout);
+	postTick(l_timeout);
+
+	preUpdate(l_timeout);
+	update(l_timeout);
+	postUpdate(l_timeout);
+
+	preRender();
+	render();
+	postRender();
+
 	/* main game loop */
 	do
 	{
-		TIME l_timeout = l_tick_target - 1;
+		l_timeout = l_tick_target - 1;
 
 		l_tick = Platform::TimeStamp();
 		m_delta_time = l_tick - l_lasttick;
@@ -158,10 +164,12 @@ Engine::run(void)
 		if (l_second >= l_second_target) {
 			if (m_frame_rate < m_fps && l_tick_target > 1) {
 				l_tick_target -= 1;
-				INFO("Framerate dropping! adjusting tick target (%d).", (int)l_tick_target);
+				INFO("Framerate dropping! adjusting tick target (%d).",
+				    static_cast<int>(l_tick_target));
 			} else if (m_frame_rate > m_fps * 1.10) {
 				l_tick_target += 2;
-				INFO("Framerate accelerated! adjusting tick target (%d).", (int)l_tick_target);
+				INFO("Framerate accelerated! adjusting tick target (%d).",
+				    static_cast<int>(l_tick_target));
 			}
 
 			/* second */
@@ -180,6 +188,30 @@ Engine::run(void)
 	finalize();
 
 	return(m_exit_code);
+}
+
+SharedEventManager
+Engine::eventManager(void) const
+{
+	return(m_event_manager);
+}
+
+SharedSceneManager
+Engine::sceneManager(void) const
+{
+	return(m_scene_manager);
+}
+
+void
+Engine::setEventManager(SharedEventManager &m)
+{
+	m_event_manager = m;
+}
+
+void
+Engine::setSceneManager(SharedSceneManager &m)
+{
+	    m_scene_manager = m;
 }
 
 void

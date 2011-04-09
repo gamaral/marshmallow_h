@@ -118,6 +118,7 @@ namespace Event
 		 */
 		virtual bool execute(TIME timeout) = 0;
 	};
+	typedef Core::Shared<IManagerInterface> SharedEventManager;
 }
 
 MARSHMALLOW_NAMESPACE_END

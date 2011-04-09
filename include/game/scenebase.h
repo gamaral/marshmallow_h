@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "core/type.h"
+#pragma once
 
 /*!
  * @file
@@ -34,54 +34,39 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cstring>
+#ifndef GAME_SCENEBASE_H
+#define GAME_SCENEBASE_H 1
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
+#include "game/isceneinterface.h"
 
-Type::Type(const char *n)
-    : m_name(STRDUP(n)),
-      m_uid(0)
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Game
 {
-	m_uid = Hash(m_name, strlen(m_name), ~(static_cast<UID>(0)));
-}
 
-Type::Type(const Type &copy)
-    : m_name(STRDUP(copy.m_name)),
-      m_uid(copy.m_uid)
-{
-}
-
-Type::~Type(void)
-{
-	free(m_name);
-}
-
-Type &
-Type::operator=(const Marshmallow::Core::Type &rhs)
-{
-	delete m_name;
-	m_name = STRDUP(rhs.m_name);
-	m_uid = rhs.m_uid;
-	return(*this);
-}
-
-UID
-Type::Hash(const char *data, size_t length, UID mask)
-{
-	UID l_hash, l_i;
-
-	for(l_hash = l_i = 0; l_i < length; ++l_i)
+	/*! @brief Game Scene Base Class */
+	class GAME_EXPORT SceneBase : public ISceneInterface
 	{
-		l_hash += data[l_i];
-		l_hash += (l_hash << 0x0A);
-		l_hash ^= (l_hash >> 0x06);
-	}
+		char *m_name;
+	public:
+		SceneBase(const char *name = "");
+		virtual ~SceneBase(void);
 
-	l_hash += (l_hash << 0x03);
-	l_hash ^= (l_hash >> 0x0B);
-	l_hash += (l_hash << 0x0F);
+	public: /* virtual */
 
-	return(l_hash & mask);
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
+
+		VIRTUAL void activate(void);
+		VIRTUAL void deactivate(void);
+		VIRTUAL void update(void);
+
+	public: /* static */
+		static Core::Type Type;
+	};
+
 }
 
+MARSHMALLOW_NAMESPACE_END
+
+#endif
