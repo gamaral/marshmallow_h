@@ -6,5 +6,10 @@ add_library(marshmallow_game STATIC
 	${MARSHMALLOW_GAME_SRCS}
 )
 
-target_link_libraries(marshmallow_game marshmallow_event marshmallow_core marshmallow_eastl)
+target_link_libraries(marshmallow_game
+	marshmallow_event
+	marshmallow_math
+	marshmallow_core
+	marshmallow_eastl
+)
 

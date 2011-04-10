@@ -50,7 +50,7 @@ namespace Core
 	    INT16 refs;
 	};
 
-	/*! @brief Shared class */
+	/*! @brief Shared Class */
 	template <class T>
 	class Shared
 	{

@@ -34,81 +34,59 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_VECTOR2_H
-#define GAME_VECTOR2_H 1
+#ifndef CORE_HASH_H
+#define CORE_HASH_H 1
 
 #include "core/global.h"
 
-#include <math.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Game
+namespace Core
 {
 
-	/*! @brief Game Vector2 */
-	class GAME_EXPORT Vector2
+	/*! @brief Hash Class */
+	class CORE_EXPORT Hash
 	{
-		float m_value[2];
+		char *m_data;
+		UID   m_result;
 
 	public:
-		Vector2(float ax = 0., float ay = 0.)
-		    { m_value[0] = ax; m_value[1] = ay; }
-		Vector2(const Vector2 &copy)
-		    { m_value[0] = copy.m_value[0];
-		      m_value[1] = copy.m_value[1]; }
 
-		float & rx(void)
-		    { return(m_value[0]); }
-		float & ry(void)
-		    { return(m_value[1]); }
+		/*!
+		 * @param d Data to hash
+		 * @param length Data length
+		 */
+		Hash(void);
+		Hash(const char *d, size_t length, UID mask = -1);
+		Hash(const Hash &copy);
+		virtual ~Hash(void);
 
-		float x(void) const
-		    { return(m_value[0]); }
-		float y(void) const
-		    { return(m_value[1]); }
+		/*! @brief Datum */
+		UID result(void) const
+		    { return(m_result); }
 
-		float & operator[](int i)
-		    { return(m_value[i]); }
+	public: /* operator */
 
-		Vector2 normalized(void) const;
-		Vector2 & normalize(void);
+		operator UID() const
+		    { return(m_result); }
 
-		float magnitude(void);
-		float magnitude2(void);
+		Marshmallow::Core::Hash & operator=(const Marshmallow::Core::Hash &rhs);
 
+		bool operator==(const Hash &rhs) const
+		    { return(m_result == rhs.m_result); }
+
+		bool operator<(const Hash &rhs) const
+		    { return(m_result < rhs.m_result); }
+
+	public: /* static */
+
+		/*! @brief One-at-a-Time Hash */
+		static UID Algorithm(const char *data, size_t length, UID mask);
+
+	protected:
+
+		void rehash(const char *d, size_t length, UID mask = -1);
 	};
-
-	Vector2
-	Vector2::normalized(void) const
-	{
-		Vector2 n(*this);
-		n.normalize();
-		return(n);
-	}
-
-	Vector2 &
-	Vector2::normalize(void)
-	{
-		float m = magnitude();
-		m_value[0] /= m;
-		m_value[1] /= m;
-		return(*this);
-	}
-
-	float
-	Vector2::magnitude(void)
-	{
-		return(sqrtf((m_value[0] * m_value[0])
-		            +(m_value[1] * m_value[1])));
-	}
-
-	float
-	Vector2::magnitude2(void)
-	{
-		return((m_value[0] * m_value[0])
-		      +(m_value[1] * m_value[1]));
-	}
 
 }
 

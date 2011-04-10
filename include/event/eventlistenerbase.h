@@ -34,34 +34,39 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_DEBUGLISTENER_H
-#define EVENT_DEBUGLISTENER_H 1
+#ifndef EVENT_EVENTLISTENERBASE_H
+#define EVENT_EVENTLISTENERBASE_H 1
 
-#include "listenerbase.h"
-
-#include <fstream>
+#include "ieventlistener.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
 
-	/*! @brief Debug Event Listener */
-	class EVENT_EXPORT DebugListener : public ListenerBase
+	/*! @brief Event Listener Base Class */
+	class EVENT_EXPORT EventListenerBase : public IEventListener
 	{
-		std::ofstream m_filestream;
-
+		Core::Identifier m_id;
 	public:
 
-		DebugListener(const char *filename);
-		virtual ~DebugListener(void);
+		EventListenerBase(const Core::Identifier &identifier);
+		virtual ~EventListenerBase(void);
 
 	public: /* virtual */
 
-		VIRTUAL bool handle(const IEventInterface &event);
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
 
-		VIRTUAL const char * name(void) const
-		    { return("DebugListener"); }
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
+
+		VIRTUAL bool handleEvent(const IEvent &)
+		    { return(false); }
+
+	public: /* type */
+
+		static const Core::Type Type;
 	};
 
 }

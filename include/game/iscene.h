@@ -34,16 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_TYPE_H
-#define CORE_TYPE_H 1
+#ifndef GAME_ISCENE_H
+#define GAME_ISCENE_H 1
 
-#include "core/strhash.h"
+#include "core/shared.h"
+#include "core/identifier.h"
+#include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core
+namespace Game
 {
-	typedef StrHash Type;
+
+	/*! @brief Game Scene Interface */
+	struct GAME_EXPORT IScene
+	{
+		virtual ~IScene(void) {};
+
+		virtual const Core::Identifier & id(void) const = 0;
+		virtual const Core::Type & type(void) const = 0;
+
+		virtual void activate(void) = 0;
+		virtual void deactivate(void) = 0;
+		virtual void update(void) = 0;
+	};
+	typedef Core::Shared<IScene> SharedScene;
+
 }
 
 MARSHMALLOW_NAMESPACE_END

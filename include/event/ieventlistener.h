@@ -34,16 +34,42 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_TYPE_H
-#define CORE_TYPE_H 1
+#ifndef EVENT_IEVENTLISTENER_H
+#define EVENT_IEVENTLISTENER_H 1
 
-#include "core/strhash.h"
+#include "core/shared.h"
+#include "core/identifier.h"
+#include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core
+namespace Event
 {
-	typedef StrHash Type;
+	struct IEvent;
+
+	/*! @brief Event Listener Interface */
+	struct EVENT_EXPORT IEventListener
+	{
+		virtual ~IEventListener(void) {};
+
+		/*!
+		 * @brief Event Id
+		 */
+		virtual const Core::Identifier & id(void) const = 0;
+
+		/*!
+		 * @brief Event Type
+		 */
+		virtual const Core::Type & type(void) const = 0;
+
+		/*!
+		 * @brief Event Handler
+		 * @param event Event
+		 */
+		virtual bool handleEvent(const IEvent &event) = 0;
+	};
+	typedef Core::Shared<IEventListener> SharedEventListener;
+
 }
 
 MARSHMALLOW_NAMESPACE_END

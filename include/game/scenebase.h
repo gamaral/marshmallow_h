@@ -37,22 +37,38 @@
 #ifndef GAME_SCENEBASE_H
 #define GAME_SCENEBASE_H 1
 
-#include "game/isceneinterface.h"
+#include "game/iscene.h"
+
+#include "EASTL/list.h"
+using namespace eastl;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
 
+	class IEntity;
+
 	/*! @brief Game Scene Base Class */
-	class GAME_EXPORT SceneBase : public ISceneInterface
+	class GAME_EXPORT SceneBase : public IScene
 	{
-		char *m_name;
+		typedef Core::Shared<IEntity> SharedEntity;
+		typedef list<SharedEntity> EntityList;
+
+		EntityList m_entities;
+		Core::Identifier m_id;
 	public:
-		SceneBase(const char *name = "");
+		SceneBase(const Core::Identifier &identifier);
 		virtual ~SceneBase(void);
 
+		void addEntity(SharedEntity &entity);
+		void removeEntity(const SharedEntity &entity);
+		SharedEntity entity(const Core::Identifier &identifier) const;
+
 	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }

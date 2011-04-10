@@ -35,10 +35,8 @@
  */
 
 #include "core/platform.h"
-#include "event/imanagerinterface.h"
+#include "event/ieventmanager.h"
 #include "game/scenemanager.h"
-
-#include <math.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;

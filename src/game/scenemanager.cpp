@@ -35,7 +35,7 @@
  */
 
 #include "core/platform.h"
-#include "game/isceneinterface.h"
+#include "game/iscene.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "core/type.h"
+#pragma once
 
 /*!
  * @file
@@ -34,54 +34,48 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cstring>
+#ifndef CORE_STRHASH_H
+#define CORE_STRHASH_H 1
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
+#include "core/hash.h"
 
-Type::Type(const char *n)
-    : m_name(STRDUP(n)),
-      m_uid(0)
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Core
 {
-	m_uid = Hash(m_name, strlen(m_name), ~(static_cast<UID>(0)));
-}
 
-Type::Type(const Type &copy)
-    : m_name(STRDUP(copy.m_name)),
-      m_uid(copy.m_uid)
-{
-}
-
-Type::~Type(void)
-{
-	free(m_name);
-}
-
-Type &
-Type::operator=(const Marshmallow::Core::Type &rhs)
-{
-	delete m_name;
-	m_name = STRDUP(rhs.m_name);
-	m_uid = rhs.m_uid;
-	return(*this);
-}
-
-UID
-Type::Hash(const char *data, size_t length, UID mask)
-{
-	UID l_hash, l_i;
-
-	for(l_hash = l_i = 0; l_i < length; ++l_i)
+	/*! @brief Event StrHash Class */
+	class CORE_EXPORT StrHash : public Hash
 	{
-		l_hash += data[l_i];
-		l_hash += (l_hash << 0x0A);
-		l_hash ^= (l_hash >> 0x06);
-	}
+		char *m_name;
 
-	l_hash += (l_hash << 0x03);
-	l_hash ^= (l_hash >> 0x0B);
-	l_hash += (l_hash << 0x0F);
+	public:
 
-	return(l_hash & mask);
+		/*!
+		 * @param name Event type name
+		 */
+		StrHash(const char *name);
+		StrHash(const StrHash &copy);
+		virtual ~StrHash(void);
+
+		/*! @brief Unique ID */
+		UID uid(void) const
+		    { return(result()); }
+
+		/*! @brief Event StrHash Name */
+		const char * name(void) const
+		    { return(m_name); }
+
+	public: /* operator */
+
+		operator const char *() const
+		    { return(m_name); }
+
+		Marshmallow::Core::StrHash & operator=(const Marshmallow::Core::StrHash &rhs);
+	};
+
 }
 
+MARSHMALLOW_NAMESPACE_END
+
+#endif

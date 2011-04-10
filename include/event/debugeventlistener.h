@@ -34,16 +34,33 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_TYPE_H
-#define CORE_TYPE_H 1
+#ifndef EVENT_DEBUGEVENTLISTENER_H
+#define EVENT_DEBUGEVENTLISTENER_H 1
 
-#include "core/strhash.h"
+#include "eventlistenerbase.h"
+
+#include <fstream>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core
+namespace Event
 {
-	typedef StrHash Type;
+
+	/*! @brief Debug Event Listener */
+	class EVENT_EXPORT DebugEventListener : public EventListenerBase
+	{
+		std::ofstream m_filestream;
+
+	public:
+
+		DebugEventListener(const char *filename);
+		virtual ~DebugEventListener(void);
+
+	public: /* virtual */
+
+		VIRTUAL bool handleEvent(const IEvent &event);
+	};
+
 }
 
 MARSHMALLOW_NAMESPACE_END

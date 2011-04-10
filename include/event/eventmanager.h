@@ -34,40 +34,60 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_IEVENTINTERFACE_H
-#define EVENT_IEVENTINTERFACE_H 1
+#ifndef EVENT_EVENTMANAGER_H
+#define EVENT_EVENTMANAGER_H 1
 
-#include "core/shared.h"
+#include "event/ieventmanager.h"
+
+#include "EASTL/hash_map.h"
+#include "EASTL/list.h"
+using namespace eastl;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core { class Type; }
-
 namespace Event
 {
-	/*! @brief Event Interface */
-	struct EVENT_EXPORT IEventInterface
+	struct IEventListener;
+
+	/*! @brief Event Manager */
+	class EVENT_EXPORT EventManager : public IEventManager
 	{
-		virtual ~IEventInterface(void) {};
+		typedef Core::Shared<IEvent> SharedEvent;
+		typedef Core::Shared<IEventListener> SharedEventListener;
 
-		/*!
-		 * @brief Event Priority
-		 */
-		virtual UINT8 priority(void) const = 0;
+		typedef list<SharedEventListener> EventListenerList;
+		typedef hash_map<UID, EventListenerList> EventListenerMap;
 
-		/*!
-		 * @brief Event TimeStamp
-		 */
-		virtual TIME timeStamp(void) const = 0;
+		typedef list<SharedEvent> EventList;
 
-		/*!
-		 * @brief Event Type
-		 */
-		virtual const Core::Type & type(void) const = 0;
+		EventListenerMap m_elmap;
+		EventList m_queue[2];
+		UINT8 m_active_queue;
+		Core::Identifier m_id;
 
+	public:
+
+		EventManager(const Core::Identifier &identifier);
+		virtual ~EventManager(void);
+
+		bool dispatch(const SharedEvent &event) const
+		    { return(dispatch(*event)); }
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
+
+		VIRTUAL bool connect(const SharedEventListener &handler, const Core::Type &type);
+		VIRTUAL bool disconnect(const SharedEventListener &handler, const Core::Type &type);
+
+		VIRTUAL bool dequeue(const SharedEvent &event, bool all = false);
+		VIRTUAL bool queue(const SharedEvent &event);
+
+		VIRTUAL bool dispatch(const IEvent &event) const;
+
+		VIRTUAL bool execute(TIME timeout);
 	};
-	typedef Core::Shared<IEventInterface> SharedEvent;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

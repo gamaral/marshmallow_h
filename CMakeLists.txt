@@ -20,11 +20,9 @@ include_directories(${PROJECT_SOURCE_DIR}/contrib/eastl/include)
 # Global Options
 set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Engine Namespace")
 
-# Overrides (DEVELOPMENT)
-set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)
 if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
 	set(DEBUG ON CACHE INTERNAL "")
-	set(DEBUG_VERBOSITY "2" CACHE STRING "Debug verbosity")
+	set(DEBUG_VERBOSITY "2" CACHE STRING "Debug Verbosity")
 endif("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
 
 # Configuration file

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "core/hash.h"
 
 /*!
  * @file
@@ -34,18 +34,60 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_TYPE_H
-#define CORE_TYPE_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
 
-#include "core/strhash.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
+Hash::Hash(void)
+    : m_result(0)
 {
-	typedef StrHash Type;
 }
 
-MARSHMALLOW_NAMESPACE_END
+Hash::Hash(const char *d, size_t length, UID mask)
+    : m_result(Algorithm(d, length, mask))
+{
+}
 
-#endif
+Hash::Hash(const Hash &copy)
+    : m_result(copy.m_result)
+{
+}
+
+Hash::~Hash(void)
+{
+}
+
+Hash &
+Hash::operator=(const Marshmallow::Core::Hash &rhs)
+{
+	if (this != &rhs)
+		m_result = rhs.m_result;
+	return(*this);
+}
+
+UID
+Hash::Algorithm(const char *data, size_t length, UID mask)
+{
+	if (!data) return(0);
+
+	UID l_hash = 0;
+	size_t l_i;
+
+	for(l_i = 0; l_i < length; ++l_i) {
+		l_hash += data[l_i];
+		l_hash += (l_hash << 0x0A);
+		l_hash ^= (l_hash >> 0x06);
+	}
+
+	l_hash += (l_hash << 0x03);
+	l_hash ^= (l_hash >> 0x0B);
+	l_hash += (l_hash << 0x0F);
+
+	return(l_hash & mask);
+}
+
+void
+Hash::rehash(const char *d, size_t length, UID mask)
+{
+	m_result = Algorithm(d, length, mask);
+}
+

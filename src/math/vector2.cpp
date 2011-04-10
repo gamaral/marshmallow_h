@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "math/vector2.h"
 
 /*!
  * @file
@@ -34,18 +34,39 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_TYPE_H
-#define CORE_TYPE_H 1
+#include <math.h>
 
-#include "core/strhash.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Math;
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
+Vector2
+Vector2::normalized(void) const
 {
-	typedef StrHash Type;
+	Vector2 n(*this);
+	n.normalize();
+	return(n);
 }
 
-MARSHMALLOW_NAMESPACE_END
+Vector2 &
+Vector2::normalize(void)
+{
+	float m = magnitude();
+	m_value[0] /= m;
+	m_value[1] /= m;
+	return(*this);
+}
 
-#endif
+float
+Vector2::magnitude(void)
+{
+	return(sqrtf(powf(m_value[0], 2)
+	           + powf(m_value[1], 2)));
+}
+
+float
+Vector2::magnitude2(void)
+{
+	return(powf(m_value[0], 2)
+	     + powf(m_value[1], 2));
+}
+

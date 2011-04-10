@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/manager.h"
+#include "event/eventmanager.h"
 
 /*!
  * @file
@@ -34,12 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "EASTL/algorithm.h"
-
 #include "core/platform.h"
-#include "core/type.h"
-#include "event/ieventinterface.h"
-#include "event/ilistenerinterface.h"
+#include "event/ievent.h"
+#include "event/ieventlistener.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -48,30 +45,30 @@ using namespace eastl;
 
 static bool SortSharedEvent(const SharedEvent& lhs, const SharedEvent& rhs);
 
-Manager::Manager(const char *name)
+EventManager::EventManager(const Core::Identifier &i)
     : m_elmap(),
-      m_active_queue(0)
+      m_active_queue(0),
+      m_id(i)
 {
-	UNUSED(name);
 }
 
-Manager::~Manager(void)
+EventManager::~EventManager(void)
 {
 }
 
 bool
-Manager::connect(const SharedListener &handler, const Core::Type &type)
+EventManager::connect(const SharedEventListener &handler, const Core::Type &t)
 {
-	INFO("Connecting `%p` handler to event type `%s`", static_cast<const void *>(&handler), type.name());
+	INFO("Connecting `%p` handler to event type `%s`", static_cast<const void *>(&handler), t.name());
 
 	EventListenerMap::const_iterator l_elmapi =
-	    m_elmap.find(type.uid());
+	    m_elmap.find(t.uid());
 
 	/* if this is a new type, assign a new EventListenerList */
 	if (l_elmapi == m_elmap.end())
-		m_elmap[type.uid()] = EventListenerList();
+		m_elmap[t.uid()] = EventListenerList();
 
-	EventListenerList &l_listeners = m_elmap[type.uid()];
+	EventListenerList &l_listeners = m_elmap[t.uid()];
 
 	EventListenerList::const_iterator l_listenersi =
 	    find(l_listeners.begin(), l_listeners.end(), handler);
@@ -89,12 +86,12 @@ Manager::connect(const SharedListener &handler, const Core::Type &type)
 }
 
 bool
-Manager::disconnect(const SharedListener &handler, const Core::Type &type)
+EventManager::disconnect(const SharedEventListener &handler, const Core::Type &t)
 {
-	INFO("Disconnecting `%p` handler from event type `%s`", static_cast<const void *>(&handler), type.name());
+	INFO("Disconnecting `%p` handler from event type `%s`", static_cast<const void *>(&handler), t.name());
 
 	EventListenerMap::const_iterator l_elmapi =
-	    m_elmap.find(type.uid());
+	    m_elmap.find(t.uid());
 
 	/* if this is a new type, assign a new EventListenerList */
 	if (l_elmapi == m_elmap.end()) {
@@ -102,7 +99,7 @@ Manager::disconnect(const SharedListener &handler, const Core::Type &type)
 		return(false);
 	}
 
-	EventListenerList &l_listeners = m_elmap[type.uid()];
+	EventListenerList &l_listeners = m_elmap[t.uid()];
 	l_listeners.remove(handler);
 	INFO("Disconnected! Current listener count is: %d", l_listeners.size());
 
@@ -110,7 +107,7 @@ Manager::disconnect(const SharedListener &handler, const Core::Type &type)
 }
 
 bool
-Manager::dispatch(const IEventInterface &event) const
+EventManager::dispatch(const IEvent &event) const
 {
 	bool l_handled = false;
 
@@ -126,22 +123,22 @@ Manager::dispatch(const IEventInterface &event) const
 	for (l_listenersi = l_listeners.begin();
 	    l_handled || (l_listenersi != l_listenerse);
 	    ++l_listenersi)
-		l_handled = (*l_listenersi)->handle(event);
+		l_handled = (*l_listenersi)->handleEvent(event);
 
 	return(l_handled);
 }
 
 bool
-Manager::dequeue(const SharedEvent &event, bool all)
+EventManager::dequeue(const SharedEvent &event, bool all)
 {
 	EventList &l_queue = m_queue[m_active_queue == 0 ? 1 : 0];
 
 	if (all) {
-		const UID type = event->type();
+		const UID l_type = event->type();
 		EventList::reverse_iterator l_i = l_queue.rbegin();
 
 		while (l_i != l_queue.rend()) {
-			if (type == (*l_i)->type())
+			if (l_type == (*l_i)->type())
 			    l_i = l_queue.erase(l_i);
 			else ++l_i;
 		}
@@ -153,7 +150,7 @@ Manager::dequeue(const SharedEvent &event, bool all)
 }
 
 bool
-Manager::queue(const SharedEvent &event)
+EventManager::queue(const SharedEvent &event)
 {
 	EventList &l_queue = m_queue[m_active_queue == 0 ? 1 : 0];
 	l_queue.push_back(event);
@@ -161,7 +158,7 @@ Manager::queue(const SharedEvent &event)
 }
 
 bool
-Manager::execute(TIME timeout)
+EventManager::execute(TIME timeout)
 {
 	const TIME l_start_time = NOW();
 

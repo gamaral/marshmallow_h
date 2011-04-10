@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "event/eventlistenerbase.h"
 
 /*!
  * @file
@@ -34,33 +34,17 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ISCENEINTERFACE_H
-#define GAME_ISCENEINTERFACE_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Event;
 
-#include "core/shared.h"
+const Core::Type EventListenerBase::Type("Event::EventListenerBase");
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core { class Type; }
-
-namespace Game
+EventListenerBase::EventListenerBase(const Core::Identifier &i)
+    : m_id(i)
 {
-
-	/*! @brief Game Scene Interface */
-	struct GAME_EXPORT ISceneInterface
-	{
-		virtual ~ISceneInterface(void) {};
-
-		virtual const Core::Type & type(void) const = 0;
-
-		virtual void activate(void) = 0;
-		virtual void deactivate(void) = 0;
-		virtual void update(void) = 0;
-	};
-	typedef Core::Shared<ISceneInterface> SharedScene;
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+EventListenerBase::~EventListenerBase(void)
+{
+}
 
-#endif

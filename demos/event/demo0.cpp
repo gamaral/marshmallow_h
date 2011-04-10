@@ -29,9 +29,9 @@
 #include "core/platform.h"
 #include "core/shared.h"
 #include "core/type.h"
-#include "event/debuglistener.h"
+#include "event/debugeventlistener.h"
 #include "event/eventbase.h"
-#include "event/manager.h"
+#include "event/eventmanager.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -41,7 +41,7 @@ class CustomEvent : public Event::EventBase
 	public:
 		CustomEvent(void)
 #define PRIORITY_HIGH 1
-		    : Event::EventBase(NOW(), PRIORITY_HIGH)
+		    : Event::EventBase("custom", NOW(), PRIORITY_HIGH)
 		    {}
 
 	public: /* virtual */
@@ -58,12 +58,12 @@ const Core::Type CustomEvent::Type("CustomEvent");
 int
 main(void)
 {
-	Event::Manager event_manager;
-	Event::EventBase event1;
+	Event::EventManager event_manager("main");
+	Event::EventBase event1("event1");
 	Event::SharedEvent event2(new CustomEvent);
-	Event::SharedEvent event3(new Event::EventBase);
-	Event::SharedEvent event4(new Event::EventBase(NOW()+1000));
-	Event::SharedListener dl(new Event::DebugListener("log.txt"));
+	Event::SharedEvent event3(new Event::EventBase("event3"));
+	Event::SharedEvent event4(new Event::EventBase("event4", NOW()+1000));
+	Event::SharedEventListener dl(new Event::DebugEventListener("log.txt"));
 
 	event_manager.connect(dl, Event::EventBase::Type);
 	event_manager.connect(dl, CustomEvent::Type);

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/listenerbase.h"
+#include "core/type.h"
 
 /*!
  * @file
@@ -34,14 +34,49 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Event;
+#include <cassert>
+#include <cstring>
 
-ListenerBase::ListenerBase(void)
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
+
+StrHash::StrHash(const char *n)
+    : Hash(),
+      m_name(0)
 {
+	assert(n);
+
+	const size_t len = strlen(n)+1;
+	m_name = new char[len];
+	memcpy(m_name, n, len);
+	rehash(m_name, len);
 }
 
-ListenerBase::~ListenerBase(void)
+StrHash::StrHash(const StrHash &copy)
+    : Hash(copy),
+      m_name(0)
 {
+	const size_t len = strlen(copy.m_name)+1;
+	m_name = new char[len];
+	memcpy(m_name, copy.m_name, len);
+}
+
+StrHash::~StrHash(void)
+{
+	delete[] m_name;
+}
+
+StrHash &
+StrHash::operator=(const Marshmallow::Core::StrHash &rhs)
+{
+	if (this != &rhs) {
+		Hash::operator=(rhs);
+
+		delete[] m_name;
+		const size_t len = strlen(rhs.m_name)+1;
+		m_name = new char[len];
+		memcpy(m_name, rhs.m_name, len);
+	}
+	return(*this);
 }
 

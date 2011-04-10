@@ -34,91 +34,44 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_IMANAGERINTERFACE_H
-#define EVENT_IMANAGERINTERFACE_H 1
+#ifndef EVENT_IEVENT_H
+#define EVENT_IEVENT_H 1
 
 #include "core/shared.h"
+#include "core/identifier.h"
+#include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core { class Type; }
-
 namespace Event
 {
-	struct IEventInterface;
-	struct IListenerInterface;
-
-	/*! @brief Event manager interface */
-	struct EVENT_EXPORT IManagerInterface
+	/*! @brief Event Interface */
+	struct EVENT_EXPORT IEvent
 	{
-		typedef Core::Shared<IEventInterface> SharedEvent;
-		typedef Core::Shared<IListenerInterface> SharedListener;
-
-		virtual ~IManagerInterface(void) {};
+		virtual ~IEvent(void) {};
 
 		/*!
-		 * @brief Event Listener Connector
-		 *
-		 * Connect an event listener to a specific event type
-		 *
-		 * @param handler Shared event handler
-		 * @param type Event type
+		 * @brief Event Id
 		 */
-		virtual bool connect(const SharedListener &handler,
-		    const Core::Type &type) = 0;
+		virtual const Core::Identifier & id(void) const = 0;
 
 		/*!
-		 * @brief Event Listener Disconnector
-		 *
-		 * Disconnect an event listener from a specific event type
-		 *
-		 * @param handler Shared event handler
-		 * @param type Event type
+		 * @brief Event Type
 		 */
-		virtual bool disconnect(const SharedListener &handler,
-		    const Core::Type &type) = 0;
+		virtual const Core::Type & type(void) const = 0;
 
 		/*!
-		 * @brief Event Dequeue
-		 *
-		 * Abort a queued event
-		 *
-		 * @param event Event
-		 * @param all Remove all events of the same type
+		 * @brief Event Priority
 		 */
-		virtual bool dequeue(const SharedEvent &event, bool all = false) = 0;
+		virtual UINT8 priority(void) const = 0;
 
 		/*!
-		 * @brief Event Queue
-		 *
-		 * Add event to queue
-		 *
-		 * @param event Event
+		 * @brief Event TimeStamp
 		 */
-		virtual bool queue(const SharedEvent &event) = 0;
-
-		/*!
-		 * @brief Event Dispatcher
-		 *
-		 * Dispatch an event immediately
-		 *
-		 * @param event Event
-		 * @return Returns true if message was consumed
-		 */
-		virtual bool dispatch(const IEventInterface &event) const = 0;
-
-		/*!
-		 * @brief Execute Queue
-		 *
-		 * Execute queued events
-		 *
-		 * @param timeout Timeout
-		 * @return Returns true if all messages in active queue where
-		 *         dispatched
-		 */
-		virtual bool execute(TIME timeout) = 0;
+		virtual TIME timeStamp(void) const = 0;
 	};
-	typedef Core::Shared<IManagerInterface> SharedEventManager;
+	typedef Core::Shared<IEvent> SharedEvent;
+
 }
 
 MARSHMALLOW_NAMESPACE_END

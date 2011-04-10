@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/entitybase.h"
 
 /*!
  * @file
@@ -34,37 +34,55 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_LISTENERBASE_H
-#define EVENT_LISTENERBASE_H 1
+#include "game/icomponent.h"
 
-#include "ilistenerinterface.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-#include "core/shared.h"
+const Core::Type EntityBase::Type("Game::EntityBase");
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Event
+EntityBase::EntityBase(const Core::Identifier i)
+    : m_id(i)
 {
-
-	/*! @brief Base event class */
-	class EVENT_EXPORT ListenerBase : public IListenerInterface
-	{
-	public:
-
-		ListenerBase(void);
-		virtual ~ListenerBase(void);
-
-	public: /* virtual */
-
-		VIRTUAL bool handle(const IEventInterface &)
-		    { return(false); }
-
-		VIRTUAL const char * name(void) const
-		    { return("ListenerBase"); }
-	};
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+EntityBase::~EntityBase(void)
+{
+}
 
-#endif
+void
+EntityBase::addComponent(SharedComponent &c)
+{
+	m_components.push_back(c);
+}
+
+void
+EntityBase::removeComponent(const SharedComponent &c)
+{
+	m_components.remove(c);
+}
+
+SharedComponent
+EntityBase::component(const Core::Identifier &i) const
+{
+	ComponentList::const_iterator l_i;
+	ComponentList::const_iterator l_c = m_components.end();
+
+	/* maybe replace later with a map if required */
+	for (l_i = m_components.begin(); l_i != l_c; ++l_i) {
+		if ((*l_i)->id() == i)
+			return(*l_i);
+	}
+	return(SharedComponent());
+}
+
+void
+EntityBase::update(void)
+{
+	ComponentList::const_iterator l_i;
+	ComponentList::const_iterator l_c = m_components.end();
+
+	for (l_i = m_components.begin(); l_i != l_c; ++l_i)
+		(*l_i)->update();
+}
+

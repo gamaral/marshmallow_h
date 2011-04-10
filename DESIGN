@@ -25,58 +25,43 @@ Layers
 1. Platform
 -----------
 
-    1.1. Devices
-    1.2. Operating System
-    1.3. Shared
+	1.1. Devices
+	1.1.1. Input
+
+	1.2. Operating System
+	1.2.1. Time
+	1.2.2. Memory
+	1.2.3. Threads
+	1.2.4. File System
+	1.2.5. Networking
+
+	1.3. Shared
+	1.3.1. Core Library
+	1.3.2. Main Loop
+	1.3.3. Initialization and Finalization
 
 2. Logic
 --------
 
-    2.1. Game State
-    2.2. Physics and Collisions
-    2.3. Event Manager
-    2.4. Process Manager
-    2.5. Command Interpreter
+	2.1. Game State
+	2.2. Physics and Collisions
+	2.3. Event Manager
+	2.4. Process Manager
+	2.5. Command Interpreter
 
 3. View
 -------
 
-    3.1. Display
-    3.2. Audio
-    3.3. Input Interpreter
-    3.4. Process Manager
-    3.5. Options
+	3.1. Display
+	3.1.1. Scenes
+	3.1.2. User Interface
 
-1.1. Devices
-------------
+	3.2. Audio
+	3.2.1. Sound Effects
+	3.2.2. Music
 
-    1.1.1. Input
+	3.3. Input Interpreter
+	3.4. Process Manager
+	3.5. Options
 
-1.2. Operating System
----------------------
-
-    1.2.1. Time
-    1.2.2. Memory
-    1.2.3. Threads
-    1.2.4. File System
-    1.2.5. Networking
-
-1.3. Shared
-------------------
-
-    1.3.1. Core Library
-    1.3.2. Main Loop
-    1.3.3. Initialization and Finalization
-
-3.1. Display
-------------
-
-    3.1.1. Scenes
-    3.1.2. User Interface
-
-3.2. Audio
-----------
-
-    3.2.1. Sound Effects
-    3.2.2. Music
 

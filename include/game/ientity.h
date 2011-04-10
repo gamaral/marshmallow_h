@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/debuglistener.h"
+#pragma once
 
 /*!
  * @file
@@ -34,35 +34,40 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
+#ifndef GAME_IENTITY_H
+#define GAME_IENTITY_H 1
+
+#include "core/shared.h"
+#include "core/identifier.h"
 #include "core/type.h"
-#include "event/ieventinterface.h"
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
-using namespace Event;
+MARSHMALLOW_NAMESPACE_BEGIN
 
-DebugListener::DebugListener(const char *filename)
-    : m_filestream(filename, std::ios_base::app)
+namespace Game
 {
-	m_filestream << std::hex;
+
+	struct IComponent;
+
+	/*! @brief Game Entity Interface */
+	struct GAME_EXPORT IEntity
+	{
+		typedef Core::Shared<IComponent> SharedComponent;
+
+		virtual ~IEntity(void) {};
+
+		virtual const Core::Identifier & id(void) const = 0;
+		virtual const Core::Type & type(void) const = 0;
+
+		virtual void addComponent(SharedComponent &component) = 0;
+		virtual void removeComponent(const SharedComponent &component) = 0;
+		virtual SharedComponent component(const Core::Identifier &identifier) const = 0;
+
+		virtual void update(void) = 0;
+	};
+	typedef Core::Shared<IEntity> SharedEntity;
+
 }
 
-DebugListener::~DebugListener(void)
-{
-	m_filestream.close();
-}
+MARSHMALLOW_NAMESPACE_END
 
-bool
-DebugListener::handle(const IEventInterface &event)
-{
-	m_filestream
-	    << Platform::TimeStampToTimeData(event.timeStamp()).string
-	    << ": MS " << event.timeStamp()
-	    << ": Event " << static_cast<const void *>(&event)
-	    << ": Type (" << event.type().uid() << ")" << event.type().name()
-	    << std::endl;
-
-	return false;
-}
-
+#endif

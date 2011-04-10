@@ -64,6 +64,7 @@
 /******************************************************************** unused */
 
 #define CORE_EXPORT
+#define MATH_EXPORT
 #define EVENT_EXPORT
 #define GAME_EXPORT
 

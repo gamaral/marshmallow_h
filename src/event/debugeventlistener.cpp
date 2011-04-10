@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "event/debugeventlistener.h"
 
 /*!
  * @file
@@ -34,18 +34,36 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_TYPE_H
-#define CORE_TYPE_H 1
+#include "core/platform.h"
+#include "event/ievent.h"
 
-#include "core/strhash.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
+using namespace Event;
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
+DebugEventListener::DebugEventListener(const char *filename)
+    : EventListenerBase("DebugEventListener"),
+      m_filestream(filename, std::ios_base::app)
 {
-	typedef StrHash Type;
+	m_filestream << std::hex;
 }
 
-MARSHMALLOW_NAMESPACE_END
+DebugEventListener::~DebugEventListener(void)
+{
+	m_filestream.close();
+}
 
-#endif
+bool
+DebugEventListener::handleEvent(const IEvent &event)
+{
+	m_filestream
+	    << Platform::TimeStampToTimeData(event.timeStamp()).string
+	    << ": MS " << event.timeStamp()
+	    << ": Event " << static_cast<const void *>(&event)
+	    << ": Type (" << event.type().uid() << ")" << event.type().name()
+	    << ": ID (" << event.id().uid() << ")" << event.id().name()
+	    << std::endl;
+
+	return false;
+}
+

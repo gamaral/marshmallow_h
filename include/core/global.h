@@ -87,6 +87,7 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+/*! @brief Time Data Struct */
 struct TimeData
 {
     char string[21];

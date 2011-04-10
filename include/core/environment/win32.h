@@ -66,6 +66,12 @@
 #   define CORE_EXPORT
 #endif
 
+#ifdef MATH_LIBRARY
+#   define MATH_EXPORT DLL_EXPORT
+#else
+#   define MATH_EXPORT
+#endif
+
 #ifdef EVENT_LIBRARY
 #   define EVENT_EXPORT DLL_EXPORT
 #else

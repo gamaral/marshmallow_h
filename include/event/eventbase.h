@@ -34,30 +34,35 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_BASEEVENT_H
-#define EVENT_BASEEVENT_H 1
+#ifndef EVENT_EVENTBASE_H
+#define EVENT_EVENTBASE_H 1
 
-#include "ieventinterface.h"
+#include "ievent.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-	/*! @brief Base event class */
-	class EVENT_EXPORT EventBase : public IEventInterface
+	/*! @brief Event Base Class */
+	class EVENT_EXPORT EventBase : public IEvent
 	{
+		Core::Identifier m_id;
 		TIME m_timestamp;
 		UINT8 m_priority;
 
 	public:
 
-		/*!
-		 * @brief Base event constructor
-		 */
-		EventBase(TIME t = 0, UINT8 p = 0);
+		EventBase(const Core::Identifier &identifier,
+		    TIME timeout = 0, UINT8 priority = 0);
 		virtual ~EventBase(void);
 
 	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
 
 		VIRTUAL UINT8 priority(void) const
 		    { return(m_priority); }
@@ -65,14 +70,10 @@ namespace Event
 		VIRTUAL TIME timeStamp(void) const
 		    { return(m_timestamp); }
 
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
 	public: /* static */
 
 		static const Core::Type Type;
 	};
-	typedef Core::Shared<EventBase> SharedEventBase;
 
 }
 

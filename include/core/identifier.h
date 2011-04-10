@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_TYPE_H
-#define CORE_TYPE_H 1
+#ifndef CORE_IDENTIFIER_H
+#define CORE_IDENTIFIER_H 1
 
 #include "core/strhash.h"
 
@@ -43,7 +43,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core
 {
-	typedef StrHash Type;
+	typedef StrHash Identifier;
 }
 
 MARSHMALLOW_NAMESPACE_END

@@ -34,16 +34,30 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_TYPE_H
-#define CORE_TYPE_H 1
+#ifndef GAME_ICOMPONENT_H
+#define GAME_ICOMPONENT_H 1
 
-#include "core/strhash.h"
+#include "core/shared.h"
+#include "core/identifier.h"
+#include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core
+namespace Game
 {
-	typedef StrHash Type;
+
+	/*! @brief Game Component Interface */
+	struct GAME_EXPORT IComponent
+	{
+		virtual ~IComponent(void) {};
+
+		virtual const Core::Identifier & id(void) const = 0;
+		virtual const Core::Type & type(void) const = 0;
+
+		virtual void update(void) = 0;
+	};
+	typedef Core::Shared<IComponent> SharedComponent;
+
 }
 
 MARSHMALLOW_NAMESPACE_END

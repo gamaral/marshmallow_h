@@ -34,9 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <string.h>
-
-#include "core/type.h"
+#include "game/ientity.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -44,14 +42,40 @@ using namespace Game;
 
 Type SceneBase::Type("Game::SceneBase");
 
-SceneBase::SceneBase(const char *name)
-    : m_name(STRDUP(name))
+SceneBase::SceneBase(const Core::Identifier &i)
+    : m_id(i)
 {
 }
 
 SceneBase::~SceneBase(void)
 {
-	free(m_name);
+}
+
+void
+SceneBase::addEntity(SharedEntity &e)
+{
+	m_entities.push_back(e);
+}
+
+void
+SceneBase::removeEntity(const SharedEntity &e)
+{
+	m_entities.remove(e);
+}
+
+SharedEntity
+SceneBase::entity(const Core::Identifier &i) const
+{
+	EntityList::const_iterator l_i;
+	EntityList::const_iterator l_c = m_entities.end();
+
+	/* maybe replace later with a map if required */
+	for (l_i = m_entities.begin(); l_i != l_c; ++l_i) {
+		if ((*l_i)->id() == i)
+			return(*l_i);
+	}
+
+	return(SharedEntity());
 }
 
 void
@@ -67,5 +91,10 @@ SceneBase::deactivate(void)
 void
 SceneBase::update(void)
 {
+	EntityList::const_iterator l_i;
+	EntityList::const_iterator l_c = m_entities.end();
+
+	for (l_i = m_entities.begin(); l_i != l_c; ++l_i)
+		(*l_i)->update();
 }
 

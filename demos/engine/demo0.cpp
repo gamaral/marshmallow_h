@@ -26,9 +26,9 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/debuglistener.h"
+#include "event/debugeventlistener.h"
 #include "event/eventbase.h"
-#include "event/manager.h"
+#include "event/eventmanager.h"
 #include "game/engine.h"
 #include "game/scenemanager.h"
 #include "game/scenebase.h"
@@ -39,17 +39,17 @@ using namespace Core;
 class Demo : public Game::Engine
 {
 	int m_stop_timer;
-	Event::SharedEventManager m_event_manager;
-	Game::SharedSceneManager m_scene_manager;
-	Event::SharedListener m_debugListener;
+	Event::SharedEventManager  m_event_manager;
+	Game::SharedSceneManager   m_scene_manager;
+	Event::SharedEventListener m_debugListener;
 
 public:
 	Demo(void)
 	: Engine(),
 	  m_stop_timer(0),
-	  m_event_manager(new Event::Manager("main")),
+	  m_event_manager(new Event::EventManager("main")),
 	  m_scene_manager(new Game::SceneManager(0)),
-	  m_debugListener(new Event::DebugListener("log.txt"))
+	  m_debugListener(new Event::DebugEventListener("log.txt"))
 	{
 	}
 
@@ -72,8 +72,8 @@ public:
 
 	VIRTUAL void second(void)
 	{
-		Event::SharedEvent event(new Event::EventBase);
-		Event::SharedEvent event2(new Event::EventBase);
+		Event::SharedEvent event(new Event::EventBase("event"));
+		Event::SharedEvent event2(new Event::EventBase("event2"));
 
 		eventManager()->queue(event);
 		eventManager()->queue(event2);

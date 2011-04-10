@@ -34,29 +34,48 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_ILISTENERINTERFACE_H
-#define EVENT_ILISTENERINTERFACE_H 1
+#ifndef MATH_VECTOR2_H
+#define MATH_VECTOR2_H 1
 
-#include "core/shared.h"
+#include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Event
+namespace Math
 {
-	struct IEventInterface;
 
-	/*! @brief Event Listener Interface */
-	struct EVENT_EXPORT IListenerInterface
+	/*! @brief Game Vector2 */
+	class MATH_EXPORT Vector2
 	{
-		virtual ~IListenerInterface(void) {};
+		float m_value[2];
 
-		/*!
-		 * @brief VIRTUAL Event handler
-		 * @param event Event
-		 */
-		virtual bool handle(const IEventInterface &event) = 0;
+	public:
+		Vector2(float ax = 0., float ay = 0.)
+		    { m_value[0] = ax; m_value[1] = ay; }
+		Vector2(const Vector2 &copy)
+		    { m_value[0] = copy.m_value[0];
+		      m_value[1] = copy.m_value[1]; }
+
+		float & rx(void)
+		    { return(m_value[0]); }
+		float & ry(void)
+		    { return(m_value[1]); }
+
+		float x(void) const
+		    { return(m_value[0]); }
+		float y(void) const
+		    { return(m_value[1]); }
+
+		float & operator[](int i)
+		    { return(m_value[i]); }
+
+		Vector2 normalized(void) const;
+		Vector2 & normalize(void);
+
+		float magnitude(void);
+		float magnitude2(void);
+
 	};
-	typedef Core::Shared<IListenerInterface> SharedListener;
 
 }
 

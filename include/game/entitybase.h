@@ -34,58 +34,50 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_MANAGER_H
-#define EVENT_MANAGER_H 1
+#ifndef GAME_ENTITYBASE_H
+#define GAME_ENTITYBASE_H 1
 
-#include "event/imanagerinterface.h"
+#include "game/ientity.h"
 
-#include "EASTL/hash_map.h"
 #include "EASTL/list.h"
 using namespace eastl;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core { class Type; }
-
-namespace Event
+namespace Game
 {
-	struct IListenerInterface;
 
-	/*! @brief Event manager base */
-	class EVENT_EXPORT Manager : public IManagerInterface
+	/*! @brief Entity Base Class */
+	class GAME_EXPORT EntityBase : public IEntity
 	{
-		typedef Core::Shared<IEventInterface> SharedEvent;
-		typedef Core::Shared<IListenerInterface> SharedListener;
+		typedef list<SharedComponent> ComponentList;
 
-		typedef list<SharedListener> EventListenerList;
-		typedef hash_map<UID, EventListenerList> EventListenerMap;
-
-		typedef list<SharedEvent> EventList;
-
-		EventListenerMap m_elmap;
-		EventList m_queue[2];
-		UINT8 m_active_queue;
+		ComponentList m_components;
+		Core::Identifier m_id;
 
 	public:
-
-		Manager(const char *name = "");
-		virtual ~Manager(void);
-
-		bool dispatch(const SharedEvent &event) const
-		    { return(dispatch(*event)); }
+		EntityBase(const Core::Identifier identifier);
+		virtual ~EntityBase(void);
 
 	public: /* virtual */
 
-		VIRTUAL bool connect(const SharedListener &handler, const Core::Type &type);
-		VIRTUAL bool disconnect(const SharedListener &handler, const Core::Type &type);
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
 
-		VIRTUAL bool dequeue(const SharedEvent &event, bool all = false);
-		VIRTUAL bool queue(const SharedEvent &event);
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
 
-		VIRTUAL bool dispatch(const IEventInterface &event) const;
+		VIRTUAL void addComponent(SharedComponent &component);
+		VIRTUAL void removeComponent(const SharedComponent &component);
+		VIRTUAL SharedComponent component(const Core::Identifier &identifier) const;
 
-		VIRTUAL bool execute(TIME timeout);
+		VIRTUAL void update(void);
+
+	public: /* static */
+
+		static const Core::Type Type;
 	};
+
 }
 
 MARSHMALLOW_NAMESPACE_END

@@ -41,7 +41,7 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Event { struct IManagerInterface; }
+namespace Event { struct IEventManager; }
 
 namespace Game
 {
@@ -51,7 +51,7 @@ namespace Game
 	/*! @brief Game Engine Class */
 	class GAME_EXPORT Engine
 	{
-		typedef Core::Shared<Event::IManagerInterface> SharedEventManager;
+		typedef Core::Shared<Event::IEventManager> SharedEventManager;
 		typedef Core::Shared<SceneManager> SharedSceneManager;
 
 		static Engine *s_instance;
@@ -66,6 +66,10 @@ namespace Game
 
 	public:
 
+		/*!
+		 * @param fps Desired frame rate
+		 * @param ups Desired update rate (debug)
+		 */
 		Engine(float fps = 60.0, float ups = 60.0);
 		virtual ~Engine(void);
 
