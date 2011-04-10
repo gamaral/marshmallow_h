@@ -42,28 +42,28 @@ using namespace Core;
 
 StrHash::StrHash(const char *n)
     : Hash(),
-      m_name(0)
+      m_str(0)
 {
 	assert(n);
 
 	const size_t len = strlen(n)+1;
-	m_name = new char[len];
-	memcpy(m_name, n, len);
-	rehash(m_name, len);
+	m_str = new char[len];
+	memcpy(m_str, n, len);
+	rehash(m_str, len);
 }
 
 StrHash::StrHash(const StrHash &copy)
     : Hash(copy),
-      m_name(0)
+      m_str(0)
 {
-	const size_t len = strlen(copy.m_name)+1;
-	m_name = new char[len];
-	memcpy(m_name, copy.m_name, len);
+	const size_t len = strlen(copy.m_str)+1;
+	m_str = new char[len];
+	memcpy(m_str, copy.m_str, len);
 }
 
 StrHash::~StrHash(void)
 {
-	delete[] m_name;
+	delete[] m_str;
 }
 
 StrHash &
@@ -72,10 +72,10 @@ StrHash::operator=(const Marshmallow::Core::StrHash &rhs)
 	if (this != &rhs) {
 		Hash::operator=(rhs);
 
-		delete[] m_name;
-		const size_t len = strlen(rhs.m_name)+1;
-		m_name = new char[len];
-		memcpy(m_name, rhs.m_name, len);
+		delete[] m_str;
+		const size_t len = strlen(rhs.m_str)+1;
+		m_str = new char[len];
+		memcpy(m_str, rhs.m_str, len);
 	}
 	return(*this);
 }

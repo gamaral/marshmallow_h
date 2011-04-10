@@ -49,6 +49,7 @@ SceneBase::SceneBase(const Core::Identifier &i)
 
 SceneBase::~SceneBase(void)
 {
+	m_entities.clear();
 }
 
 void

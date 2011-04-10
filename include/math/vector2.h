@@ -47,33 +47,30 @@ namespace Math
 	/*! @brief Game Vector2 */
 	class MATH_EXPORT Vector2
 	{
-		float m_value[2];
+		double m_value[2];
 
 	public:
-		Vector2(float ax = 0., float ay = 0.)
-		    { m_value[0] = ax; m_value[1] = ay; }
-		Vector2(const Vector2 &copy)
-		    { m_value[0] = copy.m_value[0];
-		      m_value[1] = copy.m_value[1]; }
+		Vector2(double ax = 0., double ay = 0.);
+		Vector2(const Vector2 &copy);
 
-		float & rx(void)
+		double & rx(void)
 		    { return(m_value[0]); }
-		float & ry(void)
+		double & ry(void)
 		    { return(m_value[1]); }
 
-		float x(void) const
+		double x(void) const
 		    { return(m_value[0]); }
-		float y(void) const
+		double y(void) const
 		    { return(m_value[1]); }
 
-		float & operator[](int i)
+		double & operator[](int i)
 		    { return(m_value[i]); }
 
 		Vector2 normalized(void) const;
 		Vector2 & normalize(void);
 
-		float magnitude(void);
-		float magnitude2(void);
+		double magnitude(void);
+		double magnitude2(void);
 
 	};
 

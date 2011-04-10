@@ -26,6 +26,8 @@
  * or implied, of Marshmallow Engine.
  */
 
+#include "core/platform.h"
+#include "math/vector2.h"
 #include "event/debugeventlistener.h"
 #include "event/eventbase.h"
 #include "event/eventmanager.h"
@@ -33,9 +35,33 @@
 #include "game/scenebase.h"
 #include "game/scenemanager.h"
 #include "game/entitybase.h"
+#include "game/componentbase.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
+
+class DemoMoverComponent : public Game::ComponentBase
+{
+	Math::Vector2 m_pos;
+	Math::Vector2 m_dir;
+public:
+	DemoMoverComponent(void)
+	: Game::ComponentBase("mover"),
+	  m_pos(),
+          m_dir(.01, .02) {}
+
+	Math::Vector2 &direction(void)
+	{
+		return(m_dir);
+	}
+
+	VIRTUAL void update(void)
+	{
+		m_pos.rx() += m_dir.rx() * Game::Engine::Instance()->deltaTime();
+		m_pos.ry() += m_dir.ry() * Game::Engine::Instance()->deltaTime();
+		INFO("object moved to %f, %f", m_pos.rx(), m_pos.ry());
+	}
+};
 
 class DemoScene : public Game::SceneBase
 {
@@ -50,7 +76,8 @@ public:
 		if (!m_init) {
 			m_init = true;
 			Game::SharedEntity l_entity(new Game::EntityBase("player"));
-			/* add custom components here */
+			Game::SharedComponent l_component(new DemoMoverComponent);
+			l_entity->addComponent(l_component);
 			addEntity(l_entity);
 		}
 	}

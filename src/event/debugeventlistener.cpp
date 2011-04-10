@@ -60,8 +60,8 @@ DebugEventListener::handleEvent(const IEvent &event)
 	    << Platform::TimeStampToTimeData(event.timeStamp()).string
 	    << ": MS " << event.timeStamp()
 	    << ": Event " << static_cast<const void *>(&event)
-	    << ": Type (" << event.type().uid() << ")" << event.type().name()
-	    << ": ID (" << event.id().uid() << ")" << event.id().name()
+	    << ": Type (" << event.type().uid() << ")" << event.type().str()
+	    << ": ID (" << event.id().uid() << ")" << event.id().str()
 	    << std::endl;
 
 	return false;

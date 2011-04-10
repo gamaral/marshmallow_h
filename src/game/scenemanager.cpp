@@ -50,6 +50,7 @@ SceneManager::SceneManager(SharedScene init)
 
 SceneManager::~SceneManager(void)
 {
+	m_stack.clear();
 }
 
 void

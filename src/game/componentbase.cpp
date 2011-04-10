@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/entitybase.h"
+#include "game/componentbase.h"
 
 /*!
  * @file
@@ -35,58 +35,24 @@
  */
 
 #include "core/platform.h"
-#include "game/icomponent.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type EntityBase::Type("Game::EntityBase");
+const Core::Type ComponentBase::Type("Game::Component");
 
-EntityBase::EntityBase(const Core::Identifier &i)
+ComponentBase::ComponentBase(const Core::Identifier &i)
     : m_id(i)
 {
 }
 
-EntityBase::~EntityBase(void)
+ComponentBase::~ComponentBase(void)
 {
-	m_components.clear();
 }
 
 void
-EntityBase::addComponent(SharedComponent &c)
+ComponentBase::update(void)
 {
-	m_components.push_back(c);
-}
-
-void
-EntityBase::removeComponent(const SharedComponent &c)
-{
-	m_components.remove(c);
-}
-
-SharedComponent
-EntityBase::component(const Core::Identifier &i) const
-{
-	ComponentList::const_iterator l_i;
-	ComponentList::const_iterator l_c = m_components.end();
-
-	/* maybe replace later with a map if required */
-	for (l_i = m_components.begin(); l_i != l_c; ++l_i) {
-		if ((*l_i)->id() == i)
-			return(*l_i);
-	}
-	return(SharedComponent());
-}
-
-void
-EntityBase::update(void)
-{
-	ComponentList::const_iterator l_i;
-	ComponentList::const_iterator l_c = m_components.end();
-
-	INFO("%s: Updating components.", id().str());
-	for (l_i = m_components.begin(); l_i != l_c; ++l_i)
-		(*l_i)->update();
-	INFO("%s: Components updated.", id().str());
+	INFO("Component %s update.", id().str());
 }
 

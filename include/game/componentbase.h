@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/entitybase.h"
+#pragma once
 
 /*!
  * @file
@@ -34,59 +34,42 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
+#ifndef GAME_COMPONENTBASE_H
+#define GAME_COMPONENTBASE_H 1
+
 #include "game/icomponent.h"
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
 
-const Core::Type EntityBase::Type("Game::EntityBase");
-
-EntityBase::EntityBase(const Core::Identifier &i)
-    : m_id(i)
+namespace Game
 {
+
+	/*! @brief Game Component Base Class */
+	class GAME_EXPORT ComponentBase : public IComponent
+	{
+		Core::Identifier m_id;
+
+	public:
+		ComponentBase(const Core::Identifier &identifier);
+		virtual ~ComponentBase(void);
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
+
+		VIRTUAL void update(void);
+
+	public: /* static */
+
+		static const Core::Type Type;
+	};
+
 }
 
-EntityBase::~EntityBase(void)
-{
-	m_components.clear();
-}
+MARSHMALLOW_NAMESPACE_END
 
-void
-EntityBase::addComponent(SharedComponent &c)
-{
-	m_components.push_back(c);
-}
-
-void
-EntityBase::removeComponent(const SharedComponent &c)
-{
-	m_components.remove(c);
-}
-
-SharedComponent
-EntityBase::component(const Core::Identifier &i) const
-{
-	ComponentList::const_iterator l_i;
-	ComponentList::const_iterator l_c = m_components.end();
-
-	/* maybe replace later with a map if required */
-	for (l_i = m_components.begin(); l_i != l_c; ++l_i) {
-		if ((*l_i)->id() == i)
-			return(*l_i);
-	}
-	return(SharedComponent());
-}
-
-void
-EntityBase::update(void)
-{
-	ComponentList::const_iterator l_i;
-	ComponentList::const_iterator l_c = m_components.end();
-
-	INFO("%s: Updating components.", id().str());
-	for (l_i = m_components.begin(); l_i != l_c; ++l_i)
-		(*l_i)->update();
-	INFO("%s: Components updated.", id().str());
-}
-
+#endif

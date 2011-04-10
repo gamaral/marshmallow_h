@@ -59,7 +59,7 @@ EventManager::~EventManager(void)
 bool
 EventManager::connect(const SharedEventListener &handler, const Core::Type &t)
 {
-	INFO("Connecting `%p` handler to event type `%s`", static_cast<const void *>(&handler), t.name());
+	INFO("Connecting `%p` handler to event type `%s`", static_cast<const void *>(&handler), t.str());
 
 	EventListenerMap::const_iterator l_elmapi =
 	    m_elmap.find(t.uid());
@@ -88,7 +88,7 @@ EventManager::connect(const SharedEventListener &handler, const Core::Type &t)
 bool
 EventManager::disconnect(const SharedEventListener &handler, const Core::Type &t)
 {
-	INFO("Disconnecting `%p` handler from event type `%s`", static_cast<const void *>(&handler), t.name());
+	INFO("Disconnecting `%p` handler from event type `%s`", static_cast<const void *>(&handler), t.str());
 
 	EventListenerMap::const_iterator l_elmapi =
 	    m_elmap.find(t.uid());

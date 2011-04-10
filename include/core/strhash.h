@@ -47,14 +47,14 @@ namespace Core
 	/*! @brief Event StrHash Class */
 	class CORE_EXPORT StrHash : public Hash
 	{
-		char *m_name;
+		char *m_str;
 
 	public:
 
 		/*!
-		 * @param name Event type name
+		 * @param str String
 		 */
-		StrHash(const char *name);
+		StrHash(const char *str);
 		StrHash(const StrHash &copy);
 		virtual ~StrHash(void);
 
@@ -62,14 +62,14 @@ namespace Core
 		UID uid(void) const
 		    { return(result()); }
 
-		/*! @brief Event StrHash Name */
-		const char * name(void) const
-		    { return(m_name); }
+		/*! @brief Hashed String */
+		const char * str(void) const
+		    { return(m_str); }
 
 	public: /* operator */
 
 		operator const char *() const
-		    { return(m_name); }
+		    { return(m_str); }
 
 		Marshmallow::Core::StrHash & operator=(const Marshmallow::Core::StrHash &rhs);
 	};

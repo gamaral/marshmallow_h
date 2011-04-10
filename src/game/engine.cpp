@@ -78,6 +78,9 @@ void
 Engine::finalize(void)
 {
 	Platform::Finalize();
+
+	m_event_manager.clear();
+	m_scene_manager.clear();
 }
 
 int

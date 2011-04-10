@@ -39,6 +39,18 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
+Vector2::Vector2(double ax, double ay)
+{
+	m_value[0] = ax;
+	m_value[1] = ay;
+}
+
+Vector2::Vector2(const Vector2 &copy)
+{
+	m_value[0] = copy.m_value[0];
+	m_value[1] = copy.m_value[1];
+}
+
 Vector2
 Vector2::normalized(void) const
 {
@@ -56,17 +68,17 @@ Vector2::normalize(void)
 	return(*this);
 }
 
-float
+double
 Vector2::magnitude(void)
 {
-	return(sqrtf(powf(m_value[0], 2)
-	           + powf(m_value[1], 2)));
+	return(sqrt(pow(m_value[0], 2)
+	          + pow(m_value[1], 2)));
 }
 
-float
+double
 Vector2::magnitude2(void)
 {
-	return(powf(m_value[0], 2)
-	     + powf(m_value[1], 2));
+	return(pow(m_value[0], 2)
+	     + pow(m_value[1], 2));
 }
 
