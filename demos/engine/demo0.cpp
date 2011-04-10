@@ -31,11 +31,11 @@
 #include "event/debugeventlistener.h"
 #include "event/eventbase.h"
 #include "event/eventmanager.h"
+#include "game/componentbase.h"
 #include "game/engine.h"
+#include "game/entitybase.h"
 #include "game/scenebase.h"
 #include "game/scenemanager.h"
-#include "game/entitybase.h"
-#include "game/componentbase.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -70,7 +70,7 @@ public:
 
 class DemoBounceComponent : public Game::ComponentBase
 {
-	Game::WeakComponent m_mover;
+	Core::Weak<DemoMoverComponent> m_mover;
 public:
 	DemoBounceComponent(Game::WeakEntity e)
 	: Game::ComponentBase("bouncer", e)
@@ -80,15 +80,11 @@ public:
 	VIRTUAL void update(void)
 	{
 		if (!m_mover && entity())
-			m_mover = entity()->component("mover");
+			m_mover = entity()->component("mover").cast<DemoMoverComponent>();
 
 		if (m_mover) {
-			/*
-			 * TODO: communication will be via messages
-			 */
-			DemoMoverComponent *mover = static_cast<DemoMoverComponent *>(m_mover.raw());
-			Math::Vector2 &pos = mover->position();
-			Math::Vector2 &dir = mover->direction();
+			Math::Vector2 &pos = m_mover->position();
+			Math::Vector2 &dir = m_mover->direction();
 
 			if ((pos.rx() < 0 && dir.rx() < 0)
 			 || (pos.rx() > 20 && dir.rx() > 0))
