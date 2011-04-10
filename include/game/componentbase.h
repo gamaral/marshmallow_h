@@ -70,6 +70,12 @@ namespace Game
 	public: /* static */
 
 		static const Core::Type Type;
+
+	protected:
+
+		WeakEntity &entity(void)
+		    { return(m_entity); }
+
 	};
 
 }

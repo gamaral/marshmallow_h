@@ -49,7 +49,7 @@ StrHash::StrHash(const char *n)
 	const size_t len = strlen(n)+1;
 	m_str = new char[len];
 	memcpy(m_str, n, len);
-	rehash(m_str, len);
+	rehash(m_str, len, ~static_cast<UID>(0));
 }
 
 StrHash::StrHash(const StrHash &copy)

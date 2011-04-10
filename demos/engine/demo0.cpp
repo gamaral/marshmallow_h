@@ -50,6 +50,11 @@ public:
 	  m_pos(),
           m_dir(.01, .02) {}
 
+	Math::Vector2 &position(void)
+	{
+		return(m_pos);
+	}
+
 	Math::Vector2 &direction(void)
 	{
 		return(m_dir);
@@ -60,6 +65,38 @@ public:
 		m_pos.rx() += m_dir.rx() * Game::Engine::Instance()->deltaTime();
 		m_pos.ry() += m_dir.ry() * Game::Engine::Instance()->deltaTime();
 		INFO("object moved to %f, %f", m_pos.rx(), m_pos.ry());
+	}
+};
+
+class DemoBounceComponent : public Game::ComponentBase
+{
+	Game::WeakComponent m_mover;
+public:
+	DemoBounceComponent(Game::WeakEntity e)
+	: Game::ComponentBase("bouncer", e)
+	{
+	}
+
+	VIRTUAL void update(void)
+	{
+		if (!m_mover && entity())
+			m_mover = entity()->component("mover");
+
+		if (m_mover) {
+			/*
+			 * TODO: communication will be via messages
+			 */
+			DemoMoverComponent *mover = static_cast<DemoMoverComponent *>(m_mover.raw());
+			Math::Vector2 &pos = mover->position();
+			Math::Vector2 &dir = mover->direction();
+
+			if ((pos.rx() < 0 && dir.rx() < 0)
+			 || (pos.rx() > 20 && dir.rx() > 0))
+				dir.rx() *= -.8;
+			if ((pos.ry() < 0 && dir.ry() < 0)
+			 || (pos.ry() > 20 && dir.ry() > 0))
+				dir.ry() *= -.8;
+		}
 	}
 };
 
@@ -76,8 +113,10 @@ public:
 		if (!m_init) {
 			m_init = true;
 			Game::SharedEntity l_entity(new Game::EntityBase("player"));
-			Game::SharedComponent l_component(new DemoMoverComponent(l_entity));
-			l_entity->addComponent(l_component);
+			Game::SharedComponent l_component1(new DemoMoverComponent(l_entity));
+			Game::SharedComponent l_component2(new DemoBounceComponent(l_entity));
+			l_entity->addComponent(l_component1);
+			l_entity->addComponent(l_component2);
 			addEntity(l_entity);
 		}
 	}

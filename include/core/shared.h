@@ -46,6 +46,8 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core
 {
 
+/********************************************************************* Shared */
+
 	/*! @brief Shared Data Struct */
 	struct CORE_EXPORT SharedData {
 	    void * ptr;
@@ -73,6 +75,9 @@ namespace Core
 		operator bool(void) const
 		    { return(m_data != 0 && m_data->ptr != 0); }
 
+		T * raw(void) const
+		    { return(reinterpret_cast<T *>(m_data->ptr)); }
+
 		T & operator *(void) const
 		    { return(*reinterpret_cast<T *>(m_data->ptr)); }
 
@@ -82,7 +87,7 @@ namespace Core
 		Shared & operator =(const Shared &rhs);
 
 		bool operator ==(const Shared &rhs) const
-		    { return(this == &rhs || (m_data && m_data == rhs.m_data)); }
+		    { return(this == &rhs || m_data == rhs.m_data); }
 	};
 
 	template <class T>
@@ -141,14 +146,16 @@ namespace Core
 		m_data = 0;
 	}
 
-	/*************************************************************** Weak */
+/*********************************************************************** Weak */
+
 	/*! @brief Weak Class */
 	template <class T>
 	class Weak
 	{
 		SharedData *m_data;
 	public:
-		Weak(class Shared<T> &shared);
+		Weak(void);
+		Weak(Shared<T> &shared);
 		Weak(const Weak &copy);
 		~Weak(void)
 		    { clear(); }
@@ -160,6 +167,10 @@ namespace Core
 		operator bool(void) const
 		    { return(m_data != 0 && m_data->ptr != 0); }
 
+		T * raw(void) const
+		    { assert(m_data && m_data->ptr);
+		      return(reinterpret_cast<T *>(m_data->ptr)); }
+
 		T & operator *(void) const
 		    { assert(m_data && m_data->ptr);
 		      return(*reinterpret_cast<T *>(m_data->ptr)); }
@@ -168,14 +179,21 @@ namespace Core
 		    { assert(m_data && m_data->ptr);
 		      return(reinterpret_cast<T *>(m_data->ptr)); }
 
+		Weak & operator =(const Shared<T> &rhs);
 		Weak & operator =(const Weak &rhs);
 
 		bool operator ==(const Weak &rhs) const
-		    { return(this == &rhs || (m_data && m_data == rhs.m_data)); }
+		    { return(this == &rhs || m_data == rhs.m_data); }
 	};
 
 	template <class T>
-	Weak<T>::Weak(class Shared<T> &shared)
+	Weak<T>::Weak(void)
+	    : m_data(0)
+	{
+	}
+
+	template <class T>
+	Weak<T>::Weak(Shared<T> &shared)
 	    : m_data(shared.m_data)
 	{
 		if (shared) ++m_data->wrefs;
@@ -186,6 +204,20 @@ namespace Core
 	    : m_data(copy.m_data)
 	{
 		if (copy) ++m_data->wrefs;
+	}
+
+	template <class T>
+	Weak<T> &
+	Weak<T>::operator =(const Shared<T> &rhs)
+	{
+		clear();
+
+		if (rhs) {
+			m_data = rhs.m_data;
+			++m_data->wrefs;
+		}
+
+		return(*this);
 	}
 
 	template <class T>

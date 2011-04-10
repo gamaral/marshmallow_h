@@ -57,6 +57,7 @@ namespace Game
 		virtual void update(void) = 0;
 	};
 	typedef Core::Shared<IComponent> SharedComponent;
+	typedef Core::Weak<IComponent> WeakComponent;
 
 }
 

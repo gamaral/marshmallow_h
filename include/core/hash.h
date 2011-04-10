@@ -57,7 +57,7 @@ namespace Core
 		 * @param length Data length
 		 */
 		Hash(void);
-		Hash(const char *d, size_t length, UID mask = -1);
+		Hash(const char *d, size_t length, UID mask);
 		Hash(const Hash &copy);
 		virtual ~Hash(void);
 
@@ -85,7 +85,7 @@ namespace Core
 
 	protected:
 
-		void rehash(const char *d, size_t length, UID mask = -1);
+		void rehash(const char *d, size_t length, UID mask);
 	};
 
 }
