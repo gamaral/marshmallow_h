@@ -48,13 +48,13 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event
 {
 	struct IEventListener;
+	typedef Core::Shared<IEventListener> SharedEventListener;
+
+	typedef Core::Shared<IEvent> SharedEvent;
 
 	/*! @brief Event Manager */
 	class EVENT_EXPORT EventManager : public IEventManager
 	{
-		typedef Core::Shared<IEvent> SharedEvent;
-		typedef Core::Shared<IEventListener> SharedEventListener;
-
 		typedef list<SharedEventListener> EventListenerList;
 		typedef hash_map<UID, EventListenerList> EventListenerMap;
 

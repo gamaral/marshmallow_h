@@ -46,18 +46,19 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
-	class IScene;
+	struct IScene;
+	typedef Core::Shared<IScene> SharedScene;
 
 	/*! @brief Game Scene Manager */
 	class GAME_EXPORT SceneManager
 	{
-		typedef Core::Shared<IScene> SharedScene;
 		typedef list<SharedScene> SceneStack;
 
 		SceneStack  m_stack;
 		SharedScene m_active;
+
 	public:
+
 		SceneManager(SharedScene init);
 		virtual ~SceneManager(void);
 

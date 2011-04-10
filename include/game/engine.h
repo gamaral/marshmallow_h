@@ -41,21 +41,23 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Event { struct IEventManager; }
+namespace Event
+{
+	struct IEventManager;
+	typedef Core::Shared<Event::IEventManager> SharedEventManager;
+}
 
 namespace Game
 {
 
 	class SceneManager;
+	typedef Core::Shared<SceneManager> SharedSceneManager;
 
 	/*! @brief Game Engine Class */
 	class GAME_EXPORT Engine
 	{
-		typedef Core::Shared<Event::IEventManager> SharedEventManager;
-		typedef Core::Shared<SceneManager> SharedSceneManager;
-
 		static Engine *s_instance;
-		SharedEventManager m_event_manager;
+		Event::SharedEventManager m_event_manager;
 		SharedSceneManager m_scene_manager;
 		float  m_fps;
 		float  m_ups;
@@ -88,7 +90,7 @@ namespace Game
 		/*!
 		 * @brief Event Manager
 		 */
-		SharedEventManager eventManager(void) const;
+		Event::SharedEventManager eventManager(void) const;
 
 		/*!
 		 * @brief Scene Manager
@@ -98,7 +100,7 @@ namespace Game
 		/*!
 		 * @brief Set Event Manager
 		 */
-		void setEventManager(SharedEventManager &m);
+		void setEventManager(Event::SharedEventManager &m);
 
 		/*!
 		 * @brief Set Scene Manager

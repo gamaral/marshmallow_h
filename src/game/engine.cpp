@@ -36,6 +36,7 @@
 
 #include "core/platform.h"
 #include "event/ieventmanager.h"
+#include "game/iscene.h"
 #include "game/scenemanager.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -244,6 +245,7 @@ Engine::preTick(TIME &timeout)
 {
 	TIMEOUT_INIT;
 	Platform::PreTick(TIMEOUT_DEC(timeout));
+	m_event_manager->execute(TIMEOUT_DEC(timeout));
 }
 
 void
@@ -258,7 +260,11 @@ Engine::preUpdate(TIME &timeout)
 {
 	TIMEOUT_INIT;
 	Platform::PreUpdate(TIMEOUT_DEC(timeout));
-	m_event_manager->execute(TIMEOUT_DEC(timeout));
+	if (m_scene_manager) {
+		SharedScene l_scene = m_scene_manager->active();
+		if (l_scene) l_scene->update();
+		else WARNING1("No active scene!");
+	} else WARNING1("No scene manager!");
 }
 
 void

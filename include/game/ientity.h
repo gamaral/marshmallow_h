@@ -47,12 +47,11 @@ namespace Game
 {
 
 	struct IComponent;
+	typedef Core::Shared<IComponent> SharedComponent;
 
 	/*! @brief Game Entity Interface */
 	struct GAME_EXPORT IEntity
 	{
-		typedef Core::Shared<IComponent> SharedComponent;
-
 		virtual ~IEntity(void) {};
 
 		virtual const Core::Identifier & id(void) const = 0;

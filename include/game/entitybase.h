@@ -56,7 +56,7 @@ namespace Game
 		Core::Identifier m_id;
 
 	public:
-		EntityBase(const Core::Identifier identifier);
+		EntityBase(const Core::Identifier &identifier);
 		virtual ~EntityBase(void);
 
 	public: /* virtual */

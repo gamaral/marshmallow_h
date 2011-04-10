@@ -34,6 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/platform.h"
 #include "game/icomponent.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -41,7 +42,7 @@ using namespace Game;
 
 const Core::Type EntityBase::Type("Game::EntityBase");
 
-EntityBase::EntityBase(const Core::Identifier i)
+EntityBase::EntityBase(const Core::Identifier &i)
     : m_id(i)
 {
 }
@@ -82,7 +83,9 @@ EntityBase::update(void)
 	ComponentList::const_iterator l_i;
 	ComponentList::const_iterator l_c = m_components.end();
 
+	INFO("%s: Updating components.", m_id.name());
 	for (l_i = m_components.begin(); l_i != l_c; ++l_i)
 		(*l_i)->update();
+	INFO("%s: Components updated.", m_id.name());
 }
 

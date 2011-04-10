@@ -30,11 +30,34 @@
 #include "event/eventbase.h"
 #include "event/eventmanager.h"
 #include "game/engine.h"
-#include "game/scenemanager.h"
 #include "game/scenebase.h"
+#include "game/scenemanager.h"
+#include "game/entitybase.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
+
+class DemoScene : public Game::SceneBase
+{
+	bool m_init;
+public:
+	DemoScene(void)
+	: SceneBase("DemoScene"),
+	  m_init(false) {}
+
+	VIRTUAL void activate(void)
+	{
+		if (!m_init) {
+			m_init = true;
+			Game::SharedEntity l_entity(new Game::EntityBase("player"));
+			/* add custom components here */
+			addEntity(l_entity);
+		}
+	}
+
+	VIRTUAL void deactivate(void) {
+	}
+};
 
 class Demo : public Game::Engine
 {
@@ -61,6 +84,9 @@ public:
 		setSceneManager(m_scene_manager);
 
 		eventManager()->connect(m_debugListener, Event::EventBase::Type);
+
+		Game::SharedScene l_scene(new DemoScene);
+		m_scene_manager->push(l_scene);
 	}
 
 	VIRTUAL void finalize(void)

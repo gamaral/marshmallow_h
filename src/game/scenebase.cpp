@@ -78,6 +78,12 @@ SceneBase::entity(const Core::Identifier &i) const
 	return(SharedEntity());
 }
 
+const EntityList &
+SceneBase::entities(void) const
+{
+	return(m_entities);
+}
+
 void
 SceneBase::activate(void)
 {

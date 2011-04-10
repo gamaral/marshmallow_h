@@ -46,24 +46,26 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	class IEntity;
+	typedef Core::Shared<IEntity> SharedEntity;
+
+	typedef list<SharedEntity> EntityList;
 
 	/*! @brief Game Scene Base Class */
 	class GAME_EXPORT SceneBase : public IScene
 	{
-		typedef Core::Shared<IEntity> SharedEntity;
-		typedef list<SharedEntity> EntityList;
-
 		EntityList m_entities;
 		Core::Identifier m_id;
+
 	public:
+
 		SceneBase(const Core::Identifier &identifier);
 		virtual ~SceneBase(void);
 
 		void addEntity(SharedEntity &entity);
 		void removeEntity(const SharedEntity &entity);
 		SharedEntity entity(const Core::Identifier &identifier) const;
+		const EntityList & entities(void) const;
 
 	public: /* virtual */
 
@@ -78,6 +80,7 @@ namespace Game
 		VIRTUAL void update(void);
 
 	public: /* static */
+
 		static Core::Type Type;
 	};
 
