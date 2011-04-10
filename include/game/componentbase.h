@@ -44,13 +44,17 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {
 
+	struct IEntity;
+	typedef Core::Weak<IEntity> WeakEntity;
+
 	/*! @brief Game Component Base Class */
 	class GAME_EXPORT ComponentBase : public IComponent
 	{
 		Core::Identifier m_id;
+		WeakEntity m_entity;
 
 	public:
-		ComponentBase(const Core::Identifier &identifier);
+		ComponentBase(const Core::Identifier &identifier, WeakEntity entity);
 		virtual ~ComponentBase(void);
 
 	public: /* virtual */

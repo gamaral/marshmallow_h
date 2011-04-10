@@ -45,8 +45,8 @@ class DemoMoverComponent : public Game::ComponentBase
 	Math::Vector2 m_pos;
 	Math::Vector2 m_dir;
 public:
-	DemoMoverComponent(void)
-	: Game::ComponentBase("mover"),
+	DemoMoverComponent(Game::WeakEntity e)
+	: Game::ComponentBase("mover", e),
 	  m_pos(),
           m_dir(.01, .02) {}
 
@@ -76,13 +76,10 @@ public:
 		if (!m_init) {
 			m_init = true;
 			Game::SharedEntity l_entity(new Game::EntityBase("player"));
-			Game::SharedComponent l_component(new DemoMoverComponent);
+			Game::SharedComponent l_component(new DemoMoverComponent(l_entity));
 			l_entity->addComponent(l_component);
 			addEntity(l_entity);
 		}
-	}
-
-	VIRTUAL void deactivate(void) {
 	}
 };
 
@@ -98,7 +95,7 @@ public:
 	: Engine(),
 	  m_stop_timer(0),
 	  m_event_manager(new Event::EventManager("main")),
-	  m_scene_manager(new Game::SceneManager(0)),
+	  m_scene_manager(new Game::SceneManager(Game::SharedScene())),
 	  m_debugListener(new Event::DebugEventListener("log.txt"))
 	{
 	}

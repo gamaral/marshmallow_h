@@ -37,6 +37,8 @@
 #ifndef CORE_SHARED_H
 #define CORE_SHARED_H 1
 
+#include <cassert>
+
 #include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -48,14 +50,18 @@ namespace Core
 	struct CORE_EXPORT SharedData {
 	    void * ptr;
 	    INT16 refs;
+	    INT16 wrefs;
 	};
 
 	/*! @brief Shared Class */
 	template <class T>
 	class Shared
 	{
+		template <class U> friend class Weak;
+		SharedData *m_data;
 	public:
-		Shared(T *ptr = 0);
+		Shared(void);
+		Shared(T *ptr);
 		Shared(const Shared &copy);
 		~Shared(void)
 		    { clear(); }
@@ -65,7 +71,7 @@ namespace Core
 	public: /* operator */
 
 		operator bool(void) const
-		    { return(m_data != 0); }
+		    { return(m_data != 0 && m_data->ptr != 0); }
 
 		T & operator *(void) const
 		    { return(*reinterpret_cast<T *>(m_data->ptr)); }
@@ -76,34 +82,39 @@ namespace Core
 		Shared & operator =(const Shared &rhs);
 
 		bool operator ==(const Shared &rhs) const
-		    { return(m_data && m_data == rhs.m_data); }
-
-	private:
-		SharedData *m_data;
+		    { return(this == &rhs || (m_data && m_data == rhs.m_data)); }
 	};
 
 	template <class T>
-	Shared<T>::Shared(T *ptr)
+	Shared<T>::Shared(void)
 	    : m_data(0)
 	{
-		if (ptr) {
-			m_data = new SharedData;
-			m_data->ptr  = ptr;
-			m_data->refs = 1;
-		}
+	}
+
+	template <class T>
+	Shared<T>::Shared(T *ptr)
+	    : m_data(new SharedData)
+	{
+		assert(ptr);
+		m_data->ptr  = ptr;
+		m_data->refs = 1;
+		m_data->wrefs = 0;
 	}
 
 	template <class T>
 	Shared<T>::Shared(const Shared &copy)
 	    : m_data(copy.m_data)
 	{
-		if (m_data) ++m_data->refs;
+		if (copy) ++m_data->refs;
 	}
 
 	template <class T>
 	Shared<T> &
 	Shared<T>::operator =(const Shared<T> &rhs)
 	{
+		if (*this == rhs)
+			return(*this);
+
 		clear();
 
 		if (rhs) {
@@ -121,11 +132,87 @@ namespace Core
 		if (m_data && --m_data->refs <= 0) {
 			T *ptr = reinterpret_cast<T *>(m_data->ptr);
 			delete ptr;
-			delete m_data;
+
+			if (m_data->wrefs <= 0)
+				delete m_data;
+			else
+				m_data->ptr = 0;
 		}
 		m_data = 0;
 	}
 
+	/*************************************************************** Weak */
+	/*! @brief Weak Class */
+	template <class T>
+	class Weak
+	{
+		SharedData *m_data;
+	public:
+		Weak(class Shared<T> &shared);
+		Weak(const Weak &copy);
+		~Weak(void)
+		    { clear(); }
+
+		void clear(void);
+
+	public: /* operator */
+
+		operator bool(void) const
+		    { return(m_data != 0 && m_data->ptr != 0); }
+
+		T & operator *(void) const
+		    { assert(m_data && m_data->ptr);
+		      return(*reinterpret_cast<T *>(m_data->ptr)); }
+
+		T * operator ->(void) const
+		    { assert(m_data && m_data->ptr);
+		      return(reinterpret_cast<T *>(m_data->ptr)); }
+
+		Weak & operator =(const Weak &rhs);
+
+		bool operator ==(const Weak &rhs) const
+		    { return(this == &rhs || (m_data && m_data == rhs.m_data)); }
+	};
+
+	template <class T>
+	Weak<T>::Weak(class Shared<T> &shared)
+	    : m_data(shared.m_data)
+	{
+		if (shared) ++m_data->wrefs;
+	}
+
+	template <class T>
+	Weak<T>::Weak(const Weak &copy)
+	    : m_data(copy.m_data)
+	{
+		if (copy) ++m_data->wrefs;
+	}
+
+	template <class T>
+	Weak<T> &
+	Weak<T>::operator =(const Weak<T> &rhs)
+	{
+		if (*this == rhs)
+			return(*this);
+
+		clear();
+
+		if (rhs) {
+			m_data = rhs.m_data;
+			++m_data->wrefs;
+		}
+
+		return(*this);
+	}
+
+	template <class T>
+	void
+	Weak<T>::clear(void)
+	{
+		if (m_data && --m_data->wrefs <= 0 && m_data->ptr == 0)
+			delete m_data;
+		m_data = 0;
+	}
 }
 
 MARSHMALLOW_NAMESPACE_END
