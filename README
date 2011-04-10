@@ -1,7 +1,37 @@
 Marshmallow Engine
 ==================
 
-  This engine concept is still very unstable. :)
+  This engine concept is still flaky. :)
 
-  TODO
+  It's all one big TODO
+
+Building
+========
+
+Linux
+-----
+
+Run the following from project root:
+
+    ./configure && make -C build
+
+Mac OSX
+-------
+
+Run the following from project root:
+
+    ./configure -G Xcode
+
+    Launch Xcode and open the project file in the build directory.
+
+Windows
+-------
+
+    Run CMakeGui with `source` set to project root and `output` to the build
+    directory.
+
+    Configure and Generate a MSVC++ 2010 solution.
+    (I've only tested it on Windows 7 with MSVC++ 2010).
+
+    MinGW also works.
 
