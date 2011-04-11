@@ -34,44 +34,43 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ISCENE_H
-#define GAME_ISCENE_H 1
+#ifndef GAME_VIEWMANAGER_H
+#define GAME_VIEWMANAGER_H 1
 
 #include "EASTL/list.h"
 using namespace eastl;
 
 #include "core/shared.h"
-#include "core/identifier.h"
-#include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
+	struct IView;
+	typedef Core::Shared<IView> SharedView;
 
-	class IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
-
-	typedef list<SharedEntity> EntityList;
-
-	/*! @brief Game Scene Interface */
-	struct GAME_EXPORT IScene
-	{
-		virtual ~IScene(void) {};
-
-		virtual const Core::Identifier & id(void) const = 0;
-		virtual const Core::Type & type(void) const = 0;
-
-		virtual void addEntity(SharedEntity &entity) = 0;
-		virtual void removeEntity(const SharedEntity &entity) = 0;
-		virtual SharedEntity entity(const Core::Identifier &identifier) const = 0;
-		virtual const EntityList & entities(void) const = 0;
-
-		virtual void activate(void) = 0;
-		virtual void deactivate(void) = 0;
-		virtual void update(void) = 0;
-	};
+	struct IScene;
 	typedef Core::Shared<IScene> SharedScene;
+
+	/*! @brief Game View Manager */
+	class GAME_EXPORT ViewManager
+	{
+		typedef list<SharedView> ViewList;
+
+		ViewList  m_list;
+
+	public:
+
+		ViewManager(void);
+		virtual ~ViewManager(void);
+
+		void addView(SharedView &view);
+		void removeView(const SharedView &view);
+		void clearViews(void);
+
+		void render(SharedScene &scene);
+	};
+	typedef Core::Shared<ViewManager> SharedViewManager;
 
 }
 

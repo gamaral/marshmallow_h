@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/viewmanager.h"
 
 /*!
  * @file
@@ -34,47 +34,53 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ISCENE_H
-#define GAME_ISCENE_H 1
+#include "game/iview.h"
 
-#include "EASTL/list.h"
-using namespace eastl;
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-#include "core/shared.h"
-#include "core/identifier.h"
-#include "core/type.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+ViewManager::ViewManager(void)
 {
-
-	class IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
-
-	typedef list<SharedEntity> EntityList;
-
-	/*! @brief Game Scene Interface */
-	struct GAME_EXPORT IScene
-	{
-		virtual ~IScene(void) {};
-
-		virtual const Core::Identifier & id(void) const = 0;
-		virtual const Core::Type & type(void) const = 0;
-
-		virtual void addEntity(SharedEntity &entity) = 0;
-		virtual void removeEntity(const SharedEntity &entity) = 0;
-		virtual SharedEntity entity(const Core::Identifier &identifier) const = 0;
-		virtual const EntityList & entities(void) const = 0;
-
-		virtual void activate(void) = 0;
-		virtual void deactivate(void) = 0;
-		virtual void update(void) = 0;
-	};
-	typedef Core::Shared<IScene> SharedScene;
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+ViewManager::~ViewManager(void)
+{
+	clearViews();
+}
 
-#endif
+void
+ViewManager::addView(SharedView &v)
+{
+	v->initialize();
+	m_list.push_back(v);
+}
+
+void
+ViewManager::removeView(const SharedView &v)
+{
+	m_list.remove(v);
+	v->finalize();
+}
+
+void
+ViewManager::clearViews(void)
+{
+	ViewList::const_iterator l_i;
+	ViewList::const_iterator l_c = m_list.end();
+
+	for (l_i = m_list.begin(); l_i != l_c; ++l_i)
+		(*l_i)->finalize();
+
+	m_list.clear();
+}
+
+void
+ViewManager::render(SharedScene &scene)
+{
+	ViewList::const_iterator l_i;
+	ViewList::const_iterator l_c = m_list.end();
+
+	for (l_i = m_list.begin(); l_i != l_c; ++l_i)
+		(*l_i)->render(scene);
+}
+

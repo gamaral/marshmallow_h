@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game.h"
 
 /*!
  * @file
@@ -34,47 +34,51 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ISCENE_H
-#define GAME_ISCENE_H 1
+MARSHMALLOW_NAMESPACE_USE;
 
-#include "EASTL/list.h"
-using namespace eastl;
+#include <game/viewbase.h>
 
-#include "core/shared.h"
-#include "core/identifier.h"
-#include "core/type.h"
+#include "mainscene.h"
+#include "enemyview.h"
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+Demo::Demo(void)
+    : Engine(),
+      m_stop_timer(0),
+      m_event_manager(new Event::EventManager("main")),
+      m_scene_manager(new Game::SceneManager(Game::SharedScene())),
+      m_view_manager(new Game::ViewManager())
 {
-
-	class IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
-
-	typedef list<SharedEntity> EntityList;
-
-	/*! @brief Game Scene Interface */
-	struct GAME_EXPORT IScene
-	{
-		virtual ~IScene(void) {};
-
-		virtual const Core::Identifier & id(void) const = 0;
-		virtual const Core::Type & type(void) const = 0;
-
-		virtual void addEntity(SharedEntity &entity) = 0;
-		virtual void removeEntity(const SharedEntity &entity) = 0;
-		virtual SharedEntity entity(const Core::Identifier &identifier) const = 0;
-		virtual const EntityList & entities(void) const = 0;
-
-		virtual void activate(void) = 0;
-		virtual void deactivate(void) = 0;
-		virtual void update(void) = 0;
-	};
-	typedef Core::Shared<IScene> SharedScene;
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+void
+Demo::initialize(void)
+{
+	Engine::initialize();
 
-#endif
+	setEventManager(m_event_manager);
+	setSceneManager(m_scene_manager);
+	setViewManager(m_view_manager);
+
+	Game::SharedScene l_scene(new MainScene);
+	m_scene_manager->push(l_scene);
+
+	/* tmp added here */
+	Game::SharedView l_view1(new Game::ViewBase);
+	Game::SharedView l_enemy(new EnemyView);
+	m_view_manager->addView(l_view1);
+	m_view_manager->addView(l_enemy);
+}
+
+void
+Demo::finalize(void)
+{
+	Engine::finalize();
+}
+
+void
+Demo::second(void)
+{
+	if (++m_stop_timer == 10)
+		stop();
+}
+

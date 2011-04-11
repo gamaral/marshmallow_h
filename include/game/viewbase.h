@@ -34,44 +34,30 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ISCENE_H
-#define GAME_ISCENE_H 1
+#ifndef GAME_VIEWBASE_H
+#define GAME_VIEWBASE_H 1
 
-#include "EASTL/list.h"
-using namespace eastl;
-
-#include "core/shared.h"
-#include "core/identifier.h"
-#include "core/type.h"
+#include "game/iview.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
 
-	class IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
-
-	typedef list<SharedEntity> EntityList;
-
-	/*! @brief Game Scene Interface */
-	struct GAME_EXPORT IScene
+	/*! @brief Game View Base Class */
+	struct GAME_EXPORT ViewBase : public IView
 	{
-		virtual ~IScene(void) {};
+		ViewBase(void);
+		virtual ~ViewBase(void);
 
-		virtual const Core::Identifier & id(void) const = 0;
-		virtual const Core::Type & type(void) const = 0;
+	public: /* VIRTUAL */
 
-		virtual void addEntity(SharedEntity &entity) = 0;
-		virtual void removeEntity(const SharedEntity &entity) = 0;
-		virtual SharedEntity entity(const Core::Identifier &identifier) const = 0;
-		virtual const EntityList & entities(void) const = 0;
+		VIRTUAL void initialize(void);
+		VIRTUAL void finalize(void);
 
-		virtual void activate(void) = 0;
-		virtual void deactivate(void) = 0;
-		virtual void update(void) = 0;
+		VIRTUAL void render(const SharedScene &scene);
+		VIRTUAL void renderEntity(const SharedEntity &entity);
 	};
-	typedef Core::Shared<IScene> SharedScene;
 
 }
 

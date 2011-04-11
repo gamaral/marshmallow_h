@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "enemyview.h"
 
 /*!
  * @file
@@ -34,47 +34,77 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ISCENE_H
-#define GAME_ISCENE_H 1
+#include <core/platform.h>
+#include <game/ientity.h>
 
-#include "EASTL/list.h"
-using namespace eastl;
-
-#include "core/shared.h"
-#include "core/identifier.h"
-#include "core/type.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+EnemyView::EnemyView(DifficultyLevel d)
+    : m_difficulty(static_cast<int>(d))
 {
-
-	class IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
-
-	typedef list<SharedEntity> EntityList;
-
-	/*! @brief Game Scene Interface */
-	struct GAME_EXPORT IScene
-	{
-		virtual ~IScene(void) {};
-
-		virtual const Core::Identifier & id(void) const = 0;
-		virtual const Core::Type & type(void) const = 0;
-
-		virtual void addEntity(SharedEntity &entity) = 0;
-		virtual void removeEntity(const SharedEntity &entity) = 0;
-		virtual SharedEntity entity(const Core::Identifier &identifier) const = 0;
-		virtual const EntityList & entities(void) const = 0;
-
-		virtual void activate(void) = 0;
-		virtual void deactivate(void) = 0;
-		virtual void update(void) = 0;
-	};
-	typedef Core::Shared<IScene> SharedScene;
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+EnemyView::~EnemyView(void)
+{
+}
 
-#endif
+void
+EnemyView::handleEnemy(const Game::SharedEntity &e)
+{
+	
+	EnemyState state = m_states[e->id().uid()];
+
+	/*
+	 * TODO: Use player position to update enemy states and take appropriate
+	 * action.
+	 */
+
+	switch (state) {
+	case esIdle:
+		INFO("Enemy %s moves around a little.", e->id().str());
+		/* TODO: add move message here */
+		break;
+	case esTargeting:
+		INFO("Enemy %s targets player.", e->id().str());
+		break;
+	case esShooting:
+		INFO("Enemy %s shoots at player.", e->id().str());
+		break;
+	}
+}
+
+void
+EnemyView::handlePlayer(const Game::SharedEntity &e)
+{
+	UNUSED(e);
+	/*
+	 * TODO: get player positions
+	 */
+}
+
+void
+EnemyView::initialize(void)
+{
+}
+
+void
+EnemyView::finalize(void)
+{
+	m_states.clear();
+}
+
+void
+EnemyView::renderEntity(const Game::SharedEntity &e)
+{
+	/*
+	 * Should use type, but for this example I'm using ids
+	 * static const Core::Type enemy_t("enemy");
+	 */
+	static const Core::Identifier enemy_id("enemy");
+	static const Core::Identifier user_id("player");
+
+	if (e->id() == enemy_id) {
+		handleEnemy(e);
+	} else if (e->id() == user_id) {
+		INFO1("Enemy AI says: I see a user (my enemy - target or something)!");
+	}
+}
+

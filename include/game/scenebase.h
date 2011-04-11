@@ -39,17 +39,10 @@
 
 #include "game/iscene.h"
 
-#include "EASTL/list.h"
-using namespace eastl;
-
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-	class IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
-
-	typedef list<SharedEntity> EntityList;
 
 	/*! @brief Game Scene Base Class */
 	class GAME_EXPORT SceneBase : public IScene
@@ -62,11 +55,6 @@ namespace Game
 		SceneBase(const Core::Identifier &identifier);
 		virtual ~SceneBase(void);
 
-		void addEntity(SharedEntity &entity);
-		void removeEntity(const SharedEntity &entity);
-		SharedEntity entity(const Core::Identifier &identifier) const;
-		const EntityList & entities(void) const;
-
 	public: /* virtual */
 
 		VIRTUAL const Core::Identifier & id(void) const
@@ -74,6 +62,11 @@ namespace Game
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
+
+		VIRTUAL void addEntity(SharedEntity &entity);
+		VIRTUAL void removeEntity(const SharedEntity &entity);
+		VIRTUAL SharedEntity entity(const Core::Identifier &identifier) const;
+		VIRTUAL const EntityList & entities(void) const;
 
 		VIRTUAL void activate(void);
 		VIRTUAL void deactivate(void);
@@ -83,6 +76,8 @@ namespace Game
 
 		static Core::Type Type;
 	};
+	typedef Core::Shared<SceneBase> SharedSceneBase;
+	typedef Core::Weak<SceneBase> WeakSceneBase;
 
 }
 

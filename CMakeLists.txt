@@ -19,6 +19,7 @@ include_directories(${PROJECT_SOURCE_DIR}/contrib/eastl/include)
 
 # Global Options
 set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Engine Namespace")
+set(MARSHMALLOW_VIEW_SDL "off" CACHE BOOL "Use SDL View")
 
 if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
 	set(DEBUG ON CACHE INTERNAL "")
@@ -43,6 +44,16 @@ elseif(WIN32)
 	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
 	)
 endif(UNIX)
+
+######################################################################### VIEW #
+
+if(MARSHMALLOW_VIEW_SDL)
+
+	find_package(SDL)
+
+endif(MARSHMALLOW_VIEW_SDL)
+
+############################################################## SUB DIRECTORIES #
 
 add_subdirectory(contrib)
 add_subdirectory(src)

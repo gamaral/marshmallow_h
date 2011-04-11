@@ -34,47 +34,28 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ISCENE_H
-#define GAME_ISCENE_H 1
+#include <game/engine.h>
 
-#include "EASTL/list.h"
-using namespace eastl;
+#include <event/eventmanager.h>
+#include <game/scenemanager.h>
+#include <game/viewmanager.h>
 
-#include "core/shared.h"
-#include "core/identifier.h"
-#include "core/type.h"
+MARSHMALLOW_NAMESPACE_USE;
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+class Demo : public Game::Engine
 {
+	int m_stop_timer;
+	Event::SharedEventManager  m_event_manager;
+	Game::SharedSceneManager   m_scene_manager;
+	Game::SharedViewManager    m_view_manager;
 
-	class IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
+public:
+	Demo(void);
 
-	typedef list<SharedEntity> EntityList;
+public: /* virtual */
 
-	/*! @brief Game Scene Interface */
-	struct GAME_EXPORT IScene
-	{
-		virtual ~IScene(void) {};
+	VIRTUAL void initialize(void);
+	VIRTUAL void finalize(void);
+	VIRTUAL void second(void);
+};
 
-		virtual const Core::Identifier & id(void) const = 0;
-		virtual const Core::Type & type(void) const = 0;
-
-		virtual void addEntity(SharedEntity &entity) = 0;
-		virtual void removeEntity(const SharedEntity &entity) = 0;
-		virtual SharedEntity entity(const Core::Identifier &identifier) const = 0;
-		virtual const EntityList & entities(void) const = 0;
-
-		virtual void activate(void) = 0;
-		virtual void deactivate(void) = 0;
-		virtual void update(void) = 0;
-	};
-	typedef Core::Shared<IScene> SharedScene;
-
-}
-
-MARSHMALLOW_NAMESPACE_END
-
-#endif

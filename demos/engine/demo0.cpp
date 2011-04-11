@@ -86,8 +86,8 @@ public:
 			Math::Vector2 &pos = m_mover->position();
 			Math::Vector2 &dir = m_mover->direction();
 
-			if ((pos.rx() < 0 && dir.rx() < 0)
-			 || (pos.rx() > 20 && dir.rx() > 0))
+			if ((pos.rx() < -10 && dir.rx() < 0)
+			 || (pos.rx() > 10 && dir.rx() > 0))
 				dir.rx() *= -.8;
 			if ((pos.ry() < 0 && dir.ry() < 0)
 			 || (pos.ry() > 20 && dir.ry() > 0))
@@ -157,17 +157,6 @@ public:
 
 	VIRTUAL void second(void)
 	{
-		Event::SharedEvent event(new Event::EventBase("event"));
-		Event::SharedEvent event2(new Event::EventBase("event2"));
-
-		eventManager()->queue(event);
-		eventManager()->queue(event2);
-
-		/*
-		 * Dequeue all on odd seconds
-		 */
-		eventManager()->dequeue(event, m_stop_timer % 2);
-
 		if (++m_stop_timer == 10)
 			stop();
 	}

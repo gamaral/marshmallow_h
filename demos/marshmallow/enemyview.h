@@ -34,47 +34,38 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ISCENE_H
-#define GAME_ISCENE_H 1
-
-#include "EASTL/list.h"
+#include <EASTL/hash_map.h>
+#include <EASTL/list.h>
 using namespace eastl;
 
-#include "core/shared.h"
-#include "core/identifier.h"
-#include "core/type.h"
+#include <game/viewbase.h>
+#include <math/vector2.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+MARSHMALLOW_NAMESPACE_USE;
 
-namespace Game
+class EnemyView : public Game::ViewBase
 {
+	enum EnemyState { esIdle = 0, esTargeting, esShooting };
 
-	class IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
+	int m_difficulty;
+	hash_map<UID, EnemyState> m_states;
 
-	typedef list<SharedEntity> EntityList;
+	Math::Vector2 m_playerLocation;
 
-	/*! @brief Game Scene Interface */
-	struct GAME_EXPORT IScene
-	{
-		virtual ~IScene(void) {};
+public:
+	enum DifficultyLevel { dlNovice = 0, dlNormal, dlHard, dlBattleToads };
 
-		virtual const Core::Identifier & id(void) const = 0;
-		virtual const Core::Type & type(void) const = 0;
+	EnemyView(DifficultyLevel difficulty = dlNovice);
+	virtual ~EnemyView(void);
 
-		virtual void addEntity(SharedEntity &entity) = 0;
-		virtual void removeEntity(const SharedEntity &entity) = 0;
-		virtual SharedEntity entity(const Core::Identifier &identifier) const = 0;
-		virtual const EntityList & entities(void) const = 0;
+	void handleEnemy(const Game::SharedEntity &entity);
+	void handlePlayer(const Game::SharedEntity &entity);
 
-		virtual void activate(void) = 0;
-		virtual void deactivate(void) = 0;
-		virtual void update(void) = 0;
-	};
-	typedef Core::Shared<IScene> SharedScene;
+public: /* VIRTUAL */
 
-}
+	VIRTUAL void initialize(void);
+	VIRTUAL void finalize(void);
 
-MARSHMALLOW_NAMESPACE_END
+	VIRTUAL void renderEntity(const Game::SharedEntity &entity);
+};
 
-#endif

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "mainscene.h"
 
 /*!
  * @file
@@ -34,47 +34,23 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ISCENE_H
-#define GAME_ISCENE_H 1
+#include <game/entitybase.h>
 
-#include "EASTL/list.h"
-using namespace eastl;
-
-#include "core/shared.h"
-#include "core/identifier.h"
-#include "core/type.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+MainScene::MainScene(void)
+    : SceneBase("DemoScene"),
+      m_init(false)
 {
-
-	class IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
-
-	typedef list<SharedEntity> EntityList;
-
-	/*! @brief Game Scene Interface */
-	struct GAME_EXPORT IScene
-	{
-		virtual ~IScene(void) {};
-
-		virtual const Core::Identifier & id(void) const = 0;
-		virtual const Core::Type & type(void) const = 0;
-
-		virtual void addEntity(SharedEntity &entity) = 0;
-		virtual void removeEntity(const SharedEntity &entity) = 0;
-		virtual SharedEntity entity(const Core::Identifier &identifier) const = 0;
-		virtual const EntityList & entities(void) const = 0;
-
-		virtual void activate(void) = 0;
-		virtual void deactivate(void) = 0;
-		virtual void update(void) = 0;
-	};
-	typedef Core::Shared<IScene> SharedScene;
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+void
+MainScene::activate(void)
+{
+	if (!m_init) {
+		m_init = true;
+		Game::SharedEntity l_player(new Game::EntityBase("player"));
+		Game::SharedEntity l_enemy(new Game::EntityBase("enemy"));
+		addEntity(l_player);
+		addEntity(l_enemy);
+	}
+}
 
-#endif
