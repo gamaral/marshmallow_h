@@ -1,8 +1,6 @@
 Core
 ====
 
-Add weak pointers.
-
 Allocators
 ==========
 
@@ -11,5 +9,6 @@ Merge in pool allocator, finish double buffered allocator.
 Views
 =====
 
-Start work on OpenGL Linux Game View
+Start work on SDL UI Game View (test)
+Start work on OpenGL Linux UI Game View
 
