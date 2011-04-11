@@ -38,7 +38,8 @@
 #include <game/ientity.h>
 
 EnemyView::EnemyView(DifficultyLevel d)
-    : m_difficulty(static_cast<int>(d))
+    : ViewBase(epPhasesMax),
+      m_difficulty(static_cast<int>(d))
 {
 }
 
@@ -47,7 +48,7 @@ EnemyView::~EnemyView(void)
 }
 
 void
-EnemyView::handleEnemy(const Game::SharedEntity &e)
+EnemyView::handleEnemy(const Game::SharedEntity &e, int p)
 {
 	
 	EnemyState state = m_states[e->id().uid()];
@@ -57,26 +58,35 @@ EnemyView::handleEnemy(const Game::SharedEntity &e)
 	 * action.
 	 */
 
-	switch (state) {
-	case esIdle:
-		INFO("Enemy %s moves around a little.", e->id().str());
-		/* TODO: add move message here */
-		break;
-	case esTargeting:
-		INFO("Enemy %s targets player.", e->id().str());
-		break;
-	case esShooting:
-		INFO("Enemy %s shoots at player.", e->id().str());
-		break;
+	switch (p) {
+	case epUpdate:
+		INFO("Update local data for Enemy %p (phase 0)", e->id().str());
+	    break;
+	case epExecute:
+		switch (state) {
+		case esIdle:
+			INFO("Enemy %s moves around a little. (phase 1)", e->id().str());
+			/* TODO: add move message here */
+			break;
+		case esTargeting:
+			INFO("Enemy %s targets player.", e->id().str());
+			break;
+		case esShooting:
+			INFO("Enemy %s shoots at player.", e->id().str());
+			break;
+		}
+	    break;
 	}
 }
 
 void
-EnemyView::handlePlayer(const Game::SharedEntity &e)
+EnemyView::handlePlayer(const Game::SharedEntity &e, int p)
 {
 	UNUSED(e);
+	UNUSED(p);
+
 	/*
-	 * TODO: get player positions
+	 * TODO: get player positions, etc.
 	 */
 }
 
@@ -92,7 +102,7 @@ EnemyView::finalize(void)
 }
 
 void
-EnemyView::renderEntity(const Game::SharedEntity &e)
+EnemyView::renderEntity(const Game::SharedEntity &e, int p)
 {
 	/*
 	 * Should use type, but for this example I'm using ids
@@ -101,10 +111,9 @@ EnemyView::renderEntity(const Game::SharedEntity &e)
 	static const Core::Identifier enemy_id("enemy");
 	static const Core::Identifier user_id("player");
 
-	if (e->id() == enemy_id) {
-		handleEnemy(e);
-	} else if (e->id() == user_id) {
-		INFO1("Enemy AI says: I see a user (my enemy - target or something)!");
-	}
+	if (e->id() == enemy_id)
+		handleEnemy(e, p);
+	else if (e->id() == user_id)
+		handlePlayer(e, p);
 }
 

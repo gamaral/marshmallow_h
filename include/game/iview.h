@@ -59,7 +59,7 @@ namespace Game
 		virtual void finalize(void) = 0;
 
 		virtual void render(const SharedScene &scene) = 0;
-		virtual void renderEntity(const SharedEntity &entity) = 0;
+		virtual void renderEntity(const SharedEntity &entity, int phase) = 0;
 	};
 	typedef Core::Shared<IView> SharedView;
 

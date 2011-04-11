@@ -45,6 +45,7 @@ MARSHMALLOW_NAMESPACE_USE;
 
 class EnemyView : public Game::ViewBase
 {
+	enum EnemyPhases { epUpdate, epExecute, epPhasesMax };
 	enum EnemyState { esIdle = 0, esTargeting, esShooting };
 
 	int m_difficulty;
@@ -58,14 +59,14 @@ public:
 	EnemyView(DifficultyLevel difficulty = dlNovice);
 	virtual ~EnemyView(void);
 
-	void handleEnemy(const Game::SharedEntity &entity);
-	void handlePlayer(const Game::SharedEntity &entity);
+	void handleEnemy(const Game::SharedEntity &entity, int phase);
+	void handlePlayer(const Game::SharedEntity &entity, int phase);
 
 public: /* VIRTUAL */
 
 	VIRTUAL void initialize(void);
 	VIRTUAL void finalize(void);
 
-	VIRTUAL void renderEntity(const Game::SharedEntity &entity);
+	VIRTUAL void renderEntity(const Game::SharedEntity &entity, int phase);
 };
 

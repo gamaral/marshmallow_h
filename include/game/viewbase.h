@@ -45,10 +45,18 @@ namespace Game
 {
 
 	/*! @brief Game View Base Class */
-	struct GAME_EXPORT ViewBase : public IView
+	class GAME_EXPORT ViewBase : public IView
 	{
-		ViewBase(void);
+		int m_phases;
+
+	public:
+		ViewBase(int phases = 1);
 		virtual ~ViewBase(void);
+
+		int phases(void) const
+		    { return(m_phases); }
+		void setPhases(int value)
+		    { m_phases = value; }
 
 	public: /* VIRTUAL */
 
@@ -56,7 +64,7 @@ namespace Game
 		VIRTUAL void finalize(void);
 
 		VIRTUAL void render(const SharedScene &scene);
-		VIRTUAL void renderEntity(const SharedEntity &entity);
+		VIRTUAL void renderEntity(const SharedEntity &entity, int phase);
 	};
 
 }

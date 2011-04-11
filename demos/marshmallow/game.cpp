@@ -63,9 +63,9 @@ Demo::initialize(void)
 	m_scene_manager->push(l_scene);
 
 	/* tmp added here */
-	Game::SharedView l_view1(new Game::ViewBase);
+	Game::SharedView l_uiview(new Game::ViewBase);
 	Game::SharedView l_enemy(new EnemyView);
-	m_view_manager->addView(l_view1);
+	m_view_manager->addView(l_uiview);
 	m_view_manager->addView(l_enemy);
 }
 
