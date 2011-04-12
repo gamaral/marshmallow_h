@@ -54,6 +54,7 @@ namespace Game
 
 		ComponentList m_components;
 		Core::Identifier m_id;
+		bool m_killed;
 
 	public:
 		EntityBase(const Core::Identifier &identifier);
@@ -72,6 +73,11 @@ namespace Game
 		VIRTUAL SharedComponent component(const Core::Identifier &identifier) const;
 
 		VIRTUAL void update(void);
+
+		VIRTUAL void kill(void)
+		    { m_killed = true; }
+		VIRTUAL bool isZombie(void) const
+		    { return(m_killed); }
 
 	public: /* static */
 

@@ -56,11 +56,15 @@ void
 SceneBase::addEntity(SharedEntity &e)
 {
 	m_entities.push_back(e);
+
+	/* TODO: send entity creation message */
 }
 
 void
 SceneBase::removeEntity(const SharedEntity &e)
 {
+	/* TODO: send entity removal message */
+
 	m_entities.remove(e);
 }
 
@@ -99,9 +103,14 @@ void
 SceneBase::update(void)
 {
 	EntityList::const_iterator l_i;
-	EntityList::const_iterator l_c = m_entities.end();
 
-	for (l_i = m_entities.begin(); l_i != l_c; ++l_i)
-		(*l_i)->update();
+	for (l_i = m_entities.begin(); l_i != m_entities.end();) {
+		SharedEntity l_entity = (*l_i++);
+
+		if (l_entity->isZombie())
+			removeEntity(l_entity);
+		else
+			l_entity->update();
+	}
 }
 

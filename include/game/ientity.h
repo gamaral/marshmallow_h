@@ -62,6 +62,9 @@ namespace Game
 		virtual SharedComponent component(const Core::Identifier &identifier) const = 0;
 
 		virtual void update(void) = 0;
+
+		virtual void kill(void) = 0;
+		virtual bool isZombie(void) const = 0;
 	};
 	typedef Core::Shared<IEntity> SharedEntity;
 	typedef Core::Weak<IEntity> WeakEntity;

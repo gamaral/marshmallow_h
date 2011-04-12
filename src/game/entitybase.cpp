@@ -43,7 +43,9 @@ using namespace Game;
 const Core::Type EntityBase::Type("Game::EntityBase");
 
 EntityBase::EntityBase(const Core::Identifier &i)
-    : m_id(i)
+    : m_components(),
+      m_id(i),
+      m_killed(false)
 {
 }
 
@@ -81,6 +83,9 @@ EntityBase::component(const Core::Identifier &i) const
 void
 EntityBase::update(void)
 {
+	if (isZombie())
+		return;
+
 	ComponentList::const_iterator l_i;
 	ComponentList::const_iterator l_c = m_components.end();
 

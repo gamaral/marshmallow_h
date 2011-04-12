@@ -77,6 +77,8 @@ EnemyView::handleEnemy(const Game::SharedEntity &e, int p)
 		}
 	    break;
 	}
+
+	e->kill();
 }
 
 void
