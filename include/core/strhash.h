@@ -54,6 +54,7 @@ namespace Core
 		/*!
 		 * @param str String
 		 */
+		StrHash(void);
 		StrHash(const char *str);
 		StrHash(const StrHash &copy);
 		virtual ~StrHash(void);

@@ -34,43 +34,45 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_EVENTBASE_H
-#define EVENT_EVENTBASE_H 1
+#ifndef EVENT_SCENEEVENT_H
+#define EVENT_SCENEEVENT_H 1
 
-#include "ievent.h"
-
-#include "core/identifier.h"
+#include "eventbase.h"
+#include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-	/*! @brief Event Base Class */
-	class EVENT_EXPORT EventBase : public IEvent
+
+	/*! @brief Scene Event Class */
+	class EVENT_EXPORT SceneActivatedEvent : public EventBase
 	{
-		TIME m_timestamp;
-		UINT8 m_priority;
+		Core::Identifier m_id;
+		Core::Type m_type;
 
 	public:
 
-		EventBase(TIME timeout = 0, UINT8 priority = 0);
-		virtual ~EventBase(void);
+		SceneActivatedEvent(const Core::Identifier &id,
+		                      const Core::Type &type);
+		virtual ~SceneActivatedEvent(void);
+
+		const Core::Identifier & sceneId(void) const
+		    { return(m_id); }
+
+		const Core::Type & sceneType(void) const
+		    { return(m_type); }
 
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
-		VIRTUAL UINT8 priority(void) const
-		    { return(m_priority); }
-
-		VIRTUAL TIME timeStamp(void) const
-		    { return(m_timestamp); }
-
 	public: /* static */
 
 		static const Core::Type Type;
 	};
+	typedef Core::Shared<SceneActivatedEvent> SharedSceneActivatedEvent;
 
 }
 

@@ -43,8 +43,8 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-	struct IEventManager;
-	typedef Core::Shared<Event::IEventManager> SharedEventManager;
+	class EventManager;
+	typedef Core::Shared<Event::EventManager> SharedEventManager;
 }
 
 namespace Game

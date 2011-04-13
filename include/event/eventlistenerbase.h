@@ -39,6 +39,8 @@
 
 #include "ieventlistener.h"
 
+#include "core/identifier.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event

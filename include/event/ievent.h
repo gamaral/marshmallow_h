@@ -37,23 +37,27 @@
 #ifndef EVENT_IEVENT_H
 #define EVENT_IEVENT_H 1
 
-#include "core/shared.h"
-#include "core/identifier.h"
-#include "core/type.h"
+#include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+namespace Core
+{
+	class StrHash;
+	typedef StrHash Identifier;
+	typedef StrHash Type;
+
+	template <class T> class Shared;
+	template <class T> class Weak;
+}
+
 namespace Event
 {
+
 	/*! @brief Event Interface */
 	struct EVENT_EXPORT IEvent
 	{
 		virtual ~IEvent(void) {};
-
-		/*!
-		 * @brief Event Id
-		 */
-		virtual const Core::Identifier & id(void) const = 0;
 
 		/*!
 		 * @brief Event Type
@@ -71,6 +75,7 @@ namespace Event
 		virtual TIME timeStamp(void) const = 0;
 	};
 	typedef Core::Shared<IEvent> SharedEvent;
+	typedef Core::Weak<IEvent> WeakEvent;
 
 }
 

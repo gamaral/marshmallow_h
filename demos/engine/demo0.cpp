@@ -106,6 +106,8 @@ public:
 
 	VIRTUAL void activate(void)
 	{
+		SceneBase::activate();
+
 		if (!m_init) {
 			m_init = true;
 			Game::SharedEntity l_entity(new Game::EntityBase("player"));
@@ -142,7 +144,8 @@ public:
 		setEventManager(m_event_manager);
 		setSceneManager(m_scene_manager);
 
-		eventManager()->connect(m_debugListener, Event::EventBase::Type);
+		eventManager()->connect(m_debugListener, "Event::EventBase");
+		eventManager()->connect(m_debugListener, "Event::SceneActivatedEvent");
 
 		Game::SharedScene l_scene(new DemoScene);
 		m_scene_manager->push(l_scene);

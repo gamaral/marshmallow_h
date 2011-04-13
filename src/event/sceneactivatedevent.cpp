@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "event/sceneactivatedevent.h"
 
 /*!
  * @file
@@ -34,46 +34,21 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_EVENTBASE_H
-#define EVENT_EVENTBASE_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
+using namespace Event;
 
-#include "ievent.h"
+const Type SceneActivatedEvent::Type("Event::SceneActivatedEvent");
 
-#include "core/identifier.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Event
+SceneActivatedEvent::SceneActivatedEvent(const Core::Identifier &i,
+                                       const Core::Type &t)
+    : EventBase(0, 10),
+      m_id(i),
+      m_type(t)
 {
-	/*! @brief Event Base Class */
-	class EVENT_EXPORT EventBase : public IEvent
-	{
-		TIME m_timestamp;
-		UINT8 m_priority;
-
-	public:
-
-		EventBase(TIME timeout = 0, UINT8 priority = 0);
-		virtual ~EventBase(void);
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-		VIRTUAL UINT8 priority(void) const
-		    { return(m_priority); }
-
-		VIRTUAL TIME timeStamp(void) const
-		    { return(m_timestamp); }
-
-	public: /* static */
-
-		static const Core::Type Type;
-	};
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+SceneActivatedEvent::~SceneActivatedEvent(void)
+{
+}
 
-#endif

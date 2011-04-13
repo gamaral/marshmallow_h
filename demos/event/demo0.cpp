@@ -41,7 +41,7 @@ class CustomEvent : public Event::EventBase
 	public:
 		CustomEvent(void)
 #define PRIORITY_HIGH 1
-		    : Event::EventBase("custom", NOW(), PRIORITY_HIGH)
+		    : Event::EventBase(NOW(), PRIORITY_HIGH)
 		    {}
 
 	public: /* virtual */
@@ -59,10 +59,10 @@ int
 main(void)
 {
 	Event::EventManager event_manager("main");
-	Event::EventBase event1("event1");
+	Event::EventBase event1;
 	Event::SharedEvent event2(new CustomEvent);
-	Event::SharedEvent event3(new Event::EventBase("event3"));
-	Event::SharedEvent event4(new Event::EventBase("event4", NOW()+1000));
+	Event::SharedEvent event3(new Event::EventBase());
+	Event::SharedEvent event4(new Event::EventBase(NOW()+1000));
 	Event::SharedEventListener dl(new Event::DebugEventListener("log.txt"));
 
 	event_manager.connect(dl, Event::EventBase::Type);

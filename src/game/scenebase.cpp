@@ -34,6 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "event/eventmanager.h"
+#include "event/sceneactivatedevent.h"
+#include "game/engine.h"
 #include "game/ientity.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -92,6 +95,8 @@ SceneBase::entities(void) const
 void
 SceneBase::activate(void)
 {
+	Event::SharedEvent event(new Event::SceneActivatedEvent(id(), type()));
+	Engine::Instance()->eventManager()->queue(event);
 }
 
 void

@@ -37,11 +37,19 @@
 #ifndef EVENT_IEVENTLISTENER_H
 #define EVENT_IEVENTLISTENER_H 1
 
-#include "core/shared.h"
-#include "core/identifier.h"
-#include "core/type.h"
+#include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Core
+{
+	class StrHash;
+	typedef StrHash Identifier;
+	typedef StrHash Type;
+
+	template <class T> class Shared;
+	template <class T> class Weak;
+}
 
 namespace Event
 {
@@ -69,6 +77,7 @@ namespace Event
 		virtual bool handleEvent(const IEvent &event) = 0;
 	};
 	typedef Core::Shared<IEventListener> SharedEventListener;
+	typedef Core::Weak<IEventListener> WeakEventListener;
 
 }
 

@@ -37,11 +37,14 @@
 #ifndef EVENT_EVENTMANAGER_H
 #define EVENT_EVENTMANAGER_H 1
 
-#include "event/ieventmanager.h"
-
 #include "EASTL/hash_map.h"
 #include "EASTL/list.h"
 using namespace eastl;
+
+#include "core/global.h"
+#include "core/shared.h"
+#include "core/identifier.h"
+#include "ieventlistener.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -50,10 +53,11 @@ namespace Event
 	struct IEventListener;
 	typedef Core::Shared<IEventListener> SharedEventListener;
 
+	struct IEvent;
 	typedef Core::Shared<IEvent> SharedEvent;
 
 	/*! @brief Event Manager */
-	class EVENT_EXPORT EventManager : public IEventManager
+	class EVENT_EXPORT EventManager
 	{
 		typedef list<SharedEventListener> EventListenerList;
 		typedef hash_map<UID, EventListenerList> EventListenerMap;
@@ -62,8 +66,8 @@ namespace Event
 
 		EventListenerMap m_elmap;
 		EventList m_queue[2];
-		UINT8 m_active_queue;
 		Core::Identifier m_id;
+		UINT8 m_active_queue;
 
 	public:
 
@@ -75,19 +79,21 @@ namespace Event
 
 	public: /* virtual */
 
-		VIRTUAL const Core::Identifier & id(void) const
+		virtual const Core::Identifier & id(void) const
 		    { return(m_id); }
 
-		VIRTUAL bool connect(const SharedEventListener &handler, const Core::Type &type);
-		VIRTUAL bool disconnect(const SharedEventListener &handler, const Core::Type &type);
+		virtual bool connect(const SharedEventListener &handler, const Core::Type &type);
+		virtual bool disconnect(const SharedEventListener &handler, const Core::Type &type);
 
-		VIRTUAL bool dequeue(const SharedEvent &event, bool all = false);
-		VIRTUAL bool queue(const SharedEvent &event);
+		virtual bool dequeue(const SharedEvent &event, bool all = false);
+		virtual bool queue(const SharedEvent &event);
 
-		VIRTUAL bool dispatch(const IEvent &event) const;
+		virtual bool dispatch(const IEvent &event) const;
 
-		VIRTUAL bool execute(TIME timeout);
+		virtual bool execute(TIME timeout);
 	};
+	typedef Core::Shared<EventManager> SharedEventManager;
+	typedef Core::Weak<EventManager> WeakEventManager;
 }
 
 MARSHMALLOW_NAMESPACE_END

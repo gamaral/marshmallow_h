@@ -47,8 +47,8 @@ static bool SortSharedEvent(const SharedEvent& lhs, const SharedEvent& rhs);
 
 EventManager::EventManager(const Core::Identifier &i)
     : m_elmap(),
-      m_active_queue(0),
-      m_id(i)
+      m_id(i),
+      m_active_queue(0)
 {
 }
 
@@ -175,7 +175,7 @@ EventManager::execute(TIME timeout)
 	 */
 	SharedEvent event;
 	while (!l_queue.empty()
-	    && (timeout == INFINITE || timeout < (NOW() - l_start_time))
+	    && (timeout == INFINITE || timeout > (NOW() - l_start_time))
 	    && (event = l_queue.front())->timeStamp() <= NOW()) {
 		dispatch(*event); l_queue.pop_front();
 	}

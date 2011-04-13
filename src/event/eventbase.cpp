@@ -42,9 +42,8 @@ using namespace Event;
 
 const Type EventBase::Type("Event::EventBase");
 
-EventBase::EventBase(const Core::Identifier &i, TIME t, UINT8 p)
-    : m_id(i),
-      m_timestamp(t == 0 ? NOW() : t),
+EventBase::EventBase(TIME t, UINT8 p)
+    : m_timestamp(t == 0 ? NOW() : t),
       m_priority(p)
 {
 }

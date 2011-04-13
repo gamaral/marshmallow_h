@@ -35,7 +35,7 @@
  */
 
 #include "core/platform.h"
-#include "event/ieventmanager.h"
+#include "event/eventmanager.h"
 #include "game/iscene.h"
 #include "game/scenemanager.h"
 #include "game/viewmanager.h"

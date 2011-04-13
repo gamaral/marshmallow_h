@@ -40,6 +40,12 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
+StrHash::StrHash(void)
+    : Hash(),
+      m_str(0)
+{
+}
+
 StrHash::StrHash(const char *n)
     : Hash(),
       m_str(0)

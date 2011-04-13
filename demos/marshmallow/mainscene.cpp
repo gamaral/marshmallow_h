@@ -45,6 +45,8 @@ MainScene::MainScene(void)
 void
 MainScene::activate(void)
 {
+	SceneBase::activate();
+
 	if (!m_init) {
 		m_init = true;
 		Game::SharedEntity l_player(new Game::EntityBase("player"));
