@@ -48,6 +48,9 @@ namespace Core
 
 /********************************************************************* Shared */
 
+	template <class T> class Shared;
+	template <class T> class Weak;
+
 	/*! @brief Shared Data Struct */
 	struct CORE_EXPORT SharedData {
 	    void * ptr;
@@ -55,20 +58,19 @@ namespace Core
 	    INT16 wrefs;
 	};
 
-	template <class T> class Weak;
-
 	/*! @brief Shared Class */
 	template <class T>
 	class Shared
 	{
-		template <class U> friend class Weak;
+		template <class X> friend class Weak;
 		SharedData *m_data;
+
 	public:
 		Shared(void)
 		    : m_data(0) {}
+		Shared(T *ptr);
 		Shared(SharedData *data)
 		    : m_data(data) { if (m_data) ++m_data->refs;}
-		Shared(T *ptr);
 		Shared(const Shared &copy);
 		~Shared(void)
 		    { clear(); }
@@ -78,9 +80,9 @@ namespace Core
 		T * raw(void) const
 		    { return(reinterpret_cast<T *>(m_data->ptr)); }
 
-		template <class X> Shared<X> cast(void) const;
-		template <class X> Shared<X> staticCast(void) const;
-		template <class X> Shared<X> dynamicCast(void) const;
+		template <class U> Shared<U> cast(void) const;
+		template <class U> Shared<U> staticCast(void) const;
+		template <class U> Shared<U> dynamicCast(void) const;
 
 	public: /* operator */
 
@@ -120,27 +122,27 @@ namespace Core
 	}
 
 	template <class T>
-	template <class X> Shared<X>
+	template <class U> Shared<U>
 	Shared<T>::cast(void) const
 	{
-		return(Shared<X>(m_data));
+		return(Shared<U>(m_data));
 	}
 
 	template <class T>
-	template <class X> Shared<X>
+	template <class U> Shared<U>
 	Shared<T>::staticCast(void) const
 	{
-		UNUSED(static_cast<X *>(raw()));
-		return(Shared<X>(m_data));
+		UNUSED(static_cast<U *>(raw()));
+		return(Shared<U>(m_data));
 	}
 
 	template <class T>
-	template <class X> Shared<X>
+	template <class U> Shared<U>
 	Shared<T>::dynamicCast(void) const
 	{
-		if (dynamic_cast<X *>(raw()))
-			return(Shared<X>(m_data));
-		return(Shared<X>());
+		if (dynamic_cast<U *>(raw()))
+			return(Shared<U>(m_data));
+		return(Shared<U>());
 	}
 
 	template <class T>
@@ -182,22 +184,27 @@ namespace Core
 	template <class T>
 	class Weak
 	{
+		template <class X> friend class Shared;
 		SharedData *m_data;
+
 	public:
 		Weak(void)
 		    : m_data(0) {};
 		Weak(SharedData *data)
 		    : m_data(data) { if (m_data) ++m_data->wrefs;}
-		Weak(Shared<T> &shared);
 		Weak(const Weak &copy);
 		~Weak(void)
 		    { clear(); }
 
 		void clear(void);
 
-		template <class X> Weak<X> cast(void) const;
-		template <class X> Weak<X> staticCast(void) const;
-		template <class X> Weak<X> dynamicCast(void) const;
+		T * raw(void) const
+		    { assert(m_data && m_data->ptr);
+		      return(reinterpret_cast<T *>(m_data->ptr)); }
+
+		template <class U> Weak<U> cast(void) const;
+		template <class U> Weak<U> staticCast(void) const;
+		template <class U> Weak<U> dynamicCast(void) const;
 
 	public: /* operator */
 
@@ -208,10 +215,6 @@ namespace Core
 		    { assert(m_data && m_data->ptr);
 		      return(Shared<T>(m_data)); }
 
-		T * raw(void) const
-		    { assert(m_data && m_data->ptr);
-		      return(reinterpret_cast<T *>(m_data->ptr)); }
-
 		T & operator *(void) const
 		    { assert(m_data && m_data->ptr);
 		      return(*reinterpret_cast<T *>(m_data->ptr)); }
@@ -220,19 +223,11 @@ namespace Core
 		    { assert(m_data && m_data->ptr);
 		      return(reinterpret_cast<T *>(m_data->ptr)); }
 
-		Weak & operator =(const Shared<T> &rhs);
 		Weak & operator =(const Weak &rhs);
 
 		bool operator ==(const Weak &rhs) const
 		    { return(this == &rhs || m_data == rhs.m_data); }
 	};
-
-	template <class T>
-	Weak<T>::Weak(Shared<T> &shared)
-	    : m_data(shared.m_data)
-	{
-		if (shared) ++m_data->wrefs;
-	}
 
 	template <class T>
 	Weak<T>::Weak(const Weak &copy)
@@ -242,41 +237,27 @@ namespace Core
 	}
 
 	template <class T>
-	template <class X> Weak<X>
+	template <class U> Weak<U>
 	Weak<T>::cast(void) const
 	{
-		return(Weak<X>(m_data));
+		return(Weak<U>(m_data));
 	}
 
 	template <class T>
-	template <class X> Weak<X>
+	template <class U> Weak<U>
 	Weak<T>::staticCast(void) const
 	{
-		UNUSED(static_cast<X *>(raw()));
-		return(Weak<X>(m_data));
+		UNUSED(static_cast<U *>(raw()));
+		return(Weak<U>(m_data));
 	}
 
 	template <class T>
-	template <class X> Weak<X>
+	template <class U> Weak<U>
 	Weak<T>::dynamicCast(void) const
 	{
-		if (dynamic_cast<X *>(raw()))
-			return(Weak<X>(m_data));
-		return(Weak<X>());
-	}
-
-	template <class T>
-	Weak<T> &
-	Weak<T>::operator =(const Shared<T> &rhs)
-	{
-		clear();
-
-		if (rhs) {
-			m_data = rhs.m_data;
-			++m_data->wrefs;
-		}
-
-		return(*this);
+		if (dynamic_cast<U *>(raw()))
+			return(Weak<U>(m_data));
+		return(Weak<U>());
 	}
 
 	template <class T>
