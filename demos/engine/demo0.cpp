@@ -27,7 +27,6 @@
  */
 
 #include "core/platform.h"
-#include "math/vector2.h"
 #include "event/debugeventlistener.h"
 #include "event/eventbase.h"
 #include "event/eventmanager.h"
@@ -36,6 +35,7 @@
 #include "game/entitybase.h"
 #include "game/scenebase.h"
 #include "game/scenemanager.h"
+#include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -60,12 +60,14 @@ public:
 		return(m_dir);
 	}
 
-	VIRTUAL void update(void)
+	VIRTUAL void update(TIME t)
 	{
+		UNUSED(t);
 		m_pos.rx() += m_dir.rx() * Game::Engine::Instance()->deltaTime();
 		m_pos.ry() += m_dir.ry() * Game::Engine::Instance()->deltaTime();
 		INFO("object moved to %f, %f", m_pos.rx(), m_pos.ry());
 	}
+
 };
 
 class DemoBounceComponent : public Game::ComponentBase
@@ -77,8 +79,9 @@ public:
 	{
 	}
 
-	VIRTUAL void update(void)
+	VIRTUAL void update(TIME t)
 	{
+		UNUSED(t);
 		if (!m_mover && entity())
 			m_mover = entity()->component("mover").cast<DemoMoverComponent>();
 
@@ -144,8 +147,8 @@ public:
 		setEventManager(m_event_manager);
 		setSceneManager(m_scene_manager);
 
-		eventManager()->connect(m_debugListener, "Event::EventBase");
-		eventManager()->connect(m_debugListener, "Event::SceneActivatedEvent");
+		eventManager()->connect(m_debugListener, "Event::RenderEvent");
+		eventManager()->connect(m_debugListener, "Event::UpdateEvent");
 
 		Game::SharedScene l_scene(new DemoScene);
 		m_scene_manager->push(l_scene);

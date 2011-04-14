@@ -37,24 +37,32 @@
 #ifndef GAME_ICOMPONENT_H
 #define GAME_ICOMPONENT_H 1
 
-#include "core/shared.h"
-#include "core/identifier.h"
-#include "core/type.h"
+#include "core/irenderable.h"
+#include "core/iupdateable.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Core
+{
+	class StrHash;
+	typedef StrHash Identifier;
+	typedef StrHash Type;
+
+	template <class T> class Shared;
+	template <class T> class Weak;
+}
 
 namespace Game
 {
 
 	/*! @brief Game Component Interface */
-	struct GAME_EXPORT IComponent
+	struct GAME_EXPORT IComponent : public Core::IRenderable,
+	                                public Core::IUpdateable
 	{
 		virtual ~IComponent(void) {};
 
 		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;
-
-		virtual void update(void) = 0;
 	};
 	typedef Core::Shared<IComponent> SharedComponent;
 	typedef Core::Weak<IComponent> WeakComponent;

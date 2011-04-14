@@ -34,11 +34,16 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/irenderable.h"
+#include "core/iupdateable.h"
 #include "core/platform.h"
 #include "event/eventmanager.h"
+#include "event/renderevent.h"
+#include "event/rendereventlistener.h"
+#include "event/updateevent.h"
+#include "event/updateeventlistener.h"
 #include "game/iscene.h"
 #include "game/scenemanager.h"
-#include "game/viewmanager.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -50,7 +55,6 @@ Engine *Engine::s_instance = 0;
 Engine::Engine(float f, float u)
     : m_event_manager(),
       m_scene_manager(),
-      m_view_manager(),
       m_fps(f),
       m_ups(u),
       m_delta_time(0),
@@ -79,7 +83,6 @@ Engine::initialize(void)
 void
 Engine::finalize(void)
 {
-	m_view_manager.clear();
 	m_scene_manager.clear();
 	m_event_manager.clear();
 
@@ -207,12 +210,6 @@ Engine::sceneManager(void) const
 	return(m_scene_manager);
 }
 
-SharedViewManager
-Engine::viewManager(void) const
-{
-	return(m_view_manager);
-}
-
 void
 Engine::setEventManager(SharedEventManager &m)
 {
@@ -222,22 +219,16 @@ Engine::setEventManager(SharedEventManager &m)
 void
 Engine::setSceneManager(SharedSceneManager &m)
 {
+	
 	m_scene_manager = m;
-}
-
-void
-Engine::setViewManager(SharedViewManager &m)
-{
-	m_view_manager = m;
 }
 
 void
 Engine::render(void)
 {
-	SharedScene l_scene = m_scene_manager->active();
-	if (m_view_manager) {
-		m_view_manager->render(l_scene);
-	} else WARNING1("No view manager!");
+	Event::RenderEvent event;
+	eventManager()->dispatch(event);
+	INFO1("Render event dispatched!");
 }
 
 void
@@ -246,9 +237,8 @@ Engine::tick(TIME &timeout)
 	TIMEOUT_INIT;
 	Platform::PreTick(TIMEOUT_DEC(timeout));
 
-	if (m_event_manager) {
-		m_event_manager->execute(TIMEOUT_DEC(timeout));
-	} else WARNING1("No event manager!");
+	if (m_event_manager) m_event_manager->execute(TIMEOUT_DEC(timeout));
+	else WARNING1("No event manager!");
 }
 
 void
@@ -257,11 +247,9 @@ Engine::update(TIME &timeout)
 	TIMEOUT_INIT;
 	Platform::PreUpdate(TIMEOUT_DEC(timeout));
 
-	if (m_scene_manager) {
-		SharedScene l_scene = m_scene_manager->active();
-		if (l_scene) l_scene->update();
-		else WARNING1("No active scene!");
-	} else WARNING1("No scene manager!");
+	Event::UpdateEvent event(TIMEOUT_DEC(timeout));
+	eventManager()->dispatch(event);
+	INFO1("Update event dispatched!");
 }
 
 void

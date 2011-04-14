@@ -40,9 +40,17 @@
 #include "EASTL/list.h"
 using namespace eastl;
 
+#include "core/irenderable.h"
+#include "core/iupdateable.h"
 #include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Event
+{
+	struct IEventListener;
+	typedef Core::Shared<IEventListener> SharedEventListener;
+}
 
 namespace Game
 {
@@ -50,12 +58,15 @@ namespace Game
 	typedef Core::Shared<IScene> SharedScene;
 
 	/*! @brief Game Scene Manager */
-	class GAME_EXPORT SceneManager
+	class GAME_EXPORT SceneManager : public Core::IRenderable,
+                                         public Core::IUpdateable
 	{
 		typedef list<SharedScene> SceneStack;
 
 		SceneStack  m_stack;
 		SharedScene m_active;
+		Event::SharedEventListener m_renderListener;
+		Event::SharedEventListener m_updateListener;
 
 	public:
 
@@ -66,6 +77,11 @@ namespace Game
 		void pop(void);
 
 		SharedScene active(void) const;
+
+	public: /* virtual */
+
+		VIRTUAL void render(void);
+		VIRTUAL void update(TIME timeout = INFINITE);
 	};
 	typedef Core::Shared<SceneManager> SharedSceneManager;
 

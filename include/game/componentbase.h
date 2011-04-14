@@ -39,6 +39,9 @@
 
 #include "game/icomponent.h"
 
+#include "core/identifier.h"
+#include "core/shared.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
@@ -65,7 +68,8 @@ namespace Game
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
-		VIRTUAL void update(void);
+		VIRTUAL void render(void);
+		VIRTUAL void update(TIME timeout);
 
 	public: /* static */
 

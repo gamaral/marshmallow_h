@@ -36,17 +36,13 @@
 
 MARSHMALLOW_NAMESPACE_USE;
 
-#include <game/viewbase.h>
-
 #include "mainscene.h"
-#include "enemyview.h"
 
 Demo::Demo(void)
     : Engine(),
       m_stop_timer(0),
       m_event_manager(new Event::EventManager("main")),
-      m_scene_manager(new Game::SceneManager(Game::SharedScene())),
-      m_view_manager(new Game::ViewManager())
+      m_scene_manager(new Game::SceneManager(Game::SharedScene()))
 {
 }
 
@@ -57,16 +53,9 @@ Demo::initialize(void)
 
 	setEventManager(m_event_manager);
 	setSceneManager(m_scene_manager);
-	setViewManager(m_view_manager);
 
 	Game::SharedScene l_scene(new MainScene);
 	m_scene_manager->push(l_scene);
-
-	/* tmp added here */
-	Game::SharedView l_uiview(new Game::ViewBase);
-	Game::SharedView l_enemy(new EnemyView);
-	m_view_manager->addView(l_uiview);
-	m_view_manager->addView(l_enemy);
 }
 
 void

@@ -38,7 +38,6 @@
 
 #include <event/eventmanager.h>
 #include <game/scenemanager.h>
-#include <game/viewmanager.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 
@@ -47,7 +46,6 @@ class Demo : public Game::Engine
 	int m_stop_timer;
 	Event::SharedEventManager  m_event_manager;
 	Game::SharedSceneManager   m_scene_manager;
-	Game::SharedViewManager    m_view_manager;
 
 public:
 	Demo(void);

@@ -34,38 +34,27 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_VIEWBASE_H
-#define GAME_VIEWBASE_H 1
+#ifndef CORE_IRENDERABLE_H
+#define CORE_IRENDERABLE_H 1
 
-#include "game/iview.h"
+#include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Game
+namespace Core
 {
+	template <class T> class Shared;
+	template <class T> class Weak;
 
-	/*! @brief Game View Base Class */
-	class GAME_EXPORT ViewBase : public IView
+	/*! @brief Renderable Interface */
+	struct CORE_EXPORT IRenderable
 	{
-		int m_phases;
+		virtual ~IRenderable(void) {};
 
-	public:
-		ViewBase(int phases = 1);
-		virtual ~ViewBase(void);
-
-		int phases(void) const
-		    { return(m_phases); }
-		void setPhases(int value)
-		    { m_phases = value; }
-
-	public: /* VIRTUAL */
-
-		VIRTUAL void initialize(void);
-		VIRTUAL void finalize(void);
-
-		VIRTUAL void render(const SharedScene &scene);
-		VIRTUAL void renderEntity(const SharedEntity &entity, int phase);
+		virtual void render(void) = 0;
 	};
+	typedef Shared<IRenderable> SharedRenderable;
+	typedef Weak<IRenderable> WeakRenderable;
 
 }
 

@@ -35,6 +35,9 @@
  */
 
 #include "core/platform.h"
+#include "event/eventmanager.h"
+#include "event/rendereventlistener.h"
+#include "event/updateeventlistener.h"
 #include "game/iscene.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -43,13 +46,21 @@ using namespace Game;
 
 SceneManager::SceneManager(SharedScene init)
     : m_stack(),
-      m_active()
+      m_active(),
+      m_renderListener(new Event::RenderEventListener("Game.SceneManager.Render", *this)),
+      m_updateListener(new Event::UpdateEventListener("Game.SceneManager.Update", *this))
 {
 	push(init);
+
+	Event::EventManager::Instance()->connect(m_renderListener, "Event::RenderEvent");
+	Event::EventManager::Instance()->connect(m_updateListener, "Event::UpdateEvent");
 }
 
 SceneManager::~SceneManager(void)
 {
+	Event::EventManager::Instance()->disconnect(m_updateListener, "Event::UpdateEvent");
+	Event::EventManager::Instance()->disconnect(m_renderListener, "Event::RenderEvent");
+
 	m_stack.clear();
 }
 
@@ -83,5 +94,17 @@ SharedScene
 SceneManager::active(void) const
 {
 	return(m_active);
+}
+
+void
+SceneManager::render(void)
+{
+	if (m_active) m_active->render();
+}
+
+void
+SceneManager::update(TIME t)
+{
+	if (m_active) m_active->update(t);
 }
 

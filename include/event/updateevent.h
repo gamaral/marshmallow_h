@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/viewbase.h"
+#pragma once
 
 /*!
  * @file
@@ -34,51 +34,39 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
-#include "game/engine.h"
-#include "game/scenemanager.h"
-#include "game/scenebase.h"
-#include "game/entitybase.h"
+#ifndef EVENT_UPDATEEVENT_H
+#define EVENT_UPDATEEVENT_H 1
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Game;
+#include "eventbase.h"
 
-ViewBase::ViewBase(int p)
-    : m_phases(p)
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Event
 {
+	/*! @brief Update Event Class */
+	class EVENT_EXPORT UpdateEvent : public EventBase
+	{
+		TIME m_timeout;
+	public:
+
+		UpdateEvent(TIME timeout);
+		virtual ~UpdateEvent(void);
+
+		TIME timeout(void) const
+		    { return(m_timeout); }
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
+
+	public: /* static */
+
+		static const Core::Type Type;
+	};
+
 }
 
-ViewBase::~ViewBase(void)
-{
-}
+MARSHMALLOW_NAMESPACE_END
 
-void
-ViewBase::initialize(void)
-{
-}
-
-void
-ViewBase::finalize(void)
-{
-}
-
-void
-ViewBase::render(const SharedScene &s)
-{
-	const EntityList &l_entityList = s->entities();
-
-	int l_pi;
-	EntityList::const_iterator l_i;
-	EntityList::const_iterator l_c = l_entityList.end();
-	
-	for (l_pi = 0; l_pi < m_phases; ++l_pi)
-		for (l_i = l_entityList.begin(); l_i != l_c; ++l_i)
-			renderEntity(*l_i, l_pi);
-}
-
-void
-ViewBase::renderEntity(const SharedEntity &e, int p)
-{
-	INFO("Entity %s needs rendering (phase %d)", e->id().str(), p);
-}
-
+#endif

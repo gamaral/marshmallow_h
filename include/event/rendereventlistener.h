@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/viewmanager.h"
+#pragma once
 
 /*!
  * @file
@@ -34,53 +34,47 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "game/iview.h"
+#ifndef EVENT_RENDEREVENTLISTENER_H
+#define EVENT_RENDEREVENTLISTENER_H 1
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Game;
+#include "event/eventlistenerbase.h"
 
-ViewManager::ViewManager(void)
+#include "core/shared.h"
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Core
 {
+	struct IRenderable;
 }
 
-ViewManager::~ViewManager(void)
+namespace Event
 {
-	clearViews();
+
+	/*! @brief Render Event Listener Class */
+	class EVENT_EXPORT RenderEventListener : public EventListenerBase
+	{
+		Core::IRenderable &m_renderable;
+	public:
+
+		RenderEventListener(const Core::Identifier &identifier,
+		                         Core::IRenderable &owner);
+		virtual ~RenderEventListener(void);
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
+
+		VIRTUAL bool handleEvent(const IEvent &event);
+
+	public: /* type */
+
+		static const Core::Type Type;
+	};
+
 }
 
-void
-ViewManager::addView(SharedView &v)
-{
-	v->initialize();
-	m_list.push_back(v);
-}
+MARSHMALLOW_NAMESPACE_END
 
-void
-ViewManager::removeView(const SharedView &v)
-{
-	m_list.remove(v);
-	v->finalize();
-}
-
-void
-ViewManager::clearViews(void)
-{
-	ViewList::const_iterator l_i;
-	ViewList::const_iterator l_c = m_list.end();
-
-	for (l_i = m_list.begin(); l_i != l_c; ++l_i)
-		(*l_i)->finalize();
-
-	m_list.clear();
-}
-
-void
-ViewManager::render(SharedScene &scene)
-{
-	ViewList::const_iterator l_i;
-	ViewList::const_iterator l_c = m_list.end();
-
-	for (l_i = m_list.begin(); l_i != l_c; ++l_i)
-		(*l_i)->render(scene);
-}
-
+#endif

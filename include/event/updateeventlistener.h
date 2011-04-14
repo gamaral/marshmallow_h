@@ -34,51 +34,45 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_EVENTBASE_H
-#define EVENT_EVENTBASE_H 1
+#ifndef EVENT_UPDATEEVENTLISTENER_H
+#define EVENT_UPDATEEVENTLISTENER_H 1
 
-#include "ievent.h"
+#include "event/eventlistenerbase.h"
 
-#include "core/identifier.h"
+#include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+namespace Core
+{
+	struct IUpdateable;
+}
+
 namespace Event
 {
-	enum Priority { LowestPriority = 0,
-	                 LowerPriority = 1,
-	                   LowPriority = 2,
-	                NormalPriority = 5,
-	                  HighPriority = 8,
-	                HigherPriority = 9,
-	               HighestPriority = 10 };
 
-	/*! @brief Event Base Class */
-	class EVENT_EXPORT EventBase : public IEvent
+	/*! @brief Update Event Listener Class */
+	class EVENT_EXPORT UpdateEventListener : public EventListenerBase
 	{
-		TIME m_timestamp;
-		UINT8 m_priority;
-
+		Core::IUpdateable &m_updateable;
 	public:
 
-		EventBase(TIME timeout = 0, UINT8 priority = 0);
-		virtual ~EventBase(void);
+		UpdateEventListener(const Core::Identifier &identifier,
+		                         Core::IUpdateable &owner);
+		virtual ~UpdateEventListener(void);
 
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
-		VIRTUAL UINT8 priority(void) const
-		    { return(m_priority); }
+		VIRTUAL bool handleEvent(const IEvent &event);
 
-		VIRTUAL TIME timeStamp(void) const
-		    { return(m_timestamp); }
-
-	public: /* static */
+	public: /* type */
 
 		static const Core::Type Type;
 	};
+	typedef Core::Shared<UpdateEventListener> SharedUpdateEventListener;
 
 }
 

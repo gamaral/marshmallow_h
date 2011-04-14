@@ -13,7 +13,7 @@
  *
  * THIS SOFTWARE IS PROVIDED BY MARSHMALLOW ENGINE ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MARSHMALLOW ENGINE OR
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO GAME SHALL MARSHMALLOW ENGINE OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "event/rendereventlistener.h"
 
 /*!
  * @file
@@ -34,39 +34,33 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <EASTL/hash_map.h>
-#include <EASTL/list.h>
-using namespace eastl;
-
-#include <game/viewbase.h>
-#include <math/vector2.h>
+#include "core/irenderable.h"
+#include "event/ievent.h"
 
 MARSHMALLOW_NAMESPACE_USE;
+using namespace Event;
 
-class EnemyView : public Game::ViewBase
+const Core::Type RenderEventListener::Type("Event::RenderEventListener");
+
+RenderEventListener::RenderEventListener(const Core::Identifier &i,
+                                              Core::IRenderable &o)
+    : EventListenerBase(i),
+      m_renderable(o)
 {
-	enum EnemyPhases { epUpdate, epExecute, epPhasesMax };
-	enum EnemyState { esIdle = 0, esTargeting, esShooting };
+}
 
-	int m_difficulty;
-	hash_map<UID, EnemyState> m_states;
+RenderEventListener::~RenderEventListener(void)
+{
+}
 
-	Math::Vector2 m_playerLocation;
+bool
+RenderEventListener::handleEvent(const IEvent &event)
+{
+	static const Core::Type sc_RenderType("Event::RenderEvent");
 
-public:
-	enum DifficultyLevel { dlNovice = 0, dlNormal, dlHard, dlBattleToads };
+	if (event.type() == sc_RenderType)
+		m_renderable.render();
 
-	EnemyView(DifficultyLevel difficulty = dlNovice);
-	virtual ~EnemyView(void);
-
-	void handleEnemy(const Game::SharedEntity &entity, int phase);
-	void handlePlayer(const Game::SharedEntity &entity, int phase);
-
-public: /* VIRTUAL */
-
-	VIRTUAL void initialize(void);
-	VIRTUAL void finalize(void);
-
-	VIRTUAL void renderEntity(const Game::SharedEntity &entity, int phase);
-};
+	return(false);
+}
 

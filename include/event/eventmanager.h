@@ -42,8 +42,9 @@
 using namespace eastl;
 
 #include "core/global.h"
-#include "core/shared.h"
 #include "core/identifier.h"
+#include "core/shared.h"
+
 #include "ieventlistener.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -51,7 +52,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event
 {
 	struct IEventListener;
-	typedef Core::Shared<IEventListener> SharedEventListener;
+	typedef Core::Weak<IEventListener> WeakEventListener;
 
 	struct IEvent;
 	typedef Core::Shared<IEvent> SharedEvent;
@@ -59,11 +60,13 @@ namespace Event
 	/*! @brief Event Manager */
 	class EVENT_EXPORT EventManager
 	{
-		typedef list<SharedEventListener> EventListenerList;
-		typedef hash_map<UID, EventListenerList> EventListenerMap;
+		typedef list<WeakEventListener> EventListenerList;
+		typedef Core::Shared<EventListenerList> SharedEventListenerList;
+		typedef hash_map<UID, SharedEventListenerList> EventListenerMap;
 
 		typedef list<SharedEvent> EventList;
 
+		static EventManager *s_instance;
 		EventListenerMap m_elmap;
 		EventList m_queue[2];
 		Core::Identifier m_id;
@@ -74,23 +77,26 @@ namespace Event
 		EventManager(const Core::Identifier &identifier);
 		virtual ~EventManager(void);
 
-		bool dispatch(const SharedEvent &event) const
-		    { return(dispatch(*event)); }
-
 	public: /* virtual */
 
 		virtual const Core::Identifier & id(void) const
 		    { return(m_id); }
 
-		virtual bool connect(const SharedEventListener &handler, const Core::Type &type);
-		virtual bool disconnect(const SharedEventListener &handler, const Core::Type &type);
+		virtual bool connect(const WeakEventListener &handler, const Core::Type &type);
+		virtual bool disconnect(const WeakEventListener &handler, const Core::Type &type);
 
 		virtual bool dequeue(const SharedEvent &event, bool all = false);
 		virtual bool queue(const SharedEvent &event);
 
-		virtual bool dispatch(const IEvent &event) const;
+		virtual bool dispatch(const IEvent &event);
 
 		virtual bool execute(TIME timeout);
+
+	public: /* static */
+
+		static EventManager *Instance(void)
+		    { return(s_instance); }
+
 	};
 	typedef Core::Shared<EventManager> SharedEventManager;
 	typedef Core::Weak<EventManager> WeakEventManager;

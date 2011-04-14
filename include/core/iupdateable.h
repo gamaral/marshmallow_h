@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "enemyview.h"
+#pragma once
 
 /*!
  * @file
@@ -34,88 +34,30 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <core/platform.h>
-#include <game/ientity.h>
+#ifndef CORE_IUPDATEABLE_H
+#define CORE_IUPDATEABLE_H 1
 
-EnemyView::EnemyView(DifficultyLevel d)
-    : ViewBase(epPhasesMax),
-      m_difficulty(static_cast<int>(d))
+#include "core/global.h"
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Core
 {
+	template <class T> class Shared;
+	template <class T> class Weak;
+
+	/*! @brief Updateable Interface */
+	struct CORE_EXPORT IUpdateable
+	{
+		virtual ~IUpdateable(void) {};
+
+		virtual void update(TIME timeout) = 0;
+	};
+	typedef Shared<IUpdateable> SharedUpdateable;
+	typedef Weak<IUpdateable> WeakUpdateable;
+
 }
 
-EnemyView::~EnemyView(void)
-{
-}
+MARSHMALLOW_NAMESPACE_END
 
-void
-EnemyView::handleEnemy(const Game::SharedEntity &e, int p)
-{
-	
-	EnemyState state = m_states[e->id().uid()];
-
-	/*
-	 * TODO: Use player position to update enemy states and take appropriate
-	 * action.
-	 */
-
-	switch (p) {
-	case epUpdate:
-		INFO("Update local data for Enemy %p (phase 0)", e->id().str());
-	    break;
-	case epExecute:
-		switch (state) {
-		case esIdle:
-			INFO("Enemy %s moves around a little. (phase 1)", e->id().str());
-			/* TODO: add move message here */
-			break;
-		case esTargeting:
-			INFO("Enemy %s targets player.", e->id().str());
-			break;
-		case esShooting:
-			INFO("Enemy %s shoots at player.", e->id().str());
-			break;
-		}
-	    break;
-	}
-
-	e->kill();
-}
-
-void
-EnemyView::handlePlayer(const Game::SharedEntity &e, int p)
-{
-	UNUSED(e);
-	UNUSED(p);
-
-	/*
-	 * TODO: get player positions, etc.
-	 */
-}
-
-void
-EnemyView::initialize(void)
-{
-}
-
-void
-EnemyView::finalize(void)
-{
-	m_states.clear();
-}
-
-void
-EnemyView::renderEntity(const Game::SharedEntity &e, int p)
-{
-	/*
-	 * Should use type, but for this example I'm using ids
-	 * static const Core::Type enemy_t("enemy");
-	 */
-	static const Core::Identifier enemy_id("enemy");
-	static const Core::Identifier user_id("player");
-
-	if (e->id() == enemy_id)
-		handleEnemy(e, p);
-	else if (e->id() == user_id)
-		handlePlayer(e, p);
-}
-
+#endif

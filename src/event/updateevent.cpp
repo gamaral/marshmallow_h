@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "event/updateevent.h"
 
 /*!
  * @file
@@ -34,48 +34,19 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_SCENEEVENT_H
-#define EVENT_SCENEEVENT_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
+using namespace Event;
 
-#include "eventbase.h"
-#include "core/shared.h"
+const Type UpdateEvent::Type("Event::UpdateEvent");
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Event
+UpdateEvent::UpdateEvent(TIME t)
+    : EventBase(0, HighestPriority),
+      m_timeout(t)
 {
-
-	/*! @brief Scene Event Class */
-	class EVENT_EXPORT SceneActivatedEvent : public EventBase
-	{
-		Core::Identifier m_id;
-		Core::Type m_type;
-
-	public:
-
-		SceneActivatedEvent(const Core::Identifier &id,
-		                      const Core::Type &type);
-		virtual ~SceneActivatedEvent(void);
-
-		const Core::Identifier & sceneId(void) const
-		    { return(m_id); }
-
-		const Core::Type & sceneType(void) const
-		    { return(m_type); }
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-	public: /* static */
-
-		static const Core::Type Type;
-	};
-	typedef Core::Shared<SceneActivatedEvent> SharedSceneActivatedEvent;
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+UpdateEvent::~UpdateEvent(void)
+{
+}
 
-#endif

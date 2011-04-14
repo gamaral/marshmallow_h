@@ -45,19 +45,23 @@ using namespace eastl;
 
 static bool SortSharedEvent(const SharedEvent& lhs, const SharedEvent& rhs);
 
+EventManager * EventManager::s_instance(0);
+
 EventManager::EventManager(const Core::Identifier &i)
     : m_elmap(),
       m_id(i),
       m_active_queue(0)
 {
+	if (!s_instance) s_instance = this;
 }
 
 EventManager::~EventManager(void)
 {
+	if (s_instance == this) s_instance = 0;
 }
 
 bool
-EventManager::connect(const SharedEventListener &handler, const Core::Type &t)
+EventManager::connect(const WeakEventListener &handler, const Core::Type &t)
 {
 	INFO("Connecting `%p` handler to event type `%s`", static_cast<const void *>(&handler), t.str());
 
@@ -66,27 +70,27 @@ EventManager::connect(const SharedEventListener &handler, const Core::Type &t)
 
 	/* if this is a new type, assign a new EventListenerList */
 	if (l_elmapi == m_elmap.end())
-		m_elmap[t.uid()] = EventListenerList();
+		m_elmap[t.uid()] = new EventListenerList;
 
-	EventListenerList &l_listeners = m_elmap[t.uid()];
+	SharedEventListenerList l_listeners(m_elmap[t.uid()]);
 
 	EventListenerList::const_iterator l_listenersi =
-	    find(l_listeners.begin(), l_listeners.end(), handler);
+	    find(l_listeners->begin(), l_listeners->end(), handler);
 
-	if (l_listenersi == l_listeners.end())
-		l_listeners.push_back(handler);
+	if (l_listenersi == l_listeners->end())
+		l_listeners->push_back(handler);
 	else {
 		WARNING1("Failed! Listener already connected to this event type.");
 		return(false);
 	}
 
-	INFO("Connected! Current listener count is: %d", l_listeners.size());
+	INFO("Connected! Current listener count is: %d", l_listeners->size());
 
 	return(true);
 }
 
 bool
-EventManager::disconnect(const SharedEventListener &handler, const Core::Type &t)
+EventManager::disconnect(const WeakEventListener &handler, const Core::Type &t)
 {
 	INFO("Disconnecting `%p` handler from event type `%s`", static_cast<const void *>(&handler), t.str());
 
@@ -99,15 +103,15 @@ EventManager::disconnect(const SharedEventListener &handler, const Core::Type &t
 		return(false);
 	}
 
-	EventListenerList &l_listeners = m_elmap[t.uid()];
-	l_listeners.remove(handler);
-	INFO("Disconnected! Current listener count is: %d", l_listeners.size());
+	SharedEventListenerList l_listeners(m_elmap[t.uid()]);
+	l_listeners->remove(handler);
+	INFO("Disconnected! Current listener count is: %d", l_listeners->size());
 
 	return(true);
 }
 
 bool
-EventManager::dispatch(const IEvent &event) const
+EventManager::dispatch(const IEvent &event)
 {
 	bool l_handled = false;
 
@@ -116,14 +120,16 @@ EventManager::dispatch(const IEvent &event) const
 	if (l_elmapi == m_elmap.end())
 		return(false);
 
-	const EventListenerList &l_listeners = l_elmapi->second;
-	EventListenerList::const_iterator l_listenersi;
-	const EventListenerList::const_iterator l_listenerse = l_listeners.end();
+	SharedEventListenerList l_listeners(l_elmapi->second);
+	EventListenerList::iterator l_listenersi;
 
-	for (l_listenersi = l_listeners.begin();
-	    l_handled || (l_listenersi != l_listenerse);
-	    ++l_listenersi)
-		l_handled = (*l_listenersi)->handleEvent(event);
+	for (l_listenersi = l_listeners->begin();
+	    l_handled || (l_listenersi != l_listeners->end());) {
+		if (*l_listenersi)
+			l_handled = (*l_listenersi++)->handleEvent(event);
+		else
+			l_listeners->erase(l_listenersi++);
+	}
 
 	return(l_handled);
 }

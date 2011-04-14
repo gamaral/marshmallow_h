@@ -53,8 +53,15 @@ ComponentBase::~ComponentBase(void)
 }
 
 void
-ComponentBase::update(void)
+ComponentBase::render(void)
 {
+	INFO("Component %s render.", id().str());
+}
+
+void
+ComponentBase::update(TIME t)
+{
+	UNUSED(t);
 	INFO("Component %s update.", id().str());
 }
 

@@ -37,11 +37,20 @@
 #ifndef GAME_IENTITY_H
 #define GAME_IENTITY_H 1
 
-#include "core/shared.h"
-#include "core/identifier.h"
-#include "core/type.h"
+#include "core/irenderable.h"
+#include "core/iupdateable.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Core
+{
+	class StrHash;
+	typedef StrHash Identifier;
+	typedef StrHash Type;
+
+	template <class T> class Shared;
+	template <class T> class Weak;
+}
 
 namespace Game
 {
@@ -50,7 +59,8 @@ namespace Game
 	typedef Core::Shared<IComponent> SharedComponent;
 
 	/*! @brief Game Entity Interface */
-	struct GAME_EXPORT IEntity
+	struct GAME_EXPORT IEntity : public Core::IRenderable,
+	                             public Core::IUpdateable
 	{
 		virtual ~IEntity(void) {};
 
@@ -60,8 +70,6 @@ namespace Game
 		virtual void addComponent(SharedComponent &component) = 0;
 		virtual void removeComponent(const SharedComponent &component) = 0;
 		virtual SharedComponent component(const Core::Identifier &identifier) const = 0;
-
-		virtual void update(void) = 0;
 
 		virtual void kill(void) = 0;
 		virtual bool isZombie(void) const = 0;

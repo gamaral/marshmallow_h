@@ -13,7 +13,7 @@
  *
  * THIS SOFTWARE IS PROVIDED BY MARSHMALLOW ENGINE ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MARSHMALLOW ENGINE OR
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO GAME SHALL MARSHMALLOW ENGINE OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "event/updateeventlistener.h"
 
 /*!
  * @file
@@ -34,37 +34,33 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_IVIEW_H
-#define GAME_IVIEW_H 1
+#include "core/iupdateable.h"
+#include "event/ievent.h"
 
-#include "core/shared.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Event;
 
-MARSHMALLOW_NAMESPACE_BEGIN
+const Core::Type UpdateEventListener::Type("Event::UpdateEventListener");
 
-namespace Game
+UpdateEventListener::UpdateEventListener(const Core::Identifier &i,
+                                              Core::IUpdateable &o)
+    : EventListenerBase(i),
+      m_updateable(o)
 {
-
-	struct IScene;
-	typedef Core::Shared<IScene> SharedScene;
-
-	struct IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
-
-	/*! @brief Game View Interface */
-	struct GAME_EXPORT IView
-	{
-		virtual ~IView(void) {};
-
-		virtual void initialize(void) = 0;
-		virtual void finalize(void) = 0;
-
-		virtual void render(const SharedScene &scene) = 0;
-		virtual void renderEntity(const SharedEntity &entity, int phase) = 0;
-	};
-	typedef Core::Shared<IView> SharedView;
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+UpdateEventListener::~UpdateEventListener(void)
+{
+}
 
-#endif
+bool
+UpdateEventListener::handleEvent(const IEvent &event)
+{
+	static const Core::Type sc_UpdateType("Event::UpdateEvent");
+
+	if (event.type() == sc_UpdateType)
+		m_updateable.update(INFINITE);
+
+	return(false);
+}
+

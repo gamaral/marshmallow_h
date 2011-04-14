@@ -42,6 +42,9 @@
 #include "EASTL/list.h"
 using namespace eastl;
 
+#include "core/identifier.h"
+#include "core/shared.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
@@ -72,7 +75,8 @@ namespace Game
 		VIRTUAL void removeComponent(const SharedComponent &component);
 		VIRTUAL SharedComponent component(const Core::Identifier &identifier) const;
 
-		VIRTUAL void update(void);
+		VIRTUAL void render(void);
+		VIRTUAL void update(TIME timeout = INFINITE);
 
 		VIRTUAL void kill(void)
 		    { m_killed = true; }

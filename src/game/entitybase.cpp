@@ -81,8 +81,24 @@ EntityBase::component(const Core::Identifier &i) const
 }
 
 void
-EntityBase::update(void)
+EntityBase::render(void)
 {
+	if (isZombie())
+		return;
+
+	ComponentList::const_iterator l_i;
+	ComponentList::const_iterator l_c = m_components.end();
+
+	INFO("%s: Rendering components.", id().str());
+	for (l_i = m_components.begin(); l_i != l_c; ++l_i)
+		(*l_i)->render();
+	INFO("%s: Components rendered.", id().str());
+}
+
+void
+EntityBase::update(TIME t)
+{
+	UNUSED(t);
 	if (isZombie())
 		return;
 
@@ -91,7 +107,7 @@ EntityBase::update(void)
 
 	INFO("%s: Updating components.", id().str());
 	for (l_i = m_components.begin(); l_i != l_c; ++l_i)
-		(*l_i)->update();
+		(*l_i)->update(t);
 	INFO("%s: Components updated.", id().str());
 }
 

@@ -40,8 +40,10 @@
 #include "EASTL/list.h"
 using namespace eastl;
 
-#include "core/shared.h"
 #include "core/identifier.h"
+#include "core/irenderable.h"
+#include "core/iupdateable.h"
+#include "core/shared.h"
 #include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -55,7 +57,8 @@ namespace Game
 	typedef list<SharedEntity> EntityList;
 
 	/*! @brief Game Scene Interface */
-	struct GAME_EXPORT IScene
+	struct GAME_EXPORT IScene : public Core::IRenderable,
+	                            public Core::IUpdateable
 	{
 		virtual ~IScene(void) {};
 
@@ -69,7 +72,6 @@ namespace Game
 
 		virtual void activate(void) = 0;
 		virtual void deactivate(void) = 0;
-		virtual void update(void) = 0;
 	};
 	typedef Core::Shared<IScene> SharedScene;
 

@@ -53,16 +53,12 @@ namespace Game
 	class SceneManager;
 	typedef Core::Shared<SceneManager> SharedSceneManager;
 
-	class ViewManager;
-	typedef Core::Shared<ViewManager> SharedViewManager;
-
 	/*! @brief Game Engine Class */
 	class GAME_EXPORT Engine
 	{
 		static Engine *s_instance;
 		Event::SharedEventManager m_event_manager;
 		Game::SharedSceneManager  m_scene_manager;
-		Game::SharedViewManager   m_view_manager;
 		float  m_fps;
 		float  m_ups;
 		TIME   m_delta_time;
@@ -102,11 +98,6 @@ namespace Game
 		SharedSceneManager sceneManager(void) const;
 
 		/*!
-		 * @brief View Manager
-		 */
-		SharedViewManager viewManager(void) const;
-
-		/*!
 		 * @brief Set Event Manager
 		 */
 		void setEventManager(Event::SharedEventManager &m);
@@ -115,11 +106,6 @@ namespace Game
 		 * @brief Set Scene Manager
 		 */
 		void setSceneManager(SharedSceneManager &m);
-
-		/*!
-		 * @brief Set View Manager
-		 */
-		void setViewManager(SharedViewManager &m);
 
 		/*!
 		 * @brief Target frames per second

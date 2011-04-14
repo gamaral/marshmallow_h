@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "event/renderevent.h"
 
 /*!
  * @file
@@ -34,46 +34,18 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_VIEWMANAGER_H
-#define GAME_VIEWMANAGER_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
+using namespace Event;
 
-#include "EASTL/list.h"
-using namespace eastl;
+const Type RenderEvent::Type("Event::RenderEvent");
 
-#include "core/shared.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+RenderEvent::RenderEvent(void)
+    : EventBase(0, HighestPriority)
 {
-	struct IView;
-	typedef Core::Shared<IView> SharedView;
-
-	struct IScene;
-	typedef Core::Shared<IScene> SharedScene;
-
-	/*! @brief Game View Manager */
-	class GAME_EXPORT ViewManager
-	{
-		typedef list<SharedView> ViewList;
-
-		ViewList  m_list;
-
-	public:
-
-		ViewManager(void);
-		virtual ~ViewManager(void);
-
-		void addView(SharedView &view);
-		void removeView(const SharedView &view);
-		void clearViews(void);
-
-		void render(SharedScene &scene);
-	};
-	typedef Core::Shared<ViewManager> SharedViewManager;
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+RenderEvent::~RenderEvent(void)
+{
+}
 
-#endif

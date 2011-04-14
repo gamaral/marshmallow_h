@@ -75,6 +75,9 @@ namespace Core
 
 		void clear(void);
 
+		T * raw(void) const
+		    { return(reinterpret_cast<T *>(m_data->ptr)); }
+
 		template <class X> Shared<X> cast(void) const;
 		template <class X> Shared<X> staticCast(void) const;
 		template <class X> Shared<X> dynamicCast(void) const;
@@ -84,8 +87,8 @@ namespace Core
 		operator bool(void) const
 		    { return(m_data != 0 && m_data->ptr != 0); }
 
-		T * raw(void) const
-		    { return(reinterpret_cast<T *>(m_data->ptr)); }
+		operator Weak<T>(void) const
+		    { return(Weak<T>(m_data)); }
 
 		T & operator *(void) const
 		    { return(*reinterpret_cast<T *>(m_data->ptr)); }
@@ -200,6 +203,10 @@ namespace Core
 
 		operator bool(void) const
 		    { return(m_data != 0 && m_data->ptr != 0); }
+
+		operator Shared<T>(void) const
+		    { assert(m_data && m_data->ptr);
+		      return(Shared<T>(m_data)); }
 
 		T * raw(void) const
 		    { assert(m_data && m_data->ptr);

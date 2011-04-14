@@ -34,8 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/irenderable.h"
+#include "core/iupdateable.h"
 #include "event/eventmanager.h"
-#include "event/sceneactivatedevent.h"
 #include "game/engine.h"
 #include "game/ientity.h"
 
@@ -95,8 +96,6 @@ SceneBase::entities(void) const
 void
 SceneBase::activate(void)
 {
-	Event::SharedEvent event(new Event::SceneActivatedEvent(id(), type()));
-	Engine::Instance()->eventManager()->queue(event);
 }
 
 void
@@ -105,8 +104,18 @@ SceneBase::deactivate(void)
 }
 
 void
-SceneBase::update(void)
+SceneBase::render(void)
 {
+	EntityList::const_iterator l_i;
+
+	for (l_i = m_entities.begin(); l_i != m_entities.end();l_i++)
+		if (!(*l_i)->isZombie()) (*l_i)->render();
+}
+
+void
+SceneBase::update(TIME t)
+{
+	UNUSED(t);
 	EntityList::const_iterator l_i;
 
 	for (l_i = m_entities.begin(); l_i != m_entities.end();) {
@@ -115,7 +124,7 @@ SceneBase::update(void)
 		if (l_entity->isZombie())
 			removeEntity(l_entity);
 		else
-			l_entity->update();
+			l_entity->update(t);
 	}
 }
 
