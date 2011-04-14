@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MATH_VECTOR2_H
-#define MATH_VECTOR2_H 1
+#ifndef MATH_VECTOR3_H
+#define MATH_VECTOR3_H 1
 
 #include "core/global.h"
 
@@ -44,45 +44,46 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Math
 {
 
-	/*! @brief 2D Vector */
-	class MATH_EXPORT Vector2
+	/*! @brief 3D Vector */
+	class MATH_EXPORT Vector3
 	{
-		double m_value[2];
+		double m_value[3];
 
 	public:
-		Vector2(double x = 0., double y = 0.);
-		Vector2(const Vector2 &copy);
+		Vector3(double x = 0., double y = 0., double z = 0.);
+		Vector3(const Vector3 &copy);
 
 		double & rx(void)
 		    { return(m_value[0]); }
 		double & ry(void)
 		    { return(m_value[1]); }
+		double & rz(void)
+		    { return(m_value[2]); }
 
 		const double & rx(void) const
 		    { return(m_value[0]); }
 		const double & ry(void) const
 		    { return(m_value[1]); }
+		const double & rz(void) const
+		    { return(m_value[2]); }
 
 		double x(void) const
 		    { return(m_value[0]); }
 		double y(void) const
 		    { return(m_value[1]); }
+		double z(void) const
+		    { return(m_value[2]); }
 
 		double & operator[](int i)
-		    { return(m_value[i % 2]); }
+		    { return(m_value[i % 3]); }
 
-		Vector2 normalized(void) const;
-		Vector2 & normalize(void);
+		Vector3 normalized(void) const;
+		Vector3 & normalize(void);
 
 		double magnitude(void);
 		double magnitude2(void);
-
-		double cross(const Vector2 &b) const;
-		double dot(const Vector2 &b) const;
-
 	};
-
-	typedef Vector2 Point2;
+	typedef Vector3 Point3;
 
 }
 

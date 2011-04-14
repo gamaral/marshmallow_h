@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "math/polygon2.h"
 
 /*!
  * @file
@@ -34,58 +34,18 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MATH_VECTOR2_H
-#define MATH_VECTOR2_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Math;
 
-#include "core/global.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Math
+double
+Polygon2::area(void) const
 {
+	const int l_c = size();
+	double l_area = 0;
 
-	/*! @brief 2D Vector */
-	class MATH_EXPORT Vector2
-	{
-		double m_value[2];
+	for (int l_i = 1; l_i <= l_c; ++l_i)
+	    l_area += at(l_i-1).cross(at(l_i % l_c));
 
-	public:
-		Vector2(double x = 0., double y = 0.);
-		Vector2(const Vector2 &copy);
-
-		double & rx(void)
-		    { return(m_value[0]); }
-		double & ry(void)
-		    { return(m_value[1]); }
-
-		const double & rx(void) const
-		    { return(m_value[0]); }
-		const double & ry(void) const
-		    { return(m_value[1]); }
-
-		double x(void) const
-		    { return(m_value[0]); }
-		double y(void) const
-		    { return(m_value[1]); }
-
-		double & operator[](int i)
-		    { return(m_value[i % 2]); }
-
-		Vector2 normalized(void) const;
-		Vector2 & normalize(void);
-
-		double magnitude(void);
-		double magnitude2(void);
-
-		double cross(const Vector2 &b) const;
-		double dot(const Vector2 &b) const;
-
-	};
-
-	typedef Vector2 Point2;
-
+	return(l_area / 2.);
 }
 
-MARSHMALLOW_NAMESPACE_END
-
-#endif

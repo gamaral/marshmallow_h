@@ -34,55 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MATH_VECTOR2_H
-#define MATH_VECTOR2_H 1
+#ifndef MATH_RECT2_H
+#define MATH_RECT2_H 1
 
 #include "core/global.h"
+#include "math/point2.h"
+#include "math/size2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
 
-	/*! @brief 2D Vector */
-	class MATH_EXPORT Vector2
+	/*! @brief 2D Rect */
+	class MATH_EXPORT Rect2
 	{
-		double m_value[2];
+		Point2 m_top_left;
+		Size2 m_size;
 
 	public:
-		Vector2(double x = 0., double y = 0.);
-		Vector2(const Vector2 &copy);
+		Rect2(const Point2 &topLeft, const Size2 &size);
+		Rect2(const Point2 &topLeft, const Point2 &bottomRight);
+		Rect2(const Rect2 &copy);
 
-		double & rx(void)
-		    { return(m_value[0]); }
-		double & ry(void)
-		    { return(m_value[1]); }
-
-		const double & rx(void) const
-		    { return(m_value[0]); }
-		const double & ry(void) const
-		    { return(m_value[1]); }
-
-		double x(void) const
-		    { return(m_value[0]); }
-		double y(void) const
-		    { return(m_value[1]); }
-
-		double & operator[](int i)
-		    { return(m_value[i % 2]); }
-
-		Vector2 normalized(void) const;
-		Vector2 & normalize(void);
-
-		double magnitude(void);
-		double magnitude2(void);
-
-		double cross(const Vector2 &b) const;
-		double dot(const Vector2 &b) const;
-
+		double area(void) const
+		    { return(m_size.area()); }
 	};
-
-	typedef Vector2 Point2;
 
 }
 

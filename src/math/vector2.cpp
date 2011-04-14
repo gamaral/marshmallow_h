@@ -62,7 +62,7 @@ Vector2::normalized(void) const
 Vector2 &
 Vector2::normalize(void)
 {
-	float m = magnitude();
+	const float m = magnitude();
 	m_value[0] /= m;
 	m_value[1] /= m;
 	return(*this);
@@ -80,5 +80,17 @@ Vector2::magnitude2(void)
 {
 	return(pow(m_value[0], 2)
 	     + pow(m_value[1], 2));
+}
+
+double
+Vector2::cross(const Vector2 &b) const
+{
+	return((rx() * b.ry()) - (ry() * b.rx()));
+}
+
+double
+Vector2::dot(const Vector2 &b) const
+{
+	return((rx() * b.rx()) + (ry() * b.ry()));
 }
 
