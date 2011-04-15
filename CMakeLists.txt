@@ -19,22 +19,32 @@ include_directories(${PROJECT_SOURCE_DIR}/contrib/eastl/include)
 
 # Global Options
 set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Engine Namespace")
-SET(VIEWPORT_SDL "OFF" CACHE BOOL "Use SDL Viewport")
-SET(VIEWPORT_X11_OPENGL "ON" CACHE BOOL "Use X11 OpenGL Viewport")
-SET(VIEWPORT_DEFAULT_WIDTH "800" CACHE STRING "Viewport default width")
-SET(VIEWPORT_DEFAULT_HEIGHT "600" CACHE STRING "Viewport default height")
-SET(VIEWPORT_DEFAULT_DEPTH "24" CACHE STRING "Viewport default depth")
-SET(VIEWPORT_DEFAULT_FULLSCREEN "OFF" CACHE BOOL "Viewport default fullscreen mode")
+set(MARSHMALLOW_BUILD_TYPE "STATIC" CACHE STRING "Build either STATIC or SHARED")
 
-if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+set(VIEWPORT_DEFAULT_WIDTH "800" CACHE STRING "Viewport default width")
+set(VIEWPORT_DEFAULT_HEIGHT "600" CACHE STRING "Viewport default height")
+set(VIEWPORT_DEFAULT_DEPTH "24" CACHE STRING "Viewport default depth")
+set(VIEWPORT_DEFAULT_FULLSCREEN "OFF" CACHE BOOL "Viewport default fullscreen mode")
+
+set(VIEWPORT_X11_GLX "ON" CACHE BOOL "Use X11 GLX Viewport")
+set(VIEWPORT_SDL "OFF" CACHE BOOL "Use SDL Viewport")
+set(VIEWPORT_DUMMY "OFF" CACHE BOOL "Use SDL Dummy Viewport")
+
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 	set(DEBUG ON CACHE INTERNAL "")
 	set(DEBUG_VERBOSITY "2" CACHE STRING "Debug Verbosity")
-endif("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+else(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+	set(DEBUG OFF CACHE INTERNAL "")
+endif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 
-# Configuration file
+# Configuration files
 configure_file(
-	${PROJECT_SOURCE_DIR}/include/config.in.h
-	${PROJECT_BINARY_DIR}/include/config.h
+	${PROJECT_SOURCE_DIR}/include/core/config.in.h
+	${PROJECT_BINARY_DIR}/include/core/config.h
+)
+configure_file(
+	${PROJECT_SOURCE_DIR}/include/graphics/config.in.h
+	${PROJECT_BINARY_DIR}/include/graphics/config.h
 )
 
 # Platform specific environment defenitions
@@ -52,7 +62,7 @@ endif(UNIX)
 
 ##################################################################### VIEWPORT #
 
-if(UNIX AND VIEWPORT_X11_OPENGL)
+if(UNIX AND VIEWPORT_X11_GLX)
 	find_package(X11)
 
 	if(APPLE)
@@ -72,7 +82,7 @@ if(UNIX AND VIEWPORT_X11_OPENGL)
 	endif(NOT OPENGL_FOUND)
 
 	include_directories(${X11_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
-else(VIEWPORT_SDL)
+elseif(VIEWPORT_SDL)
 	find_package(SDL)
 
 	if(NOT SDL_FOUND)
@@ -80,7 +90,7 @@ else(VIEWPORT_SDL)
 	endif(NOT SDL_FOUND)
 
 	include_directories(${SDL_INCLUDE_DIR})
-endif(UNIX AND VIEWPORT_X11_OPENGL)
+endif(UNIX AND VIEWPORT_X11_GLX)
 
 ############################################################## SUB DIRECTORIES #
 

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/viewport.h"
+#pragma once
 
 /*!
  * @file
@@ -34,70 +34,12 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <SDL.h>
+#ifndef GRAPHICS_CONFIG_H
+#define GRAPHICS_CONFIG_H 1
 
-#include "core/platform.h"
+#define DEFAULT_VIEWPORT_WIDTH      @VIEWPORT_DEFAULT_WIDTH@
+#define DEFAULT_VIEWPORT_HEIGHT     @VIEWPORT_DEFAULT_HEIGHT@
+#define DEFAULT_VIEWPORT_DEPTH      @VIEWPORT_DEFAULT_DEPTH@
+#define DEFAULT_VIEWPORT_FULLSCREEN @VIEWPORT_DEFAULT_FULLSCREEN@
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Graphics;
-
-struct Viewport::Internal
-{
-	    SDL_Surface *screen;
-	    SDL_Event event;
-} MPI;
-
-bool
-Viewport::Initialize(int w, int h, int d, bool f)
-{
-	SDL_Init(SDL_INIT_VIDEO);
-	return(Redisplay(w, h, d, f));
-}
-
-void
-Viewport::Finalize(void)
-{
-	SDL_Quit();
-}
-
-bool
-Viewport::Redisplay(int w, int h, int d, bool f)
-{
-	int l_flags =
-	    SDL_HWSURFACE |
-	    SDL_DOUBLEBUF |
-	    (f ? SDL_FULLSCREEN : 0);
-
-	MPI.screen = SDL_SetVideoMode(w, h, d, l_flags);
-	if (!MPI.screen) {
-		ERROR("SDL Error: %s", SDL_GetError());
-		return(false);
-	}
-	SDL_FillRect(MPI.screen, &MPI.screen->clip_rect, SDL_MapRGB(MPI.screen->format, 0, 0, 0));
-	SwapBuffer();
-}
-
-void
-Viewport::Tick(TIME &t)
-{
-	TIMEOUT_INIT;
-
-	SDL_Event e;
-	while(TIMEOUT_DEC(t) > 0 && SDL_PollEvent(&e))
-		switch(e.type) {
-		case SDL_QUIT:
-		case SDL_KEYUP:
-		case SDL_KEYDOWN:
-		case SDL_MOUSEMOTION:
-			/* TODO: Send Events */
-			break;
-		default: INFO1("Unknown viewport event received."); break;
-		}
-}
-
-void
-Viewport::SwapBuffer(void)
-{
-	SDL_Flip(MPI.screen);
-}
-
+#endif

@@ -40,9 +40,8 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "core/config.h"
 #include "core/environment.h"
-
-#include "config.h"
 
 #ifdef MARSHMALLOW_NAMESPACE
 #   define MARSHMALLOW_NAMESPACE_BEGIN namespace MARSHMALLOW_NAMESPACE {

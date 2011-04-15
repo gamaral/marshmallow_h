@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "event/keyboardevent.h"
 
 /*!
  * @file
@@ -34,17 +34,23 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H 1
+#include "core/platform.h"
 
-#cmakedefine MARSHMALLOW_NAMESPACE @MARSHMALLOW_NAMESPACE@
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
+using namespace Event;
 
-#cmakedefine DEBUG
-#cmakedefine DEBUG_VERBOSITY @DEBUG_VERBOSITY@
+const Type KeyboardEvent::Type("Event::KeyboardEvent");
 
-#define DEFAULT_VIEWPORT_WIDTH      @VIEWPORT_DEFAULT_WIDTH@
-#define DEFAULT_VIEWPORT_HEIGHT     @VIEWPORT_DEFAULT_HEIGHT@
-#define DEFAULT_VIEWPORT_DEPTH      @VIEWPORT_DEFAULT_DEPTH@
-#define DEFAULT_VIEWPORT_FULLSCREEN @VIEWPORT_DEFAULT_FULLSCREEN@
+KeyboardEvent::KeyboardEvent(UINT16 k, KBAction a, KBModifiers m, TIME t)
+    : EventBase(t, HighPriority),
+      m_key(k),
+      m_action(a),
+      m_modifiers(m)
+{
+}
 
-#endif
+KeyboardEvent::~KeyboardEvent(void)
+{
+}
+

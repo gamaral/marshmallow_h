@@ -34,70 +34,47 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <SDL.h>
-
 #include "core/platform.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
+const char *Viewport::Name("DUMMY");
+
 struct Viewport::Internal
 {
-	    SDL_Surface *screen;
-	    SDL_Event event;
-} MPI;
+};
 
 bool
 Viewport::Initialize(int w, int h, int d, bool f)
 {
-	SDL_Init(SDL_INIT_VIDEO);
-	return(Redisplay(w, h, d, f));
+	INFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
+	return(true);
 }
 
 void
 Viewport::Finalize(void)
 {
-	SDL_Quit();
+	INFO1("Dummy viewport finalized");
 }
 
 bool
 Viewport::Redisplay(int w, int h, int d, bool f)
 {
-	int l_flags =
-	    SDL_HWSURFACE |
-	    SDL_DOUBLEBUF |
-	    (f ? SDL_FULLSCREEN : 0);
-
-	MPI.screen = SDL_SetVideoMode(w, h, d, l_flags);
-	if (!MPI.screen) {
-		ERROR("SDL Error: %s", SDL_GetError());
-		return(false);
-	}
-	SDL_FillRect(MPI.screen, &MPI.screen->clip_rect, SDL_MapRGB(MPI.screen->format, 0, 0, 0));
-	SwapBuffer();
+	INFO("Dummy viewport redisplayed using a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
+	return(true);
 }
 
 void
 Viewport::Tick(TIME &t)
 {
-	TIMEOUT_INIT;
-
-	SDL_Event e;
-	while(TIMEOUT_DEC(t) > 0 && SDL_PollEvent(&e))
-		switch(e.type) {
-		case SDL_QUIT:
-		case SDL_KEYUP:
-		case SDL_KEYDOWN:
-		case SDL_MOUSEMOTION:
-			/* TODO: Send Events */
-			break;
-		default: INFO1("Unknown viewport event received."); break;
-		}
+	UNUSED(t);
+	INFO1("Dummy viewport ticked");
 }
 
 void
 Viewport::SwapBuffer(void)
 {
-	SDL_Flip(MPI.screen);
+	INFO1("Dummy viewport swapped imaginary buffer");
 }
 

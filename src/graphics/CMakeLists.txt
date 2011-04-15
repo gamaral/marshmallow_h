@@ -2,7 +2,7 @@ add_definitions(-DGRAPHICS_LIBRARY)
 
 file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp)
 
-if(UNIX AND VIEWPORT_X11_OPENGL)
+if(UNIX AND VIEWPORT_X11_GLX)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              viewport/x11_glx.cpp)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
@@ -13,9 +13,12 @@ elseif(VIEWPORT_SDL)
 	                              viewport/sdl.cpp)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 	                              ${SDL_LIBRARY})
-endif(UNIX AND VIEWPORT_X11_OPENGL)
+elseif(VIEWPORT_DUMMY)
+	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
+	                              viewport/dummy.cpp)
+endif(UNIX AND VIEWPORT_X11_GLX)
 
-add_library(marshmallow_graphics STATIC
+add_library(marshmallow_graphics ${MARSHMALLOW_BUILD_TYPE}
 	${MARSHMALLOW_GRAPHICS_SRCS}
 )
 

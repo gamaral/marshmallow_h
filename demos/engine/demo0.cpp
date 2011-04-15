@@ -35,6 +35,7 @@
 #include "game/entitybase.h"
 #include "game/scenebase.h"
 #include "game/scenemanager.h"
+#include "graphics/viewport.h"
 #include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -143,6 +144,8 @@ public:
 	VIRTUAL void initialize(void)
 	{
 		Engine::initialize();
+
+		Graphics::Viewport::Redisplay(1024, 768);
 
 		setEventManager(m_event_manager);
 		setSceneManager(m_scene_manager);

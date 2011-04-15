@@ -2,7 +2,7 @@ add_definitions(-DEVENT_LIBRARY)
 
 file(GLOB MARSHMALLOW_EVENT_SRCS *.cpp)
 
-add_library(marshmallow_event STATIC
+add_library(marshmallow_event ${MARSHMALLOW_BUILD_TYPE}
 	${MARSHMALLOW_EVENT_SRCS}
 )
 

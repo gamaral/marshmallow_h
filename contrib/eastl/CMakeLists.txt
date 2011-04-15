@@ -2,7 +2,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 file(GLOB MARSHMALLOW_EASTL_SRCS src/*.cpp)
 
-add_library(marshmallow_eastl STATIC
+if(${MARSHMALLOW_BUILD_TYPE} STREQUAL "SHARED")
+	add_definitions(-DEASTL_DLL)
+endif(${MARSHMALLOW_BUILD_TYPE} STREQUAL "SHARED")
+
+
+add_library(marshmallow_eastl ${MARSHMALLOW_BUILD_TYPE}
 	${MARSHMALLOW_EASTL_SRCS}
 )
 

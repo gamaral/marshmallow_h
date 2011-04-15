@@ -8,7 +8,7 @@ if [ ${CMAKE} == "" ]; then
 	exit -1
 fi
 
-CFLAGS="-O0 -g -Wextra -Wall -W -pedantic -Wshadow -Wcast-qual -Wwrite-strings -Wconversion -Wno-variadic-macros -Wno-long-long"
+CFLAGS="-O0 -g -fno-exceptions -Wextra -Wall -W -pedantic -Wshadow -Wcast-qual -Wwrite-strings -Wconversion -Wno-variadic-macros -Wno-long-long"
 CXXFLAGS="${CFLAGS} -std=c++98"
 #CXXFLAGS="${CXXFLAGS} -Weffc++ -Wold-style-cast" # \v^(.*eastl)@!.*warning
 CFLAGS="${CFLAGS} -ansi"

@@ -37,6 +37,7 @@
 #ifndef GRAPHICS_VIEWPORT_H
 #define GRAPHICS_VIEWPORT_H 1
 
+#include "graphics/config.h"
 #include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -47,11 +48,18 @@ namespace Graphics
 	/*! @brief Graphics Viewport Interface */
 	struct GRAPHICS_EXPORT Viewport
 	{
+		static const char *Name;
+
 		static bool Initialize(int width = DEFAULT_VIEWPORT_WIDTH,
 		                      int height = DEFAULT_VIEWPORT_HEIGHT,
 		                       int depth = DEFAULT_VIEWPORT_DEPTH,
 		                 bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
 		static void Finalize(void);
+
+		static bool Redisplay(int width = DEFAULT_VIEWPORT_WIDTH,
+		                     int height = DEFAULT_VIEWPORT_HEIGHT,
+		                      int depth = DEFAULT_VIEWPORT_DEPTH,
+		                bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
 
 		static void Tick(TIME &timeout);
 

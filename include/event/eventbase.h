@@ -45,13 +45,16 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-	enum Priority { LowestPriority = 0,
-	                 LowerPriority = 1,
-	                   LowPriority = 2,
-	                NormalPriority = 5,
-	                  HighPriority = 8,
-	                HigherPriority = 9,
-	               HighestPriority = 10 };
+	enum EventPriority
+	{
+		LowestPriority  = 0,
+		LowerPriority   = 1,
+		LowPriority     = 2,
+		NormalPriority  = 5,
+		HighPriority    = 8,
+		HigherPriority  = 9,
+		HighestPriority = 10
+	};
 
 	/*! @brief Event Base Class */
 	class EVENT_EXPORT EventBase : public IEvent
