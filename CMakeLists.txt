@@ -56,19 +56,23 @@ if(UNIX AND VIEWPORT_X11_OPENGL)
 	find_package(X11)
 	find_package(OpenGL)
 
-	if (NOT OPENGL_FOUND)
+	if(APPLE)
+		include_directories("/usr/X11R6/include")
+	endif(APPLE)
+
+	if(NOT OPENGL_FOUND)
 		message(error, "X11 OpenGL viewport: OpenGL was not found.")
-	elseif (NOT X11_FOUND)
+	elseif(NOT X11_FOUND)
 		message(error, "X11 OpenGL viewport: X11 was not found.")
-	endif (NOT OPENGL_FOUND)
+	endif(NOT OPENGL_FOUND)
 
 	include_directories(${X11_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
 else(VIEWPORT_SDL)
 	find_package(SDL)
 
-	if (NOT SDL_FOUND)
+	if(NOT SDL_FOUND)
 		message(FATAL_ERROR "SDL viewport: SDL was not found.")
-	endif (NOT SDL_FOUND)
+	endif(NOT SDL_FOUND)
 
 	include_directories(${SDL_INCLUDE_DIR})
 endif(UNIX AND VIEWPORT_X11_OPENGL)
