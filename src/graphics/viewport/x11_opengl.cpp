@@ -34,7 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <glx.h>
+#include <GL/glx.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/XInput2.h>
