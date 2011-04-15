@@ -28,6 +28,12 @@
 
 #pragma once
 
+/*!
+ * @file
+ *
+ * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
+ */
+
 #ifndef CONFIG_H
 #define CONFIG_H 1
 
@@ -35,5 +41,10 @@
 
 #cmakedefine DEBUG
 #cmakedefine DEBUG_VERBOSITY @DEBUG_VERBOSITY@
+
+#define DEFAULT_VIEWPORT_WIDTH      800
+#define DEFAULT_VIEWPORT_HEIGHT     600
+#define DEFAULT_VIEWPORT_DEPTH      24
+#define DEFAULT_VIEWPORT_FULLSCREEN false
 
 #endif

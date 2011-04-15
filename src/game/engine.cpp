@@ -44,10 +44,12 @@
 #include "event/updateeventlistener.h"
 #include "game/iscene.h"
 #include "game/scenemanager.h"
+#include "graphics/viewport.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Event;
+using namespace Graphics;
 using namespace Game;
 
 Engine *Engine::s_instance = 0;
@@ -65,7 +67,7 @@ Engine::Engine(float f, float u)
 	if (!s_instance)
 		s_instance = this;
 	else
-		WARNING1("Warning: Started a second engine!");
+		WARNING1("Started a second engine!");
 }
 
 Engine::~Engine(void)
@@ -78,6 +80,7 @@ void
 Engine::initialize(void)
 {
 	Platform::Initialize();
+	Viewport::Initialize();
 }
 
 void
@@ -86,6 +89,7 @@ Engine::finalize(void)
 	m_scene_manager.clear();
 	m_event_manager.clear();
 
+	Viewport::Finalize();
 	Platform::Finalize();
 }
 
@@ -121,17 +125,9 @@ Engine::run(void)
 	/* start us off */
 	TIME l_timeout = INFINITE;
 
-	preTick(l_timeout);
 	tick(l_timeout);
-	postTick(l_timeout);
-
-	preUpdate(l_timeout);
 	update(l_timeout);
-	postUpdate(l_timeout);
-
-	preRender();
 	render();
-	postRender();
 
 	/* main game loop */
 	do
@@ -146,26 +142,16 @@ Engine::run(void)
 		l_second += m_delta_time;
 
 		/* tick */
-		preTick(l_timeout);
 		tick(l_timeout);
-		postTick(l_timeout);
 
 		if (l_render >= l_render_target) {
-			/* render */
-			preRender();
 			render();
-			postRender();
-
 			l_render += (Platform::TimeStamp() - l_tick) - l_render_target;
 			++m_frame_rate;
 		}
 
 		if (l_update >= l_update_target) {
-			/* update */
-			preUpdate(l_timeout);
 			update(l_timeout);
-			postUpdate(l_timeout);
-
 			l_update += (Platform::TimeStamp() - l_tick) - l_update_target;
 		}
 
@@ -180,11 +166,7 @@ Engine::run(void)
 				    static_cast<int>(l_tick_target));
 			}
 
-			/* second */
-			preSecond();
 			second();
-			postSecond();
-
 			l_second += (Platform::TimeStamp() - l_tick) - l_second_target;
 		}
 
@@ -232,76 +214,27 @@ Engine::render(void)
 }
 
 void
-Engine::tick(TIME &timeout)
+Engine::tick(TIME &t)
 {
 	TIMEOUT_INIT;
-	Platform::PreTick(TIMEOUT_DEC(timeout));
-
-	if (m_event_manager) m_event_manager->execute(TIMEOUT_DEC(timeout));
+	Viewport::Tick(TIMEOUT_DEC(t));
+	if (m_event_manager) m_event_manager->execute(TIMEOUT_DEC(t));
 	else WARNING1("No event manager!");
 }
 
 void
-Engine::update(TIME &timeout)
+Engine::update(TIME &t)
 {
 	TIMEOUT_INIT;
-	Platform::PreUpdate(TIMEOUT_DEC(timeout));
-
-	Event::UpdateEvent event(TIMEOUT_DEC(timeout));
+	Event::UpdateEvent event(TIMEOUT_DEC(t));
 	eventManager()->dispatch(event);
 	INFO1("Update event dispatched!");
 }
 
 void
-Engine::preRender(void)
-{
-	Platform::PreRender();
-}
-
-void
-Engine::postRender(void)
-{
-	Platform::PostRender();
-}
-
-void
-Engine::preSecond(void)
-{
-	Platform::PreSecond();
-}
-
-void
-Engine::postSecond(void)
+Engine::second(void)
 {
 	INFO("FPS %d!", m_frame_rate);
 	m_frame_rate = 0;
-
-	Platform::PostSecond();
-}
-
-void
-Engine::preTick(TIME &timeout)
-{
-	UNUSED(timeout);
-}
-
-void
-Engine::postTick(TIME &timeout)
-{
-	TIMEOUT_INIT;
-	Platform::PostTick(TIMEOUT_DEC(timeout));
-}
-
-void
-Engine::preUpdate(TIME &timeout)
-{
-	UNUSED(timeout);
-}
-
-void
-Engine::postUpdate(TIME &timeout)
-{
-	TIMEOUT_INIT;
-	Platform::PostUpdate(TIMEOUT_DEC(timeout));
 }
 

@@ -137,7 +137,7 @@ namespace Game
 		virtual void finalize(void);
 
 		virtual void render(void);
-		virtual void second(void) {};
+		virtual void second(void);
 		virtual void tick(TIME &timeout);
 		virtual void update(TIME &timeout);
 
@@ -145,16 +145,6 @@ namespace Game
 
 		static Engine * Instance(void)
 		    { return(s_instance); }
-
-	protected:
-		void preRender(void);
-		void postRender(void);
-		void preSecond(void);
-		void postSecond(void);
-		void preTick(TIME &timeout);
-		void postTick(TIME &timeout);
-		void preUpdate(TIME &timeout);
-		void postUpdate(TIME &timeout);
 	};
 
 }

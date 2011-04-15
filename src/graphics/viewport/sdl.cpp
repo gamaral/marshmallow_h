@@ -26,47 +26,71 @@
  * or implied, of Marshmallow Engine.
  */
 
+#include "graphics/viewport.h"
+
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#pragma once
+#include <SDL.h>
 
-#ifndef CORE_ENVIRONMENT_H
-#define CORE_ENVIRONMENT_H 1
+#include "core/platform.h"
 
-#include <stdint.h>
-#include <time.h>
-#include <unistd.h>
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics;
 
-/********************************************************************** types */
+struct Viewport::Internal
+{
+	    SDL_Surface *screen;
+	    SDL_Event event;
+} MPI;
 
-#define CHAR   char
-#define INT16  int16_t
-#define INT32  int32_t
-#define INT64  int64_t
-#define INT8   int8_t
-#define TIME   uint32_t
-#define UINT16 uint16_t
-#define UINT32 uint32_t
-#define UINT64 uint64_t
-#define UINT8  uint8_t
-#define WCHAR  wchar_t
-#define UID    uint32_t
+bool
+Viewport::Initialize(int w, int h, int d, bool f)
+{
+	SDL_Init(SDL_INIT_VIDEO);
 
-/******************************************************************** defines */
+	MPI.screen = SDL_SetVideoMode(w, h, d, SDL_DOUBLEBUF|SDL_HWSURFACE|(f ? SDL_FULLSCREEN:0));
+	if (!MPI.screen) {
+		ERROR("SDL Error: %s", SDL_GetError());
+		return(false);
+	}
+	SDL_WM_SetCaption("Marshmallow", "Marshmallow"); // TODO: Set window caption
+	SDL_FillRect(MPI.screen, &MPI.screen->clip_rect, SDL_MapRGB(MPI.screen->format, 0, 0, 0));
+	SwapBuffer();
 
-#define INFINITE ~(static_cast<TIME>(0))
-#define STRDUP strdup
+	return(true);
+}
 
-/******************************************************************** unused */
+void
+Viewport::Finalize(void)
+{
+	SDL_Quit();
+}
 
-#define CORE_EXPORT
-#define MATH_EXPORT
-#define EVENT_EXPORT
-#define GRAPHICS_EXPORT
-#define GAME_EXPORT
+void
+Viewport::Tick(TIME &t)
+{
+	TIMEOUT_INIT;
 
-#endif
+	SDL_Event e;
+	while(TIMEOUT_DEC(t) > 0 && SDL_PollEvent(&e))
+		switch(e.type) {
+		case SDL_QUIT:
+		case SDL_KEYUP:
+		case SDL_KEYDOWN:
+		case SDL_MOUSEMOTION:
+			/* TODO: Send Events */
+			break;
+		default: INFO1("Unknown viewport event received."); break;
+		}
+}
+
+void
+Viewport::SwapBuffer(void)
+{
+	SDL_Flip(MPI.screen);
+}
+

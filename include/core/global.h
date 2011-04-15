@@ -56,6 +56,16 @@
 
 /********************************************************************** debug */
 
+/*
+ * TODO: Replace with Core::Logger
+ */
+
+#define FATAL(x,...) fprintf(stderr, "%s [%s:%d]: FATAL: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__),exit(-1)
+#define FATAL1(x) fprintf(stderr, "%s [%s:%d]: FATAL: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__),exit(-1)
+
+#define ERROR(x,...) fprintf(stderr, "%s [%s:%d]: ERROR: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
+#define ERROR1(x) fprintf(stderr, "%s [%s:%d]: ERROR: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
+
 #if defined(DEBUG) && DEBUG_VERBOSITY >= 1
 #   define WARNING(x,...) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
 #   define WARNING1(x) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
@@ -80,7 +90,7 @@
 #define MAX(x,y) (x > y ? x : y)
 #define NOW Core::Platform::TimeStamp
 
-#define TIMEOUT_INIT const TIME l_start_time = Platform::TimeStamp()
+#define TIMEOUT_INIT const TIME l_start_time = Core::Platform::TimeStamp()
 #define TIMEOUT_DEC(x) (x -= (NOW() - l_start_time))
 
 /******************************************************************** global */

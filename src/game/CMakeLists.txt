@@ -7,6 +7,7 @@ add_library(marshmallow_game STATIC
 )
 
 target_link_libraries(marshmallow_game
+	marshmallow_graphics
 	marshmallow_event
 	marshmallow_math
 	marshmallow_core

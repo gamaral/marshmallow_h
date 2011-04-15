@@ -65,50 +65,6 @@ Platform::Finalize(void)
 }
 
 void
-Platform::PreRender(void)
-{
-}
-
-void
-Platform::PostRender(void)
-{
-}
-
-void
-Platform::PreSecond(void)
-{
-}
-
-void
-Platform::PostSecond(void)
-{
-}
-
-void
-Platform::PreTick(TIME timeout)
-{
-	UNUSED(timeout);
-}
-
-void
-Platform::PostTick(TIME timeout)
-{
-	UNUSED(timeout);
-}
-
-void
-Platform::PreUpdate(TIME timeout)
-{
-	UNUSED(timeout);
-}
-
-void
-Platform::PostUpdate(TIME timeout)
-{
-	UNUSED(timeout);
-}
-
-void
 Platform::Sleep(TIME timeout)
 {
 	usleep(timeout * 1000);

@@ -78,6 +78,12 @@
 #   define EVENT_EXPORT
 #endif
 
+#ifdef GRAPHICS_LIBRARY
+#   define GRAPHICS_EXPORT DLL_EXPORT
+#else
+#   define GRAPHICS_EXPORT
+#endif
+
 #ifdef GAME_LIBRARY
 #   define GAME_EXPORT DLL_EXPORT
 #else

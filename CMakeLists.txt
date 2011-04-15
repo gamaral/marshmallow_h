@@ -19,7 +19,12 @@ include_directories(${PROJECT_SOURCE_DIR}/contrib/eastl/include)
 
 # Global Options
 set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Engine Namespace")
-set(MARSHMALLOW_VIEW_SDL "off" CACHE BOOL "Use SDL View")
+SET(VIEWPORT_SDL "off" CACHE BOOL "Use SDL Viewport")
+SET(VIEWPORT_X11_OPENGL "on" CACHE BOOL "Use X11 OpenGL Viewport")
+SET(VIEWPORT_DEFAULT_WIDTH "800" CACHE STRING "Viewport default width")
+SET(VIEWPORT_DEFAULT_HEIGHT "600" CACHE STRING "Viewport default height")
+SET(VIEWPORT_DEFAULT_DEPTH "24" CACHE STRING "Viewport default depth")
+SET(VIEWPORT_DEFAULT_FULLSCREAN "off" CACHE BOOL "Viewport default fullscreen mode")
 
 if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
 	set(DEBUG ON CACHE INTERNAL "")
@@ -45,13 +50,24 @@ elseif(WIN32)
 	)
 endif(UNIX)
 
-######################################################################### VIEW #
+##################################################################### VIEWPORT #
 
-if(MARSHMALLOW_VIEW_SDL)
+if(UNIX AND VIEWPORT_X11_OPENGL)
+	find_package(X11)
+	find_package(OpenGL)
 
+	if (NOT OPENGL_FOUND)
+		message(error, "X11 OpenGL viewport: OpenGL was not found.")
+	elseif (NOT X11_FOUND)
+		message(error, "X11 OpenGL viewport: X11 was not found.")
+	endif (NOT OPENGL_FOUND)
+else(VIEWPORT_SDL)
 	find_package(SDL)
 
-endif(MARSHMALLOW_VIEW_SDL)
+	if (NOT SDL_FOUND)
+		message(FATAL_ERROR "SDL viewport: SDL was not found.")
+	endif (NOT SDL_FOUND)
+endif(UNIX AND VIEWPORT_X11_OPENGL)
 
 ############################################################## SUB DIRECTORIES #
 

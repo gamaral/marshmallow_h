@@ -26,47 +26,42 @@
  * or implied, of Marshmallow Engine.
  */
 
+#pragma once
+
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#pragma once
+#ifndef GRAPHICS_VIEWPORT_H
+#define GRAPHICS_VIEWPORT_H 1
 
-#ifndef CORE_ENVIRONMENT_H
-#define CORE_ENVIRONMENT_H 1
+#include "core/global.h"
 
-#include <stdint.h>
-#include <time.h>
-#include <unistd.h>
+MARSHMALLOW_NAMESPACE_BEGIN
 
-/********************************************************************** types */
+namespace Graphics
+{
 
-#define CHAR   char
-#define INT16  int16_t
-#define INT32  int32_t
-#define INT64  int64_t
-#define INT8   int8_t
-#define TIME   uint32_t
-#define UINT16 uint16_t
-#define UINT32 uint32_t
-#define UINT64 uint64_t
-#define UINT8  uint8_t
-#define WCHAR  wchar_t
-#define UID    uint32_t
+	/*! @brief Graphics Viewport Interface */
+	struct GRAPHICS_EXPORT Viewport
+	{
+		static bool Initialize(int width = DEFAULT_VIEWPORT_WIDTH,
+		                      int height = DEFAULT_VIEWPORT_HEIGHT,
+		                       int depth = DEFAULT_VIEWPORT_DEPTH,
+		                 bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
+		static void Finalize(void);
 
-/******************************************************************** defines */
+		static void Tick(TIME &timeout);
 
-#define INFINITE ~(static_cast<TIME>(0))
-#define STRDUP strdup
+		static void SwapBuffer(void);
 
-/******************************************************************** unused */
+		struct Internal;
+	};
 
-#define CORE_EXPORT
-#define MATH_EXPORT
-#define EVENT_EXPORT
-#define GRAPHICS_EXPORT
-#define GAME_EXPORT
+}
+
+MARSHMALLOW_NAMESPACE_END
 
 #endif

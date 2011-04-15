@@ -83,16 +83,6 @@ namespace Core
 		 */
 		static TimeData TimeStampToTimeData(TIME timestamp);
 
-		/****************************************************** flow */
-
-		static void PreRender(void);
-		static void PostRender(void);
-		static void PreSecond(void);
-		static void PostSecond(void);
-		static void PreTick(TIME timeout);
-		static void PostTick(TIME timeout);
-		static void PreUpdate(TIME timeout);
-		static void PostUpdate(TIME timeout);
 	};
 
 }
