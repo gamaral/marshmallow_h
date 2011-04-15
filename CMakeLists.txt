@@ -61,12 +61,19 @@ if(UNIX AND VIEWPORT_X11_OPENGL)
 	elseif (NOT X11_FOUND)
 		message(error, "X11 OpenGL viewport: X11 was not found.")
 	endif (NOT OPENGL_FOUND)
+
+	include_directories(${X11_INCLUDE_DIR}
+	                    ${OPENGL_INCLUDE_DIR}
+	                    ${OPENGL_INCLUDE_DIR}/GL
+	                    ${OPENGL_INCLUDE_DIR}/Headers)
 else(VIEWPORT_SDL)
 	find_package(SDL)
 
 	if (NOT SDL_FOUND)
 		message(FATAL_ERROR "SDL viewport: SDL was not found.")
 	endif (NOT SDL_FOUND)
+
+	include_directories(${SDL_INCLUDE_DIR})
 endif(UNIX AND VIEWPORT_X11_OPENGL)
 
 ############################################################## SUB DIRECTORIES #

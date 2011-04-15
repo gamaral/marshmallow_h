@@ -3,14 +3,12 @@ add_definitions(-DGRAPHICS_LIBRARY)
 file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp)
 
 if (UNIX AND VIEWPORT_X11_OPENGL)
-	include_directories(${X11_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              viewport/x11_opengl.cpp)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 	                              ${OPENGL_LIBRARIES}
 	                              ${X11_LIBRARIES})
 elseif (VIEWPORT_SDL)
-	include_directories(${SDL_INCLUDE_DIR})
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              viewport/sdl.cpp)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
