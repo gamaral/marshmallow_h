@@ -56,6 +56,9 @@
 #define WCHAR  wchar_t
 #define UID    uint32_t
 
+#define ON     true
+#define OFF    false
+
 /******************************************************************** defines */
 
 #define INFINITE ~(static_cast<TIME>(0))

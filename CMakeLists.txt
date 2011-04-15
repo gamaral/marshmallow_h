@@ -19,12 +19,12 @@ include_directories(${PROJECT_SOURCE_DIR}/contrib/eastl/include)
 
 # Global Options
 set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Engine Namespace")
-SET(VIEWPORT_SDL "off" CACHE BOOL "Use SDL Viewport")
-SET(VIEWPORT_X11_OPENGL "on" CACHE BOOL "Use X11 OpenGL Viewport")
+SET(VIEWPORT_SDL "OFF" CACHE BOOL "Use SDL Viewport")
+SET(VIEWPORT_X11_OPENGL "ON" CACHE BOOL "Use X11 OpenGL Viewport")
 SET(VIEWPORT_DEFAULT_WIDTH "800" CACHE STRING "Viewport default width")
 SET(VIEWPORT_DEFAULT_HEIGHT "600" CACHE STRING "Viewport default height")
 SET(VIEWPORT_DEFAULT_DEPTH "24" CACHE STRING "Viewport default depth")
-SET(VIEWPORT_DEFAULT_FULLSCREAN "off" CACHE BOOL "Viewport default fullscreen mode")
+SET(VIEWPORT_DEFAULT_FULLSCREEN "OFF" CACHE BOOL "Viewport default fullscreen mode")
 
 if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
 	set(DEBUG ON CACHE INTERNAL "")

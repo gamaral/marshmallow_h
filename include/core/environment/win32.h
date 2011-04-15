@@ -54,6 +54,9 @@
 #define WCHAR  wchar_t
 #define UID    uint32_t
 
+#define ON     true
+#define OFF    false
+
 #define STRDUP _strdup
 
 /******************************************************************** exports */
