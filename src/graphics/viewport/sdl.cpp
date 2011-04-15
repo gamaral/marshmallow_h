@@ -41,6 +41,8 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
+const char *Viewport::Name("SDL");
+
 struct Viewport::Internal
 {
 	    SDL_Surface *screen;

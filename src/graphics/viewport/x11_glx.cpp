@@ -54,7 +54,6 @@ struct Viewport::Internal
 {
 	Display    *display;
 	GLXContext  context;
-	Window      rwindow;
 	Window      window;
 	Atom        wm_delete;
 	XSizeHints *size_hints;
@@ -114,11 +113,11 @@ Viewport::Redisplay(int w, int h, int d, bool f)
 	}
 
 	/* get root window */
-	MPI.rwindow = RootWindow(MPI.display, vinfo->screen);
-	XGetWindowAttributes(MPI.display, MPI.rwindow, &rwattrs);
+	Window rwindow = RootWindow(MPI.display, vinfo->screen);
+	XGetWindowAttributes(MPI.display, rwindow, &rwattrs);
 
 	/* create colormap */
-	cmap = XCreateColormap(MPI.display, MPI.rwindow, vinfo->visual, AllocNone);
+	cmap = XCreateColormap(MPI.display, rwindow, vinfo->visual, AllocNone);
 
 	/* create window */
 	swattr.colormap = cmap;
@@ -133,8 +132,9 @@ Viewport::Redisplay(int w, int h, int d, bool f)
 		PointerMotionMask |
 		StructureNotifyMask;
 	MPI.window = XCreateWindow(MPI.display,
-	                           MPI.rwindow,
-	                           (rwattrs.width - w) / 2, ( rwattrs.height - h) / 2,
+	                           rwindow,
+	                           (DisplayWidth(MPI.display, vinfo->screen) - w) / 2,
+	                           (DisplayHeight(MPI.display, vinfo->screen) - h) / 2,
 	                           w, h,
 	                           1,
 	                           d,
@@ -181,6 +181,9 @@ Viewport::Redisplay(int w, int h, int d, bool f)
 	glViewport(0, 0, w, h);
 	glClearColor(.0, .0, .0, .0);
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
 	SwapBuffer();
 
 	return(MPI.loaded = true);
