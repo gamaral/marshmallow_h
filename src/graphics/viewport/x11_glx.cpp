@@ -36,9 +36,6 @@
 
 #include <GL/glx.h>
 #include <X11/X.h>
-#include <X11/Xlib.h>
-#include <X11/extensions/Xrandr.h>
-#include <X11/keysymdef.h>
 
 #include "core/platform.h"
 #include "event/eventmanager.h"
@@ -52,141 +49,148 @@ const char *Viewport::Name("X11_GLX");
 
 struct Viewport::Internal
 {
-	Display    *display;
 	GLXContext  context;
 	Window      window;
 	Atom        wm_delete;
+	Display    *display;
 	XSizeHints *size_hints;
 	bool        loaded;
+
+	Internal(void)
+	    : display(0),
+	      size_hints(0),
+	      loaded(false)
+	{
+	}
+
+	bool
+	createXWindow(int w, int h, int d, bool f)
+	{
+		loaded = false;
+
+		/* open display */
+		if (!(display = XOpenDisplay(0))) {
+			ERROR1("Unable to open X Display.");
+			return(false);
+		}
+
+		/* get visual info */
+		GLint gattr[] = {GLX_RGBA, GLX_DEPTH_SIZE, d, GLX_DOUBLEBUFFER, None};
+		XVisualInfo *l_vinfo;
+		if(!(l_vinfo = glXChooseVisual(display, 0, gattr))) {
+			ERROR1("Unable to choose X Visual Info.");
+			return(false);
+		}
+
+		/* get root window */
+		Window rwindow = RootWindow(display, l_vinfo->screen);
+		
+		/* create window */
+		XSetWindowAttributes l_swattr;
+		l_swattr.colormap = XCreateColormap(display, rwindow, l_vinfo->visual, AllocNone);
+		l_swattr.background_pixel = BlackPixel(display, l_vinfo->screen);
+		l_swattr.border_pixel = BlackPixel(display, l_vinfo->screen);
+		l_swattr.event_mask =
+			ButtonPressMask |
+			ButtonReleaseMask |
+			ExposureMask |
+			KeyPressMask |
+			KeyReleaseMask |
+			PointerMotionMask |
+			StructureNotifyMask;
+		window = XCreateWindow(display,
+					   rwindow,
+					   (DisplayWidth(display, l_vinfo->screen) - w) / 2,
+					   (DisplayHeight(display, l_vinfo->screen) - h) / 2,
+					   w, h,
+					   1,
+					   d,
+					   InputOutput,
+					   l_vinfo->visual,
+					   CWBackPixel|CWBorderPixel|CWColormap|CWEventMask,
+					   &l_swattr);
+
+		XMapWindow(display, window);
+		XStoreName(display, window, "Marshmallow"); // TODO: Set window caption
+
+		/* catch window manager delete event */
+		wm_delete = XInternAtom(display, "WM_DELETE_WINDOW", false);
+		XSetWMProtocols(display, window, &wm_delete, 1);
+
+		/* set size hints */
+		if (f) {
+			size_hints = 0;
+		} else {
+			if(!(size_hints = XAllocSizeHints())) {
+				ERROR1("Unable to allocate window size hints.");
+				return(false);
+			}
+			size_hints->flags = PMinSize|PMaxSize;
+			size_hints->min_width = w;
+			size_hints->min_height = h;
+			size_hints->max_width = w;
+			size_hints->max_height = h;
+			XSetWMNormalHints(display, window, size_hints);
+		}
+
+		/* create context */
+		if (!(context = glXCreateContext(display, l_vinfo, 0, GL_TRUE))) {
+			ERROR1("Failed to create context!");
+			return(false);
+		}
+		if (!glXMakeCurrent(display, window, context)) {
+			WARNING1("Failed to make context current!");
+			return(false);
+		}
+		glEnable(GL_DEPTH_TEST);
+
+		/* initialize context */
+		glViewport(0, 0, w, h);
+		glClearColor(.0, .0, .0, .0);
+		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		SwapBuffer();
+
+		return(loaded = true);
+	}
+
+	void
+	cleanupXWindow(void)
+	{
+		if (display) {
+			glXMakeCurrent(display, None, 0);
+			glXDestroyContext(display, context);
+			XDestroyWindow(display, window);
+			XCloseDisplay(display);
+		}
+		if (size_hints)
+			XFree(size_hints);
+
+		display = 0;
+		size_hints = 0;
+		loaded = false;
+	}
 } MPI;
 
 bool
 Viewport::Initialize(int w, int h, int d, bool f)
 {
-	MPI.display = 0;
-	MPI.size_hints = 0;
-	MPI.loaded = false;
-	return(Redisplay(w, h, d, f));
+	return(MPI.createXWindow(w, h, d, f));
 }
 
 void
 Viewport::Finalize(void)
 {
-	if (MPI.display) {
-		glXMakeCurrent(MPI.display, None, 0);
-		glXDestroyContext(MPI.display, MPI.context);
-		XDestroyWindow(MPI.display, MPI.window);
-		XCloseDisplay(MPI.display);
-	}
-	if (MPI.size_hints)
-		XFree(MPI.size_hints);
+	MPI.cleanupXWindow();
 }
 
 bool
 Viewport::Redisplay(int w, int h, int d, bool f)
 {
-	Colormap cmap;
-	XSetWindowAttributes swattr;
-	XVisualInfo *vinfo;
-	XWindowAttributes rwattrs;
-
-	if (MPI.loaded) {
-		glXMakeCurrent(MPI.display, None, 0);
-		glXDestroyContext(MPI.display, MPI.context);
-		XDestroyWindow(MPI.display, MPI.window);
-		XCloseDisplay(MPI.display);
-	}
-
-	MPI.loaded = false;
-
-	/* open display */
-	if (!(MPI.display = XOpenDisplay(0))) {
-		ERROR1("Unable to open X Display.");
-		return(false);
-	}
-
-	/* get visual info */
-	GLint gattr[] = {GLX_RGBA, GLX_DEPTH_SIZE, d, GLX_DOUBLEBUFFER, None};
-	if(!(vinfo = glXChooseVisual(MPI.display, 0, gattr))) {
-		ERROR1("Unable to choose X Visual Info.");
-		return(false);
-	}
-
-	/* get root window */
-	Window rwindow = RootWindow(MPI.display, vinfo->screen);
-	XGetWindowAttributes(MPI.display, rwindow, &rwattrs);
-
-	/* create colormap */
-	cmap = XCreateColormap(MPI.display, rwindow, vinfo->visual, AllocNone);
-
-	/* create window */
-	swattr.colormap = cmap;
-	swattr.background_pixel = BlackPixel(MPI.display, vinfo->screen);
-	swattr.border_pixel = BlackPixel(MPI.display, vinfo->screen);
-	swattr.event_mask =
-		ButtonPressMask |
-		ButtonReleaseMask |
-		ExposureMask |
-		KeyPressMask |
-		KeyReleaseMask |
-		PointerMotionMask |
-		StructureNotifyMask;
-	MPI.window = XCreateWindow(MPI.display,
-	                           rwindow,
-	                           (DisplayWidth(MPI.display, vinfo->screen) - w) / 2,
-	                           (DisplayHeight(MPI.display, vinfo->screen) - h) / 2,
-	                           w, h,
-	                           1,
-	                           d,
-	                           InputOutput,
-	                           vinfo->visual,
-	                           CWBackPixel|CWBorderPixel|CWColormap|CWEventMask,
-	                           &swattr);
-
-	XMapWindow(MPI.display, MPI.window);
-	XStoreName(MPI.display, MPI.window, "Marshmallow"); // TODO: Set window caption
-
-	/* catch window manager delete event */
-	MPI.wm_delete = XInternAtom(MPI.display, "WM_DELETE_WINDOW", false);
-	XSetWMProtocols(MPI.display, MPI.window, &MPI.wm_delete, 1);
-
-	/* set size hints */
-	if (f) {
-		MPI.size_hints = 0;
-	} else {
-		if(!(MPI.size_hints = XAllocSizeHints())) {
-			ERROR1("Unable to allocate window size hints.");
-			return(false);
-		}
-		MPI.size_hints->flags = PMinSize|PMaxSize;
-		MPI.size_hints->min_width = w;
-		MPI.size_hints->min_height = h;
-		MPI.size_hints->max_width = w;
-		MPI.size_hints->max_height = h;
-		XSetWMNormalHints(MPI.display, MPI.window, MPI.size_hints);
-	}
-
-	/* create context */
-	if (!(MPI.context = glXCreateContext(MPI.display, vinfo, 0, GL_TRUE))) {
-		ERROR1("Failed to create context!");
-		return(false);
-	}
-	if (!glXMakeCurrent(MPI.display, MPI.window, MPI.context)) {
-		WARNING1("Failed to make context current!");
-		return(false);
-	}
-	glEnable(GL_DEPTH_TEST);
-
-	/* initialize context */
-	glViewport(0, 0, w, h);
-	glClearColor(.0, .0, .0, .0);
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW);
-	SwapBuffer();
-
-	return(MPI.loaded = true);
+	MPI.cleanupXWindow();
+	return(MPI.createXWindow(w, h, d, f));
 }
 
 void
@@ -215,10 +219,12 @@ Viewport::Tick(TIME &t)
 		} break;
 		case ButtonPress:
 		case ButtonRelease:
+			/* TODO: Send Events */
+		break;
 		case KeyPress:
 		case KeyRelease: {
 			XKeyEvent &key = e.xkey;
-			UINT16 l_key = 0;
+			UINT16 l_key = 0; // TODO: create keymap and map virtual keys
 			Event::KBAction l_action =
 			    (key.type == KeyPress ? Event::KeyPressed : Event::KeyReleased);
 			Event::KBModifiers l_modifiers = Event::NoModifiers;
