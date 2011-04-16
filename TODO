@@ -1,14 +1,32 @@
-Core
-====
 
 Allocators
 ==========
 
-Merge in pool allocator, finish double buffered allocator.
+  Pool Allocator
+  --------------
 
-Views
-=====
+  FINISHED (pending merge)
 
-Start work on SDL UI Game View (test)
-Start work on OpenGL Linux UI Game View
+  Double Buffered Allocator
+  -------------------------
+
+  FINISHED (pending merge)
+
+Game
+====
+
+Input Interpreter
+-----------------
+
+  - Listens for Keyboard, Mouse, Touch events and maps them to actual scene
+    events like 'battletoad_head_bud'.
+
+Graphics
+========
+
+Painter
+-------
+
+  - OpenGL painter (now cleaning up)
+  - SDL painter (up next)
 
