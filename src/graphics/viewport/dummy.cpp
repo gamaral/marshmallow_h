@@ -78,3 +78,12 @@ Viewport::SwapBuffer(void)
 	INFO1("Dummy viewport swapped imaginary buffer");
 }
 
+void
+Viewport::World(float &lx, float &hx, float &ly, float &hy)
+{
+	lx = -100.f;
+	hx =  100.f;
+	ly = -37.5f;
+	hy =  37.5f;
+}
+

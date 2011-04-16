@@ -54,6 +54,7 @@ struct Viewport::Internal
 	Atom        wm_delete;
 	Display    *display;
 	XSizeHints *size_hints;
+	float       world[4];
 	bool        loaded;
 
 	Internal(void)
@@ -141,14 +142,27 @@ struct Viewport::Internal
 			WARNING1("Failed to make context current!");
 			return(false);
 		}
-		glEnable(GL_DEPTH_TEST);
+
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
+		glEnable(GL_BLEND);
+		glEnable(GL_TEXTURE_2D);
+
+		/* set world coordinates */
+		float l_aratio = static_cast<float>(h) / static_cast<float>(w);
+		world[0] = -100.f;
+		world[1] =  100.f;
+		world[2] = world[0] * l_aratio;
+		world[3] = world[1] * l_aratio;
 
 		/* initialize context */
 		glViewport(0, 0, w, h);
-		glClearColor(.0, .0, .0, .0);
+		glClearColor(0., 0., 0., 0.);
+		glClearDepth(1.0f);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
+		glOrtho(world[0], world[1], world[2], world[3], 0.f, 1.f);
 		glMatrixMode(GL_MODELVIEW);
 		SwapBuffer();
 
@@ -283,6 +297,7 @@ struct Viewport::Internal
 		case XK_KP_Decimal:   l_key = Event::KEY_KDECIMAL; break;
 		case XK_KP_Divide:    l_key = Event::KEY_KDIVIDE; break;
 		case XK_KP_Multiply:  l_key = Event::KEY_KMULTIPLY; break;
+		default: WARNING1("Unknown key pressed!");
 		}
 
 		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
@@ -357,5 +372,14 @@ void
 Viewport::SwapBuffer(void)
 {
 	glXSwapBuffers(MPI.display, MPI.window);
+}
+
+void
+Viewport::World(float &lx, float &hx, float &ly, float &hy)
+{
+	lx = MPI.world[0];
+	hx = MPI.world[1];
+	ly = MPI.world[2];
+	hy = MPI.world[3];
 }
 

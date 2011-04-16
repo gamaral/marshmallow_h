@@ -65,6 +65,8 @@ namespace Graphics
 
 		static void SwapBuffer(void);
 
+		static void World(float &lx, float &hx, float &ly, float &hy);
+
 		struct Internal;
 	};
 

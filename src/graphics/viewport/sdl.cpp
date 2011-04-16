@@ -48,6 +48,7 @@ const char *Viewport::Name("SDL");
 struct Viewport::Internal
 {
 	SDL_Surface *screen;
+	float       world[4];
 
 	Internal(void)
 	: screen(0)
@@ -66,6 +67,13 @@ struct Viewport::Internal
 			ERROR("SDL Error: %s", SDL_GetError());
 			return(false);
 		}
+
+		/* set world coordinates */
+		world[0] = world[2] = 0;
+		world[1] = static_cast<float>(w);
+		world[3] = static_cast<float>(h);
+
+		/* initialize context */
 		SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0, 0, 0));
 		SwapBuffer();
 
@@ -119,5 +127,14 @@ void
 Viewport::SwapBuffer(void)
 {
 	SDL_Flip(MPI.screen);
+}
+
+void
+Viewport::World(float &lx, float &hx, float &ly, float &hy)
+{
+	lx = MPI.world[0];
+	hx = MPI.world[1];
+	ly = MPI.world[2];
+	hy = MPI.world[3];
 }
 
