@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/engineeventlistener.h"
 
 /*!
  * @file
@@ -34,47 +34,28 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_IEVENTLISTENER_H
-#define EVENT_IEVENTLISTENER_H 1
+#include "event/quitevent.h"
+#include "game/engine.h"
 
-#include "core/global.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
+EngineEventListener::EngineEventListener(const Core::Identifier &i)
+    : EventListenerBase(i)
 {
-	class StrHash;
-	typedef StrHash Identifier;
-
-	template <class T> class Shared;
-	template <class T> class Weak;
 }
 
-namespace Event
+EngineEventListener::~EngineEventListener(void)
 {
-	struct IEvent;
-
-	/*! @brief Event Listener Interface */
-	struct EVENT_EXPORT IEventListener
-	{
-		virtual ~IEventListener(void) {};
-
-		/*!
-		 * @brief Event Id
-		 */
-		virtual const Core::Identifier & id(void) const = 0;
-
-		/*!
-		 * @brief Event Handler
-		 * @param event Event
-		 */
-		virtual bool handleEvent(const IEvent &event) = 0;
-	};
-	typedef Core::Shared<IEventListener> SharedEventListener;
-	typedef Core::Weak<IEventListener> WeakEventListener;
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+bool
+EngineEventListener::handleEvent(const Event::IEvent &e)
+{
+	if (e.type() == Core::Type("Event::QuitEvent")) {
+		const Event::QuitEvent *l_qe = dynamic_cast<const Event::QuitEvent *>(&e);
+		Engine::Instance()->stop(l_qe ? l_qe->code() : 0);
+	}
+	return(false);
+}
 
-#endif

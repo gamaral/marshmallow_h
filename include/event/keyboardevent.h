@@ -44,29 +44,133 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event
 {
 
-	enum KBAction
+	enum KBActions
 	{
-		KeyReleased = 0,
-		KeyPressed  = 1
+		KeyReleased     = 0,
+		KeyPressed      = 1
 	};
 
-	enum KBModifiers
+	enum KBKeys
 	{
-		NoModifiers     = 0,
-		ShiftModifier   = 1,
-		ControlModifier = 2,
-		AltModifier     = 4,
-		MetaModifier    = 8
+		KEY_NONE        = 0,
+		KEY_ALT_L,
+		KEY_ALT_R,
+		KEY_BACKSPACE,
+		KEY_BREAK,
+		KEY_CAPS_LOCK,
+		KEY_CLEAR,
+		KEY_CONTROL_L,
+		KEY_CONTROL_R,
+		KEY_DELETE,
+		KEY_DOWN,
+		KEY_END,
+		KEY_ESCAPE,
+		KEY_F1,
+		KEY_F10,
+		KEY_F11,
+		KEY_F12,
+		KEY_F13,
+		KEY_F14,
+		KEY_F15,
+		KEY_F2,
+		KEY_F3,
+		KEY_F4,
+		KEY_F5,
+		KEY_F6,
+		KEY_F7,
+		KEY_F8,
+		KEY_F9,
+		KEY_HELP,
+		KEY_HOME,
+		KEY_INSERT,
+		KEY_K0,
+		KEY_K1,
+		KEY_K2,
+		KEY_K3,
+		KEY_K4,
+		KEY_K5,
+		KEY_K6,
+		KEY_K7,
+		KEY_K8,
+		KEY_K9,
+		KEY_KDECIMAL,
+		KEY_KDIVIDE,
+		KEY_KMULTIPLY,
+		KEY_LEFT,
+		KEY_LESS,
+		KEY_MENU,
+		KEY_META_L,
+		KEY_META_R,
+		KEY_NUM_LOCK,
+		KEY_PAGE_DOWN,
+		KEY_PAGE_UP,
+		KEY_PAUSE,
+		KEY_PRINT,
+		KEY_RIGHT,
+		KEY_SCROLL_LOCK,
+		KEY_SHIFT_L,
+		KEY_SHIFT_R,
+		KEY_TAB,
+		KEY_UP,
+		KEY_BACKSLASH    = '/',
+		KEY_BRACKETLEFT = '{',
+		KEY_BRACKETRIGHT = '}',
+		KEY_COMMA       = ',',
+		KEY_DBLQUOTE    = '"',
+		KEY_EQUAL       = '=',
+		KEY_GRAVE       = '`',
+		KEY_MINUS       = '-',
+		KEY_PERIOD      = '.',
+		KEY_PLUS        = '+',
+		KEY_RETURN      = '\n',
+		KEY_SEMICOLON   = ';',
+		KEY_SLASH       = '\\',
+		KEY_SPACE       = ' ',
+		KEY_0           = '0',
+		KEY_1           = '1',
+		KEY_2           = '2',
+		KEY_3           = '3',
+		KEY_4           = '4',
+		KEY_5           = '5',
+		KEY_6           = '6',
+		KEY_7           = '7',
+		KEY_8           = '8',
+		KEY_9           = '9',
+		KEY_A           = 'a',
+		KEY_B           = 'b',
+		KEY_C           = 'c',
+		KEY_D           = 'd',
+		KEY_E           = 'e',
+		KEY_F           = 'f',
+		KEY_G           = 'g',
+		KEY_H           = 'h',
+		KEY_I           = 'i',
+		KEY_J           = 'j',
+		KEY_K           = 'k',
+		KEY_L           = 'l',
+		KEY_M           = 'm',
+		KEY_N           = 'n',
+		KEY_O           = 'o',
+		KEY_P           = 'p',
+		KEY_Q           = 'q',
+		KEY_R           = 'r',
+		KEY_S           = 's',
+		KEY_T           = 't',
+		KEY_U           = 'u',
+		KEY_V           = 'v',
+		KEY_W           = 'w',
+		KEY_X           = 'x',
+		KEY_Y           = 'y',
+		KEY_Z           = 'z'
 	};
 
 	/*! @brief Keyboard Event Class */
 	class EVENT_EXPORT KeyboardEvent : public EventBase
 	{
-		UINT16 m_key;
-		KBAction m_action;
-		KBModifiers m_modifiers;
+		KBKeys m_key;
+		KBActions m_action;
 	public:
-		KeyboardEvent(UINT16 key, KBAction action, KBModifiers modifiers, TIME timeout = 0);
+		KeyboardEvent(KBKeys key, KBActions action, TIME timeout = 0);
 		virtual ~KeyboardEvent(void);
 
 	public: /* virtual */

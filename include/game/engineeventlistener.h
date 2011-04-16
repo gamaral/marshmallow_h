@@ -34,44 +34,28 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EVENT_IEVENTLISTENER_H
-#define EVENT_IEVENTLISTENER_H 1
+#ifndef GAME_ENGINEEVENTLISTENER_H
+#define GAME_ENGINEEVENTLISTENER_H 1
 
-#include "core/global.h"
+#include "event/eventlistenerbase.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core
+namespace Game
 {
-	class StrHash;
-	typedef StrHash Identifier;
 
-	template <class T> class Shared;
-	template <class T> class Weak;
-}
-
-namespace Event
-{
-	struct IEvent;
-
-	/*! @brief Event Listener Interface */
-	struct EVENT_EXPORT IEventListener
+	/*! @brief Game Engine Class */
+	class GAME_EXPORT EngineEventListener : public Event::EventListenerBase
 	{
-		virtual ~IEventListener(void) {};
+	public:
 
-		/*!
-		 * @brief Event Id
-		 */
-		virtual const Core::Identifier & id(void) const = 0;
+		EngineEventListener(const Core::Identifier &identifier);
+		virtual ~EngineEventListener(void);
 
-		/*!
-		 * @brief Event Handler
-		 * @param event Event
-		 */
-		virtual bool handleEvent(const IEvent &event) = 0;
+	public: /* virtual */
+
+		VIRTUAL bool handleEvent(const Event::IEvent &event);
 	};
-	typedef Core::Shared<IEventListener> SharedEventListener;
-	typedef Core::Weak<IEventListener> WeakEventListener;
 
 }
 

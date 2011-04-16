@@ -60,15 +60,8 @@ namespace Event
 		VIRTUAL const Core::Identifier & id(void) const
 		    { return(m_id); }
 
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
 		VIRTUAL bool handleEvent(const IEvent &)
 		    { return(false); }
-
-	public: /* type */
-
-		static const Core::Type Type;
 	};
 
 }

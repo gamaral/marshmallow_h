@@ -60,8 +60,7 @@ struct Viewport::Internal
 	    : display(0),
 	      size_hints(0),
 	      loaded(false)
-	{
-	}
+	{}
 
 	bool
 	createXWindow(int w, int h, int d, bool f)
@@ -157,7 +156,7 @@ struct Viewport::Internal
 	}
 
 	void
-	cleanupXWindow(void)
+	destroyXWindow(void)
 	{
 		if (display) {
 			glXMakeCurrent(display, None, 0);
@@ -172,6 +171,124 @@ struct Viewport::Internal
 		size_hints = 0;
 		loaded = false;
 	}
+
+	void
+	handleKeyEvent(XKeyEvent &key)
+	{
+		Event::KBKeys l_key = Event::KEY_NONE;
+		Event::KBActions l_action =
+		    (key.type == KeyPress ? Event::KeyPressed : Event::KeyReleased);
+
+		switch (XLookupKeysym(&key, 0)) {
+		case XK_0:            l_key = Event::KEY_0; break;
+		case XK_1:            l_key = Event::KEY_1; break;
+		case XK_2:            l_key = Event::KEY_2; break;
+		case XK_3:            l_key = Event::KEY_3; break;
+		case XK_4:            l_key = Event::KEY_4; break;
+		case XK_5:            l_key = Event::KEY_5; break;
+		case XK_6:            l_key = Event::KEY_6; break;
+		case XK_7:            l_key = Event::KEY_7; break;
+		case XK_8:            l_key = Event::KEY_8; break;
+		case XK_9:            l_key = Event::KEY_9; break;
+		case XK_a:            l_key = Event::KEY_A; break;
+		case XK_b:            l_key = Event::KEY_B; break;
+		case XK_c:            l_key = Event::KEY_C; break;
+		case XK_d:            l_key = Event::KEY_D; break;
+		case XK_e:            l_key = Event::KEY_E; break;
+		case XK_f:            l_key = Event::KEY_F; break;
+		case XK_g:            l_key = Event::KEY_G; break;
+		case XK_h:            l_key = Event::KEY_H; break;
+		case XK_i:            l_key = Event::KEY_I; break;
+		case XK_j:            l_key = Event::KEY_J; break;
+		case XK_k:            l_key = Event::KEY_K; break;
+		case XK_l:            l_key = Event::KEY_L; break;
+		case XK_m:            l_key = Event::KEY_M; break;
+		case XK_n:            l_key = Event::KEY_N; break;
+		case XK_o:            l_key = Event::KEY_O; break;
+		case XK_p:            l_key = Event::KEY_P; break;
+		case XK_q:            l_key = Event::KEY_Q; break;
+		case XK_r:            l_key = Event::KEY_R; break;
+		case XK_s:            l_key = Event::KEY_S; break;
+		case XK_t:            l_key = Event::KEY_T; break;
+		case XK_u:            l_key = Event::KEY_U; break;
+		case XK_v:            l_key = Event::KEY_V; break;
+		case XK_w:            l_key = Event::KEY_W; break;
+		case XK_x:            l_key = Event::KEY_X; break;
+		case XK_y:            l_key = Event::KEY_Y; break;
+		case XK_z:            l_key = Event::KEY_Z; break;
+		case XK_Alt_L:        l_key = Event::KEY_ALT_L; break;
+		case XK_Alt_R:        l_key = Event::KEY_ALT_R; break;
+		case XK_BackSpace:    l_key = Event::KEY_BACKSPACE; break;
+		case XK_Break:        l_key = Event::KEY_BREAK; break;
+		case XK_Caps_Lock:    l_key = Event::KEY_CAPS_LOCK; break;
+		case XK_Clear:        l_key = Event::KEY_CLEAR; break;
+		case XK_Control_L:    l_key = Event::KEY_CONTROL_R; break;
+		case XK_Control_R:    l_key = Event::KEY_CONTROL_L; break;
+		case XK_Delete:       l_key = Event::KEY_DELETE; break;
+		case XK_Down:         l_key = Event::KEY_DOWN; break;
+		case XK_End:          l_key = Event::KEY_END; break;
+		case XK_Escape:       l_key = Event::KEY_ESCAPE; break;
+		case XK_Help:         l_key = Event::KEY_HELP; break;
+		case XK_Home:         l_key = Event::KEY_HOME; break;
+		case XK_Insert:       l_key = Event::KEY_INSERT; break;
+		case XK_Left:         l_key = Event::KEY_LEFT; break;
+		case XK_Menu:         l_key = Event::KEY_MENU; break;
+		case XK_Meta_L:       l_key = Event::KEY_META_L; break;
+		case XK_Meta_R:       l_key = Event::KEY_META_R; break;
+		case XK_Num_Lock:     l_key = Event::KEY_NUM_LOCK; break;
+		case XK_Page_Down:    l_key = Event::KEY_PAGE_DOWN; break;
+		case XK_Page_Up:      l_key = Event::KEY_PAGE_UP; break;
+		case XK_Pause:        l_key = Event::KEY_PAUSE; break;
+		case XK_Print:        l_key = Event::KEY_PRINT; break;
+		case XK_Return:       l_key = Event::KEY_RETURN; break;
+		case XK_Right:        l_key = Event::KEY_RIGHT; break;
+		case XK_Scroll_Lock:  l_key = Event::KEY_SCROLL_LOCK; break;
+		case XK_Shift_L:      l_key = Event::KEY_SHIFT_L; break;
+		case XK_Shift_R:      l_key = Event::KEY_SHIFT_R; break;
+		case XK_Tab:          l_key = Event::KEY_TAB; break;
+		case XK_Up:           l_key = Event::KEY_UP; break;
+		case XK_backslash:    l_key = Event::KEY_BACKSLASH; break;
+		case XK_bracketleft:  l_key = Event::KEY_BRACKETLEFT; break;
+		case XK_bracketright: l_key = Event::KEY_BRACKETRIGHT; break;
+		case XK_equal:        l_key = Event::KEY_EQUAL; break;
+		case XK_less:         l_key = Event::KEY_LESS; break;
+		case XK_quotedbl:     l_key = Event::KEY_DBLQUOTE; break;
+		case XK_semicolon:    l_key = Event::KEY_SEMICOLON; break;
+		case XK_space:        l_key = Event::KEY_SPACE; break;
+		case XK_F1:           l_key = Event::KEY_F1; break;
+		case XK_F2:           l_key = Event::KEY_F2; break;
+		case XK_F3:           l_key = Event::KEY_F3; break;
+		case XK_F4:           l_key = Event::KEY_F4; break;
+		case XK_F5:           l_key = Event::KEY_F5; break;
+		case XK_F6:           l_key = Event::KEY_F6; break;
+		case XK_F7:           l_key = Event::KEY_F7; break;
+		case XK_F8:           l_key = Event::KEY_F8; break;
+		case XK_F9:           l_key = Event::KEY_F9; break;
+		case XK_F10:          l_key = Event::KEY_F10; break;
+		case XK_F11:          l_key = Event::KEY_F11; break;
+		case XK_F12:          l_key = Event::KEY_F12; break;
+		case XK_F13:          l_key = Event::KEY_F13; break;
+		case XK_F14:          l_key = Event::KEY_F14; break;
+		case XK_F15:          l_key = Event::KEY_F15; break;
+		case XK_KP_0:         l_key = Event::KEY_K0; break;
+		case XK_KP_1:         l_key = Event::KEY_K1; break;
+		case XK_KP_2:         l_key = Event::KEY_K2; break;
+		case XK_KP_3:         l_key = Event::KEY_K3; break;
+		case XK_KP_4:         l_key = Event::KEY_K4; break;
+		case XK_KP_5:         l_key = Event::KEY_K5; break;
+		case XK_KP_6:         l_key = Event::KEY_K6; break;
+		case XK_KP_7:         l_key = Event::KEY_K7; break;
+		case XK_KP_8:         l_key = Event::KEY_K8; break;
+		case XK_KP_9:         l_key = Event::KEY_K9; break;
+		case XK_KP_Decimal:   l_key = Event::KEY_KDECIMAL; break;
+		case XK_KP_Divide:    l_key = Event::KEY_KDIVIDE; break;
+		case XK_KP_Multiply:  l_key = Event::KEY_KMULTIPLY; break;
+		}
+
+		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
+		Event::EventManager::Instance()->queue(event);
+	}
+
 } MPI;
 
 bool
@@ -183,13 +300,13 @@ Viewport::Initialize(int w, int h, int d, bool f)
 void
 Viewport::Finalize(void)
 {
-	MPI.cleanupXWindow();
+	MPI.destroyXWindow();
 }
 
 bool
 Viewport::Redisplay(int w, int h, int d, bool f)
 {
-	MPI.cleanupXWindow();
+	MPI.destroyXWindow();
 	return(MPI.createXWindow(w, h, d, f));
 }
 
@@ -210,31 +327,27 @@ Viewport::Tick(TIME &t)
 			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 			SwapBuffer();
 			} break;
+
 		case ClientMessage: {
 			XClientMessageEvent &client = e.xclient;
 			if (static_cast<Atom>(client.data.l[0]) == MPI.wm_delete) {
-				Event::QuitEvent event;
+				Event::QuitEvent event(-1);
 				Event::EventManager::Instance()->dispatch(event);
 			}
 		} break;
+
+		case KeyPress:
+		case KeyRelease: MPI.handleKeyEvent(e.xkey); break;
+
 		case ButtonPress:
 		case ButtonRelease:
 			/* TODO: Send Events */
 		break;
-		case KeyPress:
-		case KeyRelease: {
-			XKeyEvent &key = e.xkey;
-			UINT16 l_key = 0; // TODO: create keymap and map virtual keys
-			Event::KBAction l_action =
-			    (key.type == KeyPress ? Event::KeyPressed : Event::KeyReleased);
-			Event::KBModifiers l_modifiers = Event::NoModifiers;
-			
-			Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action, l_modifiers));
-			Event::EventManager::Instance()->queue(event);
-		} break;
+
 		case MotionNotify:
 			/* TODO: Send Events */
 			break;
+
 		default: INFO1("Unknown viewport event received."); break;
 		}
 	}

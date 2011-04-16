@@ -37,6 +37,8 @@
 #include <SDL.h>
 
 #include "core/platform.h"
+#include "event/eventmanager.h"
+#include "event/quitevent.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -45,15 +47,39 @@ const char *Viewport::Name("SDL");
 
 struct Viewport::Internal
 {
-	    SDL_Surface *screen;
-	    SDL_Event event;
+	SDL_Surface *screen;
+
+	Internal(void)
+	: screen(0)
+	{}
+
+	bool
+	createSDLWindow(int w, int h, int d, bool f)
+	{
+		int l_flags =
+		    SDL_HWSURFACE |
+		    SDL_DOUBLEBUF |
+		    (f ? SDL_FULLSCREEN : 0);
+
+		screen = SDL_SetVideoMode(w, h, d, l_flags);
+		if (!screen) {
+			ERROR("SDL Error: %s", SDL_GetError());
+			return(false);
+		}
+		SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0, 0, 0));
+		SwapBuffer();
+
+		return(true);
+	}
+
 } MPI;
 
 bool
 Viewport::Initialize(int w, int h, int d, bool f)
 {
 	SDL_Init(SDL_INIT_VIDEO);
-	return(Redisplay(w, h, d, f));
+
+	return(MPI.createSDLWindow(w, h, d, f));
 }
 
 void
@@ -65,18 +91,7 @@ Viewport::Finalize(void)
 bool
 Viewport::Redisplay(int w, int h, int d, bool f)
 {
-	int l_flags =
-	    SDL_HWSURFACE |
-	    SDL_DOUBLEBUF |
-	    (f ? SDL_FULLSCREEN : 0);
-
-	MPI.screen = SDL_SetVideoMode(w, h, d, l_flags);
-	if (!MPI.screen) {
-		ERROR("SDL Error: %s", SDL_GetError());
-		return(false);
-	}
-	SDL_FillRect(MPI.screen, &MPI.screen->clip_rect, SDL_MapRGB(MPI.screen->format, 0, 0, 0));
-	SwapBuffer();
+	return(MPI.createSDLWindow(w, h, d, f));
 }
 
 void
@@ -87,12 +102,15 @@ Viewport::Tick(TIME &t)
 	SDL_Event e;
 	while(TIMEOUT_DEC(t) > 0 && SDL_PollEvent(&e))
 		switch(e.type) {
-		case SDL_QUIT:
+		case SDL_QUIT: {
+			Event::QuitEvent event(-1);
+			Event::EventManager::Instance()->dispatch(event);
+		} break;
 		case SDL_KEYUP:
 		case SDL_KEYDOWN:
 		case SDL_MOUSEMOTION:
 			/* TODO: Send Events */
-			break;
+		break;
 		default: INFO1("Unknown viewport event received."); break;
 		}
 }

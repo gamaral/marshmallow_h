@@ -44,14 +44,12 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Game;
 
-SceneManager::SceneManager(SharedScene init)
+SceneManager::SceneManager(void)
     : m_stack(),
       m_active(),
-      m_renderListener(new Event::RenderEventListener("Game.SceneManager.Render", *this)),
-      m_updateListener(new Event::UpdateEventListener("Game.SceneManager.Update", *this))
+      m_renderListener(new Event::RenderEventListener("SceneManager.RenderEventListener", *this)),
+      m_updateListener(new Event::UpdateEventListener("SceneManager.UpdateEventListener", *this))
 {
-	push(init);
-
 	Event::EventManager::Instance()->connect(m_renderListener, "Event::RenderEvent");
 	Event::EventManager::Instance()->connect(m_updateListener, "Event::UpdateEvent");
 }

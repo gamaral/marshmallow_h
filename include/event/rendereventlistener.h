@@ -63,14 +63,7 @@ namespace Event
 
 	public: /* virtual */
 
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
 		VIRTUAL bool handleEvent(const IEvent &event);
-
-	public: /* type */
-
-		static const Core::Type Type;
 	};
 
 }

@@ -70,7 +70,7 @@ namespace Game
 
 	public:
 
-		SceneManager(SharedScene init);
+		SceneManager(void);
 		virtual ~SceneManager(void);
 
 		void push(SharedScene &scene);

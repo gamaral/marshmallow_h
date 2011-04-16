@@ -28,7 +28,7 @@ set(VIEWPORT_DEFAULT_FULLSCREEN "OFF" CACHE BOOL "Viewport default fullscreen mo
 
 set(VIEWPORT_X11_GLX "ON" CACHE BOOL "Use X11 GLX Viewport")
 set(VIEWPORT_SDL "OFF" CACHE BOOL "Use SDL Viewport")
-set(VIEWPORT_DUMMY "OFF" CACHE BOOL "Use SDL Dummy Viewport")
+set(VIEWPORT_DUMMY "ON" CACHE BOOL "Use SDL Dummy Viewport")
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 	set(DEBUG ON CACHE INTERNAL "")

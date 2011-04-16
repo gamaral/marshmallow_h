@@ -44,7 +44,10 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event
 {
 	class EventManager;
-	typedef Core::Shared<Event::EventManager> SharedEventManager;
+	typedef Core::Shared<EventManager> SharedEventManager;
+	
+	class IEventListener;
+	typedef Core::Shared<IEventListener> SharedEventListener;
 }
 
 namespace Game
@@ -53,12 +56,15 @@ namespace Game
 	class SceneManager;
 	typedef Core::Shared<SceneManager> SharedSceneManager;
 
+	class EngineEventListener;
+
 	/*! @brief Game Engine Class */
 	class GAME_EXPORT Engine
 	{
 		static Engine *s_instance;
-		Event::SharedEventManager m_event_manager;
-		Game::SharedSceneManager  m_scene_manager;
+		Event::SharedEventManager  m_event_manager;
+		Game::SharedSceneManager   m_scene_manager;
+		Event::SharedEventListener m_event_listener;
 		float  m_fps;
 		float  m_ups;
 		TIME   m_delta_time;
@@ -84,8 +90,7 @@ namespace Game
 		 * @brief Stop Engine
 		 * @param exit_code Exit code
 		 */
-		void stop(int exit_code = 0)
-		    { m_exit_code = exit_code; m_running = false; }
+		void stop(int exit_code = 0);
 
 		/*!
 		 * @brief Event Manager
@@ -133,6 +138,7 @@ namespace Game
 
 	public: /* virtual */
 
+		virtual void setup(void);
 		virtual void initialize(void);
 		virtual void finalize(void);
 

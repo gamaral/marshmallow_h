@@ -40,8 +40,6 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Event;
 
-const Core::Type RenderEventListener::Type("Event::RenderEventListener");
-
 RenderEventListener::RenderEventListener(const Core::Identifier &i,
                                               Core::IRenderable &o)
     : EventListenerBase(i),

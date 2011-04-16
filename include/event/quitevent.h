@@ -47,9 +47,13 @@ namespace Event
 	/*! @brief Quit Event Class */
 	class EVENT_EXPORT QuitEvent : public EventBase
 	{
+		int m_code;
 	public:
-		QuitEvent(TIME timeout = 0);
+		QuitEvent(int code = 0, TIME timeout = 0);
 		virtual ~QuitEvent(void);
+
+		int code(void) const
+		    { return(m_code); }
 
 	public: /* virtual */
 

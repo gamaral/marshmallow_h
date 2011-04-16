@@ -49,6 +49,12 @@ using namespace eastl;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+namespace Core
+{
+	class StrHash;
+	typedef StrHash Type;
+}
+
 namespace Event
 {
 	struct IEventListener;

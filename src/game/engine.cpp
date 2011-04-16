@@ -42,6 +42,7 @@
 #include "event/rendereventlistener.h"
 #include "event/updateevent.h"
 #include "event/updateeventlistener.h"
+#include "game/engineeventlistener.h"
 #include "game/iscene.h"
 #include "game/scenemanager.h"
 #include "graphics/viewport.h"
@@ -57,6 +58,7 @@ Engine *Engine::s_instance = 0;
 Engine::Engine(float f, float u)
     : m_event_manager(),
       m_scene_manager(),
+      m_event_listener(),
       m_fps(f),
       m_ups(u),
       m_delta_time(0),
@@ -77,10 +79,23 @@ Engine::~Engine(void)
 }
 
 void
+Engine::setup(void)
+{
+	m_event_listener = new EngineEventListener("Engine.EngineEventListener");
+
+	if (!m_event_manager)
+		m_event_manager = new Event::EventManager("Engine.EventManager");
+	if (!m_scene_manager)
+		m_scene_manager = new SceneManager();
+}
+
+void
 Engine::initialize(void)
 {
 	Platform::Initialize();
 	Viewport::Initialize();
+
+	eventManager()->connect(m_event_listener, "Event::QuitEvent");
 }
 
 void
@@ -96,10 +111,8 @@ Engine::finalize(void)
 int
 Engine::run(void)
 {
-	/*************************************************** hybrid-busy-wait */
-	/*
-	 * XXX: I got this idea a while back, worth try I always say 
-	 */
+	setup();
+
 	const TIME l_mpf = static_cast<TIME>(floor(1000/m_fps)); // milliseconds per frame
 	const TIME l_mpu = static_cast<TIME>(floor(1000/m_ups)); // milliseconds per update
 
@@ -178,6 +191,14 @@ Engine::run(void)
 	finalize();
 
 	return(m_exit_code);
+}
+
+void
+Engine::stop(int ec)
+{
+	INFO1("Engine stopped");
+	m_exit_code = ec;
+	m_running = false;
 }
 
 SharedEventManager

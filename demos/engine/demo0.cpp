@@ -127,16 +127,12 @@ public:
 class Demo : public Game::Engine
 {
 	int m_stop_timer;
-	Event::SharedEventManager  m_event_manager;
-	Game::SharedSceneManager   m_scene_manager;
 	Event::SharedEventListener m_debugListener;
 
 public:
 	Demo(void)
 	: Engine(),
 	  m_stop_timer(0),
-	  m_event_manager(new Event::EventManager("main")),
-	  m_scene_manager(new Game::SceneManager(Game::SharedScene())),
 	  m_debugListener(new Event::DebugEventListener("log.txt"))
 	{
 	}
@@ -147,14 +143,14 @@ public:
 
 		Graphics::Viewport::Redisplay(1024, 768);
 
-		setEventManager(m_event_manager);
-		setSceneManager(m_scene_manager);
-
+#if 0
 		eventManager()->connect(m_debugListener, "Event::RenderEvent");
 		eventManager()->connect(m_debugListener, "Event::UpdateEvent");
+#endif
+		eventManager()->connect(m_debugListener, "Event::KeyboardEvent");
 
 		Game::SharedScene l_scene(new DemoScene);
-		m_scene_manager->push(l_scene);
+		sceneManager()->push(l_scene);
 	}
 
 	VIRTUAL void finalize(void)

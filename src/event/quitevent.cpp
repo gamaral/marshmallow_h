@@ -42,8 +42,9 @@ using namespace Event;
 
 const Type QuitEvent::Type("Event::QuitEvent");
 
-QuitEvent::QuitEvent(TIME t)
-    : EventBase(t, HighPriority)
+QuitEvent::QuitEvent(int c, TIME t)
+    : EventBase(t, HighPriority),
+      m_code(c)
 {
 }
 

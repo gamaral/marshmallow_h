@@ -44,8 +44,6 @@ MARSHMALLOW_NAMESPACE_USE;
 class Demo : public Game::Engine
 {
 	int m_stop_timer;
-	Event::SharedEventManager  m_event_manager;
-	Game::SharedSceneManager   m_scene_manager;
 
 public:
 	Demo(void);

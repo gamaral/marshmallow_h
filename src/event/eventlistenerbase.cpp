@@ -37,8 +37,6 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Event;
 
-const Core::Type EventListenerBase::Type("Event::EventListenerBase");
-
 EventListenerBase::EventListenerBase(const Core::Identifier &i)
     : m_id(i)
 {

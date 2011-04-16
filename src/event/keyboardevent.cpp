@@ -42,11 +42,10 @@ using namespace Event;
 
 const Type KeyboardEvent::Type("Event::KeyboardEvent");
 
-KeyboardEvent::KeyboardEvent(UINT16 k, KBAction a, KBModifiers m, TIME t)
+KeyboardEvent::KeyboardEvent(KBKeys k, KBActions a, TIME t)
     : EventBase(t, HighPriority),
       m_key(k),
-      m_action(a),
-      m_modifiers(m)
+      m_action(a)
 {
 }
 

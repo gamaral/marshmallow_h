@@ -40,9 +40,7 @@ MARSHMALLOW_NAMESPACE_USE;
 
 Demo::Demo(void)
     : Engine(),
-      m_stop_timer(0),
-      m_event_manager(new Event::EventManager("main")),
-      m_scene_manager(new Game::SceneManager(Game::SharedScene()))
+      m_stop_timer(0)
 {
 }
 
@@ -51,11 +49,8 @@ Demo::initialize(void)
 {
 	Engine::initialize();
 
-	setEventManager(m_event_manager);
-	setSceneManager(m_scene_manager);
-
 	Game::SharedScene l_scene(new MainScene);
-	m_scene_manager->push(l_scene);
+	sceneManager()->push(l_scene);
 }
 
 void
