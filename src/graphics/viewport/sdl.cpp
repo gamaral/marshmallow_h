@@ -35,6 +35,7 @@
  */
 
 #include <SDL.h>
+#include <SDL_opengl.h>
 
 #include "core/platform.h"
 #include "event/eventmanager.h"
@@ -60,6 +61,7 @@ struct Viewport::Internal
 		int l_flags =
 		    SDL_HWSURFACE |
 		    SDL_DOUBLEBUF |
+		    SDL_OPENGL |
 		    (f ? SDL_FULLSCREEN : 0);
 
 		screen = SDL_SetVideoMode(w, h, d, l_flags);
@@ -69,13 +71,24 @@ struct Viewport::Internal
 		}
 
 		/* set world coordinates */
-		world[0] = world[2] = 0;
-		world[1] = static_cast<float>(w);
-		world[3] = static_cast<float>(h);
+		float l_aratio = static_cast<float>(h) / static_cast<float>(w);
+		world[0] = -100.f;
+		world[1] =  100.f;
+		world[2] = world[0] * l_aratio;
+		world[3] = world[1] * l_aratio;
 
 		/* initialize context */
-		SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0, 0, 0));
+		glViewport(0, 0, w, h);
+		glClearColor(0., 0., 0., 0.);
+		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(world[0], world[1], world[2], world[3], -1.f, 1.f);
+		glMatrixMode(GL_MODELVIEW);
 		SwapBuffer();
+
+		if( glGetError() != GL_NO_ERROR )
+			return(false);
 
 		return(true);
 	}
@@ -85,7 +98,10 @@ struct Viewport::Internal
 bool
 Viewport::Initialize(int w, int h, int d, bool f)
 {
-	SDL_Init(SDL_INIT_VIDEO);
+	if (!SDL_Init(SDL_INIT_VIDEO)) {
+		ERROR1("Failed to initialize SDL");
+		return(false);
+	}
 
 	return(MVI.createSDLWindow(w, h, d, f));
 }
@@ -126,7 +142,9 @@ Viewport::Tick(TIME t)
 void
 Viewport::SwapBuffer(void)
 {
-	SDL_Flip(MVI.screen);
+	SDL_GL_SwapBuffers();
+	glClearColor(.0, .0, .0, .0);
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 }
 
 void

@@ -158,11 +158,10 @@ struct Viewport::Internal
 		/* initialize context */
 		glViewport(0, 0, w, h);
 		glClearColor(0., 0., 0., 0.);
-		glClearDepth(1.0f);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(world[0], world[1], world[2], world[3], 0.f, 1.f);
+		glOrtho(world[0], world[1], world[2], world[3], -1.f, 1.f);
 		glMatrixMode(GL_MODELVIEW);
 		SwapBuffer();
 

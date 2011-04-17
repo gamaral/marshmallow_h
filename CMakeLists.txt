@@ -84,9 +84,12 @@ if(UNIX AND VIEWPORT_X11_GLX)
 	include_directories(${X11_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
 elseif(VIEWPORT_SDL)
 	find_package(SDL)
+	find_package(OpenGL)
 
 	if(NOT SDL_FOUND)
 		message(FATAL_ERROR "SDL viewport: SDL was not found.")
+	elseif(NOT OPENGL_FOUND)
+		message(FATAL_ERROR "SDL OpenGL viewport: OpenGL was not found.")
 	endif(NOT SDL_FOUND)
 
 	include_directories(${SDL_INCLUDE_DIR})
