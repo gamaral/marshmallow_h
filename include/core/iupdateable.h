@@ -51,7 +51,7 @@ namespace Core
 	{
 		virtual ~IUpdateable(void) {};
 
-		virtual void update(TIME timeout) = 0;
+		virtual void update(TIME delta) = 0;
 	};
 	typedef Shared<IUpdateable> SharedUpdateable;
 	typedef Weak<IUpdateable> WeakUpdateable;

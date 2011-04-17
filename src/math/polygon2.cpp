@@ -40,12 +40,24 @@ using namespace Math;
 double
 Polygon2::area(void) const
 {
-	const int l_c = size();
+	const int l_c = m_points.size();
 	double l_area = 0;
 
 	for (int l_i = 1; l_i <= l_c; ++l_i)
-	    l_area += at(l_i-1).cross(at(l_i % l_c));
+	    l_area += m_points.at(l_i-1).cross(m_points.at(l_i % l_c));
 
 	return(l_area / 2.);
+}
+
+void
+Polygon2::push(const Math::Vector2 &p)
+{
+	m_points.push_back(p);
+}
+
+void
+Polygon2::pop(void)
+{
+	m_points.pop_back();
 }
 

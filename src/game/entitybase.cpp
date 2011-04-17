@@ -96,9 +96,8 @@ EntityBase::render(void)
 }
 
 void
-EntityBase::update(TIME t)
+EntityBase::update(TIME d)
 {
-	UNUSED(t);
 	if (isZombie())
 		return;
 
@@ -107,7 +106,7 @@ EntityBase::update(TIME t)
 
 	INFO("%s: Updating components.", id().str());
 	for (l_i = m_components.begin(); l_i != l_c; ++l_i)
-		(*l_i)->update(t);
+		(*l_i)->update(d);
 	INFO("%s: Components updated.", id().str());
 }
 

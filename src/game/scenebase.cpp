@@ -113,9 +113,8 @@ SceneBase::render(void)
 }
 
 void
-SceneBase::update(TIME t)
+SceneBase::update(TIME d)
 {
-	UNUSED(t);
 	EntityList::const_iterator l_i;
 
 	for (l_i = m_entities.begin(); l_i != m_entities.end();) {
@@ -124,7 +123,7 @@ SceneBase::update(TIME t)
 		if (l_entity->isZombie())
 			removeEntity(l_entity);
 		else
-			l_entity->update(t);
+			l_entity->update(d);
 	}
 }
 

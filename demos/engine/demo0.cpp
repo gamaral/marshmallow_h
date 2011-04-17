@@ -63,11 +63,11 @@ public:
 		return(m_dir);
 	}
 
-	VIRTUAL void update(TIME t)
+	VIRTUAL void update(TIME d)
 	{
-		UNUSED(t);
-		m_pos.rx() += m_dir.rx() * Game::Engine::Instance()->deltaTime();
-		m_pos.ry() += m_dir.ry() * Game::Engine::Instance()->deltaTime();
+		INFO("DELTA: %d", d);
+		m_pos.rx() += m_dir.rx() * d;
+		m_pos.ry() += m_dir.ry() * d;
 		INFO("object moved to %f, %f", m_pos.rx(), m_pos.ry());
 	}
 
@@ -82,9 +82,10 @@ public:
 	{
 	}
 
-	VIRTUAL void update(TIME t)
+	VIRTUAL void update(TIME d)
 	{
-		UNUSED(t);
+		UNUSED(d);
+
 		if (!m_mover && entity())
 			m_mover = entity()->component("mover").cast<DemoMoverComponent>();
 
@@ -94,10 +95,10 @@ public:
 
 			if ((pos.rx() < -50 && dir.rx() < 0)
 			 || (pos.rx() >  50 && dir.rx() > 0))
-				dir.rx() *= -.9;
+				dir.rx() *= -0.95;
 			if ((pos.ry() < -50 && dir.ry() < 0)
 			 || (pos.ry() >  50 && dir.ry() > 0))
-				dir.ry() *= -.9;
+				dir.ry() *= -0.95;
 		}
 	}
 };

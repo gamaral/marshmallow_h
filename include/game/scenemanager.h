@@ -83,7 +83,7 @@ namespace Game
 	public: /* virtual */
 
 		VIRTUAL void render(void);
-		VIRTUAL void update(TIME timeout = INFINITE);
+		VIRTUAL void update(TIME delta);
 	};
 	typedef Core::Shared<SceneManager> SharedSceneManager;
 

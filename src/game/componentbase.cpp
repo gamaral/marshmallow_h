@@ -59,9 +59,9 @@ ComponentBase::render(void)
 }
 
 void
-ComponentBase::update(TIME t)
+ComponentBase::update(TIME d)
 {
-	UNUSED(t);
+	UNUSED(d);
 	INFO("Component %s update.", id().str());
 }
 

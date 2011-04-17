@@ -78,7 +78,7 @@ namespace Game
 		VIRTUAL SharedComponent component(const Core::Identifier &identifier) const;
 
 		VIRTUAL void render(void);
-		VIRTUAL void update(TIME timeout = INFINITE);
+		VIRTUAL void update(TIME delta);
 
 		VIRTUAL void kill(void)
 		    { m_killed = true; }

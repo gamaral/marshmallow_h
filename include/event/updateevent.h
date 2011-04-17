@@ -46,17 +46,17 @@ namespace Event
 	/*! @brief Update Event Class */
 	class EVENT_EXPORT UpdateEvent : public EventBase
 	{
-		TIME m_timeout;
+		TIME m_delta;
 
 		NO_COPY(UpdateEvent);
 
 	public:
 
-		UpdateEvent(TIME timeout);
+		UpdateEvent(TIME delta);
 		virtual ~UpdateEvent(void);
 
-		TIME timeout(void) const
-		    { return(m_timeout); }
+		TIME delta(void) const
+		    { return(m_delta); }
 
 	public: /* virtual */
 

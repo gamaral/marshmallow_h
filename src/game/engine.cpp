@@ -113,8 +113,8 @@ Engine::run(void)
 {
 	setup();
 
-	const TIME l_mpf = static_cast<TIME>(floor(1000/m_fps)); // milliseconds per frame
-	const TIME l_mpu = static_cast<TIME>(floor(1000/m_ups)); // milliseconds per update
+	const TIME l_mpf = static_cast<TIME>(floor(1000./m_fps)); // milliseconds per frame
+	const TIME l_mpu = static_cast<TIME>(floor(1000./m_ups)); // milliseconds per update
 
 	TIME l_tick;
 	TIME l_tick_target = MIN(l_mpu, l_mpf) / 2;
@@ -128,27 +128,26 @@ Engine::run(void)
 	TIME l_second = 0;
 	TIME l_second_target = 1000;
 
-	TIME l_lasttick = Platform::TimeStamp();
-
 	m_delta_time = 0;
 	m_running = true;
 
 	initialize();
 
-	/* start us off */
-	TIME l_timeout = INFINITE;
-
-	tick(l_timeout);
-	update(l_timeout);
+	/* startup */
+	tick(l_tick_target);
+	update(0);
 	render();
+
+	TIME l_lasttick = Platform::TimeStamp();
+	TIME l_timeout;
 
 	/* main game loop */
 	do
 	{
-		l_timeout = l_tick_target - 1;
-
 		l_tick = Platform::TimeStamp();
 		m_delta_time = l_tick - l_lasttick;
+
+		l_timeout = l_tick_target - 1;
 
 		l_render += m_delta_time;
 		l_update += m_delta_time;
@@ -164,7 +163,7 @@ Engine::run(void)
 		}
 
 		if (l_update >= l_update_target) {
-			update(l_timeout);
+			update(l_update);
 			l_update += (Platform::TimeStamp() - l_tick) - l_update_target;
 		}
 
@@ -246,10 +245,9 @@ Engine::tick(TIME &t)
 }
 
 void
-Engine::update(TIME &t)
+Engine::update(TIME d)
 {
-	TIMEOUT_INIT;
-	Event::UpdateEvent event(TIMEOUT_DEC(t));
+	Event::UpdateEvent event(d);
 	eventManager()->dispatch(event);
 	INFO1("Update event dispatched!");
 }

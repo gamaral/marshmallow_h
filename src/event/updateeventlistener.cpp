@@ -27,6 +27,7 @@
  */
 
 #include "event/updateeventlistener.h"
+#include "event/updateevent.h"
 
 /*!
  * @file
@@ -52,12 +53,12 @@ UpdateEventListener::~UpdateEventListener(void)
 }
 
 bool
-UpdateEventListener::handleEvent(const IEvent &event)
+UpdateEventListener::handleEvent(const IEvent &e)
 {
 	static const Core::Type sc_UpdateType("Event::UpdateEvent");
 
-	if (event.type() == sc_UpdateType)
-		m_updateable.update(INFINITE);
+	if (e.type() == sc_UpdateType)
+		m_updateable.update(static_cast<const UpdateEvent &>(e).delta());
 
 	return(false);
 }

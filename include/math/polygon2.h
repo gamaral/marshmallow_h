@@ -48,9 +48,28 @@ namespace Math
 {
 
 	/*! @brief 2D Polygon */
-	class MATH_EXPORT Polygon2 : vector<Vector2>
+	class MATH_EXPORT Polygon2
 	{
+		vector<Vector2> m_points;
+
+	public:
+
 		double area(void) const;
+
+		int count(void) const
+		    { return(m_points.size()); }
+
+		const Math::Vector2 & at(int index) const
+		    { return(m_points.at(index)); }
+
+		void push(const Math::Vector2 &point);
+		void pop(void);
+
+	public: /* operator */
+
+		const Math::Vector2 & operator[](int index) const
+		    { return(m_points.at(index)); }
+
 	};
 
 }

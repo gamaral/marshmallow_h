@@ -40,9 +40,9 @@ using namespace Event;
 
 const Type UpdateEvent::Type("Event::UpdateEvent");
 
-UpdateEvent::UpdateEvent(TIME t)
+UpdateEvent::UpdateEvent(TIME d)
     : EventBase(0, HighestPriority),
-      m_timeout(t)
+      m_delta(d)
 {
 }
 

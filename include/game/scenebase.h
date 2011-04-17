@@ -74,7 +74,7 @@ namespace Game
 		VIRTUAL void deactivate(void);
 
 		VIRTUAL void render(void);
-		VIRTUAL void update(TIME timeout = INFINITE);
+		VIRTUAL void update(TIME delta);
 
 	public: /* static */
 

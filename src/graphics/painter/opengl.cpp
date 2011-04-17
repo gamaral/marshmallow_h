@@ -39,8 +39,9 @@
 #include "core/platform.h"
 #include "graphics/linegraphic.h"
 #include "graphics/pointgraphic.h"
-#include "graphics/trianglegraphic.h"
+#include "graphics/polygongraphic.h"
 #include "graphics/quadgraphic.h"
+#include "graphics/trianglegraphic.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -92,6 +93,19 @@ struct Painter::Internal
 		}
 		glEnd();
 	}
+
+	void
+	drawPolygonGraphic(const PolygonGraphic &g)
+	{
+		glBegin(GL_POLYGON);
+		const int l_c = g.count();
+		for (int i = 0; i < l_c; ++i) {
+			const Math::Vector2 &l_p = g[i];
+			glVertex2f(static_cast<GLfloat>(l_p.rx()),
+			           static_cast<GLfloat>(l_p.ry()));
+		}
+		glEnd();
+	}
 } MGP;
 
 void
@@ -119,6 +133,9 @@ Painter::Draw(const IGraphic &g)
 	break;
 	case QuadGraphicType:
 		MGP.drawQuadGraphic(static_cast<const QuadGraphic &>(g));
+	break;
+	case PolygonGraphicType:
+		MGP.drawPolygonGraphic(static_cast<const PolygonGraphic &>(g));
 	break;
 	default: WARNING1("Unknown graphic type"); break;
 	}

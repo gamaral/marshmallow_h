@@ -26,50 +26,62 @@
  * or implied, of Marshmallow Engine.
  */
 
+#pragma once
+
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#pragma once
+#ifndef GRAPHICS_POLYGONGRAPHIC_H
+#define GRAPHICS_POLYGONGRAPHIC_H 1
 
-#ifndef CORE_ENVIRONMENT_H
-#define CORE_ENVIRONMENT_H 1
+#include "graphics/igraphic.h"
 
-#include <stdint.h>
-#include <time.h>
-#include <unistd.h>
+#include "math/rect2.h"
+#include "math/polygon2.h"
 
-/********************************************************************** types */
+MARSHMALLOW_NAMESPACE_BEGIN
 
-#define CHAR   char
-#define INT16  int16_t
-#define INT32  int32_t
-#define INT64  int64_t
-#define INT8   int8_t
-#define TIME   __useconds_t
-#define UINT16 uint16_t
-#define UINT32 uint32_t
-#define UINT64 uint64_t
-#define UINT8  uint8_t
-#define WCHAR  wchar_t
-#define UID    uint32_t
+namespace Graphics
+{
 
-#define ON     true
-#define OFF    false
+	/*! @brief Graphics Polygon Graphic class */
+	class GRAPHICS_EXPORT PolygonGraphic : public IGraphic
+	{
+		Math::Polygon2 m_points;
 
-/******************************************************************** defines */
+		NO_COPY(PolygonGraphic);
 
-#define INFINITE ~(static_cast<TIME>(0))
-#define STRDUP strdup
+	public:
 
-/******************************************************************** unused */
+		PolygonGraphic(const Math::Polygon2 &polygon);
+		virtual ~PolygonGraphic(void);
 
-#define CORE_EXPORT
-#define MATH_EXPORT
-#define EVENT_EXPORT
-#define GRAPHICS_EXPORT
-#define GAME_EXPORT
+		const Math::Polygon2 &points(void) const
+		    { return(m_points); }
+
+		int count(void) const
+		    { return(m_points.count()); }
+
+	public: /* operators */
+
+		const Math::Vector2 & operator[](int index) const
+		    { return(m_points[index]); }
+
+	public: /* virtual */
+
+		VIRTUAL const GraphicType & type(void) const
+		    { return(Type); }
+
+	public: /* static */
+
+		static const GraphicType Type;
+	};
+
+}
+
+MARSHMALLOW_NAMESPACE_END
 
 #endif

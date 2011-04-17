@@ -147,7 +147,7 @@ namespace Game
 		virtual void render(void);
 		virtual void second(void);
 		virtual void tick(TIME &timeout);
-		virtual void update(TIME &timeout);
+		virtual void update(TIME delta);
 
 	public: /* static */
 

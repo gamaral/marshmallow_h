@@ -97,12 +97,19 @@ SceneManager::active(void) const
 void
 SceneManager::render(void)
 {
-	if (m_active) m_active->render();
+	SceneStack::const_iterator l_i;
+	SceneStack::const_iterator l_c = m_stack.end();
+
+	for (l_i = m_stack.begin(); l_i != l_c; ++l_i)
+		(*l_i)->render();
+
+	if (m_active)
+		m_active->render();
 }
 
 void
-SceneManager::update(TIME t)
+SceneManager::update(TIME d)
 {
-	if (m_active) m_active->update(t);
+	if (m_active) m_active->update(d);
 }
 

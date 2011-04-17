@@ -71,7 +71,7 @@ namespace Game
 		    { return(Type); }
 
 		VIRTUAL void render(void);
-		VIRTUAL void update(TIME timeout);
+		VIRTUAL void update(TIME delta);
 
 	public: /* static */
 
