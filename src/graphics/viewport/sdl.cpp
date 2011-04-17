@@ -103,7 +103,7 @@ Viewport::Redisplay(int w, int h, int d, bool f)
 }
 
 void
-Viewport::Tick(TIME &t)
+Viewport::Tick(TIME t)
 {
 	TIMEOUT_INIT;
 

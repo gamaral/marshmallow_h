@@ -67,7 +67,7 @@ Platform::Finalize(void)
 void
 Platform::Sleep(TIME timeout)
 {
-	usleep(timeout * 1000);
+	if (timeout > 0) usleep(timeout * 1000);
 }
 
 time_t

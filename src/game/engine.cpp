@@ -55,12 +55,11 @@ using namespace Game;
 
 Engine *Engine::s_instance = 0;
 
-Engine::Engine(float f, float u)
+Engine::Engine(float f)
     : m_event_manager(),
       m_scene_manager(),
       m_event_listener(),
       m_fps(f),
-      m_ups(u),
       m_delta_time(0),
       m_exit_code(0),
       m_frame_rate(0),
@@ -114,16 +113,13 @@ Engine::run(void)
 	setup();
 
 	const TIME l_mpf = static_cast<TIME>(floor(1000./m_fps)); // milliseconds per frame
-	const TIME l_mpu = static_cast<TIME>(floor(1000./m_ups)); // milliseconds per update
 
 	TIME l_tick;
-	TIME l_tick_target = MIN(l_mpu, l_mpf) / 2;
+	TIME l_tick_target = l_mpf / 4;
+	TIME l_tick_sleep = l_tick_target;
 
-	TIME l_render = 0;
-	TIME l_render_target = l_mpf;
-
-	TIME l_update = 0;
-	TIME l_update_target = l_mpu;
+	TIME l_frame = 0;
+	TIME l_frame_target = l_mpf;
 
 	TIME l_second = 0;
 	TIME l_second_target = 1000;
@@ -138,53 +134,39 @@ Engine::run(void)
 	update(0);
 	render();
 
-	TIME l_lasttick = Platform::TimeStamp();
-	TIME l_timeout;
+	TIME l_lasttick = NOW();
 
 	/* main game loop */
 	do
 	{
-		l_tick = Platform::TimeStamp();
+		l_tick = NOW();
 		m_delta_time = l_tick - l_lasttick;
 
-		l_timeout = l_tick_target - 1;
-
-		l_render += m_delta_time;
-		l_update += m_delta_time;
+		l_frame += m_delta_time;
 		l_second += m_delta_time;
+		l_tick_sleep -= m_delta_time;
+		l_tick_sleep += l_tick_target;
+		INFO("XXX: TICK SLEEP %d", l_tick_sleep);
 
-		/* tick */
-		tick(l_timeout);
-
-		if (l_render >= l_render_target) {
+		if (l_frame >= l_frame_target) {
 			render();
-			l_render += (Platform::TimeStamp() - l_tick) - l_render_target;
-			++m_frame_rate;
-		}
-
-		if (l_update >= l_update_target) {
-			update(l_update);
-			l_update += (Platform::TimeStamp() - l_tick) - l_update_target;
+			update(l_frame);
+			l_frame -= l_frame_target;
+			if (l_frame > l_frame_target) {
+				INFO1("Skipping frame.");
+				l_frame = 0;
+			}
 		}
 
 		if (l_second >= l_second_target) {
-			if (m_frame_rate < m_fps && l_tick_target > 1) {
-				l_tick_target -= 1;
-				INFO("Framerate dropping! adjusting tick target (%d).",
-				    static_cast<int>(l_tick_target));
-			} else if (m_frame_rate > (m_fps * 1.10)) {
-				l_tick_target += 2;
-				INFO("Framerate accelerated! adjusting tick target (%d).",
-				    static_cast<int>(l_tick_target));
-			}
-
 			second();
-			l_second += (Platform::TimeStamp() - l_tick) - l_second_target;
+			l_second -= l_second_target;
 		}
 
-		l_lasttick = l_tick;
+		tick(l_tick_target - (NOW() - l_tick));
+		l_lasttick = NOW();
 
-		Platform::Sleep(l_tick_target);
+		Platform::Sleep(l_tick_sleep);
 	} while (m_running);
 
 	finalize();
@@ -236,7 +218,7 @@ Engine::render(void)
 }
 
 void
-Engine::tick(TIME &t)
+Engine::tick(TIME t)
 {
 	TIMEOUT_INIT;
 	Viewport::Tick(TIMEOUT_DEC(t));

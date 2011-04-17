@@ -61,7 +61,7 @@ namespace Graphics
 		                      int depth = DEFAULT_VIEWPORT_DEPTH,
 		                bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
 
-		static void Tick(TIME &timeout);
+		static void Tick(TIME timeout);
 
 		static void SwapBuffer(void);
 

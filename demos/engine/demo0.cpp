@@ -160,7 +160,7 @@ class Demo : public Game::Engine
 
 public:
 	Demo(void)
-	: Engine(),
+	: Engine(60),
 	  m_stop_timer(0),
 	  m_debugListener(new Event::DebugEventListener("log.txt"))
 	{
@@ -170,7 +170,7 @@ public:
 	{
 		Engine::initialize();
 
-		Graphics::Viewport::Redisplay(1024, 768);
+		Graphics::Viewport::Redisplay(640, 480);
 
 #if 0
 		eventManager()->connect(m_debugListener, "Event::RenderEvent");
