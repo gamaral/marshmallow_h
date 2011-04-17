@@ -78,6 +78,8 @@ namespace Event
 		Core::Identifier m_id;
 		UINT8 m_active_queue;
 
+		NO_COPY(EventManager);
+
 	public:
 
 		EventManager(const Core::Identifier &identifier);

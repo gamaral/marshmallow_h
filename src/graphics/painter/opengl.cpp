@@ -39,6 +39,8 @@
 #include "core/platform.h"
 #include "graphics/linegraphic.h"
 #include "graphics/pointgraphic.h"
+#include "graphics/trianglegraphic.h"
+#include "graphics/quadgraphic.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -58,13 +60,36 @@ struct Painter::Internal
 	void
 	drawLineGraphic(const LineGraphic &g)
 	{
-		const Math::Vector2 l_beg = g[0];
-		const Math::Vector2 l_end = g[1];
 		glBegin(GL_LINES);
-		glVertex2f(static_cast<GLfloat>(l_beg.rx()),
-		           static_cast<GLfloat>(l_beg.ry()));
-		glVertex2f(static_cast<GLfloat>(l_end.rx()),
-		           static_cast<GLfloat>(l_end.ry()));
+		for (int i = 0; i < 2; ++i) {
+			const Math::Vector2 &l_p = g[i];
+			glVertex2f(static_cast<GLfloat>(l_p.rx()),
+			           static_cast<GLfloat>(l_p.ry()));
+		}
+		glEnd();
+	}
+
+	void
+	drawTriangleGraphic(const TriangleGraphic &g)
+	{
+		glBegin(GL_TRIANGLES);
+		for (int i = 0; i < 3; ++i) {
+			const Math::Vector2 &l_p = g[i];
+			glVertex2f(static_cast<GLfloat>(l_p.rx()),
+			           static_cast<GLfloat>(l_p.ry()));
+		}
+		glEnd();
+	}
+
+	void
+	drawQuadGraphic(const QuadGraphic &g)
+	{
+		glBegin(GL_QUADS);
+		for (int i = 0; i < 4; ++i) {
+			const Math::Vector2 &l_p = g[i];
+			glVertex2f(static_cast<GLfloat>(l_p.rx()),
+			           static_cast<GLfloat>(l_p.ry()));
+		}
 		glEnd();
 	}
 } MGP;
@@ -88,6 +113,12 @@ Painter::Draw(const IGraphic &g)
 	break;
 	case LineGraphicType:
 		MGP.drawLineGraphic(static_cast<const LineGraphic &>(g));
+	break;
+	case TriangleGraphicType:
+		MGP.drawTriangleGraphic(static_cast<const TriangleGraphic &>(g));
+	break;
+	case QuadGraphicType:
+		MGP.drawQuadGraphic(static_cast<const QuadGraphic &>(g));
 	break;
 	default: WARNING1("Unknown graphic type"); break;
 	}

@@ -68,6 +68,8 @@ namespace Game
 		Event::SharedEventListener m_renderListener;
 		Event::SharedEventListener m_updateListener;
 
+		NO_COPY(SceneManager);
+
 	public:
 
 		SceneManager(void);

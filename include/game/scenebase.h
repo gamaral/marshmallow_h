@@ -50,6 +50,8 @@ namespace Game
 		EntityList m_entities;
 		Core::Identifier m_id;
 
+		NO_COPY(SceneBase);
+
 	public:
 
 		SceneBase(const Core::Identifier &identifier);

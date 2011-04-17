@@ -51,7 +51,7 @@ namespace Graphics
 		PointGraphicType,
 		LineGraphicType,
 		TriangleGraphicType,
-		RectGraphicType,
+		QuadGraphicType,
 		PolygonGraphicType,
 		GraphicTypeMax
 	};

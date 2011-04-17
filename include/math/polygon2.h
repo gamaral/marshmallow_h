@@ -40,7 +40,7 @@
 #include "EASTL/vector.h"
 using namespace eastl;
 
-#include "math/point2.h"
+#include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -48,7 +48,7 @@ namespace Math
 {
 
 	/*! @brief 2D Polygon */
-	class MATH_EXPORT Polygon2 : vector<Point2>
+	class MATH_EXPORT Polygon2 : vector<Vector2>
 	{
 		double area(void) const;
 	};

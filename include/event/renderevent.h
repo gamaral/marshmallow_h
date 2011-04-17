@@ -46,6 +46,9 @@ namespace Event
 	/*! @brief Render Event Class */
 	class EVENT_EXPORT RenderEvent : public EventBase
 	{
+
+		NO_COPY(RenderEvent);
+
 	public:
 
 		RenderEvent(void);

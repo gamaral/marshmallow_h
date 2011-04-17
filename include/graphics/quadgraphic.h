@@ -34,11 +34,12 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_POINTGRAPHIC_H
-#define GRAPHICS_POINTGRAPHIC_H 1
+#ifndef GRAPHICS_QUADGRAPHIC_H
+#define GRAPHICS_QUADGRAPHIC_H 1
 
 #include "graphics/igraphic.h"
 
+#include "math/rect2.h"
 #include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -46,20 +47,26 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics
 {
 
-	/*! @brief Graphics Point Graphic class */
-	class GRAPHICS_EXPORT PointGraphic : public IGraphic
+	/*! @brief Graphics Quad Graphic class */
+	class GRAPHICS_EXPORT QuadGraphic : public IGraphic
 	{
-		Math::Vector2 m_position;
+		Math::Vector2 m_points[4];
 
-		NO_COPY(PointGraphic);
+		NO_COPY(QuadGraphic);
 
 	public:
 
-		PointGraphic(const Math::Vector2 &position);
-		virtual ~PointGraphic(void);
+		QuadGraphic(const Math::Vector2 &p1,
+		            const Math::Vector2 &p2,
+		            const Math::Vector2 &p3,
+		            const Math::Vector2 &p4);
+		QuadGraphic(const Math::Rect2 &rect);
+		virtual ~QuadGraphic(void);
 
-		const Math::Vector2 & position(void) const
-		    { return(m_position); }
+	public: /* operators */
+
+		const Math::Vector2 & operator[](int index) const
+		    { return(m_points[index % 4]); }
 
 	public: /* virtual */
 

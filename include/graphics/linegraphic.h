@@ -51,7 +51,10 @@ namespace Graphics
 	{
 		Math::Vector2 m_points[2];
 
+		NO_COPY(LineGraphic);
+
 	public:
+
 		LineGraphic(const Math::Vector2 &p1, const Math::Vector2 &p2);
 		virtual ~LineGraphic(void);
 
@@ -74,11 +77,6 @@ namespace Graphics
 	public: /* static */
 
 		static const GraphicType Type;
-
-	protected:
-
-		LineGraphic(const LineGraphic &)
-			: IGraphic() {};
 	};
 
 }

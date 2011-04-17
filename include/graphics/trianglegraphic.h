@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_POINTGRAPHIC_H
-#define GRAPHICS_POINTGRAPHIC_H 1
+#ifndef GRAPHICS_TRIANGLEGRAPHIC_H
+#define GRAPHICS_TRIANGLEGRAPHIC_H 1
 
 #include "graphics/igraphic.h"
 
@@ -46,20 +46,24 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics
 {
 
-	/*! @brief Graphics Point Graphic class */
-	class GRAPHICS_EXPORT PointGraphic : public IGraphic
+	/*! @brief Graphics Triangle Graphic class */
+	class GRAPHICS_EXPORT TriangleGraphic : public IGraphic
 	{
-		Math::Vector2 m_position;
+		Math::Vector2 m_points[3];
 
-		NO_COPY(PointGraphic);
+		NO_COPY(TriangleGraphic);
 
 	public:
 
-		PointGraphic(const Math::Vector2 &position);
-		virtual ~PointGraphic(void);
+		TriangleGraphic(const Math::Vector2 &p1,
+		                const Math::Vector2 &p2,
+		                const Math::Vector2 &p3);
+		virtual ~TriangleGraphic(void);
 
-		const Math::Vector2 & position(void) const
-		    { return(m_position); }
+	public: /* operators */
+
+		const Math::Vector2 & operator[](int index) const
+		    { return(m_points[index % 3]); }
 
 	public: /* virtual */
 

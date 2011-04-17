@@ -55,3 +55,34 @@ Rect2::Rect2(const Rect2 &c)
 {
 }
 
+Point2
+Rect2::topLeft(void) const
+{
+	return(m_top_left);
+}
+
+Point2
+Rect2::topRight(void) const
+{
+	Point2 l_point(m_top_left);
+	l_point.rx() += m_size.width();
+	return(l_point);
+}
+
+Point2
+Rect2::bottomLeft(void) const
+{
+	Point2 l_point(m_top_left);
+	l_point.ry() += m_size.height();
+	return(l_point);
+}
+
+Point2
+Rect2::bottomRight(void) const
+{
+	Point2 l_point(m_top_left);
+	l_point.rx() += m_size.width();
+	l_point.ry() += m_size.height();
+	return(l_point);
+}
+

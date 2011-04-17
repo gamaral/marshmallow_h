@@ -50,6 +50,9 @@ namespace Event
 	class EVENT_EXPORT EventListenerBase : public IEventListener
 	{
 		Core::Identifier m_id;
+
+		NO_COPY(EventListenerBase);
+
 	public:
 
 		EventListenerBase(const Core::Identifier &identifier);

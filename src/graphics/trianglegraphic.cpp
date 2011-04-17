@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "graphics/trianglegraphic.h"
 
 /*!
  * @file
@@ -34,9 +34,21 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MATH_POINT2_H
-#define MATH_POINT2_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics;
 
-#include "vector2.h"
+const GraphicType TriangleGraphic::Type(TriangleGraphicType);
 
-#endif
+TriangleGraphic::TriangleGraphic(const Math::Vector2 &p1,
+                                 const Math::Vector2 &p2,
+                                 const Math::Vector2 &p3)
+{
+	m_points[0] = p1;
+	m_points[1] = p2;
+	m_points[2] = p3;
+}
+
+TriangleGraphic::~TriangleGraphic(void)
+{
+}
+

@@ -55,6 +55,9 @@ namespace Event
 	class EVENT_EXPORT UpdateEventListener : public EventListenerBase
 	{
 		Core::IUpdateable &m_updateable;
+
+		NO_COPY(UpdateEventListener);
+
 	public:
 
 		UpdateEventListener(const Core::Identifier &identifier,

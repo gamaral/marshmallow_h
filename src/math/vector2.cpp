@@ -94,3 +94,33 @@ Vector2::dot(const Vector2 &b) const
 	return((rx() * b.rx()) + (ry() * b.ry()));
 }
 
+Vector2 &
+Vector2::operator+=(const Vector2 &rhs)
+{
+	m_value[0] += rhs.m_value[0];
+	m_value[1] += rhs.m_value[1];
+	return(*this);
+}
+
+Vector2 &
+Vector2::operator-=(const Vector2 &rhs)
+{
+	m_value[0] -= rhs.m_value[0];
+	m_value[1] -= rhs.m_value[1];
+	return(*this);
+}
+
+Vector2
+Vector2::operator+(const Vector2 &rhs) const
+{
+	return(Vector2(m_value[0] + rhs.m_value[0],
+	               m_value[1] + rhs.m_value[1]));
+}
+
+Vector2
+Vector2::operator-(const Vector2 &rhs) const
+{
+	return(Vector2(m_value[0] - rhs.m_value[0],
+	               m_value[1] - rhs.m_value[1]));
+}
+

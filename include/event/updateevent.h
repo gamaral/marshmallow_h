@@ -47,6 +47,9 @@ namespace Event
 	class EVENT_EXPORT UpdateEvent : public EventBase
 	{
 		TIME m_timeout;
+
+		NO_COPY(UpdateEvent);
+
 	public:
 
 		UpdateEvent(TIME timeout);

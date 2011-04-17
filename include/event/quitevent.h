@@ -48,7 +48,11 @@ namespace Event
 	class EVENT_EXPORT QuitEvent : public EventBase
 	{
 		int m_code;
+
+		NO_COPY(QuitEvent);
+
 	public:
+
 		QuitEvent(int code = 0, TIME timeout = 0);
 		virtual ~QuitEvent(void);
 

@@ -38,7 +38,7 @@
 #define MATH_RECT2_H 1
 
 #include "core/global.h"
-#include "math/point2.h"
+#include "math/vector2.h"
 #include "math/size2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -53,9 +53,15 @@ namespace Math
 		Size2 m_size;
 
 	public:
+
 		Rect2(const Point2 &topLeft, const Size2 &size);
 		Rect2(const Point2 &topLeft, const Point2 &bottomRight);
 		Rect2(const Rect2 &copy);
+
+		Point2 topLeft(void) const;
+		Point2 topRight(void) const;
+		Point2 bottomLeft(void) const;
+		Point2 bottomRight(void) const;
 
 		double area(void) const
 		    { return(m_size.area()); }

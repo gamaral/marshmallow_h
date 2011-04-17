@@ -62,6 +62,8 @@ namespace Event
 		TIME m_timestamp;
 		UINT8 m_priority;
 
+		NO_COPY(EventBase);
+
 	public:
 
 		EventBase(TIME timeout = 0, UINT8 priority = 0);

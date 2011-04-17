@@ -55,6 +55,9 @@ namespace Event
 	class EVENT_EXPORT RenderEventListener : public EventListenerBase
 	{
 		Core::IRenderable &m_renderable;
+
+		NO_COPY(RenderEventListener);
+
 	public:
 
 		RenderEventListener(const Core::Identifier &identifier,

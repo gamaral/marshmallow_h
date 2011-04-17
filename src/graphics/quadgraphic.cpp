@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "graphics/quadgraphic.h"
 
 /*!
  * @file
@@ -34,9 +34,31 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MATH_POINT3_H
-#define MATH_POINT3_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics;
 
-#include "vector3.h"
+const GraphicType QuadGraphic::Type(QuadGraphicType);
 
-#endif
+QuadGraphic::QuadGraphic(const Math::Vector2 &p1,
+                         const Math::Vector2 &p2,
+                         const Math::Vector2 &p3,
+                         const Math::Vector2 &p4)
+{
+	m_points[0] = p1;
+	m_points[1] = p2;
+	m_points[2] = p3;
+	m_points[3] = p4;
+}
+
+QuadGraphic::QuadGraphic(const Math::Rect2 &rect)
+{
+	m_points[0] = rect.topLeft();
+	m_points[1] = rect.topRight();
+	m_points[2] = rect.bottomRight();
+	m_points[3] = rect.bottomLeft();
+}
+
+QuadGraphic::~QuadGraphic(void)
+{
+}
+

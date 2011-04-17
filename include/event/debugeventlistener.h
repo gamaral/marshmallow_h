@@ -51,6 +51,8 @@ namespace Event
 	{
 		std::ofstream m_filestream;
 
+		NO_COPY(DebugEventListener);
+
 	public:
 
 		DebugEventListener(const char *filename);

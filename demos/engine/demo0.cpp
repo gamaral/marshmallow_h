@@ -37,7 +37,7 @@
 #include "game/scenemanager.h"
 #include "math/vector2.h"
 #include "graphics/painter.h"
-#include "graphics/pointgraphic.h"
+#include "graphics/quadgraphic.h"
 #include "graphics/viewport.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -117,8 +117,10 @@ public:
 			m_mover = entity()->component("mover").cast<DemoMoverComponent>();
 
 		if (m_mover) {
-			Graphics::PointGraphic point(m_mover->position());
-			Graphics::Painter::Draw(point);
+			Math::Rect2 l_rect(m_mover->position()+Math::Vector2(-5, -5),
+			                   Math::Size2(10, 10));
+			Graphics::QuadGraphic l_quad(l_rect);
+			Graphics::Painter::Draw(l_quad);
 		}
 	}
 
@@ -167,9 +169,9 @@ public:
 	{
 		Engine::initialize();
 
-#if 0
 		Graphics::Viewport::Redisplay(1024, 768);
 
+#if 0
 		eventManager()->connect(m_debugListener, "Event::RenderEvent");
 		eventManager()->connect(m_debugListener, "Event::UpdateEvent");
 #endif

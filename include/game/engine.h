@@ -72,6 +72,8 @@ namespace Game
 		int    m_frame_rate;
 		bool   m_running;
 
+		NO_COPY(Engine);
+
 	public:
 
 		/*!

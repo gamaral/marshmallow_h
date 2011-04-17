@@ -59,6 +59,8 @@ namespace Game
 		Core::Identifier m_id;
 		bool m_killed;
 
+		NO_COPY(EntityBase);
+
 	public:
 		EntityBase(const Core::Identifier &identifier);
 		virtual ~EntityBase(void);

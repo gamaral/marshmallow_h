@@ -84,6 +84,8 @@
 /********************************************************************* helpers */
 
 #define VIRTUAL
+#define NO_COPY(x) x(const x&)
+
 #define UNUSED(x) (void)x
 #define MIN(x,y) (x < y ? x : y)
 #define MAX(x,y) (x > y ? x : y)

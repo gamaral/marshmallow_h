@@ -169,7 +169,11 @@ namespace Event
 	{
 		KBKeys m_key;
 		KBActions m_action;
+
+		NO_COPY(KeyboardEvent);
+
 	public:
+
 		KeyboardEvent(KBKeys key, KBActions action, TIME timeout = 0);
 		virtual ~KeyboardEvent(void);
 

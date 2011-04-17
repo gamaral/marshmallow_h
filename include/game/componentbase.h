@@ -56,6 +56,8 @@ namespace Game
 		Core::Identifier m_id;
 		WeakEntity m_entity;
 
+		NO_COPY(ComponentBase);
+
 	public:
 		ComponentBase(const Core::Identifier &identifier, WeakEntity entity);
 		virtual ~ComponentBase(void);
