@@ -77,7 +77,8 @@ namespace Graphics
 
 	protected:
 
-		LineGraphic(const LineGraphic &) {};
+		LineGraphic(const LineGraphic &)
+			: IGraphic() {};
 	};
 
 }

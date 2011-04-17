@@ -69,7 +69,8 @@ namespace Graphics
 
 	protected:
 
-		PointGraphic(const PointGraphic &) {};
+		PointGraphic(const PointGraphic &)
+			: IGraphic() {};
 	};
 
 }
