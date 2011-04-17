@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/viewport.h"
+#include "graphics/color.h"
 
 /*!
  * @file
@@ -34,107 +34,26 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <SDL.h>
-
-#include "core/platform.h"
-#include "event/eventmanager.h"
-#include "event/quitevent.h"
-
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const char *Viewport::Name("SDL");
-
-struct Viewport::Internal
+Color::Color(float r, float g, float b, float a)
 {
-	SDL_Surface *screen;
-	float       world[4];
-
-	Internal(void)
-	: screen(0)
-	{}
-
-	bool
-	createSDLWindow(int w, int h, int d, bool f)
-	{
-		int l_flags =
-		    SDL_HWSURFACE |
-		    SDL_DOUBLEBUF |
-		    (f ? SDL_FULLSCREEN : 0);
-
-		screen = SDL_SetVideoMode(w, h, d, l_flags);
-		if (!screen) {
-			ERROR("SDL Error: %s", SDL_GetError());
-			return(false);
-		}
-
-		/* set world coordinates */
-		world[0] = world[2] = 0;
-		world[1] = static_cast<float>(w);
-		world[3] = static_cast<float>(h);
-
-		/* initialize context */
-		SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0, 0, 0));
-		SwapBuffer();
-
-		return(true);
-	}
-
-} MVI;
-
-bool
-Viewport::Initialize(int w, int h, int d, bool f)
-{
-	SDL_Init(SDL_INIT_VIDEO);
-
-	return(MVI.createSDLWindow(w, h, d, f));
+	m_rgba[0] = r;
+	m_rgba[1] = g;
+	m_rgba[2] = b;
+	m_rgba[3] = a;
 }
 
-void
-Viewport::Finalize(void)
+Color::Color(const Color &c)
 {
-	SDL_Quit();
+	m_rgba[0] = c.m_rgba[0];
+	m_rgba[1] = c.m_rgba[1];
+	m_rgba[2] = c.m_rgba[2];
+	m_rgba[3] = c.m_rgba[3];
 }
 
-bool
-Viewport::Redisplay(int w, int h, int d, bool f)
+Color::~Color(void)
 {
-	return(MVI.createSDLWindow(w, h, d, f));
-}
-
-void
-Viewport::Tick(TIME &t)
-{
-	TIMEOUT_INIT;
-
-	SDL_Event e;
-	while(TIMEOUT_DEC(t) > 0 && SDL_PollEvent(&e))
-		switch(e.type) {
-		case SDL_QUIT: {
-			Event::QuitEvent event(-1);
-			Event::EventManager::Instance()->dispatch(event);
-		} break;
-		case SDL_KEYUP:
-		case SDL_KEYDOWN:
-		case SDL_MOUSEMOTION:
-			/* TODO: Send Events */
-		break;
-		default: INFO1("Unknown viewport event received."); break;
-		}
-}
-
-void
-Viewport::SwapBuffer(void)
-{
-	SDL_Flip(MVI.screen);
-}
-
-void
-Viewport::World(float &lx, float &hx, float &ly, float &hy)
-{
-	lx = MVI.world[0];
-	hx = MVI.world[1];
-	ly = MVI.world[2];
-	hy = MVI.world[3];
 }
 

@@ -35,8 +35,10 @@
 #include "game/entitybase.h"
 #include "game/scenebase.h"
 #include "game/scenemanager.h"
-#include "graphics/viewport.h"
 #include "math/vector2.h"
+#include "graphics/painter.h"
+#include "graphics/pointgraphic.h"
+#include "graphics/viewport.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -49,7 +51,7 @@ public:
 	DemoMoverComponent(Game::WeakEntity e)
 	: Game::ComponentBase("mover", e),
 	  m_pos(),
-          m_dir(.01, .02) {}
+          m_dir(.06, .04) {}
 
 	Math::Vector2 &position(void)
 	{
@@ -90,14 +92,36 @@ public:
 			Math::Vector2 &pos = m_mover->position();
 			Math::Vector2 &dir = m_mover->direction();
 
-			if ((pos.rx() < -10 && dir.rx() < 0)
-			 || (pos.rx() > 10 && dir.rx() > 0))
-				dir.rx() *= -.8;
-			if ((pos.ry() < 0 && dir.ry() < 0)
-			 || (pos.ry() > 20 && dir.ry() > 0))
-				dir.ry() *= -.8;
+			if ((pos.rx() < -50 && dir.rx() < 0)
+			 || (pos.rx() >  50 && dir.rx() > 0))
+				dir.rx() *= -.9;
+			if ((pos.ry() < -50 && dir.ry() < 0)
+			 || (pos.ry() >  50 && dir.ry() > 0))
+				dir.ry() *= -.9;
 		}
 	}
+};
+
+class DemoDrawComponent : public Game::ComponentBase
+{
+	Core::Weak<DemoMoverComponent> m_mover;
+public:
+	DemoDrawComponent(Game::WeakEntity e)
+	: Game::ComponentBase("draw", e)
+	{
+	}
+
+	VIRTUAL void render(void)
+	{
+		if (!m_mover && entity())
+			m_mover = entity()->component("mover").cast<DemoMoverComponent>();
+
+		if (m_mover) {
+			Graphics::PointGraphic point(m_mover->position());
+			Graphics::Painter::Draw(point);
+		}
+	}
+
 };
 
 class DemoScene : public Game::SceneBase
@@ -117,8 +141,10 @@ public:
 			Game::SharedEntity l_entity(new Game::EntityBase("player"));
 			Game::SharedComponent l_component1(new DemoMoverComponent(l_entity));
 			Game::SharedComponent l_component2(new DemoBounceComponent(l_entity));
+			Game::SharedComponent l_component3(new DemoDrawComponent(l_entity));
 			l_entity->addComponent(l_component1);
 			l_entity->addComponent(l_component2);
+			l_entity->addComponent(l_component3);
 			addEntity(l_entity);
 		}
 	}
@@ -141,9 +167,9 @@ public:
 	{
 		Engine::initialize();
 
+#if 0
 		Graphics::Viewport::Redisplay(1024, 768);
 
-#if 0
 		eventManager()->connect(m_debugListener, "Event::RenderEvent");
 		eventManager()->connect(m_debugListener, "Event::UpdateEvent");
 #endif
@@ -162,8 +188,11 @@ public:
 
 	VIRTUAL void second(void)
 	{
-		if (++m_stop_timer == 10)
+		if (++m_stop_timer == 60)
 			stop();
+
+		Engine::second();
+
 	}
 };
 

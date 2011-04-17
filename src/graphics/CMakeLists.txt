@@ -4,7 +4,8 @@ file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp)
 
 if(UNIX AND VIEWPORT_X11_GLX)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-	                              viewport/x11_glx.cpp)
+	                              viewport/x11_glx.cpp
+	                              painter/opengl.cpp)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 	                              ${OPENGL_LIBRARIES}
 	                              ${X11_LIBRARIES})

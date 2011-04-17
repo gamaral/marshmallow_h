@@ -41,6 +41,7 @@
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
+#include "graphics/painter.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -304,25 +305,30 @@ struct Viewport::Internal
 		Event::EventManager::Instance()->queue(event);
 	}
 
-} MPI;
+} MVI;
 
 bool
 Viewport::Initialize(int w, int h, int d, bool f)
 {
-	return(MPI.createXWindow(w, h, d, f));
+	bool l_success = MVI.createXWindow(w, h, d, f);
+
+	if (l_success) Painter::Initialize();
+
+	return(l_success);
 }
 
 void
 Viewport::Finalize(void)
 {
-	MPI.destroyXWindow();
+	Painter::Finalize();
+	MVI.destroyXWindow();
 }
 
 bool
 Viewport::Redisplay(int w, int h, int d, bool f)
 {
-	MPI.destroyXWindow();
-	return(MPI.createXWindow(w, h, d, f));
+	MVI.destroyXWindow();
+	return(MVI.createXWindow(w, h, d, f));
 }
 
 void
@@ -331,28 +337,26 @@ Viewport::Tick(TIME &t)
 	TIMEOUT_INIT;
 	XEvent e;
 
-	while(TIMEOUT_DEC(t) > 0 && XPending(MPI.display)) {
-		XNextEvent(MPI.display, &e);
+	while(TIMEOUT_DEC(t) > 0 && XPending(MVI.display)) {
+		XNextEvent(MVI.display, &e);
 
 		switch(e.type) {
 		case Expose: {
 			XExposeEvent &expose = e.xexpose;
 			glViewport(0, 0, expose.width, expose.height);
-			glClearColor(.0, .0, .0, .0);
-			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 			SwapBuffer();
 			} break;
 
 		case ClientMessage: {
 			XClientMessageEvent &client = e.xclient;
-			if (static_cast<Atom>(client.data.l[0]) == MPI.wm_delete) {
+			if (static_cast<Atom>(client.data.l[0]) == MVI.wm_delete) {
 				Event::QuitEvent event(-1);
 				Event::EventManager::Instance()->dispatch(event);
 			}
 		} break;
 
 		case KeyPress:
-		case KeyRelease: MPI.handleKeyEvent(e.xkey); break;
+		case KeyRelease: MVI.handleKeyEvent(e.xkey); break;
 
 		case ButtonPress:
 		case ButtonRelease:
@@ -371,15 +375,17 @@ Viewport::Tick(TIME &t)
 void
 Viewport::SwapBuffer(void)
 {
-	glXSwapBuffers(MPI.display, MPI.window);
+	glXSwapBuffers(MVI.display, MVI.window);
+	glClearColor(.0, .0, .0, .0);
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 }
 
 void
 Viewport::World(float &lx, float &hx, float &ly, float &hy)
 {
-	lx = MPI.world[0];
-	hx = MPI.world[1];
-	ly = MPI.world[2];
-	hy = MPI.world[3];
+	lx = MVI.world[0];
+	hx = MVI.world[1];
+	ly = MVI.world[2];
+	hy = MVI.world[3];
 }
 

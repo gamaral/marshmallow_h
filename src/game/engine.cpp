@@ -173,7 +173,7 @@ Engine::run(void)
 				l_tick_target -= 1;
 				INFO("Framerate dropping! adjusting tick target (%d).",
 				    static_cast<int>(l_tick_target));
-			} else if (m_frame_rate > m_fps * 1.10) {
+			} else if (m_frame_rate > (m_fps * 1.10)) {
 				l_tick_target += 2;
 				INFO("Framerate accelerated! adjusting tick target (%d).",
 				    static_cast<int>(l_tick_target));
@@ -232,6 +232,8 @@ Engine::render(void)
 	Event::RenderEvent event;
 	eventManager()->dispatch(event);
 	INFO1("Render event dispatched!");
+
+	Graphics::Viewport::SwapBuffer();
 }
 
 void

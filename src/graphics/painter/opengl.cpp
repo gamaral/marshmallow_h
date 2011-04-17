@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/viewport.h"
+#include "graphics/painter.h"
 
 /*!
  * @file
@@ -34,107 +34,62 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <SDL.h>
+#include <GL/gl.h>
 
 #include "core/platform.h"
-#include "event/eventmanager.h"
-#include "event/quitevent.h"
+#include "graphics/linegraphic.h"
+#include "graphics/pointgraphic.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const char *Viewport::Name("SDL");
-
-struct Viewport::Internal
+struct Painter::Internal
 {
-	SDL_Surface *screen;
-	float       world[4];
-
-	Internal(void)
-	: screen(0)
-	{}
-
-	bool
-	createSDLWindow(int w, int h, int d, bool f)
+	void
+	drawPointGraphic(const PointGraphic &g)
 	{
-		int l_flags =
-		    SDL_HWSURFACE |
-		    SDL_DOUBLEBUF |
-		    (f ? SDL_FULLSCREEN : 0);
-
-		screen = SDL_SetVideoMode(w, h, d, l_flags);
-		if (!screen) {
-			ERROR("SDL Error: %s", SDL_GetError());
-			return(false);
-		}
-
-		/* set world coordinates */
-		world[0] = world[2] = 0;
-		world[1] = static_cast<float>(w);
-		world[3] = static_cast<float>(h);
-
-		/* initialize context */
-		SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0, 0, 0));
-		SwapBuffer();
-
-		return(true);
+		const Math::Vector2 &l_p = g.position();
+		glBegin(GL_POINTS);
+		glVertex2f(static_cast<GLfloat>(l_p.rx()),
+		           static_cast<GLfloat>(l_p.ry()));
+		glEnd();
 	}
 
-} MVI;
+	void
+	drawLineGraphic(const LineGraphic &g)
+	{
+		const Math::Vector2 l_beg = g[0];
+		const Math::Vector2 l_end = g[1];
+		glBegin(GL_LINES);
+		glVertex2f(static_cast<GLfloat>(l_beg.rx()),
+		           static_cast<GLfloat>(l_beg.ry()));
+		glVertex2f(static_cast<GLfloat>(l_end.rx()),
+		           static_cast<GLfloat>(l_end.ry()));
+		glEnd();
+	}
+} MGP;
 
-bool
-Viewport::Initialize(int w, int h, int d, bool f)
+void
+Painter::Initialize(void)
 {
-	SDL_Init(SDL_INIT_VIDEO);
-
-	return(MVI.createSDLWindow(w, h, d, f));
 }
 
 void
-Viewport::Finalize(void)
+Painter::Finalize(void)
 {
-	SDL_Quit();
-}
-
-bool
-Viewport::Redisplay(int w, int h, int d, bool f)
-{
-	return(MVI.createSDLWindow(w, h, d, f));
 }
 
 void
-Viewport::Tick(TIME &t)
+Painter::Draw(const IGraphic &g)
 {
-	TIMEOUT_INIT;
-
-	SDL_Event e;
-	while(TIMEOUT_DEC(t) > 0 && SDL_PollEvent(&e))
-		switch(e.type) {
-		case SDL_QUIT: {
-			Event::QuitEvent event(-1);
-			Event::EventManager::Instance()->dispatch(event);
-		} break;
-		case SDL_KEYUP:
-		case SDL_KEYDOWN:
-		case SDL_MOUSEMOTION:
-			/* TODO: Send Events */
-		break;
-		default: INFO1("Unknown viewport event received."); break;
-		}
-}
-
-void
-Viewport::SwapBuffer(void)
-{
-	SDL_Flip(MVI.screen);
-}
-
-void
-Viewport::World(float &lx, float &hx, float &ly, float &hy)
-{
-	lx = MVI.world[0];
-	hx = MVI.world[1];
-	ly = MVI.world[2];
-	hy = MVI.world[3];
+	switch (g.type()) {
+	case PointGraphicType:
+		MGP.drawPointGraphic(static_cast<const PointGraphic &>(g));
+	break;
+	case LineGraphicType:
+		MGP.drawLineGraphic(static_cast<const LineGraphic &>(g));
+	break;
+	default: WARNING1("Unknown graphic type"); break;
+	}
 }
 
