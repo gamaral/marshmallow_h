@@ -94,7 +94,6 @@ struct Viewport::Internal
 		l_swattr.event_mask =
 			ButtonPressMask |
 			ButtonReleaseMask |
-			ExposureMask |
 			KeyPressMask |
 			KeyReleaseMask |
 			PointerMotionMask |
@@ -341,12 +340,6 @@ Viewport::Tick(TIME t)
 		XNextEvent(MVI.display, &e);
 
 		switch(e.type) {
-		case Expose: {
-			XExposeEvent &expose = e.xexpose;
-			glViewport(0, 0, expose.width, expose.height);
-			SwapBuffer();
-			} break;
-
 		case ClientMessage: {
 			XClientMessageEvent &client = e.xclient;
 			if (static_cast<Atom>(client.data.l[0]) == MVI.wm_delete) {
