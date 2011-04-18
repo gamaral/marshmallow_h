@@ -57,6 +57,7 @@ Platform::Internal::Internal(void)
 void
 Platform::Initialize(void)
 {
+	srand(platform_internal.start_time);
 }
 
 void

@@ -47,11 +47,19 @@ class DemoMoverComponent : public Game::ComponentBase
 {
 	Math::Vector2 m_pos;
 	Math::Vector2 m_dir;
+
 public:
 	DemoMoverComponent(Game::WeakEntity e)
 	: Game::ComponentBase("mover", e),
-	  m_pos(),
-          m_dir(.06, .04) {}
+	  m_pos(0, 0),
+	  m_dir(0.5, 0.5)
+	{
+		Math::Size2 l_vpsize = Graphics::Viewport::Size();
+		m_pos.rx() = rand() % (int) l_vpsize.width();
+		m_pos.ry() = rand() % (int) l_vpsize.height();
+		m_dir.rx() += (rand() % 10) / 100.;
+		m_dir.ry() += (rand() % 10) / 100.;
+	}
 
 	Math::Vector2 &position(void)
 	{
@@ -75,7 +83,9 @@ public:
 
 class DemoBounceComponent : public Game::ComponentBase
 {
+
 	Core::Weak<DemoMoverComponent> m_mover;
+
 public:
 	DemoBounceComponent(Game::WeakEntity e)
 	: Game::ComponentBase("bouncer", e)
@@ -90,14 +100,15 @@ public:
 			m_mover = entity()->component("mover").cast<DemoMoverComponent>();
 
 		if (m_mover) {
+			Math::Size2 l_vpsize = Graphics::Viewport::Size();
 			Math::Vector2 &pos = m_mover->position();
 			Math::Vector2 &dir = m_mover->direction();
 
-			if ((pos.rx() < -50 && dir.rx() < 0)
-			 || (pos.rx() >  50 && dir.rx() > 0))
+			if ((pos.rx() <= 0 && dir.rx() < 0)
+			 || (pos.rx() >  l_vpsize.width() && dir.rx() > 0))
 				dir.rx() *= -0.95;
-			if ((pos.ry() < -50 && dir.ry() < 0)
-			 || (pos.ry() >  50 && dir.ry() > 0))
+			if ((pos.ry() <= 0 && dir.ry() < 0)
+			 || (pos.ry() >  l_vpsize.height() && dir.ry() > 0))
 				dir.ry() *= -0.95;
 		}
 	}
@@ -106,7 +117,9 @@ public:
 class DemoDrawComponent : public Game::ComponentBase
 {
 	Core::Weak<DemoMoverComponent> m_mover;
+
 public:
+
 	DemoDrawComponent(Game::WeakEntity e)
 	: Game::ComponentBase("draw", e)
 	{
@@ -118,8 +131,8 @@ public:
 			m_mover = entity()->component("mover").cast<DemoMoverComponent>();
 
 		if (m_mover) {
-			Math::Rect2 l_rect(m_mover->position()+Math::Vector2(-5, -5),
-			                   Math::Size2(10, 10));
+			Math::Rect2 l_rect(m_mover->position()+Math::Vector2(-20, -20),
+			                   Math::Size2(40, 40));
 			Graphics::QuadGraphic l_quad(l_rect);
 			Graphics::Painter::Draw(l_quad);
 		}
@@ -130,7 +143,9 @@ public:
 class DemoScene : public Game::SceneBase
 {
 	bool m_init;
+
 public:
+
 	DemoScene(void)
 	: SceneBase("DemoScene"),
 	  m_init(false) {}
@@ -159,6 +174,7 @@ class Demo : public Game::Engine
 	Event::SharedEventListener m_debugListener;
 
 public:
+
 	Demo(void)
 	: Engine(60),
 	  m_stop_timer(0),
@@ -191,11 +207,10 @@ public:
 
 	VIRTUAL void second(void)
 	{
-		if (++m_stop_timer == 60)
-			stop();
-
 		Engine::second();
 
+		if (++m_stop_timer == 30)
+			stop();
 	}
 };
 

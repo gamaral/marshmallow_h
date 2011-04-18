@@ -9,16 +9,10 @@ if(UNIX AND VIEWPORT_X11_GLX)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 	                              ${OPENGL_LIBRARIES}
 	                              ${X11_LIBRARIES})
-elseif(VIEWPORT_SDL)
-	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-	                              viewport/sdl.cpp
-	                              painter/opengl.cpp)
-	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
-	                              ${OPENGL_LIBRARIES}
-	                              ${SDL_LIBRARY})
 elseif(VIEWPORT_DUMMY)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-	                              viewport/dummy.cpp)
+	                              viewport/dummy.cpp
+	                              painter/dummy.cpp)
 endif(UNIX AND VIEWPORT_X11_GLX)
 
 add_library(marshmallow_graphics ${MARSHMALLOW_BUILD_TYPE}

@@ -55,7 +55,6 @@ struct Viewport::Internal
 	Atom        wm_delete;
 	Display    *display;
 	XSizeHints *size_hints;
-	float       world[4];
 	bool        loaded;
 
 	Internal(void)
@@ -148,22 +147,18 @@ struct Viewport::Internal
 		glEnable(GL_BLEND);
 		glEnable(GL_TEXTURE_2D);
 
-		/* set world coordinates */
-		float l_aratio = static_cast<float>(h) / static_cast<float>(w);
-		world[0] = -100.f;
-		world[1] =  100.f;
-		world[2] = world[0] * l_aratio;
-		world[3] = world[1] * l_aratio;
-
 		/* initialize context */
 		glViewport(0, 0, w, h);
 		glClearColor(0., 0., 0., 0.);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(world[0], world[1], world[2], world[3], -1.f, 1.f);
+		glOrtho(0, w, h, 0, -1.f, 1.f);
 		glMatrixMode(GL_MODELVIEW);
 		SwapBuffer();
+
+		if( glGetError() != GL_NO_ERROR )
+			return(false);
 
 		return(loaded = true);
 	}
@@ -372,12 +367,13 @@ Viewport::SwapBuffer(void)
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 }
 
-void
-Viewport::World(float &lx, float &hx, float &ly, float &hy)
+const Math::Size2
+Viewport::Size(void)
 {
-	lx = MVI.world[0];
-	hx = MVI.world[1];
-	ly = MVI.world[2];
-	hy = MVI.world[3];
+	if (MVI.size_hints)
+		return(Math::Size2(MVI.size_hints->max_width,
+		                   MVI.size_hints->max_height));
+
+	return(Math::Size2());
 }
 

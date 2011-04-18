@@ -92,7 +92,9 @@ void
 Engine::initialize(void)
 {
 	Platform::Initialize();
-	Viewport::Initialize();
+
+	if (!Viewport::Initialize())
+		FATAL1("Failed to initialize engine!");
 
 	eventManager()->connect(m_event_listener, "Event::QuitEvent");
 }

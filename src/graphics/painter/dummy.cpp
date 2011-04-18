@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "graphics/painter.h"
 
 /*!
  * @file
@@ -34,45 +34,25 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_VIEWPORT_H
-#define GRAPHICS_VIEWPORT_H 1
+#include "core/platform.h"
+#include "graphics/igraphic.h"
 
-#include "graphics/config.h"
-#include "core/global.h"
-#include "math/size2.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics;
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
+void
+Painter::Initialize(void)
 {
-
-	/*! @brief Graphics Viewport Interface */
-	struct GRAPHICS_EXPORT Viewport
-	{
-		static const char *Name;
-
-		static bool Initialize(int width = DEFAULT_VIEWPORT_WIDTH,
-		                      int height = DEFAULT_VIEWPORT_HEIGHT,
-		                       int depth = DEFAULT_VIEWPORT_DEPTH,
-		                 bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
-		static void Finalize(void);
-
-		static bool Redisplay(int width = DEFAULT_VIEWPORT_WIDTH,
-		                     int height = DEFAULT_VIEWPORT_HEIGHT,
-		                      int depth = DEFAULT_VIEWPORT_DEPTH,
-		                bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
-
-		static void Tick(TIME timeout);
-
-		static void SwapBuffer(void);
-
-		static const Math::Size2 Size(void);
-
-		struct Internal;
-	};
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+void
+Painter::Finalize(void)
+{
+}
 
-#endif
+void
+Painter::Draw(const IGraphic &)
+{
+	INFO1("Drawing graphic"); break;
+}
+

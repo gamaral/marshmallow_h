@@ -26,16 +26,16 @@ set(VIEWPORT_DEFAULT_HEIGHT "600" CACHE STRING "Viewport default height")
 set(VIEWPORT_DEFAULT_DEPTH "24" CACHE STRING "Viewport default depth")
 set(VIEWPORT_DEFAULT_FULLSCREEN "OFF" CACHE BOOL "Viewport default fullscreen mode")
 
-set(VIEWPORT_X11_GLX "ON" CACHE BOOL "Use X11 GLX Viewport")
-set(VIEWPORT_SDL "OFF" CACHE BOOL "Use SDL Viewport")
-set(VIEWPORT_DUMMY "ON" CACHE BOOL "Use SDL Dummy Viewport")
+set(VIEWPORT_X11_GLX "OFF" CACHE BOOL "Use X11 GLX Viewport")
+set(VIEWPORT_DUMMY "OFF" CACHE BOOL "Use Dummy Viewport")
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	set(DEBUG ON CACHE INTERNAL "")
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+	set(DEBUG ON CACHE BOOL "Internal Debug Flag")
 	set(DEBUG_VERBOSITY "0" CACHE STRING "Debug Verbosity")
-else(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-	set(DEBUG OFF CACHE INTERNAL "")
-endif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+else("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+	set(DEBUG OFF CACHE BOOL "Internal Debug Flag")
+	set(DEBUG_VERBOSITY "0" CACHE STRING "Debug Verbosity")
+endif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 
 # Configuration files
 configure_file(
@@ -82,18 +82,7 @@ if(UNIX AND VIEWPORT_X11_GLX)
 	endif(NOT OPENGL_FOUND)
 
 	include_directories(${X11_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
-elseif(VIEWPORT_SDL)
-	find_package(SDL)
-	find_package(OpenGL)
-
-	if(NOT SDL_FOUND)
-		message(FATAL_ERROR "SDL viewport: SDL was not found.")
-	elseif(NOT OPENGL_FOUND)
-		message(FATAL_ERROR "SDL OpenGL viewport: OpenGL was not found.")
-	endif(NOT SDL_FOUND)
-
-	include_directories(${SDL_INCLUDE_DIR})
-endif(UNIX AND VIEWPORT_X11_GLX)
+    endif(UNIX AND VIEWPORT_X11_GLX)
 
 ############################################################## SUB DIRECTORIES #
 
