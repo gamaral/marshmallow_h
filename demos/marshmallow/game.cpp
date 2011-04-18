@@ -62,6 +62,8 @@ Demo::finalize(void)
 void
 Demo::second(void)
 {
+	Engine::second();
+
 	if (++m_stop_timer == 10)
 		stop();
 }
