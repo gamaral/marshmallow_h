@@ -6,9 +6,10 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 # General
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Includes
 include_directories(${PROJECT_BINARY_DIR}/include)
@@ -16,6 +17,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Contribs
 include_directories(${PROJECT_SOURCE_DIR}/contrib/eastl/include)
+include_directories(${PROJECT_SOURCE_DIR}/contrib/glpng/include)
 
 # Global Options
 set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Engine Namespace")

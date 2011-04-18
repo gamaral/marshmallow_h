@@ -47,6 +47,13 @@ namespace Graphics
 
 	struct IGraphic;
 
+	enum BlendTypes {
+		NoBlending = 0,
+		AdditiveBlending,
+		AlphaBlending,
+		MultiplyBlending
+	};
+
 	/*! @brief Graphics Painter */
 	struct GRAPHICS_EXPORT Painter
 	{
@@ -54,6 +61,7 @@ namespace Graphics
 		static void Finalize(void);
 
 		static void Draw(const IGraphic &graphic);
+		static void Blend(BlendTypes blend);
 
 		struct Internal;
 	};

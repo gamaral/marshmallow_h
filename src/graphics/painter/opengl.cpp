@@ -85,13 +85,28 @@ struct Painter::Internal
 	void
 	drawQuadGraphic(const QuadGraphic &g)
 	{
+		const bool l_texture = (g.texture());
+		const GLfloat l_texcoords[4][2] = {{0,0},{0,1},{1,1},{1,0}};
+
+		if (l_texture) {
+			glBindTexture(GL_TEXTURE_2D, g.texture()->tid());
+			Blend(AlphaBlending);
+		}
+
 		glBegin(GL_QUADS);
 		for (int i = 0; i < 4; ++i) {
 			const Math::Vector2 &l_p = g[i];
+			if (l_texture)
+				glTexCoord2f(l_texcoords[i][0], l_texcoords[i][1]);
 			glVertex2f(static_cast<GLfloat>(l_p.rx()),
 			           static_cast<GLfloat>(l_p.ry()));
 		}
 		glEnd();
+
+		if (l_texture) {
+			Blend(NoBlending);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 	}
 
 	void
@@ -138,6 +153,28 @@ Painter::Draw(const IGraphic &g)
 		MGP.drawPolygonGraphic(static_cast<const PolygonGraphic &>(g));
 	break;
 	default: WARNING1("Unknown graphic type"); break;
+	}
+}
+
+void
+Painter::Blend(BlendTypes b)
+{
+	switch (b) {
+	case AdditiveBlending:
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	break;
+	case AlphaBlending:
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	break;
+	case MultiplyBlending:
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+	break;
+	case NoBlending:
+		glDisable(GL_BLEND);
+	break;
 	}
 }
 

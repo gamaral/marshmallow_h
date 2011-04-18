@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "graphics/textureasset.h"
 
 /*!
  * @file
@@ -34,59 +34,23 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_QUADGRAPHIC_H
-#define GRAPHICS_QUADGRAPHIC_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics;
 
-#include "graphics/igraphic.h"
+const Core::AssetType TextureAsset::Type(Core::TextureAssetType);
 
-#include "core/shared.h"
-#include "math/rect2.h"
-#include "math/vector2.h"
-#include "graphics/textureasset.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
+TextureAsset::TextureAsset(const Core::Identifier &i)
+    : m_id(i)
 {
-
-	/*! @brief Graphics Quad Graphic class */
-	class GRAPHICS_EXPORT QuadGraphic : public IGraphic
-	{
-		Math::Vector2 m_points[4];
-		Graphics::WeakTextureAsset m_texture;
-
-		NO_COPY(QuadGraphic);
-
-	public:
-
-		QuadGraphic(const Math::Vector2 &p1,
-		            const Math::Vector2 &p2,
-		            const Math::Vector2 &p3,
-		            const Math::Vector2 &p4);
-		QuadGraphic(const Math::Rect2 &rect);
-		virtual ~QuadGraphic(void);
-
-	public: /* operators */
-
-		const Math::Vector2 & operator[](int index) const
-		    { return(m_points[index % 4]); }
-
-	public: /* virtual */
-
-		VIRTUAL const GraphicType & type(void) const
-		    { return(Type); }
-
-		VIRTUAL const WeakTextureAsset &texture(void) const
-		    { return(m_texture); }
-		VIRTUAL void setTexture(WeakTextureAsset texture);
-
-	public: /* static */
-
-		static const GraphicType Type;
-	};
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+TextureAsset::~TextureAsset(void)
+{
+}
 
-#endif
+void
+TextureAsset::load(const char *filename) const
+{
+	UNUSED(filename);
+}
+

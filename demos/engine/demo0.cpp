@@ -38,6 +38,7 @@
 #include "math/vector2.h"
 #include "graphics/painter.h"
 #include "graphics/quadgraphic.h"
+#include "graphics/textureasset.h"
 #include "graphics/viewport.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -52,13 +53,13 @@ public:
 	DemoMoverComponent(Game::WeakEntity e)
 	: Game::ComponentBase("mover", e),
 	  m_pos(0, 0),
-	  m_dir(0.5, 0.5)
+	  m_dir(0.2, 0.2)
 	{
 		Math::Size2 l_vpsize = Graphics::Viewport::Size();
-		m_pos.rx() = rand() % (int) l_vpsize.width();
-		m_pos.ry() = rand() % (int) l_vpsize.height();
 		m_dir.rx() += (rand() % 10) / 100.;
 		m_dir.ry() += (rand() % 10) / 100.;
+		if (rand() % 2) m_dir.rx() *= -1;
+		if (rand() % 2) m_dir.ry() *= -1;
 	}
 
 	Math::Vector2 &position(void)
@@ -101,14 +102,15 @@ public:
 
 		if (m_mover) {
 			Math::Size2 l_vpsize = Graphics::Viewport::Size();
+
 			Math::Vector2 &pos = m_mover->position();
 			Math::Vector2 &dir = m_mover->direction();
 
-			if ((pos.rx() <= 0 && dir.rx() < 0)
-			 || (pos.rx() >  l_vpsize.width() && dir.rx() > 0))
+			if ((pos.rx() <= -l_vpsize.width() / 2 && dir.rx() < 0)
+			 || (pos.rx() >=  l_vpsize.width() / 2 && dir.rx() > 0))
 				dir.rx() *= -0.95;
-			if ((pos.ry() <= 0 && dir.ry() < 0)
-			 || (pos.ry() >  l_vpsize.height() && dir.ry() > 0))
+			if ((pos.ry() <= -l_vpsize.height() / 2 && dir.ry() < 0)
+			 || (pos.ry() >=  l_vpsize.height() / 2 && dir.ry() > 0))
 				dir.ry() *= -0.95;
 		}
 	}
@@ -117,11 +119,15 @@ public:
 class DemoDrawComponent : public Game::ComponentBase
 {
 	Core::Weak<DemoMoverComponent> m_mover;
+	Graphics::SharedTextureAsset m_asset;
+	Graphics::SharedGraphic m_quad;
 
 public:
 
 	DemoDrawComponent(Game::WeakEntity e)
-	: Game::ComponentBase("draw", e)
+	: Game::ComponentBase("draw", e),
+	  m_asset(new Graphics::TextureAsset),
+	  m_quad()
 	{
 	}
 
@@ -130,12 +136,17 @@ public:
 		if (!m_mover && entity())
 			m_mover = entity()->component("mover").cast<DemoMoverComponent>();
 
-		if (m_mover) {
-			Math::Rect2 l_rect(m_mover->position()+Math::Vector2(-20, -20),
-			                   Math::Size2(40, 40));
-			Graphics::QuadGraphic l_quad(l_rect);
-			Graphics::Painter::Draw(l_quad);
+		if (m_asset && !(*m_asset))
+			m_asset->load("demos/engine/assets/mallow.png");
+
+		if (m_mover && m_asset) {
+			Math::Rect2 l_rect(m_mover->position()+Math::Vector2(-32, -32), Math::Size2(64, 64));
+			m_quad = new Graphics::QuadGraphic(l_rect);
+			m_quad->setTexture(m_asset);
 		}
+
+		if (m_quad)
+			Graphics::Painter::Draw(*m_quad);
 	}
 
 };

@@ -5,14 +5,17 @@ file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp)
 if(UNIX AND VIEWPORT_X11_GLX)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              viewport/x11_glx.cpp
-	                              painter/opengl.cpp)
+	                              painter/opengl.cpp
+	                              textureasset/opengl.cpp)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
+	                              marshmallow_glpng
 	                              ${OPENGL_LIBRARIES}
 	                              ${X11_LIBRARIES})
 elseif(VIEWPORT_DUMMY)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              viewport/dummy.cpp
-	                              painter/dummy.cpp)
+	                              painter/dummy.cpp
+	                              textureasset/dummy.cpp)
 endif(UNIX AND VIEWPORT_X11_GLX)
 
 add_library(marshmallow_graphics ${MARSHMALLOW_BUILD_TYPE}

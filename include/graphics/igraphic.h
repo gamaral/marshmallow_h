@@ -42,8 +42,17 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+namespace Core
+{
+	template <class T> class Shared;
+	template <class T> class Weak;
+}
+
 namespace Graphics
 {
+
+	class TextureAsset;
+	typedef Core::Weak<TextureAsset> WeakTextureAsset;
 
 	enum GraphicType
 	{
@@ -63,10 +72,13 @@ namespace Graphics
 
 		virtual const GraphicType & type(void) const = 0;
 
-		/* TODO: Create brush and/or pen shared classes */
+		virtual const WeakTextureAsset &texture(void) const = 0;
+		virtual void setTexture(WeakTextureAsset texture) = 0;
 
-		/* TODO: Create shared texture class */
+		/* TODO: Create brush and/or pen shared classes */
 	};
+	typedef Core::Shared<IGraphic> SharedGraphic;
+	typedef Core::Weak<IGraphic> WeakGraphic;
 
 }
 

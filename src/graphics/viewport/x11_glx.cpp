@@ -142,15 +142,15 @@ struct Viewport::Internal
 			return(false);
 		}
 
+		//glCullFace(GL_BACK);
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_LIGHTING);
-		glEnable(GL_BLEND);
 		glEnable(GL_TEXTURE_2D);
 
 		/* initialize context */
 		glViewport(0, 0, w, h);
 		glClearColor(0., 0., 0., 0.);
-		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glOrtho(0, w, h, 0, -1.f, 1.f);
@@ -365,6 +365,10 @@ Viewport::SwapBuffer(void)
 	glXSwapBuffers(MVI.display, MVI.window);
 	glClearColor(.0, .0, .0, .0);
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+
+	glTranslatef(static_cast<GLfloat>(MVI.size_hints->max_width / 2),
+	             static_cast<GLfloat>(MVI.size_hints->max_height / 2), 0.0f);
 }
 
 const Math::Size2

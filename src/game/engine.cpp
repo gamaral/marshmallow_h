@@ -148,7 +148,6 @@ Engine::run(void)
 		l_second += m_delta_time;
 		l_tick_sleep -= m_delta_time;
 		l_tick_sleep += l_tick_target;
-		INFO("XXX: TICK SLEEP %d", l_tick_sleep);
 
 		if (l_frame >= l_frame_target) {
 			render();

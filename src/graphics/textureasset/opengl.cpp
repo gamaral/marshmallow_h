@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "graphics/textureasset.h"
 
 /*!
  * @file
@@ -34,59 +34,61 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_QUADGRAPHIC_H
-#define GRAPHICS_QUADGRAPHIC_H 1
+#include <GL/gl.h>
+#include <GL/glpng.h>
 
-#include "graphics/igraphic.h"
+#include "core/platform.h"
 
-#include "core/shared.h"
-#include "math/rect2.h"
-#include "math/vector2.h"
-#include "graphics/textureasset.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics;
 
-MARSHMALLOW_NAMESPACE_BEGIN
+const Core::AssetType TextureAsset::Type(Core::TextureAssetType);
 
-namespace Graphics
+TextureAsset::TextureAsset(void)
+    : m_id(),
+      m_size(),
+      m_texture_id(0)
 {
-
-	/*! @brief Graphics Quad Graphic class */
-	class GRAPHICS_EXPORT QuadGraphic : public IGraphic
-	{
-		Math::Vector2 m_points[4];
-		Graphics::WeakTextureAsset m_texture;
-
-		NO_COPY(QuadGraphic);
-
-	public:
-
-		QuadGraphic(const Math::Vector2 &p1,
-		            const Math::Vector2 &p2,
-		            const Math::Vector2 &p3,
-		            const Math::Vector2 &p4);
-		QuadGraphic(const Math::Rect2 &rect);
-		virtual ~QuadGraphic(void);
-
-	public: /* operators */
-
-		const Math::Vector2 & operator[](int index) const
-		    { return(m_points[index % 4]); }
-
-	public: /* virtual */
-
-		VIRTUAL const GraphicType & type(void) const
-		    { return(Type); }
-
-		VIRTUAL const WeakTextureAsset &texture(void) const
-		    { return(m_texture); }
-		VIRTUAL void setTexture(WeakTextureAsset texture);
-
-	public: /* static */
-
-		static const GraphicType Type;
-	};
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+TextureAsset::~TextureAsset(void)
+{
+	unload();
+}
 
-#endif
+void
+TextureAsset::load(const char *f)
+{
+	pngInfo pi;
+
+	glGenTextures(1, &m_texture_id);
+	glBindTexture(GL_TEXTURE_2D, m_texture_id);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+	if (!pngLoad(f, PNG_BUILDMIPMAPS, PNG_ALPHA, &pi)) {
+		m_size = Math::Size2(0, 0);
+		INFO1("Failed to load texture.");
+		return;
+	}
+
+	m_id = Core::Identifier(f);
+	m_size = Math::Size2(pi.Width, pi.Height);
+	INFO1("Texture loaded.");
+}
+
+void
+TextureAsset::unload(void)
+{
+	if (m_texture_id)
+		glDeleteTextures(1, &m_texture_id);
+
+	m_id = Core::Identifier();
+	m_size = Math::Size2();
+	m_texture_id = 0;
+}
+

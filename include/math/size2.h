@@ -68,10 +68,13 @@ namespace Math
 		double height(void) const
 		    { return(m_value[1]); }
 
+		double area(void) const;
+
+	public: /* operators */
+
 		double & operator[](int i)
 		    { return(m_value[i % 2]); }
 
-		double area(void) const;
 	};
 
 }

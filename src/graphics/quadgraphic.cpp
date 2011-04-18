@@ -52,10 +52,16 @@ QuadGraphic::QuadGraphic(const Math::Vector2 &p1,
 
 QuadGraphic::QuadGraphic(const Math::Rect2 &rect)
 {
-	m_points[0] = rect.topLeft();
-	m_points[1] = rect.topRight();
-	m_points[2] = rect.bottomRight();
-	m_points[3] = rect.bottomLeft();
+	m_points[0] = rect.topRight();
+	m_points[1] = rect.bottomRight();
+	m_points[2] = rect.bottomLeft();
+	m_points[3] = rect.topLeft();
+}
+
+void
+QuadGraphic::setTexture(Graphics::WeakTextureAsset t)
+{
+	m_texture = t;
 }
 
 QuadGraphic::~QuadGraphic(void)

@@ -34,56 +34,35 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_QUADGRAPHIC_H
-#define GRAPHICS_QUADGRAPHIC_H 1
+#ifndef CORE_IASSET_H
+#define CORE_IASSET_H 1
 
-#include "graphics/igraphic.h"
-
-#include "core/shared.h"
-#include "math/rect2.h"
-#include "math/vector2.h"
-#include "graphics/textureasset.h"
+#include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Graphics
+namespace Core
 {
 
-	/*! @brief Graphics Quad Graphic class */
-	class GRAPHICS_EXPORT QuadGraphic : public IGraphic
+	template <class T> class Shared;
+	template <class T> class Weak;
+
+	enum AssetType
 	{
-		Math::Vector2 m_points[4];
-		Graphics::WeakTextureAsset m_texture;
-
-		NO_COPY(QuadGraphic);
-
-	public:
-
-		QuadGraphic(const Math::Vector2 &p1,
-		            const Math::Vector2 &p2,
-		            const Math::Vector2 &p3,
-		            const Math::Vector2 &p4);
-		QuadGraphic(const Math::Rect2 &rect);
-		virtual ~QuadGraphic(void);
-
-	public: /* operators */
-
-		const Math::Vector2 & operator[](int index) const
-		    { return(m_points[index % 4]); }
-
-	public: /* virtual */
-
-		VIRTUAL const GraphicType & type(void) const
-		    { return(Type); }
-
-		VIRTUAL const WeakTextureAsset &texture(void) const
-		    { return(m_texture); }
-		VIRTUAL void setTexture(WeakTextureAsset texture);
-
-	public: /* static */
-
-		static const GraphicType Type;
+		UnknownAssetType = 0,
+		TextureAssetType,
+		AssetTypeMax
 	};
+
+	/*! @brief Assets Asset Interface */
+	struct CORE_EXPORT IAsset
+	{
+		virtual ~IAsset(void) {};
+
+		virtual const AssetType & type(void) const = 0;
+	};
+	typedef Shared<IAsset> SharedAsset;
+	typedef Weak<IAsset> WeakAsset;
 
 }
 

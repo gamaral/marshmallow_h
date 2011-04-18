@@ -34,56 +34,61 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_QUADGRAPHIC_H
-#define GRAPHICS_QUADGRAPHIC_H 1
+#ifndef GRAPHICS_TEXTUREASSET_H
+#define GRAPHICS_TEXTUREASSET_H 1
 
-#include "graphics/igraphic.h"
+#include "core/iasset.h"
 
-#include "core/shared.h"
-#include "math/rect2.h"
-#include "math/vector2.h"
-#include "graphics/textureasset.h"
+#include "core/identifier.h"
+#include "math/size2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
 
-	/*! @brief Graphics Quad Graphic class */
-	class GRAPHICS_EXPORT QuadGraphic : public IGraphic
+	/*! @brief Graphic Texture Asset Class */
+	class GRAPHICS_EXPORT TextureAsset : public Core::IAsset
 	{
-		Math::Vector2 m_points[4];
-		Graphics::WeakTextureAsset m_texture;
+		Core::Identifier m_id;
+		Math::Size2 m_size;
+		unsigned int m_texture_id;
 
-		NO_COPY(QuadGraphic);
+		NO_COPY(TextureAsset);
 
 	public:
 
-		QuadGraphic(const Math::Vector2 &p1,
-		            const Math::Vector2 &p2,
-		            const Math::Vector2 &p3,
-		            const Math::Vector2 &p4);
-		QuadGraphic(const Math::Rect2 &rect);
-		virtual ~QuadGraphic(void);
+		TextureAsset(void);
+		virtual ~TextureAsset(void);
 
-	public: /* operators */
+		void load(const char *filename);
+		void unload(void);
 
-		const Math::Vector2 & operator[](int index) const
-		    { return(m_points[index % 4]); }
+		unsigned int tid(void) const
+		    { return(m_texture_id); }
+
+		const Math::Size2 &size(void) const
+		    { return(m_size); }
 
 	public: /* virtual */
 
-		VIRTUAL const GraphicType & type(void) const
+		virtual const Core::Identifier & id(void) const
+		    { return(m_id); }
+
+		VIRTUAL const Core::AssetType & type(void) const
 		    { return(Type); }
 
-		VIRTUAL const WeakTextureAsset &texture(void) const
-		    { return(m_texture); }
-		VIRTUAL void setTexture(WeakTextureAsset texture);
+	public: /* operators */
+
+		operator bool(void) const
+		    { return(m_texture_id); }
 
 	public: /* static */
 
-		static const GraphicType Type;
+		static const Core::AssetType Type;
 	};
+	typedef Core::Shared<TextureAsset> SharedTextureAsset;
+	typedef Core::Weak<TextureAsset> WeakTextureAsset;
 
 }
 

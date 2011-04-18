@@ -46,7 +46,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics
 {
 
-	/*! @brief Graphics Point Graphic class */
+	/*! @brief Graphics Point Graphic Class */
 	class GRAPHICS_EXPORT PointGraphic : public IGraphic
 	{
 		Math::Vector2 m_position;

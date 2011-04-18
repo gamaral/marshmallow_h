@@ -58,13 +58,15 @@ StrHash::StrHash(const char *n)
 	rehash(m_str, len, ~static_cast<UID>(0));
 }
 
-StrHash::StrHash(const StrHash &copy)
-    : Hash(copy),
+StrHash::StrHash(const StrHash &c)
+    : Hash(c),
       m_str(0)
 {
-	const size_t len = strlen(copy.m_str)+1;
-	m_str = new char[len];
-	memcpy(m_str, copy.m_str, len);
+	if (c.m_str) {
+		const size_t len = strlen(c.m_str)+1;
+		m_str = new char[len];
+		memcpy(m_str, c.m_str, len);
+	}
 }
 
 StrHash::~StrHash(void)
@@ -79,9 +81,13 @@ StrHash::operator=(const Marshmallow::Core::StrHash &rhs)
 		Hash::operator=(rhs);
 
 		delete[] m_str;
-		const size_t len = strlen(rhs.m_str)+1;
-		m_str = new char[len];
-		memcpy(m_str, rhs.m_str, len);
+		m_str = 0;
+
+		if (rhs.m_str) {
+			const size_t len = strlen(rhs.m_str)+1;
+			m_str = new char[len];
+			memcpy(m_str, rhs.m_str, len);
+		}
 	}
 	return(*this);
 }
