@@ -53,6 +53,6 @@ Painter::Finalize(void)
 void
 Painter::Draw(const IGraphic &)
 {
-	INFO1("Drawing graphic"); break;
+	INFO1("Drawing graphic");
 }
 

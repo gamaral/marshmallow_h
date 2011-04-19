@@ -39,8 +39,7 @@ using namespace Graphics;
 
 const Core::AssetType TextureAsset::Type(Core::TextureAssetType);
 
-TextureAsset::TextureAsset(const Core::Identifier &i)
-    : m_id(i)
+TextureAsset::TextureAsset(void)
 {
 }
 
@@ -49,8 +48,13 @@ TextureAsset::~TextureAsset(void)
 }
 
 void
-TextureAsset::load(const char *filename) const
+TextureAsset::load(const char *f)
 {
-	UNUSED(filename);
+	UNUSED(f);
+}
+
+void
+TextureAsset::unload(void)
+{
 }
 
