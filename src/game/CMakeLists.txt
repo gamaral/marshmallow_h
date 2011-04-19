@@ -2,7 +2,7 @@ add_definitions(-DGAME_LIBRARY)
 
 file(GLOB MARSHMALLOW_GAME_SRCS *.cpp)
 
-add_library(marshmallow_game ${MARSHMALLOW_BUILD_TYPE}
+add_library(marshmallow_game
 	${MARSHMALLOW_GAME_SRCS}
 )
 

@@ -6,12 +6,15 @@ include_directories(${ZLIB_INCLUDE_DIR}
 
 set(MARSHMALLOW_GLPNG_SRCS glpng.c)
 
-set(CMAKE_SHARED_LIBRARY_C_FLAGS "-fPIC")
-set(CMAKE_STATIC_LIBRARY_C_FLAG "-Wl," )
+if(BUILD_SHARED_LIBS)
+	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-fPIC")
+else()
+	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-Wl," )
+endif()
 
-add_library(marshmallow_glpng ${MARSHMALLOW_BUILD_TYPE} ${MARSHMALLOW_GLPNG_SRCS})
+add_library(marshmallow_glpng ${MARSHMALLOW_GLPNG_SRCS})
 
 target_link_libraries(marshmallow_glpng ${ZLIB_LIBRARIES}
-                                        ${PNG_LIBRARY}
+                                        ${PNG_LIBRARIES}
                                         ${OPENGL_LIBRARIES})
 

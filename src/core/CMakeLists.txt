@@ -8,9 +8,9 @@ if(UNIX)
 else(WIN32)
 	set(MARSHMALLOW_CORE_SRCS ${MARSHMALLOW_CORE_SRCS} platform/win32.cpp)
 	set(MARSHMALLOW_CORE_LIBS Winmm)
-endif(UNIX)
+endif()
 
-add_library(marshmallow_core ${MARSHMALLOW_BUILD_TYPE}
+add_library(marshmallow_core
 	${MARSHMALLOW_CORE_SRCS}
 )
 

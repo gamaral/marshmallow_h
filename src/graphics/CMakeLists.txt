@@ -2,7 +2,7 @@ add_definitions(-DGRAPHICS_LIBRARY)
 
 file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp)
 
-if(UNIX AND VIEWPORT_X11_GLX)
+if(UNIX AND MARSHMALLOW_VIEWPORT_X11_GLX)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              viewport/x11_glx.cpp
 	                              painter/opengl.cpp
@@ -11,14 +11,14 @@ if(UNIX AND VIEWPORT_X11_GLX)
 	                              marshmallow_glpng
 	                              ${OPENGL_LIBRARIES}
 	                              ${X11_LIBRARIES})
-elseif(VIEWPORT_DUMMY)
+elseif(MARSHMALLOW_VIEWPORT_DUMMY)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              viewport/dummy.cpp
 	                              painter/dummy.cpp
 	                              textureasset/dummy.cpp)
-endif(UNIX AND VIEWPORT_X11_GLX)
+endif()
 
-add_library(marshmallow_graphics ${MARSHMALLOW_BUILD_TYPE}
+add_library(marshmallow_graphics
 	${MARSHMALLOW_GRAPHICS_SRCS}
 )
 
