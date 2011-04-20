@@ -37,12 +37,9 @@
 #ifndef GRAPHICS_QUADGRAPHIC_H
 #define GRAPHICS_QUADGRAPHIC_H 1
 
-#include "graphics/igraphic.h"
+#include "graphics/graphicbase.h"
 
-#include "core/shared.h"
 #include "math/rect2.h"
-#include "math/vector2.h"
-#include "graphics/textureasset.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -50,10 +47,9 @@ namespace Graphics
 {
 
 	/*! @brief Graphics Quad Graphic class */
-	class GRAPHICS_EXPORT QuadGraphic : public IGraphic
+	class GRAPHICS_EXPORT QuadGraphic : public GraphicBase
 	{
 		Math::Vector2 m_points[4];
-		Graphics::WeakTextureAsset m_texture;
 
 		NO_COPY(QuadGraphic);
 
@@ -62,8 +58,10 @@ namespace Graphics
 		QuadGraphic(const Math::Vector2 &p1,
 		            const Math::Vector2 &p2,
 		            const Math::Vector2 &p3,
-		            const Math::Vector2 &p4);
-		QuadGraphic(const Math::Rect2 &rect);
+		            const Math::Vector2 &p4,
+		            const Math::Vector2 &position = Math::Vector2::Null);
+		QuadGraphic(const Math::Rect2 &rect,
+		    const Math::Vector2 &position = Math::Vector2::Null);
 		virtual ~QuadGraphic(void);
 
 	public: /* operators */
@@ -75,10 +73,6 @@ namespace Graphics
 
 		VIRTUAL const GraphicType & type(void) const
 		    { return(Type); }
-
-		VIRTUAL const WeakTextureAsset &texture(void) const
-		    { return(m_texture); }
-		VIRTUAL void setTexture(WeakTextureAsset texture);
 
 	public: /* static */
 

@@ -37,7 +37,7 @@
 #ifndef GRAPHICS_LINEGRAPHIC_H
 #define GRAPHICS_LINEGRAPHIC_H 1
 
-#include "graphics/igraphic.h"
+#include "graphics/graphicbase.h"
 
 #include "math/vector2.h"
 
@@ -47,7 +47,7 @@ namespace Graphics
 {
 
 	/*! @brief Graphics Line Graphic class */
-	class GRAPHICS_EXPORT LineGraphic : public IGraphic
+	class GRAPHICS_EXPORT LineGraphic : public GraphicBase
 	{
 		Math::Vector2 m_points[2];
 
@@ -55,7 +55,9 @@ namespace Graphics
 
 	public:
 
-		LineGraphic(const Math::Vector2 &p1, const Math::Vector2 &p2);
+		LineGraphic(const Math::Vector2 &p1,
+		            const Math::Vector2 &p2,
+		            const Math::Vector2 &position = Math::Vector2::Null);
 		virtual ~LineGraphic(void);
 
 		const Math::Vector2 & beginning(void) const

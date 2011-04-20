@@ -47,32 +47,32 @@ namespace Math
 	/*! @brief 2D Size */
 	class MATH_EXPORT Size2
 	{
-		double m_value[2];
+		float m_value[2];
 
 	public:
-		Size2(double width = 0., double height = 0.);
+		Size2(float width = 0., float height = 0.);
 		Size2(const Size2 &copy);
 
-		double & rwidth(void)
+		float & rwidth(void)
 		    { return(m_value[0]); }
-		double & rheight(void)
+		float & rheight(void)
 		    { return(m_value[1]); }
 
-		const double & rwidth(void) const
+		const float & rwidth(void) const
 		    { return(m_value[0]); }
-		const double & rheight(void) const
+		const float & rheight(void) const
 		    { return(m_value[1]); }
 
-		double width(void) const
+		float width(void) const
 		    { return(m_value[0]); }
-		double height(void) const
+		float height(void) const
 		    { return(m_value[1]); }
 
-		double area(void) const;
+		float area(void) const;
 
 	public: /* operators */
 
-		double & operator[](int i)
+		float & operator[](int i)
 		    { return(m_value[i % 2]); }
 
 	};

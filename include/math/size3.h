@@ -47,37 +47,37 @@ namespace Math
 	/*! @brief 3D Size */
 	class MATH_EXPORT Size3
 	{
-		double m_value[3];
+		float m_value[3];
 
 	public:
-		Size3(double width = 0., double height = 0., double depth = 0.);
+		Size3(float width = 0., float height = 0., float depth = 0.);
 		Size3(const Size3 &copy);
 
-		double & rwidth(void)
+		float & rwidth(void)
 		    { return(m_value[0]); }
-		double & rheight(void)
+		float & rheight(void)
 		    { return(m_value[1]); }
-		double & rdepth(void)
+		float & rdepth(void)
 		    { return(m_value[2]); }
 
-		const double & rwidth(void) const
+		const float & rwidth(void) const
 		    { return(m_value[0]); }
-		const double & rheight(void) const
+		const float & rheight(void) const
 		    { return(m_value[1]); }
-		const double & rdepth(void) const
+		const float & rdepth(void) const
 		    { return(m_value[2]); }
 
-		double width(void) const
+		float width(void) const
 		    { return(m_value[0]); }
-		double height(void) const
+		float height(void) const
 		    { return(m_value[1]); }
-		double depth(void) const
+		float depth(void) const
 		    { return(m_value[2]); }
 
-		double & operator[](int i)
+		float & operator[](int i)
 		    { return(m_value[i % 3]); }
 
-		long double volume(void) const;
+		float volume(void) const;
 	};
 
 }

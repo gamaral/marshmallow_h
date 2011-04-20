@@ -47,41 +47,46 @@ namespace Math
 	/*! @brief 3D Vector */
 	class MATH_EXPORT Vector3
 	{
-		double m_value[3];
+		float m_value[3];
 
 	public:
-		Vector3(double x = 0., double y = 0., double z = 0.);
+		Vector3(float x = 0., float y = 0., float z = 0.);
 		Vector3(const Vector3 &copy);
 
-		double & rx(void)
+		float & rx(void)
 		    { return(m_value[0]); }
-		double & ry(void)
+		float & ry(void)
 		    { return(m_value[1]); }
-		double & rz(void)
+		float & rz(void)
 		    { return(m_value[2]); }
 
-		const double & rx(void) const
+		const float & rx(void) const
 		    { return(m_value[0]); }
-		const double & ry(void) const
+		const float & ry(void) const
 		    { return(m_value[1]); }
-		const double & rz(void) const
+		const float & rz(void) const
 		    { return(m_value[2]); }
 
-		double x(void) const
+		float x(void) const
 		    { return(m_value[0]); }
-		double y(void) const
+		float y(void) const
 		    { return(m_value[1]); }
-		double z(void) const
+		float z(void) const
 		    { return(m_value[2]); }
 
-		double & operator[](int i)
+		float & operator[](int i)
 		    { return(m_value[i % 3]); }
 
 		Vector3 normalized(void) const;
 		Vector3 & normalize(void);
 
-		double magnitude(void);
-		double magnitude2(void);
+		float magnitude(void);
+		float magnitude2(void);
+
+	public: /* static */
+
+		static const Vector3 Null;
+		static const Vector3 One;
 	};
 	typedef Vector3 Point3;
 

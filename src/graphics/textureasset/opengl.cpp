@@ -77,7 +77,7 @@ TextureAsset::load(const char *f)
 	}
 
 	m_id = Core::Identifier(f);
-	m_size = Math::Size2(pi.Width, pi.Height);
+	m_size = Math::Size2(static_cast<float>(pi.Width), static_cast<float>(pi.Height));
 	INFO1("Texture loaded.");
 }
 

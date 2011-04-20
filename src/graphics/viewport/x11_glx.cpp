@@ -150,7 +150,7 @@ struct Viewport::Internal
 		/* initialize context */
 		glViewport(0, 0, w, h);
 		glClearColor(0., 0., 0., 0.);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glOrtho(0, w, h, 0, -1.f, 1.f);
@@ -375,8 +375,8 @@ const Math::Size2
 Viewport::Size(void)
 {
 	if (MVI.size_hints)
-		return(Math::Size2(MVI.size_hints->max_width,
-		                   MVI.size_hints->max_height));
+		return(Math::Size2(static_cast<float>(MVI.size_hints->max_width),
+		                   static_cast<float>(MVI.size_hints->max_height)));
 
 	return(Math::Size2());
 }

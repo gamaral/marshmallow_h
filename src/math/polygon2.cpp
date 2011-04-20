@@ -37,16 +37,16 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
-double
+float
 Polygon2::area(void) const
 {
 	const int l_c = m_points.size();
-	double l_area = 0;
+	float l_area = 0;
 
 	for (int l_i = 1; l_i <= l_c; ++l_i)
 	    l_area += m_points.at(l_i-1).cross(m_points.at(l_i % l_c));
 
-	return(l_area / 2.);
+	return(l_area / 2.f);
 }
 
 void

@@ -85,28 +85,16 @@ struct Painter::Internal
 	void
 	drawQuadGraphic(const QuadGraphic &g)
 	{
-		const bool l_texture = (g.texture());
-		const GLfloat l_texcoords[4][2] = {{0,0},{0,1},{1,1},{1,0}};
-
-		if (l_texture) {
-			glBindTexture(GL_TEXTURE_2D, g.texture()->tid());
-			Blend(AlphaBlending);
-		}
+		static const GLfloat l_texcoords[4][2] = {{0,0},{0,1},{1,1},{1,0}};
 
 		glBegin(GL_QUADS);
 		for (int i = 0; i < 4; ++i) {
 			const Math::Vector2 &l_p = g[i];
-			if (l_texture)
-				glTexCoord2f(l_texcoords[i][0], l_texcoords[i][1]);
+			glTexCoord2f(l_texcoords[i][0], l_texcoords[i][1]);
 			glVertex2f(static_cast<GLfloat>(l_p.rx()),
 			           static_cast<GLfloat>(l_p.ry()));
 		}
 		glEnd();
-
-		if (l_texture) {
-			Blend(NoBlending);
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
 	}
 
 	void
@@ -136,6 +124,22 @@ Painter::Finalize(void)
 void
 Painter::Draw(const IGraphic &g)
 {
+	const Math::Vector2 l_position = g.position();
+	const bool  l_texture = (g.texture());
+	const float l_rotate_angle = g.rotation();
+
+	if (l_texture) {
+		glBindTexture(GL_TEXTURE_2D, g.texture()->tid());
+		Blend(AlphaBlending);
+	}
+
+	glPushMatrix();
+	glTranslatef(l_position.rx(), l_position.ry(), 0.f);
+
+	if (l_rotate_angle)
+		glRotatef(l_rotate_angle, 0, 0, 1);
+
+	/* actually draw graphic */
 	switch (g.type()) {
 	case PointGraphicType:
 		MGP.drawPointGraphic(static_cast<const PointGraphic &>(g));
@@ -153,6 +157,13 @@ Painter::Draw(const IGraphic &g)
 		MGP.drawPolygonGraphic(static_cast<const PolygonGraphic &>(g));
 	break;
 	default: WARNING1("Unknown graphic type"); break;
+	}
+
+	glPopMatrix();
+
+	if (l_texture) {
+		Blend(NoBlending);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
 

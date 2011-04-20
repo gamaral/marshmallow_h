@@ -39,7 +39,10 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
-Vector2::Vector2(double ax, double ay)
+const Vector2 Vector2::Null(0, 0);
+const Vector2 Vector2::One(1, 1);
+
+Vector2::Vector2(float ax, float ay)
 {
 	m_value[0] = ax;
 	m_value[1] = ay;
@@ -63,32 +66,35 @@ Vector2 &
 Vector2::normalize(void)
 {
 	const float m = magnitude();
-	m_value[0] /= m;
-	m_value[1] /= m;
+	if (m != 0) {
+		m_value[0] /= m;
+		m_value[1] /= m;
+	} else m_value[0] = m_value[1] = 0;
+
 	return(*this);
 }
 
-double
+float
 Vector2::magnitude(void)
 {
-	return(sqrt(pow(m_value[0], 2)
-	          + pow(m_value[1], 2)));
+	return(sqrtf(powf(m_value[0], 2)
+	           + powf(m_value[1], 2)));
 }
 
-double
+float
 Vector2::magnitude2(void)
 {
-	return(pow(m_value[0], 2)
-	     + pow(m_value[1], 2));
+	return(powf(m_value[0], 2)
+	     + powf(m_value[1], 2));
 }
 
-double
+float
 Vector2::cross(const Vector2 &b) const
 {
 	return((rx() * b.ry()) - (ry() * b.rx()));
 }
 
-double
+float
 Vector2::dot(const Vector2 &b) const
 {
 	return((rx() * b.rx()) + (ry() * b.ry()));

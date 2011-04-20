@@ -37,7 +37,7 @@
 #ifndef GRAPHICS_POINTGRAPHIC_H
 #define GRAPHICS_POINTGRAPHIC_H 1
 
-#include "graphics/igraphic.h"
+#include "graphics/graphicbase.h"
 
 #include "math/vector2.h"
 
@@ -47,19 +47,14 @@ namespace Graphics
 {
 
 	/*! @brief Graphics Point Graphic Class */
-	class GRAPHICS_EXPORT PointGraphic : public IGraphic
+	class GRAPHICS_EXPORT PointGraphic : public GraphicBase
 	{
-		Math::Vector2 m_position;
-
 		NO_COPY(PointGraphic);
 
 	public:
 
 		PointGraphic(const Math::Vector2 &position);
 		virtual ~PointGraphic(void);
-
-		const Math::Vector2 & position(void) const
-		    { return(m_position); }
 
 	public: /* virtual */
 

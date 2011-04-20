@@ -47,38 +47,38 @@ namespace Math
 	/*! @brief 2D Vector */
 	class MATH_EXPORT Vector2
 	{
-		double m_value[2];
+		float m_value[2];
 
 	public:
-		Vector2(double x = 0., double y = 0.);
+		Vector2(float x = 0., float y = 0.);
 		Vector2(const Vector2 &copy);
 
-		double & rx(void)
+		float & rx(void)
 		    { return(m_value[0]); }
-		double & ry(void)
+		float & ry(void)
 		    { return(m_value[1]); }
 
-		const double & rx(void) const
+		const float & rx(void) const
 		    { return(m_value[0]); }
-		const double & ry(void) const
+		const float & ry(void) const
 		    { return(m_value[1]); }
 
-		double x(void) const
+		float x(void) const
 		    { return(m_value[0]); }
-		double y(void) const
+		float y(void) const
 		    { return(m_value[1]); }
 
-		double & operator[](int i)
+		float & operator[](int i)
 		    { return(m_value[i % 2]); }
 
 		Vector2 normalized(void) const;
 		Vector2 & normalize(void);
 
-		double magnitude(void);
-		double magnitude2(void);
+		float magnitude(void);
+		float magnitude2(void);
 
-		double cross(const Vector2 &b) const;
-		double dot(const Vector2 &b) const;
+		float cross(const Vector2 &b) const;
+		float dot(const Vector2 &b) const;
 
 	public: /* operators */
 
@@ -86,6 +86,11 @@ namespace Math
 		Vector2 & operator-=(const Vector2 &rhs);
 		Vector2 operator+(const Vector2 &rhs) const;
 		Vector2 operator-(const Vector2 &rhs) const;
+
+	public: /* static */
+
+		static const Vector2 Null;
+		static const Vector2 One;
 
 	};
 

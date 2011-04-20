@@ -37,7 +37,7 @@
 #ifndef GRAPHICS_POLYGONGRAPHIC_H
 #define GRAPHICS_POLYGONGRAPHIC_H 1
 
-#include "graphics/igraphic.h"
+#include "graphics/graphicbase.h"
 
 #include "math/rect2.h"
 #include "math/polygon2.h"
@@ -48,7 +48,7 @@ namespace Graphics
 {
 
 	/*! @brief Graphics Polygon Graphic class */
-	class GRAPHICS_EXPORT PolygonGraphic : public IGraphic
+	class GRAPHICS_EXPORT PolygonGraphic : public GraphicBase
 	{
 		Math::Polygon2 m_points;
 
@@ -56,7 +56,8 @@ namespace Graphics
 
 	public:
 
-		PolygonGraphic(const Math::Polygon2 &polygon);
+		PolygonGraphic(const Math::Polygon2 &polygon,
+		                const Math::Vector2 &position);
 		virtual ~PolygonGraphic(void);
 
 		const Math::Polygon2 &points(void) const

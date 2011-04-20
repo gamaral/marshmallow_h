@@ -37,7 +37,7 @@
 #ifndef GRAPHICS_TRIANGLEGRAPHIC_H
 #define GRAPHICS_TRIANGLEGRAPHIC_H 1
 
-#include "graphics/igraphic.h"
+#include "graphics/graphicbase.h"
 
 #include "math/vector2.h"
 
@@ -47,7 +47,7 @@ namespace Graphics
 {
 
 	/*! @brief Graphics Triangle Graphic class */
-	class GRAPHICS_EXPORT TriangleGraphic : public IGraphic
+	class GRAPHICS_EXPORT TriangleGraphic : public GraphicBase
 	{
 		Math::Vector2 m_points[3];
 
@@ -57,7 +57,8 @@ namespace Graphics
 
 		TriangleGraphic(const Math::Vector2 &p1,
 		                const Math::Vector2 &p2,
-		                const Math::Vector2 &p3);
+		                const Math::Vector2 &p3,
+		                const Math::Vector2 &position);
 		virtual ~TriangleGraphic(void);
 
 	public: /* operators */

@@ -39,8 +39,10 @@ using namespace Graphics;
 
 const GraphicType PolygonGraphic::Type(PolygonGraphicType);
 
-PolygonGraphic::PolygonGraphic(const Math::Polygon2 &p)
-    : m_points(p)
+PolygonGraphic::PolygonGraphic(const Math::Polygon2 &pn,
+                               const Math::Vector2 &p)
+    : GraphicBase(p),
+      m_points(pn)
 {
 }
 

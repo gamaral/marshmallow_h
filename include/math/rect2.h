@@ -63,7 +63,7 @@ namespace Math
 		Point2 bottomLeft(void) const;
 		Point2 bottomRight(void) const;
 
-		double area(void) const
+		float area(void) const
 		    { return(m_size.area()); }
 	};
 

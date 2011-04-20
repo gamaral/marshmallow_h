@@ -42,6 +42,11 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+namespace Math
+{
+	class Vector2;
+}
+
 namespace Core
 {
 	template <class T> class Shared;
@@ -72,8 +77,14 @@ namespace Graphics
 
 		virtual const GraphicType & type(void) const = 0;
 
-		virtual const WeakTextureAsset &texture(void) const = 0;
+		virtual const Math::Vector2 & position(void) const = 0;
+		virtual void setPosition(const Math::Vector2 &position) = 0;
+
+		virtual const WeakTextureAsset & texture(void) const = 0;
 		virtual void setTexture(WeakTextureAsset texture) = 0;
+
+		virtual float rotation(void) const = 0;
+		virtual void setRotation(float angle) = 0;
 
 		/* TODO: Create brush and/or pen shared classes */
 	};

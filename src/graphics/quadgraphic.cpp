@@ -42,7 +42,9 @@ const GraphicType QuadGraphic::Type(QuadGraphicType);
 QuadGraphic::QuadGraphic(const Math::Vector2 &p1,
                          const Math::Vector2 &p2,
                          const Math::Vector2 &p3,
-                         const Math::Vector2 &p4)
+                         const Math::Vector2 &p4,
+                         const Math::Vector2 &p)
+    : GraphicBase(p)
 {
 	m_points[0] = p1;
 	m_points[1] = p2;
@@ -50,18 +52,14 @@ QuadGraphic::QuadGraphic(const Math::Vector2 &p1,
 	m_points[3] = p4;
 }
 
-QuadGraphic::QuadGraphic(const Math::Rect2 &rect)
+QuadGraphic::QuadGraphic(const Math::Rect2 &r,
+                         const Math::Vector2 &p)
+    : GraphicBase(p)
 {
-	m_points[0] = rect.topRight();
-	m_points[1] = rect.bottomRight();
-	m_points[2] = rect.bottomLeft();
-	m_points[3] = rect.topLeft();
-}
-
-void
-QuadGraphic::setTexture(Graphics::WeakTextureAsset t)
-{
-	m_texture = t;
+	m_points[0] = r.topRight();
+	m_points[1] = r.bottomRight();
+	m_points[2] = r.bottomLeft();
+	m_points[3] = r.topLeft();
 }
 
 QuadGraphic::~QuadGraphic(void)

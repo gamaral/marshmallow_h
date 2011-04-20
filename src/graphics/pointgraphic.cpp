@@ -40,7 +40,7 @@ using namespace Graphics;
 const GraphicType PointGraphic::Type(PointGraphicType);
 
 PointGraphic::PointGraphic(const Math::Vector2 &p)
-    : m_position(p)
+    : GraphicBase(p)
 {
 }
 

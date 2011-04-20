@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/linegraphic.h"
+#include "graphics/graphicbase.h"
 
 /*!
  * @file
@@ -37,18 +37,28 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const GraphicType LineGraphic::Type(LineGraphicType);
-
-LineGraphic::LineGraphic(const Math::Vector2 &p1,
-                         const Math::Vector2 &p2,
-                         const Math::Vector2 &p)
-    : GraphicBase(p)
+GraphicBase::GraphicBase(const Math::Vector2 &p)
+    : m_position(p),
+      m_texture(),
+      m_rotation(0)
 {
-	m_points[0] = p1;
-	m_points[1] = p2;
 }
 
-LineGraphic::~LineGraphic(void)
+void
+GraphicBase::setPosition(const Math::Vector2 &p)
 {
+	m_position = p;
+}
+
+void
+GraphicBase::setTexture(Graphics::WeakTextureAsset t)
+{
+	m_texture = t;
+}
+
+void
+GraphicBase::setRotation(float a)
+{
+	m_rotation = a;
 }
 

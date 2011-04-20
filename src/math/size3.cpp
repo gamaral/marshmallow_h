@@ -37,7 +37,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
-Size3::Size3(double aw, double ah, double ad)
+Size3::Size3(float aw, float ah, float ad)
 {
 	m_value[0] = aw;
 	m_value[1] = ah;
@@ -51,7 +51,7 @@ Size3::Size3(const Size3 &copy)
 	m_value[2] = copy.m_value[2];
 }
 
-long double
+float
 Size3::volume(void) const
 {
 	return(m_value[0] * m_value[1] * m_value[2]);

@@ -121,13 +121,15 @@ class DemoDrawComponent : public Game::ComponentBase
 	Core::Weak<DemoMoverComponent> m_mover;
 	Graphics::SharedTextureAsset m_asset;
 	Graphics::SharedGraphic m_quad;
+	float m_angle;
 
 public:
 
 	DemoDrawComponent(Game::WeakEntity e)
 	: Game::ComponentBase("draw", e),
 	  m_asset(new Graphics::TextureAsset),
-	  m_quad()
+	  m_quad(),
+	  m_angle(0)
 	{
 	}
 
@@ -140,13 +142,15 @@ public:
 			m_asset->load("demos/engine/assets/mallow.png");
 
 		if (m_mover && m_asset) {
-			Math::Rect2 l_rect(m_mover->position()+Math::Vector2(-32, -32), Math::Size2(64, 64));
-			m_quad = new Graphics::QuadGraphic(l_rect);
+			Math::Rect2 l_rect(Math::Vector2(-32, -32), Math::Size2(64, 64));
+			m_quad = new Graphics::QuadGraphic(l_rect, m_mover->position());
 			m_quad->setTexture(m_asset);
 		}
 
-		if (m_quad)
+		if (m_quad) {
+			m_quad->setRotation(fmod(m_angle += m_mover->direction().rx() - m_mover->direction().ry(), 360.));
 			Graphics::Painter::Draw(*m_quad);
+		}
 	}
 
 };

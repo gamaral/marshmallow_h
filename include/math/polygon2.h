@@ -54,7 +54,7 @@ namespace Math
 
 	public:
 
-		double area(void) const;
+		float area(void) const;
 
 		int count(void) const
 		    { return(m_points.size()); }

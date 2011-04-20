@@ -39,7 +39,10 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
-Vector3::Vector3(double ax, double ay, double az)
+const Vector3 Vector3::Null(0, 0, 0);
+const Vector3 Vector3::One(1, 1, 1);
+
+Vector3::Vector3(float ax, float ay, float az)
 {
 	m_value[0] = ax;
 	m_value[1] = ay;
@@ -71,19 +74,19 @@ Vector3::normalize(void)
 	return(*this);
 }
 
-double
+float
 Vector3::magnitude(void)
 {
-	return(sqrt(pow(m_value[0], 2)
-	          + pow(m_value[1], 2)
-	          + pow(m_value[2], 2)));
+	return(sqrtf(powf(m_value[0], 2)
+	           + powf(m_value[1], 2)
+	           + powf(m_value[2], 2)));
 }
 
-double
+float
 Vector3::magnitude2(void)
 {
-	return(pow(m_value[0], 2)
-	     + pow(m_value[1], 2)
-	     + pow(m_value[2], 2));
+	return(powf(m_value[0], 2)
+	     + powf(m_value[1], 2)
+	     + powf(m_value[2], 2));
 }
 

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/linegraphic.h"
+#pragma once
 
 /*!
  * @file
@@ -34,21 +34,52 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Graphics;
+#ifndef GRAPHICS_GRAPHICBASE_H
+#define GRAPHICS_GRAPHICBASE_H 1
 
-const GraphicType LineGraphic::Type(LineGraphicType);
+#include "graphics/igraphic.h"
 
-LineGraphic::LineGraphic(const Math::Vector2 &p1,
-                         const Math::Vector2 &p2,
-                         const Math::Vector2 &p)
-    : GraphicBase(p)
+#include "core/shared.h"
+#include "math/vector2.h"
+#include "graphics/textureasset.h"
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Graphics
 {
-	m_points[0] = p1;
-	m_points[1] = p2;
+
+	/*! @brief Graphics Quad Graphic class */
+	class GRAPHICS_EXPORT GraphicBase : public IGraphic
+	{
+		Math::Vector2 m_position;
+		Graphics::WeakTextureAsset m_texture;
+		float m_rotation;
+
+		NO_COPY(GraphicBase);
+
+	public:
+
+		GraphicBase(const Math::Vector2 &position = Math::Vector2::Null);
+		virtual ~GraphicBase(void) {};
+
+	public: /* virtual */
+
+		VIRTUAL const Math::Vector2 & position(void) const
+		    { return(m_position); }
+
+		VIRTUAL const WeakTextureAsset & texture(void) const
+		    { return(m_texture); }
+
+		VIRTUAL float rotation(void) const
+		    { return(m_rotation); }
+
+		VIRTUAL void setPosition(const Math::Vector2 &position);
+		VIRTUAL void setTexture(WeakTextureAsset texture);
+		VIRTUAL void setRotation(float angle);
+	};
+
 }
 
-LineGraphic::~LineGraphic(void)
-{
-}
+MARSHMALLOW_NAMESPACE_END
 
+#endif
