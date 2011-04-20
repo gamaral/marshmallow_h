@@ -1,17 +1,21 @@
-include_directories(BEFORE SYSTEM
-                    ${ZLIB_INCLUDE_DIR}
-                    ${PNG_INCLUDE_DIR}
-                    ${OPENGL_INCLUDE_DIR})
-include_directories(${CMAKE_SOURCE_DIR}/include/)
+find_package(PNG)
+add_definitions(${PNG_DEFINITIONS})
+
+
+include_directories(${PNG_INCLUDE_DIR}
+                    ${OPENGL_INCLUDE_DIR}
+                    ${CMAKE_SOURCE_DIR}/include/)
 
 
 set(MARSHMALLOW_GLPNG_SRCS glpng.c)
+
 
 if(BUILD_SHARED_LIBS)
 	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-fPIC")
 else()
 	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-Wl," )
 endif()
+
 
 add_library(marshmallow_glpng ${MARSHMALLOW_GLPNG_SRCS})
 

@@ -4,12 +4,11 @@
 # For conditions of distribution and use, see the disclaimer
 # and license in png.h
 
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+find_package(ZLIB)
+include_directories(${ZLIB_INCLUDE_DIR})
 
 mark_as_advanced(LIBPNG_ARG LIBPNG_DEBUG LIBPNG_M_LIBRARY LIBPNG_NO_CONSOLE_IO
     LIBPNG_NO_STDIO LIBPNG_SHARED LIBPNG_STATIC LIBPNG_UNAME_EXECUTABLE)
-
-include_directories(BEFORE SYSTEM ${ZLIB_INCLUDE_DIR})
 
 if(NOT WIN32)
   find_library(LIBPNG_M_LIBRARY

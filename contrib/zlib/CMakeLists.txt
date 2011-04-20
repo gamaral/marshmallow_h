@@ -88,7 +88,6 @@ set(ZLIB_SRCS
     trees.c
     uncompr.c
     zutil.c
-    win32/zlib1.rc
 )
 
 # parse the full version number from zlib.h and include in ZLIB_FULL_VERSION
@@ -96,18 +95,7 @@ file(READ ${CMAKE_CURRENT_SOURCE_DIR}/zlib.h _zlib_h_contents)
 string(REGEX REPLACE ".*#define[ \t]+ZLIB_VERSION[ \t]+\"([0-9A-Za-z.]+)\".*"
     "\\1" ZLIB_FULL_VERSION ${_zlib_h_contents})
 
-if(MINGW)
-    # This gets us DLL resource information when compiling on MinGW.
-    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj
-                       COMMAND windres.exe
-                            -D GCC_WINDRES
-                            -I ${CMAKE_CURRENT_SOURCE_DIR}
-                            -I ${CMAKE_CURRENT_BINARY_DIR}
-                            -o ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj
-                            -i ${CMAKE_CURRENT_SOURCE_DIR}/win32/zlib1.rc)
-    set(ZLIB_SRCS ${ZLIB_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj)
-endif(MINGW)
-
 add_library(marshmallow_zlib ${ZLIB_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
+
 set_target_properties(marshmallow_zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
 
