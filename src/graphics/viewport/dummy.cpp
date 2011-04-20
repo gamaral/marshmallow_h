@@ -48,6 +48,10 @@ struct Viewport::Internal
 bool
 Viewport::Initialize(int w, int h, int d, bool f)
 {
+	UNUSED(w);
+	UNUSED(h);
+	UNUSED(d);
+	UNUSED(f);
 	INFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
 	return(true);
 }
@@ -61,6 +65,10 @@ Viewport::Finalize(void)
 bool
 Viewport::Redisplay(int w, int h, int d, bool f)
 {
+	UNUSED(w);
+	UNUSED(h);
+	UNUSED(d);
+	UNUSED(f);
 	INFO("Dummy viewport redisplayed using a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
 	return(true);
 }

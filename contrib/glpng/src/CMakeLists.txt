@@ -1,7 +1,8 @@
-include_directories(${ZLIB_INCLUDE_DIR}
+include_directories(BEFORE SYSTEM
+                    ${ZLIB_INCLUDE_DIR}
                     ${PNG_INCLUDE_DIR}
-                    ${OPENGL_INCLUDE_DIR}
-                    ${CMAKE_SOURCE_DIR}/include/)
+                    ${OPENGL_INCLUDE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/include/)
 
 
 set(MARSHMALLOW_GLPNG_SRCS glpng.c)

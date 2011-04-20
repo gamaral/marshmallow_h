@@ -18,8 +18,8 @@ include_directories(${PROJECT_BINARY_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Contribs
-include_directories(${PROJECT_SOURCE_DIR}/contrib/eastl/include)
-include_directories(${PROJECT_SOURCE_DIR}/contrib/glpng/include)
+include_directories(BEFORE SYSTEM ${PROJECT_SOURCE_DIR}/contrib/eastl/include)
+include_directories(BEFORE SYSTEM ${PROJECT_SOURCE_DIR}/contrib/glpng/include)
 
 # Global Options
 set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Marshmallow Namespace")
@@ -31,8 +31,8 @@ set(MARSHMALLOW_VIEWPORT_HEIGHT "480" CACHE STRING "Viewport default height")
 set(MARSHMALLOW_VIEWPORT_DEPTH  "24" CACHE STRING "Viewport default depth")
 option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode" OFF)
 
-option(MARSHMALLOW_VIEWPORT_X11_GLX "Use X11-GLX Viewport (linux)" ON)
-option(MARSHMALLOW_VIEWPORT_DUMMY "Use Dummy Viewport (testing)" ON)
+option(MARSHMALLOW_VIEWPORT_USE_X11_GLX "Use X11-GLX Viewport (linux)" OFF)
+option(MARSHMALLOW_VIEWPORT_USE_DUMMY "Use Dummy Viewport (testing)" ON)
 
 option(MARSHMALLOW_CONTRIB_ZLIB "Use bundled ZLIB" ON)
 option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG" ON)
@@ -69,7 +69,7 @@ endif()
 
 ##################################################################### VIEWPORT #
 
-if(UNIX AND MARSHMALLOW_VIEWPORT_X11_GLX)
+if(UNIX AND MARSHMALLOW_VIEWPORT_USE_X11_GLX)
 	find_package(X11)
 
 	if(APPLE)
@@ -99,6 +99,7 @@ if (OPENGL_FOUND)
 		set(ZLIB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/zlib/
 		                     ${PROJECT_BINARY_DIR}/contrib/zlib/)
 		set(ZLIB_LIBRARIES marshmallow_zlib)
+		set(ZLIB_LIBRARY marshmallow_zlib)
 	else()
 		find_package(ZLIB)
 	endif()

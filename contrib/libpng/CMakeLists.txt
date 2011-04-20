@@ -1,60 +1,61 @@
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
 # Copyright (C) 2007-2011 Glenn Randers-Pehrson
 
 # This code is released under the libpng license.
 # For conditions of distribution and use, see the disclaimer
 # and license in png.h
 
-# needed packages
-find_package(ZLIB REQUIRED)
-include_directories(${ZLIB_INCLUDE_DIR})
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+
+mark_as_advanced(LIBPNG_ARG LIBPNG_DEBUG LIBPNG_M_LIBRARY LIBPNG_NO_CONSOLE_IO
+    LIBPNG_NO_STDIO LIBPNG_SHARED LIBPNG_STATIC LIBPNG_UNAME_EXECUTABLE)
+
+include_directories(BEFORE SYSTEM ${ZLIB_INCLUDE_DIR})
 
 if(NOT WIN32)
-  find_library(M_LIBRARY
+  find_library(LIBPNG_M_LIBRARY
     NAMES m
     PATHS /usr/lib /usr/local/lib
   )
-  if(NOT M_LIBRARY)
+  if(NOT LIBPNG_M_LIBRARY)
     message(STATUS
       "math library 'libm' not found - floating point support disabled")
   endif()
 else()
   # not needed on windows
-  set(M_LIBRARY "")
+  set(LIBPNG_M_LIBRARY "")
 endif()
 
 # COMMAND LINE OPTIONS
 if(BUILD_SHARED_LIBS)
-  option(PNG_SHARED "Build shared lib" ON)
-  option(PNG_STATIC "Build static lib" OFF)
+  option(LIBPNG_SHARED "Build shared lib" ON)
+  option(LIBPNG_STATIC "Build static lib" OFF)
   set(CMAKE_C_FLAGS "-fPIC")
 else()
-  option(PNG_SHARED "Build shared lib" OFF)
-  option(PNG_STATIC "Build static lib" ON)
+  option(LIBPNG_SHARED "Build shared lib" OFF)
+  option(LIBPNG_STATIC "Build static lib" ON)
   set(CMAKE_C_FLAG "-Wl," )
 endif()
 
-option(PNG_NO_CONSOLE_IO "FIXME" YES)
-option(PNG_NO_STDIO      "FIXME" YES)
-option(PNG_DEBUG         "Build with debug output" NO)
-option(PNGARG            "FIXME" YES)
+option(LIBPNG_NO_CONSOLE_IO "FIXME" YES)
+option(LIBPNG_NO_STDIO      "FIXME" YES)
+option(LIBPNG_DEBUG         "Build with debug output" NO)
+option(LIBPNG_ARG            "FIXME" YES)
 #TODO:
 # PNG_CONSOLE_IO_SUPPORTED
 
 # maybe needs improving, but currently I don't know when we can enable what :)
 set(png_asm_tmp "OFF")
 if(NOT WIN32)
-  find_program(uname_executable NAMES uname PATHS /bin /usr/bin /usr/local/bin)
-  if(uname_executable)
-    exec_program(${uname_executable}
+  find_program(LIBPNG_UNAME_EXECUTABLE NAMES uname PATHS /bin /usr/bin /usr/local/bin)
+  if(LIBPNG_UNAME_EXECUTABLE)
+    exec_program(${LIBPNG_UNAME_EXECUTABLE}
                  ARGS --machine OUTPUT_VARIABLE uname_output)
     if("uname_output" MATCHES "^.*i[1-9]86.*$")
       set(png_asm_tmp "ON")
     else("uname_output" MATCHES "^.*i[1-9]86.*$")
       set(png_asm_tmp "OFF")
     endif("uname_output" MATCHES "^.*i[1-9]86.*$")
-  endif(uname_executable)
+  endif(LIBPNG_UNAME_EXECUTABLE)
 else()
   # this env var is normally only set on win64
   set(TEXT "ProgramFiles(x86)")
@@ -108,10 +109,10 @@ if(_AIX)
 endif(_AIX)
 
 if(MSVC)
-  add_definitions(-DPNG_NO_MODULEDEF -D_CRT_SECURE_NO_DEPRECATE)
+  add_definitions(-DLIBPNG_NO_MODULEDEF -D_CRT_SECURE_NO_DEPRECATE)
 endif(MSVC)
 
-if(PNG_SHARED OR  NOT MSVC)
+if(LIBPNG_SHARED OR  NOT MSVC)
   #if building msvc static this has NOT to be defined
   add_definitions(-DZLIB_DLL)
 endif()
@@ -121,47 +122,47 @@ if(PNG_CONSOLE_IO_SUPPORTED)
   add_definitions(-DPNG_CONSOLE_IO_SUPPORTED)
 endif()
 
-if(PNG_NO_CONSOLE_IO)
-  add_definitions(-DPNG_NO_CONSOLE_IO)
+if(LIBPNG_NO_CONSOLE_IO)
+  add_definitions(-DLIBPNG_NO_CONSOLE_IO)
 endif()
 
-if(PNG_NO_STDIO)
-  add_definitions(-DPNG_NO_STDIO)
+if(LIBPNG_NO_STDIO)
+  add_definitions(-DLIBPNG_NO_STDIO)
 endif()
 
-if(PNG_DEBUG)
-  add_definitions(-DPNG_DEBUG)
+if(LIBPNG_DEBUG)
+  add_definitions(-DLIBPNG_DEBUG)
 endif()
 
-if(NOT M_LIBRARY AND NOT WIN32)
-  add_definitions(-DPNG_NO_FLOATING_POINT_SUPPORTED)
+if(NOT LIBPNG_M_LIBRARY AND NOT WIN32)
+  add_definitions(-DLIBPNG_NO_FLOATING_POINT_SUPPORTED)
 endif()
 
 # NOW BUILD OUR TARGET
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${ZLIB_INCLUDE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-if(PNG_SHARED)
+if(LIBPNG_SHARED)
   add_library(${PNG_LIB_NAME} SHARED ${libpng_sources})
   if(MSVC)
     # msvc does not append 'lib' - do it here to have consistent name
     set_target_properties(${PNG_LIB_NAME} PROPERTIES PREFIX "lib")
     set_target_properties(${PNG_LIB_NAME} PROPERTIES IMPORT_PREFIX "lib")
   endif()
-  target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARY} ${M_LIBRARY})
+  target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARY} ${LIBPNG_M_LIBRARY})
 endif()
 
-if(PNG_STATIC)
+if(LIBPNG_STATIC)
 # does not work without changing name
   add_library(${PNG_LIB_NAME} STATIC ${libpng_sources})
   if(MSVC)
     # msvc does not append 'lib' - do it here to have consistent name
     set_target_properties(${PNG_LIB_NAME} PROPERTIES PREFIX "lib")
   endif()
-  target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARY} ${M_LIBRARY})
+  target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARY} ${LIBPNG_M_LIBRARY})
 endif()
 
 
-if(PNG_SHARED AND WIN32)
+if(LIBPNG_SHARED AND WIN32)
   set_target_properties(${PNG_LIB_NAME} PROPERTIES DEFINE_SYMBOL PNG_BUILD_DLL)
 endif()
 
@@ -184,8 +185,4 @@ macro(_png_generate_symlink_code CODE SRC DEST)
       \"${SRC}\" \"${DEST}\")
     ")
 endmacro()
-
-# CREATE PKGCONFIG FILES
-# we use the same files like ./configure, so we have to set its vars
-set(LIBS        "-lz -lm")
 

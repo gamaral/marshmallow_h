@@ -10,7 +10,8 @@ fi
 
 cd build
 cmake .. \
-    -DCMAKE_BUILD_TYPE:STRING="Debug"
+    -DCMAKE_BUILD_TYPE:STRING="Debug" \
+    ${@}
 [ $? -eq 0 ] && echo && echo "Completed successfully! :)"
 cd ..
 
