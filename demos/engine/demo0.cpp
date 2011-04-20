@@ -56,8 +56,8 @@ public:
 	  m_dir(0.2, 0.2)
 	{
 		Math::Size2 l_vpsize = Graphics::Viewport::Size();
-		m_dir.rx() += (rand() % 10) / 100.;
-		m_dir.ry() += (rand() % 10) / 100.;
+		m_dir.rx() += (rand() % 10) / 100.f;
+		m_dir.ry() += (rand() % 10) / 100.f;
 		if (rand() % 2) m_dir.rx() *= -1;
 		if (rand() % 2) m_dir.ry() *= -1;
 	}
@@ -108,10 +108,10 @@ public:
 
 			if ((pos.rx() <= -l_vpsize.width() / 2 && dir.rx() < 0)
 			 || (pos.rx() >=  l_vpsize.width() / 2 && dir.rx() > 0))
-				dir.rx() *= -0.95;
+				dir.rx() *= -0.95f;
 			if ((pos.ry() <= -l_vpsize.height() / 2 && dir.ry() < 0)
 			 || (pos.ry() >=  l_vpsize.height() / 2 && dir.ry() > 0))
-				dir.ry() *= -0.95;
+				dir.ry() *= -0.95f;
 		}
 	}
 };
@@ -148,7 +148,7 @@ public:
 		}
 
 		if (m_quad) {
-			m_quad->setRotation(fmod(m_angle += m_mover->direction().rx() - m_mover->direction().ry(), 360.));
+			m_quad->setRotation(fmod(m_angle += m_mover->direction().rx() - m_mover->direction().ry(), 360.f));
 			Graphics::Painter::Draw(*m_quad);
 		}
 	}

@@ -1,10 +1,7 @@
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
-
 include(CheckTypeSize)
 include(CheckFunctionExists)
 include(CheckIncludeFile)
 include(CheckCSourceCompiles)
-enable_testing()
 
 check_include_file(sys/types.h HAVE_SYS_TYPES_H)
 check_include_file(stdint.h    HAVE_STDINT_H)
@@ -49,18 +46,6 @@ if(MSVC)
     set(CMAKE_DEBUG_POSTFIX "d")
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
     add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
-endif()
-
-if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
-    # If we're doing an out of source build and the user has a zconf.h
-    # in their source tree...
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h)
-        message(FATAL_ERROR
-            "You must remove ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h "
-            "from the source tree.  This file is included with zlib "
-            "but CMake generates this file for you automatically "
-            "in the build directory.")
-  endif()
 endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/zconf.h.cmakein

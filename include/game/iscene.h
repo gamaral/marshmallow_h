@@ -51,7 +51,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {
 
-	class IEntity;
+	struct IEntity;
 	typedef Core::Shared<IEntity> SharedEntity;
 
 	typedef list<SharedEntity> EntityList;

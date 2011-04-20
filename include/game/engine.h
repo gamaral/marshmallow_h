@@ -46,7 +46,7 @@ namespace Event
 	class EventManager;
 	typedef Core::Shared<EventManager> SharedEventManager;
 	
-	class IEventListener;
+	struct IEventListener;
 	typedef Core::Shared<IEventListener> SharedEventListener;
 }
 
