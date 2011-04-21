@@ -63,8 +63,9 @@ set(MARSHMALLOW_VIEWPORT_HEIGHT "480" CACHE STRING "Viewport default height")
 set(MARSHMALLOW_VIEWPORT_DEPTH  "24" CACHE STRING "Viewport default depth")
 option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode" OFF)
 
-option(MARSHMALLOW_VIEWPORT_USE_X11_GLX "Use X11-GLX Viewport (linux)" OFF)
 option(MARSHMALLOW_VIEWPORT_USE_DUMMY "Use Dummy Viewport (testing)" ON)
+option(MARSHMALLOW_VIEWPORT_USE_WGL "Use Wiggle (WGL) Viewport (windows)" OFF)
+option(MARSHMALLOW_VIEWPORT_USE_X11_GLX "Use X11-GLX Viewport (unix)" OFF)
 
 option(MARSHMALLOW_CONTRIB_ZLIB "Use bundled ZLIB" ON)
 option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG" ON)
@@ -121,6 +122,9 @@ if(UNIX AND MARSHMALLOW_VIEWPORT_USE_X11_GLX)
 	endif()
 
 	include_directories(${X11_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
+else(WIN32 AND MARSHMALLOW_VIEWPORT_USE_WGL)
+	find_package(OpenGL)
+	include_directories(${OPENGL_INCLUDE_DIR})
 endif()
 
 ############################################################## SUB DIRECTORIES #

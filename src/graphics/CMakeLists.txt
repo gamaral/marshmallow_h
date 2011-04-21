@@ -11,6 +11,14 @@ if(UNIX AND MARSHMALLOW_VIEWPORT_USE_X11_GLX)
 	                              marshmallow_glpng
 	                              ${OPENGL_LIBRARIES}
 	                              ${X11_LIBRARIES})
+elseif(WIN32 AND MARSHMALLOW_VIEWPORT_USE_WGL)
+	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
+	                              viewport/wgl.cpp
+	                              painter/opengl.cpp
+	                              textureasset/opengl.cpp)
+	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
+	                              marshmallow_glpng
+	                              ${OPENGL_LIBRARIES})
 elseif(MARSHMALLOW_VIEWPORT_USE_DUMMY)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              viewport/dummy.cpp

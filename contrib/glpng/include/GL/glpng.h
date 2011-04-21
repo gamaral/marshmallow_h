@@ -29,14 +29,6 @@
 extern "C" {
 #endif
 
-#ifdef _MSC_VER
-	#ifdef _DEBUG
-		#pragma comment (lib, "glpngd.lib")
-	#else
-		#pragma comment (lib, "glpng.lib")
-	#endif
-#endif
-
 /* XXX This is from Win32's <windef.h> */
 #ifndef APIENTRY
 	#if (_MSC_VER >= 800) || defined(_STDCALL_SUPPORTED)
