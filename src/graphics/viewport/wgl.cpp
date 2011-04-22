@@ -130,9 +130,9 @@ struct Viewport::Internal
 
 		/* create window rect */
 		wrect.left   = ((l_warea.right - l_warea.left) - w) / 2;
-		wrect.right  = w;
-		wrect.bottom = h;
+		wrect.right  = wrect.left + w;
 		wrect.top    = ((l_warea.bottom - l_warea.top) - h) / 2;
+		wrect.bottom = wrect.top + h;
 		AdjustWindowRectEx(&wrect, l_wstyle[0], false, l_wstyle[1]);
 
 		/* create actual window */

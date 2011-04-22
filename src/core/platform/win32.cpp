@@ -35,8 +35,9 @@
  */
 
 #include <windows.h>
-#include <Mmsystem.h>
 #include <time.h>
+
+#define EPOCHFILETIME (116444736000000000i64)
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -64,9 +65,9 @@ Platform::Finalize(void)
 }
 
 void
-Platform::Sleep(TIME timeout)
+Platform::Sleep(TIME t)
 {
-	UNUSED(timeout);
+	if (t > 0) SleepEx(t, true);
 }
 
 time_t
@@ -78,7 +79,20 @@ Platform::StartTime(void)
 TIME
 Platform::TimeStamp(void)
 {
-	return(timeGetTime());
+	FILETIME        l_ft;
+	LARGE_INTEGER   l_li;
+	__int64         l_t;
+	time_t          l_seconds;
+	TIME            l_mseconds;
+
+	GetSystemTimeAsFileTime(&l_ft);
+	l_li.LowPart  = l_ft.dwLowDateTime;
+	l_li.HighPart = l_ft.dwHighDateTime;
+	l_t  = (l_li.QuadPart - EPOCHFILETIME) / 10;
+	l_seconds  = (l_t / 1000000) - platform_internal.start_time;
+	l_mseconds =  l_t % 1000000;
+
+	return(static_cast<TIME>(l_seconds * 1000) + (l_mseconds / 1000));
 }
 
 TimeData
