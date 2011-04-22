@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MATH_VECTOR3_H
-#define MATH_VECTOR3_H 1
+#ifndef MATH_POINT3_H
+#define MATH_POINT3_H 1
 
 #include "core/global.h"
 
@@ -44,14 +44,16 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Math
 {
 
-	/*! @brief 3D Vector */
-	class MATH_EXPORT Vector3
+	class Vector3;
+
+	/*! @brief 3D Point */
+	class MATH_EXPORT Point3
 	{
 		float m_value[3];
 
 	public:
-		Vector3(float x = 0., float y = 0., float z = 0.);
-		Vector3(const Vector3 &copy);
+		Point3(float x = 0., float y = 0., float z = 0.);
+		Point3(const Point3 &copy);
 
 		float & rx(void)
 		    { return(m_value[0]); }
@@ -77,16 +79,19 @@ namespace Math
 		float & operator[](int i)
 		    { return(m_value[i % 3]); }
 
-		Vector3 normalized(void) const;
-		Vector3 & normalize(void);
+		Vector3 difference(const Point3 &rhs) const;
 
-		float magnitude(void);
-		float magnitude2(void);
+	public: /* operators */
+
+		Point3 & operator+=(const Vector3 &rhs);
+		Point3 & operator-=(const Vector3 &rhs);
+		Point3 operator+(const Vector3 &rhs) const;
+		Point3 operator-(const Vector3 &rhs) const;
 
 	public: /* static */
 
-		static const Vector3 Null;
-		static const Vector3 One;
+		static const Point3 Null;
+
 	};
 
 }

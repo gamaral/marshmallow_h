@@ -49,19 +49,19 @@ namespace Math
 	/*! @brief 2D Rect */
 	class MATH_EXPORT Rect2
 	{
-		Point2 m_top_left;
+		Vector2 m_top_left;
 		Size2 m_size;
 
 	public:
 
-		Rect2(const Point2 &topLeft, const Size2 &size);
-		Rect2(const Point2 &topLeft, const Point2 &bottomRight);
+		Rect2(const Vector2 &topLeft, const Size2 &size);
+		Rect2(const Vector2 &topLeft, const Vector2 &bottomRight);
 		Rect2(const Rect2 &copy);
 
-		Point2 topLeft(void) const;
-		Point2 topRight(void) const;
-		Point2 bottomLeft(void) const;
-		Point2 bottomRight(void) const;
+		Vector2 topLeft(void) const;
+		Vector2 topRight(void) const;
+		Vector2 bottomLeft(void) const;
+		Vector2 bottomRight(void) const;
 
 		float area(void) const
 		    { return(m_size.area()); }

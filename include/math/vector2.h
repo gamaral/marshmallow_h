@@ -94,8 +94,6 @@ namespace Math
 
 	};
 
-	typedef Vector2 Point2;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MATH_VECTOR3_H
-#define MATH_VECTOR3_H 1
+#ifndef MATH_POINT2_H
+#define MATH_POINT2_H 1
 
 #include "core/global.h"
 
@@ -44,49 +44,48 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Math
 {
 
-	/*! @brief 3D Vector */
-	class MATH_EXPORT Vector3
+	class Vector2;
+
+	/*! @brief 2D Point */
+	class MATH_EXPORT Point2
 	{
-		float m_value[3];
+		float m_value[2];
 
 	public:
-		Vector3(float x = 0., float y = 0., float z = 0.);
-		Vector3(const Vector3 &copy);
+		Point2(float x = 0., float y = 0.);
+		Point2(const Point2 &copy);
 
 		float & rx(void)
 		    { return(m_value[0]); }
 		float & ry(void)
 		    { return(m_value[1]); }
-		float & rz(void)
-		    { return(m_value[2]); }
 
 		const float & rx(void) const
 		    { return(m_value[0]); }
 		const float & ry(void) const
 		    { return(m_value[1]); }
-		const float & rz(void) const
-		    { return(m_value[2]); }
 
 		float x(void) const
 		    { return(m_value[0]); }
 		float y(void) const
 		    { return(m_value[1]); }
-		float z(void) const
-		    { return(m_value[2]); }
 
 		float & operator[](int i)
-		    { return(m_value[i % 3]); }
+		    { return(m_value[i % 2]); }
 
-		Vector3 normalized(void) const;
-		Vector3 & normalize(void);
+		Vector2 difference(const Point2 &rhs) const;
 
-		float magnitude(void);
-		float magnitude2(void);
+	public: /* operators */
+
+		Point2 & operator+=(const Vector2 &rhs);
+		Point2 & operator-=(const Vector2 &rhs);
+		Point2 operator+(const Vector2 &rhs) const;
+		Point2 operator-(const Vector2 &rhs) const;
 
 	public: /* static */
 
-		static const Vector3 Null;
-		static const Vector3 One;
+		static const Point2 Null;
+
 	};
 
 }

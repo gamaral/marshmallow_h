@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "math/point3.h"
 
 /*!
  * @file
@@ -34,63 +34,58 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MATH_VECTOR3_H
-#define MATH_VECTOR3_H 1
+#include "math/vector3.h"
 
-#include "core/global.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Math;
 
-MARSHMALLOW_NAMESPACE_BEGIN
+const Point3 Point3::Null(0, 0);
 
-namespace Math
+Point3::Point3(float ax, float ay, float az)
 {
-
-	/*! @brief 3D Vector */
-	class MATH_EXPORT Vector3
-	{
-		float m_value[3];
-
-	public:
-		Vector3(float x = 0., float y = 0., float z = 0.);
-		Vector3(const Vector3 &copy);
-
-		float & rx(void)
-		    { return(m_value[0]); }
-		float & ry(void)
-		    { return(m_value[1]); }
-		float & rz(void)
-		    { return(m_value[2]); }
-
-		const float & rx(void) const
-		    { return(m_value[0]); }
-		const float & ry(void) const
-		    { return(m_value[1]); }
-		const float & rz(void) const
-		    { return(m_value[2]); }
-
-		float x(void) const
-		    { return(m_value[0]); }
-		float y(void) const
-		    { return(m_value[1]); }
-		float z(void) const
-		    { return(m_value[2]); }
-
-		float & operator[](int i)
-		    { return(m_value[i % 3]); }
-
-		Vector3 normalized(void) const;
-		Vector3 & normalize(void);
-
-		float magnitude(void);
-		float magnitude2(void);
-
-	public: /* static */
-
-		static const Vector3 Null;
-		static const Vector3 One;
-	};
-
+	m_value[0] = ax;
+	m_value[1] = ay;
+	m_value[2] = az;
 }
 
-MARSHMALLOW_NAMESPACE_END
+Point3::Point3(const Point3 &copy)
+{
+	m_value[0] = copy.m_value[0];
+	m_value[1] = copy.m_value[1];
+	m_value[2] = copy.m_value[2];
+}
 
-#endif
+Point3 &
+Point3::operator+=(const Vector3 &rhs)
+{
+	m_value[0] += rhs.rx();
+	m_value[1] += rhs.ry();
+	m_value[2] += rhs.rz();
+	return(*this);
+}
+
+Point3 &
+Point3::operator-=(const Vector3 &rhs)
+{
+	m_value[0] -= rhs.rx();
+	m_value[1] -= rhs.ry();
+	m_value[2] -= rhs.rz();
+	return(*this);
+}
+
+Point3
+Point3::operator+(const Vector3 &rhs) const
+{
+	return(Point3(m_value[0] + rhs.rx(),
+	              m_value[1] + rhs.ry(),
+	              m_value[2] + rhs.rz()));
+}
+
+Point3
+Point3::operator-(const Vector3 &rhs) const
+{
+	return(Point3(m_value[0] - rhs.rx(),
+	              m_value[1] - rhs.ry(),
+	              m_value[2] - rhs.rz()));
+}
+
