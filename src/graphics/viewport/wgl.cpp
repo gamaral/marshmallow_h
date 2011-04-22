@@ -77,13 +77,13 @@ struct Viewport::Internal
 		window = 0;
 
 		WNDCLASS l_wc;
-		l_wc.style = CS_HREDRAW|CS_VREDRAW|CS_OWNDC;
-		l_wc.lpfnWndProc = (WNDPROC) WindowProc;
-		l_wc.cbClsExtra  = 0;
-		l_wc.cbWndExtra  = 0;
-		l_wc.hInstance   = GetModuleHandle(0);
-		l_wc.hIcon       = 0;
-		l_wc.hCursor     = LoadCursor(0, IDC_ARROW);
+		l_wc.style         = CS_HREDRAW|CS_VREDRAW|CS_OWNDC;
+		l_wc.lpfnWndProc   = (WNDPROC) WindowProc;
+		l_wc.cbClsExtra    = 0;
+		l_wc.cbWndExtra    = 0;
+		l_wc.hInstance     = GetModuleHandle(0);
+		l_wc.hIcon         = 0;
+		l_wc.hCursor       = LoadCursor(0, IDC_ARROW);
 		l_wc.hbrBackground = 0;
 		l_wc.lpszMenuName  = 0;
 		l_wc.lpszClassName = "marshmallow_wgl";
@@ -193,6 +193,29 @@ struct Viewport::Internal
 		ShowWindow(window, SW_SHOW);
 		SetForegroundWindow(window);
 		SetFocus(window);
+
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
+		glEnable(GL_BLEND);
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_TEXTURE_2D);
+
+		/* initialize context */
+
+		const float l_hw = w / 2.f;
+		const float l_hh = h / 2.f;
+
+		glViewport(0, 0, w, h);
+		glClearColor(0., 0., 0., 0.);
+		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(-l_hw, l_hw, l_hh, -l_hh, -1.f, 1.f);
+		glMatrixMode(GL_MODELVIEW);
+		SwapBuffer();
+
+		if( glGetError() != GL_NO_ERROR )
+			return(false);
 
 		return(loaded = true);
 	}
@@ -312,9 +335,6 @@ Viewport::SwapBuffer(void)
 	glClearColor(.0, .0, .0, .0);
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-
-	glTranslatef(static_cast<GLfloat>((MVI.wrect.right - MVI.wrect.left) / 2),
-	             static_cast<GLfloat>((MVI.wrect.bottom - MVI.wrect.top) / 2), 0.0f);
 }
 
 const Math::Size2

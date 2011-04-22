@@ -39,27 +39,27 @@ using namespace Graphics;
 
 const GraphicType QuadGraphic::Type(QuadGraphicType);
 
-QuadGraphic::QuadGraphic(const Math::Vector2 &p1,
-                         const Math::Vector2 &p2,
-                         const Math::Vector2 &p3,
-                         const Math::Vector2 &p4,
+QuadGraphic::QuadGraphic(const Math::Vector2 &tl,
+                         const Math::Vector2 &bl,
+                         const Math::Vector2 &br,
+                         const Math::Vector2 &tr,
                          const Math::Vector2 &p)
     : GraphicBase(p)
 {
-	m_points[0] = p1;
-	m_points[1] = p2;
-	m_points[2] = p3;
-	m_points[3] = p4;
+	m_points[0] = tl;
+	m_points[1] = bl;
+	m_points[2] = br;
+	m_points[3] = tr;
 }
 
 QuadGraphic::QuadGraphic(const Math::Rect2 &r,
                          const Math::Vector2 &p)
     : GraphicBase(p)
 {
-	m_points[0] = r.topRight();
-	m_points[1] = r.bottomRight();
-	m_points[2] = r.bottomLeft();
-	m_points[3] = r.topLeft();
+	m_points[0] = r.topLeft();
+	m_points[1] = r.bottomLeft();
+	m_points[2] = r.bottomRight();
+	m_points[3] = r.topRight();
 }
 
 QuadGraphic::~QuadGraphic(void)

@@ -55,10 +55,10 @@ namespace Graphics
 
 	public:
 
-		QuadGraphic(const Math::Vector2 &p1,
-		            const Math::Vector2 &p2,
-		            const Math::Vector2 &p3,
-		            const Math::Vector2 &p4,
+		QuadGraphic(const Math::Vector2 &tl,
+		            const Math::Vector2 &bl,
+		            const Math::Vector2 &br,
+		            const Math::Vector2 &tr,
 		            const Math::Vector2 &position = Math::Vector2::Null);
 		QuadGraphic(const Math::Rect2 &rect,
 		    const Math::Vector2 &position = Math::Vector2::Null);
