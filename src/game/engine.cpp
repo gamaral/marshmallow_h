@@ -55,11 +55,12 @@ using namespace Game;
 
 Engine *Engine::s_instance = 0;
 
-Engine::Engine(float f)
+Engine::Engine(float f, float u)
     : m_event_manager(),
       m_scene_manager(),
       m_event_listener(),
       m_fps(f),
+      m_ups(u),
       m_delta_time(0),
       m_exit_code(0),
       m_frame_rate(0),
@@ -114,17 +115,18 @@ Engine::run(void)
 {
 	setup();
 
-	const TIME l_mpf = static_cast<TIME>(floor(1000./m_fps)); // milliseconds per frame
+	TIME l_render = 0;
+#define MILLISECONDS_PER_SECOND 1000.f
+	TIME l_render_target = MILLISECONDS_PER_SECOND / m_fps;
 
-	TIME l_tick;
-	TIME l_tick_target = l_mpf / 4;
-	TIME l_tick_sleep = l_tick_target;
-
-	TIME l_frame = 0;
-	TIME l_frame_target = l_mpf;
+	TIME l_update = 0;
+	TIME l_update_target = MILLISECONDS_PER_SECOND / m_ups;
 
 	TIME l_second = 0;
-	TIME l_second_target = 1000;
+	TIME l_second_target = MILLISECONDS_PER_SECOND;
+
+	TIME l_tick;
+	TIME l_tick_target = MIN(l_render_target, l_update_target) / 3.f;
 
 	m_delta_time = 0;
 	m_running = true;
@@ -142,21 +144,24 @@ Engine::run(void)
 	do
 	{
 		l_tick = NOW();
-		m_delta_time = l_tick - l_lasttick;
 
-		l_frame += m_delta_time;
+		m_delta_time = (l_tick - l_lasttick);
+		l_render += m_delta_time;
+		l_update += m_delta_time;
 		l_second += m_delta_time;
-		l_tick_sleep -= m_delta_time;
-		l_tick_sleep += l_tick_target;
 
-		if (l_frame >= l_frame_target) {
+		if (l_render >= l_render_target) {
 			render();
-			update(l_frame);
-			l_frame -= l_frame_target;
-			if (l_frame > l_frame_target) {
-				INFO1("Skipping frame.");
-				l_frame = 0;
-			}
+			l_render -= l_render_target;
+			if (l_render > l_render_target / 2)
+				INFO1("Skipping render frame."), l_render = 0;
+		}
+
+		if (l_update >= l_update_target) {
+			update(l_update / MILLISECONDS_PER_SECOND);
+			l_update -= l_update_target;
+			if (l_update > l_update_target / 2)
+				INFO1("Skipping update frame."), l_update = 0;
 		}
 
 		if (l_second >= l_second_target) {
@@ -165,9 +170,7 @@ Engine::run(void)
 		}
 
 		tick(l_tick_target - (NOW() - l_tick));
-		l_lasttick = NOW();
-
-		Platform::Sleep(l_tick_sleep);
+		l_lasttick = l_tick;
 	} while (m_running);
 
 	finalize();

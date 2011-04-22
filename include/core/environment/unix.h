@@ -37,31 +37,33 @@
 #ifndef CORE_ENVIRONMENT_H
 #define CORE_ENVIRONMENT_H 1
 
+#include <ctime>
+#include <climits>
 #include <stdint.h>
-#include <time.h>
 #include <unistd.h>
 
 /********************************************************************** types */
 
-#define CHAR   char
-#define INT16  int16_t
-#define INT32  int32_t
-#define INT64  int64_t
-#define INT8   int8_t
-#define TIME   int32_t
-#define UINT16 uint16_t
-#define UINT32 uint32_t
-#define UINT64 uint64_t
-#define UINT8  uint8_t
-#define WCHAR  wchar_t
-#define UID    uint32_t
+#define CHAR     char
+#define INT16    int16_t
+#define INT32    int32_t
+#define INT64    int64_t
+#define INT8     int8_t
+#define TIME     double
+#define TIME_MAX DBL_MAX
+#define UINT16   uint16_t
+#define UINT32   uint32_t
+#define UINT64   uint64_t
+#define UINT8    uint8_t
+#define WCHAR    wchar_t
+#define UID      uint32_t
 
-#define ON     true
-#define OFF    false
+#define ON       true
+#define OFF      false
 
 /******************************************************************** defines */
 
-#define INFINITE ~(static_cast<TIME>(0))
+#define INFINITE TIME_MAX
 #define STRDUP strdup
 
 /******************************************************************** unused */

@@ -39,8 +39,11 @@
 
 #cmakedefine MARSHMALLOW_NAMESPACE @MARSHMALLOW_NAMESPACE@
 
-#ifndef NDEBUG
-#   define DEBUG 1
+#ifdef NDEBUG
+#   define DEBUG OFF
+#   define DEBUG_VERBOSITY 0
+#else
+#   define DEBUG @MARSHMALLOW_DEBUG@
 #   define DEBUG_VERBOSITY @MARSHMALLOW_DEBUG_VERBOSITY@
 #endif
 

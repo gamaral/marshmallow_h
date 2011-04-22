@@ -53,7 +53,7 @@ public:
 	DemoMoverComponent(Game::WeakEntity e)
 	: Game::ComponentBase("mover", e),
 	  m_pos(0, 0),
-	  m_dir(0.2, 0.2)
+	  m_dir(100.2, 100.2)
 	{
 		Math::Size2 l_vpsize = Graphics::Viewport::Size();
 		m_dir.rx() += (rand() % 10) / 100.f;
@@ -74,7 +74,7 @@ public:
 
 	VIRTUAL void update(TIME d)
 	{
-		INFO("DELTA: %d", d);
+		INFO("DELTA: %f", d);
 		m_pos.rx() += m_dir.rx() * d;
 		m_pos.ry() += m_dir.ry() * d;
 		INFO("object moved to %f, %f", m_pos.rx(), m_pos.ry());
@@ -148,7 +148,7 @@ public:
 		}
 
 		if (m_quad) {
-			m_quad->setRotation(fmod(m_angle += m_mover->direction().rx() - m_mover->direction().ry(), 360.f));
+			m_quad->setRotation(m_angle = fmod(m_angle + 1, 360.f));
 			Graphics::Painter::Draw(*m_quad);
 		}
 	}
@@ -191,7 +191,7 @@ class Demo : public Game::Engine
 public:
 
 	Demo(void)
-	: Engine(60),
+	: Engine(),
 	  m_stop_timer(0),
 	  m_debugListener(new Event::DebugEventListener("log.txt"))
 	{

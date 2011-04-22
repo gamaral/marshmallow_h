@@ -68,7 +68,14 @@ Platform::Finalize(void)
 void
 Platform::Sleep(TIME timeout)
 {
-	if (timeout > 0) usleep(timeout * 1000);
+	if (timeout <= 0) return;
+
+	struct timespec l_ts;
+	l_ts.tv_sec = 0;
+#define NANOSECONDS_PER_MILLISECOND 1000000.f
+	l_ts.tv_nsec = timeout * NANOSECONDS_PER_MILLISECOND;
+	nanosleep(&l_ts, 0);
+
 }
 
 time_t
@@ -82,9 +89,8 @@ Platform::TimeStamp(void)
 {
 	struct timeval time;
 	gettimeofday(&time, 0);
-	return(static_cast<TIME>
-	    ((static_cast<double>(time.tv_sec - platform_internal.start_time) * 1000)
-	   + (static_cast<double>(time.tv_usec) / 1000) + 0.5));
+	return(((time.tv_sec  - platform_internal.start_time) * 1000.f)
+	      + (time.tv_usec / 1000.f));
 }
 
 TimeData
@@ -95,7 +101,7 @@ Platform::TimeStampToTimeData(TIME timestamp)
 
 	l_ts.internal = timestamp;
 	l_ts.system =
-	    static_cast<time_t>(Platform::StartTime()+(l_ts.internal/1000));
+	    static_cast<time_t>(Platform::StartTime()+(l_ts.internal/1000.f));
 
 	gmtime_r(&l_ts.system, &l_time);
 

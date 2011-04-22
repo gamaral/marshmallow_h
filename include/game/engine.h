@@ -66,6 +66,7 @@ namespace Game
 		Game::SharedSceneManager   m_scene_manager;
 		Event::SharedEventListener m_event_listener;
 		float  m_fps;
+		float  m_ups;
 		TIME   m_delta_time;
 		int    m_exit_code;
 		int    m_frame_rate;
@@ -79,7 +80,7 @@ namespace Game
 		 * @param fps Desired frame rate
 		 * @param ups Desired update rate (debug)
 		 */
-		Engine(float fps = 60.0);
+		Engine(float fps = 60.0, float ups = 120.0);
 		virtual ~Engine(void);
 
 		/*!
@@ -118,6 +119,12 @@ namespace Game
 		 */
 		float fps(void) const
 		    { return(m_fps); }
+
+		/*!
+		 * @brief Target updates per second
+		 */
+		float ups(void) const
+		    { return(m_ups); }
 
 		/*!
 		 * @brief Time that has elapsed since last tick

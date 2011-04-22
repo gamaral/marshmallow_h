@@ -8,7 +8,7 @@ find_package(ZLIB)
 include_directories(${ZLIB_INCLUDE_DIR})
 
 mark_as_advanced(LIBPNG_ARG LIBPNG_DEBUG LIBPNG_M_LIBRARY LIBPNG_NO_CONSOLE_IO
-    LIBPNG_NO_STDIO LIBPNG_SHARED LIBPNG_STATIC LIBPNG_UNAME_EXECUTABLE)
+    LIBPNG_NO_STDIO BUILD_SHARED_LIBS NOT BUILD_SHARED_LIBS LIBPNG_UNAME_EXECUTABLE)
 
 if(NOT WIN32)
   find_library(LIBPNG_M_LIBRARY
@@ -26,12 +26,8 @@ endif()
 
 # COMMAND LINE OPTIONS
 if(BUILD_SHARED_LIBS)
-  option(LIBPNG_SHARED "Build shared lib" ON)
-  option(LIBPNG_STATIC "Build static lib" OFF)
   set(CMAKE_C_FLAGS "-fPIC")
 else()
-  option(LIBPNG_SHARED "Build shared lib" OFF)
-  option(LIBPNG_STATIC "Build static lib" ON)
   set(CMAKE_C_FLAG "-Wl," )
 endif()
 
@@ -111,7 +107,7 @@ if(MSVC)
   add_definitions(-DLIBPNG_NO_MODULEDEF -D_CRT_SECURE_NO_DEPRECATE)
 endif(MSVC)
 
-if(LIBPNG_SHARED OR  NOT MSVC)
+if(BUILD_SHARED_LIBS OR  NOT MSVC)
   #if building msvc static this has NOT to be defined
   add_definitions(-DZLIB_DLL)
 endif()
@@ -140,28 +136,24 @@ endif()
 # NOW BUILD OUR TARGET
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-if(LIBPNG_SHARED)
-  add_library(${PNG_LIB_NAME} SHARED ${libpng_sources})
+add_library(${PNG_LIB_NAME} ${libpng_sources})
+target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARY} ${LIBPNG_M_LIBRARY})
+
+if(BUILD_SHARED_LIBS)
   if(MSVC)
     # msvc does not append 'lib' - do it here to have consistent name
     set_target_properties(${PNG_LIB_NAME} PROPERTIES PREFIX "lib")
     set_target_properties(${PNG_LIB_NAME} PROPERTIES IMPORT_PREFIX "lib")
   endif()
-  target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARY} ${LIBPNG_M_LIBRARY})
-endif()
-
-if(LIBPNG_STATIC)
-# does not work without changing name
-  add_library(${PNG_LIB_NAME} STATIC ${libpng_sources})
+else()
   if(MSVC)
     # msvc does not append 'lib' - do it here to have consistent name
     set_target_properties(${PNG_LIB_NAME} PROPERTIES PREFIX "lib")
   endif()
-  target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARY} ${LIBPNG_M_LIBRARY})
 endif()
 
 
-if(LIBPNG_SHARED AND WIN32)
+if(BUILD_SHARED_LIBS AND WIN32)
   set_target_properties(${PNG_LIB_NAME} PROPERTIES DEFINE_SYMBOL PNG_BUILD_DLL)
 endif()
 
