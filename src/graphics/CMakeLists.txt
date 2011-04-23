@@ -10,7 +10,7 @@ if(UNIX AND MARSHMALLOW_VIEWPORT_USE_X11_GLX)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 	                              marshmallow_glpng
 	                              ${OPENGL_LIBRARIES}
-	                              ${X11_LIBRARIES})
+	                              ${X11_LIBRARIES} Xxf86vm)
 elseif(WIN32 AND MARSHMALLOW_VIEWPORT_USE_WGL)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              viewport/wgl.cpp

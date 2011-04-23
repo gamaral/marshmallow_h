@@ -47,7 +47,8 @@ using namespace Game;
 Type SceneBase::Type("Game::SceneBase");
 
 SceneBase::SceneBase(const Core::Identifier &i)
-    : m_id(i)
+    : m_entities(),
+      m_id(i)
 {
 }
 

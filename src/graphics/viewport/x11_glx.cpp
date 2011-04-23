@@ -36,6 +36,7 @@
 
 #include <GL/glx.h>
 #include <X11/X.h>
+#include <X11/extensions/xf86vmode.h>
 
 #include "core/platform.h"
 #include "event/eventmanager.h"
@@ -50,27 +51,48 @@ const char *Viewport::Name("X11_GLX");
 
 struct Viewport::Internal
 {
-	GLXContext  context;
+	XF86VidModeModeInfo dvminfo;
 	Window      window;
-	Atom        wm_delete;
 	Display    *display;
-	XSizeHints *size_hints;
+	int         size[2];
+	int         screen;
+	GLXContext  context;
+	Atom        wm_delete;
+	bool        fullscreen;
 	bool        loaded;
 
 	Internal(void)
-	    : display(0),
-	      size_hints(0),
+	    : dvminfo(),
+	      window(0),
+	      display(0),
+	      screen(0),
+	      context(0),
+	      wm_delete(0),
+	      fullscreen(false),
 	      loaded(false)
-	{}
+	{
+		size[0] = 0;
+		size[1] = 0;
+	}
 
 	bool
 	createXWindow(int w, int h, int d, bool f)
 	{
 		loaded = false;
+		context = 0;
+		display = 0;
+		screen = 0;
+		window = 0;
+		wm_delete = 0;
+
+		fullscreen = f;
+		size[0] = w;
+		size[1] = h;
 
 		/* open display */
 		if (!(display = XOpenDisplay(0))) {
 			ERROR1("Unable to open X Display.");
+			destroyXWindow();
 			return(false);
 		}
 
@@ -79,17 +101,19 @@ struct Viewport::Internal
 		XVisualInfo *l_vinfo;
 		if(!(l_vinfo = glXChooseVisual(display, 0, gattr))) {
 			ERROR1("Unable to choose X Visual Info.");
+			destroyXWindow();
 			return(false);
 		}
+		screen = l_vinfo->screen;
 
 		/* get root window */
-		Window rwindow = RootWindow(display, l_vinfo->screen);
+		Window rwindow = RootWindow(display, screen);
 		
-		/* create window */
+		/* window attributes */
 		XSetWindowAttributes l_swattr;
 		l_swattr.colormap = XCreateColormap(display, rwindow, l_vinfo->visual, AllocNone);
-		l_swattr.background_pixel = BlackPixel(display, l_vinfo->screen);
-		l_swattr.border_pixel = BlackPixel(display, l_vinfo->screen);
+		l_swattr.background_pixel = BlackPixel(display, screen);
+		l_swattr.border_pixel = BlackPixel(display, screen);
 		l_swattr.event_mask =
 			ButtonPressMask |
 			ButtonReleaseMask |
@@ -97,48 +121,119 @@ struct Viewport::Internal
 			KeyReleaseMask |
 			PointerMotionMask |
 			StructureNotifyMask;
-		window = XCreateWindow(display,
-					   rwindow,
-					   (DisplayWidth(display, l_vinfo->screen) - w) / 2,
-					   (DisplayHeight(display, l_vinfo->screen) - h) / 2,
-					   w, h,
-					   1,
-					   d,
-					   InputOutput,
-					   l_vinfo->visual,
-					   CWBackPixel|CWBorderPixel|CWColormap|CWEventMask,
-					   &l_swattr);
 
-		XMapWindow(display, window);
-		XStoreName(display, window, "Marshmallow"); // TODO: Set window caption
+		/* create window */
+		if (fullscreen) {
+			/* get display modes */
+			XF86VidModeModeLine l_cmline;
+			int l_cdotclock;
+			XF86VidModeModeInfo **l_modes;
+			int l_mode_count;
+			int l_mode_selected = -1;
+
+			XF86VidModeGetModeLine(display, screen, &l_cdotclock, &l_cmline);
+			XF86VidModeGetAllModeLines(display, screen, &l_mode_count, &l_modes);
+			dvminfo.dotclock = 0;
+			for (int i = 0; i < l_mode_count; ++i) {
+				INFO("Display mode %dx%d [%d]",
+				    l_modes[i]->hdisplay,
+				    l_modes[i]->vdisplay, i);
+
+				if (!dvminfo.dotclock &&
+				    l_modes[i]->hdisplay == l_cmline.hdisplay &&
+				    l_modes[i]->vdisplay == l_cmline.vdisplay &&
+				    static_cast<int>(l_modes[i]->dotclock) == l_cdotclock) {
+					INFO1("Found current display mode");
+					dvminfo = *l_modes[i];
+				}
+				if (l_mode_selected == -1 &&
+				    l_modes[i]->hdisplay == w &&
+				    l_modes[i]->vdisplay == h) {
+					INFO1("Found appropriate display mode");
+					l_mode_selected = i;
+				}
+			}
+
+			if (l_mode_selected == -1) {
+				ERROR1("Unable to find a suitable display mode.");
+				destroyXWindow();
+				return(false);
+			}
+
+			XF86VidModeSwitchToMode(display, screen, l_modes[l_mode_selected]);
+			XF86VidModeSetViewPort(display, screen, 0, 0);
+			XFree(l_modes);
+
+			/* create a fullscreen window */
+			l_swattr.override_redirect = true;
+			window = XCreateWindow
+			   (display,
+			    rwindow,
+			    0, 0, w, h, 0,
+			    d,
+			    InputOutput,
+			    l_vinfo->visual,
+			    CWBackPixel|CWBorderPixel|CWColormap|
+			    CWEventMask|CWOverrideRedirect,
+			    &l_swattr);
+			XMapRaised(display, window);
+			XWarpPointer(display, None, window, 0, 0, 0, 0, 0, 0);
+			XGrabKeyboard(display, window, true, GrabModeAsync,
+			    GrabModeAsync, CurrentTime);
+			XGrabPointer(display, window, true,
+			    ButtonPressMask, GrabModeAsync, GrabModeAsync,
+			    window, None, CurrentTime);
+
+		} else {
+			window = XCreateWindow
+			   (display,
+			    rwindow,
+			    (DisplayWidth(display, screen) - w) / 2,
+			    (DisplayHeight(display, screen) - h) / 2,
+			    w, h,
+			    1,
+			    d,
+			    InputOutput,
+			    l_vinfo->visual,
+			    CWBackPixel|CWBorderPixel|CWColormap|CWEventMask,
+			    &l_swattr);
+			XMapRaised(display, window);
+
+			/* set size hints */
+			XSizeHints *l_size_hints;
+			if(!(l_size_hints = XAllocSizeHints())) {
+				ERROR1("Unable to allocate window size hints.");
+				destroyXWindow();
+				return(false);
+			}
+			l_size_hints->flags = PMinSize|PMaxSize;
+			l_size_hints->min_width = w;
+			l_size_hints->min_height = h;
+			l_size_hints->max_width = w;
+			l_size_hints->max_height = h;
+			XSetWMNormalHints(display, window, l_size_hints);
+			XFree(l_size_hints);
+		}
 
 		/* catch window manager delete event */
 		wm_delete = XInternAtom(display, "WM_DELETE_WINDOW", false);
 		XSetWMProtocols(display, window, &wm_delete, 1);
 
-		/* set size hints */
-		if (f) {
-			size_hints = 0;
-		} else {
-			if(!(size_hints = XAllocSizeHints())) {
-				ERROR1("Unable to allocate window size hints.");
-				return(false);
-			}
-			size_hints->flags = PMinSize|PMaxSize;
-			size_hints->min_width = w;
-			size_hints->min_height = h;
-			size_hints->max_width = w;
-			size_hints->max_height = h;
-			XSetWMNormalHints(display, window, size_hints);
-		}
-
 		/* create context */
 		if (!(context = glXCreateContext(display, l_vinfo, 0, GL_TRUE))) {
 			ERROR1("Failed to create context!");
+			destroyXWindow();
 			return(false);
 		}
 		if (!glXMakeCurrent(display, window, context)) {
-			WARNING1("Failed to make context current!");
+			ERROR1("Failed to make context current!");
+			destroyXWindow();
+			return(false);
+		}
+
+		if (!glXIsDirect(display, context)) {
+			ERROR1("GLX context doesn't support direct rendering.");
+			destroyXWindow();
 			return(false);
 		}
 
@@ -150,8 +245,8 @@ struct Viewport::Internal
 
 		/* initialize context */
 
-		const float l_hw = w / 2.f;
-		const float l_hh = h / 2.f;
+		const float l_hw = static_cast<float>(w) / 2.f;
+		const float l_hh = static_cast<float>(h) / 2.f;
 
 		glViewport(0, 0, w, h);
 		glClearColor(0., 0., 0., 0.);
@@ -161,9 +256,13 @@ struct Viewport::Internal
 		glOrtho(-l_hw, l_hw, l_hh, -l_hh, -1.f, 1.f);
 		glMatrixMode(GL_MODELVIEW);
 		SwapBuffer();
+		glFlush();
 
-		if( glGetError() != GL_NO_ERROR )
+		if( glGetError() != GL_NO_ERROR ) {
+			ERROR1("GLX failed during initialization.");
+			destroyXWindow();
 			return(false);
+		}
 
 		return(loaded = true);
 	}
@@ -173,15 +272,21 @@ struct Viewport::Internal
 	{
 		if (display) {
 			glXMakeCurrent(display, None, 0);
-			glXDestroyContext(display, context);
-			XDestroyWindow(display, window);
+			if (context) glXDestroyContext(display, context);
+			if (fullscreen) {
+				XF86VidModeSwitchToMode(display, screen, &dvminfo);
+				XF86VidModeSetViewPort(display, screen, 0, 0);
+			}
+			if (window) XDestroyWindow(display, window);
 			XCloseDisplay(display);
 		}
-		if (size_hints)
-			XFree(size_hints);
 
+		context = 0;
 		display = 0;
-		size_hints = 0;
+		display = 0;
+		screen = 0;
+		window = 0;
+		wm_delete = 0;
 		loaded = false;
 	}
 
@@ -376,10 +481,7 @@ Viewport::SwapBuffer(void)
 const Math::Size2
 Viewport::Size(void)
 {
-	if (MVI.size_hints)
-		return(Math::Size2(static_cast<float>(MVI.size_hints->max_width),
-		                   static_cast<float>(MVI.size_hints->max_height)));
-
-	return(Math::Size2());
+	return(Math::Size2(static_cast<float>(MVI.size[0]),
+	                   static_cast<float>(MVI.size[1])));
 }
 

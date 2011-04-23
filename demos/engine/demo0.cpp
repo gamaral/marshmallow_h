@@ -201,9 +201,8 @@ public:
 	{
 		Engine::initialize();
 
-		Graphics::Viewport::Redisplay(640, 480);
-
 #if 0
+		Graphics::Viewport::Redisplay(640, 480);
 		eventManager()->connect(m_debugListener, "Event::RenderEvent");
 		eventManager()->connect(m_debugListener, "Event::UpdateEvent");
 #endif

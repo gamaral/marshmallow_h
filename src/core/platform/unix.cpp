@@ -36,6 +36,7 @@
 
 #include <sys/time.h>
 
+#include <cmath>
 #include <ctime>
 #include <unistd.h>
 
@@ -73,7 +74,7 @@ Platform::Sleep(TIME timeout)
 	struct timespec l_ts;
 	l_ts.tv_sec = 0;
 #define NANOSECONDS_PER_MILLISECOND 1000000.f
-	l_ts.tv_nsec = timeout * NANOSECONDS_PER_MILLISECOND;
+	l_ts.tv_nsec = static_cast<INT64>(trunc(timeout * NANOSECONDS_PER_MILLISECOND));
 	nanosleep(&l_ts, 0);
 
 }
@@ -89,8 +90,8 @@ Platform::TimeStamp(void)
 {
 	struct timeval time;
 	gettimeofday(&time, 0);
-	return(((time.tv_sec  - platform_internal.start_time) * 1000.f)
-	      + (time.tv_usec / 1000.f));
+	return(static_cast<double>((time.tv_sec - platform_internal.start_time) * 1000)
+	    + (static_cast<double>(time.tv_usec) / 1000.));
 }
 
 TimeData
@@ -101,7 +102,8 @@ Platform::TimeStampToTimeData(TIME timestamp)
 
 	l_ts.internal = timestamp;
 	l_ts.system =
-	    static_cast<time_t>(Platform::StartTime()+(l_ts.internal/1000.f));
+	    static_cast<time_t>(Platform::StartTime() +
+	    static_cast<time_t>(trunc(l_ts.internal/1000.)));
 
 	gmtime_r(&l_ts.system, &l_time);
 

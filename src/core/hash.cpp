@@ -38,17 +38,20 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
 Hash::Hash(void)
-    : m_result(0)
+    : m_data(0),
+      m_result(0)
 {
 }
 
 Hash::Hash(const char *d, size_t length, UID mask)
-    : m_result(Algorithm(d, length, mask))
+    : m_data(0),
+      m_result(Algorithm(d, length, mask))
 {
 }
 
 Hash::Hash(const Hash &copy)
-    : m_result(copy.m_result)
+    : m_data(0),
+     m_result(copy.m_result)
 {
 }
 
