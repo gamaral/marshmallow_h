@@ -62,10 +62,7 @@ namespace Game
 		VIRTUAL const Core::Identifier & id(void) const
 		    { return(m_id); }
 
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-		VIRTUAL void addEntity(SharedEntity &entity);
+		VIRTUAL void addEntity(SharedEntity entity);
 		VIRTUAL void removeEntity(const SharedEntity &entity);
 		VIRTUAL SharedEntity entity(const Core::Identifier &identifier) const;
 		VIRTUAL const EntityList & entities(void) const;
@@ -75,10 +72,6 @@ namespace Game
 
 		VIRTUAL void render(void);
 		VIRTUAL void update(TIME delta);
-
-	public: /* static */
-
-		static Core::Type Type;
 	};
 	typedef Core::Shared<SceneBase> SharedSceneBase;
 	typedef Core::Weak<SceneBase> WeakSceneBase;

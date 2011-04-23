@@ -44,8 +44,6 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Game;
 
-Type SceneBase::Type("Game::SceneBase");
-
 SceneBase::SceneBase(const Core::Identifier &i)
     : m_entities(),
       m_id(i)
@@ -58,7 +56,7 @@ SceneBase::~SceneBase(void)
 }
 
 void
-SceneBase::addEntity(SharedEntity &e)
+SceneBase::addEntity(SharedEntity e)
 {
 	m_entities.push_back(e);
 

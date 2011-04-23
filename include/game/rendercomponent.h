@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/eventbase.h"
+#pragma once
 
 /*!
  * @file
@@ -34,19 +34,60 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
+#ifndef GAME_RENDERCOMPONENT_H
+#define GAME_RENDERCOMPONENT_H 1
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
-using namespace Event;
+#include "game/componentbase.h"
 
-EventBase::EventBase(TIME t, UINT8 p)
-    : m_timestamp(t == 0 ? NOW() : t),
-      m_priority(p)
+#include "math/point2.h"
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Graphics
 {
+	struct IGraphic;
+	typedef Core::Shared<IGraphic> SharedGraphic;
 }
 
-EventBase::~EventBase(void)
+namespace Game
 {
+
+	class PositionComponent;
+	typedef Core::Weak<PositionComponent> WeakPositionComponent;
+
+	/*! @brief Game Render Component Class */
+	class GAME_EXPORT RenderComponent : public ComponentBase
+	{
+
+		WeakPositionComponent m_position;
+		Graphics::SharedGraphic m_graphic;
+		NO_COPY(RenderComponent);
+
+	public:
+		RenderComponent(const Core::Identifier &i, WeakEntity entity);
+		virtual ~RenderComponent(void);
+
+		Graphics::SharedGraphic & graphic(void)
+			{ return(m_graphic); }
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
+
+		VIRTUAL void render(void);
+		VIRTUAL void update(TIME d);
+
+	public: /* static */
+
+		static const Core::Type Type;
+
+	};
+	typedef Core::Shared<RenderComponent> SharedRenderComponent;
+	typedef Core::Weak<RenderComponent> WeakRenderComponent;
+
 }
 
+MARSHMALLOW_NAMESPACE_END
+
+#endif

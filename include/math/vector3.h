@@ -80,8 +80,23 @@ namespace Math
 		Vector3 normalized(void) const;
 		Vector3 & normalize(void);
 
-		float magnitude(void);
-		float magnitude2(void);
+		float magnitude(void) const;
+		float magnitude2(void) const;
+
+	public: /* operators */
+
+		operator bool(void) const
+		    { return(m_value[0] || m_value[1] || m_value[2]); }
+
+		bool operator==(const Vector3 &rhs) const
+		    { return(m_value[0] == rhs.m_value[0] &&
+		             m_value[1] == rhs.m_value[1] &&
+		             m_value[2] == rhs.m_value[2]); }
+
+		Vector3 & operator+=(const Vector3 &rhs);
+		Vector3 & operator-=(const Vector3 &rhs);
+		Vector3 operator+(const Vector3 &rhs) const;
+		Vector3 operator-(const Vector3 &rhs) const;
 
 	public: /* static */
 

@@ -27,65 +27,31 @@
  */
 
 #include "core/platform.h"
+#include "math/vector2.h"
 #include "event/debugeventlistener.h"
 #include "event/eventbase.h"
 #include "event/eventmanager.h"
-#include "game/componentbase.h"
-#include "game/engine.h"
-#include "game/entitybase.h"
-#include "game/scenebase.h"
-#include "game/scenemanager.h"
 #include "graphics/painter.h"
 #include "graphics/quadgraphic.h"
 #include "graphics/textureasset.h"
 #include "graphics/viewport.h"
-#include "math/vector2.h"
+#include "game/engine.h"
+#include "game/entity.h"
+#include "game/icomponent.h"
+#include "game/movementcomponent.h"
+#include "game/positioncomponent.h"
+#include "game/rendercomponent.h"
+#include "game/scenebase.h"
+#include "game/scenemanager.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
-class DemoMoverComponent : public Game::ComponentBase
-{
-	Math::Point2 m_pos;
-	Math::Vector2 m_dir;
-
-public:
-	DemoMoverComponent(Game::WeakEntity e)
-	: Game::ComponentBase("mover", e),
-	  m_pos(0, 0),
-	  m_dir(200.2, 200.2)
-	{
-		Math::Size2 l_vpsize = Graphics::Viewport::Size();
-		m_dir.rx() += (rand() % 10) / 100.f;
-		m_dir.ry() += (rand() % 10) / 100.f;
-		if (rand() % 2) m_dir.rx() *= -1;
-		if (rand() % 2) m_dir.ry() *= -1;
-	}
-
-	Math::Point2 &position(void)
-	{
-		return(m_pos);
-	}
-
-	Math::Vector2 &direction(void)
-	{
-		return(m_dir);
-	}
-
-	VIRTUAL void update(TIME d)
-	{
-		INFO("DELTA: %f", d);
-		m_pos.rx() += m_dir.rx() * d;
-		m_pos.ry() += m_dir.ry() * d;
-		INFO("object moved to %f, %f", m_pos.rx(), m_pos.ry());
-	}
-
-};
-
 class DemoBounceComponent : public Game::ComponentBase
 {
 
-	Core::Weak<DemoMoverComponent> m_mover;
+	Game::WeakPositionComponent m_position;
+	Game::WeakMovementComponent m_movement;
 
 public:
 	DemoBounceComponent(Game::WeakEntity e)
@@ -95,16 +61,26 @@ public:
 
 	VIRTUAL void update(TIME d)
 	{
+		if (!entity()) return;
 		UNUSED(d);
 
-		if (!m_mover && entity())
-			m_mover = entity()->component("mover").cast<DemoMoverComponent>();
+		if (!m_position)
+			m_position = entity()->componentType("Game::PositionComponent").
+			    cast<Game::PositionComponent>();
 
-		if (m_mover) {
+		if (!m_movement)
+			m_movement = entity()->componentType("Game::MovementComponent").
+			    cast<Game::MovementComponent>();
+
+		if (m_position && m_movement) {
+			INFO("DELTA: %f", d);
+			INFO("Current position %f, %f",
+			    m_position->position().rx(), m_position->position().ry());
+
 			Math::Size2 l_vpsize = Graphics::Viewport::Size();
 
-			Math::Point2 &pos = m_mover->position();
-			Math::Vector2 &dir = m_mover->direction();
+			Math::Point2  &pos = m_position->position();
+			Math::Vector2 &dir = m_movement->direction();
 
 			if ((pos.rx() <= -l_vpsize.width() / 2 && dir.rx() < 0)
 			 || (pos.rx() >=  l_vpsize.width() / 2 && dir.rx() > 0))
@@ -114,55 +90,26 @@ public:
 				dir.ry() *= -0.95f;
 		}
 	}
-};
 
-class DemoDrawComponent : public Game::ComponentBase
-{
-	Core::Weak<DemoMoverComponent> m_mover;
-	Graphics::SharedTextureAsset m_asset;
-	Graphics::SharedGraphic m_quad;
-	float m_angle;
-
-public:
-
-	DemoDrawComponent(Game::WeakEntity e)
-	: Game::ComponentBase("draw", e),
-	  m_asset(new Graphics::TextureAsset),
-	  m_quad(),
-	  m_angle(0)
+	VIRTUAL const Core::Type & type(void) const
 	{
+		static const Core::Type s_type("DemoBounceComponent");
+		return(s_type);
 	}
-
-	VIRTUAL void render(void)
-	{
-		if (!m_mover && entity())
-			m_mover = entity()->component("mover").cast<DemoMoverComponent>();
-
-		if (m_asset && !(*m_asset))
-			m_asset->load("demos/engine/assets/mallow.png");
-
-		if (m_mover && m_asset) {
-			Math::Rect2 l_rect(m_mover->position(), Math::Size2(64, 64));
-			m_quad = new Graphics::QuadGraphic(l_rect);
-			m_quad->setTexture(m_asset);
-		}
-
-		if (m_quad) {
-			Graphics::Painter::Draw(*m_quad);
-		}
-	}
-
 };
 
 class DemoScene : public Game::SceneBase
 {
 	bool m_init;
+	Graphics::SharedTextureAsset m_asset; // move to scene asset manager
 
 public:
 
 	DemoScene(void)
 	: SceneBase("DemoScene"),
-	  m_init(false) {}
+	  m_init(false),
+	  m_asset(new Graphics::TextureAsset)
+	  {}
 
 	VIRTUAL void activate(void)
 	{
@@ -170,15 +117,40 @@ public:
 
 		if (!m_init) {
 			m_init = true;
-			Game::SharedEntity l_entity(new Game::EntityBase("player"));
-			Game::SharedComponent l_component1(new DemoMoverComponent(l_entity));
-			Game::SharedComponent l_component2(new DemoBounceComponent(l_entity));
-			Game::SharedComponent l_component3(new DemoDrawComponent(l_entity));
-			l_entity->addComponent(l_component1);
-			l_entity->addComponent(l_component2);
-			l_entity->addComponent(l_component3);
+			Game::SharedEntity l_entity(new Game::Entity("player"));
+
+			Game::PositionComponent *l_pcomponent =
+			    new Game::PositionComponent("position", l_entity);
+			l_entity->addComponent(l_pcomponent);
+
+			Game::MovementComponent *l_mcomponent =
+			    new Game::MovementComponent("movement", l_entity);
+			l_mcomponent->direction() = Math::Vector2(150, 150);
+			if (rand() % 2)
+			    l_mcomponent->direction().rx() *= -1;
+			if (rand() % 2)
+			    l_mcomponent->direction().ry() *= -1;
+			l_entity->addComponent(l_mcomponent);
+
+			DemoBounceComponent *l_bcomponent = new DemoBounceComponent(l_entity);
+			l_entity->addComponent(l_bcomponent);
+
+			m_asset->load("demos/engine/assets/mallow.png");
+			Math::Rect2 l_rect(Math::Point2::Null, m_asset->size());
+			Game::RenderComponent *l_rcomponent =
+			    new Game::RenderComponent("render", l_entity);
+			l_rcomponent->graphic() = new Graphics::QuadGraphic(l_rect);
+			l_rcomponent->graphic()->setTexture(m_asset);
+			l_entity->addComponent(l_rcomponent);
+
 			addEntity(l_entity);
 		}
+	}
+
+	VIRTUAL const Core::Type & type(void) const
+	{
+		static const Core::Type s_type("DemoScene");
+		return(s_type);
 	}
 };
 
@@ -213,8 +185,6 @@ public:
 
 	VIRTUAL void finalize(void)
 	{
-		eventManager()->disconnect(m_debugListener, Event::EventBase::Type);
-		
 		Engine::finalize();
 	}
 

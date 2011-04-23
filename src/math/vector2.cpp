@@ -75,14 +75,14 @@ Vector2::normalize(void)
 }
 
 float
-Vector2::magnitude(void)
+Vector2::magnitude(void) const
 {
 	return(sqrtf(powf(m_value[0], 2)
 	           + powf(m_value[1], 2)));
 }
 
 float
-Vector2::magnitude2(void)
+Vector2::magnitude2(void) const
 {
 	return(powf(m_value[0], 2)
 	     + powf(m_value[1], 2));
@@ -101,6 +101,14 @@ Vector2::dot(const Vector2 &b) const
 }
 
 Vector2 &
+Vector2::operator*=(float rhs)
+{
+	m_value[0] *= rhs;
+	m_value[1] *= rhs;
+	return(*this);
+}
+
+Vector2 &
 Vector2::operator+=(const Vector2 &rhs)
 {
 	m_value[0] += rhs.m_value[0];
@@ -114,6 +122,12 @@ Vector2::operator-=(const Vector2 &rhs)
 	m_value[0] -= rhs.m_value[0];
 	m_value[1] -= rhs.m_value[1];
 	return(*this);
+}
+
+Vector2
+Vector2::operator*(float rhs) const
+{
+	return(Vector2(m_value[0] * rhs, m_value[1] * rhs));
 }
 
 Vector2

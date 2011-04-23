@@ -21,6 +21,11 @@ Input Interpreter
   - Listens for Keyboard, Mouse, Touch events and maps them to actual scene
     events like 'battletoad_head_bud'.
 
+Components
+----------
+
+  - Might give them a priority level.
+
 Graphics
 ========
 

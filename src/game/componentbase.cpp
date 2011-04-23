@@ -39,8 +39,6 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type ComponentBase::Type("Game::Component");
-
 ComponentBase::ComponentBase(const Core::Identifier &i, WeakEntity e)
     : m_id(i),
       m_entity(e)

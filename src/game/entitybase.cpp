@@ -40,8 +40,6 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type EntityBase::Type("Game::EntityBase");
-
 EntityBase::EntityBase(const Core::Identifier &i)
     : m_components(),
       m_id(i),
@@ -55,7 +53,7 @@ EntityBase::~EntityBase(void)
 }
 
 void
-EntityBase::addComponent(SharedComponent &c)
+EntityBase::addComponent(SharedComponent c)
 {
 	m_components.push_back(c);
 }
@@ -75,6 +73,20 @@ EntityBase::component(const Core::Identifier &i) const
 	/* maybe replace later with a map if required */
 	for (l_i = m_components.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->id() == i)
+			return(*l_i);
+	}
+	return(SharedComponent());
+}
+
+SharedComponent
+EntityBase::componentType(const Core::Type &t) const
+{
+	ComponentList::const_iterator l_i;
+	ComponentList::const_iterator l_c = m_components.end();
+
+	/* maybe replace later with a map if required */
+	for (l_i = m_components.begin(); l_i != l_c; ++l_i) {
+		if ((*l_i)->type() == t)
 			return(*l_i);
 	}
 	return(SharedComponent());

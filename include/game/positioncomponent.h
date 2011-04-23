@@ -46,7 +46,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {
 
-	/*! @brief Game Component Base Class */
+	/*! @brief Game Position Component Class */
 	class GAME_EXPORT PositionComponent : public ComponentBase
 	{
 
@@ -54,17 +54,24 @@ namespace Game
 		NO_COPY(PositionComponent);
 
 	public:
-		PositionComponent(const Core::Identifier &identifier, WeakEntity entity);
+		PositionComponent(const Core::Identifier &i, WeakEntity entity);
 		virtual ~PositionComponent(void);
 
-		void setPosition(Math::Point2 & position);
-		const Math::Point2 & position(void) const;
+		Math::Point2 & position(void)
+			{ return(m_position); }
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
 
 	public: /* static */
 
 		static const Core::Type Type;
 
 	};
+	typedef Core::Shared<PositionComponent> SharedPositionComponent;
+	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
 }
 

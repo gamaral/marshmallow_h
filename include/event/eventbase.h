@@ -71,18 +71,12 @@ namespace Event
 
 	public: /* virtual */
 
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
 		VIRTUAL UINT8 priority(void) const
 		    { return(m_priority); }
 
 		VIRTUAL TIME timeStamp(void) const
 		    { return(m_timestamp); }
 
-	public: /* static */
-
-		static const Core::Type Type;
 	};
 
 }

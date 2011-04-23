@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/eventbase.h"
+#include "game/movementcomponent.h"
 
 /*!
  * @file
@@ -34,19 +34,36 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
+#include "game/ientity.h"
+#include "game/positioncomponent.h"
 
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
-using namespace Event;
+using namespace Game;
 
-EventBase::EventBase(TIME t, UINT8 p)
-    : m_timestamp(t == 0 ? NOW() : t),
-      m_priority(p)
+const Core::Type MovementComponent::Type("Game::MovementComponent");
+
+MovementComponent::MovementComponent(const Core::Identifier &i, WeakEntity e)
+    : ComponentBase(i, e),
+      m_position(),
+      m_direction()
 {
 }
 
-EventBase::~EventBase(void)
+MovementComponent::~MovementComponent(void)
 {
+}
+
+void
+MovementComponent::update(TIME d)
+{
+	UNUSED(d);
+
+	if (!m_position)
+		m_position = entity()->componentType("Game::PositionComponent").
+		    dynamicCast<PositionComponent>();
+
+	if (m_position && m_direction)
+		m_position->position() += m_direction * static_cast<float>(d);
+
 }
 

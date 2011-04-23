@@ -40,11 +40,20 @@ MARSHMALLOW_NAMESPACE_USE;
 
 class MainScene : public Game::SceneBase
 {
+
 	bool m_init;
 public:
+
 	MainScene(void);
 
 public: /* VIRTUAL */
+
 	VIRTUAL void activate(void);
+
+	VIRTUAL const Core::Type & type(void) const
+	    { return(Type); }
+
+public: /* static */
+	static const Core::Type Type;
 };
 

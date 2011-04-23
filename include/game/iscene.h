@@ -65,7 +65,7 @@ namespace Game
 		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;
 
-		virtual void addEntity(SharedEntity &entity) = 0;
+		virtual void addEntity(SharedEntity entity) = 0;
 		virtual void removeEntity(const SharedEntity &entity) = 0;
 		virtual SharedEntity entity(const Core::Identifier &identifier) const = 0;
 		virtual const EntityList & entities(void) const = 0;

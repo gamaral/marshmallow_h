@@ -74,16 +74,25 @@ namespace Math
 		Vector2 normalized(void) const;
 		Vector2 & normalize(void);
 
-		float magnitude(void);
-		float magnitude2(void);
+		float magnitude(void) const;
+		float magnitude2(void) const;
 
 		float cross(const Vector2 &b) const;
 		float dot(const Vector2 &b) const;
 
 	public: /* operators */
 
+		operator bool(void) const
+		    { return(m_value[0] || m_value[1]); }
+
+		bool operator==(const Vector2 &rhs) const
+		    { return(m_value[0] == rhs.m_value[0] &&
+		             m_value[1] == rhs.m_value[1]); }
+
+		Vector2 & operator*=(float rhs);
 		Vector2 & operator+=(const Vector2 &rhs);
 		Vector2 & operator-=(const Vector2 &rhs);
+		Vector2 operator*(float rhs) const;
 		Vector2 operator+(const Vector2 &rhs) const;
 		Vector2 operator-(const Vector2 &rhs) const;
 

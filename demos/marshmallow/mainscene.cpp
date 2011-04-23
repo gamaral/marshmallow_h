@@ -34,7 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <game/entitybase.h>
+#include <game/entity.h>
+
+const Core::Type MainScene::Type("DemoScene");
 
 MainScene::MainScene(void)
     : SceneBase("DemoScene"),
@@ -49,8 +51,8 @@ MainScene::activate(void)
 
 	if (!m_init) {
 		m_init = true;
-		Game::SharedEntity l_player(new Game::EntityBase("player"));
-		Game::SharedEntity l_enemy(new Game::EntityBase("enemy"));
+		Game::SharedEntity l_player(new Game::Entity("player"));
+		Game::SharedEntity l_enemy(new Game::Entity("enemy"));
 		addEntity(l_player);
 		addEntity(l_enemy);
 	}

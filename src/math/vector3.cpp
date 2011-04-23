@@ -75,7 +75,7 @@ Vector3::normalize(void)
 }
 
 float
-Vector3::magnitude(void)
+Vector3::magnitude(void) const
 {
 	return(sqrtf(powf(m_value[0], 2)
 	           + powf(m_value[1], 2)
@@ -83,10 +83,44 @@ Vector3::magnitude(void)
 }
 
 float
-Vector3::magnitude2(void)
+Vector3::magnitude2(void) const
 {
 	return(powf(m_value[0], 2)
 	     + powf(m_value[1], 2)
 	     + powf(m_value[2], 2));
+}
+
+Vector3 &
+Vector3::operator+=(const Vector3 &rhs)
+{
+	m_value[0] += rhs.m_value[0];
+	m_value[1] += rhs.m_value[1];
+	m_value[2] += rhs.m_value[2];
+	return(*this);
+}
+
+Vector3 &
+Vector3::operator-=(const Vector3 &rhs)
+{
+	m_value[0] -= rhs.m_value[0];
+	m_value[1] -= rhs.m_value[1];
+	m_value[2] -= rhs.m_value[2];
+	return(*this);
+}
+
+Vector3
+Vector3::operator+(const Vector3 &rhs) const
+{
+	return(Vector3(m_value[0] + rhs.m_value[0],
+	               m_value[1] + rhs.m_value[1],
+	               m_value[2] + rhs.m_value[2]));
+}
+
+Vector3
+Vector3::operator-(const Vector3 &rhs) const
+{
+	return(Vector3(m_value[0] - rhs.m_value[0],
+	               m_value[1] - rhs.m_value[1],
+	               m_value[2] - rhs.m_value[2]));
 }
 

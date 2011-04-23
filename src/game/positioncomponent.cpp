@@ -34,7 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
 #include "game/ientity.h"
 
 MARSHMALLOW_NAMESPACE_USE;

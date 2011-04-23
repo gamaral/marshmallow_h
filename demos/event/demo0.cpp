@@ -39,9 +39,9 @@ using namespace Core;
 class CustomEvent : public Event::EventBase
 {
 	public:
-		CustomEvent(void)
+		CustomEvent(TIME t)
 #define PRIORITY_HIGH 1
-		    : Event::EventBase(NOW(), PRIORITY_HIGH)
+		    : Event::EventBase(t, PRIORITY_HIGH)
 		    {}
 
 	public: /* virtual */
@@ -59,13 +59,12 @@ int
 main(void)
 {
 	Event::EventManager event_manager("main");
-	Event::EventBase event1;
-	Event::SharedEvent event2(new CustomEvent);
-	Event::SharedEvent event3(new Event::EventBase());
-	Event::SharedEvent event4(new Event::EventBase(NOW()+1000));
+	CustomEvent event1(NOW());
+	Event::SharedEvent event2(new CustomEvent(NOW()+2000));
+	Event::SharedEvent event3(new CustomEvent(NOW()+1000));
+	Event::SharedEvent event4(new CustomEvent(NOW()-1000));
 	Event::SharedEventListener dl(new Event::DebugEventListener("log.txt"));
 
-	event_manager.connect(dl, Event::EventBase::Type);
 	event_manager.connect(dl, CustomEvent::Type);
 	event_manager.connect(dl, CustomEvent::Type);
 
@@ -82,7 +81,6 @@ main(void)
 	event_manager.dispatch(event1);
 
 	event_manager.disconnect(dl, CustomEvent::Type);
-	event_manager.disconnect(dl, Event::EventBase::Type);
 	return(0);
 }
 

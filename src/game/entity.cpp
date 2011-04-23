@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/eventbase.h"
+#include "game/entity.h"
 
 /*!
  * @file
@@ -34,19 +34,17 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
-
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
-using namespace Event;
+using namespace Game;
 
-EventBase::EventBase(TIME t, UINT8 p)
-    : m_timestamp(t == 0 ? NOW() : t),
-      m_priority(p)
+const Core::Type Entity::Type("Game::Entity");
+
+Entity::Entity(const Core::Identifier &i)
+    : EntityBase(i)
 {
 }
 
-EventBase::~EventBase(void)
+Entity::~Entity(void)
 {
 }
 

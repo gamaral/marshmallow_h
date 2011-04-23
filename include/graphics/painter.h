@@ -42,6 +42,11 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+namespace Math
+{
+	class Point2;
+}
+
 namespace Graphics
 {
 
@@ -60,7 +65,7 @@ namespace Graphics
 		static void Initialize(void);
 		static void Finalize(void);
 
-		static void Draw(const IGraphic &graphic);
+		static void Draw(const IGraphic &graphic, const Math::Point2 *origin = 0);
 		static void Blend(BlendTypes blend);
 
 		struct Internal;

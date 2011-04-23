@@ -67,15 +67,8 @@ namespace Game
 		VIRTUAL const Core::Identifier & id(void) const
 		    { return(m_id); }
 
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
 		VIRTUAL void render(void) {};
 		VIRTUAL void update(TIME) {};
-
-	public: /* static */
-
-		static const Core::Type Type;
 
 	protected:
 

@@ -67,9 +67,10 @@ namespace Game
 		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;
 
-		virtual void addComponent(SharedComponent &component) = 0;
+		virtual void addComponent(SharedComponent component) = 0;
 		virtual void removeComponent(const SharedComponent &component) = 0;
 		virtual SharedComponent component(const Core::Identifier &identifier) const = 0;
+		virtual SharedComponent componentType(const Core::Type &type) const = 0;
 
 		virtual void kill(void) = 0;
 		virtual bool isZombie(void) const = 0;

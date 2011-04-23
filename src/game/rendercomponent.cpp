@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/eventbase.h"
+#include "game/rendercomponent.h"
 
 /*!
  * @file
@@ -34,19 +34,39 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
+#include "graphics/igraphic.h"
+#include "graphics/painter.h"
+#include "game/ientity.h"
+#include "game/positioncomponent.h"
 
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
-using namespace Event;
+using namespace Game;
 
-EventBase::EventBase(TIME t, UINT8 p)
-    : m_timestamp(t == 0 ? NOW() : t),
-      m_priority(p)
+const Core::Type RenderComponent::Type("Game::RenderComponent");
+
+RenderComponent::RenderComponent(const Core::Identifier &i, WeakEntity e)
+    : ComponentBase(i, e),
+      m_position(),
+      m_graphic()
 {
 }
 
-EventBase::~EventBase(void)
+RenderComponent::~RenderComponent(void)
 {
+}
+
+void
+RenderComponent::update(TIME)
+{
+	if (!m_position)
+		m_position = entity()->componentType("Game::PositionComponent").
+		    dynamicCast<PositionComponent>();
+}
+
+void
+RenderComponent::render(void)
+{
+	if (m_position && m_graphic)
+		Graphics::Painter::Draw(*m_graphic, &m_position->position());
 }
 

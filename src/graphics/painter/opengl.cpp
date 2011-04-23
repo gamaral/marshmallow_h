@@ -121,9 +121,9 @@ Painter::Finalize(void)
 }
 
 void
-Painter::Draw(const IGraphic &g)
+Painter::Draw(const IGraphic &g, const Math::Point2 *o)
 {
-	const Math::Point2 l_origin = g.origin();
+	const Math::Point2 l_origin = (o ? *o : g.origin());
 	const bool  l_texture = (g.texture());
 	const float l_rotate_angle = g.rotation();
 

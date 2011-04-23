@@ -62,6 +62,7 @@ namespace Game
 		NO_COPY(EntityBase);
 
 	public:
+
 		EntityBase(const Core::Identifier &identifier);
 		virtual ~EntityBase(void);
 
@@ -70,12 +71,10 @@ namespace Game
 		VIRTUAL const Core::Identifier & id(void) const
 		    { return(m_id); }
 
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-		VIRTUAL void addComponent(SharedComponent &component);
+		VIRTUAL void addComponent(SharedComponent component);
 		VIRTUAL void removeComponent(const SharedComponent &component);
 		VIRTUAL SharedComponent component(const Core::Identifier &identifier) const;
+		VIRTUAL SharedComponent componentType(const Core::Type &type) const;
 
 		VIRTUAL void render(void);
 		VIRTUAL void update(TIME delta);
@@ -84,10 +83,6 @@ namespace Game
 		    { m_killed = true; }
 		VIRTUAL bool isZombie(void) const
 		    { return(m_killed); }
-
-	public: /* static */
-
-		static const Core::Type Type;
 	};
 
 }
