@@ -40,6 +40,7 @@
 #include "graphics/graphicbase.h"
 
 #include "math/rect2.h"
+#include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -49,7 +50,7 @@ namespace Graphics
 	/*! @brief Graphics Quad Graphic class */
 	class GRAPHICS_EXPORT QuadGraphic : public GraphicBase
 	{
-		Math::Vector2 m_points[4];
+		Math::Vector2 m_vectors[4];
 
 		NO_COPY(QuadGraphic);
 
@@ -59,15 +60,14 @@ namespace Graphics
 		            const Math::Vector2 &bl,
 		            const Math::Vector2 &br,
 		            const Math::Vector2 &tr,
-		            const Math::Vector2 &position = Math::Vector2::Null);
-		QuadGraphic(const Math::Rect2 &rect,
-		    const Math::Vector2 &position = Math::Vector2::Null);
+		            const Math::Point2  &origin = Math::Point2::Null);
+		QuadGraphic(const Math::Rect2 &rect);
 		virtual ~QuadGraphic(void);
 
 	public: /* operators */
 
 		const Math::Vector2 & operator[](int index) const
-		    { return(m_points[index % 4]); }
+		    { return(m_vectors[index % 4]); }
 
 	public: /* virtual */
 

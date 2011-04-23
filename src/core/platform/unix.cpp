@@ -74,7 +74,7 @@ Platform::Sleep(TIME timeout)
 	struct timespec l_ts;
 	l_ts.tv_sec = 0;
 #define NANOSECONDS_PER_MILLISECOND 1000000.f
-	l_ts.tv_nsec = static_cast<INT64>(trunc(timeout * NANOSECONDS_PER_MILLISECOND));
+	l_ts.tv_nsec = static_cast<long int>(trunc(timeout * NANOSECONDS_PER_MILLISECOND));
 	nanosleep(&l_ts, 0);
 
 }

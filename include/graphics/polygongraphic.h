@@ -50,26 +50,26 @@ namespace Graphics
 	/*! @brief Graphics Polygon Graphic class */
 	class GRAPHICS_EXPORT PolygonGraphic : public GraphicBase
 	{
-		Math::Polygon2 m_points;
+		Math::Polygon2 m_vectors;
 
 		NO_COPY(PolygonGraphic);
 
 	public:
 
 		PolygonGraphic(const Math::Polygon2 &polygon,
-		                const Math::Vector2 &position);
+		               const Math::Point2   &origin);
 		virtual ~PolygonGraphic(void);
 
-		const Math::Polygon2 &points(void) const
-		    { return(m_points); }
+		const Math::Polygon2 &vectors(void) const
+		    { return(m_vectors); }
 
 		int count(void) const
-		    { return(m_points.count()); }
+		    { return(m_vectors.count()); }
 
 	public: /* operators */
 
 		const Math::Vector2 & operator[](int index) const
-		    { return(m_points[index]); }
+		    { return(m_vectors[index]); }
 
 	public: /* virtual */
 

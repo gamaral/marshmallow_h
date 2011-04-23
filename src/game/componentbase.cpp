@@ -34,7 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
 #include "game/ientity.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -50,18 +49,5 @@ ComponentBase::ComponentBase(const Core::Identifier &i, WeakEntity e)
 
 ComponentBase::~ComponentBase(void)
 {
-}
-
-void
-ComponentBase::render(void)
-{
-	INFO("Component %s render.", id().str());
-}
-
-void
-ComponentBase::update(TIME d)
-{
-	UNUSED(d);
-	INFO("Component %s update.", id().str());
 }
 

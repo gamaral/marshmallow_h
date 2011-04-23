@@ -43,23 +43,22 @@ QuadGraphic::QuadGraphic(const Math::Vector2 &tl,
                          const Math::Vector2 &bl,
                          const Math::Vector2 &br,
                          const Math::Vector2 &tr,
-                         const Math::Vector2 &p)
-    : GraphicBase(p)
+                         const Math::Point2  &o)
+    : GraphicBase(o)
 {
-	m_points[0] = tl;
-	m_points[1] = bl;
-	m_points[2] = br;
-	m_points[3] = tr;
+	m_vectors[0] = tl;
+	m_vectors[1] = bl;
+	m_vectors[2] = br;
+	m_vectors[3] = tr;
 }
 
-QuadGraphic::QuadGraphic(const Math::Rect2 &r,
-                         const Math::Vector2 &p)
-    : GraphicBase(p)
+QuadGraphic::QuadGraphic(const Math::Rect2  &r)
+    : GraphicBase(r.origin())
 {
-	m_points[0] = r.topLeft();
-	m_points[1] = r.bottomLeft();
-	m_points[2] = r.bottomRight();
-	m_points[3] = r.topRight();
+	m_vectors[0] = r.topLeft();
+	m_vectors[1] = r.bottomLeft();
+	m_vectors[2] = r.bottomRight();
+	m_vectors[3] = r.topRight();
 }
 
 QuadGraphic::~QuadGraphic(void)

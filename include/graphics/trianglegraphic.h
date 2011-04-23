@@ -58,7 +58,7 @@ namespace Graphics
 		TriangleGraphic(const Math::Vector2 &p1,
 		                const Math::Vector2 &p2,
 		                const Math::Vector2 &p3,
-		                const Math::Vector2 &position);
+		                const Math::Point2  &origin);
 		virtual ~TriangleGraphic(void);
 
 	public: /* operators */

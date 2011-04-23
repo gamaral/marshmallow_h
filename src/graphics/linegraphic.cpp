@@ -41,8 +41,8 @@ const GraphicType LineGraphic::Type(LineGraphicType);
 
 LineGraphic::LineGraphic(const Math::Vector2 &p1,
                          const Math::Vector2 &p2,
-                         const Math::Vector2 &p)
-    : GraphicBase(p)
+                         const Math::Point2  &o)
+    : GraphicBase(o)
 {
 	m_points[0] = p1;
 	m_points[1] = p2;

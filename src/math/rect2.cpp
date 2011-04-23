@@ -34,23 +34,19 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "math/vector2.h"
+
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
-Rect2::Rect2(const Vector2 &tl, const Size2 &s)
-    : m_top_left(tl),
+Rect2::Rect2(const Point2 &o, const Size2 &s)
+    : m_origin(o),
       m_size(s)
 {
 }
 
-Rect2::Rect2(const Vector2 &tl, const Vector2 &br)
-    : m_top_left(tl),
-      m_size(br.rx() - tl.rx(), br.ry() - tl.ry())
-{
-}
-
 Rect2::Rect2(const Rect2 &c)
-    : m_top_left(c.m_top_left),
+    : m_origin(c.m_origin),
       m_size(c.m_size)
 {
 }
@@ -58,31 +54,28 @@ Rect2::Rect2(const Rect2 &c)
 Vector2
 Rect2::topLeft(void) const
 {
-	return(m_top_left);
+	return(Vector2(-m_size.width()  / 2.f,
+	               -m_size.height() / 2.f));
 }
 
 Vector2
 Rect2::topRight(void) const
 {
-	Vector2 l_point(m_top_left);
-	l_point.rx() += m_size.width();
-	return(l_point);
+	return(Vector2(m_size.width()  / 2.f,
+	              -m_size.height() / 2.f));
 }
 
 Vector2
 Rect2::bottomLeft(void) const
 {
-	Vector2 l_point(m_top_left);
-	l_point.ry() += m_size.height();
-	return(l_point);
+	return(Vector2(-m_size.width()  / 2.f,
+	                m_size.height() / 2.f));
 }
 
 Vector2
 Rect2::bottomRight(void) const
 {
-	Vector2 l_point(m_top_left);
-	l_point.rx() += m_size.width();
-	l_point.ry() += m_size.height();
-	return(l_point);
+	return(Vector2(m_size.width()  / 2.f,
+	               m_size.height() / 2.f));
 }
 

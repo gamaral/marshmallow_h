@@ -44,7 +44,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
-	class Vector2;
+	class Point2;
 }
 
 namespace Core
@@ -77,8 +77,8 @@ namespace Graphics
 
 		virtual const GraphicType & type(void) const = 0;
 
-		virtual const Math::Vector2 & position(void) const = 0;
-		virtual void setPosition(const Math::Vector2 &position) = 0;
+		virtual const Math::Point2 & origin(void) const = 0;
+		virtual void setOrigin(const Math::Point2 &origin) = 0;
 
 		virtual const WeakTextureAsset & texture(void) const = 0;
 		virtual void setTexture(WeakTextureAsset texture) = 0;

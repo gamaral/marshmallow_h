@@ -39,8 +39,8 @@ using namespace Graphics;
 
 const GraphicType PointGraphic::Type(PointGraphicType);
 
-PointGraphic::PointGraphic(const Math::Vector2 &p)
-    : GraphicBase(p)
+PointGraphic::PointGraphic(const Math::Point2 &o)
+    : GraphicBase(o)
 {
 }
 

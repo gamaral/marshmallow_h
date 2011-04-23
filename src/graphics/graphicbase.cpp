@@ -37,17 +37,17 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-GraphicBase::GraphicBase(const Math::Vector2 &p)
-    : m_position(p),
+GraphicBase::GraphicBase(const Math::Point2 &o)
+    : m_origin(o),
       m_texture(),
       m_rotation(0)
 {
 }
 
 void
-GraphicBase::setPosition(const Math::Vector2 &p)
+GraphicBase::setOrigin(const Math::Point2 &o)
 {
-	m_position = p;
+	m_origin = o;
 }
 
 void

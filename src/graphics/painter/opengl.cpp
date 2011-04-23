@@ -51,10 +51,9 @@ struct Painter::Internal
 	void
 	drawPointGraphic(const PointGraphic &g)
 	{
-		const Math::Vector2 &l_p = g.position();
+		UNUSED(g);
 		glBegin(GL_POINTS);
-		glVertex2f(static_cast<GLfloat>(l_p.rx()),
-		           static_cast<GLfloat>(l_p.ry()));
+		glVertex2f(0.f, 0.f);
 		glEnd();
 	}
 
@@ -124,7 +123,7 @@ Painter::Finalize(void)
 void
 Painter::Draw(const IGraphic &g)
 {
-	const Math::Vector2 l_position = g.position();
+	const Math::Point2 l_origin = g.origin();
 	const bool  l_texture = (g.texture());
 	const float l_rotate_angle = g.rotation();
 
@@ -134,7 +133,7 @@ Painter::Draw(const IGraphic &g)
 	}
 
 	glPushMatrix();
-	glTranslatef(l_position.rx(), l_position.ry(), 0.f);
+	glTranslatef(l_origin.rx(), l_origin.ry(), 0.f);
 
 	if (l_rotate_angle)
 		glRotatef(l_rotate_angle, 0, 0, 1);

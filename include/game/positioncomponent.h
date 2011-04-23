@@ -34,36 +34,36 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_POINTGRAPHIC_H
-#define GRAPHICS_POINTGRAPHIC_H 1
+#ifndef GAME_POSITIONCOMPONENT_H
+#define GAME_POSITIONCOMPONENT_H 1
 
-#include "graphics/graphicbase.h"
+#include "game/componentbase.h"
 
 #include "math/point2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Graphics
+namespace Game
 {
 
-	/*! @brief Graphics Point Graphic Class */
-	class GRAPHICS_EXPORT PointGraphic : public GraphicBase
+	/*! @brief Game Component Base Class */
+	class GAME_EXPORT PositionComponent : public ComponentBase
 	{
-		NO_COPY(PointGraphic);
+
+		Math::Point2 m_position;
+		NO_COPY(PositionComponent);
 
 	public:
+		PositionComponent(const Core::Identifier &identifier, WeakEntity entity);
+		virtual ~PositionComponent(void);
 
-		PointGraphic(const Math::Point2 &origin);
-		virtual ~PointGraphic(void);
-
-	public: /* virtual */
-
-		VIRTUAL const GraphicType & type(void) const
-		    { return(Type); }
+		void setPosition(Math::Point2 & position);
+		const Math::Point2 & position(void) const;
 
 	public: /* static */
 
-		static const GraphicType Type;
+		static const Core::Type Type;
+
 	};
 
 }

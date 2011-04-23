@@ -40,6 +40,7 @@
 #include "EASTL/vector.h"
 using namespace eastl;
 
+#include "math/point2.h"
 #include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -50,17 +51,22 @@ namespace Math
 	/*! @brief 2D Polygon */
 	class MATH_EXPORT Polygon2
 	{
-		vector<Vector2> m_points;
+		Point2 m_origin;
+		vector<Vector2> m_vectors;
 
 	public:
+		Polygon2(const Point2 &origin);
+
+		const Point2 & origin(void) const
+		    { return(m_origin); }
 
 		float area(void) const;
 
 		int count(void) const
-		    { return(m_points.size()); }
+		    { return(m_vectors.size()); }
 
 		const Math::Vector2 & at(int index) const
-		    { return(m_points.at(index)); }
+		    { return(m_vectors.at(index)); }
 
 		void push(const Math::Vector2 &point);
 		void pop(void);
@@ -68,7 +74,7 @@ namespace Math
 	public: /* operator */
 
 		const Math::Vector2 & operator[](int index) const
-		    { return(m_points.at(index)); }
+		    { return(m_vectors.at(index)); }
 
 	};
 

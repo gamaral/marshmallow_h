@@ -35,25 +35,25 @@
 #include "game/entitybase.h"
 #include "game/scenebase.h"
 #include "game/scenemanager.h"
-#include "math/vector2.h"
 #include "graphics/painter.h"
 #include "graphics/quadgraphic.h"
 #include "graphics/textureasset.h"
 #include "graphics/viewport.h"
+#include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
 class DemoMoverComponent : public Game::ComponentBase
 {
-	Math::Vector2 m_pos;
+	Math::Point2 m_pos;
 	Math::Vector2 m_dir;
 
 public:
 	DemoMoverComponent(Game::WeakEntity e)
 	: Game::ComponentBase("mover", e),
 	  m_pos(0, 0),
-	  m_dir(100.2, 100.2)
+	  m_dir(200.2, 200.2)
 	{
 		Math::Size2 l_vpsize = Graphics::Viewport::Size();
 		m_dir.rx() += (rand() % 10) / 100.f;
@@ -62,7 +62,7 @@ public:
 		if (rand() % 2) m_dir.ry() *= -1;
 	}
 
-	Math::Vector2 &position(void)
+	Math::Point2 &position(void)
 	{
 		return(m_pos);
 	}
@@ -103,7 +103,7 @@ public:
 		if (m_mover) {
 			Math::Size2 l_vpsize = Graphics::Viewport::Size();
 
-			Math::Vector2 &pos = m_mover->position();
+			Math::Point2 &pos = m_mover->position();
 			Math::Vector2 &dir = m_mover->direction();
 
 			if ((pos.rx() <= -l_vpsize.width() / 2 && dir.rx() < 0)
@@ -142,13 +142,12 @@ public:
 			m_asset->load("demos/engine/assets/mallow.png");
 
 		if (m_mover && m_asset) {
-			Math::Rect2 l_rect(Math::Vector2(-32, -32), Math::Size2(64, 64));
-			m_quad = new Graphics::QuadGraphic(l_rect, m_mover->position());
+			Math::Rect2 l_rect(m_mover->position(), Math::Size2(64, 64));
+			m_quad = new Graphics::QuadGraphic(l_rect);
 			m_quad->setTexture(m_asset);
 		}
 
 		if (m_quad) {
-			m_quad->setRotation(m_angle = fmod(m_angle + 1, 360.f));
 			Graphics::Painter::Draw(*m_quad);
 		}
 	}

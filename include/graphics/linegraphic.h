@@ -57,7 +57,7 @@ namespace Graphics
 
 		LineGraphic(const Math::Vector2 &p1,
 		            const Math::Vector2 &p2,
-		            const Math::Vector2 &position = Math::Vector2::Null);
+		            const Math::Point2  &origin = Math::Point2::Null);
 		virtual ~LineGraphic(void);
 
 		const Math::Vector2 & beginning(void) const

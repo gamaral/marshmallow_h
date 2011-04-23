@@ -70,8 +70,8 @@ namespace Game
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
-		VIRTUAL void render(void);
-		VIRTUAL void update(TIME delta);
+		VIRTUAL void render(void) {};
+		VIRTUAL void update(TIME) {};
 
 	public: /* static */
 

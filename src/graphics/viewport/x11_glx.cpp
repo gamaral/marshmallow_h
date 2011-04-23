@@ -36,6 +36,7 @@
 
 #include <GL/glx.h>
 #include <X11/X.h>
+#define XMD_H
 #include <X11/extensions/xf86vmode.h>
 
 #include "core/platform.h"

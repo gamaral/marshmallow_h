@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/positioncomponent.h"
 
 /*!
  * @file
@@ -34,40 +34,21 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_POINTGRAPHIC_H
-#define GRAPHICS_POINTGRAPHIC_H 1
+#include "core/platform.h"
+#include "game/ientity.h"
 
-#include "graphics/graphicbase.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-#include "math/point2.h"
+const Core::Type PositionComponent::Type("Game::PositionComponent");
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
+PositionComponent::PositionComponent(const Core::Identifier &i, WeakEntity e)
+    : ComponentBase(i, e),
+      m_position()
 {
-
-	/*! @brief Graphics Point Graphic Class */
-	class GRAPHICS_EXPORT PointGraphic : public GraphicBase
-	{
-		NO_COPY(PointGraphic);
-
-	public:
-
-		PointGraphic(const Math::Point2 &origin);
-		virtual ~PointGraphic(void);
-
-	public: /* virtual */
-
-		VIRTUAL const GraphicType & type(void) const
-		    { return(Type); }
-
-	public: /* static */
-
-		static const GraphicType Type;
-	};
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+PositionComponent::~PositionComponent(void)
+{
+}
 
-#endif

@@ -37,14 +37,20 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
+Polygon2::Polygon2(const Point2 &o)
+    : m_origin(o),
+      m_vectors()
+{
+}
+
 float
 Polygon2::area(void) const
 {
-	const int l_c = m_points.size();
+	const int l_c = m_vectors.size();
 	float l_area = 0;
 
 	for (int l_i = 1; l_i <= l_c; ++l_i)
-	    l_area += m_points.at(l_i-1).cross(m_points.at(l_i % l_c));
+	    l_area += m_vectors.at(l_i-1).cross(m_vectors.at(l_i % l_c));
 
 	return(l_area / 2.f);
 }
@@ -52,12 +58,12 @@ Polygon2::area(void) const
 void
 Polygon2::push(const Math::Vector2 &p)
 {
-	m_points.push_back(p);
+	m_vectors.push_back(p);
 }
 
 void
 Polygon2::pop(void)
 {
-	m_points.pop_back();
+	m_vectors.pop_back();
 }
 
