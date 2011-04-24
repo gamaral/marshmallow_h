@@ -1,4 +1,6 @@
-include_directories(AFTER SYSTEM ${PROJECT_SOURCE_DIR}/src)
+include_directories(${PROJECT_BINARY_DIR}/include
+                    ${PROJECT_SOURCE_DIR}/include
+                    ${EASTL_INCLUDE_DIR})
 
 add_subdirectory(event)
 add_subdirectory(engine)

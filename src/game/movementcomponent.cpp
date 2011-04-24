@@ -60,7 +60,7 @@ MovementComponent::update(TIME d)
 
 	if (!m_position)
 		m_position = entity()->componentType("Game::PositionComponent").
-		    dynamicCast<PositionComponent>();
+		    staticCast<PositionComponent>();
 
 	if (m_position && m_direction)
 		m_position->position() += m_direction * static_cast<float>(d);

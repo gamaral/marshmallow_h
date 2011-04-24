@@ -51,10 +51,8 @@ MainScene::activate(void)
 
 	if (!m_init) {
 		m_init = true;
-		Game::SharedEntity l_player(new Game::Entity("player"));
-		Game::SharedEntity l_enemy(new Game::Entity("enemy"));
-		addEntity(l_player);
-		addEntity(l_enemy);
+		addEntity(new Game::Entity("player"));
+		addEntity(new Game::Entity("enemy"));
 	}
 }
 

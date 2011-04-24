@@ -1,5 +1,5 @@
 # Copyright 2011 Marshmallow Engine. All rights reserved.
-# Copyright 2011 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
+# Copyright 2011 Guillermo A. Amaral B. (gamaral) <g@maral.me>
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -26,25 +26,9 @@
 # or implied, of Marshmallow Engine.
 #
 
-add_subdirectory(eastl)
-set(EASTL_LIBRARIES marshmallow_eastl PARENT_SCOPE)
-set(EASTL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/eastl/include"
-    PARENT_SCOPE)
+file(GLOB MARSHMALLOW_TINYXML_SRCS src/*)
 
-add_subdirectory(tinyxml)
-set(TINYXML_LIBRARIES marshmallow_tinyxml PARENT_SCOPE)
-set(TINYXML_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tinyxml/include"
-    PARENT_SCOPE)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-if (MARSHMALLOW_CONTRIB_ZLIB AND ZLIB_FOUND)
-	add_subdirectory(zlib)
-endif()
-
-if(MARSHMALLOW_CONTRIB_LIBPNG AND PNG_FOUND)
-	add_subdirectory(libpng)
-endif()
-
-if(OPENGL_FOUND)
-	add_subdirectory(glpng)
-endif()
+add_library(marshmallow_tinyxml ${MARSHMALLOW_TINYXML_SRCS})
 

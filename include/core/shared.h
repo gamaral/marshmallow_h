@@ -82,7 +82,6 @@ namespace Core
 
 		template <class U> Shared<U> cast(void) const;
 		template <class U> Shared<U> staticCast(void) const;
-		template <class U> Shared<U> dynamicCast(void) const;
 
 	public: /* operator */
 
@@ -134,15 +133,6 @@ namespace Core
 	{
 		UNUSED(static_cast<U *>(raw()));
 		return(Shared<U>(m_data));
-	}
-
-	template <class T>
-	template <class U> Shared<U>
-	Shared<T>::dynamicCast(void) const
-	{
-		if (dynamic_cast<U *>(raw()))
-			return(Shared<U>(m_data));
-		return(Shared<U>());
 	}
 
 	template <class T>
@@ -204,7 +194,6 @@ namespace Core
 
 		template <class U> Weak<U> cast(void) const;
 		template <class U> Weak<U> staticCast(void) const;
-		template <class U> Weak<U> dynamicCast(void) const;
 
 	public: /* operator */
 
@@ -249,15 +238,6 @@ namespace Core
 	{
 		UNUSED(static_cast<U *>(raw()));
 		return(Weak<U>(m_data));
-	}
-
-	template <class T>
-	template <class U> Weak<U>
-	Weak<T>::dynamicCast(void) const
-	{
-		if (dynamic_cast<U *>(raw()))
-			return(Weak<U>(m_data));
-		return(Weak<U>());
 	}
 
 	template <class T>

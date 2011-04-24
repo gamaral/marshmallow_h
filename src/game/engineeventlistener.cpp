@@ -53,7 +53,7 @@ bool
 EngineEventListener::handleEvent(const Event::IEvent &e)
 {
 	if (e.type() == Core::Type("Event::QuitEvent")) {
-		const Event::QuitEvent *l_qe = dynamic_cast<const Event::QuitEvent *>(&e);
+		const Event::QuitEvent *l_qe = static_cast<const Event::QuitEvent *>(&e);
 		Engine::Instance()->stop(l_qe ? l_qe->code() : 0);
 	}
 	return(false);

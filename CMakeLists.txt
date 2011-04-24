@@ -35,7 +35,7 @@ if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 endif()
 
-############################################################### CMAKE #
+######################################################################## CMAKE #
 
 option(BUILD_SHARED_LIBS "Build a shared library" OFF)
 set(CMAKE_BUILD_TYPE_SHARED_LIBS ON)
@@ -44,13 +44,23 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
-# Includes
-include_directories(${PROJECT_BINARY_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/include)
+if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
+	set(CMAKE_CXX_FLAGS "-fno-rtti -fno-exceptions ${CMAKE_CXX_FLAGS}")
+endif()
 
-# Contribs
-include_directories(BEFORE SYSTEM ${PROJECT_SOURCE_DIR}/contrib/eastl/include)
-include_directories(BEFORE SYSTEM ${PROJECT_SOURCE_DIR}/contrib/glpng/include)
+###################################################################### CONTRIB #
+
+set(EASTL_LIBRARIES marshmallow_eastl CACHE INTERNAL "")
+set(EASTL_INCLUDE_DIR
+    "${PROJECT_SOURCE_DIR}/contrib/eastl/include" CACHE INTERNAL "")
+
+set(TINYXML_LIBRARIES marshmallow_tinyxml CACHE INTERNAL "")
+set(TINYXML_INCLUDE_DIR
+    "${PROJECT_SOURCE_DIR}/contrib/tinyxml/include" CACHE INTERNAL "")
+
+set(GLPNG_LIBRARIES marshmallow_glpng CACHE INTERNAL "")
+set(GLPNG_INCLUDE_DIR
+    "${PROJECT_SOURCE_DIR}/contrib/glpng/include" CACHE INTERNAL "")
 
 ############################################################### GLOBAL OPTIONS #
 
