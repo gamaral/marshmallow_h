@@ -61,6 +61,9 @@ namespace Graphics
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
 	public: /* static */
 
 		static const Core::Type Type;

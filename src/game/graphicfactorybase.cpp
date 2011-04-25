@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/movementcomponent.h"
+#include "game/graphicfactorybase.h"
 
 /*!
  * @file
@@ -34,56 +34,40 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
-
-#include "game/ientity.h"
-#include "game/positioncomponent.h"
+#include "graphics/linegraphic.h"
+#include "graphics/pointgraphic.h"
+#include "graphics/polygongraphic.h"
+#include "graphics/quadgraphic.h"
+#include "graphics/trianglegraphic.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type MovementComponent::Type("Game::MovementComponent");
+IGraphicFactory *GraphicFactoryBase::s_instance(0);
 
-MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e),
-      m_position(),
-      m_direction()
+GraphicFactoryBase::GraphicFactoryBase(void)
 {
+	if (!s_instance) s_instance = this;
 }
 
-MovementComponent::~MovementComponent(void)
+GraphicFactoryBase::~GraphicFactoryBase(void)
 {
+	if (s_instance == this) s_instance = 0;
 }
 
-void
-MovementComponent::update(TIME d)
+Graphics::SharedGraphic
+GraphicFactoryBase::createGraphic(const Core::Type &type) const
 {
-	UNUSED(d);
-
-	if (!m_position)
-		m_position = entity().componentType("Game::PositionComponent").
-		    staticCast<PositionComponent>();
-
-	if (m_position && m_direction)
-		m_position->position() += m_direction * static_cast<float>(d);
-
-}
-
-bool
-MovementComponent::serialize(TinyXML::TiXmlElement &n) const
-{
-	n.SetAttribute("id", id().str());
-	n.SetAttribute("type", type().str());
-	n.SetDoubleAttribute("x", m_direction.rx());
-	n.SetDoubleAttribute("y", m_direction.ry());
-	return(true);
-}
-
-bool
-MovementComponent::deserialize(TinyXML::TiXmlElement &n)
-{
-	n.QueryFloatAttribute("x", &m_direction.rx());
-	n.QueryFloatAttribute("y", &m_direction.ry());
-	return(true);
+	if (Graphics::QuadGraphic::Type == type)
+		return(new Graphics::QuadGraphic);
+	else if (Graphics::PointGraphic::Type == type)
+		return(new Graphics::PointGraphic);
+	else if (Graphics::PolygonGraphic::Type == type)
+		return(new Graphics::PolygonGraphic);
+	else if (Graphics::TriangleGraphic::Type == type)
+		return(new Graphics::TriangleGraphic);
+	else if (Graphics::LineGraphic::Type == type)
+		return(new Graphics::LineGraphic);
+	return(Graphics::SharedGraphic());
 }
 

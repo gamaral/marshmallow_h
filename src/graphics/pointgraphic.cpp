@@ -48,3 +48,19 @@ PointGraphic::~PointGraphic(void)
 {
 }
 
+bool
+PointGraphic::serialize(TinyXML::TiXmlElement &n) const
+{
+	/* TODO: FILL IN */
+	UNUSED(n);
+	return(false);
+}
+
+bool
+PointGraphic::deserialize(TinyXML::TiXmlElement &n)
+{
+	/* TODO: FILL IN */
+	UNUSED(n);
+	return(false);
+}
+

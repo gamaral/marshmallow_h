@@ -57,6 +57,7 @@ namespace Graphics
 	public:
 
 		PolygonGraphic(const Math::Polygon2 &polygon);
+		PolygonGraphic(void);
 		virtual ~PolygonGraphic(void);
 
 		const Math::Polygon2 &vectors(void) const
@@ -74,6 +75,9 @@ namespace Graphics
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
 	public: /* static */
 

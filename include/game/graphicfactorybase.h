@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/movementcomponent.h"
+#pragma once
 
 /*!
  * @file
@@ -34,56 +34,41 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
+#ifndef GAME_GRAPHICFACTORYBASE_H
+#define GAME_GRAPHICFACTORYBASE_H 1
 
-#include "game/ientity.h"
-#include "game/positioncomponent.h"
+#include "game/igraphicfactory.h"
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
 
-const Core::Type MovementComponent::Type("Game::MovementComponent");
-
-MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e),
-      m_position(),
-      m_direction()
+namespace Game
 {
+
+	/*! @brief Game Graphic Factory Base Class */
+	class GAME_EXPORT GraphicFactoryBase : public IGraphicFactory
+	{
+		static IGraphicFactory *s_instance;
+
+		NO_COPY(GraphicFactoryBase);
+
+	public:
+
+		GraphicFactoryBase(void);
+		virtual ~GraphicFactoryBase(void);
+
+	public: /* virtual */
+
+		VIRTUAL Graphics::SharedGraphic createGraphic(const Core::Type &type) const;
+
+	public: /* static */
+
+		static IGraphicFactory *Instance(void)
+		    { return(s_instance); }
+
+	};
+
 }
 
-MovementComponent::~MovementComponent(void)
-{
-}
+MARSHMALLOW_NAMESPACE_END
 
-void
-MovementComponent::update(TIME d)
-{
-	UNUSED(d);
-
-	if (!m_position)
-		m_position = entity().componentType("Game::PositionComponent").
-		    staticCast<PositionComponent>();
-
-	if (m_position && m_direction)
-		m_position->position() += m_direction * static_cast<float>(d);
-
-}
-
-bool
-MovementComponent::serialize(TinyXML::TiXmlElement &n) const
-{
-	n.SetAttribute("id", id().str());
-	n.SetAttribute("type", type().str());
-	n.SetDoubleAttribute("x", m_direction.rx());
-	n.SetDoubleAttribute("y", m_direction.ry());
-	return(true);
-}
-
-bool
-MovementComponent::deserialize(TinyXML::TiXmlElement &n)
-{
-	n.QueryFloatAttribute("x", &m_direction.rx());
-	n.QueryFloatAttribute("y", &m_direction.ry());
-	return(true);
-}
-
+#endif

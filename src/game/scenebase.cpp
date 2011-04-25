@@ -150,28 +150,28 @@ SceneBase::serialize(TinyXML::TiXmlElement &n) const
 bool
 SceneBase::deserialize(TinyXML::TiXmlElement &n)
 {
-	TinyXML::TiXmlElement *l_entity;
-	for (l_entity = n.FirstChildElement("entity") ;
-	     l_entity != 0 ;
-	     l_entity = n.NextSiblingElement("entity")) {
+	TinyXML::TiXmlElement *l_child;
+	for (l_child = n.FirstChildElement("entity") ;
+	     l_child;
+	     l_child = l_child->NextSiblingElement("entity")) {
 
-		const char *l_id   = l_entity->Attribute("id");
-		const char *l_type = l_entity->Attribute("type");
+		const char *l_id   = l_child->Attribute("id");
+		const char *l_type = l_child->Attribute("type");
 
-		SharedEntity l_sentity =
+		SharedEntity l_entity =
 		    EntityFactory::Instance()->createEntity(l_type, l_id);
 
-		if (!l_sentity) {
+		if (!l_entity) {
 			WARNING("Entity '%s' of type '%s' creation failed", l_id, l_type);
 			continue;
 		}
 
-		if (!l_sentity->deserialize(*l_entity)) {
+		if (!l_entity->deserialize(*l_child)) {
 			WARNING("Entity '%s' of type '%s' failed deserialization", l_id, l_type);
 			continue;
 		}
 
-		addEntity(l_sentity);
+		addEntity(l_entity);
 	}
 	
 	return(true);

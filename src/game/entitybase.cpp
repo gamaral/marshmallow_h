@@ -135,28 +135,28 @@ EntityBase::serialize(TinyXML::TiXmlElement &n) const
 bool
 EntityBase::deserialize(TinyXML::TiXmlElement &n)
 {
-	TinyXML::TiXmlElement *l_component;
-	for (l_component = n.FirstChildElement("component") ;
-	     l_component != 0 ;
-	     l_component = n.NextSiblingElement("component")) {
+	TinyXML::TiXmlElement *l_child;
+	for (l_child = n.FirstChildElement("component") ;
+	     l_child;
+	     l_child = l_child->NextSiblingElement("component")) {
 
-		const char *l_id   = l_component->Attribute("id");
-		const char *l_type = l_component->Attribute("type");
+		const char *l_id   = l_child->Attribute("id");
+		const char *l_type = l_child->Attribute("type");
 
-		SharedComponent l_scomponent =
+		SharedComponent l_component =
 		    ComponentFactory::Instance()->createComponent(l_type, l_id, *this);
 
-		if (!l_scomponent) {
+		if (!l_component) {
 			WARNING("Component '%s' of type '%s' creation failed", l_id, l_type);
 			continue;
 		}
 
-		if (!l_scomponent->deserialize(*l_component)) {
+		if (!l_component->deserialize(*l_child)) {
 			WARNING("Component '%s' of type '%s' failed deserialization", l_id, l_type);
 			continue;
 		}
 
-		addComponent(l_scomponent);
+		addComponent(l_component);
 	}
 
 	return(true);

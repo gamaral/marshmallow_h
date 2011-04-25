@@ -47,6 +47,9 @@ namespace Game
 	/*! @brief Game No Frills Component Factory Class */
 	class GAME_EXPORT ComponentFactory : public ComponentFactoryBase
 	{
+
+		NO_COPY(ComponentFactory);
+
 	public:
 
 		ComponentFactory(void)

@@ -50,7 +50,7 @@ namespace Graphics
 	/*! @brief Graphics Quad Graphic class */
 	class GRAPHICS_EXPORT GraphicBase : public IGraphic
 	{
-		Graphics::WeakTextureAsset m_texture;
+		Graphics::SharedTextureAsset m_texture;
 		float m_rotation;
 
 		NO_COPY(GraphicBase);
@@ -62,14 +62,17 @@ namespace Graphics
 
 	public: /* virtual */
 
-		VIRTUAL const WeakTextureAsset & texture(void) const
+		VIRTUAL const SharedTextureAsset & texture(void) const
 		    { return(m_texture); }
 
 		VIRTUAL float rotation(void) const
 		    { return(m_rotation); }
 
-		VIRTUAL void setTexture(WeakTextureAsset texture);
+		VIRTUAL void setTexture(SharedTextureAsset texture);
 		VIRTUAL void setRotation(float angle);
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 	};
 
 }

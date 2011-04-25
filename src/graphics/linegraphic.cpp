@@ -47,7 +47,30 @@ LineGraphic::LineGraphic(const Math::Vector2 &p1,
 	m_points[1] = p2;
 }
 
+LineGraphic::LineGraphic(void)
+    : GraphicBase()
+{
+	m_points[0] = Math::Vector2::Null;
+	m_points[1] = Math::Vector2::Null;
+}
+
 LineGraphic::~LineGraphic(void)
 {
+}
+
+bool
+LineGraphic::serialize(TinyXML::TiXmlElement &n) const
+{
+	/* TODO: FILL IN */
+	UNUSED(n);
+	return(false);
+}
+
+bool
+LineGraphic::deserialize(TinyXML::TiXmlElement &n)
+{
+	/* TODO: FILL IN */
+	UNUSED(n);
+	return(false);
 }
 

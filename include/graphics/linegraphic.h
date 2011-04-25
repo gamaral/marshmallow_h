@@ -57,6 +57,7 @@ namespace Graphics
 
 		LineGraphic(const Math::Vector2 &p1,
 		            const Math::Vector2 &p2);
+		LineGraphic(void);
 		virtual ~LineGraphic(void);
 
 		const Math::Vector2 & beginning(void) const
@@ -74,6 +75,9 @@ namespace Graphics
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
 	public: /* static */
 

@@ -51,14 +51,10 @@ namespace Math
 	/*! @brief 2D Polygon */
 	class MATH_EXPORT Polygon2
 	{
-		Point2 m_origin;
 		vector<Vector2> m_vectors;
 
 	public:
-		Polygon2(const Point2 &origin);
-
-		const Point2 & origin(void) const
-		    { return(m_origin); }
+		Polygon2(void);
 
 		float area(void) const;
 
@@ -68,7 +64,7 @@ namespace Math
 		const Math::Vector2 & at(int index) const
 		    { return(m_vectors.at(index)); }
 
-		void push(const Math::Vector2 &point);
+		void push(const Math::Vector2 &vector);
 		void pop(void);
 
 	public: /* operator */

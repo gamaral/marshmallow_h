@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml.h>
+
 #include "game/ientity.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -54,14 +56,18 @@ PositionComponent::~PositionComponent(void)
 bool
 PositionComponent::serialize(TinyXML::TiXmlElement &n) const
 {
-	UNUSED(n);
+	n.SetAttribute("id", id().str());
+	n.SetAttribute("type", type().str());
+	n.SetDoubleAttribute("x", m_position.rx());
+	n.SetDoubleAttribute("y", m_position.ry());
 	return(true);
 }
 
 bool
 PositionComponent::deserialize(TinyXML::TiXmlElement &n)
 {
-	UNUSED(n);
+	n.QueryFloatAttribute("x", &m_position.rx());
+	n.QueryFloatAttribute("y", &m_position.ry());
 	return(true);
 }
 

@@ -34,8 +34,12 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml.h>
+
+#include "core/platform.h"
 #include "graphics/igraphic.h"
 #include "graphics/painter.h"
+#include "game/graphicfactorybase.h"
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
@@ -73,14 +77,46 @@ RenderComponent::render(void)
 bool
 RenderComponent::serialize(TinyXML::TiXmlElement &n) const
 {
-	UNUSED(n);
+	n.SetAttribute("id", id().str());
+	n.SetAttribute("type", type().str());
+
+	TinyXML::TiXmlElement l_graphic("graphic");
+	if (m_graphic && m_graphic->serialize(l_graphic)) {
+		WARNING("Render component '%s' serialization failed to serialize graphic!",
+		    id().str());
+		return(false);
+	}
+
 	return(true);
 }
 
 bool
 RenderComponent::deserialize(TinyXML::TiXmlElement &n)
 {
-	UNUSED(n);
+	TinyXML::TiXmlElement *l_child = n.FirstChildElement("graphic");
+	if (!l_child) {
+		WARNING("Render component '%s' deserialized without a graphic!",
+		    id().str());
+		return(false);
+	}
+
+	const char *l_graphic_type = l_child->Attribute("type");
+	Graphics::SharedGraphic l_graphic =
+	    Game::GraphicFactoryBase::Instance()->createGraphic(l_graphic_type);
+	if (!l_graphic) {
+		WARNING("Render component '%s' has an unknown graphic type",
+		    id().str());
+		return(false);
+	}
+
+	if (!l_graphic->deserialize(*l_child)) {
+		WARNING("Render component '%s' deserialization of graphic failed",
+		    id().str());
+		return(false);
+	}
+
+	m_graphic = l_graphic;
+
 	return(true);
 }
 

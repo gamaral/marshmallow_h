@@ -246,8 +246,8 @@ struct Viewport::Internal
 
 		/* initialize context */
 
-		const float l_hw = static_cast<float>(w) / 2.f;
-		const float l_hh = static_cast<float>(h) / 2.f;
+		const float l_hw = DEFAULT_VIEWPORT_VWIDTH / 2.f;
+		const float l_hh = DEFAULT_VIEWPORT_VHEIGHT / 2.f;
 
 		glViewport(0, 0, w, h);
 		glClearColor(0., 0., 0., 0.);
@@ -482,7 +482,15 @@ Viewport::SwapBuffer(void)
 const Math::Size2
 Viewport::Size(void)
 {
+	return(Math::Size2(static_cast<float>(DEFAULT_VIEWPORT_VWIDTH),
+	                   static_cast<float>(DEFAULT_VIEWPORT_VHEIGHT)));
+}
+
+const Math::Size2
+Viewport::WindowSize(void)
+{
 	return(Math::Size2(static_cast<float>(MVI.size[0]),
 	                   static_cast<float>(MVI.size[1])));
 }
+
 

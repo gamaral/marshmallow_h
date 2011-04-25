@@ -52,6 +52,7 @@ namespace Game
 		static IComponentFactory *s_instance;
 
 		NO_COPY(ComponentFactoryBase);
+
 	public:
 
 		ComponentFactoryBase(void);

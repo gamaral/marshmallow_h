@@ -45,7 +45,29 @@ PolygonGraphic::PolygonGraphic(const Math::Polygon2 &pn)
 {
 }
 
+PolygonGraphic::PolygonGraphic(void)
+    : GraphicBase(),
+      m_vectors()
+{
+}
+
 PolygonGraphic::~PolygonGraphic(void)
 {
+}
+
+bool
+PolygonGraphic::serialize(TinyXML::TiXmlElement &n) const
+{
+	/* TODO: FILL IN */
+	UNUSED(n);
+	return(false);
+}
+
+bool
+PolygonGraphic::deserialize(TinyXML::TiXmlElement &n)
+{
+	/* TODO: FILL IN */
+	UNUSED(n);
+	return(false);
 }
 

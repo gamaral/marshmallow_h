@@ -58,6 +58,7 @@ namespace Graphics
 		TriangleGraphic(const Math::Vector2 &p1,
 		                const Math::Vector2 &p2,
 		                const Math::Vector2 &p3);
+		TriangleGraphic(void);
 		virtual ~TriangleGraphic(void);
 
 	public: /* operators */
@@ -69,6 +70,9 @@ namespace Graphics
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
 	public: /* static */
 

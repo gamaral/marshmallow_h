@@ -61,6 +61,7 @@ namespace Graphics
 		            const Math::Vector2 &br,
 		            const Math::Vector2 &tr);
 		QuadGraphic(const Math::Rect2 &rect);
+		QuadGraphic(void);
 		virtual ~QuadGraphic(void);
 
 	public: /* operators */
@@ -72,6 +73,9 @@ namespace Graphics
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
 	public: /* static */
 

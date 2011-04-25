@@ -44,22 +44,18 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core
 {
 
+	class StrHash;
+	typedef StrHash Type;
+
 	template <class T> class Shared;
 	template <class T> class Weak;
-
-	enum AssetType
-	{
-		UnknownAssetType = 0,
-		TextureAssetType,
-		AssetTypeMax
-	};
 
 	/*! @brief Assets Asset Interface */
 	struct CORE_EXPORT IAsset
 	{
 		virtual ~IAsset(void) {};
 
-		virtual const AssetType & type(void) const = 0;
+		virtual const Core::Type & type(void) const = 0;
 	};
 	typedef Shared<IAsset> SharedAsset;
 	typedef Weak<IAsset> WeakAsset;

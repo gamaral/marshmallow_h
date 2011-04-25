@@ -49,7 +49,31 @@ TriangleGraphic::TriangleGraphic(const Math::Vector2 &p1,
 	m_points[2] = p3;
 }
 
+TriangleGraphic::TriangleGraphic(void)
+    : GraphicBase()
+{
+	m_points[0] = Math::Vector2::Null;
+	m_points[1] = Math::Vector2::Null;
+	m_points[2] = Math::Vector2::Null;
+}
+
 TriangleGraphic::~TriangleGraphic(void)
 {
+}
+
+bool
+TriangleGraphic::serialize(TinyXML::TiXmlElement &n) const
+{
+	/* TODO: FILL IN */
+	UNUSED(n);
+	return(false);
+}
+
+bool
+TriangleGraphic::deserialize(TinyXML::TiXmlElement &n)
+{
+	/* TODO: FILL IN */
+	UNUSED(n);
+	return(false);
 }
 

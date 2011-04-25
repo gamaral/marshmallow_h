@@ -34,6 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml.h>
+
+#include "graphics/textureasset.h"
+
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
@@ -60,7 +64,41 @@ QuadGraphic::QuadGraphic(const Math::Rect2  &r)
 	m_vectors[3] = r.topRight();
 }
 
+QuadGraphic::QuadGraphic(void)
+    : GraphicBase()
+{
+	m_vectors[0] = Math::Vector2::Null;
+	m_vectors[1] = Math::Vector2::Null;
+	m_vectors[2] = Math::Vector2::Null;
+	m_vectors[3] = Math::Vector2::Null;
+}
+
 QuadGraphic::~QuadGraphic(void)
 {
+}
+
+bool
+QuadGraphic::serialize(TinyXML::TiXmlElement &n) const
+{
+	return(GraphicBase::serialize(n));
+}
+
+bool
+QuadGraphic::deserialize(TinyXML::TiXmlElement &n)
+{
+
+	if (!GraphicBase::deserialize(n))
+		return(false);
+
+	int l_i;
+	TinyXML::TiXmlElement *l_child;
+	for (l_i = 0, l_child = n.FirstChildElement("vector");
+	     l_i < 4 && l_child;
+	     ++l_i, l_child = l_child->NextSiblingElement("vector")) {
+		l_child->QueryFloatAttribute("x", &m_vectors[l_i].rx());
+		l_child->QueryFloatAttribute("y", &m_vectors[l_i].ry());
+	}
+
+	return(true);
 }
 

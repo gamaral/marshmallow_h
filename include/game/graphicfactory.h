@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/movementcomponent.h"
+#pragma once
 
 /*!
  * @file
@@ -34,56 +34,33 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
+#ifndef GAME_GRAPHICFACTORY_H
+#define GAME_GRAPHICFACTORY_H 1
 
-#include "game/ientity.h"
-#include "game/positioncomponent.h"
+#include "game/graphicfactorybase.h"
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
 
-const Core::Type MovementComponent::Type("Game::MovementComponent");
-
-MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e),
-      m_position(),
-      m_direction()
+namespace Game
 {
-}
 
-MovementComponent::~MovementComponent(void)
-{
-}
+	/*! @brief Game No Frills Graphic Factory Class */
+	class GAME_EXPORT GraphicFactory : public GraphicFactoryBase
+	{
 
-void
-MovementComponent::update(TIME d)
-{
-	UNUSED(d);
+		NO_COPY(GraphicFactory);
 
-	if (!m_position)
-		m_position = entity().componentType("Game::PositionComponent").
-		    staticCast<PositionComponent>();
+	public:
 
-	if (m_position && m_direction)
-		m_position->position() += m_direction * static_cast<float>(d);
+		GraphicFactory(void)
+		    : GraphicFactoryBase() {}
+
+		virtual ~GraphicFactory(void)
+		    {}
+	};
 
 }
 
-bool
-MovementComponent::serialize(TinyXML::TiXmlElement &n) const
-{
-	n.SetAttribute("id", id().str());
-	n.SetAttribute("type", type().str());
-	n.SetDoubleAttribute("x", m_direction.rx());
-	n.SetDoubleAttribute("y", m_direction.ry());
-	return(true);
-}
+MARSHMALLOW_NAMESPACE_END
 
-bool
-MovementComponent::deserialize(TinyXML::TiXmlElement &n)
-{
-	n.QueryFloatAttribute("x", &m_direction.rx());
-	n.QueryFloatAttribute("y", &m_direction.ry());
-	return(true);
-}
-
+#endif

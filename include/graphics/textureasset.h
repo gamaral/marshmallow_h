@@ -75,7 +75,7 @@ namespace Graphics
 		virtual const Core::Identifier & id(void) const
 		    { return(m_id); }
 
-		VIRTUAL const Core::AssetType & type(void) const
+		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
 	public: /* operators */
@@ -85,7 +85,7 @@ namespace Graphics
 
 	public: /* static */
 
-		static const Core::AssetType Type;
+		static const Core::Type Type;
 	};
 	typedef Core::Shared<TextureAsset> SharedTextureAsset;
 	typedef Core::Weak<TextureAsset> WeakTextureAsset;

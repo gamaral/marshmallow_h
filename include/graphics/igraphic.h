@@ -37,7 +37,7 @@
 #ifndef GRAPHICS_IGRAPHIC_H
 #define GRAPHICS_IGRAPHIC_H 1
 
-#include "core/global.h"
+#include "core/iserializable.h"
 #include "graphics/config.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -55,17 +55,17 @@ namespace Graphics
 {
 
 	class TextureAsset;
-	typedef Core::Weak<TextureAsset> WeakTextureAsset;
+	typedef Core::Shared<TextureAsset> SharedTextureAsset;
 
 	/*! @brief Graphics Graphic Interface */
-	struct GRAPHICS_EXPORT IGraphic
+	struct GRAPHICS_EXPORT IGraphic : public Core::ISerializable
 	{
 		virtual ~IGraphic(void) {};
 
 		virtual const Core::Type & type(void) const = 0;
 
-		virtual const WeakTextureAsset & texture(void) const = 0;
-		virtual void setTexture(WeakTextureAsset texture) = 0;
+		virtual const SharedTextureAsset & texture(void) const = 0;
+		virtual void setTexture(SharedTextureAsset texture) = 0;
 
 		virtual float rotation(void) const = 0;
 		virtual void setRotation(float angle) = 0;

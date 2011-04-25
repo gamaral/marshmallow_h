@@ -68,8 +68,10 @@ set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Marshmallow Namespace")
 set(MARSHMALLOW_DEBUG_VERBOSITY "0" CACHE STRING "Verbosity Level")
 option(MARSHMALLOW_DEBUG "Marshmallow Debugging" OFF)
 
-set(MARSHMALLOW_VIEWPORT_WIDTH  "640" CACHE STRING "Viewport default width")
-set(MARSHMALLOW_VIEWPORT_HEIGHT "480" CACHE STRING "Viewport default height")
+set(MARSHMALLOW_VIEWPORT_HEIGHT "480" CACHE STRING "Viewport window height")
+set(MARSHMALLOW_VIEWPORT_WIDTH  "640" CACHE STRING "Viewport window width")
+set(MARSHMALLOW_VIEWPORT_VHEIGHT "600" CACHE STRING "Viewport virtual width")
+set(MARSHMALLOW_VIEWPORT_VWIDTH "800" CACHE STRING "Viewport virtual height")
 set(MARSHMALLOW_VIEWPORT_DEPTH  "24" CACHE STRING "Viewport default depth")
 option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode" OFF)
 

@@ -67,6 +67,7 @@ namespace Graphics
 		static void SwapBuffer(void);
 
 		static const Math::Size2 Size(void);
+		static const Math::Size2 WindowSize(void);
 
 		struct Internal;
 	};

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/movementcomponent.h"
+#pragma once
 
 /*!
  * @file
@@ -34,56 +34,48 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
+#ifndef GAME_IGRAPHICFACTORY_H
+#define GAME_IGRAPHICFACTORY_H 1
 
-#include "game/ientity.h"
-#include "game/positioncomponent.h"
+#include "core/global.h"
+#include "graphics/igraphic.h"
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
 
-const Core::Type MovementComponent::Type("Game::MovementComponent");
-
-MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e),
-      m_position(),
-      m_direction()
+namespace Core
 {
+	class StrHash;
+	typedef StrHash Type;
+
+	template <class T> class Shared;
+	template <class T> class Weak;
 }
 
-MovementComponent::~MovementComponent(void)
+namespace Graphics
 {
+	struct IGraphic;
+	typedef Core::Shared<IGraphic> SharedGraphic;
 }
 
-void
-MovementComponent::update(TIME d)
+namespace Game
 {
-	UNUSED(d);
 
-	if (!m_position)
-		m_position = entity().componentType("Game::PositionComponent").
-		    staticCast<PositionComponent>();
+	struct IGraphic;
+	typedef Core::Shared<IGraphic> SharedGraphic;
+	typedef Core::Weak<IGraphic> WeakGraphic;
 
-	if (m_position && m_direction)
-		m_position->position() += m_direction * static_cast<float>(d);
+	/*! @brief Game Graphic Factory Interface */
+	struct GAME_EXPORT IGraphicFactory
+	{
+		virtual ~IGraphicFactory(void) {};
+
+		virtual Graphics::SharedGraphic createGraphic(const Core::Type &type) const = 0;
+	};
+	typedef Core::Shared<IGraphicFactory> SharedGraphicFactory;
+	typedef Core::Weak<IGraphicFactory> WeakGraphicFactory;
 
 }
 
-bool
-MovementComponent::serialize(TinyXML::TiXmlElement &n) const
-{
-	n.SetAttribute("id", id().str());
-	n.SetAttribute("type", type().str());
-	n.SetDoubleAttribute("x", m_direction.rx());
-	n.SetDoubleAttribute("y", m_direction.ry());
-	return(true);
-}
+MARSHMALLOW_NAMESPACE_END
 
-bool
-MovementComponent::deserialize(TinyXML::TiXmlElement &n)
-{
-	n.QueryFloatAttribute("x", &m_direction.rx());
-	n.QueryFloatAttribute("y", &m_direction.ry());
-	return(true);
-}
-
+#endif

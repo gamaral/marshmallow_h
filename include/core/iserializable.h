@@ -59,8 +59,8 @@ namespace Core
 		virtual bool serialize(TinyXML::TiXmlElement &node) const = 0;
 		virtual bool deserialize(TinyXML::TiXmlElement &node) = 0;
 	};
-	typedef Shared<IRenderable> SharedSerializable;
-	typedef Weak<IRenderable> WeakSerializable;
+	typedef Shared<ISerializable> SharedSerializable;
+	typedef Weak<ISerializable> WeakSerializable;
 
 }
 

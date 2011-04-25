@@ -37,7 +37,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const Core::AssetType TextureAsset::Type(Core::TextureAssetType);
+const Core::Type TextureAsset::Type("Graphics::TextureAsset");
 
 TextureAsset::TextureAsset(void)
 {

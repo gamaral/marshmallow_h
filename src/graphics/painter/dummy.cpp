@@ -51,7 +51,7 @@ Painter::Finalize(void)
 }
 
 void
-Painter::Draw(const IGraphic &, const Marshmallow::Math::Point2*)
+Painter::Draw(const IGraphic &, const Math::Point2&)
 {
 	INFO1("Drawing graphic");
 }

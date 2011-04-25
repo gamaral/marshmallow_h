@@ -37,9 +37,8 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
-Polygon2::Polygon2(const Point2 &o)
-    : m_origin(o),
-      m_vectors()
+Polygon2::Polygon2(void)
+    : m_vectors()
 {
 }
 
@@ -56,9 +55,9 @@ Polygon2::area(void) const
 }
 
 void
-Polygon2::push(const Math::Vector2 &p)
+Polygon2::push(const Math::Vector2 &v)
 {
-	m_vectors.push_back(p);
+	m_vectors.push_back(v);
 }
 
 void
