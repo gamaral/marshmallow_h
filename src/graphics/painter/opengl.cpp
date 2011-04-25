@@ -121,9 +121,8 @@ Painter::Finalize(void)
 }
 
 void
-Painter::Draw(const IGraphic &g, const Math::Point2 *o)
+Painter::Draw(const IGraphic &g, const Math::Point2 &o)
 {
-	const Math::Point2 l_origin = (o ? *o : g.origin());
 	const bool  l_texture = (g.texture());
 	const float l_rotate_angle = g.rotation();
 
@@ -133,30 +132,23 @@ Painter::Draw(const IGraphic &g, const Math::Point2 *o)
 	}
 
 	glPushMatrix();
-	glTranslatef(l_origin.rx(), l_origin.ry(), 0.f);
+	glTranslatef(o.rx(), o.ry(), 0.f);
 
 	if (l_rotate_angle)
 		glRotatef(l_rotate_angle, 0, 0, 1);
 
 	/* actually draw graphic */
-	switch (g.type()) {
-	case PointGraphicType:
-		MGP.drawPointGraphic(static_cast<const PointGraphic &>(g));
-	break;
-	case LineGraphicType:
-		MGP.drawLineGraphic(static_cast<const LineGraphic &>(g));
-	break;
-	case TriangleGraphicType:
-		MGP.drawTriangleGraphic(static_cast<const TriangleGraphic &>(g));
-	break;
-	case QuadGraphicType:
+	if (g.type() == QuadGraphic::Type)
 		MGP.drawQuadGraphic(static_cast<const QuadGraphic &>(g));
-	break;
-	case PolygonGraphicType:
+	else if (g.type() == LineGraphic::Type)
+		MGP.drawLineGraphic(static_cast<const LineGraphic &>(g));
+	else if (g.type() == TriangleGraphic::Type)
+		MGP.drawTriangleGraphic(static_cast<const TriangleGraphic &>(g));
+	else if (g.type() == PolygonGraphic::Type)
 		MGP.drawPolygonGraphic(static_cast<const PolygonGraphic &>(g));
-	break;
-	default: WARNING1("Unknown graphic type"); break;
-	}
+	else if (g.type() == PointGraphic::Type)
+		MGP.drawPointGraphic(static_cast<const PointGraphic &>(g));
+	else WARNING1("Unknown graphic type");
 
 	glPopMatrix();
 

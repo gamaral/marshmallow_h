@@ -38,7 +38,6 @@
 #define MATH_RECT2_H 1
 
 #include "core/global.h"
-#include "math/point2.h"
 #include "math/size2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -46,19 +45,17 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Math
 {
 
+	class Vector2;
+
 	/*! @brief 2D Rect */
 	class MATH_EXPORT Rect2
 	{
-		Point2 m_origin;
 		Size2 m_size;
 
 	public:
 
-		Rect2(const Point2 &origin, const Size2 &size);
+		Rect2(const Size2 &size);
 		Rect2(const Rect2 &copy);
-
-		const Point2 & origin(void) const
-		    { return(m_origin); }
 
 		const Size2 & size(void) const
 		    { return(m_size); }

@@ -53,17 +53,17 @@ namespace Graphics
 
 	public:
 
-		PointGraphic(const Math::Point2 &origin);
+		PointGraphic(void);
 		virtual ~PointGraphic(void);
 
 	public: /* virtual */
 
-		VIRTUAL const GraphicType & type(void) const
+		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
 	public: /* static */
 
-		static const GraphicType Type;
+		static const Core::Type Type;
 	};
 
 }

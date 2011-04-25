@@ -39,15 +39,13 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
-Rect2::Rect2(const Point2 &o, const Size2 &s)
-    : m_origin(o),
-      m_size(s)
+Rect2::Rect2(const Size2 &s)
+    : m_size(s)
 {
 }
 
 Rect2::Rect2(const Rect2 &c)
-    : m_origin(c.m_origin),
-      m_size(c.m_size)
+    : m_size(c.m_size)
 {
 }
 

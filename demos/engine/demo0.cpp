@@ -135,7 +135,7 @@ public:
 			l_entity->addComponent(l_bcomponent);
 
 			m_asset->load("demos/engine/assets/mallow.png");
-			Math::Rect2 l_rect(Math::Point2::Null, m_asset->size());
+			Math::Rect2 l_rect(m_asset->size());
 			Game::RenderComponent *l_rcomponent =
 			    new Game::RenderComponent("render", *l_entity);
 			l_rcomponent->graphic() = new Graphics::QuadGraphic(l_rect);

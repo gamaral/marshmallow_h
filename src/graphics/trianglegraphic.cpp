@@ -37,13 +37,12 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const GraphicType TriangleGraphic::Type(TriangleGraphicType);
+const Core::Type TriangleGraphic::Type("Graphics::TriangleGraphic");
 
 TriangleGraphic::TriangleGraphic(const Math::Vector2 &p1,
                                  const Math::Vector2 &p2,
-                                 const Math::Vector2 &p3,
-                                 const Math::Point2  &o)
-    : GraphicBase(o)
+                                 const Math::Vector2 &p3)
+    : GraphicBase()
 {
 	m_points[0] = p1;
 	m_points[1] = p2;

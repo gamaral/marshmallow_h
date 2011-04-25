@@ -57,8 +57,7 @@ namespace Graphics
 
 		TriangleGraphic(const Math::Vector2 &p1,
 		                const Math::Vector2 &p2,
-		                const Math::Vector2 &p3,
-		                const Math::Point2  &origin);
+		                const Math::Vector2 &p3);
 		virtual ~TriangleGraphic(void);
 
 	public: /* operators */
@@ -68,12 +67,12 @@ namespace Graphics
 
 	public: /* virtual */
 
-		VIRTUAL const GraphicType & type(void) const
+		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
 	public: /* static */
 
-		static const GraphicType Type;
+		static const Core::Type Type;
 	};
 
 }

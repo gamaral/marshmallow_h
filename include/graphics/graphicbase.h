@@ -40,7 +40,6 @@
 #include "graphics/igraphic.h"
 
 #include "core/shared.h"
-#include "math/point2.h"
 #include "graphics/textureasset.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -51,7 +50,6 @@ namespace Graphics
 	/*! @brief Graphics Quad Graphic class */
 	class GRAPHICS_EXPORT GraphicBase : public IGraphic
 	{
-		Math::Point2 m_origin;
 		Graphics::WeakTextureAsset m_texture;
 		float m_rotation;
 
@@ -59,13 +57,10 @@ namespace Graphics
 
 	public:
 
-		GraphicBase(const Math::Point2 &origin = Math::Point2::Null);
+		GraphicBase(void);
 		virtual ~GraphicBase(void) {};
 
 	public: /* virtual */
-
-		VIRTUAL const Math::Point2 & origin(void) const
-		    { return(m_origin); }
 
 		VIRTUAL const WeakTextureAsset & texture(void) const
 		    { return(m_texture); }
@@ -73,7 +68,6 @@ namespace Graphics
 		VIRTUAL float rotation(void) const
 		    { return(m_rotation); }
 
-		VIRTUAL void setOrigin(const Math::Point2 &origin);
 		VIRTUAL void setTexture(WeakTextureAsset texture);
 		VIRTUAL void setRotation(float angle);
 	};

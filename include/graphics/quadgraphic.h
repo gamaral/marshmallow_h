@@ -59,8 +59,7 @@ namespace Graphics
 		QuadGraphic(const Math::Vector2 &tl,
 		            const Math::Vector2 &bl,
 		            const Math::Vector2 &br,
-		            const Math::Vector2 &tr,
-		            const Math::Point2  &origin = Math::Point2::Null);
+		            const Math::Vector2 &tr);
 		QuadGraphic(const Math::Rect2 &rect);
 		virtual ~QuadGraphic(void);
 
@@ -71,12 +70,12 @@ namespace Graphics
 
 	public: /* virtual */
 
-		VIRTUAL const GraphicType & type(void) const
+		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
 	public: /* static */
 
-		static const GraphicType Type;
+		static const Core::Type Type;
 	};
 
 }

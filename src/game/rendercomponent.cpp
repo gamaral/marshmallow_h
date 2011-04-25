@@ -67,7 +67,7 @@ void
 RenderComponent::render(void)
 {
 	if (m_position && m_graphic)
-		Graphics::Painter::Draw(*m_graphic, &m_position->position());
+		Graphics::Painter::Draw(*m_graphic, m_position->position());
 }
 
 bool

@@ -42,13 +42,11 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Math
-{
-	class Point2;
-}
-
 namespace Core
 {
+	class StrHash;
+	typedef StrHash Type;
+
 	template <class T> class Shared;
 	template <class T> class Weak;
 }
@@ -59,26 +57,12 @@ namespace Graphics
 	class TextureAsset;
 	typedef Core::Weak<TextureAsset> WeakTextureAsset;
 
-	enum GraphicType
-	{
-		UnknownGraphicType = 0,
-		PointGraphicType,
-		LineGraphicType,
-		TriangleGraphicType,
-		QuadGraphicType,
-		PolygonGraphicType,
-		GraphicTypeMax
-	};
-
 	/*! @brief Graphics Graphic Interface */
 	struct GRAPHICS_EXPORT IGraphic
 	{
 		virtual ~IGraphic(void) {};
 
-		virtual const GraphicType & type(void) const = 0;
-
-		virtual const Math::Point2 & origin(void) const = 0;
-		virtual void setOrigin(const Math::Point2 &origin) = 0;
+		virtual const Core::Type & type(void) const = 0;
 
 		virtual const WeakTextureAsset & texture(void) const = 0;
 		virtual void setTexture(WeakTextureAsset texture) = 0;

@@ -37,14 +37,13 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const GraphicType QuadGraphic::Type(QuadGraphicType);
+const Core::Type QuadGraphic::Type("Graphics::QuadGraphic");
 
 QuadGraphic::QuadGraphic(const Math::Vector2 &tl,
                          const Math::Vector2 &bl,
                          const Math::Vector2 &br,
-                         const Math::Vector2 &tr,
-                         const Math::Point2  &o)
-    : GraphicBase(o)
+                         const Math::Vector2 &tr)
+    : GraphicBase()
 {
 	m_vectors[0] = tl;
 	m_vectors[1] = bl;
@@ -53,7 +52,7 @@ QuadGraphic::QuadGraphic(const Math::Vector2 &tl,
 }
 
 QuadGraphic::QuadGraphic(const Math::Rect2  &r)
-    : GraphicBase(r.origin())
+    : GraphicBase()
 {
 	m_vectors[0] = r.topLeft();
 	m_vectors[1] = r.bottomLeft();

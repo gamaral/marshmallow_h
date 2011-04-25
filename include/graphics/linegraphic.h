@@ -56,8 +56,7 @@ namespace Graphics
 	public:
 
 		LineGraphic(const Math::Vector2 &p1,
-		            const Math::Vector2 &p2,
-		            const Math::Point2  &origin = Math::Point2::Null);
+		            const Math::Vector2 &p2);
 		virtual ~LineGraphic(void);
 
 		const Math::Vector2 & beginning(void) const
@@ -73,12 +72,12 @@ namespace Graphics
 
 	public: /* virtual */
 
-		VIRTUAL const GraphicType & type(void) const
+		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
 	public: /* static */
 
-		static const GraphicType Type;
+		static const Core::Type Type;
 	};
 
 }

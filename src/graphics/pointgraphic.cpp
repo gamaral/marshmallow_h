@@ -37,10 +37,10 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const GraphicType PointGraphic::Type(PointGraphicType);
+const Core::Type PointGraphic::Type("Graphics::PointGraphic");
 
-PointGraphic::PointGraphic(const Math::Point2 &o)
-    : GraphicBase(o)
+PointGraphic::PointGraphic(void)
+    : GraphicBase()
 {
 }
 

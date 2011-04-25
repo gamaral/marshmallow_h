@@ -37,12 +37,11 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const GraphicType LineGraphic::Type(LineGraphicType);
+const Core::Type LineGraphic::Type("Graphics::LineGraphic");
 
 LineGraphic::LineGraphic(const Math::Vector2 &p1,
-                         const Math::Vector2 &p2,
-                         const Math::Point2  &o)
-    : GraphicBase(o)
+                         const Math::Vector2 &p2)
+    : GraphicBase()
 {
 	m_points[0] = p1;
 	m_points[1] = p2;

@@ -56,8 +56,7 @@ namespace Graphics
 
 	public:
 
-		PolygonGraphic(const Math::Polygon2 &polygon,
-		               const Math::Point2   &origin);
+		PolygonGraphic(const Math::Polygon2 &polygon);
 		virtual ~PolygonGraphic(void);
 
 		const Math::Polygon2 &vectors(void) const
@@ -73,12 +72,12 @@ namespace Graphics
 
 	public: /* virtual */
 
-		VIRTUAL const GraphicType & type(void) const
+		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
 	public: /* static */
 
-		static const GraphicType Type;
+		static const Core::Type Type;
 	};
 
 }

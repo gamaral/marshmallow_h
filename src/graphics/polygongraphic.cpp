@@ -37,11 +37,10 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const GraphicType PolygonGraphic::Type(PolygonGraphicType);
+const Core::Type PolygonGraphic::Type("Graphics::PolygonGraphic");
 
-PolygonGraphic::PolygonGraphic(const Math::Polygon2 &pn,
-                               const Math::Point2 &o)
-    : GraphicBase(o),
+PolygonGraphic::PolygonGraphic(const Math::Polygon2 &pn)
+    : GraphicBase(),
       m_vectors(pn)
 {
 }
