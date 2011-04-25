@@ -41,7 +41,7 @@ using namespace Game;
 
 const Core::Type PositionComponent::Type("Game::PositionComponent");
 
-PositionComponent::PositionComponent(const Core::Identifier &i, WeakEntity e)
+PositionComponent::PositionComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e),
       m_position()
 {
@@ -49,5 +49,19 @@ PositionComponent::PositionComponent(const Core::Identifier &i, WeakEntity e)
 
 PositionComponent::~PositionComponent(void)
 {
+}
+
+bool
+PositionComponent::serialize(TinyXML::TiXmlElement &n) const
+{
+	UNUSED(n);
+	return(true);
+}
+
+bool
+PositionComponent::deserialize(TinyXML::TiXmlElement &n)
+{
+	UNUSED(n);
+	return(true);
 }
 

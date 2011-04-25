@@ -34,59 +34,42 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITYBASE_H
-#define GAME_ENTITYBASE_H 1
+#ifndef GAME_ICOMPONENTFACTORY_H
+#define GAME_ICOMPONENTFACTORY_H 1
 
-#include "game/ientity.h"
-
-#include "EASTL/list.h"
-using namespace eastl;
-
-#include "core/identifier.h"
-#include "core/shared.h"
+#include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Core
+{
+	class StrHash;
+	typedef StrHash Identifier;
+	typedef StrHash Type;
+
+	template <class T> class Shared;
+	template <class T> class Weak;
+}
 
 namespace Game
 {
 
-	/*! @brief Entity Base Class */
-	class GAME_EXPORT EntityBase : public IEntity
+	struct IComponent;
+	typedef Core::Shared<IComponent> SharedComponent;
+	typedef Core::Weak<IComponent> WeakComponent;
+
+	struct IEntity;
+
+	/*! @brief Game ComponentFactory Interface */
+	struct GAME_EXPORT IComponentFactory
 	{
-		typedef list<SharedComponent> ComponentList;
+		virtual ~IComponentFactory(void) {};
 
-		ComponentList m_components;
-		Core::Identifier m_id;
-		bool m_killed;
-
-		NO_COPY(EntityBase);
-
-	public:
-
-		EntityBase(const Core::Identifier &identifier);
-		virtual ~EntityBase(void);
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
-
-		VIRTUAL void addComponent(SharedComponent component);
-		VIRTUAL void removeComponent(const SharedComponent &component);
-		VIRTUAL SharedComponent component(const Core::Identifier &identifier) const;
-		VIRTUAL SharedComponent componentType(const Core::Type &type) const;
-
-		VIRTUAL void render(void);
-		VIRTUAL void update(TIME delta);
-
-		VIRTUAL void kill(void)
-		    { m_killed = true; }
-		VIRTUAL bool isZombie(void) const
-		    { return(m_killed); }
-
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		virtual SharedComponent createComponent(const Core::Type &type,
+		    const Core::Identifier &identifier, IEntity &entity) const = 0;
 	};
+	typedef Core::Shared<IComponentFactory> SharedComponentFactory;
+	typedef Core::Weak<IComponentFactory> WeakComponentFactory;
 
 }
 

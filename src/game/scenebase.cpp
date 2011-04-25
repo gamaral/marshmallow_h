@@ -34,10 +34,14 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml.h>
+
+#include "core/platform.h"
 #include "core/irenderable.h"
 #include "core/iupdateable.h"
 #include "event/eventmanager.h"
 #include "game/engine.h"
+#include "game/entityfactory.h"
 #include "game/ientity.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -124,5 +128,52 @@ SceneBase::update(TIME d)
 		else
 			l_entity->update(d);
 	}
+}
+
+bool
+SceneBase::serialize(TinyXML::TiXmlElement &n) const
+{
+	n.SetAttribute("id", id().str());
+	n.SetAttribute("type", type().str());
+
+	EntityList::const_iterator l_i;
+	for (l_i = m_entities.begin(); l_i != m_entities.end();) {
+		SharedEntity l_entity = (*l_i++);
+		TinyXML::TiXmlElement l_element("entity");
+		if (l_entity->serialize(l_element))
+			n.InsertEndChild(l_element);
+	}
+	
+	return(true);
+}
+
+bool
+SceneBase::deserialize(TinyXML::TiXmlElement &n)
+{
+	TinyXML::TiXmlElement *l_entity;
+	for (l_entity = n.FirstChildElement("entity") ;
+	     l_entity != 0 ;
+	     l_entity = n.NextSiblingElement("entity")) {
+
+		const char *l_id   = l_entity->Attribute("id");
+		const char *l_type = l_entity->Attribute("type");
+
+		SharedEntity l_sentity =
+		    EntityFactory::Instance()->createEntity(l_type, l_id);
+
+		if (!l_sentity) {
+			WARNING("Entity '%s' of type '%s' creation failed", l_id, l_type);
+			continue;
+		}
+
+		if (!l_sentity->deserialize(*l_entity)) {
+			WARNING("Entity '%s' of type '%s' failed deserialization", l_id, l_type);
+			continue;
+		}
+
+		addEntity(l_sentity);
+	}
+	
+	return(true);
 }
 

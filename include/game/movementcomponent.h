@@ -58,7 +58,7 @@ namespace Game
 		NO_COPY(MovementComponent);
 
 	public:
-		MovementComponent(const Core::Identifier &identifier, WeakEntity entity);
+		MovementComponent(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~MovementComponent(void);
 
 		Math::Vector2 & direction(void)
@@ -70,6 +70,9 @@ namespace Game
 		    { return(Type); }
 
 		VIRTUAL void update(TIME d);
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
 	public: /* static */
 

@@ -44,15 +44,3 @@ MainScene::MainScene(void)
 {
 }
 
-void
-MainScene::activate(void)
-{
-	SceneBase::activate();
-
-	if (!m_init) {
-		m_init = true;
-		addEntity(new Game::Entity("player"));
-		addEntity(new Game::Entity("enemy"));
-	}
-}
-

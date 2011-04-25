@@ -38,6 +38,7 @@
 #define GAME_IENTITY_H 1
 
 #include "core/irenderable.h"
+#include "core/iserializable.h"
 #include "core/iupdateable.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -60,7 +61,8 @@ namespace Game
 
 	/*! @brief Game Entity Interface */
 	struct GAME_EXPORT IEntity : public Core::IRenderable,
-	                             public Core::IUpdateable
+	                             public Core::IUpdateable,
+	                             public Core::ISerializable
 	{
 		virtual ~IEntity(void) {};
 

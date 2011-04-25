@@ -34,58 +34,27 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITYBASE_H
-#define GAME_ENTITYBASE_H 1
-
-#include "game/ientity.h"
-
-#include "EASTL/list.h"
-using namespace eastl;
-
-#include "core/identifier.h"
 #include "core/shared.h"
+#include "game/iscene.h"
+
+#ifndef GAME_SCENEBUILDER_H
+#define GAME_SCENEBUILDER_H 1
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
 
-	/*! @brief Entity Base Class */
-	class GAME_EXPORT EntityBase : public IEntity
+	/*! @brief Game Scene Builder */
+	class GAME_EXPORT SceneBuilder
 	{
-		typedef list<SharedComponent> ComponentList;
-
-		ComponentList m_components;
-		Core::Identifier m_id;
-		bool m_killed;
-
-		NO_COPY(EntityBase);
+		NO_COPY(SceneBuilder);
 
 	public:
+		SceneBuilder(void);
+		~SceneBuilder(void);
 
-		EntityBase(const Core::Identifier &identifier);
-		virtual ~EntityBase(void);
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
-
-		VIRTUAL void addComponent(SharedComponent component);
-		VIRTUAL void removeComponent(const SharedComponent &component);
-		VIRTUAL SharedComponent component(const Core::Identifier &identifier) const;
-		VIRTUAL SharedComponent componentType(const Core::Type &type) const;
-
-		VIRTUAL void render(void);
-		VIRTUAL void update(TIME delta);
-
-		VIRTUAL void kill(void)
-		    { m_killed = true; }
-		VIRTUAL bool isZombie(void) const
-		    { return(m_killed); }
-
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		bool load(const char *filename, IScene &scene);
 	};
 
 }

@@ -34,15 +34,11 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITYBASE_H
-#define GAME_ENTITYBASE_H 1
+#ifndef GAME_ENTITYFACTORYBASE_H
+#define GAME_ENTITYFACTORYBASE_H 1
 
-#include "game/ientity.h"
+#include "game/ientityfactory.h"
 
-#include "EASTL/list.h"
-using namespace eastl;
-
-#include "core/identifier.h"
 #include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -50,42 +46,27 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {
 
-	/*! @brief Entity Base Class */
-	class GAME_EXPORT EntityBase : public IEntity
+	/*! @brief Game Entity Factory Base Class */
+	class GAME_EXPORT EntityFactoryBase : public IEntityFactory
 	{
-		typedef list<SharedComponent> ComponentList;
+		static IEntityFactory *s_instance;
 
-		ComponentList m_components;
-		Core::Identifier m_id;
-		bool m_killed;
-
-		NO_COPY(EntityBase);
-
+		NO_COPY(EntityFactoryBase);
 	public:
 
-		EntityBase(const Core::Identifier &identifier);
-		virtual ~EntityBase(void);
+		EntityFactoryBase(void);
+		virtual ~EntityFactoryBase(void);
 
-	public: /* virtual */
+	public: /* operators */
 
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
+		VIRTUAL SharedEntity createEntity(const Core::Type &type,
+		    const Core::Identifier &identifier) const;
 
-		VIRTUAL void addComponent(SharedComponent component);
-		VIRTUAL void removeComponent(const SharedComponent &component);
-		VIRTUAL SharedComponent component(const Core::Identifier &identifier) const;
-		VIRTUAL SharedComponent componentType(const Core::Type &type) const;
+	public: /* static */
 
-		VIRTUAL void render(void);
-		VIRTUAL void update(TIME delta);
+		static IEntityFactory *Instance(void)
+		    { return(s_instance); }
 
-		VIRTUAL void kill(void)
-		    { m_killed = true; }
-		VIRTUAL bool isZombie(void) const
-		    { return(m_killed); }
-
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 	};
 
 }

@@ -54,22 +54,21 @@ class DemoBounceComponent : public Game::ComponentBase
 	Game::WeakMovementComponent m_movement;
 
 public:
-	DemoBounceComponent(Game::WeakEntity e)
+	DemoBounceComponent(Game::IEntity &e)
 	: Game::ComponentBase("bouncer", e)
 	{
 	}
 
 	VIRTUAL void update(TIME d)
 	{
-		if (!entity()) return;
 		UNUSED(d);
 
 		if (!m_position)
-			m_position = entity()->componentType("Game::PositionComponent").
+			m_position = entity().componentType("Game::PositionComponent").
 			    cast<Game::PositionComponent>();
 
 		if (!m_movement)
-			m_movement = entity()->componentType("Game::MovementComponent").
+			m_movement = entity().componentType("Game::MovementComponent").
 			    cast<Game::MovementComponent>();
 
 		if (m_position && m_movement) {
@@ -120,11 +119,11 @@ public:
 			Game::SharedEntity l_entity(new Game::Entity("player"));
 
 			Game::PositionComponent *l_pcomponent =
-			    new Game::PositionComponent("position", l_entity);
+			    new Game::PositionComponent("position", *l_entity);
 			l_entity->addComponent(l_pcomponent);
 
 			Game::MovementComponent *l_mcomponent =
-			    new Game::MovementComponent("movement", l_entity);
+			    new Game::MovementComponent("movement", *l_entity);
 			l_mcomponent->direction() = Math::Vector2(150, 150);
 			if (rand() % 2)
 			    l_mcomponent->direction().rx() *= -1;
@@ -132,13 +131,13 @@ public:
 			    l_mcomponent->direction().ry() *= -1;
 			l_entity->addComponent(l_mcomponent);
 
-			DemoBounceComponent *l_bcomponent = new DemoBounceComponent(l_entity);
+			DemoBounceComponent *l_bcomponent = new DemoBounceComponent(*l_entity);
 			l_entity->addComponent(l_bcomponent);
 
 			m_asset->load("demos/engine/assets/mallow.png");
 			Math::Rect2 l_rect(Math::Point2::Null, m_asset->size());
 			Game::RenderComponent *l_rcomponent =
-			    new Game::RenderComponent("render", l_entity);
+			    new Game::RenderComponent("render", *l_entity);
 			l_rcomponent->graphic() = new Graphics::QuadGraphic(l_rect);
 			l_rcomponent->graphic()->setTexture(m_asset);
 			l_entity->addComponent(l_rcomponent);

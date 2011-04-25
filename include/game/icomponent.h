@@ -38,6 +38,7 @@
 #define GAME_ICOMPONENT_H 1
 
 #include "core/irenderable.h"
+#include "core/iserializable.h"
 #include "core/iupdateable.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -57,7 +58,8 @@ namespace Game
 
 	/*! @brief Game Component Interface */
 	struct GAME_EXPORT IComponent : public Core::IRenderable,
-	                                public Core::IUpdateable
+	                                public Core::IUpdateable,
+	                                public Core::ISerializable
 	{
 		virtual ~IComponent(void) {};
 

@@ -48,8 +48,6 @@ public:
 
 public: /* VIRTUAL */
 
-	VIRTUAL void activate(void);
-
 	VIRTUAL const Core::Type & type(void) const
 	    { return(Type); }
 

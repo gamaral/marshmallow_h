@@ -1,10 +1,9 @@
 add_definitions(-DGRAPHICS_LIBRARY)
 
-include_directories(${GLPNG_INCLUDE_DIR})
-
 file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp)
 
 if(UNIX AND MARSHMALLOW_VIEWPORT_USE_X11_GLX)
+	include_directories(${GLPNG_INCLUDE_DIR})
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              viewport/x11_glx.cpp
 	                              painter/opengl.cpp
@@ -14,6 +13,7 @@ if(UNIX AND MARSHMALLOW_VIEWPORT_USE_X11_GLX)
 	                              ${OPENGL_LIBRARIES}
 	                              ${X11_LIBRARIES} Xxf86vm)
 elseif(WIN32 AND MARSHMALLOW_VIEWPORT_USE_WGL)
+	include_directories(${GLPNG_INCLUDE_DIR})
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              viewport/wgl.cpp
 	                              painter/opengl.cpp

@@ -1,0 +1,11 @@
+<scene>
+	<entity id="hero" type="Game::Entity">
+		<component id="position" type="Game::PositionComponent" />
+		<component id="movement" type="Game::MovementComponent" />
+		<component id="render"   type="Game::RenderComponent">
+			<graphic type="Graphics::QuadGraphic">
+				<asset type="texture" format="png" file="/tmp/file.png" />
+			</graphic>
+		</component>
+	</entity>
+</scene>

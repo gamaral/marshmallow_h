@@ -54,12 +54,12 @@ namespace Game
 	class GAME_EXPORT ComponentBase : public IComponent
 	{
 		Core::Identifier m_id;
-		WeakEntity m_entity;
+		IEntity &m_entity;
 
 		NO_COPY(ComponentBase);
 
 	public:
-		ComponentBase(const Core::Identifier &identifier, WeakEntity entity);
+		ComponentBase(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~ComponentBase(void);
 
 	public: /* virtual */
@@ -70,9 +70,14 @@ namespace Game
 		VIRTUAL void render(void) {};
 		VIRTUAL void update(TIME) {};
 
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const
+		    { UNUSED(node); return(true); }
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node)
+		    { UNUSED(node); return(true); }
+
 	protected:
 
-		WeakEntity &entity(void)
+		IEntity & entity(void) const
 		    { return(m_entity); }
 
 	};

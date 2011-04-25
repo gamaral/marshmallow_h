@@ -42,7 +42,7 @@ using namespace Game;
 
 const Core::Type MovementComponent::Type("Game::MovementComponent");
 
-MovementComponent::MovementComponent(const Core::Identifier &i, WeakEntity e)
+MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e),
       m_position(),
       m_direction()
@@ -59,11 +59,25 @@ MovementComponent::update(TIME d)
 	UNUSED(d);
 
 	if (!m_position)
-		m_position = entity()->componentType("Game::PositionComponent").
+		m_position = entity().componentType("Game::PositionComponent").
 		    staticCast<PositionComponent>();
 
 	if (m_position && m_direction)
 		m_position->position() += m_direction * static_cast<float>(d);
 
+}
+
+bool
+MovementComponent::serialize(TinyXML::TiXmlElement &n) const
+{
+	UNUSED(n);
+	return(true);
+}
+
+bool
+MovementComponent::deserialize(TinyXML::TiXmlElement &n)
+{
+	UNUSED(n);
+	return(true);
 }
 

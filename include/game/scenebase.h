@@ -72,6 +72,9 @@ namespace Game
 
 		VIRTUAL void render(void);
 		VIRTUAL void update(TIME delta);
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 	};
 	typedef Core::Shared<SceneBase> SharedSceneBase;
 	typedef Core::Weak<SceneBase> WeakSceneBase;

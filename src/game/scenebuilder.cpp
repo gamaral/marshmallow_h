@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/scenebuilder.h"
 
 /*!
  * @file
@@ -34,62 +34,41 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITYBASE_H
-#define GAME_ENTITYBASE_H 1
+#include <tinyxml.h>
 
+#include "core/platform.h"
 #include "game/ientity.h"
+#include "game/icomponent.h"
 
-#include "EASTL/list.h"
-using namespace eastl;
+MARSHMALLOW_NAMESPACE_USE;
+using namespace TinyXML;
+using namespace Game;
 
-#include "core/identifier.h"
-#include "core/shared.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+SceneBuilder::SceneBuilder(void)
 {
-
-	/*! @brief Entity Base Class */
-	class GAME_EXPORT EntityBase : public IEntity
-	{
-		typedef list<SharedComponent> ComponentList;
-
-		ComponentList m_components;
-		Core::Identifier m_id;
-		bool m_killed;
-
-		NO_COPY(EntityBase);
-
-	public:
-
-		EntityBase(const Core::Identifier &identifier);
-		virtual ~EntityBase(void);
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
-
-		VIRTUAL void addComponent(SharedComponent component);
-		VIRTUAL void removeComponent(const SharedComponent &component);
-		VIRTUAL SharedComponent component(const Core::Identifier &identifier) const;
-		VIRTUAL SharedComponent componentType(const Core::Type &type) const;
-
-		VIRTUAL void render(void);
-		VIRTUAL void update(TIME delta);
-
-		VIRTUAL void kill(void)
-		    { m_killed = true; }
-		VIRTUAL bool isZombie(void) const
-		    { return(m_killed); }
-
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
-	};
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+SceneBuilder::~SceneBuilder(void)
+{
+}
 
-#endif
+bool
+SceneBuilder::load(const char *f, IScene &s)
+{
+	TiXmlDocument l_document;
+	if (l_document.LoadFile(f, TIXML_DEFAULT_ENCODING)) {
+		TiXmlElement* l_root = l_document.FirstChildElement("scene");
+		if (!l_root) {
+			WARNING1("Invalid scene - document contains no 'scene' element.");
+			return(false);
+		}
+
+		if (!s.deserialize(*l_root)) {
+			WARNING1("Failed to deserialize scene.");
+			return(false);
+		}
+	} else return(false);
+
+	return(true);
+}
+

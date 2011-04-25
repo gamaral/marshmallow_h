@@ -37,6 +37,8 @@ distribution.
 #	endif
 #endif
 
+namespace TinyXML {
+
 // Note tha "PutString" hardcodes the same list. This
 // is less flexible than it appears. Changing the entries
 // or order will break putstring.	
@@ -1631,5 +1633,7 @@ bool TiXmlText::Blank() const
 		if ( !IsWhiteSpace( value[i] ) )
 			return false;
 	return true;
+}
+
 }
 

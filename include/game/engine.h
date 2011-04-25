@@ -37,122 +37,29 @@
 #ifndef GAME_ENGINE_H
 #define GAME_ENGINE_H 1
 
-#include "core/shared.h"
+#include "game/enginebase.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Event
-{
-	class EventManager;
-	typedef Core::Shared<EventManager> SharedEventManager;
-	
-	struct IEventListener;
-	typedef Core::Shared<IEventListener> SharedEventListener;
-}
 
 namespace Game
 {
 
-	class SceneManager;
-	typedef Core::Shared<SceneManager> SharedSceneManager;
-
-	class EngineEventListener;
-
-	/*! @brief Game Engine Class */
-	class GAME_EXPORT Engine
+	/*! @brief Game No Frills Engine Class */
+	class GAME_EXPORT Engine : public EngineBase
 	{
-		static Engine *s_instance;
-		Event::SharedEventManager  m_event_manager;
-		Game::SharedSceneManager   m_scene_manager;
-		Event::SharedEventListener m_event_listener;
-		float  m_fps;
-		float  m_ups;
-		TIME   m_delta_time;
-		int    m_exit_code;
-		int    m_frame_rate;
-		bool   m_running;
-
 		NO_COPY(Engine);
 
 	public:
 
 		/*!
-		 * @param fps Desired frame rate
-		 * @param ups Desired update rate (debug)
+		 * @param _fps Desired frame rate
+		 * @param _ups Desired update rate
 		 */
-		Engine(float fps = 60.0, float ups = 120.0);
-		virtual ~Engine(void);
+		Engine(float _fps = 60.0, float _ups = 120.0)
+		    : EngineBase(_fps, _ups) {}
 
-		/*!
-		 * @brief Start Engine
-		 */
-		int run(void);
-
-		/*!
-		 * @brief Stop Engine
-		 * @param exit_code Exit code
-		 */
-		void stop(int exit_code = 0);
-
-		/*!
-		 * @brief Event Manager
-		 */
-		Event::SharedEventManager eventManager(void) const;
-
-		/*!
-		 * @brief Scene Manager
-		 */
-		SharedSceneManager sceneManager(void) const;
-
-		/*!
-		 * @brief Set Event Manager
-		 */
-		void setEventManager(Event::SharedEventManager &m);
-
-		/*!
-		 * @brief Set Scene Manager
-		 */
-		void setSceneManager(SharedSceneManager &m);
-
-		/*!
-		 * @brief Target frames per second
-		 */
-		float fps(void) const
-		    { return(m_fps); }
-
-		/*!
-		 * @brief Target updates per second
-		 */
-		float ups(void) const
-		    { return(m_ups); }
-
-		/*!
-		 * @brief Time that has elapsed since last tick
-		 */
-		TIME deltaTime(void) const
-		    { return(m_delta_time); }
-
-		/*!
-		 * @brief Actual frame rate achieved
-		 */
-		int frameRate(void)
-		    { return(m_frame_rate); }
-
-	public: /* virtual */
-
-		virtual void setup(void);
-		virtual void initialize(void);
-		virtual void finalize(void);
-
-		virtual void render(void);
-		virtual void second(void);
-		virtual void tick(TIME timeout);
-		virtual void update(TIME delta);
-
-	public: /* static */
-
-		static Engine * Instance(void)
-		    { return(s_instance); }
+		virtual ~Engine(void)
+		    {};
 	};
 
 }

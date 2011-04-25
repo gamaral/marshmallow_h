@@ -34,59 +34,33 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITYBASE_H
-#define GAME_ENTITYBASE_H 1
+#ifndef CORE_ISERIALIZABLE_H
+#define CORE_ISERIALIZABLE_H 1
 
-#include "game/ientity.h"
+#include "core/global.h"
 
-#include "EASTL/list.h"
-using namespace eastl;
-
-#include "core/identifier.h"
-#include "core/shared.h"
+namespace TinyXML
+{
+	class TiXmlElement;
+}
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Game
+namespace Core
 {
+	template <class T> class Shared;
+	template <class T> class Weak;
 
-	/*! @brief Entity Base Class */
-	class GAME_EXPORT EntityBase : public IEntity
+	/*! @brief Serializable Interface */
+	struct CORE_EXPORT ISerializable
 	{
-		typedef list<SharedComponent> ComponentList;
+		virtual ~ISerializable(void) {};
 
-		ComponentList m_components;
-		Core::Identifier m_id;
-		bool m_killed;
-
-		NO_COPY(EntityBase);
-
-	public:
-
-		EntityBase(const Core::Identifier &identifier);
-		virtual ~EntityBase(void);
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
-
-		VIRTUAL void addComponent(SharedComponent component);
-		VIRTUAL void removeComponent(const SharedComponent &component);
-		VIRTUAL SharedComponent component(const Core::Identifier &identifier) const;
-		VIRTUAL SharedComponent componentType(const Core::Type &type) const;
-
-		VIRTUAL void render(void);
-		VIRTUAL void update(TIME delta);
-
-		VIRTUAL void kill(void)
-		    { m_killed = true; }
-		VIRTUAL bool isZombie(void) const
-		    { return(m_killed); }
-
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		virtual bool serialize(TinyXML::TiXmlElement &node) const = 0;
+		virtual bool deserialize(TinyXML::TiXmlElement &node) = 0;
 	};
+	typedef Shared<IRenderable> SharedSerializable;
+	typedef Weak<IRenderable> WeakSerializable;
 
 }
 

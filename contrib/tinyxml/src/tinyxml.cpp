@@ -31,6 +31,8 @@ distribution.
 
 #include "tinyxml.h"
 
+namespace TinyXML {
+
 FILE* TiXmlFOpen( const char* filename, const char* mode );
 
 bool TiXmlBase::condenseWhiteSpace = true;
@@ -1835,5 +1837,7 @@ bool TiXmlPrinter::Visit( const TiXmlUnknown& unknown )
 	buffer += ">";
 	DoLineBreak();
 	return true;
+}
+
 }
 

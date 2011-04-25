@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/engine.h"
+#include "game/enginebase.h"
 
 /*!
  * @file
@@ -53,9 +53,9 @@ using namespace Event;
 using namespace Graphics;
 using namespace Game;
 
-Engine *Engine::s_instance = 0;
+EngineBase *EngineBase::s_instance = 0;
 
-Engine::Engine(float f, float u)
+EngineBase::EngineBase(float f, float u)
     : m_event_manager(),
       m_scene_manager(),
       m_event_listener(),
@@ -72,25 +72,25 @@ Engine::Engine(float f, float u)
 		WARNING1("Started a second engine!");
 }
 
-Engine::~Engine(void)
+EngineBase::~EngineBase(void)
 {
 	if (this == s_instance)
 		s_instance = 0;
 }
 
 void
-Engine::setup(void)
+EngineBase::setup(void)
 {
-	m_event_listener = new EngineEventListener("Engine.EngineEventListener");
+	m_event_listener = new EngineEventListener("EngineBase.EngineEventListener");
 
 	if (!m_event_manager)
-		m_event_manager = new Event::EventManager("Engine.EventManager");
+		m_event_manager = new Event::EventManager("EngineBase.EventManager");
 	if (!m_scene_manager)
 		m_scene_manager = new SceneManager();
 }
 
 void
-Engine::initialize(void)
+EngineBase::initialize(void)
 {
 	Platform::Initialize();
 
@@ -101,7 +101,7 @@ Engine::initialize(void)
 }
 
 void
-Engine::finalize(void)
+EngineBase::finalize(void)
 {
 	m_scene_manager.clear();
 	m_event_manager.clear();
@@ -110,8 +110,33 @@ Engine::finalize(void)
 	Platform::Finalize();
 }
 
+SharedEventManager
+EngineBase::eventManager(void) const
+{
+	return(m_event_manager);
+}
+
+SharedSceneManager
+EngineBase::sceneManager(void) const
+{
+	return(m_scene_manager);
+}
+
+void
+EngineBase::setEventManager(SharedEventManager &m)
+{
+	m_event_manager = m;
+}
+
+void
+EngineBase::setSceneManager(SharedSceneManager &m)
+{
+	
+	m_scene_manager = m;
+}
+
 int
-Engine::run(void)
+EngineBase::run(void)
 {
 	setup();
 
@@ -179,40 +204,15 @@ Engine::run(void)
 }
 
 void
-Engine::stop(int ec)
+EngineBase::stop(int ec)
 {
-	INFO1("Engine stopped");
+	INFO1("EngineBase stopped");
 	m_exit_code = ec;
 	m_running = false;
 }
 
-SharedEventManager
-Engine::eventManager(void) const
-{
-	return(m_event_manager);
-}
-
-SharedSceneManager
-Engine::sceneManager(void) const
-{
-	return(m_scene_manager);
-}
-
 void
-Engine::setEventManager(SharedEventManager &m)
-{
-	m_event_manager = m;
-}
-
-void
-Engine::setSceneManager(SharedSceneManager &m)
-{
-	
-	m_scene_manager = m;
-}
-
-void
-Engine::render(void)
+EngineBase::render(void)
 {
 	Event::RenderEvent event;
 	eventManager()->dispatch(event);
@@ -222,7 +222,7 @@ Engine::render(void)
 }
 
 void
-Engine::tick(TIME t)
+EngineBase::tick(TIME t)
 {
 	TIMEOUT_INIT;
 	Viewport::Tick(TIMEOUT_DEC(t));
@@ -231,7 +231,7 @@ Engine::tick(TIME t)
 }
 
 void
-Engine::update(TIME d)
+EngineBase::update(TIME d)
 {
 	Event::UpdateEvent event(d);
 	eventManager()->dispatch(event);
@@ -239,7 +239,7 @@ Engine::update(TIME d)
 }
 
 void
-Engine::second(void)
+EngineBase::second(void)
 {
 	INFO("FPS %d!", m_frame_rate);
 	m_frame_rate = 0;

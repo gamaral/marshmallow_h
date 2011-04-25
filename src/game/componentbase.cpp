@@ -34,12 +34,13 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/platform.h"
 #include "game/ientity.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-ComponentBase::ComponentBase(const Core::Identifier &i, WeakEntity e)
+ComponentBase::ComponentBase(const Core::Identifier &i, IEntity &e)
     : m_id(i),
       m_entity(e)
 {

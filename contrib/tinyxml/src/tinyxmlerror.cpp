@@ -31,6 +31,8 @@ distribution.
 // It also cleans up the code a bit.
 //
 
+namespace TinyXML {
+
 const char* TiXmlBase::errorString[ TIXML_ERROR_STRING_COUNT ] =
 {
 	"No error",
@@ -50,3 +52,6 @@ const char* TiXmlBase::errorString[ TIXML_ERROR_STRING_COUNT ] =
 	"Error parsing CDATA.",
 	"Error when TiXmlDocument added to document, because TiXmlDocument can only be at the root.",
 };
+
+}
+

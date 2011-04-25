@@ -40,9 +40,11 @@
 #include "EASTL/list.h"
 using namespace eastl;
 
-#include "core/identifier.h"
 #include "core/irenderable.h"
+#include "core/iserializable.h"
 #include "core/iupdateable.h"
+
+#include "core/identifier.h"
 #include "core/shared.h"
 #include "core/type.h"
 
@@ -58,7 +60,8 @@ namespace Game
 
 	/*! @brief Game Scene Interface */
 	struct GAME_EXPORT IScene : public Core::IRenderable,
-	                            public Core::IUpdateable
+	                            public Core::IUpdateable,
+	                            public Core::ISerializable
 	{
 		virtual ~IScene(void) {};
 
@@ -74,6 +77,7 @@ namespace Game
 		virtual void deactivate(void) = 0;
 	};
 	typedef Core::Shared<IScene> SharedScene;
+	typedef Core::Weak<IScene> WeakScene;
 
 }
 

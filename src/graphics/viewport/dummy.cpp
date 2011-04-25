@@ -77,18 +77,16 @@ void
 Viewport::Tick(TIME t)
 {
 	UNUSED(t);
-	INFO1("Dummy viewport ticked");
 }
 
 void
 Viewport::SwapBuffer(void)
 {
-	INFO1("Dummy viewport swapped imaginary buffer");
 }
 
 const Math::Size2
 Viewport::Size(void)
 {
-	return(Math::Size2());
+	return(Math::Size2(DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT));
 }
 

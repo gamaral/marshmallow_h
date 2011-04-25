@@ -44,7 +44,7 @@ using namespace Game;
 
 const Core::Type RenderComponent::Type("Game::RenderComponent");
 
-RenderComponent::RenderComponent(const Core::Identifier &i, WeakEntity e)
+RenderComponent::RenderComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e),
       m_position(),
       m_graphic()
@@ -59,7 +59,7 @@ void
 RenderComponent::update(TIME)
 {
 	if (!m_position)
-		m_position = entity()->componentType("Game::PositionComponent").
+		m_position = entity().componentType("Game::PositionComponent").
 		    staticCast<PositionComponent>();
 }
 
@@ -68,5 +68,19 @@ RenderComponent::render(void)
 {
 	if (m_position && m_graphic)
 		Graphics::Painter::Draw(*m_graphic, &m_position->position());
+}
+
+bool
+RenderComponent::serialize(TinyXML::TiXmlElement &n) const
+{
+	UNUSED(n);
+	return(true);
+}
+
+bool
+RenderComponent::deserialize(TinyXML::TiXmlElement &n)
+{
+	UNUSED(n);
+	return(true);
 }
 

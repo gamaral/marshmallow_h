@@ -34,7 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml.h>
+
 #include "core/platform.h"
+#include "game/componentfactory.h"
 #include "game/icomponent.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -120,5 +123,42 @@ EntityBase::update(TIME d)
 	for (l_i = m_components.begin(); l_i != l_c; ++l_i)
 		(*l_i)->update(d);
 	INFO("%s: Components updated.", id().str());
+}
+
+bool
+EntityBase::serialize(TinyXML::TiXmlElement &n) const
+{
+	UNUSED(n);
+	return(false);
+}
+
+bool
+EntityBase::deserialize(TinyXML::TiXmlElement &n)
+{
+	TinyXML::TiXmlElement *l_component;
+	for (l_component = n.FirstChildElement("component") ;
+	     l_component != 0 ;
+	     l_component = n.NextSiblingElement("component")) {
+
+		const char *l_id   = l_component->Attribute("id");
+		const char *l_type = l_component->Attribute("type");
+
+		SharedComponent l_scomponent =
+		    ComponentFactory::Instance()->createComponent(l_type, l_id, *this);
+
+		if (!l_scomponent) {
+			WARNING("Component '%s' of type '%s' creation failed", l_id, l_type);
+			continue;
+		}
+
+		if (!l_scomponent->deserialize(*l_component)) {
+			WARNING("Component '%s' of type '%s' failed deserialization", l_id, l_type);
+			continue;
+		}
+
+		addComponent(l_scomponent);
+	}
+
+	return(true);
 }
 

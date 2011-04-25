@@ -36,6 +36,10 @@
 
 MARSHMALLOW_NAMESPACE_USE;
 
+#include <game/componentfactory.h>
+#include <game/entityfactory.h>
+#include <game/scenebuilder.h>
+
 #include "mainscene.h"
 
 Demo::Demo(void)
@@ -49,8 +53,14 @@ Demo::initialize(void)
 {
 	Engine::initialize();
 
+	Game::EntityFactory l_ef;
+	Game::ComponentFactory l_cf;
+
 	Game::SharedScene l_scene(new MainScene);
 	sceneManager()->push(l_scene);
+
+	Game::SceneBuilder builder;
+	builder.load("demos/marshmallow/assets/mainscene.xml", *l_scene);
 }
 
 void

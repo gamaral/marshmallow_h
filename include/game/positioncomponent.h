@@ -54,7 +54,7 @@ namespace Game
 		NO_COPY(PositionComponent);
 
 	public:
-		PositionComponent(const Core::Identifier &i, WeakEntity entity);
+		PositionComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~PositionComponent(void);
 
 		Math::Point2 & position(void)
@@ -64,6 +64,9 @@ namespace Game
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
 	public: /* static */
 

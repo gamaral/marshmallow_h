@@ -64,7 +64,7 @@ namespace Game
 		NO_COPY(RenderComponent);
 
 	public:
-		RenderComponent(const Core::Identifier &i, WeakEntity entity);
+		RenderComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~RenderComponent(void);
 
 		Graphics::SharedGraphic & graphic(void)
@@ -77,6 +77,9 @@ namespace Game
 
 		VIRTUAL void render(void);
 		VIRTUAL void update(TIME d);
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
 	public: /* static */
 

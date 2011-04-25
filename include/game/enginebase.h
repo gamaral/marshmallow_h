@@ -34,14 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_SCENEMANAGER_H
-#define GAME_SCENEMANAGER_H 1
+#ifndef GAME_ENGINEBASE_H
+#define GAME_ENGINEBASE_H 1
 
-#include "EASTL/list.h"
-using namespace eastl;
-
-#include "core/irenderable.h"
-#include "core/iupdateable.h"
+#include "game/iengine.h"
 
 #include "core/shared.h"
 
@@ -49,44 +45,109 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
+	class EventManager;
+	typedef Core::Shared<EventManager> SharedEventManager;
+	
 	struct IEventListener;
 	typedef Core::Shared<IEventListener> SharedEventListener;
 }
 
 namespace Game
 {
-	struct IScene;
-	typedef Core::Shared<IScene> SharedScene;
 
-	/*! @brief Game Scene Manager */
-	class GAME_EXPORT SceneManager : public Core::IRenderable,
-                                         public Core::IUpdateable
+	class SceneManager;
+	typedef Core::Shared<SceneManager> SharedSceneManager;
+
+	class EngineBaseEventListener;
+
+	/*! @brief Game EngineBase Class */
+	class GAME_EXPORT EngineBase : public IEngine
 	{
-		typedef list<SharedScene> SceneStack;
+		static EngineBase *s_instance;
+		Event::SharedEventManager  m_event_manager;
+		Game::SharedSceneManager   m_scene_manager;
+		Event::SharedEventListener m_event_listener;
+		float  m_fps;
+		float  m_ups;
+		TIME   m_delta_time;
+		int    m_exit_code;
+		int    m_frame_rate;
+		bool   m_running;
 
-		SceneStack  m_stack;
-		SharedScene m_active;
-		Event::SharedEventListener m_renderListener;
-		Event::SharedEventListener m_updateListener;
-
-		NO_COPY(SceneManager);
+		NO_COPY(EngineBase);
 
 	public:
 
-		SceneManager(void);
-		virtual ~SceneManager(void);
+		/*!
+		 * @param fps Desired frame rate
+		 * @param ups Desired update rate
+		 */
+		EngineBase(float fps = 60.0, float ups = 120.0);
+		virtual ~EngineBase(void);
 
-		void push(SharedScene &scene);
-		void pop(void);
+		/*!
+		 * @brief Event Manager
+		 */
+		Event::SharedEventManager eventManager(void) const;
 
-		SharedScene active(void) const;
+		/*!
+		 * @brief Scene Manager
+		 */
+		SharedSceneManager sceneManager(void) const;
+
+		/*!
+		 * @brief Set Event Manager
+		 */
+		void setEventManager(Event::SharedEventManager &m);
+
+		/*!
+		 * @brief Set Scene Manager
+		 */
+		void setSceneManager(SharedSceneManager &m);
+
+		/*!
+		 * @brief Target frames per second
+		 */
+		float fps(void) const
+		    { return(m_fps); }
+
+		/*!
+		 * @brief Target updates per second
+		 */
+		float ups(void) const
+		    { return(m_ups); }
+
+		/*!
+		 * @brief Time that has elapsed since last tick
+		 */
+		TIME deltaTime(void) const
+		    { return(m_delta_time); }
+
+		/*!
+		 * @brief Actual frame rate achieved
+		 */
+		int frameRate(void)
+		    { return(m_frame_rate); }
 
 	public: /* virtual */
 
+		VIRTUAL int run(void);
+		VIRTUAL void stop(int exit_code = 0);
+
+		VIRTUAL void setup(void);
+		VIRTUAL void initialize(void);
+		VIRTUAL void finalize(void);
+
 		VIRTUAL void render(void);
+		VIRTUAL void second(void);
+		VIRTUAL void tick(TIME timeout);
 		VIRTUAL void update(TIME delta);
+
+	public: /* static */
+
+		static EngineBase * Instance(void)
+		    { return(s_instance); }
 	};
-	typedef Core::Shared<SceneManager> SharedSceneManager;
 
 }
 

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/componentfactorybase.h"
 
 /*!
  * @file
@@ -34,62 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITYBASE_H
-#define GAME_ENTITYBASE_H 1
+#include "game/movementcomponent.h"
+#include "game/positioncomponent.h"
+#include "game/rendercomponent.h"
 
-#include "game/ientity.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-#include "EASTL/list.h"
-using namespace eastl;
+IComponentFactory *ComponentFactoryBase::s_instance(0);
 
-#include "core/identifier.h"
-#include "core/shared.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+ComponentFactoryBase::ComponentFactoryBase(void)
 {
-
-	/*! @brief Entity Base Class */
-	class GAME_EXPORT EntityBase : public IEntity
-	{
-		typedef list<SharedComponent> ComponentList;
-
-		ComponentList m_components;
-		Core::Identifier m_id;
-		bool m_killed;
-
-		NO_COPY(EntityBase);
-
-	public:
-
-		EntityBase(const Core::Identifier &identifier);
-		virtual ~EntityBase(void);
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
-
-		VIRTUAL void addComponent(SharedComponent component);
-		VIRTUAL void removeComponent(const SharedComponent &component);
-		VIRTUAL SharedComponent component(const Core::Identifier &identifier) const;
-		VIRTUAL SharedComponent componentType(const Core::Type &type) const;
-
-		VIRTUAL void render(void);
-		VIRTUAL void update(TIME delta);
-
-		VIRTUAL void kill(void)
-		    { m_killed = true; }
-		VIRTUAL bool isZombie(void) const
-		    { return(m_killed); }
-
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
-	};
-
+	if (!s_instance) s_instance = this;
 }
 
-MARSHMALLOW_NAMESPACE_END
+ComponentFactoryBase::~ComponentFactoryBase(void)
+{
+	if (s_instance == this) s_instance = 0;
+}
 
-#endif
+SharedComponent
+ComponentFactoryBase::createComponent(const Core::Type &t,
+    const Core::Identifier &i, IEntity &e) const
+{
+	if (t == PositionComponent::Type) return(new PositionComponent(i, e));
+	else if (t == MovementComponent::Type) return(new MovementComponent(i, e));
+	else if (t == RenderComponent::Type) return(new RenderComponent(i, e));
+	return(SharedComponent());
+}
+
