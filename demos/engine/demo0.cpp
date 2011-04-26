@@ -35,7 +35,7 @@
 #include "graphics/quadgraphic.h"
 #include "graphics/textureasset.h"
 #include "graphics/viewport.h"
-#include "game/engine.h"
+#include "game/enginebase.h"
 #include "game/entity.h"
 #include "game/icomponent.h"
 #include "game/movementcomponent.h"
@@ -153,7 +153,7 @@ public:
 	}
 };
 
-class Demo : public Game::Engine
+class Demo : public Game::EngineBase
 {
 	int m_stop_timer;
 	Event::SharedEventListener m_debugListener;
@@ -161,7 +161,7 @@ class Demo : public Game::Engine
 public:
 
 	Demo(void)
-	: Engine(),
+	: EngineBase(),
 	  m_stop_timer(0),
 	  m_debugListener(new Event::DebugEventListener("log.txt"))
 	{
@@ -169,13 +169,8 @@ public:
 
 	VIRTUAL void initialize(void)
 	{
-		Engine::initialize();
+		EngineBase::initialize();
 
-#if 0
-		Graphics::Viewport::Redisplay(640, 480);
-		eventManager()->connect(m_debugListener, "Event::RenderEvent");
-		eventManager()->connect(m_debugListener, "Event::UpdateEvent");
-#endif
 		eventManager()->connect(m_debugListener, "Event::KeyboardEvent");
 
 		Game::SharedScene l_scene(new DemoScene);
@@ -184,12 +179,12 @@ public:
 
 	VIRTUAL void finalize(void)
 	{
-		Engine::finalize();
+		EngineBase::finalize();
 	}
 
 	VIRTUAL void second(void)
 	{
-		Engine::second();
+		EngineBase::second();
 
 		if (++m_stop_timer == 30)
 			stop();

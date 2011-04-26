@@ -43,23 +43,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
-	/*! @brief Game No Frills Entity Factory Class */
-	class GAME_EXPORT EntityFactory : public EntityFactoryBase
-	{
-
-		NO_COPY(EntityFactory);
-
-	public:
-
-		EntityFactory(void)
-		    : EntityFactoryBase() {}
-
-		virtual ~EntityFactory(void)
-		{};
-
-	};
-
+	typedef EntityFactoryBase EntityFactory;
 }
 
 MARSHMALLOW_NAMESPACE_END

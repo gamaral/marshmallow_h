@@ -44,10 +44,9 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {
 
-	/*! @brief Game Engine Class */
+	/*! @brief Game Engine Event Listener Class */
 	class GAME_EXPORT EngineEventListener : public Event::EventListenerBase
 	{
-
 		NO_COPY(EngineEventListener);
 
 	public:

@@ -49,7 +49,6 @@ namespace Game
 	/*! @brief Game Position Component Class */
 	class GAME_EXPORT PositionComponent : public ComponentBase
 	{
-
 		Math::Point2 m_position;
 		NO_COPY(PositionComponent);
 
@@ -71,7 +70,6 @@ namespace Game
 	public: /* static */
 
 		static const Core::Type Type;
-
 	};
 	typedef Core::Shared<PositionComponent> SharedPositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;

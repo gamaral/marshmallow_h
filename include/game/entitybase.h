@@ -50,7 +50,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {
 
-	/*! @brief Entity Base Class */
+	/*! @brief Game Entity Base Class */
 	class GAME_EXPORT EntityBase : public IEntity
 	{
 		typedef list<SharedComponent> ComponentList;

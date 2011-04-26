@@ -91,7 +91,6 @@ namespace Math
 	public: /* static */
 
 		static const Point3 Null;
-
 	};
 
 }

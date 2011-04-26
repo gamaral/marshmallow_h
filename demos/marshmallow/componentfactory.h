@@ -34,18 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENGINE_H
-#define GAME_ENGINE_H 1
+#ifndef COMPONENTFACTORY_H
+#define COMPONENTFACTORY_H 1
 
-#include "game/enginebase.h"
+#include <game/componentfactorybase.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+MARSHMALLOW_NAMESPACE_USE;
 
-namespace Game
+class GAME_EXPORT ComponentFactory : public Game::ComponentFactoryBase
 {
-	typedef EngineBase Engine;
-}
 
-MARSHMALLOW_NAMESPACE_END
+	NO_COPY(ComponentFactory);
+
+public:
+
+	ComponentFactory(void)
+	    : ComponentFactoryBase()
+	{}
+
+	virtual ~ComponentFactory(void)
+	{};
+
+public: /* virtual */
+
+	VIRTUAL Game::SharedComponent createComponent(const Core::Type &type,
+	    const Core::Identifier &identifier, Game::IEntity &entity) const;
+
+};
 
 #endif

@@ -59,6 +59,7 @@ namespace Game
 		NO_COPY(ComponentBase);
 
 	public:
+
 		ComponentBase(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~ComponentBase(void);
 
@@ -79,7 +80,6 @@ namespace Game
 
 		IEntity & entity(void) const
 		    { return(m_entity); }
-
 	};
 
 }

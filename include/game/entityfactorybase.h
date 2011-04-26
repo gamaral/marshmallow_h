@@ -52,12 +52,13 @@ namespace Game
 		static IEntityFactory *s_instance;
 
 		NO_COPY(EntityFactoryBase);
+
 	public:
 
 		EntityFactoryBase(void);
 		virtual ~EntityFactoryBase(void);
 
-	public: /* operators */
+	public: /* virtual */
 
 		VIRTUAL SharedEntity createEntity(const Core::Type &type,
 		    const Core::Identifier &identifier) const;

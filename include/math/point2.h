@@ -85,7 +85,6 @@ namespace Math
 	public: /* static */
 
 		static const Point2 Null;
-
 	};
 
 }

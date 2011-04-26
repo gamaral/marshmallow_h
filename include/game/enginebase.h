@@ -54,13 +54,12 @@ namespace Event
 
 namespace Game
 {
-
 	class SceneManager;
 	typedef Core::Shared<SceneManager> SharedSceneManager;
 
 	class EngineBaseEventListener;
 
-	/*! @brief Game EngineBase Class */
+	/*! @brief Game Engine Base Class */
 	class GAME_EXPORT EngineBase : public IEngine
 	{
 		static EngineBase *s_instance;

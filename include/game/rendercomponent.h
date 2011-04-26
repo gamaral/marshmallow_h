@@ -58,7 +58,6 @@ namespace Game
 	/*! @brief Game Render Component Class */
 	class GAME_EXPORT RenderComponent : public ComponentBase
 	{
-
 		WeakPositionComponent m_position;
 		Graphics::SharedGraphic m_graphic;
 		NO_COPY(RenderComponent);
@@ -84,7 +83,6 @@ namespace Game
 	public: /* static */
 
 		static const Core::Type Type;
-
 	};
 	typedef Core::Shared<RenderComponent> SharedRenderComponent;
 	typedef Core::Weak<RenderComponent> WeakRenderComponent;

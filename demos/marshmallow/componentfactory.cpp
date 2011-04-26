@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "componentfactory.h"
 
 /*!
  * @file
@@ -34,18 +34,14 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENGINE_H
-#define GAME_ENGINE_H 1
+#include "bouncecomponent.h"
 
-#include "game/enginebase.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+Game::SharedComponent
+ComponentFactory::createComponent(const Core::Type &t,
+    const Core::Identifier &i, Game::IEntity &e) const
 {
-	typedef EngineBase Engine;
+	if (BounceComponent::Type == t)
+		return(new BounceComponent(i, e));
+	else return(ComponentFactoryBase::createComponent(t, i, e));
 }
 
-MARSHMALLOW_NAMESPACE_END
-
-#endif

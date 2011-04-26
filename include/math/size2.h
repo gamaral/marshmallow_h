@@ -74,7 +74,6 @@ namespace Math
 
 		float & operator[](int i)
 		    { return(m_value[i % 2]); }
-
 	};
 
 }

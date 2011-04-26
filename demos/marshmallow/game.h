@@ -34,14 +34,17 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <game/engine.h>
+#ifndef GAME_H
+#define GAME_H 1
+
+#include <game/enginebase.h>
 
 #include <event/eventmanager.h>
 #include <game/scenemanager.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 
-class Demo : public Game::Engine
+class Demo : public Game::EngineBase
 {
 	int m_stop_timer;
 
@@ -54,4 +57,6 @@ public: /* virtual */
 	VIRTUAL void finalize(void);
 	VIRTUAL void second(void);
 };
+
+#endif
 

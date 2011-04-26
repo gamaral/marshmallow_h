@@ -71,7 +71,6 @@ namespace Math
 
 		const Math::Vector2 & operator[](int index) const
 		    { return(m_vectors.at(index)); }
-
 	};
 
 }

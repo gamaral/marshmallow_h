@@ -34,6 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#ifndef MAINSCENE_H
+#define MAINSCENE_H 1
+
 #include <game/scenebase.h>
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -54,4 +57,6 @@ public: /* VIRTUAL */
 public: /* static */
 	static const Core::Type Type;
 };
+
+#endif
 

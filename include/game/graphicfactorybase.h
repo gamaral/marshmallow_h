@@ -64,7 +64,6 @@ namespace Game
 
 		static IGraphicFactory *Instance(void)
 		    { return(s_instance); }
-
 	};
 
 }

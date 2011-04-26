@@ -60,7 +60,7 @@ namespace Game
 
 	struct IEntity;
 
-	/*! @brief Game ComponentFactory Interface */
+	/*! @brief Game Component Factory Interface */
 	struct GAME_EXPORT IComponentFactory
 	{
 		virtual ~IComponentFactory(void) {};

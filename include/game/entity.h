@@ -44,7 +44,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {
 
-	/*! @brief No Frills Entity Class */
+	/*! @brief Game No Frills Entity Class */
 	class GAME_EXPORT Entity : public EntityBase
 	{
 		NO_COPY(Entity);

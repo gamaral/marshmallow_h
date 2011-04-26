@@ -43,22 +43,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
-	/*! @brief Game No Frills Graphic Factory Class */
-	class GAME_EXPORT GraphicFactory : public GraphicFactoryBase
-	{
-
-		NO_COPY(GraphicFactory);
-
-	public:
-
-		GraphicFactory(void)
-		    : GraphicFactoryBase() {}
-
-		virtual ~GraphicFactory(void)
-		    {}
-	};
-
+	typedef GraphicFactoryBase GraphicFactory;
 }
 
 MARSHMALLOW_NAMESPACE_END

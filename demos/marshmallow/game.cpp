@@ -36,15 +36,15 @@
 
 MARSHMALLOW_NAMESPACE_USE;
 
-#include <game/componentfactory.h>
 #include <game/entityfactory.h>
 #include <game/graphicfactory.h>
 #include <game/scenebuilder.h>
 
+#include "componentfactory.h"
 #include "mainscene.h"
 
 Demo::Demo(void)
-    : Engine(),
+    : EngineBase(),
       m_stop_timer(0)
 {
 }
@@ -52,9 +52,9 @@ Demo::Demo(void)
 void
 Demo::initialize(void)
 {
-	Engine::initialize();
+	EngineBase::initialize();
 
-	Game::ComponentFactory l_cf;
+	ComponentFactory l_cf;
 	Game::EntityFactory l_ef;
 	Game::GraphicFactory l_gf;
 
@@ -68,13 +68,13 @@ Demo::initialize(void)
 void
 Demo::finalize(void)
 {
-	Engine::finalize();
+	EngineBase::finalize();
 }
 
 void
 Demo::second(void)
 {
-	Engine::second();
+	EngineBase::second();
 
 	if (++m_stop_timer == 10)
 		stop();

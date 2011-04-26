@@ -58,7 +58,7 @@ namespace Game
 		ComponentFactoryBase(void);
 		virtual ~ComponentFactoryBase(void);
 
-	public: /* operators */
+	public: /* virtual */
 
 		VIRTUAL SharedComponent createComponent(const Core::Type &type,
 		    const Core::Identifier &identifier, IEntity &entity) const;
@@ -67,7 +67,6 @@ namespace Game
 
 		static IComponentFactory *Instance(void)
 		    { return(s_instance); }
-
 	};
 
 }

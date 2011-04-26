@@ -34,18 +34,37 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENGINE_H
-#define GAME_ENGINE_H 1
+#ifndef BOUNCECOMPONENT_H
+#define BOUNCECOMPONENT_H 1
 
-#include "game/enginebase.h"
+#include <game/componentbase.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#include <game/movementcomponent.h>
+#include <game/positioncomponent.h>
 
-namespace Game
+MARSHMALLOW_NAMESPACE_USE;
+
+class BounceComponent : public Game::ComponentBase
 {
-	typedef EngineBase Engine;
-}
+	Game::WeakPositionComponent m_position;
+	Game::WeakMovementComponent m_movement;
 
-MARSHMALLOW_NAMESPACE_END
+public:
+
+	BounceComponent(const Core::Identifier &identifier, Game::IEntity &entity);
+	virtual ~BounceComponent(void);
+
+public: /* virtual */
+
+	VIRTUAL const Core::Type & type(void) const
+	    { return(Type); }
+
+	VIRTUAL void update(TIME d);
+
+public: /* static */
+
+	static const Core::Type Type;
+};
 
 #endif
+

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "bouncecomponent.h"
 
 /*!
  * @file
@@ -34,18 +34,49 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENGINE_H
-#define GAME_ENGINE_H 1
+#include <math/size2.h>
+#include <graphics/viewport.h>
+#include <game/ientity.h>
 
-#include "game/enginebase.h"
+const Core::Type BounceComponent::Type("BounceComponent");
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+BounceComponent::BounceComponent(const Core::Identifier &i, Game::IEntity &e)
+    : ComponentBase(i, e)
 {
-	typedef EngineBase Engine;
+	
 }
 
-MARSHMALLOW_NAMESPACE_END
+BounceComponent::~BounceComponent(void)
+{
+}
 
-#endif
+void
+BounceComponent::update(TIME d)
+{
+	if (!m_position)
+		m_position = entity().componentType("Game::PositionComponent").
+		    cast<Game::PositionComponent>();
+
+	if (!m_movement)
+		m_movement = entity().componentType("Game::MovementComponent").
+		    cast<Game::MovementComponent>();
+
+	if (m_position && m_movement) {
+		INFO("DELTA: %f", d);
+		INFO("Current position %f, %f",
+		    m_position->position().rx(), m_position->position().ry());
+
+		Math::Size2 l_vpsize = Graphics::Viewport::Size();
+
+		Math::Point2  &pos = m_position->position();
+		Math::Vector2 &dir = m_movement->direction();
+
+		if ((pos.rx() <= -l_vpsize.width() / 2 && dir.rx() < 0)
+		 || (pos.rx() >=  l_vpsize.width() / 2 && dir.rx() > 0))
+			dir.rx() *= -0.95f;
+		if ((pos.ry() <= -l_vpsize.height() / 2 && dir.ry() < 0)
+		 || (pos.ry() >=  l_vpsize.height() / 2 && dir.ry() > 0))
+			dir.ry() *= -0.95f;
+	}
+}
+
