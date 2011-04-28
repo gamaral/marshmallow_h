@@ -39,17 +39,9 @@
 
 #include "core/global.h"
 
+#include "core/fd.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
-{
-	class StrHash;
-	typedef StrHash Identifier;
-	typedef StrHash Type;
-
-	template <class T> class Shared;
-	template <class T> class Weak;
-}
 
 namespace Game
 {

@@ -44,9 +44,7 @@ using namespace eastl;
 #include "core/iserializable.h"
 #include "core/iupdateable.h"
 
-#include "core/identifier.h"
-#include "core/shared.h"
-#include "core/type.h"
+#include "core/fd.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

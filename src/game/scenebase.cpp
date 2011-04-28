@@ -36,7 +36,7 @@
 
 #include <tinyxml.h>
 
-#include "core/platform.h"
+#include "core/logger.h"
 #include "core/irenderable.h"
 #include "core/iupdateable.h"
 #include "event/eventmanager.h"

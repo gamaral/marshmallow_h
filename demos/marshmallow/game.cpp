@@ -36,11 +36,15 @@
 
 MARSHMALLOW_NAMESPACE_USE;
 
+#include <tinyxml.h>
+
+#include <math/vector2.h>
+#include <math/vector3.h>
+#include <graphics/viewport.h>
 #include <game/box2dscene.h>
 #include <game/entityfactory.h>
 #include <game/graphicfactory.h>
 #include <game/scenebuilder.h>
-#include <math/vector2.h>
 
 #include "componentfactory.h"
 
@@ -77,7 +81,13 @@ Demo::second(void)
 {
 	EngineBase::second();
 
-	if (++m_stop_timer == 10)
+	if (++m_stop_timer == 10) {
+		TinyXML::TiXmlDocument l_document;
+		TinyXML::TiXmlElement l_root("scene");
+		sceneManager()->active()->serialize(l_root);
+		l_document.InsertEndChild(l_root);
+		l_document.SaveFile("/tmp/scene.xml");
 		stop();
+	}
 }
 

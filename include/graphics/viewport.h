@@ -37,9 +37,10 @@
 #ifndef GRAPHICS_VIEWPORT_H
 #define GRAPHICS_VIEWPORT_H 1
 
-#include "graphics/config.h"
 #include "core/global.h"
 #include "math/size2.h"
+#include "math/vector3.h"
+#include "graphics/config.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -65,6 +66,9 @@ namespace Graphics
 		static void Tick(TIME timeout);
 
 		static void SwapBuffer(void);
+
+		static const Math::Vector3 Camera(void);
+		static void SetCamera(const Math::Vector3 &camera);
 
 		static const Math::Size2 Size(void);
 		static const Math::Size2 WindowSize(void);

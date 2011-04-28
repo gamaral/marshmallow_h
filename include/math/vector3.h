@@ -79,6 +79,9 @@ namespace Math
 		float & operator[](int i)
 		    { return(m_value[i % 3]); }
 
+		float operator[](int i) const
+		    { return(m_value[i % 3]); }
+
 		Vector3 normalized(void) const;
 		Vector3 & normalize(void);
 

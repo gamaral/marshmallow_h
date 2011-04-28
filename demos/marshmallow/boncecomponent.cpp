@@ -34,6 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <core/logger.h>
 #include <math/size2.h>
 #include <graphics/viewport.h>
 #include <game/ientity.h>

@@ -34,49 +34,21 @@
 
 #pragma once
 
-#ifndef CORE_GLOBAL_H
-#define CORE_GLOBAL_H 1
+#ifndef CORE_FD_H
+#define CORE_FD_H 1
 
-#include <cstdio>
-#include <cstdlib>
-
-#include "core/config.h"
-#include "core/environment.h"
-
-#ifdef MARSHMALLOW_NAMESPACE
-#   define MARSHMALLOW_NAMESPACE_BEGIN namespace MARSHMALLOW_NAMESPACE {
-#   define MARSHMALLOW_NAMESPACE_END   }
-#   define MARSHMALLOW_NAMESPACE_USE   using namespace MARSHMALLOW_NAMESPACE
-#else
-#   define MARSHMALLOW_NAMESPACE_BEGIN
-#   define MARSHMALLOW_NAMESPACE_END
-#   define MARSHMALLOW_NAMESPACE_USE
-#endif
-
-/********************************************************************* helpers */
-
-#define VIRTUAL
-#define NO_COPY(x) x(const x&)
-
-#define UNUSED(x) (void)x
-#define MIN(x,y) (x < y ? x : y)
-#define MAX(x,y) (x > y ? x : y)
-
-#define TIMEOUT_INIT const TIME l_start_time = Core::Platform::TimeStamp()
-#define TIMEOUT_DEC(x) (x -= (NOW() - l_start_time))
-
-/******************************************************************** global */
+#include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-/*! @brief Time Data Struct */
-struct TimeData
+namespace Core
 {
-    char string[21];
-    time_t system;
-    TIME internal;
-};
+	class StrHash;
+	typedef StrHash Identifier;
+	typedef StrHash Type;
 
+	template <class T> class Shared;
+	template <class T> class Weak;
+}
 MARSHMALLOW_NAMESPACE_END
 
 #endif

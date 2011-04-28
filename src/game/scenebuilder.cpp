@@ -36,7 +36,7 @@
 
 #include <tinyxml.h>
 
-#include "core/platform.h"
+#include "core/logger.h"
 #include "game/ientity.h"
 #include "game/icomponent.h"
 

@@ -36,7 +36,7 @@
 
 #include <tinyxml.h>
 
-#include "core/platform.h"
+#include "core/logger.h"
 #include "graphics/igraphic.h"
 #include "game/box2dscene.h"
 #include "game/ientity.h"

@@ -39,6 +39,8 @@
 
 #include "core/global.h"
 
+#define NOW Core::Platform::TimeStamp
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core

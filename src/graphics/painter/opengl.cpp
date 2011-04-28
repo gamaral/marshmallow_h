@@ -36,7 +36,7 @@
 
 #include <GL/gl.h>
 
-#include "core/platform.h"
+#include "core/logger.h"
 #include "graphics/linegraphic.h"
 #include "graphics/pointgraphic.h"
 #include "graphics/polygongraphic.h"

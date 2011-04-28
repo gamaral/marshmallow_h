@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "core/platform.h"
+#include "core/logger.h"
 #include "math/vector2.h"
 #include "event/debugeventlistener.h"
 #include "event/eventbase.h"
@@ -126,7 +126,7 @@ public:
 
 			Game::MovementComponent *l_mcomponent =
 			    new Game::MovementComponent("movement", *l_entity);
-			l_mcomponent->direction() = Math::Vector2(150, 150);
+			l_mcomponent->direction() = Math::Vector2(15, 15);
 			if (rand() % 2)
 			    l_mcomponent->direction().rx() *= -1;
 			if (rand() % 2)
@@ -137,7 +137,7 @@ public:
 			l_entity->addComponent(l_bcomponent);
 
 			m_asset->load("demos/engine/assets/mallow.png");
-			Math::Rect2 l_rect(m_asset->size());
+			Math::Rect2 l_rect(Math::Size2(5, 5));
 			Game::RenderComponent *l_rcomponent =
 			    new Game::RenderComponent("render", *l_entity);
 			l_rcomponent->graphic() = new Graphics::QuadGraphic(l_rect);

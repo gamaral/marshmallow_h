@@ -80,7 +80,17 @@ QuadGraphic::~QuadGraphic(void)
 bool
 QuadGraphic::serialize(TinyXML::TiXmlElement &n) const
 {
-	return(GraphicBase::serialize(n));
+	if (!GraphicBase::serialize(n))
+		return(false);
+
+	for (int i = 0; i < 4; ++i) {
+		TinyXML::TiXmlElement l_vector("vector");
+		l_vector.SetDoubleAttribute("x", m_vectors[i].rx());
+		l_vector.SetDoubleAttribute("y", m_vectors[i].ry());
+		n.InsertEndChild(l_vector);
+	}
+
+	return(true);
 }
 
 bool

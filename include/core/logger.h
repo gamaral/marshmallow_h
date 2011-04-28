@@ -26,16 +26,48 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "core/global.h"
-
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#pragma once
 
+#ifndef CORE_LOGGER_H
+#define CORE_LOGGER_H 1
 
-MARSHMALLOW_NAMESPACE_END
+#include <cstdio>
+#include <cstdlib>
 
+#include "core/config.h"
+#include "core/environment.h"
+#include "core/platform.h"
+
+/*
+ * TODO: Replace with Core::Logger
+ */
+
+#define FATAL(x,...) fprintf(stderr, "%s [%s:%d]: FATAL: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__),exit(-1)
+#define FATAL1(x) fprintf(stderr, "%s [%s:%d]: FATAL: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__),exit(-1)
+
+#define ERROR(x,...) fprintf(stderr, "%s [%s:%d]: ERROR: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
+#define ERROR1(x) fprintf(stderr, "%s [%s:%d]: ERROR: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
+
+#if defined(DEBUG) && DEBUG_VERBOSITY >= 1
+#   define WARNING(x,...) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
+#   define WARNING1(x) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
+#else
+#   define WARNING(x,...) (void)0
+#   define WARNING1(x) (void)0
+#endif
+
+#if defined(DEBUG) && DEBUG_VERBOSITY >= 2
+#   define INFO(x,...) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
+#   define INFO1(x) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
+#else
+#   define INFO(...) (void)0
+#   define INFO1(...) (void)0
+#endif
+
+#endif

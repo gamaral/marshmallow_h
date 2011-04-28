@@ -37,7 +37,7 @@
 #include <GL/gl.h>
 #include <GL/glpng.h>
 
-#include "core/platform.h"
+#include "core/logger.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;

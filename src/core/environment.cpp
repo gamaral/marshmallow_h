@@ -27,7 +27,7 @@
  */
 
 #include "core/global.h"
-#include "core/platform.h"
+#include "core/logger.h"
 
 /*!
  * @file

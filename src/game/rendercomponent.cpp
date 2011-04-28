@@ -36,7 +36,7 @@
 
 #include <tinyxml.h>
 
-#include "core/platform.h"
+#include "core/logger.h"
 #include "graphics/igraphic.h"
 #include "graphics/painter.h"
 #include "game/graphicfactorybase.h"
@@ -81,11 +81,12 @@ RenderComponent::serialize(TinyXML::TiXmlElement &n) const
 	n.SetAttribute("type", type().str());
 
 	TinyXML::TiXmlElement l_graphic("graphic");
-	if (m_graphic && m_graphic->serialize(l_graphic)) {
+	if (m_graphic && !m_graphic->serialize(l_graphic)) {
 		WARNING("Render component '%s' serialization failed to serialize graphic!",
 		    id().str());
 		return(false);
 	}
+	n.InsertEndChild(l_graphic);
 
 	return(true);
 }

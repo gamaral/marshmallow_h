@@ -53,27 +53,27 @@ Vector2
 Rect2::topLeft(void) const
 {
 	return(Vector2(-m_size.width()  / 2.f,
-	               -m_size.height() / 2.f));
+	                m_size.height() / 2.f));
 }
 
 Vector2
 Rect2::topRight(void) const
 {
 	return(Vector2(m_size.width()  / 2.f,
-	              -m_size.height() / 2.f));
+	               m_size.height() / 2.f));
 }
 
 Vector2
 Rect2::bottomLeft(void) const
 {
 	return(Vector2(-m_size.width()  / 2.f,
-	                m_size.height() / 2.f));
+	               -m_size.height() / 2.f));
 }
 
 Vector2
 Rect2::bottomRight(void) const
 {
 	return(Vector2(m_size.width()  / 2.f,
-	               m_size.height() / 2.f));
+	               -m_size.height() / 2.f));
 }
 

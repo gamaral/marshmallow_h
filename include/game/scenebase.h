@@ -39,6 +39,10 @@
 
 #include "game/iscene.h"
 
+#include "core/identifier.h"
+#include "core/shared.h"
+#include "core/type.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game

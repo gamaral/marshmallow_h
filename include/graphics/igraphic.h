@@ -38,18 +38,11 @@
 #define GRAPHICS_IGRAPHIC_H 1
 
 #include "core/iserializable.h"
+
+#include "core/fd.h"
 #include "graphics/config.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
-{
-	class StrHash;
-	typedef StrHash Type;
-
-	template <class T> class Shared;
-	template <class T> class Weak;
-}
 
 namespace Graphics
 {

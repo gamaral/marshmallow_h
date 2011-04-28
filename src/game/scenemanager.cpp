@@ -34,7 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
+#include "core/logger.h"
 #include "event/eventmanager.h"
 #include "event/rendereventlistener.h"
 #include "event/updateeventlistener.h"

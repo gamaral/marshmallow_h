@@ -73,6 +73,9 @@ namespace Math
 		float & operator[](int i)
 		    { return(m_value[i % 2]); }
 
+		float operator[](int i) const
+		    { return(m_value[i % 2]); }
+
 		Vector2 normalized(void) const;
 		Vector2 & normalize(void);
 

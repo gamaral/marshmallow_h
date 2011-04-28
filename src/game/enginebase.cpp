@@ -36,7 +36,7 @@
 
 #include "core/irenderable.h"
 #include "core/iupdateable.h"
-#include "core/platform.h"
+#include "core/logger.h"
 #include "event/eventmanager.h"
 #include "event/renderevent.h"
 #include "event/rendereventlistener.h"

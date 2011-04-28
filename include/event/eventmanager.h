@@ -42,18 +42,13 @@
 using namespace eastl;
 
 #include "core/global.h"
+#include "core/fd.h"
 #include "core/identifier.h"
 #include "core/shared.h"
 
 #include "ieventlistener.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
-{
-	class StrHash;
-	typedef StrHash Type;
-}
 
 namespace Event
 {

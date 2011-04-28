@@ -34,7 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
+#include "core/logger.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -84,9 +84,26 @@ Viewport::SwapBuffer(void)
 {
 }
 
+const Math::Vector3
+Viewport::Camera(void)
+{
+	return(Math::Vector3(0.f, 0.f, 1.f));
+}
+
+void
+Viewport::SetCamera(const Math::Vector3 &)
+{
+}
+
 const Math::Size2
 Viewport::Size(void)
 {
 	return(Math::Size2(DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT));
+}
+
+const Math::Size2
+Viewport::WindowSize(void)
+{
+	return(Math::Size2(DEFAULT_VIEWPORT_VWIDTH, DEFAULT_VIEWPORT_VHEIGHT));
 }
 

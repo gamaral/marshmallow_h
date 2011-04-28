@@ -36,7 +36,7 @@
 
 #include <tinyxml.h>
 
-#include "core/platform.h"
+#include "core/logger.h"
 #include "game/componentfactory.h"
 #include "game/icomponent.h"
 
@@ -129,8 +129,18 @@ EntityBase::update(TIME d)
 bool
 EntityBase::serialize(TinyXML::TiXmlElement &n) const
 {
-	UNUSED(n);
-	return(false);
+	n.SetAttribute("id", id().str());
+	n.SetAttribute("type", type().str());
+
+	ComponentList::const_iterator l_i;
+	for (l_i = m_components.begin(); l_i != m_components.end();) {
+		SharedComponent l_entity = (*l_i++);
+		TinyXML::TiXmlElement l_element("component");
+		if (l_entity->serialize(l_element))
+			n.InsertEndChild(l_element);
+	}
+	
+	return(true);
 }
 
 bool

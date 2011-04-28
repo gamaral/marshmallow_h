@@ -38,7 +38,7 @@
 
 #include <GL/gl.h>
 
-#include "core/platform.h"
+#include "core/logger.h"
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
@@ -55,6 +55,8 @@ struct Viewport::Internal
 	HGLRC context;
 	HWND  window;
 	RECT  wrect;
+	float camera[3];
+	float size[2];
 	bool  fullscreen;
 	bool  loaded;
 
@@ -65,6 +67,11 @@ struct Viewport::Internal
 	      loaded(false)
 	{
 		wrect.bottom = wrect.left = wrect.top = wrect.bottom = 0;
+
+		camera[0] = camera[1] = 0.f;  // camera x y
+		camera[2] = 1.f;              // camera zoom
+
+		size[0] = size[1] = 0.f;
 	}
 
 	bool
@@ -202,16 +209,10 @@ struct Viewport::Internal
 
 		/* initialize context */
 
-		const float l_hw = w / 2.f;
-		const float l_hh = h / 2.f;
-
 		glViewport(0, 0, w, h);
 		glClearColor(0., 0., 0., 0.);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-l_hw, l_hw, l_hh, -l_hh, -1.f, 1.f);
-		glMatrixMode(GL_MODELVIEW);
+		adjustView();
 		SwapBuffer();
 
 		if( glGetError() != GL_NO_ERROR )
@@ -250,6 +251,21 @@ struct Viewport::Internal
 			WARNING1("Failed to unregister window class");
 
 		loaded = false;
+	}
+
+	void
+	adjustView(void)
+	{
+		size[0] = DEFAULT_VIEWPORT_VWIDTH * camera[2];
+		size[1] = DEFAULT_VIEWPORT_VHEIGHT * camera[2];
+
+		const float l_hw = size[0] / 2.f;
+		const float l_hh = size[1] / 2.f;
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(-l_hw + camera[0], l_hw + camera[0], -l_hh + camera[1], l_hh + camera[1], -1.f, 1.f);
+		glMatrixMode(GL_MODELVIEW);
 	}
 	
 	static LRESULT CALLBACK
@@ -337,8 +353,30 @@ Viewport::SwapBuffer(void)
 	glLoadIdentity();
 }
 
+const Math::Vector3
+Viewport::Camera(void)
+{
+	return(Math::Vector3(MVI.camera[0], MVI.camera[1], MVI.camera[2]));
+}
+
+void
+Viewport::SetCamera(const Math::Vector3 &c)
+{
+	MVI.camera[0] = c[0];
+	MVI.camera[1] = c[1];
+	MVI.camera[2] = c[2];
+
+	MVI.adjustView();
+}
+
 const Math::Size2
 Viewport::Size(void)
+{
+	return(Math::Size2(MVI.size[0], MVI.size[1]));
+}
+
+const Math::Size2
+Viewport::WindowSize(void)
 {
 	if (MVI.loaded)
 		return(Math::Size2(static_cast<float>(MVI.wrect.right - MVI.wrect.left),
