@@ -43,9 +43,10 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-EntityBase::EntityBase(const Core::Identifier &i)
+EntityBase::EntityBase(const Core::Identifier &i, IScene &s)
     : m_components(),
       m_id(i),
+      m_scene(s),
       m_killed(false)
 {
 }

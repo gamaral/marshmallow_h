@@ -51,7 +51,7 @@ namespace Game
 
 	public:
 
-		Entity(const Core::Identifier &identifier);
+		Entity(const Core::Identifier &identifier, IScene &scene);
 		virtual ~Entity(void);
 
 	public: /* virtual */

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/scene.h"
 
 /*!
  * @file
@@ -34,29 +34,17 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MAINSCENE_H
-#define MAINSCENE_H 1
-
-#include <game/scenebase.h>
-
 MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-class MainScene : public Game::SceneBase
+const Core::Type Scene::Type("Game::Scene");
+
+Scene::Scene(const Core::Identifier &i)
+    : SceneBase(i)
 {
+}
 
-	bool m_init;
-public:
-
-	MainScene(void);
-
-public: /* VIRTUAL */
-
-	VIRTUAL const Core::Type & type(void) const
-	    { return(Type); }
-
-public: /* static */
-	static const Core::Type Type;
-};
-
-#endif
+Scene::~Scene(void)
+{
+}
 

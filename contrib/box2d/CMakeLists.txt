@@ -1,0 +1,153 @@
+set(BOX2D_Collision_SRCS
+	src/Collision/b2BroadPhase.cpp
+	src/Collision/b2CollideCircle.cpp
+	src/Collision/b2CollideEdge.cpp
+	src/Collision/b2CollidePolygon.cpp
+	src/Collision/b2Collision.cpp
+	src/Collision/b2Distance.cpp
+	src/Collision/b2DynamicTree.cpp
+	src/Collision/b2TimeOfImpact.cpp
+)
+set(BOX2D_Collision_HDRS
+	include/Box2D/Collision/b2BroadPhase.h
+	include/Box2D/Collision/b2Collision.h
+	include/Box2D/Collision/b2Distance.h
+	include/Box2D/Collision/b2DynamicTree.h
+	include/Box2D/Collision/b2TimeOfImpact.h
+)
+set(BOX2D_Shapes_SRCS
+	src/Collision/Shapes/b2CircleShape.cpp
+	src/Collision/Shapes/b2EdgeShape.cpp
+	src/Collision/Shapes/b2LoopShape.cpp
+	src/Collision/Shapes/b2PolygonShape.cpp
+)
+set(BOX2D_Shapes_HDRS
+	include/Box2D/Collision/Shapes/b2CircleShape.h
+	include/Box2D/Collision/Shapes/b2EdgeShape.h
+	include/Box2D/Collision/Shapes/b2LoopShape.h
+	include/Box2D/Collision/Shapes/b2PolygonShape.h
+	include/Box2D/Collision/Shapes/b2Shape.h
+)
+set(BOX2D_Common_SRCS
+	src/Common/b2BlockAllocator.cpp
+	src/Common/b2Draw.cpp
+	src/Common/b2Math.cpp
+	src/Common/b2Settings.cpp
+	src/Common/b2StackAllocator.cpp
+	src/Common/b2Timer.cpp
+)
+set(BOX2D_Common_HDRS
+	include/Box2D/Common/b2BlockAllocator.h
+	include/Box2D/Common/b2Draw.h
+	include/Box2D/Common/b2GrowableStack.h
+	include/Box2D/Common/b2Math.h
+	include/Box2D/Common/b2Settings.h
+	include/Box2D/Common/b2StackAllocator.h
+	include/Box2D/Common/b2Timer.h
+)
+set(BOX2D_Dynamics_SRCS
+	src/Dynamics/b2Body.cpp
+	src/Dynamics/b2ContactManager.cpp
+	src/Dynamics/b2Fixture.cpp
+	src/Dynamics/b2Island.cpp
+	src/Dynamics/b2World.cpp
+	src/Dynamics/b2WorldCallbacks.cpp
+)
+set(BOX2D_Dynamics_HDRS
+	include/Box2D/Dynamics/b2Body.h
+	include/Box2D/Dynamics/b2ContactManager.h
+	include/Box2D/Dynamics/b2Fixture.h
+	include/Box2D/Dynamics/b2Island.h
+	include/Box2D/Dynamics/b2TimeStep.h
+	include/Box2D/Dynamics/b2World.h
+	include/Box2D/Dynamics/b2WorldCallbacks.h
+)
+set(BOX2D_Contacts_SRCS
+	src/Dynamics/Contacts/b2CircleContact.cpp
+	src/Dynamics/Contacts/b2Contact.cpp
+	src/Dynamics/Contacts/b2ContactSolver.cpp
+	src/Dynamics/Contacts/b2PolygonAndCircleContact.cpp
+	src/Dynamics/Contacts/b2EdgeAndCircleContact.cpp
+	src/Dynamics/Contacts/b2EdgeAndPolygonContact.cpp
+	src/Dynamics/Contacts/b2LoopAndCircleContact.cpp
+	src/Dynamics/Contacts/b2LoopAndPolygonContact.cpp
+	src/Dynamics/Contacts/b2PolygonContact.cpp
+)
+set(BOX2D_Contacts_HDRS
+	include/Box2D/Dynamics/Contacts/b2CircleContact.h
+	include/Box2D/Dynamics/Contacts/b2Contact.h
+	include/Box2D/Dynamics/Contacts/b2ContactSolver.h
+	include/Box2D/Dynamics/Contacts/b2PolygonAndCircleContact.h
+	include/Box2D/Dynamics/Contacts/b2EdgeAndCircleContact.h
+	include/Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact.h
+	include/Box2D/Dynamics/Contacts/b2LoopAndCircleContact.h
+	include/Box2D/Dynamics/Contacts/b2LoopAndPolygonContact.h
+	include/Box2D/Dynamics/Contacts/b2PolygonContact.h
+)
+set(BOX2D_Joints_SRCS
+	src/Dynamics/Joints/b2DistanceJoint.cpp
+	src/Dynamics/Joints/b2FrictionJoint.cpp
+	src/Dynamics/Joints/b2GearJoint.cpp
+	src/Dynamics/Joints/b2Joint.cpp
+	src/Dynamics/Joints/b2MouseJoint.cpp
+	src/Dynamics/Joints/b2PrismaticJoint.cpp
+	src/Dynamics/Joints/b2PulleyJoint.cpp
+	src/Dynamics/Joints/b2RevoluteJoint.cpp
+	src/Dynamics/Joints/b2RopeJoint.cpp
+	src/Dynamics/Joints/b2WeldJoint.cpp
+	src/Dynamics/Joints/b2WheelJoint.cpp
+)
+set(BOX2D_Joints_HDRS
+	include/Box2D/Dynamics/Joints/b2DistanceJoint.h
+	include/Box2D/Dynamics/Joints/b2FrictionJoint.h
+	include/Box2D/Dynamics/Joints/b2GearJoint.h
+	include/Box2D/Dynamics/Joints/b2Joint.h
+	include/Box2D/Dynamics/Joints/b2MouseJoint.h
+	include/Box2D/Dynamics/Joints/b2PrismaticJoint.h
+	include/Box2D/Dynamics/Joints/b2PulleyJoint.h
+	include/Box2D/Dynamics/Joints/b2RevoluteJoint.h
+	include/Box2D/Dynamics/Joints/b2RopeJoint.h
+	include/Box2D/Dynamics/Joints/b2WeldJoint.h
+	include/Box2D/Dynamics/Joints/b2WheelJoint.h
+)
+set(BOX2D_Rope_SRCS
+	src/Rope/b2Rope.cpp
+)
+set(BOX2D_Rope_HDRS
+	include/Box2D/Rope/b2Rope.h
+)
+set(BOX2D_General_HDRS
+	include/Box2D/Box2D.h
+)
+include_directories( ./include )
+
+add_library(marshmallow_box2d
+	${BOX2D_General_HDRS}
+	${BOX2D_Joints_SRCS}
+	${BOX2D_Joints_HDRS}
+	${BOX2D_Contacts_SRCS}
+	${BOX2D_Contacts_HDRS}
+	${BOX2D_Dynamics_SRCS}
+	${BOX2D_Dynamics_HDRS}
+	${BOX2D_Common_SRCS}
+	${BOX2D_Common_HDRS}
+	${BOX2D_Shapes_SRCS}
+	${BOX2D_Shapes_HDRS}
+	${BOX2D_Collision_SRCS}
+	${BOX2D_Collision_HDRS}
+	${BOX2D_Rope_SRCS}
+	${BOX2D_Rope_HDRS}
+)
+
+if(MSVC)
+	# These are used to create visual studio folders.
+	source_group(Collision FILES ${BOX2D_Collision_SRCS} ${BOX2D_Collision_HDRS})
+	source_group(Collision\\Shapes FILES ${BOX2D_Shapes_SRCS} ${BOX2D_Shapes_HDRS})
+	source_group(Common FILES ${BOX2D_Common_SRCS} ${BOX2D_Common_HDRS})
+	source_group(Dynamics FILES ${BOX2D_Dynamics_SRCS} ${BOX2D_Dynamics_HDRS})
+	source_group(Dynamics\\Contacts FILES ${BOX2D_Contacts_SRCS} ${BOX2D_Contacts_HDRS})
+	source_group(Dynamics\\Joints FILES ${BOX2D_Joints_SRCS} ${BOX2D_Joints_HDRS})
+	source_group(Include FILES ${BOX2D_General_HDRS})
+	source_group(Rope FILES ${BOX2D_Rope_SRCS} ${BOX2D_Rope_HDRS})
+endif()
+

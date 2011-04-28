@@ -45,7 +45,6 @@
 #include "game/ientity.h"
 
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
 using namespace Game;
 
 SceneBase::SceneBase(const Core::Identifier &i)
@@ -159,7 +158,7 @@ SceneBase::deserialize(TinyXML::TiXmlElement &n)
 		const char *l_type = l_child->Attribute("type");
 
 		SharedEntity l_entity =
-		    EntityFactory::Instance()->createEntity(l_type, l_id);
+		    EntityFactory::Instance()->createEntity(l_type, l_id, *this);
 
 		if (!l_entity) {
 			WARNING("Entity '%s' of type '%s' creation failed", l_id, l_type);

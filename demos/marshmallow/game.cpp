@@ -36,12 +36,13 @@
 
 MARSHMALLOW_NAMESPACE_USE;
 
+#include <game/box2dscene.h>
 #include <game/entityfactory.h>
 #include <game/graphicfactory.h>
 #include <game/scenebuilder.h>
+#include <math/vector2.h>
 
 #include "componentfactory.h"
-#include "mainscene.h"
 
 Demo::Demo(void)
     : EngineBase(),
@@ -58,7 +59,7 @@ Demo::initialize(void)
 	Game::EntityFactory l_ef;
 	Game::GraphicFactory l_gf;
 
-	Game::SharedScene l_scene(new MainScene);
+	Game::SharedScene l_scene(new Game::Box2DScene("main", Math::Vector2(0, -10.f)));
 	sceneManager()->push(l_scene);
 
 	Game::SceneBuilder builder;

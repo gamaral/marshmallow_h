@@ -39,8 +39,8 @@ using namespace Game;
 
 const Core::Type Entity::Type("Game::Entity");
 
-Entity::Entity(const Core::Identifier &i)
-    : EntityBase(i)
+Entity::Entity(const Core::Identifier &i, IScene &s)
+    : EntityBase(i, s)
 {
 }
 

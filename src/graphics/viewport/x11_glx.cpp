@@ -254,7 +254,7 @@ struct Viewport::Internal
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(-l_hw, l_hw, l_hh, -l_hh, -1.f, 1.f);
+		glOrtho(-l_hw, l_hw, -l_hh, l_hh, -1.f, 1.f);
 		glMatrixMode(GL_MODELVIEW);
 		SwapBuffer();
 		glFlush();

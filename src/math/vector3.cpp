@@ -34,7 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <math.h>
+#include <Box2D/Common/b2Math.h>
+
+#include <cmath>
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;

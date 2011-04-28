@@ -34,6 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "game/box2dcomponent.h"
 #include "game/movementcomponent.h"
 #include "game/positioncomponent.h"
 #include "game/rendercomponent.h"
@@ -57,9 +58,10 @@ SharedComponent
 ComponentFactoryBase::createComponent(const Core::Type &t,
     const Core::Identifier &i, IEntity &e) const
 {
-	if (t == PositionComponent::Type) return(new PositionComponent(i, e));
+	if (t == Box2DComponent::Type) return(new Box2DComponent(i, e));
 	else if (t == MovementComponent::Type) return(new MovementComponent(i, e));
 	else if (t == RenderComponent::Type) return(new RenderComponent(i, e));
+	else if (t == PositionComponent::Type) return(new PositionComponent(i, e));
 	return(SharedComponent());
 }
 

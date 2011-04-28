@@ -35,10 +35,10 @@ add_library(marshmallow_graphics
 )
 
 target_link_libraries(marshmallow_graphics
-	marshmallow_event
-	marshmallow_math
 	marshmallow_core
 	marshmallow_eastl
+	marshmallow_event
+	marshmallow_math
 	${MARSHMALLOW_GRAPHICS_LIBS}
 )
 

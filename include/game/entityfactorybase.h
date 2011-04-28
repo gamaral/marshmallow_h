@@ -61,7 +61,7 @@ namespace Game
 	public: /* virtual */
 
 		VIRTUAL SharedEntity createEntity(const Core::Type &type,
-		    const Core::Identifier &identifier) const;
+		    const Core::Identifier &identifier, IScene &scene) const;
 
 	public: /* static */
 

@@ -109,6 +109,8 @@ public:
 	  m_init(false),
 	  m_asset(new Graphics::TextureAsset)
 	  {}
+	
+	virtual ~DemoScene(void) {};
 
 	VIRTUAL void activate(void)
 	{
@@ -116,7 +118,7 @@ public:
 
 		if (!m_init) {
 			m_init = true;
-			Game::SharedEntity l_entity(new Game::Entity("player"));
+			Game::SharedEntity l_entity(new Game::Entity("player", *this));
 
 			Game::PositionComponent *l_pcomponent =
 			    new Game::PositionComponent("position", *l_entity);

@@ -39,6 +39,8 @@
 
 #include "core/global.h"
 
+struct b2Vec3;
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
@@ -87,6 +89,7 @@ namespace Math
 
 		operator bool(void) const
 		    { return(m_value[0] || m_value[1] || m_value[2]); }
+		operator b2Vec3(void) const;
 
 		bool operator==(const Vector3 &rhs) const
 		    { return(m_value[0] == rhs.m_value[0] &&

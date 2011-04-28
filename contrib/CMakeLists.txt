@@ -36,6 +36,11 @@ set(TINYXML_LIBRARIES marshmallow_tinyxml PARENT_SCOPE)
 set(TINYXML_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tinyxml/include"
     PARENT_SCOPE)
 
+add_subdirectory(box2d)
+set(BOX2D_LIBRARIES marshmallow_box2d PARENT_SCOPE)
+set(BOX2D_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/box2d/include"
+    PARENT_SCOPE)
+
 if (MARSHMALLOW_CONTRIB_ZLIB AND ZLIB_FOUND)
 	add_subdirectory(zlib)
 endif()

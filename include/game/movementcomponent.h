@@ -77,7 +77,6 @@ namespace Game
 	public: /* static */
 
 		static const Core::Type Type;
-
 	};
 	typedef Core::Shared<MovementComponent> SharedMovementComponent;
 	typedef Core::Weak<MovementComponent> WeakMovementComponent;

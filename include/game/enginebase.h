@@ -81,7 +81,7 @@ namespace Game
 		 * @param fps Desired frame rate
 		 * @param ups Desired update rate
 		 */
-		EngineBase(float fps = 60.0, float ups = 120.0);
+		EngineBase(float fps = 60.0, float ups = 60.0);
 		virtual ~EngineBase(void);
 
 		/*!

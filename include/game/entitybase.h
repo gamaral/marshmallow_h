@@ -57,19 +57,23 @@ namespace Game
 
 		ComponentList m_components;
 		Core::Identifier m_id;
+		IScene &m_scene;
 		bool m_killed;
 
 		NO_COPY(EntityBase);
 
 	public:
 
-		EntityBase(const Core::Identifier &identifier);
+		EntityBase(const Core::Identifier &identifier, IScene &scene);
 		virtual ~EntityBase(void);
 
 	public: /* virtual */
 
 		VIRTUAL const Core::Identifier & id(void) const
 		    { return(m_id); }
+
+		VIRTUAL IScene &scene(void)
+		    { return(m_scene); }
 
 		VIRTUAL void addComponent(SharedComponent component);
 		VIRTUAL void removeComponent(const SharedComponent &component);

@@ -1,61 +1,72 @@
 <scene>
-	<entity id="marshmallow1" type="Game::Entity">
-		<component id="position" type="Game::PositionComponent" x="100" y="100" />
-		<component id="movement" type="Game::MovementComponent" x="-100" y="300" />
+	<entity id="wall" type="Game::Entity">
+		<component id="position" type="Game::PositionComponent" x="0" y="-25" />
 		<component id="render"   type="Game::RenderComponent">
-			<graphic type="Graphics::QuadGraphic" rotation="10">
-				<vector x="-32" y="-32" />
-				<vector x="-32" y="32" />
-				<vector x="32"  y="32" />
-				<vector x="32"  y="-32" />
-				<texture file="demos/engine/assets/mallow.png" />
+			<graphic type="Graphics::QuadGraphic">
+				<vector x="-20" y=".25" />
+				<vector x="-20" y="-.25" />
+				<vector x="20"  y="-.25" />
+				<vector x="20"  y=".25" />
 			</graphic>
 		</component>
-		<component id="custom" type="BounceComponent" />
+		<component id="physics" type="Game::Box2DComponent" width="40" height=".5" />
 	</entity>
 
-	<entity id="marshmallow2" type="Game::Entity">
-		<component id="position" type="Game::PositionComponent" x="-100" y="100" />
-		<component id="movement" type="Game::MovementComponent" x="200" y="0" />
+	<entity id="marshmallow1" type="Game::Entity">
+		<component id="position" type="Game::PositionComponent" x="1.2" y="10" />
 		<component id="render"   type="Game::RenderComponent">
-			<graphic type="Graphics::QuadGraphic" rotation="-10">
-				<vector x="-64" y="-64" />
-				<vector x="-64" y="64" />
-				<vector x="64"  y="64" />
-				<vector x="64"  y="-64" />
+			<graphic type="Graphics::QuadGraphic">
+				<vector x="-3" y="3" />
+				<vector x="-3" y="-3" />
+				<vector x="3"  y="-3" />
+				<vector x="3"  y="3" />
 				<texture file="demos/engine/assets/mallow.png" />
 			</graphic>
 		</component>
-		<component id="custom" type="BounceComponent" />
+		<component id="physics" type="Game::Box2DComponent" body="dynamic" width="4.5" height="4.5" density="1" friction="0.3" />
+	</entity>
+
+
+	<entity id="marshmallow2" type="Game::Entity">
+		<component id="position" type="Game::PositionComponent" x="-2" y="0" />
+		<component id="render"   type="Game::RenderComponent">
+			<graphic type="Graphics::QuadGraphic">
+				<vector x="-3" y="3" />
+				<vector x="-3" y="-3" />
+				<vector x="3"  y="-3" />
+				<vector x="3"  y="3" />
+				<texture file="demos/engine/assets/mallow.png" />
+			</graphic>
+		</component>
+		<component id="physics" type="Game::Box2DComponent" body="dynamic" width="4.5" height="4.5" density="1" friction="0.3" />
 	</entity>
 
 	<entity id="marshmallow3" type="Game::Entity">
-		<component id="position" type="Game::PositionComponent" x="-50" y="200" />
-		<component id="movement" type="Game::MovementComponent" x="0" y="-80" />
+		<component id="position" type="Game::PositionComponent" x="-1" y="40" />
 		<component id="render"   type="Game::RenderComponent">
-			<graphic type="Graphics::QuadGraphic" rotation="0">
-				<vector x="-16" y="-16" />
-				<vector x="-16" y="16" />
-				<vector x="16"  y="16" />
-				<vector x="16"  y="-16" />
+			<graphic type="Graphics::QuadGraphic">
+				<vector x="-3" y="3" />
+				<vector x="-3" y="-3" />
+				<vector x="3"  y="-3" />
+				<vector x="3"  y="3" />
 				<texture file="demos/engine/assets/mallow.png" />
 			</graphic>
 		</component>
-		<component id="custom" type="BounceComponent" />
+		<component id="physics" type="Game::Box2DComponent" body="dynamic" width="4.5" height="4.5" density="2" friction="0.3" />
 	</entity>
 
-	<entity id="marshmallow4" type="Game::Entity">
-		<component id="position" type="Game::PositionComponent" x="50" y="-200" />
-		<component id="movement" type="Game::MovementComponent" x="0" y="50" />
+	<entity id="marshmallow3" type="Game::Entity">
+		<component id="position" type="Game::PositionComponent" x="-1.5" y="60" />
 		<component id="render"   type="Game::RenderComponent">
-			<graphic type="Graphics::QuadGraphic" rotation="0">
-				<vector x="-16" y="-16" />
-				<vector x="-16" y="16" />
-				<vector x="16"  y="16" />
-				<vector x="16"  y="-16" />
+			<graphic type="Graphics::QuadGraphic">
+				<vector x="-3" y="3" />
+				<vector x="-3" y="-3" />
+				<vector x="3"  y="-3" />
+				<vector x="3"  y="3" />
 				<texture file="demos/engine/assets/mallow.png" />
 			</graphic>
 		</component>
-		<component id="custom" type="BounceComponent" />
+		<component id="physics" type="Game::Box2DComponent" body="dynamic" width="4.5" height="4.5" density="2" friction="0.3" />
 	</entity>
+
 </scene>

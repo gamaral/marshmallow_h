@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "mainscene.h"
+#pragma once
 
 /*!
  * @file
@@ -34,13 +34,76 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <game/entity.h>
+#ifndef GAME_BOX2DCOMPONENT_H
+#define GAME_BOX2DCOMPONENT_H 1
 
-const Core::Type MainScene::Type("DemoScene");
+#include "game/componentbase.h"
 
-MainScene::MainScene(void)
-    : SceneBase("DemoScene"),
-      m_init(false)
+#include "math/size2.h"
+
+struct b2Body;
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Game
 {
+	class PositionComponent;
+	typedef Core::Weak<PositionComponent> WeakPositionComponent;
+
+	class RenderComponent;
+	typedef Core::Weak<RenderComponent> WeakRenderComponent;
+
+	/*! @brief Game Box2D Component Class */
+	class GAME_EXPORT Box2DComponent : public ComponentBase
+	{
+		WeakPositionComponent m_position;
+		WeakRenderComponent m_render;
+		Math::Size2 m_size;
+		b2Body* m_body;
+		int   m_body_type;
+		float m_density;
+		float m_friction;
+		bool  m_init;
+
+		NO_COPY(Box2DComponent);
+
+	public:
+
+		Box2DComponent(const Core::Identifier &identifier, IEntity &entity);
+		virtual ~Box2DComponent(void);
+
+		b2Body * body(void)
+		    { return(m_body); }
+
+		int & bodyType(void)
+		    { return(m_body_type); }
+
+		float & density(void)
+		    { return(m_density); }
+
+		float & friction(void)
+		    { return(m_friction); }
+
+		Math::Size2 &size(void)
+		    { return(m_size); }
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
+
+		VIRTUAL void update(TIME delta);
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
+	public: /* static */
+
+		static const Core::Type Type;
+	};
+
 }
 
+MARSHMALLOW_NAMESPACE_END
+
+#endif
