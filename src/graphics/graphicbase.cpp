@@ -65,7 +65,11 @@ GraphicBase::serialize(TinyXML::TiXmlElement &n) const
 	n.SetAttribute("type", type().str());
 	n.SetDoubleAttribute("rotation", m_rotation);
 
-	/* TODO: Save Texture */
+	if (m_texture) {
+		TinyXML::TiXmlElement l_child("texture");
+		l_child.SetAttribute("file", m_texture->filename());
+		n.InsertEndChild(l_child);
+	}
 
 	return(true);
 }

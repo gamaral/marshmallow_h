@@ -37,6 +37,8 @@
 #include <GL/gl.h>
 #include <GL/glpng.h>
 
+#include <cstring>
+
 #include "core/logger.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -47,6 +49,7 @@ const Core::Type TextureAsset::Type("Graphics::TextureAsset");
 TextureAsset::TextureAsset(void)
     : m_id(),
       m_size(),
+      m_filename(0),
       m_texture_id(0)
 {
 }
@@ -59,6 +62,11 @@ TextureAsset::~TextureAsset(void)
 void
 TextureAsset::load(const char *f)
 {
+	if (m_texture_id) {
+		WARNING1("Load texture asset called on active texture.");
+		return;
+	}
+
 	pngInfo pi;
 
 	glGenTextures(1, &m_texture_id);
@@ -78,6 +86,7 @@ TextureAsset::load(const char *f)
 
 	m_id = Core::Identifier(f);
 	m_size = Math::Size2(static_cast<float>(pi.Width), static_cast<float>(pi.Height));
+	m_filename = STRDUP(f);
 	INFO1("Texture loaded.");
 }
 
@@ -89,6 +98,8 @@ TextureAsset::unload(void)
 
 	m_id = Core::Identifier();
 	m_size = Math::Size2();
+	free(m_filename);
+	m_filename = 0;
 	m_texture_id = 0;
 }
 

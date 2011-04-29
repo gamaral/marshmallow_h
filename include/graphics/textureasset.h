@@ -52,6 +52,7 @@ namespace Graphics
 	{
 		Core::Identifier m_id;
 		Math::Size2 m_size;
+		char *m_filename;
 		unsigned int m_texture_id;
 
 		NO_COPY(TextureAsset);
@@ -63,6 +64,9 @@ namespace Graphics
 
 		void load(const char *filename);
 		void unload(void);
+
+		const char *filename(void) const
+		    { return(m_filename); }
 
 		unsigned int tid(void) const
 		    { return(m_texture_id); }
