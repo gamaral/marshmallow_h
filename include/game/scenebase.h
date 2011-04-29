@@ -51,7 +51,7 @@ namespace Game
 	/*! @brief Game Scene Base Class */
 	class GAME_EXPORT SceneBase : public IScene
 	{
-		EntityList m_entities;
+		SceneLayerList m_layers;
 		Core::Identifier m_id;
 
 		NO_COPY(SceneBase);
@@ -66,13 +66,16 @@ namespace Game
 		VIRTUAL const Core::Identifier & id(void) const
 		    { return(m_id); }
 
-		VIRTUAL void addEntity(SharedEntity entity);
-		VIRTUAL void removeEntity(const SharedEntity &entity);
-		VIRTUAL SharedEntity entity(const Core::Identifier &identifier) const;
-		VIRTUAL const EntityList & entities(void) const;
+		VIRTUAL void pushLayer(SharedSceneLayer layer);
+		VIRTUAL void popLayer(void);
+		VIRTUAL void removeLayer(const Core::Identifier &identifier);
+		VIRTUAL SharedSceneLayer getLayer(const Core::Identifier &identifier) const;
+		VIRTUAL SharedSceneLayer getLayerType(const Core::Type &type) const;
+		VIRTUAL const SceneLayerList & getLayers(void) const
+		    { return(m_layers); }
 
-		VIRTUAL void activate(void);
-		VIRTUAL void deactivate(void);
+		VIRTUAL void activate(void) {}
+		VIRTUAL void deactivate(void) {}
 
 		VIRTUAL void render(void);
 		VIRTUAL void update(TIME delta);

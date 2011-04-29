@@ -1,5 +1,31 @@
 Marshmallow Engine
 ==================
 
-TODO (changed)
+ENGINE
+
+    Main engine, may only have a single active scene at any one time.
+
+SCENES
+
+    Scenes may have many layers. Layers stacks are FILO, drawn and updated
+    bottom up.
+
+LAYERS
+
+    There can be different types of layers, they may block update and rendering
+    to other layers.
+
+    SEE ALSO: Game::EntitySceneLayer (render and update)
+              Game::Box2DSceneLayer (update-only)
+              Game::PauseSceneLayer (blocks updates)
+
+ENTITIES
+
+    Entities are stored in Game::EntitySceneLayers, they may contain any number
+    of components.
+
+COMPONENTS
+
+    Components bring features to an entities, like position, static movement,
+    box2d bodies, rendering, etc.
 

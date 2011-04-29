@@ -51,10 +51,10 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {
 
-	struct IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
+	struct ISceneLayer;
+	typedef Core::Shared<ISceneLayer> SharedSceneLayer;
 
-	typedef list<SharedEntity> EntityList;
+	typedef list<SharedSceneLayer> SceneLayerList;
 
 	/*! @brief Game Scene Interface */
 	struct GAME_EXPORT IScene : public Core::IRenderable,
@@ -66,10 +66,12 @@ namespace Game
 		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;
 
-		virtual void addEntity(SharedEntity entity) = 0;
-		virtual void removeEntity(const SharedEntity &entity) = 0;
-		virtual SharedEntity entity(const Core::Identifier &identifier) const = 0;
-		virtual const EntityList & entities(void) const = 0;
+		virtual void pushLayer(SharedSceneLayer layer) = 0;
+		virtual void popLayer(void) = 0;
+		virtual void removeLayer(const Core::Identifier &identifier) = 0;
+		virtual SharedSceneLayer getLayer(const Core::Identifier &identifier) const = 0;
+		virtual SharedSceneLayer getLayerType(const Core::Type &type) const = 0;
+		virtual const SceneLayerList & getLayers(void) const = 0;
 
 		virtual void activate(void) = 0;
 		virtual void deactivate(void) = 0;

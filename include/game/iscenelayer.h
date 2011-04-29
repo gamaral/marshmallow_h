@@ -34,35 +34,44 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITY_H
-#define GAME_ENTITY_H 1
+#ifndef GAME_ISCENELAYER_H
+#define GAME_ISCENELAYER_H 1
 
-#include "game/entitybase.h"
+#include "core/irenderable.h"
+#include "core/iserializable.h"
+#include "core/iupdateable.h"
+
+#include "core/fd.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
 
-	/*! @brief Game No Frills Entity Class */
-	class GAME_EXPORT Entity : public EntityBase
-	{
-		NO_COPY(Entity);
+	struct IScene;
 
-	public:
-
-		Entity(const Core::Identifier &identifier, EntitySceneLayer &l);
-		virtual ~Entity(void);
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-	public: /* static */
-
-		static const Core::Type Type;
+	enum SceneLayerFlags {
+		       slfNone = 0,
+		slfUpdateBlock = 1,
+		slfRenderBlock = 2
 	};
+
+	/*! @brief Game Scene Interface */
+	struct GAME_EXPORT ISceneLayer : public Core::IRenderable,
+	                                 public Core::IUpdateable,
+	                                 public Core::ISerializable
+	{
+		virtual ~ISceneLayer(void) {};
+
+		virtual const Core::Identifier & id(void) const = 0;
+		virtual const Core::Type & type(void) const = 0;
+
+		virtual IScene &scene(void) = 0;
+
+		virtual int flags(void) const = 0;
+	};
+	typedef Core::Shared<ISceneLayer> SharedSceneLayer;
+	typedef Core::Weak<ISceneLayer> WeakSceneLayer;
 
 }
 

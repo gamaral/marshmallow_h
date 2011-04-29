@@ -37,96 +37,111 @@
 #include <tinyxml.h>
 
 #include "core/logger.h"
-#include "core/irenderable.h"
-#include "core/iupdateable.h"
 #include "event/eventmanager.h"
 #include "game/engine.h"
-#include "game/entityfactory.h"
-#include "game/ientity.h"
+#include "game/iscenelayer.h"
+#include "game/scenelayerfactory.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
 SceneBase::SceneBase(const Core::Identifier &i)
-    : m_entities(),
+    : m_layers(),
       m_id(i)
 {
 }
 
 SceneBase::~SceneBase(void)
 {
-	m_entities.clear();
+	m_layers.clear();
 }
 
 void
-SceneBase::addEntity(SharedEntity e)
+SceneBase::pushLayer(SharedSceneLayer l)
 {
-	m_entities.push_back(e);
-
-	/* TODO: send entity creation message */
+	m_layers.push_front(l);
 }
 
 void
-SceneBase::removeEntity(const SharedEntity &e)
+SceneBase::popLayer(void)
 {
-	/* TODO: send entity removal message */
-
-	m_entities.remove(e);
+	m_layers.pop_front();
 }
 
-SharedEntity
-SceneBase::entity(const Core::Identifier &i) const
+void
+SceneBase::removeLayer(const Core::Identifier &i)
 {
-	EntityList::const_iterator l_i;
-	EntityList::const_iterator l_c = m_entities.end();
+	SceneLayerList::const_iterator l_i;
+	SceneLayerList::const_iterator l_c = m_layers.end();
 
 	/* maybe replace later with a map if required */
-	for (l_i = m_entities.begin(); l_i != l_c; ++l_i) {
+	for (l_i = m_layers.begin(); l_i != l_c; ++l_i)
+		if ((*l_i)->id() == i) {
+			m_layers.remove(*l_i);
+			return;
+		}
+}
+
+SharedSceneLayer
+SceneBase::getLayer(const Core::Identifier &i) const
+{
+	SceneLayerList::const_iterator l_i;
+	SceneLayerList::const_iterator l_c = m_layers.end();
+
+	/* maybe replace later with a map if required */
+	for (l_i = m_layers.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->id() == i)
 			return(*l_i);
 	}
 
-	return(SharedEntity());
+	return(SharedSceneLayer());
 }
 
-const EntityList &
-SceneBase::entities(void) const
+SharedSceneLayer
+SceneBase::getLayerType(const Core::Type &t) const
 {
-	return(m_entities);
-}
+	SceneLayerList::const_iterator l_i;
+	SceneLayerList::const_iterator l_c = m_layers.end();
 
-void
-SceneBase::activate(void)
-{
-}
+	/* maybe replace later with a map if required */
+	for (l_i = m_layers.begin(); l_i != l_c; ++l_i) {
+		if ((*l_i)->type() == t)
+			return(*l_i);
+	}
 
-void
-SceneBase::deactivate(void)
-{
+	return(SharedSceneLayer());
 }
 
 void
 SceneBase::render(void)
 {
-	EntityList::const_iterator l_i;
+	if (m_layers.empty()) return;
 
-	for (l_i = m_entities.begin(); l_i != m_entities.end();l_i++)
-		if (!(*l_i)->isZombie()) (*l_i)->render();
+	SceneLayerList::const_iterator l_i;
+	SceneLayerList::const_iterator l_b = m_layers.begin();
+	SceneLayerList::const_iterator l_c = --m_layers.end();
+
+	for (l_i = l_b; l_i != l_c; ++l_i)
+		if ((*l_i)->flags() & slfRenderBlock)
+			break;
+
+	do { (*l_i)->render(); } while(l_i-- != l_b);
 }
 
 void
 SceneBase::update(TIME d)
 {
-	EntityList::const_iterator l_i;
+	if (m_layers.empty()) return;
 
-	for (l_i = m_entities.begin(); l_i != m_entities.end();) {
-		SharedEntity l_entity = (*l_i++);
+	SceneLayerList::const_iterator l_i;
+	SceneLayerList::const_iterator l_b = m_layers.begin();
+	SceneLayerList::const_iterator l_c = --m_layers.end();
 
-		if (l_entity->isZombie())
-			removeEntity(l_entity);
-		else
-			l_entity->update(d);
-	}
+	for (l_i = l_b; l_i != l_c; ++l_i)
+		if ((*l_i)->flags() & slfUpdateBlock)
+			break;
+
+	do { (*l_i)->update(d); } while(l_i-- != l_b);
 }
 
 bool
@@ -135,11 +150,11 @@ SceneBase::serialize(TinyXML::TiXmlElement &n) const
 	n.SetAttribute("id", id().str());
 	n.SetAttribute("type", type().str());
 
-	EntityList::const_iterator l_i;
-	for (l_i = m_entities.begin(); l_i != m_entities.end();) {
-		SharedEntity l_entity = (*l_i++);
-		TinyXML::TiXmlElement l_element("entity");
-		if (l_entity->serialize(l_element))
+	SceneLayerList::const_reverse_iterator l_i;
+	SceneLayerList::const_reverse_iterator l_c = m_layers.rend();
+	for (l_i = m_layers.rbegin(); l_i != l_c; ++l_i) {
+		TinyXML::TiXmlElement l_element("layer");
+		if ((*l_i)->serialize(l_element))
 			n.InsertEndChild(l_element);
 	}
 	
@@ -150,27 +165,27 @@ bool
 SceneBase::deserialize(TinyXML::TiXmlElement &n)
 {
 	TinyXML::TiXmlElement *l_child;
-	for (l_child = n.FirstChildElement("entity") ;
+	for (l_child = n.FirstChildElement("layer") ;
 	     l_child;
-	     l_child = l_child->NextSiblingElement("entity")) {
+	     l_child = l_child->NextSiblingElement("layer")) {
 
 		const char *l_id   = l_child->Attribute("id");
 		const char *l_type = l_child->Attribute("type");
 
-		SharedEntity l_entity =
-		    EntityFactory::Instance()->createEntity(l_type, l_id, *this);
+		SharedSceneLayer l_layer =
+		    SceneLayerFactory::Instance()->createSceneLayer(l_type, l_id, *this);
 
-		if (!l_entity) {
-			WARNING("Entity '%s' of type '%s' creation failed", l_id, l_type);
+		if (!l_layer) {
+			WARNING("SceneLayer '%s' of type '%s' creation failed", l_id, l_type);
 			continue;
 		}
 
-		if (!l_entity->deserialize(*l_child)) {
-			WARNING("Entity '%s' of type '%s' failed deserialization", l_id, l_type);
+		if (!l_layer->deserialize(*l_child)) {
+			WARNING("SceneLayer '%s' of type '%s' failed deserialization", l_id, l_type);
 			continue;
 		}
 
-		addEntity(l_entity);
+		pushLayer(l_layer);
 	}
 	
 	return(true);

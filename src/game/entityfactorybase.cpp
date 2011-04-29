@@ -54,10 +54,9 @@ EntityFactoryBase::~EntityFactoryBase(void)
 
 SharedEntity
 EntityFactoryBase::createEntity(const Core::Type &t,
-                                const Core::Identifier &i,
-                                IScene &s) const
+    const Core::Identifier &i, EntitySceneLayer &l) const
 {
-	if (t == Entity::Type) return(new Entity(i, s));
+	if (t == Entity::Type) return(new Entity(i, l));
 	return(SharedEntity());
 }
 

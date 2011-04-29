@@ -177,6 +177,7 @@ EngineBase::run(void)
 
 		if (l_render >= l_render_target) {
 			render();
+			m_frame_rate++;
 			l_render -= l_render_target;
 			if (l_render > l_render_target / 2)
 				INFO1("Skipping render frame."), l_render = 0;
@@ -191,6 +192,7 @@ EngineBase::run(void)
 
 		if (l_second >= l_second_target) {
 			second();
+			m_frame_rate = 0;
 			l_second -= l_second_target;
 		}
 
@@ -216,7 +218,6 @@ EngineBase::render(void)
 {
 	Event::RenderEvent event;
 	eventManager()->dispatch(event);
-	INFO1("Render event dispatched!");
 
 	Graphics::Viewport::SwapBuffer();
 }
@@ -235,7 +236,6 @@ EngineBase::update(TIME d)
 {
 	Event::UpdateEvent event(d);
 	eventManager()->dispatch(event);
-	INFO1("Update event dispatched!");
 }
 
 void

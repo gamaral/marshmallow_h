@@ -61,7 +61,7 @@ MovementComponent::update(TIME d)
 	UNUSED(d);
 
 	if (!m_position)
-		m_position = entity().componentType("Game::PositionComponent").
+		m_position = entity().getComponentType("Game::PositionComponent").
 		    staticCast<PositionComponent>();
 
 	if (m_position && m_direction)

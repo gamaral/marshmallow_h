@@ -18,6 +18,11 @@ Run the following from project root:
 
     ./configure && make -C build
 
+    X11-XGL is turned OFF by default, you will need to turn it ON using
+    ccmake/cmake-gui or by passing the following argument to the configuration
+    script: -DMARSHMALLOW_VIEWPORT_USE_X11_GLX:BOOL=ON (remember to reconfigure
+    more than one to allow cmake to look for dependencies)
+
 Mac OSX
 -------
 
@@ -32,6 +37,9 @@ Windows
 
     Run CMakeGui with `source` set to project root and `output` to the build
     directory.
+
+    X11-WGL (wiggle) is turned OFF by default, you will need to turn it ON using
+    ccmake/cmake-gui.
 
     Configure and Generate a MSVC++ 2010 solution.
     (I've only tested it on Windows 7 with MSVC++ 2010).

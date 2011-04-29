@@ -34,35 +34,56 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITY_H
-#define GAME_ENTITY_H 1
+#ifndef GAME_BOX2DSCENELAYER_H
+#define GAME_BOX2DSCENELAYER_H 1
 
-#include "game/entitybase.h"
+#include <Box2D/Box2D.h>
+
+#include "game/scenelayerbase.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Math { struct Vector2; }
 
 namespace Game
 {
 
-	/*! @brief Game No Frills Entity Class */
-	class GAME_EXPORT Entity : public EntityBase
+	/*! @brief Game Box2D Powered Scene Layer Class */
+	class GAME_EXPORT Box2DSceneLayer : public SceneLayerBase
 	{
-		NO_COPY(Entity);
+		b2World m_world;
+
+		NO_COPY(Box2DSceneLayer);
 
 	public:
 
-		Entity(const Core::Identifier &identifier, EntitySceneLayer &l);
-		virtual ~Entity(void);
+		Box2DSceneLayer(const Core::Identifier &identifier,
+		    IScene &scene);
+		virtual ~Box2DSceneLayer(void);
+
+		Math::Vector2 gravity(void) const;
+		void setGravity(const Math::Vector2 &gravity);
+
+		b2World &world(void)
+		    { return(m_world); }
 
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
+		VIRTUAL void render(void) {}
+		VIRTUAL void update(TIME delta);
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
 	public: /* static */
 
 		static const Core::Type Type;
 	};
+	typedef Core::Shared<Box2DSceneLayer> SharedBox2DSceneLayer;
+	typedef Core::Weak<Box2DSceneLayer> WeakBox2DSceneLayer;
 
 }
 

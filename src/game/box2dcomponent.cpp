@@ -38,8 +38,10 @@
 
 #include "core/logger.h"
 #include "graphics/igraphic.h"
-#include "game/box2dscene.h"
+#include "game/box2dscenelayer.h"
+#include "game/entityscenelayer.h"
 #include "game/ientity.h"
+#include "game/iscene.h"
 #include "game/positioncomponent.h"
 #include "game/rendercomponent.h"
 
@@ -50,6 +52,7 @@ const Core::Type Box2DComponent::Type("Game::Box2DComponent");
 
 Box2DComponent::Box2DComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e),
+      m_b2layer(),
       m_position(),
       m_render(),
       m_size(),
@@ -69,20 +72,29 @@ void
 Box2DComponent::update(TIME d)
 {
 	UNUSED(d);
-	if (!m_init && Box2DScene::Type == entity().scene().type()) {
-		Box2DScene &l_scene = static_cast<Box2DScene &>(entity().scene());
-		b2World &l_world = l_scene.world();
 
-		m_position = entity().componentType("Game::PositionComponent").
+	if (!m_init && !m_b2layer) {
+		WeakSceneLayer l_layer = entity().layer().scene().getLayerType("Game::Box2DSceneLayer");
+		m_b2layer = l_layer.cast<Box2DSceneLayer>();
+
+		if (!m_b2layer) {
+			WARNING1("Box2DComponent used with non Box2D Scene!");
+			return;
+		}
+
+		b2World &l_world = m_b2layer->world();
+
+		m_position = entity().getComponentType("Game::PositionComponent").
 		    staticCast<PositionComponent>();
 
-		m_render = entity().componentType("Game::RenderComponent").
+		m_render = entity().getComponentType("Game::RenderComponent").
 		    staticCast<RenderComponent>();
 
 		if (m_position && m_render) {
 			b2BodyDef bodyDef;
 			bodyDef.type = static_cast<b2BodyType>(m_body_type);
-			bodyDef.angle = m_render->graphic()->rotation() * (b2_pi / 180);
+#define DEGREE_TO_RADIAN 0.0174532925f
+			bodyDef.angle = m_render->graphic()->rotation() * DEGREE_TO_RADIAN;
 			bodyDef.position.Set
 			    (m_position->position().rx(),
 			     m_position->position().ry());
@@ -101,7 +113,7 @@ Box2DComponent::update(TIME d)
 
 			m_init = true;
 		} else WARNING1("Unsatisfied component dependencies");
-	} else if (!m_init) WARNING1("Box2DComponent used with non Box2D Scene!");
+	}
 
 	if (!(m_init && m_position && m_render && m_body))
 		return;
@@ -111,7 +123,9 @@ Box2DComponent::update(TIME d)
 
 	m_position->position().rx() = l_position.x;
 	m_position->position().ry() = l_position.y;
-	m_render->graphic()->setRotation((l_angle * 180) / b2_pi);
+#define RADIAN_TO_DEGREE 57.2957795f
+	m_render->graphic()->setRotation(fmodf(l_angle * RADIAN_TO_DEGREE, 360.f));
+	//m_render->graphic()->setRotation(fmodf((l_angle * 180.f / b2_pi), 360.f));
 }
 
 bool

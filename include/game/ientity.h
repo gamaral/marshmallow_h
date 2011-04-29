@@ -50,7 +50,7 @@ namespace Game
 	struct IComponent;
 	typedef Core::Shared<IComponent> SharedComponent;
 
-	struct IScene;
+	class EntitySceneLayer;
 
 	/*! @brief Game Entity Interface */
 	struct GAME_EXPORT IEntity : public Core::IRenderable,
@@ -62,12 +62,14 @@ namespace Game
 		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;
 
-		virtual IScene &scene(void) = 0;
+		virtual EntitySceneLayer &layer(void) = 0;
 
-		virtual void addComponent(SharedComponent component) = 0;
+		virtual void pushComponent(const SharedComponent &component) = 0;
+		virtual void popComponent(void) = 0;
+		virtual void removeComponent(const Core::Identifier &identifier) = 0;
 		virtual void removeComponent(const SharedComponent &component) = 0;
-		virtual SharedComponent component(const Core::Identifier &identifier) const = 0;
-		virtual SharedComponent componentType(const Core::Type &type) const = 0;
+		virtual SharedComponent getComponent(const Core::Identifier &identifier) const = 0;
+		virtual SharedComponent getComponentType(const Core::Type &type) const = 0;
 
 		virtual void kill(void) = 0;
 		virtual bool isZombie(void) const = 0;

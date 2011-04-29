@@ -50,7 +50,7 @@ namespace Game
 	typedef Core::Shared<IEntity> SharedEntity;
 	typedef Core::Weak<IEntity> WeakEntity;
 
-	struct IScene;
+	class EntitySceneLayer;
 
 	/*! @brief Game EntityFactory Interface */
 	struct GAME_EXPORT IEntityFactory
@@ -58,7 +58,7 @@ namespace Game
 		virtual ~IEntityFactory(void) {};
 
 		virtual SharedEntity createEntity(const Core::Type &type,
-		    const Core::Identifier &identifier, IScene &scene) const = 0;
+		    const Core::Identifier &identifier, EntitySceneLayer &layer) const = 0;
 	};
 	typedef Core::Shared<IEntityFactory> SharedEntityFactory;
 	typedef Core::Weak<IEntityFactory> WeakEntityFactory;

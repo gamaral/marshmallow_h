@@ -34,35 +34,48 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITY_H
-#define GAME_ENTITY_H 1
+#ifndef GAME_PAUSESCENELAYER_H
+#define GAME_PAUSESCENELAYER_H 1
 
-#include "game/entitybase.h"
+#include "game/scenelayerbase.h"
+
+#include "EASTL/list.h"
+using namespace eastl;
+
+#include "core/identifier.h"
+#include "core/shared.h"
+#include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
 
-	/*! @brief Game No Frills Entity Class */
-	class GAME_EXPORT Entity : public EntityBase
+	/*! @brief Game Pause Scene Layer Class */
+	class GAME_EXPORT PauseSceneLayer : public SceneLayerBase
 	{
-		NO_COPY(Entity);
+		NO_COPY(PauseSceneLayer);
 
 	public:
 
-		Entity(const Core::Identifier &identifier, EntitySceneLayer &l);
-		virtual ~Entity(void);
+		PauseSceneLayer(const Core::Identifier &identifier,
+		    IScene &scene);
+		virtual ~PauseSceneLayer(void);
 
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
+		VIRTUAL void render(void) {}
+		VIRTUAL void update(TIME) {}
+
 	public: /* static */
 
 		static const Core::Type Type;
 	};
+	typedef Core::Shared<PauseSceneLayer> SharedPauseSceneLayer;
+	typedef Core::Weak<PauseSceneLayer> WeakPauseSceneLayer;
 
 }
 

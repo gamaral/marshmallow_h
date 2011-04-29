@@ -34,35 +34,50 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITY_H
-#define GAME_ENTITY_H 1
+#ifndef GAME_SCENELAYERBASE_H
+#define GAME_SCENELAYERBASE_H 1
 
-#include "game/entitybase.h"
+#include "game/iscenelayer.h"
+
+#include "core/fd.h"
+#include "core/identifier.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
 
-	/*! @brief Game No Frills Entity Class */
-	class GAME_EXPORT Entity : public EntityBase
+	/*! @brief Game Scene Layer Base Class */
+	class GAME_EXPORT SceneLayerBase : public ISceneLayer
 	{
-		NO_COPY(Entity);
+		Core::Identifier m_id;
+		IScene &m_scene;
+		int m_flags;
+
+		NO_COPY(SceneLayerBase);
 
 	public:
 
-		Entity(const Core::Identifier &identifier, EntitySceneLayer &l);
-		virtual ~Entity(void);
+		SceneLayerBase(const Core::Identifier &identifier,
+		    IScene &scene, int flags = slfNone);
+		virtual ~SceneLayerBase(void);
 
 	public: /* virtual */
 
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
 
-	public: /* static */
+		VIRTUAL IScene &scene(void)
+		    { return(m_scene); }
 
-		static const Core::Type Type;
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
+		VIRTUAL int flags(void) const
+		    { return(m_flags); }
 	};
+	typedef Core::Shared<SceneLayerBase> SharedSceneLayerBase;
+	typedef Core::Weak<SceneLayerBase> WeakSceneLayerBase;
 
 }
 

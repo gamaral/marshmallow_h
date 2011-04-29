@@ -41,10 +41,13 @@ MARSHMALLOW_NAMESPACE_USE;
 #include <math/vector2.h>
 #include <math/vector3.h>
 #include <graphics/viewport.h>
-#include <game/box2dscene.h>
+#include <game/box2dscenelayer.h>
 #include <game/entityfactory.h>
+#include <game/entityscenelayer.h>
 #include <game/graphicfactory.h>
+#include <game/scene.h>
 #include <game/scenebuilder.h>
+#include <game/scenelayerfactory.h>
 
 #include "componentfactory.h"
 
@@ -62,9 +65,10 @@ Demo::initialize(void)
 	ComponentFactory l_cf;
 	Game::EntityFactory l_ef;
 	Game::GraphicFactory l_gf;
+	Game::SceneLayerFactory l_slf;
 
-	Game::SharedScene l_scene(new Game::Box2DScene("main", Math::Vector2(0, -10.f)));
-	sceneManager()->push(l_scene);
+	Game::SharedScene l_scene(new Game::Scene("main"));
+	sceneManager()->pushScene(l_scene);
 
 	Game::SceneBuilder builder;
 	builder.load("demos/marshmallow/assets/mainscene.xml", *l_scene);
@@ -81,12 +85,12 @@ Demo::second(void)
 {
 	EngineBase::second();
 
-	if (++m_stop_timer == 10) {
+	if (++m_stop_timer == 8) {
 		TinyXML::TiXmlDocument l_document;
 		TinyXML::TiXmlElement l_root("scene");
-		sceneManager()->active()->serialize(l_root);
+		sceneManager()->activeScene()->serialize(l_root);
 		l_document.InsertEndChild(l_root);
-		l_document.SaveFile("/tmp/scene.xml");
+		l_document.SaveFile("scene.xml");
 		stop();
 	}
 }

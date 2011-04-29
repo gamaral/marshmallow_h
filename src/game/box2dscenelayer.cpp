@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/box2dscene.h"
+#include "game/box2dscenelayer.h"
 
 /*!
  * @file
@@ -34,36 +34,80 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml.h>
+
 #include "core/platform.h"
 #include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type Box2DScene::Type("Game::Box2DScene");
+const Core::Type Box2DSceneLayer::Type("Game::Box2DSceneLayer");
 
-Box2DScene::Box2DScene(const Core::Identifier &i, const Math::Vector2 &g)
-    : SceneBase(i),
-      m_world(g, true)
+Box2DSceneLayer::Box2DSceneLayer(const Core::Identifier &i, IScene &s)
+    : SceneLayerBase(i, s),
+      m_world(b2Vec2(0.f, -10.f), true)
 {
 }
 
-Box2DScene::~Box2DScene(void)
+Box2DSceneLayer::~Box2DSceneLayer(void)
 {
 }
 
 void
-Box2DScene::update(TIME d)
+Box2DSceneLayer::update(TIME d)
 {
 	m_world.Step
-	    //(static_cast<float>(d),
-	    (1.f/60.f,
+	    (static_cast<float>(d),
 #define VELOCITY_ITERATIONS 10.f
 	     VELOCITY_ITERATIONS,
 #define POSITION_ITERATIONS 8.f
 	     POSITION_ITERATIONS);
 	m_world.ClearForces();
+}
 
-	SceneBase::update(d);
+Math::Vector2
+Box2DSceneLayer::gravity(void) const
+{
+	b2Vec2 l_gravity = m_world.GetGravity();
+	return(Math::Vector2(l_gravity.x, l_gravity.y));
+}
+
+void
+Box2DSceneLayer::setGravity(const Math::Vector2 &g)
+{
+	m_world.SetGravity(g);
+}
+
+bool
+Box2DSceneLayer::serialize(TinyXML::TiXmlElement &n) const
+{
+	if (!SceneLayerBase::serialize(n))
+		return(false);
+
+	TinyXML::TiXmlElement l_child("gravity");
+	b2Vec2 l_gravity = m_world.GetGravity();
+	l_child.SetDoubleAttribute("x", l_gravity.x);
+	l_child.SetDoubleAttribute("y", l_gravity.y);
+	n.InsertEndChild(l_child);
+
+	return(true);
+}
+
+bool
+Box2DSceneLayer::deserialize(TinyXML::TiXmlElement &n)
+{
+	if (!SceneLayerBase::deserialize(n))
+		return(false);
+
+	TinyXML::TiXmlElement *l_child = n.FirstChildElement("gravity");
+	if (l_child) {
+		float l_x, l_y;
+		l_child->QueryFloatAttribute("x", &l_x);
+		l_child->QueryFloatAttribute("y", &l_y);
+		m_world.SetGravity(b2Vec2(l_x, l_y));
+	}
+	
+	return(true);
 }
 

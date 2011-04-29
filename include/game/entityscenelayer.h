@@ -34,35 +34,65 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITY_H
-#define GAME_ENTITY_H 1
+#ifndef GAME_ENTITYSCENELAYER_H
+#define GAME_ENTITYSCENELAYER_H 1
 
-#include "game/entitybase.h"
+#include "game/scenelayerbase.h"
+
+#include "EASTL/list.h"
+using namespace eastl;
+
+#include "core/identifier.h"
+#include "core/shared.h"
+#include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
 
-	/*! @brief Game No Frills Entity Class */
-	class GAME_EXPORT Entity : public EntityBase
+	struct IEntity;
+	typedef Core::Shared<IEntity> SharedEntity;
+
+	typedef list<SharedEntity> EntityList;
+
+	/*! @brief Game Entity Scene Layer Class */
+	class GAME_EXPORT EntitySceneLayer : public SceneLayerBase
 	{
-		NO_COPY(Entity);
+		EntityList m_entities;
+
+		NO_COPY(EntitySceneLayer);
 
 	public:
 
-		Entity(const Core::Identifier &identifier, EntitySceneLayer &l);
-		virtual ~Entity(void);
+		EntitySceneLayer(const Core::Identifier &identifier,
+		    IScene &scene, int flags = slfNone);
+		virtual ~EntitySceneLayer(void);
+
+		void addEntity(const SharedEntity &entity);
+		void removeEntity(const Core::Identifier &identifier);
+		void removeEntity(const SharedEntity &entity);
+		SharedEntity getEntity(const Core::Identifier &identifier) const;
+		const EntityList & getEntities(void) const
+		    { return(m_entities); }
 
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
+		VIRTUAL void render(void);
+		VIRTUAL void update(TIME delta);
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
 	public: /* static */
 
 		static const Core::Type Type;
 	};
+	typedef Core::Shared<EntitySceneLayer> SharedEntitySceneLayer;
+	typedef Core::Weak<EntitySceneLayer> WeakEntitySceneLayer;
 
 }
 

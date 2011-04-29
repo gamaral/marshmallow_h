@@ -61,13 +61,12 @@ namespace Game
 	public: /* virtual */
 
 		VIRTUAL SharedEntity createEntity(const Core::Type &type,
-		    const Core::Identifier &identifier, IScene &scene) const;
+		    const Core::Identifier &identifier, EntitySceneLayer &layer) const;
 
 	public: /* static */
 
 		static IEntityFactory *Instance(void)
 		    { return(s_instance); }
-
 	};
 
 }

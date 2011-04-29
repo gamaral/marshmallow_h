@@ -50,6 +50,8 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {
 
+	class EntitySceneLayer;
+
 	/*! @brief Game Entity Base Class */
 	class GAME_EXPORT EntityBase : public IEntity
 	{
@@ -57,14 +59,14 @@ namespace Game
 
 		ComponentList m_components;
 		Core::Identifier m_id;
-		IScene &m_scene;
+		EntitySceneLayer &m_layer;
 		bool m_killed;
 
 		NO_COPY(EntityBase);
 
 	public:
 
-		EntityBase(const Core::Identifier &identifier, IScene &scene);
+		EntityBase(const Core::Identifier &identifier, EntitySceneLayer &layer);
 		virtual ~EntityBase(void);
 
 	public: /* virtual */
@@ -72,13 +74,15 @@ namespace Game
 		VIRTUAL const Core::Identifier & id(void) const
 		    { return(m_id); }
 
-		VIRTUAL IScene &scene(void)
-		    { return(m_scene); }
+		VIRTUAL EntitySceneLayer &layer(void)
+		    { return(m_layer); }
 
-		VIRTUAL void addComponent(SharedComponent component);
+		VIRTUAL void pushComponent(const SharedComponent &component);
+		VIRTUAL void popComponent(void);
+		VIRTUAL void removeComponent(const Core::Identifier &identifier);
 		VIRTUAL void removeComponent(const SharedComponent &component);
-		VIRTUAL SharedComponent component(const Core::Identifier &identifier) const;
-		VIRTUAL SharedComponent componentType(const Core::Type &type) const;
+		VIRTUAL SharedComponent getComponent(const Core::Identifier &identifier) const;
+		VIRTUAL SharedComponent getComponentType(const Core::Type &type) const;
 
 		VIRTUAL void render(void);
 		VIRTUAL void update(TIME delta);

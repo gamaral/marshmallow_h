@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/scenelayerbase.h"
 
 /*!
  * @file
@@ -34,38 +34,40 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITY_H
-#define GAME_ENTITY_H 1
+#include <tinyxml.h>
 
-#include "game/entitybase.h"
+#include "core/logger.h"
+#include "event/eventmanager.h"
+#include "game/engine.h"
+#include "game/entityfactory.h"
+#include "game/ientity.h"
 
-MARSHMALLOW_NAMESPACE_BEGIN
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-namespace Game
+SceneLayerBase::SceneLayerBase(const Core::Identifier &i, IScene &s, int f)
+    : m_id(i),
+      m_scene(s),
+      m_flags(f)
 {
-
-	/*! @brief Game No Frills Entity Class */
-	class GAME_EXPORT Entity : public EntityBase
-	{
-		NO_COPY(Entity);
-
-	public:
-
-		Entity(const Core::Identifier &identifier, EntitySceneLayer &l);
-		virtual ~Entity(void);
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-	public: /* static */
-
-		static const Core::Type Type;
-	};
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+SceneLayerBase::~SceneLayerBase(void)
+{
+}
 
-#endif
+bool
+SceneLayerBase::serialize(TinyXML::TiXmlElement &n) const
+{
+	n.SetAttribute("id", id().str());
+	n.SetAttribute("type", type().str());
+	return(true);
+}
+
+bool
+SceneLayerBase::deserialize(TinyXML::TiXmlElement &n)
+{
+	UNUSED(n);
+	return(true);
+}
+

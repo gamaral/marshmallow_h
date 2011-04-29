@@ -63,7 +63,7 @@ void
 RenderComponent::update(TIME)
 {
 	if (!m_position)
-		m_position = entity().componentType("Game::PositionComponent").
+		m_position = entity().getComponentType("Game::PositionComponent").
 		    staticCast<PositionComponent>();
 }
 

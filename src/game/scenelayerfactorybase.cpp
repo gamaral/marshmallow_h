@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/scenelayerfactorybase.h"
 
 /*!
  * @file
@@ -34,52 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_BOX2DSCENE_H
-#define GAME_BOX2DSCENE_H 1
+#include "game/box2dscenelayer.h"
+#include "game/entityscenelayer.h"
+#include "game/pausescenelayer.h"
 
-#include <Box2D/Box2D.h>
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-#include "game/scenebase.h"
+ISceneLayerFactory *SceneLayerFactoryBase::s_instance(0);
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Math { struct Vector2; }
-
-namespace Game
+SceneLayerFactoryBase::SceneLayerFactoryBase(void)
 {
-
-	/*! @brief Game Box2D Powered Scene Class */
-	class GAME_EXPORT Box2DScene : public SceneBase
-	{
-		b2World m_world;
-
-		NO_COPY(Box2DScene);
-
-	public:
-
-		Box2DScene(const Core::Identifier &identifier,
-		    const Math::Vector2 &gravity);
-		virtual ~Box2DScene(void);
-
-		b2World &world(void)
-		    { return(m_world); }
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-		VIRTUAL void update(TIME delta);
-
-	public: /* static */
-
-		static const Core::Type Type;
-	};
-	typedef Core::Shared<Box2DScene> SharedBox2DScene;
-	typedef Core::Weak<Box2DScene> WeakBox2DScene;
-
+	if (!s_instance) s_instance = this;
 }
 
-MARSHMALLOW_NAMESPACE_END
+SceneLayerFactoryBase::~SceneLayerFactoryBase(void)
+{
+	if (s_instance == this) s_instance = 0;
+}
 
-#endif
+SharedSceneLayer
+SceneLayerFactoryBase::createSceneLayer(const Core::Type &t,
+    const Core::Identifier &i, IScene &s) const
+{
+	if (t == Box2DSceneLayer::Type) return(new Box2DSceneLayer(i, s));
+	else if (t == EntitySceneLayer::Type) return(new EntitySceneLayer(i, s));
+	else if (t == PauseSceneLayer::Type) return(new PauseSceneLayer(i, s));
+	return(SharedSceneLayer());
+}
+

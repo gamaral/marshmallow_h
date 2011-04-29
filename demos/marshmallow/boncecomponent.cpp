@@ -55,11 +55,11 @@ void
 BounceComponent::update(TIME d)
 {
 	if (!m_position)
-		m_position = entity().componentType("Game::PositionComponent").
+		m_position = entity().getComponentType("Game::PositionComponent").
 		    cast<Game::PositionComponent>();
 
 	if (!m_movement)
-		m_movement = entity().componentType("Game::MovementComponent").
+		m_movement = entity().getComponentType("Game::MovementComponent").
 		    cast<Game::MovementComponent>();
 
 	if (m_position && m_movement) {

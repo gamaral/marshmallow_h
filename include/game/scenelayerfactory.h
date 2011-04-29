@@ -34,36 +34,16 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITY_H
-#define GAME_ENTITY_H 1
+#ifndef GAME_SCENELAYERFACTORY_H
+#define GAME_SCENELAYERFACTORY_H 1
 
-#include "game/entitybase.h"
+#include "game/scenelayerfactorybase.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
-	/*! @brief Game No Frills Entity Class */
-	class GAME_EXPORT Entity : public EntityBase
-	{
-		NO_COPY(Entity);
-
-	public:
-
-		Entity(const Core::Identifier &identifier, EntitySceneLayer &l);
-		virtual ~Entity(void);
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-	public: /* static */
-
-		static const Core::Type Type;
-	};
-
+	typedef SceneLayerFactoryBase SceneLayerFactory;
 }
 
 MARSHMALLOW_NAMESPACE_END

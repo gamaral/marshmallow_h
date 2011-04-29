@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/pausescenelayer.h"
 
 /*!
  * @file
@@ -34,38 +34,17 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITY_H
-#define GAME_ENTITY_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-#include "game/entitybase.h"
+const Core::Type PauseSceneLayer::Type("Game::PauseSceneLayer");
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, IScene &s)
+    : SceneLayerBase(i, s, slfUpdateBlock)
 {
-
-	/*! @brief Game No Frills Entity Class */
-	class GAME_EXPORT Entity : public EntityBase
-	{
-		NO_COPY(Entity);
-
-	public:
-
-		Entity(const Core::Identifier &identifier, EntitySceneLayer &l);
-		virtual ~Entity(void);
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-	public: /* static */
-
-		static const Core::Type Type;
-	};
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+PauseSceneLayer::~PauseSceneLayer(void)
+{
+}
 
-#endif

@@ -34,34 +34,39 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ENTITY_H
-#define GAME_ENTITY_H 1
+#ifndef GAME_SCENELAYERFACTORYBASE_H
+#define GAME_SCENELAYERFACTORYBASE_H 1
 
-#include "game/entitybase.h"
+#include "game/iscenelayerfactory.h"
+
+#include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
 
-	/*! @brief Game No Frills Entity Class */
-	class GAME_EXPORT Entity : public EntityBase
+	/*! @brief Game Scene Layer Factory Base Class */
+	class GAME_EXPORT SceneLayerFactoryBase : public ISceneLayerFactory
 	{
-		NO_COPY(Entity);
+		static ISceneLayerFactory *s_instance;
+
+		NO_COPY(SceneLayerFactoryBase);
 
 	public:
 
-		Entity(const Core::Identifier &identifier, EntitySceneLayer &l);
-		virtual ~Entity(void);
+		SceneLayerFactoryBase(void);
+		virtual ~SceneLayerFactoryBase(void);
 
 	public: /* virtual */
 
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
+		VIRTUAL SharedSceneLayer createSceneLayer(const Core::Type &type,
+		    const Core::Identifier &identifier, IScene &scene) const;
 
 	public: /* static */
 
-		static const Core::Type Type;
+		static ISceneLayerFactory *Instance(void)
+		    { return(s_instance); }
 	};
 
 }

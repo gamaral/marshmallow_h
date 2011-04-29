@@ -47,6 +47,9 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
+	class Box2DSceneLayer;
+	typedef Core::Weak<Box2DSceneLayer> WeakBox2DSceneLayer;
+
 	class PositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
@@ -56,6 +59,7 @@ namespace Game
 	/*! @brief Game Box2D Component Class */
 	class GAME_EXPORT Box2DComponent : public ComponentBase
 	{
+		WeakBox2DSceneLayer m_b2layer;
 		WeakPositionComponent m_position;
 		WeakRenderComponent m_render;
 		Math::Size2 m_size;

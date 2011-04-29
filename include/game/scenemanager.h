@@ -76,10 +76,10 @@ namespace Game
 		SceneManager(void);
 		virtual ~SceneManager(void);
 
-		void push(SharedScene &scene);
-		void pop(void);
+		void pushScene(SharedScene &scene);
+		void popScene(void);
 
-		SharedScene active(void) const;
+		SharedScene activeScene(void) const;
 
 	public: /* virtual */
 

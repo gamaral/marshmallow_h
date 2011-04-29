@@ -37,6 +37,7 @@
 #include "graphics/viewport.h"
 #include "game/enginebase.h"
 #include "game/entity.h"
+#include "game/entityscenelayer.h"
 #include "game/icomponent.h"
 #include "game/movementcomponent.h"
 #include "game/positioncomponent.h"
@@ -64,11 +65,11 @@ public:
 		UNUSED(d);
 
 		if (!m_position)
-			m_position = entity().componentType("Game::PositionComponent").
+			m_position = entity().getComponentType("Game::PositionComponent").
 			    cast<Game::PositionComponent>();
 
 		if (!m_movement)
-			m_movement = entity().componentType("Game::MovementComponent").
+			m_movement = entity().getComponentType("Game::MovementComponent").
 			    cast<Game::MovementComponent>();
 
 		if (m_position && m_movement) {
@@ -118,11 +119,12 @@ public:
 
 		if (!m_init) {
 			m_init = true;
-			Game::SharedEntity l_entity(new Game::Entity("player", *this));
+			Game::SharedEntitySceneLayer l_layer(new Game::EntitySceneLayer("main", *this));
+			Game::SharedEntity l_entity(new Game::Entity("player", *l_layer));
 
 			Game::PositionComponent *l_pcomponent =
 			    new Game::PositionComponent("position", *l_entity);
-			l_entity->addComponent(l_pcomponent);
+			l_entity->pushComponent(l_pcomponent);
 
 			Game::MovementComponent *l_mcomponent =
 			    new Game::MovementComponent("movement", *l_entity);
@@ -131,10 +133,10 @@ public:
 			    l_mcomponent->direction().rx() *= -1;
 			if (rand() % 2)
 			    l_mcomponent->direction().ry() *= -1;
-			l_entity->addComponent(l_mcomponent);
+			l_entity->pushComponent(l_mcomponent);
 
 			DemoBounceComponent *l_bcomponent = new DemoBounceComponent(*l_entity);
-			l_entity->addComponent(l_bcomponent);
+			l_entity->pushComponent(l_bcomponent);
 
 			m_asset->load("demos/engine/assets/mallow.png");
 			Math::Rect2 l_rect(Math::Size2(5, 5));
@@ -142,9 +144,10 @@ public:
 			    new Game::RenderComponent("render", *l_entity);
 			l_rcomponent->graphic() = new Graphics::QuadGraphic(l_rect);
 			l_rcomponent->graphic()->setTexture(m_asset);
-			l_entity->addComponent(l_rcomponent);
+			l_entity->pushComponent(l_rcomponent);
 
-			addEntity(l_entity);
+			pushLayer(l_layer.staticCast<Game::ISceneLayer>());
+			l_layer->addEntity(l_entity);
 		}
 	}
 
@@ -176,7 +179,7 @@ public:
 		eventManager()->connect(m_debugListener, "Event::KeyboardEvent");
 
 		Game::SharedScene l_scene(new DemoScene);
-		sceneManager()->push(l_scene);
+		sceneManager()->pushScene(l_scene);
 	}
 
 	VIRTUAL void finalize(void)

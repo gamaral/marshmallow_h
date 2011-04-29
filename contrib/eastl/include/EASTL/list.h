@@ -830,7 +830,7 @@ namespace eastl
     inline typename list<T, Allocator>::const_reverse_iterator
     list<T, Allocator>::rbegin() const
     {
-        return const_reverse_iterator((ListNodeBase*)&mNode);
+        return const_reverse_iterator((const ListNodeBase*)&mNode);
     }
 
 
@@ -927,10 +927,10 @@ namespace eastl
             #if EASTL_DEBUG
                 const ListNodeBase* p = (ListNodeBase*)mNode.mpNext;
                 size_type n = 0;
-                while(p != (ListNodeBase*)&mNode)
+                while(p != (const ListNodeBase*)&mNode)
                 {
                     ++n;
-                    p = (ListNodeBase*)p->mpNext;
+                    p = (const ListNodeBase*)p->mpNext;
                 }
                 return n;
             #else

@@ -43,10 +43,10 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-EntityBase::EntityBase(const Core::Identifier &i, IScene &s)
+EntityBase::EntityBase(const Core::Identifier &i, EntitySceneLayer &l)
     : m_components(),
       m_id(i),
-      m_scene(s),
+      m_layer(l),
       m_killed(false)
 {
 }
@@ -57,9 +57,28 @@ EntityBase::~EntityBase(void)
 }
 
 void
-EntityBase::addComponent(SharedComponent c)
+EntityBase::pushComponent(const SharedComponent &c)
 {
-	m_components.push_back(c);
+	m_components.push_front(c);
+}
+
+void
+EntityBase::popComponent(void)
+{
+	m_components.pop_front();
+}
+
+void
+EntityBase::removeComponent(const Core::Identifier &i)
+{
+	ComponentList::const_iterator l_i;
+	ComponentList::const_iterator l_c = m_components.end();
+
+	for (l_i = m_components.begin(); l_i != l_c; ++l_i)
+		if ((*l_i)->id() == i) {
+			m_components.remove(*l_i);
+			return;
+		}
 }
 
 void
@@ -69,12 +88,11 @@ EntityBase::removeComponent(const SharedComponent &c)
 }
 
 SharedComponent
-EntityBase::component(const Core::Identifier &i) const
+EntityBase::getComponent(const Core::Identifier &i) const
 {
 	ComponentList::const_iterator l_i;
 	ComponentList::const_iterator l_c = m_components.end();
 
-	/* maybe replace later with a map if required */
 	for (l_i = m_components.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->id() == i)
 			return(*l_i);
@@ -83,12 +101,11 @@ EntityBase::component(const Core::Identifier &i) const
 }
 
 SharedComponent
-EntityBase::componentType(const Core::Type &t) const
+EntityBase::getComponentType(const Core::Type &t) const
 {
 	ComponentList::const_iterator l_i;
 	ComponentList::const_iterator l_c = m_components.end();
 
-	/* maybe replace later with a map if required */
 	for (l_i = m_components.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->type() == t)
 			return(*l_i);
@@ -99,31 +116,25 @@ EntityBase::componentType(const Core::Type &t) const
 void
 EntityBase::render(void)
 {
-	if (isZombie())
-		return;
+	if (isZombie()) return;
 
-	ComponentList::const_iterator l_i;
-	ComponentList::const_iterator l_c = m_components.end();
+	ComponentList::const_reverse_iterator l_i;
+	ComponentList::const_reverse_iterator l_c = m_components.rend();
 
-	INFO("%s: Rendering components.", id().str());
-	for (l_i = m_components.begin(); l_i != l_c; ++l_i)
+	for (l_i = m_components.rbegin(); l_i != l_c; ++l_i)
 		(*l_i)->render();
-	INFO("%s: Components rendered.", id().str());
 }
 
 void
 EntityBase::update(TIME d)
 {
-	if (isZombie())
-		return;
+	if (isZombie()) return;
 
-	ComponentList::const_iterator l_i;
-	ComponentList::const_iterator l_c = m_components.end();
+	ComponentList::const_reverse_iterator l_i;
+	ComponentList::const_reverse_iterator l_c = m_components.rend();
 
-	INFO("%s: Updating components.", id().str());
-	for (l_i = m_components.begin(); l_i != l_c; ++l_i)
+	for (l_i = m_components.rbegin(); l_i != l_c; ++l_i)
 		(*l_i)->update(d);
-	INFO("%s: Components updated.", id().str());
 }
 
 bool
@@ -132,11 +143,12 @@ EntityBase::serialize(TinyXML::TiXmlElement &n) const
 	n.SetAttribute("id", id().str());
 	n.SetAttribute("type", type().str());
 
-	ComponentList::const_iterator l_i;
-	for (l_i = m_components.begin(); l_i != m_components.end();) {
-		SharedComponent l_entity = (*l_i++);
+	ComponentList::const_reverse_iterator l_i;
+	ComponentList::const_reverse_iterator l_c = m_components.rend();
+
+	for (l_i = m_components.rbegin(); l_i != l_c; l_i++) {
 		TinyXML::TiXmlElement l_element("component");
-		if (l_entity->serialize(l_element))
+		if ((*l_i)->serialize(l_element))
 			n.InsertEndChild(l_element);
 	}
 	
@@ -167,7 +179,7 @@ EntityBase::deserialize(TinyXML::TiXmlElement &n)
 			continue;
 		}
 
-		addComponent(l_component);
+		pushComponent(l_component);
 	}
 
 	return(true);

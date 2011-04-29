@@ -63,7 +63,7 @@ SceneManager::~SceneManager(void)
 }
 
 void
-SceneManager::push(SharedScene &scene)
+SceneManager::pushScene(SharedScene &scene)
 {
 	if (!scene) return;
 
@@ -77,7 +77,7 @@ SceneManager::push(SharedScene &scene)
 }
 
 void
-SceneManager::pop(void)
+SceneManager::popScene(void)
 {
 	if (m_active)
 		m_active->deactivate();
@@ -89,7 +89,7 @@ SceneManager::pop(void)
 }
 
 SharedScene
-SceneManager::active(void) const
+SceneManager::activeScene(void) const
 {
 	return(m_active);
 }
