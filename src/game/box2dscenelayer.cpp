@@ -36,7 +36,6 @@
 
 #include <tinyxml.h>
 
-#include "core/platform.h"
 #include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_USE;

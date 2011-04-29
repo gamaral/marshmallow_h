@@ -37,8 +37,6 @@
 #include <tinyxml.h>
 
 #include "core/logger.h"
-#include "game/ientity.h"
-#include "game/icomponent.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace TinyXML;

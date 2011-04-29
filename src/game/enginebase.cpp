@@ -34,18 +34,13 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/irenderable.h"
-#include "core/iupdateable.h"
 #include "core/logger.h"
 #include "event/eventmanager.h"
 #include "event/renderevent.h"
-#include "event/rendereventlistener.h"
 #include "event/updateevent.h"
-#include "event/updateeventlistener.h"
-#include "game/engineeventlistener.h"
-#include "game/iscene.h"
-#include "game/scenemanager.h"
 #include "graphics/viewport.h"
+#include "game/engineeventlistener.h"
+#include "game/scenemanager.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;

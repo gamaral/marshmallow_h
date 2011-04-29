@@ -35,7 +35,6 @@
  */
 
 #include "game/entity.h"
-#include "game/scenebase.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;

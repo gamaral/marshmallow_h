@@ -37,8 +37,6 @@
 #include <tinyxml.h>
 
 #include "core/logger.h"
-#include "event/eventmanager.h"
-#include "game/engine.h"
 #include "game/entityfactory.h"
 #include "game/ientity.h"
 

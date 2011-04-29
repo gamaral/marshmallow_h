@@ -37,7 +37,6 @@
 #include <tinyxml.h>
 
 #include "core/logger.h"
-#include "graphics/igraphic.h"
 #include "graphics/painter.h"
 #include "game/graphicfactorybase.h"
 #include "game/ientity.h"

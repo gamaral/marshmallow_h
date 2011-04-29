@@ -36,8 +36,6 @@
 
 #include <tinyxml.h>
 
-#include "game/ientity.h"
-
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
