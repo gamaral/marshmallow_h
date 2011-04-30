@@ -34,11 +34,14 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml.h>
+
 #include "core/logger.h"
 #include "event/eventmanager.h"
 #include "event/rendereventlistener.h"
 #include "event/updateeventlistener.h"
 #include "game/iscene.h"
+#include "game/scenefactory.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -111,5 +114,55 @@ void
 SceneManager::update(TIME d)
 {
 	if (m_active) m_active->update(d);
+}
+
+bool
+SceneManager::serialize(TinyXML::TiXmlElement &n) const
+{
+	SceneStack::const_reverse_iterator l_i;
+	SceneStack::const_reverse_iterator l_c = m_stack.rend();
+	for (l_i = m_stack.rbegin(); l_i != l_c; ++l_i) {
+		TinyXML::TiXmlElement l_element("scene");
+		if ((*l_i)->serialize(l_element))
+			n.InsertEndChild(l_element);
+	}
+
+	if (m_active) {
+		TinyXML::TiXmlElement l_element("scene");
+		if (m_active->serialize(l_element))
+			n.InsertEndChild(l_element);
+	}
+	
+	return(true);
+}
+
+bool
+SceneManager::deserialize(TinyXML::TiXmlElement &n)
+{
+	TinyXML::TiXmlElement *l_child;
+	for (l_child = n.FirstChildElement("scene") ;
+	     l_child;
+	     l_child = l_child->NextSiblingElement("scene")) {
+
+		const char *l_id   = l_child->Attribute("id");
+		const char *l_type = l_child->Attribute("type");
+
+		SharedScene l_scene =
+		    SceneFactory::Instance()->createScene(l_type, l_id);
+
+		if (!l_scene) {
+			WARNING("Scene '%s' of type '%s' creation failed", l_id, l_type);
+			continue;
+		}
+
+		if (!l_scene->deserialize(*l_child)) {
+			WARNING("Scene '%s' of type '%s' failed deserialization", l_id, l_type);
+			continue;
+		}
+
+		pushScene(l_scene);
+	}
+	
+	return(true);
 }
 

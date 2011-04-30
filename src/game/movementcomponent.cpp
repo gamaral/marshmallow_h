@@ -72,8 +72,9 @@ MovementComponent::update(TIME d)
 bool
 MovementComponent::serialize(TinyXML::TiXmlElement &n) const
 {
-	n.SetAttribute("id", id().str());
-	n.SetAttribute("type", type().str());
+	if (!ComponentBase::serialize(n))
+	    return(false);
+
 	n.SetDoubleAttribute("x", m_direction.rx());
 	n.SetDoubleAttribute("y", m_direction.ry());
 	return(true);
@@ -82,6 +83,9 @@ MovementComponent::serialize(TinyXML::TiXmlElement &n) const
 bool
 MovementComponent::deserialize(TinyXML::TiXmlElement &n)
 {
+	if (!ComponentBase::deserialize(n))
+	    return(false);
+
 	n.QueryFloatAttribute("x", &m_direction.rx());
 	n.QueryFloatAttribute("y", &m_direction.ry());
 	return(true);

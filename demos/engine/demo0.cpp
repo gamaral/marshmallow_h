@@ -139,7 +139,7 @@ public:
 			l_entity->pushComponent(l_bcomponent);
 
 			m_asset->load("demos/engine/assets/mallow.png");
-			Math::Rect2 l_rect(Math::Size2(5, 5));
+			Math::Rect2 l_rect(Math::Size2(10, 10));
 			Game::RenderComponent *l_rcomponent =
 			    new Game::RenderComponent("render", *l_entity);
 			l_rcomponent->graphic() = new Graphics::QuadGraphic(l_rect);
@@ -172,7 +172,7 @@ public:
 	{
 	}
 
-	VIRTUAL void initialize(void)
+	VIRTUAL bool initialize(void)
 	{
 		EngineBase::initialize();
 
@@ -180,11 +180,8 @@ public:
 
 		Game::SharedScene l_scene(new DemoScene);
 		sceneManager()->pushScene(l_scene);
-	}
 
-	VIRTUAL void finalize(void)
-	{
-		EngineBase::finalize();
+		return(true);
 	}
 
 	VIRTUAL void second(void)

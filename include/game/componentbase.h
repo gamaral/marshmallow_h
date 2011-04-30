@@ -71,10 +71,8 @@ namespace Game
 		VIRTUAL void render(void) {};
 		VIRTUAL void update(TIME) {};
 
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const
-		    { UNUSED(node); return(true); }
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node)
-		    { UNUSED(node); return(true); }
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
 	protected:
 

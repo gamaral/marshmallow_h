@@ -37,7 +37,9 @@
 #ifndef GAME_IENGINE_H
 #define GAME_IENGINE_H 1
 
-#include "core/global.h"
+#include "core/irenderable.h"
+#include "core/iserializable.h"
+#include "core/iupdateable.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -45,7 +47,9 @@ namespace Game
 {
 
 	/*! @brief Game Engine Interface */
-	struct GAME_EXPORT IEngine
+	struct GAME_EXPORT IEngine : public Core::IRenderable,
+	                             public Core::IUpdateable,
+	                             public Core::ISerializable
 	{
 		virtual ~IEngine(void) {};
 
@@ -60,14 +64,11 @@ namespace Game
 		 */
 		virtual void stop(int exit_code = 0) = 0;
 
-		virtual void setup(void) = 0;
-		virtual void initialize(void) = 0;
+		virtual bool initialize(void) = 0;
 		virtual void finalize(void) = 0;
 
-		virtual void render(void) = 0;
 		virtual void second(void) = 0;
 		virtual void tick(TIME timeout) = 0;
-		virtual void update(TIME delta) = 0;
 	};
 
 }

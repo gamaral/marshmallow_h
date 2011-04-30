@@ -76,8 +76,8 @@ RenderComponent::render(void)
 bool
 RenderComponent::serialize(TinyXML::TiXmlElement &n) const
 {
-	n.SetAttribute("id", id().str());
-	n.SetAttribute("type", type().str());
+	if (!ComponentBase::serialize(n))
+	    return(false);
 
 	TinyXML::TiXmlElement l_graphic("graphic");
 	if (m_graphic && !m_graphic->serialize(l_graphic)) {
@@ -93,6 +93,9 @@ RenderComponent::serialize(TinyXML::TiXmlElement &n) const
 bool
 RenderComponent::deserialize(TinyXML::TiXmlElement &n)
 {
+	if (!ComponentBase::deserialize(n))
+	    return(false);
+
 	TinyXML::TiXmlElement *l_child = n.FirstChildElement("graphic");
 	if (!l_child) {
 		WARNING("Render component '%s' deserialized without a graphic!",

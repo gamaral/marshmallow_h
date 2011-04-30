@@ -34,29 +34,16 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/shared.h"
-#include "game/iscene.h"
+#ifndef GAME_SCENEFACTORY_H
+#define GAME_SCENEFACTORY_H 1
 
-#ifndef GAME_SCENEBUILDER_H
-#define GAME_SCENEBUILDER_H 1
+#include "game/scenefactorybase.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
-	/*! @brief Game Scene Builder */
-	class GAME_EXPORT SceneBuilder
-	{
-		NO_COPY(SceneBuilder);
-
-	public:
-		SceneBuilder(void);
-		~SceneBuilder(void);
-
-		bool load(const char *filename, IScene &scene);
-	};
-
+	typedef SceneFactoryBase SceneFactory;
 }
 
 MARSHMALLOW_NAMESPACE_END

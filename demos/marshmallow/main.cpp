@@ -35,8 +35,11 @@
 #include "game.h"
 
 int
-main(void)
+main(int argc, const char *argv[])
 {
-	return(Demo().run());
+	const char *l_filename("demos/marshmallow/assets/mainscene.xml");
+	if (argc > 1) l_filename = argv[1];
+
+	return(Demo(l_filename).run());
 }
 

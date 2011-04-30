@@ -34,27 +34,39 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <cstring>
+
+#include "core/logger.h"
+
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
 const Core::Type TextureAsset::Type("Graphics::TextureAsset");
 
 TextureAsset::TextureAsset(void)
+    : m_id(),
+      m_size(),
+      m_filename(0),
+      m_texture_id(0)
 {
 }
 
 TextureAsset::~TextureAsset(void)
 {
+	unload();
 }
 
 void
 TextureAsset::load(const char *f)
 {
-	UNUSED(f);
+	m_filename = STRDUP(f);
+	INFO1("Texture loaded (not really).");
 }
 
 void
 TextureAsset::unload(void)
 {
+	free(m_filename);
+	m_filename = 0;
 }
 

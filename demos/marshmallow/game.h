@@ -46,15 +46,16 @@ MARSHMALLOW_NAMESPACE_USE;
 
 class Demo : public Game::EngineBase
 {
+	char *m_filename;
 	int m_stop_timer;
 
 public:
-	Demo(void);
+	Demo(const char *filename);
+	virtual ~Demo(void);
 
 public: /* virtual */
 
-	VIRTUAL void initialize(void);
-	VIRTUAL void finalize(void);
+	VIRTUAL bool initialize(void);
 	VIRTUAL void second(void);
 };
 

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/scenebuilder.h"
+#pragma once
 
 /*!
  * @file
@@ -34,39 +34,35 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
+#ifndef GAME_ISCENEFACTORY_H
+#define GAME_ISCENEFACTORY_H 1
 
-#include "core/logger.h"
+#include "core/global.h"
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace TinyXML;
-using namespace Game;
+#include "core/fd.h"
 
-SceneBuilder::SceneBuilder(void)
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Game
 {
+
+	struct IScene;
+
+	/*! @brief Game SceneFactory Interface */
+	struct GAME_EXPORT ISceneFactory
+	{
+		typedef Core::Shared<IScene> SharedScene;
+
+		virtual ~ISceneFactory(void) {};
+
+		virtual SharedScene createScene(const Core::Type &type,
+		    const Core::Identifier &identifier) const = 0;
+	};
+	typedef Core::Shared<ISceneFactory> SharedSceneFactory;
+	typedef Core::Weak<ISceneFactory> WeakSceneFactory;
+
 }
 
-SceneBuilder::~SceneBuilder(void)
-{
-}
+MARSHMALLOW_NAMESPACE_END
 
-bool
-SceneBuilder::load(const char *f, IScene &s)
-{
-	TiXmlDocument l_document;
-	if (l_document.LoadFile(f, TIXML_DEFAULT_ENCODING)) {
-		TiXmlElement* l_root = l_document.FirstChildElement("scene");
-		if (!l_root) {
-			WARNING1("Invalid scene - document contains no 'scene' element.");
-			return(false);
-		}
-
-		if (!s.deserialize(*l_root)) {
-			WARNING1("Failed to deserialize scene.");
-			return(false);
-		}
-	} else return(false);
-
-	return(true);
-}
-
+#endif

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/scenefactorybase.h"
 
 /*!
  * @file
@@ -34,67 +34,28 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_SCENEMANAGER_H
-#define GAME_SCENEMANAGER_H 1
+#include "game/scene.h"
 
-#include "EASTL/list.h"
-using namespace eastl;
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-#include "core/irenderable.h"
-#include "core/iserializable.h"
-#include "core/iupdateable.h"
+ISceneFactory *SceneFactoryBase::s_instance(0);
 
-#include "core/shared.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Event
+SceneFactoryBase::SceneFactoryBase(void)
 {
-	struct IEventListener;
-	typedef Core::Shared<IEventListener> SharedEventListener;
+	if (!s_instance) s_instance = this;
 }
 
-namespace Game
+SceneFactoryBase::~SceneFactoryBase(void)
 {
-	struct IScene;
-
-	/*! @brief Game Scene Manager */
-	class GAME_EXPORT SceneManager : public Core::IRenderable,
-                                         public Core::IUpdateable,
-	                                 public Core::ISerializable
-	{
-		typedef Core::Shared<IScene> SharedScene;
-		typedef list<SharedScene> SceneStack;
-
-		SceneStack  m_stack;
-		SharedScene m_active;
-		Event::SharedEventListener m_renderListener;
-		Event::SharedEventListener m_updateListener;
-
-		NO_COPY(SceneManager);
-
-	public:
-
-		SceneManager(void);
-		virtual ~SceneManager(void);
-
-		void pushScene(SharedScene &scene);
-		void popScene(void);
-
-		SharedScene activeScene(void) const;
-
-	public: /* virtual */
-
-		VIRTUAL void render(void);
-		VIRTUAL void update(TIME delta);
-
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
-	};
-	typedef Core::Shared<SceneManager> SharedSceneManager;
-
+	if (s_instance == this) s_instance = 0;
 }
 
-MARSHMALLOW_NAMESPACE_END
+SharedScene
+SceneFactoryBase::createScene(const Core::Type &t,
+    const Core::Identifier &i) const
+{
+	if (t == Scene::Type) return(new Scene(i));
+	return(SharedScene());
+}
 
-#endif

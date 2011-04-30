@@ -38,46 +38,63 @@ MARSHMALLOW_NAMESPACE_USE;
 
 #include <tinyxml.h>
 
+#include <core/logger.h>
 #include <math/vector2.h>
 #include <math/vector3.h>
 #include <graphics/viewport.h>
-#include <game/box2dscenelayer.h>
 #include <game/entityfactory.h>
 #include <game/entityscenelayer.h>
 #include <game/graphicfactory.h>
 #include <game/scene.h>
-#include <game/scenebuilder.h>
+#include <game/scenefactory.h>
 #include <game/scenelayerfactory.h>
 
 #include "componentfactory.h"
 
-Demo::Demo(void)
+Demo::Demo(const char *f)
     : EngineBase(),
+      m_filename(STRDUP(f)),
       m_stop_timer(0)
 {
 }
 
-void
+Demo::~Demo(void)
+{
+	free(m_filename);
+	m_filename = 0;
+}
+
+bool
 Demo::initialize(void)
 {
-	EngineBase::initialize();
+	if (!EngineBase::initialize())
+		return(false);
 
 	ComponentFactory l_cf;
 	Game::EntityFactory l_ef;
 	Game::GraphicFactory l_gf;
+	Game::SceneFactory l_sf;
 	Game::SceneLayerFactory l_slf;
 
-	Game::SharedScene l_scene(new Game::Scene("main"));
-	sceneManager()->pushScene(l_scene);
+	{	/* derialization test */
+		TinyXML::TiXmlDocument l_document;
+		if (!l_document.LoadFile(m_filename)) {
+			ERROR("Failed to load '%s'", m_filename);
+			return(false);
+		}
+		TinyXML::TiXmlElement *l_root = l_document.FirstChildElement("marshmallow");
+		if (l_root) deserialize(*l_root);
+	}
 
-	Game::SceneBuilder builder;
-	builder.load("demos/marshmallow/assets/mainscene.xml", *l_scene);
-}
+	{	/* pre-run serialization test */
+		TinyXML::TiXmlDocument l_document;
+		TinyXML::TiXmlElement  l_root("marshmallow");
+		serialize(l_root);
+		l_document.InsertEndChild(l_root);
+		l_document.SaveFile("mainscene.xml");
+	}
 
-void
-Demo::finalize(void)
-{
-	EngineBase::finalize();
+	return(true);
 }
 
 void
@@ -86,12 +103,13 @@ Demo::second(void)
 	EngineBase::second();
 
 	if (++m_stop_timer == 8) {
-		TinyXML::TiXmlDocument l_document;
-		TinyXML::TiXmlElement l_root("scene");
-		sceneManager()->activeScene()->serialize(l_root);
-		l_document.InsertEndChild(l_root);
-		l_document.SaveFile("scene.xml");
 		stop();
+	} else if (m_stop_timer == 4) {
+		TinyXML::TiXmlDocument l_document;
+		TinyXML::TiXmlElement l_root("marshmallow");
+		serialize(l_root);
+		l_document.InsertEndChild(l_root);
+		l_document.SaveFile("midscene.xml");
 	}
 }
 

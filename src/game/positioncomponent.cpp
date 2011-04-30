@@ -54,8 +54,9 @@ PositionComponent::~PositionComponent(void)
 bool
 PositionComponent::serialize(TinyXML::TiXmlElement &n) const
 {
-	n.SetAttribute("id", id().str());
-	n.SetAttribute("type", type().str());
+	if (!ComponentBase::serialize(n))
+	    return(false);
+
 	n.SetDoubleAttribute("x", m_position.rx());
 	n.SetDoubleAttribute("y", m_position.ry());
 	return(true);
@@ -64,6 +65,9 @@ PositionComponent::serialize(TinyXML::TiXmlElement &n) const
 bool
 PositionComponent::deserialize(TinyXML::TiXmlElement &n)
 {
+	if (!ComponentBase::deserialize(n))
+	    return(false);
+
 	n.QueryFloatAttribute("x", &m_position.rx());
 	n.QueryFloatAttribute("y", &m_position.ry());
 	return(true);

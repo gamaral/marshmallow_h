@@ -34,64 +34,40 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_SCENEMANAGER_H
-#define GAME_SCENEMANAGER_H 1
+#ifndef GAME_SCENEFACTORYBASE_H
+#define GAME_SCENEFACTORYBASE_H 1
 
-#include "EASTL/list.h"
-using namespace eastl;
-
-#include "core/irenderable.h"
-#include "core/iserializable.h"
-#include "core/iupdateable.h"
+#include "game/iscenefactory.h"
 
 #include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Event
-{
-	struct IEventListener;
-	typedef Core::Shared<IEventListener> SharedEventListener;
-}
-
 namespace Game
 {
-	struct IScene;
 
-	/*! @brief Game Scene Manager */
-	class GAME_EXPORT SceneManager : public Core::IRenderable,
-                                         public Core::IUpdateable,
-	                                 public Core::ISerializable
+	/*! @brief Game Scene  Factory Base Class */
+	class GAME_EXPORT SceneFactoryBase : public ISceneFactory
 	{
-		typedef Core::Shared<IScene> SharedScene;
-		typedef list<SharedScene> SceneStack;
+		static ISceneFactory *s_instance;
 
-		SceneStack  m_stack;
-		SharedScene m_active;
-		Event::SharedEventListener m_renderListener;
-		Event::SharedEventListener m_updateListener;
-
-		NO_COPY(SceneManager);
+		NO_COPY(SceneFactoryBase);
 
 	public:
 
-		SceneManager(void);
-		virtual ~SceneManager(void);
-
-		void pushScene(SharedScene &scene);
-		void popScene(void);
-
-		SharedScene activeScene(void) const;
+		SceneFactoryBase(void);
+		virtual ~SceneFactoryBase(void);
 
 	public: /* virtual */
 
-		VIRTUAL void render(void);
-		VIRTUAL void update(TIME delta);
+		VIRTUAL SharedScene createScene(const Core::Type &type,
+		    const Core::Identifier &identifier) const;
 
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+	public: /* static */
+
+		static ISceneFactory *Instance(void)
+		    { return(s_instance); }
 	};
-	typedef Core::Shared<SceneManager> SharedSceneManager;
 
 }
 

@@ -133,14 +133,17 @@ namespace Game
 		VIRTUAL int run(void);
 		VIRTUAL void stop(int exit_code = 0);
 
-		VIRTUAL void setup(void);
-		VIRTUAL void initialize(void);
+		VIRTUAL bool initialize(void);
 		VIRTUAL void finalize(void);
 
-		VIRTUAL void render(void);
 		VIRTUAL void second(void);
 		VIRTUAL void tick(TIME timeout);
+
+		VIRTUAL void render(void);
 		VIRTUAL void update(TIME delta);
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
 	public: /* static */
 

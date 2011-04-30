@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml.h>
+
 #include "core/logger.h"
 #include "event/eventmanager.h"
 #include "event/renderevent.h"
@@ -73,26 +75,26 @@ EngineBase::~EngineBase(void)
 		s_instance = 0;
 }
 
-void
-EngineBase::setup(void)
+bool
+EngineBase::initialize(void)
 {
+	Platform::Initialize();
+
+	if (!Viewport::Initialize()) {
+		ERROR1("Failed to initialize engine!");
+		return(false);
+	}
+
 	m_event_listener = new EngineEventListener("EngineBase.EngineEventListener");
 
 	if (!m_event_manager)
 		m_event_manager = new Event::EventManager("EngineBase.EventManager");
 	if (!m_scene_manager)
 		m_scene_manager = new SceneManager();
-}
-
-void
-EngineBase::initialize(void)
-{
-	Platform::Initialize();
-
-	if (!Viewport::Initialize())
-		FATAL1("Failed to initialize engine!");
 
 	eventManager()->connect(m_event_listener, "Event::QuitEvent");
+
+	return(true);
 }
 
 void
@@ -133,7 +135,11 @@ EngineBase::setSceneManager(SharedSceneManager &m)
 int
 EngineBase::run(void)
 {
-	setup();
+	if (!initialize()) {
+		ERROR1("Engine initialization failed");
+		finalize();
+		return(-1);
+	}
 
 	TIME l_render = 0;
 #define MILLISECONDS_PER_SECOND 1000.f
@@ -150,8 +156,6 @@ EngineBase::run(void)
 
 	m_delta_time = 0;
 	m_running = true;
-
-	initialize();
 
 	/* startup */
 	tick(l_tick_target);
@@ -209,15 +213,6 @@ EngineBase::stop(int ec)
 }
 
 void
-EngineBase::render(void)
-{
-	Event::RenderEvent event;
-	eventManager()->dispatch(event);
-
-	Graphics::Viewport::SwapBuffer();
-}
-
-void
 EngineBase::tick(TIME t)
 {
 	TIMEOUT_INIT;
@@ -227,16 +222,68 @@ EngineBase::tick(TIME t)
 }
 
 void
+EngineBase::second(void)
+{
+	INFO("FPS %d!", m_frame_rate);
+	m_frame_rate = 0;
+}
+
+void
+EngineBase::render(void)
+{
+	Event::RenderEvent event;
+	eventManager()->dispatch(event);
+
+	Graphics::Viewport::SwapBuffer();
+}
+
+void
 EngineBase::update(TIME d)
 {
 	Event::UpdateEvent event(d);
 	eventManager()->dispatch(event);
 }
 
-void
-EngineBase::second(void)
+bool
+EngineBase::serialize(TinyXML::TiXmlElement &n) const
 {
-	INFO("FPS %d!", m_frame_rate);
-	m_frame_rate = 0;
+	n.SetDoubleAttribute("fps", m_fps);
+	n.SetDoubleAttribute("ups", m_ups);
+
+	if (m_scene_manager) {
+		TinyXML::TiXmlElement l_element("scenes");
+
+		if (!m_scene_manager->serialize(l_element)) {
+			WARNING1("Scene Manager serialization failed");
+			return(false);
+		}
+
+		n.InsertEndChild(l_element);
+	}
+
+	return(true);
+}
+
+bool
+EngineBase::deserialize(TinyXML::TiXmlElement &n)
+{
+	/*
+	 * Engine deserialization should ideally
+	 * take place BEFORE it has been started.
+	 */
+
+	TinyXML::TiXmlElement *l_element;
+
+	l_element = n.FirstChildElement("scenes");
+
+	n.QueryFloatAttribute("fps", &m_fps);
+	n.QueryFloatAttribute("ups", &m_ups);
+
+	if (l_element && m_scene_manager)
+		m_scene_manager->deserialize(*l_element);
+	else if (l_element && !m_scene_manager)
+		return(false);
+	
+	return(true);
 }
 

@@ -131,13 +131,10 @@ Box2DComponent::update(TIME d)
 bool
 Box2DComponent::serialize(TinyXML::TiXmlElement &n) const
 {
-	if (!(m_init && m_body))
+	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	n.SetAttribute("id", id().str());
-	n.SetAttribute("type", type().str());
-
-	switch (m_body->GetType()) {
+	switch (m_body_type) {
 	case b2_staticBody:
 	    n.SetAttribute("body", "static");
 	    break;
@@ -161,7 +158,7 @@ Box2DComponent::serialize(TinyXML::TiXmlElement &n) const
 bool
 Box2DComponent::deserialize(TinyXML::TiXmlElement &n)
 {
-	if (m_init || m_body)
+	if (!ComponentBase::deserialize(n))
 	    return(false);
 
 	const char *l_body = n.Attribute("body");
