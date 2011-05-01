@@ -39,7 +39,7 @@
 #include "event/rendereventlistener.h"
 #include "event/updateeventlistener.h"
 #include "game/iscene.h"
-#include "game/scenefactory.h"
+#include "game/factorybase.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -146,7 +146,7 @@ SceneManager::deserialize(TinyXML::TiXmlElement &n)
 		const char *l_type = l_child->Attribute("type");
 
 		SharedScene l_scene =
-		    SceneFactory::Instance()->createScene(l_type, l_id);
+		    FactoryBase::Instance()->createScene(l_type, l_id);
 
 		if (!l_scene) {
 			WARNING("Scene '%s' of type '%s' creation failed", l_id, l_type);

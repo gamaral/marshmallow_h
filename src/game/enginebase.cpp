@@ -40,7 +40,11 @@
 #include "event/updateevent.h"
 #include "graphics/viewport.h"
 #include "game/engineeventlistener.h"
+#include "game/factory.h"
 #include "game/scenemanager.h"
+
+extern int iAllocations;
+extern int iDeallocations;
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -54,6 +58,7 @@ EngineBase::EngineBase(float f, float u, bool s)
     : m_event_manager(),
       m_scene_manager(),
       m_event_listener(),
+      m_factory(),
       m_fps(f),
       m_ups(u),
       m_delta_time(0),
@@ -90,6 +95,8 @@ EngineBase::initialize(void)
 		m_event_manager = new Event::EventManager("EngineBase.EventManager");
 	if (!m_scene_manager)
 		m_scene_manager = new SceneManager();
+	if (!m_factory)
+		m_factory = new Factory();
 
 	eventManager()->connect(m_event_listener, "Event::QuitEvent");
 
@@ -118,17 +125,29 @@ EngineBase::sceneManager(void) const
 	return(m_scene_manager);
 }
 
+SharedFactory
+EngineBase::factory(void) const
+{
+	return(m_factory);
+}
+
 void
-EngineBase::setEventManager(SharedEventManager &m)
+EngineBase::setEventManager(const SharedEventManager &m)
 {
 	m_event_manager = m;
 }
 
 void
-EngineBase::setSceneManager(SharedSceneManager &m)
+EngineBase::setSceneManager(const SharedSceneManager &m)
 {
 	
 	m_scene_manager = m;
+}
+
+void
+EngineBase::setFactory(const SharedFactory &f)
+{
+	m_factory = f;
 }
 
 int
@@ -141,7 +160,7 @@ EngineBase::run(void)
 	}
 
 	TIME l_render = 0;
-#define MILLISECONDS_PER_SECOND 1000.0
+#define MILLISECONDS_PER_SECOND static_cast<TIME>(1000.0)
 	TIME l_render_target = MILLISECONDS_PER_SECOND / m_fps;
 
 	TIME l_update = 0;
@@ -151,7 +170,7 @@ EngineBase::run(void)
 	TIME l_second_target = MILLISECONDS_PER_SECOND;
 
 	TIME l_tick;
-	TIME l_tick_target = MIN(l_render_target, l_update_target) / 3.0;
+	TIME l_tick_target = MIN(l_render_target, l_update_target) / static_cast<TIME>(3.0);
 
 	m_delta_time = 0;
 	m_running = true;
@@ -227,7 +246,7 @@ EngineBase::tick(TIME t)
 void
 EngineBase::second(void)
 {
-	INFO("FPS %d!", m_frame_rate);
+	WARNING("FPS %d!", m_frame_rate);
 	m_frame_rate = 0;
 }
 

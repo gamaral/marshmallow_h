@@ -36,7 +36,7 @@
 
 #include "core/logger.h"
 #include "game/iscenelayer.h"
-#include "game/scenelayerfactory.h"
+#include "game/factorybase.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
@@ -169,7 +169,7 @@ SceneBase::deserialize(TinyXML::TiXmlElement &n)
 		const char *l_type = l_child->Attribute("type");
 
 		SharedSceneLayer l_layer =
-		    SceneLayerFactory::Instance()->createSceneLayer(l_type, l_id, *this);
+		    FactoryBase::Instance()->createSceneLayer(l_type, l_id, *this);
 
 		if (!l_layer) {
 			WARNING("SceneLayer '%s' of type '%s' creation failed", l_id, l_type);

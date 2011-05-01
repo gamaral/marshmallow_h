@@ -90,8 +90,8 @@ Platform::TimeStamp(void)
 {
 	struct timeval time;
 	gettimeofday(&time, 0);
-	return(static_cast<double>((time.tv_sec - platform_internal.start_time) * 1000)
-	    + (static_cast<double>(time.tv_usec) / 1000.0));
+	return(static_cast<TIME>((time.tv_sec - platform_internal.start_time) * 1000)
+	    + (static_cast<TIME>(time.tv_usec) / 1000.0f));
 }
 
 TimeData

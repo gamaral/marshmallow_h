@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/entityfactorybase.h"
+#pragma once
 
 /*!
  * @file
@@ -34,28 +34,18 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "game/entity.h"
+#ifndef GAME_FACTORY_H
+#define GAME_FACTORY_H 1
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Game;
+#include "game/factorybase.h"
 
-IEntityFactory *EntityFactoryBase::s_instance(0);
+MARSHMALLOW_NAMESPACE_BEGIN
 
-EntityFactoryBase::EntityFactoryBase(void)
+namespace Game
 {
-	if (!s_instance) s_instance = this;
+	typedef FactoryBase Factory;
 }
 
-EntityFactoryBase::~EntityFactoryBase(void)
-{
-	if (s_instance == this) s_instance = 0;
-}
+MARSHMALLOW_NAMESPACE_END
 
-SharedEntity
-EntityFactoryBase::createEntity(const Core::Type &t,
-    const Core::Identifier &i, EntitySceneLayer &l) const
-{
-	if (t == Entity::Type) return(new Entity(i, l));
-	return(SharedEntity());
-}
-
+#endif

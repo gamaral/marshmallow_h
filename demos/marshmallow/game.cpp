@@ -37,12 +37,8 @@
 MARSHMALLOW_NAMESPACE_USE;
 
 #include <core/logger.h>
-#include <game/entityfactory.h>
-#include <game/graphicfactory.h>
-#include <game/scenefactory.h>
-#include <game/scenelayerfactory.h>
 
-#include "componentfactory.h"
+#include "customfactory.h"
 
 Demo::Demo(const char *f)
     : EngineBase(),
@@ -60,14 +56,10 @@ Demo::~Demo(void)
 bool
 Demo::initialize(void)
 {
+	setFactory(new CustomFactory);
+
 	if (!EngineBase::initialize())
 		return(false);
-
-	ComponentFactory l_cf;
-	Game::EntityFactory l_ef;
-	Game::GraphicFactory l_gf;
-	Game::SceneFactory l_sf;
-	Game::SceneLayerFactory l_slf;
 
 	{	/* derialization test */
 		TinyXML::TiXmlDocument l_document;

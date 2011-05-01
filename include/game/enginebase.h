@@ -57,6 +57,9 @@ namespace Game
 	class SceneManager;
 	typedef Core::Shared<SceneManager> SharedSceneManager;
 
+	struct IFactory;
+	typedef Core::Shared<IFactory> SharedFactory;
+
 	class EngineBaseEventListener;
 
 	/*! @brief Game Engine Base Class */
@@ -66,6 +69,7 @@ namespace Game
 		Event::SharedEventManager  m_event_manager;
 		Game::SharedSceneManager   m_scene_manager;
 		Event::SharedEventListener m_event_listener;
+		Game::SharedFactory        m_factory;
 		float  m_fps;
 		float  m_ups;
 		TIME   m_delta_time;
@@ -98,14 +102,24 @@ namespace Game
 		SharedSceneManager sceneManager(void) const;
 
 		/*!
+		 * @brief Factory
+		 */
+		SharedFactory factory(void) const;
+
+		/*!
 		 * @brief Set Event Manager
 		 */
-		void setEventManager(Event::SharedEventManager &m);
+		void setEventManager(const Event::SharedEventManager &manager);
 
 		/*!
 		 * @brief Set Scene Manager
 		 */
-		void setSceneManager(SharedSceneManager &m);
+		void setSceneManager(const SharedSceneManager &manager);
+
+		/*!
+		 * @brief Set Factory
+		 */
+		void setFactory(const SharedFactory &factory);
 
 		/*!
 		 * @brief Target frames per second

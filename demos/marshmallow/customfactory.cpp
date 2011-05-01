@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "customfactory.h"
 
 /*!
  * @file
@@ -34,43 +34,14 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_SCENELAYERFACTORYBASE_H
-#define GAME_SCENELAYERFACTORYBASE_H 1
+#include "bouncecomponent.h"
 
-#include "game/iscenelayerfactory.h"
-
-#include "core/shared.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+Game::SharedComponent
+CustomFactory::createComponent(const Core::Type &t,
+    const Core::Identifier &i, Game::IEntity &e) const
 {
-
-	/*! @brief Game Scene Layer Factory Base Class */
-	class GAME_EXPORT SceneLayerFactoryBase : public ISceneLayerFactory
-	{
-		static ISceneLayerFactory *s_instance;
-
-		NO_COPY(SceneLayerFactoryBase);
-
-	public:
-
-		SceneLayerFactoryBase(void);
-		virtual ~SceneLayerFactoryBase(void);
-
-	public: /* virtual */
-
-		VIRTUAL SharedSceneLayer createSceneLayer(const Core::Type &type,
-		    const Core::Identifier &identifier, IScene &scene) const;
-
-	public: /* static */
-
-		static ISceneLayerFactory *Instance(void)
-		    { return(s_instance); }
-	};
-
+	if (BounceComponent::Type == t)
+		return(new BounceComponent(i, e));
+	else return(FactoryBase::createComponent(t, i, e));
 }
 
-MARSHMALLOW_NAMESPACE_END
-
-#endif

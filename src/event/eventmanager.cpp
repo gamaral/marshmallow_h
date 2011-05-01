@@ -63,7 +63,7 @@ EventManager::~EventManager(void)
 bool
 EventManager::connect(const WeakEventListener &handler, const Core::Type &t)
 {
-	INFO("Connecting `%p` handler to event type `%s`", static_cast<const void *>(&handler), t.str());
+	INFO("Connecting `%p` handler to event type `%s`", static_cast<const void *>(&handler), t.str().c_str());
 
 	EventListenerMap::const_iterator l_elmapi =
 	    m_elmap.find(t.uid());
@@ -92,7 +92,7 @@ EventManager::connect(const WeakEventListener &handler, const Core::Type &t)
 bool
 EventManager::disconnect(const WeakEventListener &handler, const Core::Type &t)
 {
-	INFO("Disconnecting `%p` handler from event type `%s`", static_cast<const void *>(&handler), t.str());
+	INFO("Disconnecting `%p` handler from event type `%s`", static_cast<const void *>(&handler), t.str().c_str());
 
 	EventListenerMap::const_iterator l_elmapi =
 	    m_elmap.find(t.uid());

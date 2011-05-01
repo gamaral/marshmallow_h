@@ -34,43 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_COMPONENTFACTORYBASE_H
-#define GAME_COMPONENTFACTORYBASE_H 1
+#ifndef CUSTOMFACTORY_H
+#define CUSTOMFACTORY_H 1
 
-#include "game/icomponentfactory.h"
+#include <game/factorybase.h>
 
-#include "core/shared.h"
+MARSHMALLOW_NAMESPACE_USE;
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+class GAME_EXPORT CustomFactory : public Game::FactoryBase
 {
 
-	/*! @brief Game Component Factory Base Class */
-	class GAME_EXPORT ComponentFactoryBase : public IComponentFactory
-	{
-		static IComponentFactory *s_instance;
+	NO_COPY(CustomFactory);
 
-		NO_COPY(ComponentFactoryBase);
+public:
 
-	public:
+	CustomFactory(void)
+	    : FactoryBase()
+	{}
 
-		ComponentFactoryBase(void);
-		virtual ~ComponentFactoryBase(void);
+	virtual ~CustomFactory(void)
+	{};
 
-	public: /* virtual */
+public: /* virtual */
 
-		VIRTUAL SharedComponent createComponent(const Core::Type &type,
-		    const Core::Identifier &identifier, IEntity &entity) const;
+	VIRTUAL Game::SharedComponent createComponent(const Core::Type &type,
+	    const Core::Identifier &identifier, Game::IEntity &entity) const;
 
-	public: /* static */
-
-		static IComponentFactory *Instance(void)
-		    { return(s_instance); }
-	};
-
-}
-
-MARSHMALLOW_NAMESPACE_END
+};
 
 #endif

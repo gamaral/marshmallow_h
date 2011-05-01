@@ -35,8 +35,9 @@
  */
 
 #include "core/logger.h"
+#include "graphics/igraphic.h"
 #include "graphics/painter.h"
-#include "game/graphicfactorybase.h"
+#include "game/factorybase.h"
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
@@ -103,7 +104,7 @@ RenderComponent::deserialize(TinyXML::TiXmlElement &n)
 
 	const char *l_graphic_type = l_child->Attribute("type");
 	Graphics::SharedGraphic l_graphic =
-	    Game::GraphicFactoryBase::Instance()->createGraphic(l_graphic_type);
+	    Game::FactoryBase::Instance()->createGraphic(l_graphic_type);
 	if (!l_graphic) {
 		WARNING("Render component '%s' has an unknown graphic type",
 		    id().str().c_str());

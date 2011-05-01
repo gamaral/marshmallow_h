@@ -35,7 +35,7 @@
  */
 
 #include "core/logger.h"
-#include "game/componentfactory.h"
+#include "game/factorybase.h"
 #include "game/icomponent.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -165,7 +165,7 @@ EntityBase::deserialize(TinyXML::TiXmlElement &n)
 		const char *l_type = l_child->Attribute("type");
 
 		SharedComponent l_component =
-		    ComponentFactory::Instance()->createComponent(l_type, l_id, *this);
+		    FactoryBase::Instance()->createComponent(l_type, l_id, *this);
 
 		if (!l_component) {
 			WARNING("Component '%s' of type '%s' creation failed", l_id, l_type);

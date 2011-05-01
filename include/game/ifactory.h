@@ -34,16 +34,60 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_SCENEFACTORY_H
-#define GAME_SCENEFACTORY_H 1
+#ifndef GAME_IFACTORY_H
+#define GAME_IFACTORY_H 1
 
-#include "game/scenefactorybase.h"
+#include "core/fd.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+namespace Graphics
+{
+	struct IGraphic;
+	typedef Core::Shared<IGraphic> SharedGraphic;
+}
+
 namespace Game
 {
-	typedef SceneFactoryBase SceneFactory;
+	class EntitySceneLayer;
+
+	struct IComponent;
+	typedef Core::Shared<IComponent> SharedComponent;
+
+	struct IEntity;
+	typedef Core::Shared<IEntity> SharedEntity;
+
+	struct IGraphic;
+	typedef Core::Shared<IGraphic> SharedGraphic;
+
+	struct IScene;
+	typedef Core::Shared<IScene> SharedScene;
+
+	struct ISceneLayer;
+	typedef Core::Shared<ISceneLayer> SharedSceneLayer;
+
+	/*! @brief Game Factory Interface */
+	struct GAME_EXPORT IFactory
+	{
+		virtual ~IFactory(void) {};
+
+		virtual SharedScene createScene(const Core::Type &type,
+		    const Core::Identifier &identifier) const = 0;
+
+		virtual SharedSceneLayer createSceneLayer(const Core::Type &type,
+		    const Core::Identifier &identifier, IScene &scene) const = 0;
+
+		virtual SharedEntity createEntity(const Core::Type &type,
+		    const Core::Identifier &identifier, EntitySceneLayer &layer) const = 0;
+
+		virtual SharedComponent createComponent(const Core::Type &type,
+		    const Core::Identifier &identifier, IEntity &entity) const = 0;
+
+		virtual Graphics::SharedGraphic createGraphic(const Core::Type &type) const = 0;
+	};
+	typedef Core::Shared<IFactory> SharedFactory;
+	typedef Core::Weak<IFactory> WeakFactory;
+
 }
 
 MARSHMALLOW_NAMESPACE_END

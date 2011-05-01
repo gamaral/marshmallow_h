@@ -34,32 +34,54 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef COMPONENTFACTORY_H
-#define COMPONENTFACTORY_H 1
+#ifndef GAME_FACTORYBASE_H
+#define GAME_FACTORYBASE_H 1
 
-#include <game/componentfactorybase.h>
+#include "game/ifactory.h"
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_BEGIN
 
-class GAME_EXPORT ComponentFactory : public Game::ComponentFactoryBase
+namespace Game
 {
 
-	NO_COPY(ComponentFactory);
+	/*! @brief Game Factory Base Class */
+	class GAME_EXPORT FactoryBase : public IFactory
+	{
+		static IFactory *s_instance;
 
-public:
+		NO_COPY(FactoryBase);
 
-	ComponentFactory(void)
-	    : ComponentFactoryBase()
-	{}
+	public:
 
-	virtual ~ComponentFactory(void)
-	{};
+		FactoryBase(void);
+		virtual ~FactoryBase(void);
 
-public: /* virtual */
+	public: /* virtual */
 
-	VIRTUAL Game::SharedComponent createComponent(const Core::Type &type,
-	    const Core::Identifier &identifier, Game::IEntity &entity) const;
+		VIRTUAL SharedScene createScene(const Core::Type &type,
+		    const Core::Identifier &identifier) const;
 
-};
+		VIRTUAL SharedSceneLayer createSceneLayer(const Core::Type &type,
+		    const Core::Identifier &identifier, IScene &scene) const;
+
+		VIRTUAL SharedEntity createEntity(const Core::Type &type,
+		    const Core::Identifier &identifier, EntitySceneLayer &layer) const;
+
+		VIRTUAL SharedComponent createComponent(const Core::Type &type,
+		    const Core::Identifier &identifier, IEntity &entity) const;
+
+		VIRTUAL Graphics::SharedGraphic createGraphic(const Core::Type &type) const;
+
+	public: /* static */
+
+		static IFactory *Instance(void)
+		    { return(s_instance); }
+	};
+	typedef Core::Shared<IFactory> SharedFactory;
+	typedef Core::Weak<IFactory> WeakFactory;
+
+}
+
+MARSHMALLOW_NAMESPACE_END
 
 #endif
