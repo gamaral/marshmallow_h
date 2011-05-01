@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
-
 #include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_USE;

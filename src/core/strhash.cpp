@@ -42,36 +42,32 @@ using namespace Core;
 
 StrHash::StrHash(void)
     : Hash(),
-      m_str(0)
+      m_str()
 {
 }
 
-StrHash::StrHash(const char *n)
+StrHash::StrHash(const char *s)
     : Hash(),
-      m_str(0)
+      m_str(s)
 {
-	assert(n);
+	rehash(s, m_str.length(), ~static_cast<UID>(0));
+}
 
-	const size_t len = strlen(n)+1;
-	m_str = new char[len];
-	memcpy(m_str, n, len);
-	rehash(m_str, len, ~static_cast<UID>(0));
+StrHash::StrHash(const Core::String &s)
+    : Hash(),
+      m_str(s)
+{
+	rehash(m_str.c_str(), m_str.length(), ~static_cast<UID>(0));
 }
 
 StrHash::StrHash(const StrHash &c)
     : Hash(c),
-      m_str(0)
+      m_str(c.m_str)
 {
-	if (c.m_str) {
-		const size_t len = strlen(c.m_str)+1;
-		m_str = new char[len];
-		memcpy(m_str, c.m_str, len);
-	}
 }
 
 StrHash::~StrHash(void)
 {
-	delete[] m_str;
 }
 
 StrHash &
@@ -79,15 +75,7 @@ StrHash::operator=(const Marshmallow::Core::StrHash &rhs)
 {
 	if (this != &rhs) {
 		Hash::operator=(rhs);
-
-		delete[] m_str;
-		m_str = 0;
-
-		if (rhs.m_str) {
-			const size_t len = strlen(rhs.m_str)+1;
-			m_str = new char[len];
-			memcpy(m_str, rhs.m_str, len);
-		}
+		m_str = rhs.m_str;
 	}
 	return(*this);
 }

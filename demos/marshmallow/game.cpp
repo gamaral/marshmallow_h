@@ -36,16 +36,9 @@
 
 MARSHMALLOW_NAMESPACE_USE;
 
-#include <tinyxml.h>
-
 #include <core/logger.h>
-#include <math/vector2.h>
-#include <math/vector3.h>
-#include <graphics/viewport.h>
 #include <game/entityfactory.h>
-#include <game/entityscenelayer.h>
 #include <game/graphicfactory.h>
-#include <game/scene.h>
 #include <game/scenefactory.h>
 #include <game/scenelayerfactory.h>
 
@@ -91,7 +84,11 @@ Demo::initialize(void)
 		TinyXML::TiXmlElement  l_root("marshmallow");
 		serialize(l_root);
 		l_document.InsertEndChild(l_root);
-		l_document.SaveFile("mainscene.xml");
+
+		Core::String l_filename;
+		l_filename.append(Core::Platform::TemporaryDirectory());
+		l_filename.append("marshmallow.xml");
+		l_document.SaveFile(l_filename.c_str());
 	}
 
 	return(true);
@@ -102,14 +99,17 @@ Demo::second(void)
 {
 	EngineBase::second();
 
-	if (++m_stop_timer == 8) {
+	TinyXML::TiXmlDocument l_document;
+	TinyXML::TiXmlElement  l_root("marshmallow");
+	serialize(l_root);
+	l_document.InsertEndChild(l_root);
+
+	Core::String l_filename;
+	l_filename.append(Core::Platform::TemporaryDirectory());
+	l_filename.append_sprintf("marshmallow%02d.xml", m_stop_timer);
+	l_document.SaveFile(l_filename.c_str());
+
+	if (++m_stop_timer == 8)
 		stop();
-	} else if (m_stop_timer == 4) {
-		TinyXML::TiXmlDocument l_document;
-		TinyXML::TiXmlElement l_root("marshmallow");
-		serialize(l_root);
-		l_document.InsertEndChild(l_root);
-		l_document.SaveFile("midscene.xml");
-	}
 }
 

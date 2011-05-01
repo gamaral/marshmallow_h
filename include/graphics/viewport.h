@@ -37,7 +37,7 @@
 #ifndef GRAPHICS_VIEWPORT_H
 #define GRAPHICS_VIEWPORT_H 1
 
-#include "core/global.h"
+#include "core/type.h"
 #include "math/size2.h"
 #include "math/vector3.h"
 #include "graphics/config.h"
@@ -50,7 +50,7 @@ namespace Graphics
 	/*! @brief Graphics Viewport Interface */
 	struct GRAPHICS_EXPORT Viewport
 	{
-		static const char *Name;
+		static const Core::Type Type;
 
 		static bool Initialize(int width = DEFAULT_VIEWPORT_WIDTH,
 		                      int height = DEFAULT_VIEWPORT_HEIGHT,

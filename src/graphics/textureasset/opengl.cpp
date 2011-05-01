@@ -47,9 +47,9 @@ using namespace Graphics;
 const Core::Type TextureAsset::Type("Graphics::TextureAsset");
 
 TextureAsset::TextureAsset(void)
-    : m_id(),
+    : m_filename(),
+      m_id(),
       m_size(),
-      m_filename(0),
       m_texture_id(0)
 {
 }
@@ -60,7 +60,7 @@ TextureAsset::~TextureAsset(void)
 }
 
 void
-TextureAsset::load(const char *f)
+TextureAsset::load(const Core::String &f)
 {
 	if (m_texture_id) {
 		WARNING1("Load texture asset called on active texture.");
@@ -78,7 +78,7 @@ TextureAsset::load(const char *f)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-	if (!pngLoad(f, PNG_BUILDMIPMAPS, PNG_ALPHA, &pi)) {
+	if (!pngLoad(f.c_str(), PNG_BUILDMIPMAPS, PNG_ALPHA, &pi)) {
 		m_size = Math::Size2(0, 0);
 		INFO1("Failed to load texture.");
 		return;
@@ -86,7 +86,7 @@ TextureAsset::load(const char *f)
 
 	m_id = Core::Identifier(f);
 	m_size = Math::Size2(static_cast<float>(pi.Width), static_cast<float>(pi.Height));
-	m_filename = STRDUP(f);
+	m_filename = f;
 	INFO1("Texture loaded.");
 }
 
@@ -98,8 +98,7 @@ TextureAsset::unload(void)
 
 	m_id = Core::Identifier();
 	m_size = Math::Size2();
-	free(m_filename);
-	m_filename = 0;
+	m_filename.clear();
 	m_texture_id = 0;
 }
 

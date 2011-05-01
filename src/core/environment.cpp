@@ -101,3 +101,9 @@ operator new[](size_t size, size_t alignment, size_t alignmentOffset, const
 	return(new char[size]);
 }
 
+int
+Vsnprintf8(char8_t*  pDestination, size_t n, const char8_t*  pFormat, va_list arguments)
+{
+	return(vsnprintf(pDestination, n, pFormat, arguments));
+}
+

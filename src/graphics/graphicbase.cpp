@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
-
 #include "graphics/textureasset.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -62,12 +60,12 @@ GraphicBase::setRotation(float a)
 bool
 GraphicBase::serialize(TinyXML::TiXmlElement &n) const
 {
-	n.SetAttribute("type", type().str());
+	n.SetAttribute("type", type().str().c_str());
 	n.SetDoubleAttribute("rotation", m_rotation);
 
 	if (m_texture) {
 		TinyXML::TiXmlElement l_child("texture");
-		l_child.SetAttribute("file", m_texture->filename());
+		l_child.SetAttribute("file", m_texture->filename().c_str());
 		n.InsertEndChild(l_child);
 	}
 

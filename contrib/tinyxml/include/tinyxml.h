@@ -33,10 +33,10 @@ distribution.
 #endif
 
 #include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cassert>
 
 // Help out windows:
 #if defined( _DEBUG ) && !defined( DEBUG )
@@ -45,7 +45,7 @@ distribution.
 
 #ifdef TIXML_USE_STL
 	#include <string>
- 	#include <iostream>
+	#include <iostream>
 	#include <sstream>
 	#define TIXML_STRING		std::string
 #else

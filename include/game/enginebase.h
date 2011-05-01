@@ -71,6 +71,7 @@ namespace Game
 		TIME   m_delta_time;
 		int    m_exit_code;
 		int    m_frame_rate;
+		bool   m_suspendable;
 		bool   m_running;
 
 		NO_COPY(EngineBase);
@@ -80,8 +81,10 @@ namespace Game
 		/*!
 		 * @param fps Desired frame rate
 		 * @param ups Desired update rate
+		 * @param suspendable Allow engine to sleep
 		 */
-		EngineBase(float fps = 60.0, float ups = 60.0);
+		EngineBase(float fps = 60.0, float ups = 60.0,
+		    bool suspendable = false);
 		virtual ~EngineBase(void);
 
 		/*!

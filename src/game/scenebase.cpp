@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
-
 #include "core/logger.h"
 #include "game/iscenelayer.h"
 #include "game/scenelayerfactory.h"
@@ -145,8 +143,8 @@ SceneBase::update(TIME d)
 bool
 SceneBase::serialize(TinyXML::TiXmlElement &n) const
 {
-	n.SetAttribute("id", id().str());
-	n.SetAttribute("type", type().str());
+	n.SetAttribute("id", id().str().c_str());
+	n.SetAttribute("type", type().str().c_str());
 
 	SceneLayerList::const_reverse_iterator l_i;
 	SceneLayerList::const_reverse_iterator l_c = m_layers.rend();

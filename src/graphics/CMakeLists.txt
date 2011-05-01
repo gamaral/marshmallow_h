@@ -4,10 +4,10 @@ include_directories(${TINYXML_INCLUDE_DIR})
 
 file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp)
 
-if(UNIX AND MARSHMALLOW_VIEWPORT_USE_X11_GLX)
+if(UNIX AND MARSHMALLOW_VIEWPORT_USE_GLX)
 	include_directories(${GLPNG_INCLUDE_DIR})
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-	                              viewport/x11_glx.cpp
+	                              viewport/glx.cpp
 	                              painter/opengl.cpp
 	                              textureasset/opengl.cpp)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}

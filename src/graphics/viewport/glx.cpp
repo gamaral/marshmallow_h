@@ -49,7 +49,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const char *Viewport::Name("X11_GLX");
+const Core::Type Viewport::Type("GLX");
 
 struct Viewport::Internal
 {

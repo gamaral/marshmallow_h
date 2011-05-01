@@ -37,7 +37,7 @@
 #ifndef CORE_PLATFORM_H
 #define CORE_PLATFORM_H 1
 
-#include "core/global.h"
+#include "core/string.h"
 
 #define NOW Core::Platform::TimeStamp
 
@@ -84,6 +84,10 @@ namespace Core
 		 *         formats.
 		 */
 		static TimeData TimeStampToTimeData(TIME timestamp);
+
+		/*************************************************** location */
+
+		static String TemporaryDirectory(void);
 
 	};
 

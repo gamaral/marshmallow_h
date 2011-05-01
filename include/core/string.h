@@ -26,20 +26,28 @@
  * or implied, of Marshmallow Engine.
  */
 
+#pragma once
+
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "game.h"
+#ifndef CORE_STRING_H
+#define CORE_STRING_H 1
 
-int
-main(int argc, const char *argv[])
+#include <EASTL/string.h>
+
+#include "core/global.h"
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Core
 {
-	const char *l_filename("demos/marshmallow/assets/default.xml");
-	if (argc > 1) l_filename = argv[1];
-
-	return(Demo(l_filename).run());
+	typedef eastl::string String;
 }
 
+MARSHMALLOW_NAMESPACE_END
+
+#endif

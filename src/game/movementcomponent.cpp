@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
-
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 

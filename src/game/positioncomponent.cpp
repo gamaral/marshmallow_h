@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
-
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 

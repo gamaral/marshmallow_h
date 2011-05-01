@@ -55,7 +55,7 @@ namespace Event
 
 	public:
 
-		DebugEventListener(const char *filename);
+		DebugEventListener(const Core::String &f);
 		virtual ~DebugEventListener(void);
 
 	public: /* virtual */

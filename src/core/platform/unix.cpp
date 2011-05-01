@@ -73,7 +73,7 @@ Platform::Sleep(TIME timeout)
 
 	struct timespec l_ts;
 	l_ts.tv_sec = 0;
-#define NANOSECONDS_PER_MILLISECOND 1000000.f
+#define NANOSECONDS_PER_MILLISECOND 1000000.0
 	l_ts.tv_nsec = static_cast<long int>(trunc(timeout * NANOSECONDS_PER_MILLISECOND));
 	nanosleep(&l_ts, 0);
 
@@ -91,7 +91,7 @@ Platform::TimeStamp(void)
 	struct timeval time;
 	gettimeofday(&time, 0);
 	return(static_cast<double>((time.tv_sec - platform_internal.start_time) * 1000)
-	    + (static_cast<double>(time.tv_usec) / 1000.));
+	    + (static_cast<double>(time.tv_usec) / 1000.0));
 }
 
 TimeData
@@ -116,5 +116,11 @@ Platform::TimeStampToTimeData(TIME timestamp)
 		l_time.tm_sec);
 
 	return(l_ts);
+}
+
+String
+Platform::TemporaryDirectory(void)
+{
+	return("/tmp/");
 }
 

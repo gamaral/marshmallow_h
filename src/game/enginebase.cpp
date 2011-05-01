@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
-
 #include "core/logger.h"
 #include "event/eventmanager.h"
 #include "event/renderevent.h"
@@ -52,7 +50,7 @@ using namespace Game;
 
 EngineBase *EngineBase::s_instance = 0;
 
-EngineBase::EngineBase(float f, float u)
+EngineBase::EngineBase(float f, float u, bool s)
     : m_event_manager(),
       m_scene_manager(),
       m_event_listener(),
@@ -61,6 +59,7 @@ EngineBase::EngineBase(float f, float u)
       m_delta_time(0),
       m_exit_code(0),
       m_frame_rate(0),
+      m_suspendable(s),
       m_running(false)
 {
 	if (!s_instance)
@@ -142,7 +141,7 @@ EngineBase::run(void)
 	}
 
 	TIME l_render = 0;
-#define MILLISECONDS_PER_SECOND 1000.f
+#define MILLISECONDS_PER_SECOND 1000.0
 	TIME l_render_target = MILLISECONDS_PER_SECOND / m_fps;
 
 	TIME l_update = 0;
@@ -152,7 +151,7 @@ EngineBase::run(void)
 	TIME l_second_target = MILLISECONDS_PER_SECOND;
 
 	TIME l_tick;
-	TIME l_tick_target = MIN(l_render_target, l_update_target) / 3.f;
+	TIME l_tick_target = MIN(l_render_target, l_update_target) / 3.0;
 
 	m_delta_time = 0;
 	m_running = true;
@@ -196,6 +195,10 @@ EngineBase::run(void)
 		}
 
 		tick(l_tick_target - (NOW() - l_tick));
+
+		if (m_suspendable)
+			Platform::Sleep(l_tick_target - (NOW() - l_tick));
+
 		l_lasttick = l_tick;
 	} while (m_running);
 
@@ -249,6 +252,7 @@ EngineBase::serialize(TinyXML::TiXmlElement &n) const
 {
 	n.SetDoubleAttribute("fps", m_fps);
 	n.SetDoubleAttribute("ups", m_ups);
+	n.SetAttribute("suspendable", m_suspendable ? "t" : "f");
 
 	if (m_scene_manager) {
 		TinyXML::TiXmlElement l_element("scenes");
@@ -278,6 +282,10 @@ EngineBase::deserialize(TinyXML::TiXmlElement &n)
 
 	n.QueryFloatAttribute("fps", &m_fps);
 	n.QueryFloatAttribute("ups", &m_ups);
+
+	const char *l_suspendable = n.Attribute("suspendable");
+	m_suspendable = (l_suspendable &&
+	                (l_suspendable[0] == 't' || l_suspendable[0] == 'T'));
 
 	if (l_element && m_scene_manager)
 		m_scene_manager->deserialize(*l_element);

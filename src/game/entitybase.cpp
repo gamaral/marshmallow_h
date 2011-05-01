@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
-
 #include "core/logger.h"
 #include "game/componentfactory.h"
 #include "game/icomponent.h"
@@ -140,8 +138,8 @@ EntityBase::update(TIME d)
 bool
 EntityBase::serialize(TinyXML::TiXmlElement &n) const
 {
-	n.SetAttribute("id", id().str());
-	n.SetAttribute("type", type().str());
+	n.SetAttribute("id", id().str().c_str());
+	n.SetAttribute("type", type().str().c_str());
 
 	ComponentList::const_reverse_iterator l_i;
 	ComponentList::const_reverse_iterator l_c = m_components.rend();

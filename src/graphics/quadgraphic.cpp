@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
-
 #include "graphics/textureasset.h"
 
 MARSHMALLOW_NAMESPACE_USE;

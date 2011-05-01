@@ -1423,7 +1423,7 @@ namespace eastl
 
         #if EASTL_VA_COPY_ENABLED
             va_list argumentsSaved;
-            this->va_copy(argumentsSaved, arguments);
+            va_copy(argumentsSaved, arguments);
         #endif
 
         if(mpBegin == GetEmptyString(value_type())) // We need to do this because non-standard vsnprintf implementations will otherwise overwrite gEmptyString with a non-zero char.
@@ -1435,7 +1435,7 @@ namespace eastl
         {
             // In this case we definitely have C99 Vsnprintf behaviour.
             #if EASTL_VA_COPY_ENABLED
-                this->va_copy(arguments, argumentsSaved);
+                va_copy(arguments, argumentsSaved);
             #endif
             resize(nInitialSize + nReturnValue);
             nReturnValue = eastl::Vsnprintf(mpBegin + nInitialSize, (size_t)(nReturnValue + 1), pFormat, arguments); // '+1' because vsnprintf wants to know the size of the buffer including the terminating zero.
@@ -1448,7 +1448,7 @@ namespace eastl
             for(; (nReturnValue < 0) && (n < 1000000); n *= 2)
             {
                 #if EASTL_VA_COPY_ENABLED
-                    this->va_copy(arguments, argumentsSaved);
+                    va_copy(arguments, argumentsSaved);
                 #endif
                 resize(n);
 

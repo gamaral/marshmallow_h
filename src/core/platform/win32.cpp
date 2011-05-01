@@ -65,7 +65,7 @@ Platform::Finalize(void)
 void
 Platform::Sleep(TIME t)
 {
-	if (t > 0) SleepEx(t, true);
+	if (t > 0) SleepEx(static_cast<DWORD>(floor(t)), true);
 }
 
 time_t
@@ -87,8 +87,8 @@ Platform::TimeStamp(void)
 	l_li.HighPart = l_ft.dwHighDateTime;
 #define EPOCHFILETIME (116444736000000000i64)
 	l_micro_seconds = (l_li.QuadPart - EPOCHFILETIME) / 10;
-#define MICROSECONDS_PER_MILLISECOND 1000.f
-#define MILLISECONDS_PER_SECOND 1000.f
+#define MICROSECONDS_PER_MILLISECOND 1000.0
+#define MILLISECONDS_PER_SECOND 1000.0
 	l_mseconds = (l_micro_seconds / MICROSECONDS_PER_MILLISECOND)
 	    -(platform_internal.start_time * MILLISECONDS_PER_SECOND);
 	return(l_mseconds);
@@ -115,5 +115,19 @@ Platform::TimeStampToTimeData(TIME timestamp)
 		l_time.tm_sec);
 
 	return(l_ts);
+}
+
+String
+Platform::TemporaryDirectory(void)
+{
+	static String sTempDirectory;
+
+	if (sTempDirectory.empty()) {
+		char l_buffer[MAX_PATH];
+		GetTempPath(MAX_PATH, l_buffer);
+		sTempDirectory.assign(l_buffer);
+	}
+
+	return(sTempDirectory);
 }
 

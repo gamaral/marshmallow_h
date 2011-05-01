@@ -38,6 +38,7 @@
 #define CORE_STRHASH_H 1
 
 #include "core/hash.h"
+#include "core/string.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -47,7 +48,7 @@ namespace Core
 	/*! @brief Event StrHash Class */
 	class CORE_EXPORT StrHash : public Hash
 	{
-		char *m_str;
+		Core::String m_str;
 
 	public:
 
@@ -56,6 +57,7 @@ namespace Core
 		 */
 		StrHash(void);
 		StrHash(const char *str);
+		StrHash(const Core::String &str);
 		StrHash(const StrHash &copy);
 		virtual ~StrHash(void);
 
@@ -64,13 +66,16 @@ namespace Core
 		    { return(result()); }
 
 		/*! @brief Hashed String */
-		const char * str(void) const
+		const Core::String &str(void) const
 		    { return(m_str); }
 
 	public: /* operator */
 
-		operator const char *() const
+		operator const Core::String &() const
 		    { return(m_str); }
+
+		operator const char *() const
+		    { return(m_str.c_str()); }
 
 		Marshmallow::Core::StrHash & operator=(const Marshmallow::Core::StrHash &rhs);
 	};

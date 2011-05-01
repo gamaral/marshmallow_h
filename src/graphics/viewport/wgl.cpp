@@ -47,7 +47,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const char *Viewport::Name("X11_WGL");
+const Core::Type Viewport::Type("WGL");
 
 struct Viewport::Internal
 {

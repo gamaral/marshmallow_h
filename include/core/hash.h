@@ -47,7 +47,6 @@ namespace Core
 	/*! @brief Hash Class */
 	class CORE_EXPORT Hash
 	{
-		char *m_data;
 		UID   m_result;
 
 	public:

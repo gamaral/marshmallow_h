@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
-
 #include "core/logger.h"
 #include "graphics/painter.h"
 #include "game/graphicfactorybase.h"
@@ -82,7 +80,7 @@ RenderComponent::serialize(TinyXML::TiXmlElement &n) const
 	TinyXML::TiXmlElement l_graphic("graphic");
 	if (m_graphic && !m_graphic->serialize(l_graphic)) {
 		WARNING("Render component '%s' serialization failed to serialize graphic!",
-		    id().str());
+		    id().str().c_str());
 		return(false);
 	}
 	n.InsertEndChild(l_graphic);
@@ -99,7 +97,7 @@ RenderComponent::deserialize(TinyXML::TiXmlElement &n)
 	TinyXML::TiXmlElement *l_child = n.FirstChildElement("graphic");
 	if (!l_child) {
 		WARNING("Render component '%s' deserialized without a graphic!",
-		    id().str());
+		    id().str().c_str());
 		return(false);
 	}
 
@@ -108,13 +106,13 @@ RenderComponent::deserialize(TinyXML::TiXmlElement &n)
 	    Game::GraphicFactoryBase::Instance()->createGraphic(l_graphic_type);
 	if (!l_graphic) {
 		WARNING("Render component '%s' has an unknown graphic type",
-		    id().str());
+		    id().str().c_str());
 		return(false);
 	}
 
 	if (!l_graphic->deserialize(*l_child)) {
 		WARNING("Render component '%s' deserialization of graphic failed",
-		    id().str());
+		    id().str().c_str());
 		return(false);
 	}
 

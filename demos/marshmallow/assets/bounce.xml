@@ -1,4 +1,4 @@
-<marshmallow fps="60" ups="120">
+<marshmallow fps="60" ups="60" suspendable="t">
     <scenes>
         <scene id="main" type="Game::Scene">
             <layer id="main" type="Game::EntitySceneLayer">

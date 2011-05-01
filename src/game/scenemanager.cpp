@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
-
 #include "core/logger.h"
 #include "event/eventmanager.h"
 #include "event/rendereventlistener.h"

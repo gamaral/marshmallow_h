@@ -44,9 +44,9 @@ using namespace Graphics;
 const Core::Type TextureAsset::Type("Graphics::TextureAsset");
 
 TextureAsset::TextureAsset(void)
-    : m_id(),
+    : m_filename(),
+      m_id(),
       m_size(),
-      m_filename(0),
       m_texture_id(0)
 {
 }
@@ -57,16 +57,15 @@ TextureAsset::~TextureAsset(void)
 }
 
 void
-TextureAsset::load(const char *f)
+TextureAsset::load(const Core::String &f)
 {
-	m_filename = STRDUP(f);
 	INFO1("Texture loaded (not really).");
+	m_filename = f;
 }
 
 void
 TextureAsset::unload(void)
 {
-	free(m_filename);
-	m_filename = 0;
+	m_filename.clear();
 }
 

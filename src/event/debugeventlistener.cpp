@@ -41,9 +41,9 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Event;
 
-DebugEventListener::DebugEventListener(const char *filename)
+DebugEventListener::DebugEventListener(const Core::String &f)
     : EventListenerBase("DebugEventListener"),
-      m_filestream(filename, std::ios_base::app)
+      m_filestream(f.c_str(), std::ios_base::app)
 {
 	m_filestream << std::hex;
 }
@@ -54,13 +54,13 @@ DebugEventListener::~DebugEventListener(void)
 }
 
 bool
-DebugEventListener::handleEvent(const IEvent &event)
+DebugEventListener::handleEvent(const IEvent &e)
 {
 	m_filestream
-	    << Platform::TimeStampToTimeData(event.timeStamp()).string
-	    << ": MS " << event.timeStamp()
-	    << ": Event " << static_cast<const void *>(&event)
-	    << ": Type (" << event.type().uid() << ")" << event.type().str()
+	    << Platform::TimeStampToTimeData(e.timeStamp()).string
+	    << ": MS " << e.timeStamp()
+	    << ": Event " << static_cast<const void *>(&e)
+	    << ": Type (" << e.type().uid() << ")" << e.type().str().c_str()
 	    << std::endl;
 
 	return false;

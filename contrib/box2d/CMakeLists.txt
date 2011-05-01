@@ -139,15 +139,12 @@ add_library(marshmallow_box2d
 	${BOX2D_Rope_HDRS}
 )
 
-if(MSVC)
-	# These are used to create visual studio folders.
-	source_group(Collision FILES ${BOX2D_Collision_SRCS} ${BOX2D_Collision_HDRS})
-	source_group(Collision\\Shapes FILES ${BOX2D_Shapes_SRCS} ${BOX2D_Shapes_HDRS})
-	source_group(Common FILES ${BOX2D_Common_SRCS} ${BOX2D_Common_HDRS})
-	source_group(Dynamics FILES ${BOX2D_Dynamics_SRCS} ${BOX2D_Dynamics_HDRS})
-	source_group(Dynamics\\Contacts FILES ${BOX2D_Contacts_SRCS} ${BOX2D_Contacts_HDRS})
-	source_group(Dynamics\\Joints FILES ${BOX2D_Joints_SRCS} ${BOX2D_Joints_HDRS})
-	source_group(Include FILES ${BOX2D_General_HDRS})
-	source_group(Rope FILES ${BOX2D_Rope_SRCS} ${BOX2D_Rope_HDRS})
-endif()
+source_group(Collision FILES ${BOX2D_Collision_SRCS} ${BOX2D_Collision_HDRS})
+source_group(Collision\\Shapes FILES ${BOX2D_Shapes_SRCS} ${BOX2D_Shapes_HDRS})
+source_group(Common FILES ${BOX2D_Common_SRCS} ${BOX2D_Common_HDRS})
+source_group(Dynamics FILES ${BOX2D_Dynamics_SRCS} ${BOX2D_Dynamics_HDRS})
+source_group(Dynamics\\Contacts FILES ${BOX2D_Contacts_SRCS} ${BOX2D_Contacts_HDRS})
+source_group(Dynamics\\Joints FILES ${BOX2D_Joints_SRCS} ${BOX2D_Joints_HDRS})
+source_group(Include FILES ${BOX2D_General_HDRS})
+source_group(Rope FILES ${BOX2D_Rope_SRCS} ${BOX2D_Rope_HDRS})
 

@@ -37,12 +37,9 @@
 #ifndef CORE_ISERIALIZABLE_H
 #define CORE_ISERIALIZABLE_H 1
 
-#include "core/global.h"
+#include <tinyxml.h>
 
-namespace TinyXML
-{
-	class TiXmlElement;
-}
+#include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

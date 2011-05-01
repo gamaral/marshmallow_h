@@ -76,8 +76,8 @@ set(MARSHMALLOW_VIEWPORT_DEPTH  "24" CACHE STRING "Viewport default depth")
 option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode" OFF)
 
 option(MARSHMALLOW_VIEWPORT_USE_DUMMY "Use Dummy Viewport (testing)" ON)
-option(MARSHMALLOW_VIEWPORT_USE_WGL "Use Wiggle (WGL) Viewport (windows)" OFF)
-option(MARSHMALLOW_VIEWPORT_USE_X11_GLX "Use X11-GLX Viewport (unix)" OFF)
+option(MARSHMALLOW_VIEWPORT_USE_WGL "Use WGL (Wiggle) Viewport (windows)" OFF)
+option(MARSHMALLOW_VIEWPORT_USE_GLX "Use GLX Viewport (unix)" OFF)
 
 option(MARSHMALLOW_CONTRIB_ZLIB "Use bundled ZLIB" ON)
 option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG" ON)
@@ -114,7 +114,7 @@ endif()
 
 ##################################################################### VIEWPORT #
 
-if(UNIX AND MARSHMALLOW_VIEWPORT_USE_X11_GLX)
+if(UNIX AND MARSHMALLOW_VIEWPORT_USE_GLX)
 	find_package(X11)
 
 	if(APPLE)
@@ -128,9 +128,9 @@ if(UNIX AND MARSHMALLOW_VIEWPORT_USE_X11_GLX)
 	endif()
 
 	if(NOT OPENGL_FOUND)
-		message(FATAL_ERROR "X11 OpenGL viewport: OpenGL was not found.")
+		message(FATAL_ERROR "GLX viewport: OpenGL was not found.")
 	elseif(NOT X11_FOUND)
-		message(FATAL_ERROR "X11 OpenGL viewport: X11 was not found.")
+		message(FATAL_ERROR "GLX viewport: X11 was not found.")
 	endif()
 
 	include_directories(${X11_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})

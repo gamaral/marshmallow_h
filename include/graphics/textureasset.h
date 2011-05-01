@@ -40,6 +40,7 @@
 #include "core/iasset.h"
 
 #include "core/identifier.h"
+#include "core/string.h"
 #include "math/size2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -50,9 +51,9 @@ namespace Graphics
 	/*! @brief Graphic Texture Asset Class */
 	class GRAPHICS_EXPORT TextureAsset : public Core::IAsset
 	{
+		Core::String m_filename;
 		Core::Identifier m_id;
 		Math::Size2 m_size;
-		char *m_filename;
 		unsigned int m_texture_id;
 
 		NO_COPY(TextureAsset);
@@ -62,10 +63,10 @@ namespace Graphics
 		TextureAsset(void);
 		virtual ~TextureAsset(void);
 
-		void load(const char *filename);
+		void load(const Core::String &filename);
 		void unload(void);
 
-		const char *filename(void) const
+		const Core::String &filename(void) const
 		    { return(m_filename); }
 
 		unsigned int tid(void) const

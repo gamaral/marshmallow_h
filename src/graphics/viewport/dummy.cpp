@@ -39,7 +39,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const char *Viewport::Name("DUMMY");
+const Core::Type Viewport::Type("DUMMY");
 
 struct Viewport::Internal
 {
