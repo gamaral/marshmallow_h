@@ -1,4 +1,4 @@
-<marshmallow fps="60" ups="60" suspendable="t">
+<marshmallow fps="60" ups="120" suspendable="t">
     <scenes>
         <scene id="main" type="Game::Scene">
             <layer id="box2d" type="Game::Box2DSceneLayer">
@@ -68,45 +68,6 @@
                         </graphic>
                     </component>
                     <component id="physics" type="Game::Box2DComponent" body="dynamic" width="4.5" height="4.5" density="10" friction="0.3" />
-                </entity>
-                <entity id="marshmallow4" type="Game::Entity">
-                    <component id="origin" type="Game::PositionComponent" x="-1.5" y="60" />
-                    <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="52">
-                            <texture file="demos/engine/assets/mallow.png" />
-                            <vector x="-5" y="5" />
-                            <vector x="-5" y="-5" />
-                            <vector x="5" y="-5" />
-                            <vector x="5" y="5" />
-                        </graphic>
-                    </component>
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width="8" height="8" density="1.2" friction="0.1" />
-                </entity>
-                <entity id="marshmallow4" type="Game::Entity">
-                    <component id="origin" type="Game::PositionComponent" x="-1.5" y="60" />
-                    <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="52">
-                            <texture file="demos/engine/assets/mallow.png" />
-                            <vector x="-5" y="5" />
-                            <vector x="-5" y="-5" />
-                            <vector x="5" y="-5" />
-                            <vector x="5" y="5" />
-                        </graphic>
-                    </component>
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width="8" height="8" density="1.2" friction="0.1" />
-                </entity>
-                <entity id="marshmallow4" type="Game::Entity">
-                    <component id="origin" type="Game::PositionComponent" x="-1.5" y="60" />
-                    <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="52">
-                            <texture file="demos/engine/assets/mallow.png" />
-                            <vector x="-5" y="5" />
-                            <vector x="-5" y="-5" />
-                            <vector x="5" y="-5" />
-                            <vector x="5" y="5" />
-                        </graphic>
-                    </component>
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width="8" height="8" density="1.2" friction="0.1" />
                 </entity>
                 <entity id="marshmallow4" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="-1.5" y="60" />
