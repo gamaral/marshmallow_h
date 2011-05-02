@@ -89,7 +89,7 @@ EngineBase::initialize(void)
 		return(false);
 	}
 
-	m_event_listener = new EngineEventListener("EngineBase.EngineEventListener");
+	m_event_listener = new EngineEventListener(*this);
 
 	if (!m_event_manager)
 		m_event_manager = new Event::EventManager("EngineBase.EventManager");

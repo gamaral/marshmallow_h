@@ -37,7 +37,7 @@
 #ifndef EVENT_UPDATEEVENTLISTENER_H
 #define EVENT_UPDATEEVENTLISTENER_H 1
 
-#include "event/eventlistenerbase.h"
+#include "event/ieventlistener.h"
 
 #include "core/shared.h"
 
@@ -52,7 +52,7 @@ namespace Event
 {
 
 	/*! @brief Update Event Listener Class */
-	class EVENT_EXPORT UpdateEventListener : public EventListenerBase
+	class EVENT_EXPORT UpdateEventListener : public IEventListener
 	{
 		Core::IUpdateable &m_updateable;
 
@@ -60,8 +60,7 @@ namespace Event
 
 	public:
 
-		UpdateEventListener(const Core::Identifier &identifier,
-		                         Core::IUpdateable &owner);
+		UpdateEventListener(Core::IUpdateable &owner);
 		virtual ~UpdateEventListener(void);
 
 	public: /* virtual */

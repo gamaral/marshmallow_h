@@ -40,8 +40,8 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-EngineEventListener::EngineEventListener(const Core::Identifier &i)
-    : EventListenerBase(i)
+EngineEventListener::EngineEventListener(IEngine &e)
+    : m_engine(e)
 {
 }
 
@@ -54,7 +54,7 @@ EngineEventListener::handleEvent(const Event::IEvent &e)
 {
 	if (e.type() == Core::Type("Event::QuitEvent")) {
 		const Event::QuitEvent *l_qe = static_cast<const Event::QuitEvent *>(&e);
-		Engine::Instance()->stop(l_qe ? l_qe->code() : 0);
+		m_engine.stop(l_qe ? l_qe->code() : 0);
 	}
 	return(false);
 }

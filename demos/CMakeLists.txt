@@ -7,4 +7,5 @@ include_directories(${PROJECT_BINARY_DIR}/include
 add_subdirectory(event)
 add_subdirectory(engine)
 add_subdirectory(marshmallow)
+add_subdirectory(angrymallows)
 

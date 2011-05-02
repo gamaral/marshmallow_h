@@ -37,21 +37,25 @@
 #ifndef GAME_ENGINEEVENTLISTENER_H
 #define GAME_ENGINEEVENTLISTENER_H 1
 
-#include "event/eventlistenerbase.h"
+#include "event/ieventlistener.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
 
+	struct IEngine;
+
 	/*! @brief Game Engine Event Listener Class */
-	class GAME_EXPORT EngineEventListener : public Event::EventListenerBase
+	class GAME_EXPORT EngineEventListener : public Event::IEventListener
 	{
+		IEngine &m_engine;
+
 		NO_COPY(EngineEventListener);
 
 	public:
 
-		EngineEventListener(const Core::Identifier &identifier);
+		EngineEventListener(IEngine &engine);
 		virtual ~EngineEventListener(void);
 
 	public: /* virtual */

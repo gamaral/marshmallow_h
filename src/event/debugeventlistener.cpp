@@ -35,6 +35,7 @@
  */
 
 #include "core/platform.h"
+#include "core/type.h"
 #include "event/ievent.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -42,8 +43,7 @@ using namespace Core;
 using namespace Event;
 
 DebugEventListener::DebugEventListener(const Core::String &f)
-    : EventListenerBase("DebugEventListener"),
-      m_filestream(f.c_str(), std::ios_base::app)
+    : m_filestream(f.c_str(), std::ios_base::app)
 {
 	m_filestream << std::hex;
 }

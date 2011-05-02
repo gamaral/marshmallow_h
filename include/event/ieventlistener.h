@@ -52,11 +52,6 @@ namespace Event
 		virtual ~IEventListener(void) {};
 
 		/*!
-		 * @brief Event Id
-		 */
-		virtual const Core::Identifier & id(void) const = 0;
-
-		/*!
 		 * @brief Event Handler
 		 * @param event Event
 		 */

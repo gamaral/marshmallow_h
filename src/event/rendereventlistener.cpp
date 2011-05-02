@@ -34,16 +34,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/type.h"
 #include "core/irenderable.h"
 #include "event/ievent.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Event;
 
-RenderEventListener::RenderEventListener(const Core::Identifier &i,
-                                              Core::IRenderable &o)
-    : EventListenerBase(i),
-      m_renderable(o)
+RenderEventListener::RenderEventListener(Core::IRenderable &o)
+    : m_renderable(o)
 {
 }
 

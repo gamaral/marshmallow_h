@@ -41,10 +41,8 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Event;
 
-UpdateEventListener::UpdateEventListener(const Core::Identifier &i,
-                                              Core::IUpdateable &o)
-    : EventListenerBase(i),
-      m_updateable(o)
+UpdateEventListener::UpdateEventListener(Core::IUpdateable &o)
+    : m_updateable(o)
 {
 }
 

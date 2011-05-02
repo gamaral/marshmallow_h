@@ -37,7 +37,7 @@
 #ifndef EVENT_RENDEREVENTLISTENER_H
 #define EVENT_RENDEREVENTLISTENER_H 1
 
-#include "event/eventlistenerbase.h"
+#include "event/ieventlistener.h"
 
 #include "core/shared.h"
 
@@ -52,7 +52,7 @@ namespace Event
 {
 
 	/*! @brief Render Event Listener Class */
-	class EVENT_EXPORT RenderEventListener : public EventListenerBase
+	class EVENT_EXPORT RenderEventListener : public IEventListener
 	{
 		Core::IRenderable &m_renderable;
 
@@ -60,8 +60,7 @@ namespace Event
 
 	public:
 
-		RenderEventListener(const Core::Identifier &identifier,
-		                         Core::IRenderable &owner);
+		RenderEventListener(Core::IRenderable &owner);
 		virtual ~RenderEventListener(void);
 
 	public: /* virtual */

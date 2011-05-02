@@ -37,9 +37,11 @@
 #ifndef EVENT_DEBUGEVENTLISTENER_H
 #define EVENT_DEBUGEVENTLISTENER_H 1
 
-#include "eventlistenerbase.h"
+#include "ieventlistener.h"
 
 #include <fstream>
+
+#include "core/string.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -47,7 +49,7 @@ namespace Event
 {
 
 	/*! @brief Debug Event Listener */
-	class EVENT_EXPORT DebugEventListener : public EventListenerBase
+	class EVENT_EXPORT DebugEventListener : public IEventListener
 	{
 		std::ofstream m_filestream;
 
