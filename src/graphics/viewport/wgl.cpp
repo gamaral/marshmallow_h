@@ -57,6 +57,7 @@ struct Viewport::Internal
 	RECT  wrect;
 	float camera[3];
 	float size[2];
+	float vscale;
 	bool  fullscreen;
 	bool  loaded;
 
@@ -64,6 +65,7 @@ struct Viewport::Internal
 	    : dcontext(0),
 	      context(0),
 	      window(0),
+	      vscale(1),
 	      loaded(false)
 	{
 		wrect.bottom = wrect.left = wrect.top = wrect.bottom = 0;
@@ -256,8 +258,13 @@ struct Viewport::Internal
 	void
 	adjustView(void)
 	{
+		const float aratio =
+		    (static_cast<float>(wrect.right - wrect.left) /
+		     static_cast<float>(wrect.bottom - wrect.top));
+
 		size[0] = DEFAULT_VIEWPORT_VWIDTH * camera[2];
-		size[1] = DEFAULT_VIEWPORT_VHEIGHT * camera[2];
+		size[1] = (DEFAULT_VIEWPORT_VWIDTH * aratio) * camera[2];
+		vscale = static_cast<float>(wrect.right - wrect.left) / size[0];
 
 		const float l_hw = size[0] / 2.f;
 		const float l_hh = size[1] / 2.f;
@@ -383,5 +390,17 @@ Viewport::WindowSize(void)
 		                   static_cast<float>(MVI.wrect.bottom - MVI.wrect.top)));
 
 	return(Math::Size2());
+}
+
+float
+Viewport::MapToWorld(int x)
+{
+	return(static_cast<float>(x) / MVI.vscale);
+}
+
+int
+Viewport::MapFromWorld(float x)
+{
+	return(static_cast<int>(floor(static_cast<float>(x) * MVI.vscale)));
 }
 

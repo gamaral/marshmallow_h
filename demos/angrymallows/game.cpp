@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game.h"
 
 /*!
  * @file
@@ -34,64 +34,62 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_HASH_H
-#define CORE_HASH_H 1
+MARSHMALLOW_NAMESPACE_USE;
 
-#include "core/global.h"
+#include <core/logger.h>
+#include <graphics/viewport.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#include "customfactory.h"
 
-namespace Core
+Demo::Demo(const char *f)
+    : EngineBase(),
+      m_filename(STRDUP(f)),
+      m_stop_timer(0)
 {
-
-	/*! @brief Hash Class */
-	class CORE_EXPORT Hash
-	{
-		UID   m_result;
-
-	public:
-
-		/*!
-		 * @param d Data to hash
-		 * @param length Data length
-		 */
-		Hash(void);
-		Hash(const char *d, size_t length, UID mask);
-		Hash(const Hash &copy);
-		virtual ~Hash(void);
-
-		/*! @brief Datum */
-		UID result(void) const
-		    { return(m_result); }
-
-	public: /* operator */
-
-		operator UID() const
-		    { return(m_result); }
-
-		Marshmallow::Core::Hash & operator=(const Marshmallow::Core::Hash &rhs);
-
-		bool operator==(const Hash &rhs) const
-		    { return(m_result == rhs.m_result); }
-
-		bool operator!=(const Hash &rhs) const
-		    { return(m_result != rhs.m_result); }
-
-		bool operator<(const Hash &rhs) const
-		    { return(m_result < rhs.m_result); }
-
-	public: /* static */
-
-		/*! @brief One-at-a-Time Hash */
-		static UID Algorithm(const char *data, size_t length, UID mask);
-
-	protected:
-
-		void rehash(const char *d, size_t length, UID mask);
-	};
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+Demo::~Demo(void)
+{
+	free(m_filename);
+	m_filename = 0;
+}
 
-#endif
+bool
+Demo::initialize(void)
+{
+	setFactory(new CustomFactory);
+
+	if (!EngineBase::initialize())
+		return(false);
+
+	{	/* derialization test */
+		TinyXML::TiXmlDocument l_document;
+		if (!l_document.LoadFile(m_filename)) {
+			ERROR("Failed to load '%s'", m_filename);
+			return(false);
+		}
+		TinyXML::TiXmlElement *l_root = l_document.FirstChildElement("marshmallow");
+		if (l_root) deserialize(*l_root);
+	}
+
+	{	/* pre-run serialization test */
+		TinyXML::TiXmlDocument l_document;
+		TinyXML::TiXmlElement  l_root("marshmallow");
+		serialize(l_root);
+		l_document.InsertEndChild(l_root);
+	}
+
+	Graphics::Viewport::SetCamera(Math::Vector3(0, 0, 0.035));
+
+	return(true);
+}
+
+void
+Demo::second(void)
+{
+	EngineBase::second();
+
+	if (++m_stop_timer == 120)
+		stop();
+}
+

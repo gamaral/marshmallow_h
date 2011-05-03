@@ -34,64 +34,30 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_HASH_H
-#define CORE_HASH_H 1
+#ifndef GAME_H
+#define GAME_H 1
 
-#include "core/global.h"
+#include <game/enginebase.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#include <event/eventmanager.h>
+#include <game/scenemanager.h>
 
-namespace Core
+MARSHMALLOW_NAMESPACE_USE;
+
+class Demo : public Game::EngineBase
 {
+	char *m_filename;
+	int m_stop_timer;
 
-	/*! @brief Hash Class */
-	class CORE_EXPORT Hash
-	{
-		UID   m_result;
+public:
+	Demo(const char *filename);
+	virtual ~Demo(void);
 
-	public:
+public: /* virtual */
 
-		/*!
-		 * @param d Data to hash
-		 * @param length Data length
-		 */
-		Hash(void);
-		Hash(const char *d, size_t length, UID mask);
-		Hash(const Hash &copy);
-		virtual ~Hash(void);
-
-		/*! @brief Datum */
-		UID result(void) const
-		    { return(m_result); }
-
-	public: /* operator */
-
-		operator UID() const
-		    { return(m_result); }
-
-		Marshmallow::Core::Hash & operator=(const Marshmallow::Core::Hash &rhs);
-
-		bool operator==(const Hash &rhs) const
-		    { return(m_result == rhs.m_result); }
-
-		bool operator!=(const Hash &rhs) const
-		    { return(m_result != rhs.m_result); }
-
-		bool operator<(const Hash &rhs) const
-		    { return(m_result < rhs.m_result); }
-
-	public: /* static */
-
-		/*! @brief One-at-a-Time Hash */
-		static UID Algorithm(const char *data, size_t length, UID mask);
-
-	protected:
-
-		void rehash(const char *d, size_t length, UID mask);
-	};
-
-}
-
-MARSHMALLOW_NAMESPACE_END
+	VIRTUAL bool initialize(void);
+	VIRTUAL void second(void);
+};
 
 #endif
+

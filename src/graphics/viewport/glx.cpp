@@ -37,6 +37,7 @@
 #include <GL/glx.h>
 #include <GL/glu.h>
 #include <X11/X.h>
+#include <X11/XKBlib.h>
 #define XMD_H
 #include <X11/extensions/xf86vmode.h>
 
@@ -62,6 +63,7 @@ struct Viewport::Internal
 	Atom        wm_delete;
 	float       camera[3];
 	float       size[2];
+	float       vscale;
 	bool        fullscreen;
 	bool        loaded;
 
@@ -72,6 +74,7 @@ struct Viewport::Internal
 	      screen(0),
 	      context(0),
 	      wm_delete(0),
+	      vscale(1),
 	      fullscreen(false),
 	      loaded(false)
 	{
@@ -222,6 +225,7 @@ struct Viewport::Internal
 			XSetWMNormalHints(display, window, l_size_hints);
 			XFree(l_size_hints);
 		}
+		XkbSetDetectableAutoRepeat(display, true, 0);
 
 		/* catch window manager delete event */
 		wm_delete = XInternAtom(display, "WM_DELETE_WINDOW", false);
@@ -294,8 +298,12 @@ struct Viewport::Internal
 	void
 	adjustView(void)
 	{
+		const float aratio =
+		    (static_cast<float>(wsize[1]) / static_cast<float>(wsize[0]));
+
 		size[0] = DEFAULT_VIEWPORT_VWIDTH * camera[2];
-		size[1] = DEFAULT_VIEWPORT_VHEIGHT * camera[2];
+		size[1] = (DEFAULT_VIEWPORT_VWIDTH * aratio) * camera[2];
+		vscale = static_cast<float>(wsize[0]) / size[0];
 
 		const float l_hw = size[0] / 2.f;
 		const float l_hh = size[1] / 2.f;
@@ -521,5 +529,17 @@ Viewport::WindowSize(void)
 {
 	return(Math::Size2(static_cast<float>(MVI.wsize[0]),
 	                   static_cast<float>(MVI.wsize[1])));
+}
+
+float
+Viewport::MapToWorld(int x)
+{
+	return(static_cast<float>(x) / MVI.vscale);
+}
+
+int
+Viewport::MapFromWorld(float x)
+{
+	return(static_cast<int>(floor(static_cast<float>(x) * MVI.vscale)));
 }
 

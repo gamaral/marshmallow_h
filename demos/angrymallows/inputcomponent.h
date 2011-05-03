@@ -34,64 +34,62 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_HASH_H
-#define CORE_HASH_H 1
+#ifndef INPUTCOMPONENT_H
+#define INPUTCOMPONENT_H 1
 
-#include "core/global.h"
+#include <game/componentbase.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#include <event/ieventlistener.h>
+#include <game/box2dcomponent.h>
+#include <game/positioncomponent.h>
 
-namespace Core
+MARSHMALLOW_NAMESPACE_USE;
+
+class InputComponent : public Game::ComponentBase
 {
+	Game::WeakPositionComponent m_position;
+	Game::WeakBox2DComponent m_body;
+	Event::SharedEventListener m_listener;
 
-	/*! @brief Hash Class */
-	class CORE_EXPORT Hash
-	{
-		UID   m_result;
-
-	public:
-
-		/*!
-		 * @param d Data to hash
-		 * @param length Data length
-		 */
-		Hash(void);
-		Hash(const char *d, size_t length, UID mask);
-		Hash(const Hash &copy);
-		virtual ~Hash(void);
-
-		/*! @brief Datum */
-		UID result(void) const
-		    { return(m_result); }
-
-	public: /* operator */
-
-		operator UID() const
-		    { return(m_result); }
-
-		Marshmallow::Core::Hash & operator=(const Marshmallow::Core::Hash &rhs);
-
-		bool operator==(const Hash &rhs) const
-		    { return(m_result == rhs.m_result); }
-
-		bool operator!=(const Hash &rhs) const
-		    { return(m_result != rhs.m_result); }
-
-		bool operator<(const Hash &rhs) const
-		    { return(m_result < rhs.m_result); }
-
-	public: /* static */
-
-		/*! @brief One-at-a-Time Hash */
-		static UID Algorithm(const char *data, size_t length, UID mask);
-
-	protected:
-
-		void rehash(const char *d, size_t length, UID mask);
+	enum State {
+		ICFalling,
+		ICStanding,
+		ICJumping
 	};
 
-}
+	State m_state;
 
-MARSHMALLOW_NAMESPACE_END
+	bool m_jump;
+	bool m_left;
+	bool m_right;
+
+	NO_COPY(InputComponent);
+
+public:
+
+	InputComponent(const Core::Identifier &identifier, Game::IEntity &entity);
+	virtual ~InputComponent(void);
+
+	void jump(bool status)
+	    { m_jump = status; }
+
+	void left(bool status)
+	    { m_left = status; }
+
+	void right(bool status)
+	    { m_right = status; }
+
+public: /* virtual */
+
+	VIRTUAL const Core::Type & type(void) const
+	    { return(Type); }
+
+	VIRTUAL void update(TIME d);
+
+public: /* static */
+
+	static const Core::Type Type;
+};
 
 #endif
+

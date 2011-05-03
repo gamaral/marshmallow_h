@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "inputcomponent.h"
 
 /*!
  * @file
@@ -34,64 +34,71 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_HASH_H
-#define CORE_HASH_H 1
+#include <Box2D/Box2D.h>
 
-#include "core/global.h"
+#include <core/logger.h>
+#include <math/size2.h>
+#include <event/eventmanager.h>
+#include <event/keyboardevent.h>
+#include <graphics/viewport.h>
+#include <game/enginebase.h>
+#include <game/ientity.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#include "inputcomponentlistener.h"
 
-namespace Core
+const Core::Type InputComponent::Type("InputComponent");
+
+InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
+    : ComponentBase(i, e),
+      m_state(ICJumping),
+      m_listener(new InputComponentListener(*this)),
+      m_jump(false),
+      m_left(false),
+      m_right(false)
 {
-
-	/*! @brief Hash Class */
-	class CORE_EXPORT Hash
-	{
-		UID   m_result;
-
-	public:
-
-		/*!
-		 * @param d Data to hash
-		 * @param length Data length
-		 */
-		Hash(void);
-		Hash(const char *d, size_t length, UID mask);
-		Hash(const Hash &copy);
-		virtual ~Hash(void);
-
-		/*! @brief Datum */
-		UID result(void) const
-		    { return(m_result); }
-
-	public: /* operator */
-
-		operator UID() const
-		    { return(m_result); }
-
-		Marshmallow::Core::Hash & operator=(const Marshmallow::Core::Hash &rhs);
-
-		bool operator==(const Hash &rhs) const
-		    { return(m_result == rhs.m_result); }
-
-		bool operator!=(const Hash &rhs) const
-		    { return(m_result != rhs.m_result); }
-
-		bool operator<(const Hash &rhs) const
-		    { return(m_result < rhs.m_result); }
-
-	public: /* static */
-
-		/*! @brief One-at-a-Time Hash */
-		static UID Algorithm(const char *data, size_t length, UID mask);
-
-	protected:
-
-		void rehash(const char *d, size_t length, UID mask);
-	};
-
+	Game::EngineBase::Instance()->eventManager()->connect(m_listener, Event::KeyboardEvent::Type);
 }
 
-MARSHMALLOW_NAMESPACE_END
+InputComponent::~InputComponent(void)
+{
+}
 
-#endif
+void
+InputComponent::update(TIME d)
+{
+	if (!m_position)
+		m_position = entity().getComponentType("Game::PositionComponent").
+		    cast<Game::PositionComponent>();
+
+	if (!m_body) {
+		m_body = entity().getComponentType("Game::Box2DComponent").
+		    cast<Game::Box2DComponent>();
+	}
+
+	if (m_position && m_body) {
+		b2Vec2 l_vel = m_body->body()->GetLinearVelocity();
+
+		switch (m_state) {
+		case ICJumping:
+			if (l_vel.y <= 0) m_state = ICFalling;
+			break;
+		case ICFalling:
+			if (l_vel.y >= 0) m_state = ICStanding;
+			break;
+		case ICStanding:
+			if (m_jump) {
+				m_body->body()->ApplyLinearImpulse(b2Vec2(0, 0.0004), m_body->body()->GetWorldCenter());
+				m_state = ICJumping;
+			}
+
+			if (m_left && l_vel.x > -.4f)
+				m_body->body()->ApplyAngularImpulse(0.000001);
+
+			if (m_right && l_vel.x < .4f)
+				m_body->body()->ApplyAngularImpulse(-0.000001);
+
+			break;
+		}
+	}
+}
+

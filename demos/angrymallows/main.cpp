@@ -26,72 +26,20 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
-
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_HASH_H
-#define CORE_HASH_H 1
+#include "game.h"
 
-#include "core/global.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
+int
+main(int argc, const char *argv[])
 {
+	const char *l_filename("demos/angrymallows/assets/default.xml");
+	if (argc > 1) l_filename = argv[1];
 
-	/*! @brief Hash Class */
-	class CORE_EXPORT Hash
-	{
-		UID   m_result;
-
-	public:
-
-		/*!
-		 * @param d Data to hash
-		 * @param length Data length
-		 */
-		Hash(void);
-		Hash(const char *d, size_t length, UID mask);
-		Hash(const Hash &copy);
-		virtual ~Hash(void);
-
-		/*! @brief Datum */
-		UID result(void) const
-		    { return(m_result); }
-
-	public: /* operator */
-
-		operator UID() const
-		    { return(m_result); }
-
-		Marshmallow::Core::Hash & operator=(const Marshmallow::Core::Hash &rhs);
-
-		bool operator==(const Hash &rhs) const
-		    { return(m_result == rhs.m_result); }
-
-		bool operator!=(const Hash &rhs) const
-		    { return(m_result != rhs.m_result); }
-
-		bool operator<(const Hash &rhs) const
-		    { return(m_result < rhs.m_result); }
-
-	public: /* static */
-
-		/*! @brief One-at-a-Time Hash */
-		static UID Algorithm(const char *data, size_t length, UID mask);
-
-	protected:
-
-		void rehash(const char *d, size_t length, UID mask);
-	};
-
+	return(Demo(l_filename).run());
 }
 
-MARSHMALLOW_NAMESPACE_END
-
-#endif

@@ -177,6 +177,12 @@ namespace Event
 		KeyboardEvent(KBKeys key, KBActions action, TIME timeout = 0);
 		virtual ~KeyboardEvent(void);
 
+		KBKeys key(void) const
+		    { return(m_key); }
+
+		KBActions action(void) const
+		    { return(m_action); }
+
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const

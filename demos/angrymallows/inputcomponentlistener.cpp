@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "inputcomponentlistener.h"
 
 /*!
  * @file
@@ -34,64 +34,35 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_HASH_H
-#define CORE_HASH_H 1
+#include <event/keyboardevent.h>
 
-#include "core/global.h"
+#include "inputcomponent.h"
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
+InputComponentListener::InputComponentListener(InputComponent &i)
+    : m_input(i)
 {
-
-	/*! @brief Hash Class */
-	class CORE_EXPORT Hash
-	{
-		UID   m_result;
-
-	public:
-
-		/*!
-		 * @param d Data to hash
-		 * @param length Data length
-		 */
-		Hash(void);
-		Hash(const char *d, size_t length, UID mask);
-		Hash(const Hash &copy);
-		virtual ~Hash(void);
-
-		/*! @brief Datum */
-		UID result(void) const
-		    { return(m_result); }
-
-	public: /* operator */
-
-		operator UID() const
-		    { return(m_result); }
-
-		Marshmallow::Core::Hash & operator=(const Marshmallow::Core::Hash &rhs);
-
-		bool operator==(const Hash &rhs) const
-		    { return(m_result == rhs.m_result); }
-
-		bool operator!=(const Hash &rhs) const
-		    { return(m_result != rhs.m_result); }
-
-		bool operator<(const Hash &rhs) const
-		    { return(m_result < rhs.m_result); }
-
-	public: /* static */
-
-		/*! @brief One-at-a-Time Hash */
-		static UID Algorithm(const char *data, size_t length, UID mask);
-
-	protected:
-
-		void rehash(const char *d, size_t length, UID mask);
-	};
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+InputComponentListener::~InputComponentListener(void)
+{
+}
 
-#endif
+bool
+InputComponentListener::handleEvent(const Event::IEvent &e)
+{
+	if (e.type() != Event::KeyboardEvent::Type)
+		return(false);
+
+	const Event::KeyboardEvent &l_kevent =
+	    static_cast<const Event::KeyboardEvent &>(e);
+
+	if (l_kevent.key() == Event::KEY_SPACE)
+		m_input.jump(l_kevent.action() == Event::KeyPressed);
+	else if (l_kevent.key() == Event::KEY_LEFT)
+		m_input.left(l_kevent.action() == Event::KeyPressed);
+	else if (l_kevent.key() == Event::KEY_RIGHT)
+		m_input.right(l_kevent.action() == Event::KeyPressed);
+
+	return(false);
+}
+

@@ -104,6 +104,18 @@ Viewport::Size(void)
 const Math::Size2
 Viewport::WindowSize(void)
 {
-	return(Math::Size2(DEFAULT_VIEWPORT_VWIDTH, DEFAULT_VIEWPORT_VHEIGHT));
+	return(Math::Size2(DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT));
+}
+
+float
+Viewport::MapToWorld(int x)
+{
+	return(static_cast<float>(x));
+}
+
+int
+Viewport::MapFromWorld(float x)
+{
+	return(static_cast<int>(trunc(x)));
 }
 

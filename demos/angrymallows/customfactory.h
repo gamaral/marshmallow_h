@@ -34,64 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_HASH_H
-#define CORE_HASH_H 1
+#ifndef CUSTOMFACTORY_H
+#define CUSTOMFACTORY_H 1
 
-#include "core/global.h"
+#include <game/factorybase.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+MARSHMALLOW_NAMESPACE_USE;
 
-namespace Core
+class GAME_EXPORT CustomFactory : public Game::FactoryBase
 {
 
-	/*! @brief Hash Class */
-	class CORE_EXPORT Hash
-	{
-		UID   m_result;
+	NO_COPY(CustomFactory);
 
-	public:
+public:
 
-		/*!
-		 * @param d Data to hash
-		 * @param length Data length
-		 */
-		Hash(void);
-		Hash(const char *d, size_t length, UID mask);
-		Hash(const Hash &copy);
-		virtual ~Hash(void);
+	CustomFactory(void)
+	    : FactoryBase()
+	{}
 
-		/*! @brief Datum */
-		UID result(void) const
-		    { return(m_result); }
+	virtual ~CustomFactory(void)
+	{};
 
-	public: /* operator */
+public: /* virtual */
 
-		operator UID() const
-		    { return(m_result); }
+	VIRTUAL Game::SharedComponent createComponent(const Core::Type &type,
+	    const Core::Identifier &identifier, Game::IEntity &entity) const;
 
-		Marshmallow::Core::Hash & operator=(const Marshmallow::Core::Hash &rhs);
-
-		bool operator==(const Hash &rhs) const
-		    { return(m_result == rhs.m_result); }
-
-		bool operator!=(const Hash &rhs) const
-		    { return(m_result != rhs.m_result); }
-
-		bool operator<(const Hash &rhs) const
-		    { return(m_result < rhs.m_result); }
-
-	public: /* static */
-
-		/*! @brief One-at-a-Time Hash */
-		static UID Algorithm(const char *data, size_t length, UID mask);
-
-	protected:
-
-		void rehash(const char *d, size_t length, UID mask);
-	};
-
-}
-
-MARSHMALLOW_NAMESPACE_END
+};
 
 #endif

@@ -34,64 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_HASH_H
-#define CORE_HASH_H 1
+#ifndef INPUTCOMPONENTLISTENER_H
+#define INPUTCOMPONENTLISTENER_H 1
 
-#include "core/global.h"
+#include <core/shared.h>
+#include <event/ieventlistener.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+MARSHMALLOW_NAMESPACE_USE;
 
-namespace Core
+class InputComponent;
+
+class InputComponentListener : public Event::IEventListener
 {
+	InputComponent &m_input;
 
-	/*! @brief Hash Class */
-	class CORE_EXPORT Hash
-	{
-		UID   m_result;
+	NO_COPY(InputComponentListener);
+public:
 
-	public:
+	InputComponentListener(InputComponent &input);
+	virtual ~InputComponentListener(void);
 
-		/*!
-		 * @param d Data to hash
-		 * @param length Data length
-		 */
-		Hash(void);
-		Hash(const char *d, size_t length, UID mask);
-		Hash(const Hash &copy);
-		virtual ~Hash(void);
+public: /* virtual */
 
-		/*! @brief Datum */
-		UID result(void) const
-		    { return(m_result); }
-
-	public: /* operator */
-
-		operator UID() const
-		    { return(m_result); }
-
-		Marshmallow::Core::Hash & operator=(const Marshmallow::Core::Hash &rhs);
-
-		bool operator==(const Hash &rhs) const
-		    { return(m_result == rhs.m_result); }
-
-		bool operator!=(const Hash &rhs) const
-		    { return(m_result != rhs.m_result); }
-
-		bool operator<(const Hash &rhs) const
-		    { return(m_result < rhs.m_result); }
-
-	public: /* static */
-
-		/*! @brief One-at-a-Time Hash */
-		static UID Algorithm(const char *data, size_t length, UID mask);
-
-	protected:
-
-		void rehash(const char *d, size_t length, UID mask);
-	};
-
-}
-
-MARSHMALLOW_NAMESPACE_END
+	VIRTUAL bool handleEvent(const Event::IEvent &event);
+};
+typedef Core::Shared<InputComponentListener> SharedInputComponentListener;
+typedef Core::Weak<InputComponentListener> WeakInputComponentListener;
 
 #endif
+

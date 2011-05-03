@@ -73,6 +73,9 @@ namespace Graphics
 		static const Math::Size2 Size(void);
 		static const Math::Size2 WindowSize(void);
 
+		static float MapToWorld(int x);
+		static int MapFromWorld(float x);
+
 		struct Internal;
 	};
 
