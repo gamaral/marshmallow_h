@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/pausescenelayer.h"
+#pragma once
 
 /*!
  * @file
@@ -34,42 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "math/point2.h"
-#include "math/size2.h"
-#include "graphics/painter.h"
-#include "graphics/quadgraphic.h"
-#include "graphics/viewport.h"
+#ifndef GAMELISTENER_H
+#define GAMELISTENER_H 1
+
+#include <event/ieventlistener.h>
+
+#include <core/fd.h>
+#include <game/iengine.h>
 
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Game;
 
-const Core::Type PauseSceneLayer::Type("Game::PauseSceneLayer");
-
-PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, IScene &s)
-    : SceneLayerBase(i, s, slfUpdateBlock)
+class GameListener : public Event::IEventListener
 {
-}
+	Game::IEngine &m_engine;
 
-PauseSceneLayer::~PauseSceneLayer(void)
-{
-}
+	NO_COPY(GameListener);
+public:
 
-Graphics::SharedGraphic
-PauseSceneLayer::graphic(void) const
-{
-	return(m_graphic);
-}
+	GameListener(Game::IEngine &engine);
+	virtual ~GameListener(void);
 
-void
-PauseSceneLayer::render(void)
-{
-	if (!m_graphic) {
-		Math::Rect2 l_rect(Graphics::Viewport::Size());
-		Graphics::QuadGraphic *l_graphic = new Graphics::QuadGraphic(l_rect);
-		l_graphic->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.6f));
-		m_graphic = l_graphic;
-	}
+public: /* virtual */
 
-	Graphics::Painter::Draw(*m_graphic, Math::Point2(0,0));
-}
+	VIRTUAL bool handleEvent(const Event::IEvent &event);
+};
+typedef Core::Shared<GameListener> SharedGameListener;
+typedef Core::Weak<GameListener> WeakGameListener;
+
+#endif
 

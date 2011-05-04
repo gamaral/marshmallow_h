@@ -46,6 +46,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
+	class Color;
 
 	class TextureAsset;
 	typedef Core::Shared<TextureAsset> SharedTextureAsset;
@@ -57,11 +58,10 @@ namespace Graphics
 
 		virtual const Core::Type & type(void) const = 0;
 
-		virtual const SharedTextureAsset & texture(void) const = 0;
-		virtual void setTexture(SharedTextureAsset texture) = 0;
+		virtual const Graphics::Color & color(void) const = 0;
 
+		virtual const SharedTextureAsset & texture(void) const = 0;
 		virtual float rotation(void) const = 0;
-		virtual void setRotation(float angle) = 0;
 
 		/* TODO: Create brush and/or pen shared classes */
 	};

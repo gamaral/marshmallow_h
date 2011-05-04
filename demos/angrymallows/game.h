@@ -40,12 +40,14 @@
 #include <game/enginebase.h>
 
 #include <event/eventmanager.h>
+#include <event/ieventlistener.h>
 #include <game/scenemanager.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 
 class Demo : public Game::EngineBase
 {
+	Event::SharedEventListener m_listener;
 	char *m_filename;
 	int m_stop_timer;
 

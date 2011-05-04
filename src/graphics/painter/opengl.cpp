@@ -126,10 +126,15 @@ Painter::Draw(const IGraphic &g, const Math::Point2 &o)
 	const bool  l_texture = (g.texture());
 	const float l_rotate_angle = g.rotation();
 
-	if (l_texture) {
+	Blend(AlphaBlending);
+
+	/* set color */
+	const Graphics::Color &l_color = g.color();
+	glColor4f(l_color[0], l_color[1], l_color[2], l_color[3]);
+
+	/* set texture */
+	if (l_texture)
 		glBindTexture(GL_TEXTURE_2D, g.texture()->tid());
-		Blend(AlphaBlending);
-	}
 
 	glPushMatrix();
 	glTranslatef(o.rx(), o.ry(), 0.f);
@@ -152,10 +157,10 @@ Painter::Draw(const IGraphic &g, const Math::Point2 &o)
 
 	glPopMatrix();
 
-	if (l_texture) {
-		Blend(NoBlending);
+	if (l_texture)
 		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+
+	Blend(NoBlending);
 }
 
 void
@@ -168,7 +173,7 @@ Painter::Blend(BlendTypes b)
 	break;
 	case AlphaBlending:
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	break;
 	case MultiplyBlending:
 		glEnable(GL_BLEND);

@@ -40,6 +40,7 @@
 #include "graphics/igraphic.h"
 
 #include "core/shared.h"
+#include "graphics/color.h"
 #include "graphics/textureasset.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -50,6 +51,7 @@ namespace Graphics
 	/*! @brief Graphics Quad Graphic class */
 	class GRAPHICS_EXPORT GraphicBase : public IGraphic
 	{
+		Graphics::Color m_color;
 		Graphics::SharedTextureAsset m_texture;
 		float m_rotation;
 
@@ -60,7 +62,16 @@ namespace Graphics
 		GraphicBase(void);
 		virtual ~GraphicBase(void) {};
 
+		void setColor(const Graphics::Color &color);
+
+		void setTexture(SharedTextureAsset texture);
+
+		void setRotation(float angle);
+
 	public: /* virtual */
+
+		VIRTUAL const Graphics::Color & color(void) const
+		    { return(m_color); }
 
 		VIRTUAL const SharedTextureAsset & texture(void) const
 		    { return(m_texture); }
@@ -68,12 +79,11 @@ namespace Graphics
 		VIRTUAL float rotation(void) const
 		    { return(m_rotation); }
 
-		VIRTUAL void setTexture(SharedTextureAsset texture);
-		VIRTUAL void setRotation(float angle);
-
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 	};
+	typedef Core::Shared<GraphicBase> SharedGraphicBase;
+	typedef Core::Weak<GraphicBase> WeakGraphicBase;
 
 }
 

@@ -92,21 +92,6 @@ namespace Game
 		virtual ~EngineBase(void);
 
 		/*!
-		 * @brief Event Manager
-		 */
-		Event::SharedEventManager eventManager(void) const;
-
-		/*!
-		 * @brief Scene Manager
-		 */
-		SharedSceneManager sceneManager(void) const;
-
-		/*!
-		 * @brief Factory
-		 */
-		SharedFactory factory(void) const;
-
-		/*!
 		 * @brief Set Event Manager
 		 */
 		void setEventManager(const Event::SharedEventManager &manager);
@@ -149,6 +134,10 @@ namespace Game
 
 		VIRTUAL int run(void);
 		VIRTUAL void stop(int exit_code = 0);
+
+		VIRTUAL Event::SharedEventManager eventManager(void) const;
+		VIRTUAL SharedSceneManager sceneManager(void) const;
+		VIRTUAL SharedFactory factory(void) const;
 
 		VIRTUAL bool initialize(void);
 		VIRTUAL void finalize(void);

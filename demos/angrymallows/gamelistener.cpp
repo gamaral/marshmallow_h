@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/pausescenelayer.h"
+#include "gamelistener.h"
 
 /*!
  * @file
@@ -34,42 +34,42 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "math/point2.h"
-#include "math/size2.h"
-#include "graphics/painter.h"
-#include "graphics/quadgraphic.h"
-#include "graphics/viewport.h"
+#include <event/keyboardevent.h>
+#include <game/iscene.h>
+#include <game/pausescenelayer.h>
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Game;
+#include "game.h"
 
-const Core::Type PauseSceneLayer::Type("Game::PauseSceneLayer");
-
-PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, IScene &s)
-    : SceneLayerBase(i, s, slfUpdateBlock)
+GameListener::GameListener(Game::IEngine &e)
+    : m_engine(e)
 {
 }
 
-PauseSceneLayer::~PauseSceneLayer(void)
+GameListener::~GameListener(void)
 {
 }
 
-Graphics::SharedGraphic
-PauseSceneLayer::graphic(void) const
+bool
+GameListener::handleEvent(const Event::IEvent &e)
 {
-	return(m_graphic);
-}
+	if (e.type() != Event::KeyboardEvent::Type)
+		return(false);
 
-void
-PauseSceneLayer::render(void)
-{
-	if (!m_graphic) {
-		Math::Rect2 l_rect(Graphics::Viewport::Size());
-		Graphics::QuadGraphic *l_graphic = new Graphics::QuadGraphic(l_rect);
-		l_graphic->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.6f));
-		m_graphic = l_graphic;
-	}
+	const Event::KeyboardEvent &l_kevent =
+	    static_cast<const Event::KeyboardEvent &>(e);
 
-	Graphics::Painter::Draw(*m_graphic, Math::Point2(0,0));
+	if (l_kevent.action() != Event::KeyPressed)
+		return(false);
+
+	if (l_kevent.key() == Event::KEY_RETURN) {
+		Game::SharedScene l_scene = m_engine.sceneManager()->activeScene();
+		if (l_scene->getLayer("pause"))
+			l_scene->removeLayer("pause");
+		else
+			l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
+	} else if (l_kevent.key() == Event::KEY_ESCAPE)
+		m_engine.stop();
+
+	return(true);
 }
 

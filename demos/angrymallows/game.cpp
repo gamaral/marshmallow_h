@@ -37,12 +37,15 @@
 MARSHMALLOW_NAMESPACE_USE;
 
 #include <core/logger.h>
+#include <event/keyboardevent.h>
 #include <graphics/viewport.h>
 
 #include "customfactory.h"
+#include "gamelistener.h"
 
 Demo::Demo(const char *f)
     : EngineBase(),
+      m_listener(),
       m_filename(STRDUP(f)),
       m_stop_timer(0)
 {
@@ -61,6 +64,9 @@ Demo::initialize(void)
 
 	if (!EngineBase::initialize())
 		return(false);
+
+	m_listener = new GameListener(*this);
+	Game::EngineBase::Instance()->eventManager()->connect(m_listener, Event::KeyboardEvent::Type);
 
 	{	/* derialization test */
 		TinyXML::TiXmlDocument l_document;
@@ -89,7 +95,9 @@ Demo::second(void)
 {
 	EngineBase::second();
 
-	if (++m_stop_timer == 120)
+	if (++m_stop_timer == 120) {
+		WARNING1("Stopping engine (auto-shutdown)");
 		stop();
+	}
 }
 

@@ -40,9 +40,16 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
 GraphicBase::GraphicBase(void)
-    : m_texture(),
+    : m_color(),
+      m_texture(),
       m_rotation(0)
 {
+}
+
+void
+GraphicBase::setColor(const Graphics::Color &c)
+{
+	m_color = c;
 }
 
 void
@@ -63,10 +70,19 @@ GraphicBase::serialize(TinyXML::TiXmlElement &n) const
 	n.SetAttribute("type", type().str().c_str());
 	n.SetDoubleAttribute("rotation", m_rotation);
 
+	/* color */
+	TinyXML::TiXmlElement l_color("color");
+	l_color.SetDoubleAttribute("r", m_color[0]);
+	l_color.SetDoubleAttribute("g", m_color[1]);
+	l_color.SetDoubleAttribute("b", m_color[2]);
+	l_color.SetDoubleAttribute("a", m_color[3]);
+	n.InsertEndChild(l_color);
+
+	/* texture */
 	if (m_texture) {
-		TinyXML::TiXmlElement l_child("texture");
-		l_child.SetAttribute("file", m_texture->filename().c_str());
-		n.InsertEndChild(l_child);
+		TinyXML::TiXmlElement l_texture("texture");
+		l_texture.SetAttribute("file", m_texture->filename().c_str());
+		n.InsertEndChild(l_texture);
 	}
 
 	return(true);
@@ -79,6 +95,16 @@ GraphicBase::deserialize(TinyXML::TiXmlElement &n)
 
 	n.QueryFloatAttribute("rotation", &m_rotation);
 
+	/* color */
+	l_child = n.FirstChildElement("color");
+	if (l_child) {
+		l_child->QueryFloatAttribute("r", &m_color[0]);
+		l_child->QueryFloatAttribute("g", &m_color[1]);
+		l_child->QueryFloatAttribute("b", &m_color[2]);
+		l_child->QueryFloatAttribute("a", &m_color[3]);
+	}
+
+	/* texture */
 	l_child = n.FirstChildElement("texture");
 	if (l_child) {
 		const char *l_file = l_child->Attribute("file");

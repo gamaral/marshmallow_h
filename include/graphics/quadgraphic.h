@@ -81,6 +81,8 @@ namespace Graphics
 
 		static const Core::Type Type;
 	};
+	typedef Core::Shared<QuadGraphic> SharedQuadGraphic;
+	typedef Core::Weak<QuadGraphic> WeakQuadGraphic;
 
 }
 

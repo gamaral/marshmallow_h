@@ -37,8 +37,8 @@
 #ifndef GRAPHICS_COLOR_H
 #define GRAPHICS_COLOR_H 1
 
-#include "graphics/config.h"
 #include "core/global.h"
+#include "graphics/config.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -52,9 +52,18 @@ namespace Graphics
 
 	public:
 
-		Color(float r = 0., float g = 0., float b = 0., float a = 1. );
+		Color(float r = 1.f, float g = 1.f, float b = 1.f, float a = 1.f );
 		Color(const Color &copy);
 		~Color(void);
+
+		float & rred(void)
+		    { return(m_rgba[0]); }
+		float & rgreen(void)
+		    { return(m_rgba[1]); }
+		float & rblue(void)
+		    { return(m_rgba[2]); }
+		float & ralpha(void)
+		    { return(m_rgba[3]); }
 
 		float red(void) const
 		    { return(m_rgba[0]); }
@@ -65,20 +74,15 @@ namespace Graphics
 		float alpha(void) const
 		    { return(m_rgba[3]); }
 
-		void setRed(float value)
-		    { m_rgba[0] = value; }
-		void setGreen(float value)
-		    { m_rgba[1] = value; }
-		void setBlue(float value)
-		    { m_rgba[2] = value; }
-		void setAlpha(float value)
-		    { m_rgba[3] = value; }
-
 	public: /* operators */
 
 		float operator[](int index) const
 		    { return(m_rgba[index % 4]); }
 
+		float & operator[](int index)
+		    { return(m_rgba[index % 4]); }
+
+		Color & operator=(const Color &rhs);
 	};
 
 }

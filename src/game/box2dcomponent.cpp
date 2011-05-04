@@ -35,7 +35,7 @@
  */
 
 #include "core/logger.h"
-#include "graphics/igraphic.h"
+#include "graphics/graphicbase.h"
 #include "game/box2dscenelayer.h"
 #include "game/entityscenelayer.h"
 #include "game/ientity.h"
@@ -71,7 +71,17 @@ Box2DComponent::update(TIME d)
 {
 	UNUSED(d);
 
-	if (!m_init && !m_b2layer) {
+	if (!m_position) {
+		m_position = entity().getComponentType("Game::PositionComponent").
+		    staticCast<PositionComponent>();
+	}
+
+	if (!m_render) {
+		m_render = entity().getComponentType("Game::RenderComponent").
+		    staticCast<RenderComponent>();
+	}
+
+	if (!m_init && !m_b2layer && m_position) {
 		WeakSceneLayer l_layer = entity().layer().scene().getLayerType("Game::Box2DSceneLayer");
 		m_b2layer = l_layer.cast<Box2DSceneLayer>();
 
@@ -82,48 +92,48 @@ Box2DComponent::update(TIME d)
 
 		b2World &l_world = m_b2layer->world();
 
-		m_position = entity().getComponentType("Game::PositionComponent").
-		    staticCast<PositionComponent>();
-
-		m_render = entity().getComponentType("Game::RenderComponent").
-		    staticCast<RenderComponent>();
-
-		if (m_position && m_render) {
-			b2BodyDef bodyDef;
-			bodyDef.type = static_cast<b2BodyType>(m_body_type);
+		/* create box2d body */
+		b2BodyDef bodyDef;
+		bodyDef.type = static_cast<b2BodyType>(m_body_type);
 #define DEGREE_TO_RADIAN 0.0174532925f
-			bodyDef.angle = m_render->graphic()->rotation() * DEGREE_TO_RADIAN;
-			bodyDef.position.Set
-			    (m_position->position().rx(),
-			     m_position->position().ry());
-			m_body = l_world.CreateBody(&bodyDef);
+		if (m_render) bodyDef.angle = m_render->graphic()->rotation() * DEGREE_TO_RADIAN;
+		bodyDef.position.Set
+		    (m_position->position().rx(),
+		     m_position->position().ry());
+		m_body = l_world.CreateBody(&bodyDef);
 
-			b2PolygonShape l_dynamicBox;
-			l_dynamicBox.SetAsBox(m_size.width() / 2.f,
-			                      m_size.height() / 2.f);
+		/* create shape */
+		b2PolygonShape l_dynamicBox;
+		l_dynamicBox.SetAsBox(m_size.width() / 2.f,
+				      m_size.height() / 2.f);
 
-			b2FixtureDef l_fixtureDef;
-			l_fixtureDef.shape = &l_dynamicBox;
-			l_fixtureDef.density = m_density;
-			l_fixtureDef.friction = m_friction;
+		/* create fixture */
+		b2FixtureDef l_fixtureDef;
+		l_fixtureDef.shape = &l_dynamicBox;
+		l_fixtureDef.density = m_density;
+		l_fixtureDef.friction = m_friction;
+		m_body->CreateFixture(&l_fixtureDef);
 
-			m_body->CreateFixture(&l_fixtureDef);
-
-			m_init = true;
-		} else WARNING1("Unsatisfied component dependencies");
+		m_init = true;
 	}
 
-	if (!(m_init && m_position && m_render && m_body))
+	/* abort if not initialized */
+	if (!m_init)
 		return;
 
 	b2Vec2 l_position = m_body->GetPosition();
 	float32 l_angle = m_body->GetAngle();
 
+	/* entity position */
 	m_position->position().rx() = l_position.x;
 	m_position->position().ry() = l_position.y;
+
+	/* render graphic rotation */
+	if (m_render) {
 #define RADIAN_TO_DEGREE 57.2957795f
-	m_render->graphic()->setRotation(fmodf(l_angle * RADIAN_TO_DEGREE, 360.f));
-	//m_render->graphic()->setRotation(fmodf((l_angle * 180.f / b2_pi), 360.f));
+		Graphics::WeakGraphicBase l_gbase(m_render->graphic().staticCast<Graphics::GraphicBase>());
+		if (l_gbase) l_gbase->setRotation(fmodf(l_angle * RADIAN_TO_DEGREE, 360.f));
+	}
 }
 
 bool

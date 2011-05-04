@@ -78,7 +78,7 @@ namespace Core
 		void clear(void);
 
 		T * raw(void) const
-		    { return(reinterpret_cast<T *>(m_data->ptr)); }
+		    { return(m_data ? reinterpret_cast<T *>(m_data->ptr) : 0); }
 
 		template <class U> Shared<U> cast(void) const;
 		template <class U> Shared<U> staticCast(void) const;

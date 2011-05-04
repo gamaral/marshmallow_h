@@ -48,12 +48,20 @@ using namespace eastl;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+namespace Graphics
+{
+	struct IGraphic;
+	typedef Core::Shared<IGraphic> SharedGraphic;
+}
+
 namespace Game
 {
 
 	/*! @brief Game Pause Scene Layer Class */
 	class GAME_EXPORT PauseSceneLayer : public SceneLayerBase
 	{
+		Graphics::SharedGraphic m_graphic;
+
 		NO_COPY(PauseSceneLayer);
 
 	public:
@@ -62,13 +70,15 @@ namespace Game
 		    IScene &scene);
 		virtual ~PauseSceneLayer(void);
 
+		Graphics::SharedGraphic graphic(void) const;
+
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
-		VIRTUAL void render(void) {}
-		VIRTUAL void update(TIME) {}
+		VIRTUAL void render(void);
+		VIRTUAL void update(TIME) {};
 
 	public: /* static */
 

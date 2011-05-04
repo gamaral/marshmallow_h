@@ -40,11 +40,23 @@
 #include "core/irenderable.h"
 #include "core/iserializable.h"
 #include "core/iupdateable.h"
+#include "core/fd.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+namespace Event
+{
+	class EventManager;
+	typedef Core::Shared<EventManager> SharedEventManager;
+}
+
 namespace Game
 {
+	class SceneManager;
+	typedef Core::Shared<SceneManager> SharedSceneManager;
+
+	struct IFactory;
+	typedef Core::Shared<IFactory> SharedFactory;
 
 	/*! @brief Game Engine Interface */
 	struct GAME_EXPORT IEngine : public Core::IRenderable,
@@ -63,6 +75,21 @@ namespace Game
 		 * @param exit_code Exit code
 		 */
 		virtual void stop(int exit_code = 0) = 0;
+
+		/*!
+		 * @brief Event Manager
+		 */
+		virtual Event::SharedEventManager eventManager(void) const = 0;
+
+		/*!
+		 * @brief Scene Manager
+		 */
+		virtual SharedSceneManager sceneManager(void) const = 0;
+
+		/*!
+		 * @brief Factory
+		 */
+		virtual SharedFactory factory(void) const = 0;
 
 		virtual bool initialize(void) = 0;
 		virtual void finalize(void) = 0;

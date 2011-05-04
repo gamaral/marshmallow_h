@@ -57,3 +57,12 @@ Color::~Color(void)
 {
 }
 
+Color &
+Color::operator=(const Color &rhs) {
+	m_rgba[0] = rhs.m_rgba[0],
+	m_rgba[1] = rhs.m_rgba[1],
+	m_rgba[2] = rhs.m_rgba[2],
+	m_rgba[3] = rhs.m_rgba[3];
+	return(*this);
+}
+

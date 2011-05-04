@@ -113,24 +113,6 @@ EngineBase::finalize(void)
 	Platform::Finalize();
 }
 
-SharedEventManager
-EngineBase::eventManager(void) const
-{
-	return(m_event_manager);
-}
-
-SharedSceneManager
-EngineBase::sceneManager(void) const
-{
-	return(m_scene_manager);
-}
-
-SharedFactory
-EngineBase::factory(void) const
-{
-	return(m_factory);
-}
-
 void
 EngineBase::setEventManager(const SharedEventManager &m)
 {
@@ -232,6 +214,24 @@ EngineBase::stop(int ec)
 	INFO1("EngineBase stopped");
 	m_exit_code = ec;
 	m_running = false;
+}
+
+SharedEventManager
+EngineBase::eventManager(void) const
+{
+	return(m_event_manager);
+}
+
+SharedSceneManager
+EngineBase::sceneManager(void) const
+{
+	return(m_scene_manager);
+}
+
+SharedFactory
+EngineBase::factory(void) const
+{
+	return(m_factory);
 }
 
 void

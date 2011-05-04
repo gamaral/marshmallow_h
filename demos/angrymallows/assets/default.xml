@@ -18,21 +18,11 @@
                     </component>
                 </entity>
                 <entity id="floor" type="Game::Entity">
-                    <component id="origin" type="Game::PositionComponent" x="1.4" y="-0.86" />
-                    <component id="physics" type="Game::Box2DComponent" body="static" width="4.8" height="0.01" />
-                    <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="0">
-                            <texture file="demos/marshmallow/assets/kitchen_counter.png" />
-                            <vector x="-2.4" y="0.008" />
-                            <vector x="-2.4" y="-0.008" />
-                            <vector x="2.4" y="-0.008" />
-                            <vector x="2.4" y="0.008" />
-                        </graphic>
-                    </component>
+                    <component id="origin" type="Game::PositionComponent" x="1.4" y="-0.92" />
+                    <component id="physics" type="Game::Box2DComponent" body="static" width="4.8" height="0.1" />
                 </entity>
                 <entity id="player" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="-0.85" y="1" />
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".1" height=".1" density="0.01" friction="1" />
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadGraphic" rotation="12">
                             <texture file="demos/engine/assets/mallow.png" />
@@ -42,11 +32,11 @@
                             <vector x=".08" y=".08" />
                         </graphic>
                     </component>
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".1" height=".1" density="0.01" friction="1" />
                     <component id="input" type="InputComponent" />
                 </entity>
                 <entity id="marshmallow" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="0" y="-0.4" />
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadGraphic" rotation="12">
                             <texture file="demos/angrymallows/assets/nullows.png" />
@@ -56,10 +46,10 @@
                             <vector x=".1" y=".1" />
                         </graphic>
                     </component>
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
                 </entity>
                 <entity id="marshmallow" type="Game::Entity">
-                    <component id="origin" type="Game::PositionComponent" x="-0.13" y="-0.6" />
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
+                    <component id="origin" type="Game::PositionComponent" x="-0.13" y="-0.65" />
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadGraphic" rotation="12">
                             <texture file="demos/angrymallows/assets/nullows.png" />
@@ -69,10 +59,10 @@
                             <vector x=".1" y=".1" />
                         </graphic>
                     </component>
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
                 </entity>
                 <entity id="marshmallow" type="Game::Entity">
-                    <component id="origin" type="Game::PositionComponent" x=".11" y="-0.6" />
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
+                    <component id="origin" type="Game::PositionComponent" x=".11" y="-0.65" />
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadGraphic" rotation="12">
                             <texture file="demos/angrymallows/assets/nullows.png" />
@@ -82,10 +72,10 @@
                             <vector x=".1" y=".1" />
                         </graphic>
                     </component>
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
                 </entity>
                 <entity id="marshmallow" type="Game::Entity">
-                    <component id="origin" type="Game::PositionComponent" x="-0.25" y="-0.8" />
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
+                    <component id="origin" type="Game::PositionComponent" x="-0.25" y="-0.90" />
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadGraphic" rotation="12">
                             <texture file="demos/angrymallows/assets/nullows.png" />
@@ -95,10 +85,10 @@
                             <vector x=".1" y=".1" />
                         </graphic>
                     </component>
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
                 </entity>
                 <entity id="marshmallow" type="Game::Entity">
-                    <component id="origin" type="Game::PositionComponent" x="0" y="-0.8" />
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
+                    <component id="origin" type="Game::PositionComponent" x="0" y="-0.9" />
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadGraphic" rotation="12">
                             <texture file="demos/angrymallows/assets/nullows.png" />
@@ -108,10 +98,10 @@
                             <vector x=".1" y=".1" />
                         </graphic>
                     </component>
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
                 </entity>
                 <entity id="marshmallow" type="Game::Entity">
-                    <component id="origin" type="Game::PositionComponent" x="0.25" y="-0.8" />
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
+                    <component id="origin" type="Game::PositionComponent" x="0.25" y="-0.9" />
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadGraphic" rotation="12">
                             <texture file="demos/angrymallows/assets/nullows.png" />
@@ -121,6 +111,7 @@
                             <vector x=".1" y=".1" />
                         </graphic>
                     </component>
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
                 </entity>
             </layer>
         </scene>
