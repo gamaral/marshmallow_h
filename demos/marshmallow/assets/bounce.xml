@@ -10,9 +10,9 @@
                         <graphic type="Graphics::QuadGraphic" rotation="0">
                             <texture file="demos/engine/assets/mallow.png" />
                             <vector x="-3" y="3" />
-                            <vector x="-3" y="-3" />
-                            <vector x="3" y="-3" />
                             <vector x="3" y="3" />
+                            <vector x="3" y="-3" />
+                            <vector x="-3" y="-3" />
                         </graphic>
                     </component>
                 </entity>
