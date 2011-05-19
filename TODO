@@ -12,26 +12,19 @@ Allocators
 
   FINISHED (pending merge)
 
-Game
-====
 
-Input Interpreter
------------------
+Resource Manager
+================
 
-  - Listens for Keyboard, Mouse, Touch events and maps them to actual scene
-    events like 'battletoad_head_bud'.
+  Load assets from disk using DataIO.
 
-Components
-----------
+  Add DataIO Filters, like zlib.
 
-  - Might give them a priority level.
+  Draft composite resource file format.
 
-Graphics
-========
+  Create off-line resource file compositor.
 
-Painter
--------
-
-  - OpenGL painter (now cleaning up)
-  - SDL painter (up next)
+  Scene requests resources, gets shared variable returned to it.
+  Weak is kept for lookup.
+  Update checks for invalid weak pointers
 

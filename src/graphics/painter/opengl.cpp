@@ -52,48 +52,63 @@ struct Painter::Internal
 	drawPointGraphic(const PointGraphic &g)
 	{
 		UNUSED(g);
-		glBegin(GL_POINTS);
-		glVertex2f(0.f, 0.f);
-		glEnd();
+		static const GLfloat l_buffer[2] = {0, 0};
+		glVertexPointer(2, GL_FLOAT, 0, l_buffer);
+		glDrawArrays(GL_POINTS, 0, 2);
 	}
 
 	void
 	drawLineGraphic(const LineGraphic &g)
 	{
-		glBegin(GL_LINES);
-		for (int i = 0; i < 2; ++i) {
+		GLfloat l_buffer[4];
+
+		for (int i = 0, j = 0; i < 2; ++i) {
 			const Math::Vector2 &l_p = g[i];
-			glVertex2f(static_cast<GLfloat>(l_p.rx()),
-			           static_cast<GLfloat>(l_p.ry()));
+			l_buffer[j++] = static_cast<GLfloat>(l_p.rx());
+			l_buffer[j++] = static_cast<GLfloat>(l_p.ry());
 		}
-		glEnd();
+
+		glVertexPointer(2, GL_FLOAT, 0, l_buffer);
+		glDrawArrays(GL_LINES, 0, 2);
 	}
 
 	void
 	drawTriangleGraphic(const TriangleGraphic &g)
 	{
-		glBegin(GL_TRIANGLES);
-		for (int i = 0; i < 3; ++i) {
+		GLfloat l_buffer[6];
+		GLfloat l_texcoords[6] = { 0,0, 1,0, 1,1 };
+
+		for (int i = 0, j = 0; i < 3; ++i) {
 			const Math::Vector2 &l_p = g[i];
-			glVertex2f(static_cast<GLfloat>(l_p.rx()),
-			           static_cast<GLfloat>(l_p.ry()));
+			l_buffer[j++] = static_cast<GLfloat>(l_p.rx());
+			l_buffer[j++] = static_cast<GLfloat>(l_p.ry());
 		}
-		glEnd();
+
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, l_buffer);
+		glTexCoordPointer(2, GL_FLOAT, 0, l_texcoords);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 
 	void
 	drawQuadGraphic(const QuadGraphic &g)
 	{
-		static const GLfloat l_texcoords[4][2] = {{0,0},{0,1},{1,1},{1,0}};
+		GLfloat l_buffer[8];
+		GLfloat l_texcoords[8] = { 0,0, 1,0, 1,1 ,0,1 };
+		static const GLubyte l_indices[6] = { 1, 0, 2, 3, 2, 0 };
 
-		glBegin(GL_QUADS);
-		for (int i = 0; i < 4; ++i) {
+		for (int i = 0, j = 0; i < 4; ++i) {
 			const Math::Vector2 &l_p = g[i];
-			glTexCoord2f(l_texcoords[i][0], l_texcoords[i][1]);
-			glVertex2f(static_cast<GLfloat>(l_p.rx()),
-			           static_cast<GLfloat>(l_p.ry()));
+			l_buffer[j++] = static_cast<GLfloat>(l_p.rx());
+			l_buffer[j++] = static_cast<GLfloat>(l_p.ry());
 		}
-		glEnd();
+
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, l_buffer);
+		glTexCoordPointer(2, GL_FLOAT, 0, l_texcoords);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, l_indices);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 
 	void
@@ -113,11 +128,13 @@ struct Painter::Internal
 void
 Painter::Initialize(void)
 {
+	glEnableClientState(GL_VERTEX_ARRAY);
 }
 
 void
 Painter::Finalize(void)
 {
+	glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void
@@ -126,6 +143,10 @@ Painter::Draw(const IGraphic &g, const Math::Point2 &o)
 	const bool  l_texture = (g.texture());
 	const float l_rotate_angle = g.rotation();
 
+	glPushMatrix();
+	glTranslatef(o.rx(), o.ry(), 0.f);
+
+	/* set blending */
 	Blend(AlphaBlending);
 
 	/* set color */
@@ -136,9 +157,7 @@ Painter::Draw(const IGraphic &g, const Math::Point2 &o)
 	if (l_texture)
 		glBindTexture(GL_TEXTURE_2D, g.texture()->tid());
 
-	glPushMatrix();
-	glTranslatef(o.rx(), o.ry(), 0.f);
-
+	/* set rotation */
 	if (l_rotate_angle)
 		glRotatef(l_rotate_angle, 0, 0, 1);
 
@@ -155,12 +174,12 @@ Painter::Draw(const IGraphic &g, const Math::Point2 &o)
 		MGP.drawPointGraphic(static_cast<const PointGraphic &>(g));
 	else WARNING1("Unknown graphic type");
 
-	glPopMatrix();
-
 	if (l_texture)
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 	Blend(NoBlending);
+
+	glPopMatrix();
 }
 
 void

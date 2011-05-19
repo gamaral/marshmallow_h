@@ -48,18 +48,18 @@ QuadGraphic::QuadGraphic(const Math::Vector2 &tl,
     : GraphicBase()
 {
 	m_vectors[0] = tl;
-	m_vectors[1] = bl;
+	m_vectors[1] = tr;
 	m_vectors[2] = br;
-	m_vectors[3] = tr;
+	m_vectors[3] = bl;
 }
 
 QuadGraphic::QuadGraphic(const Math::Rect2  &r)
     : GraphicBase()
 {
 	m_vectors[0] = r.topLeft();
-	m_vectors[1] = r.bottomLeft();
+	m_vectors[1] = r.topRight();
 	m_vectors[2] = r.bottomRight();
-	m_vectors[3] = r.topRight();
+	m_vectors[3] = r.bottomLeft();
 }
 
 QuadGraphic::QuadGraphic(void)
