@@ -38,9 +38,9 @@ include_directories(${PNG_INCLUDE_DIR}
 set(MARSHMALLOW_GLPNG_SRCS src/glpng.c)
 
 if(BUILD_SHARED_LIBS)
-	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-fPIC")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 else()
-	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-Wl," )
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl," )
 endif()
 
 add_library(marshmallow_glpng ${MARSHMALLOW_GLPNG_SRCS})

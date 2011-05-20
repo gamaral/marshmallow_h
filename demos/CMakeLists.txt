@@ -4,7 +4,6 @@ include_directories(${PROJECT_BINARY_DIR}/include
                     ${EASTL_INCLUDE_DIR}
                     ${TINYXML_INCLUDE_DIR})
 
-add_subdirectory(event)
 add_subdirectory(engine)
 add_subdirectory(marshmallow)
 add_subdirectory(angrymallows)

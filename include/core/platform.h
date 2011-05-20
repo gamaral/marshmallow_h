@@ -43,6 +43,8 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+int Main(int argc, const char *argv[]);
+
 namespace Core
 {
 	/*! @brief Platform specific class */

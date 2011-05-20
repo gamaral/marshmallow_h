@@ -43,7 +43,6 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
-
 struct Platform::Internal
 {
 	Internal(void);
@@ -122,5 +121,13 @@ String
 Platform::TemporaryDirectory(void)
 {
 	return("/tmp/");
+}
+
+/**************************************************************** ENTRY POINT */
+
+int
+main(int argc, const char *argv[])
+{
+	return(Main(argc, argv));
 }
 

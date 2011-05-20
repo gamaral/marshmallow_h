@@ -131,3 +131,11 @@ Platform::TemporaryDirectory(void)
 	return(sTempDirectory);
 }
 
+/**************************************************************** ENTRY POINT */
+
+int
+main(int argc, const char *argv[])
+{
+	return(Main(argc, argv));
+}
+

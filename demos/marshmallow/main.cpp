@@ -34,12 +34,16 @@
 
 #include "game.h"
 
+MARSHMALLOW_NAMESPACE_BEGIN
+
 int
-main(int argc, const char *argv[])
+Main(int argc, const char *argv[])
 {
 	const char *l_filename("demos/marshmallow/assets/default.xml");
 	if (argc > 1) l_filename = argv[1];
 
 	return(Demo(l_filename).run());
 }
+
+MARSHMALLOW_NAMESPACE_END
 
