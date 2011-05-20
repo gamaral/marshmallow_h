@@ -50,8 +50,8 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-	struct IGraphic;
-	typedef Core::Shared<IGraphic> SharedGraphic;
+	struct IMesh;
+	typedef Core::Shared<IMesh> SharedMesh;
 }
 
 namespace Game
@@ -60,7 +60,7 @@ namespace Game
 	/*! @brief Game Pause Scene Layer Class */
 	class GAME_EXPORT PauseSceneLayer : public SceneLayerBase
 	{
-		Graphics::SharedGraphic m_graphic;
+		Graphics::SharedMesh m_mesh;
 
 		NO_COPY(PauseSceneLayer);
 
@@ -70,7 +70,7 @@ namespace Game
 		    IScene &scene);
 		virtual ~PauseSceneLayer(void);
 
-		Graphics::SharedGraphic graphic(void) const;
+		Graphics::SharedMesh mesh(void) const;
 
 	public: /* virtual */
 

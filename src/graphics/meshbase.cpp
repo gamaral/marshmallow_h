@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/quadgraphic.h"
+#include "graphics/meshbase.h"
 
 /*!
  * @file
@@ -39,72 +39,79 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const Core::Type QuadGraphic::Type("Graphics::QuadGraphic");
-
-QuadGraphic::QuadGraphic(const Math::Vector2 &tl,
-                         const Math::Vector2 &bl,
-                         const Math::Vector2 &br,
-                         const Math::Vector2 &tr)
-    : GraphicBase()
+MeshBase::MeshBase(void)
+    : m_color(),
+      m_texture(),
+      m_rotation(0)
 {
-	m_vectors[0] = tl;
-	m_vectors[1] = tr;
-	m_vectors[2] = br;
-	m_vectors[3] = bl;
+	m_scale[0] = m_scale[1] = 1.f;
 }
 
-QuadGraphic::QuadGraphic(const Math::Rect2  &r)
-    : GraphicBase()
+void
+MeshBase::setColor(const Graphics::Color &c)
 {
-	m_vectors[0] = r.topLeft();
-	m_vectors[1] = r.topRight();
-	m_vectors[2] = r.bottomRight();
-	m_vectors[3] = r.bottomLeft();
+	m_color = c;
 }
 
-QuadGraphic::QuadGraphic(void)
-    : GraphicBase()
+void
+MeshBase::setTexture(Graphics::SharedTextureAsset t)
 {
-	m_vectors[0] = Math::Vector2::Null;
-	m_vectors[1] = Math::Vector2::Null;
-	m_vectors[2] = Math::Vector2::Null;
-	m_vectors[3] = Math::Vector2::Null;
+	m_texture = t;
 }
 
-QuadGraphic::~QuadGraphic(void)
+void
+MeshBase::setRotation(float a)
 {
+	m_rotation = a;
 }
 
 bool
-QuadGraphic::serialize(TinyXML::TiXmlElement &n) const
+MeshBase::serialize(TinyXML::TiXmlElement &n) const
 {
-	if (!GraphicBase::serialize(n))
-		return(false);
+	n.SetAttribute("type", type().str().c_str());
+	n.SetDoubleAttribute("rotation", m_rotation);
 
-	for (int i = 0; i < 4; ++i) {
-		TinyXML::TiXmlElement l_vector("vector");
-		l_vector.SetDoubleAttribute("x", m_vectors[i].rx());
-		l_vector.SetDoubleAttribute("y", m_vectors[i].ry());
-		n.InsertEndChild(l_vector);
+	/* color */
+	TinyXML::TiXmlElement l_color("color");
+	l_color.SetDoubleAttribute("r", m_color[0]);
+	l_color.SetDoubleAttribute("g", m_color[1]);
+	l_color.SetDoubleAttribute("b", m_color[2]);
+	l_color.SetDoubleAttribute("a", m_color[3]);
+	n.InsertEndChild(l_color);
+
+	/* texture */
+	if (m_texture) {
+		TinyXML::TiXmlElement l_texture("texture");
+		l_texture.SetAttribute("file", m_texture->filename().c_str());
+		n.InsertEndChild(l_texture);
 	}
 
 	return(true);
 }
 
 bool
-QuadGraphic::deserialize(TinyXML::TiXmlElement &n)
+MeshBase::deserialize(TinyXML::TiXmlElement &n)
 {
-
-	if (!GraphicBase::deserialize(n))
-		return(false);
-
-	int l_i;
 	TinyXML::TiXmlElement *l_child;
-	for (l_i = 0, l_child = n.FirstChildElement("vector");
-	     l_i < 4 && l_child;
-	     ++l_i, l_child = l_child->NextSiblingElement("vector")) {
-		l_child->QueryFloatAttribute("x", &m_vectors[l_i].rx());
-		l_child->QueryFloatAttribute("y", &m_vectors[l_i].ry());
+
+	n.QueryFloatAttribute("rotation", &m_rotation);
+
+	/* color */
+	l_child = n.FirstChildElement("color");
+	if (l_child) {
+		l_child->QueryFloatAttribute("r", &m_color[0]);
+		l_child->QueryFloatAttribute("g", &m_color[1]);
+		l_child->QueryFloatAttribute("b", &m_color[2]);
+		l_child->QueryFloatAttribute("a", &m_color[3]);
+	}
+
+	/* texture */
+	l_child = n.FirstChildElement("texture");
+	if (l_child) {
+		const char *l_file = l_child->Attribute("file");
+		TextureAsset *l_texture = new TextureAsset;
+		l_texture->load(l_file);
+		setTexture(l_texture);
 	}
 
 	return(true);

@@ -8,10 +8,10 @@
                 <entity id="background" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="0" y="0" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="0">
+                        <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/marshmallow/assets/kitchen.png" />
-                            <vector x="-2.66" y="2" />
                             <vector x="2.66" y="2" />
+                            <vector x="-2.66" y="2" />
                             <vector x="2.66" y="-2" />
                             <vector x="-2.66" y="-2" />
                         </graphic>
@@ -24,10 +24,10 @@
                 <entity id="player" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="-0.85" y="1" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="0">
+                        <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/engine/assets/mallow.png" />
-                            <vector x="-.08" y=".08" />
                             <vector x=".08" y=".08" />
+                            <vector x="-.08" y=".08" />
                             <vector x=".08" y="-.08" />
                             <vector x="-.08" y="-.08" />
                         </graphic>
@@ -38,10 +38,10 @@
                 <entity id="marshmallow" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="0" y="-0.5" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="0">
+                        <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/angrymallows/assets/nullows.png" />
-                            <vector x="-.1" y=".1" />
                             <vector x=".1" y=".1" />
+                            <vector x="-.1" y=".1" />
                             <vector x=".1" y="-.1" />
                             <vector x="-.1" y="-.1" />
                         </graphic>
@@ -51,10 +51,10 @@
                 <entity id="marshmallow" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="-0.13" y="-0.65" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="0">
+                        <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/angrymallows/assets/nullows.png" />
-                            <vector x="-.1" y=".1" />
                             <vector x=".1" y=".1" />
+                            <vector x="-.1" y=".1" />
                             <vector x=".1" y="-.1" />
                             <vector x="-.1" y="-.1" />
                         </graphic>
@@ -64,10 +64,10 @@
                 <entity id="marshmallow" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x=".11" y="-0.65" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="0">
+                        <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/angrymallows/assets/nullows.png" />
-                            <vector x="-.1" y=".1" />
                             <vector x=".1" y=".1" />
+                            <vector x="-.1" y=".1" />
                             <vector x=".1" y="-.1" />
                             <vector x="-.1" y="-.1" />
                         </graphic>
@@ -77,10 +77,10 @@
                 <entity id="marshmallow" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="-0.25" y="-0.79" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="0">
+                        <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/angrymallows/assets/nullows.png" />
-                            <vector x="-.1" y=".1" />
                             <vector x=".1" y=".1" />
+                            <vector x="-.1" y=".1" />
                             <vector x=".1" y="-.1" />
                             <vector x="-.1" y="-.1" />
                         </graphic>
@@ -90,10 +90,10 @@
                 <entity id="marshmallow" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="0" y="-0.79" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="0">
+                        <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/angrymallows/assets/nullows.png" />
-                            <vector x="-.1" y=".1" />
                             <vector x=".1" y=".1" />
+                            <vector x="-.1" y=".1" />
                             <vector x=".1" y="-.1" />
                             <vector x="-.1" y="-.1" />
                         </graphic>
@@ -103,10 +103,10 @@
                 <entity id="marshmallow" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="0.25" y="-0.79" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="0">
+                        <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/angrymallows/assets/nullows.png" />
-                            <vector x="-.1" y=".1" />
                             <vector x=".1" y=".1" />
+                            <vector x="-.1" y=".1" />
                             <vector x=".1" y="-.1" />
                             <vector x="-.1" y="-.1" />
                         </graphic>

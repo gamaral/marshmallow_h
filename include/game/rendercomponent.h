@@ -45,8 +45,8 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-	struct IGraphic;
-	typedef Core::Shared<IGraphic> SharedGraphic;
+	struct IMesh;
+	typedef Core::Shared<IMesh> SharedMesh;
 }
 
 namespace Game
@@ -59,15 +59,15 @@ namespace Game
 	class GAME_EXPORT RenderComponent : public ComponentBase
 	{
 		WeakPositionComponent m_position;
-		Graphics::SharedGraphic m_graphic;
+		Graphics::SharedMesh m_mesh;
 		NO_COPY(RenderComponent);
 
 	public:
 		RenderComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~RenderComponent(void);
 
-		Graphics::SharedGraphic & graphic(void)
-			{ return(m_graphic); }
+		Graphics::SharedMesh & mesh(void)
+			{ return(m_mesh); }
 
 	public: /* virtual */
 

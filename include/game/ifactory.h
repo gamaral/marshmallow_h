@@ -43,8 +43,8 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-	struct IGraphic;
-	typedef Core::Shared<IGraphic> SharedGraphic;
+	struct IMesh;
+	typedef Core::Shared<IMesh> SharedMesh;
 }
 
 namespace Game
@@ -56,9 +56,6 @@ namespace Game
 
 	struct IEntity;
 	typedef Core::Shared<IEntity> SharedEntity;
-
-	struct IGraphic;
-	typedef Core::Shared<IGraphic> SharedGraphic;
 
 	struct IScene;
 	typedef Core::Shared<IScene> SharedScene;
@@ -83,7 +80,7 @@ namespace Game
 		virtual SharedComponent createComponent(const Core::Type &type,
 		    const Core::Identifier &identifier, IEntity &entity) const = 0;
 
-		virtual Graphics::SharedGraphic createGraphic(const Core::Type &type) const = 0;
+		virtual Graphics::SharedMesh createMesh(const Core::Type &type) const = 0;
 	};
 	typedef Core::Shared<IFactory> SharedFactory;
 	typedef Core::Weak<IFactory> WeakFactory;

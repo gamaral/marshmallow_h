@@ -34,55 +34,60 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_QUADGRAPHIC_H
-#define GRAPHICS_QUADGRAPHIC_H 1
+#ifndef GRAPHICS_LINEMESH_H
+#define GRAPHICS_LINEMESH_H 1
 
-#include "graphics/graphicbase.h"
-
-#include "math/rect2.h"
-#include "math/vector2.h"
+#include "graphics/meshbase.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
 
-	/*! @brief Graphics Quad Graphic class */
-	class GRAPHICS_EXPORT QuadGraphic : public GraphicBase
+	/*! @brief Graphics Line Mesh Class */
+	class GRAPHICS_EXPORT LineMesh : public MeshBase
 	{
-		Math::Vector2 m_vectors[4];
+#define LINE_VERTEXES 2
+		float m_vertex[LINE_VERTEXES * 2];
 
-		NO_COPY(QuadGraphic);
+		NO_COPY(LineMesh);
 
 	public:
 
-		QuadGraphic(const Math::Vector2 &tl,
-		            const Math::Vector2 &bl,
-		            const Math::Vector2 &br,
-		            const Math::Vector2 &tr);
-		QuadGraphic(const Math::Rect2 &rect);
-		QuadGraphic(void);
-		virtual ~QuadGraphic(void);
-
-	public: /* operators */
-
-		const Math::Vector2 & operator[](int index) const
-		    { return(m_vectors[index % 4]); }
+		LineMesh(const Math::Vector2 &p1,
+		            const Math::Vector2 &p2);
+		LineMesh(void);
+		virtual ~LineMesh(void);
 
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
+		VIRTUAL Math::Vector2 vertex(int index) const;
+
+		VIRTUAL void textureCoord(int, float &, float &) const
+		    {}
+
+		VIRTUAL int size(void) const
+		    { return(LINE_VERTEXES); }
+
+		VIRTUAL const float * vertexDataArray(void) const
+		    { return(m_vertex); }
+		VIRTUAL const float * textureCoordArray(void) const
+		    { return(0); }
+
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
+		VIRTUAL void setVertex(int index, Math::Vector2 &vertex);
+		VIRTUAL void setTextureCoord(int, float, float)
+		    {};
 
 	public: /* static */
 
 		static const Core::Type Type;
 	};
-	typedef Core::Shared<QuadGraphic> SharedQuadGraphic;
-	typedef Core::Weak<QuadGraphic> WeakQuadGraphic;
 
 }
 

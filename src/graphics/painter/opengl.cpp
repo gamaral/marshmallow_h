@@ -37,11 +37,10 @@
 #include <GL/gl.h>
 
 #include "core/logger.h"
-#include "graphics/linegraphic.h"
-#include "graphics/pointgraphic.h"
-#include "graphics/polygongraphic.h"
-#include "graphics/quadgraphic.h"
-#include "graphics/trianglegraphic.h"
+#include "math/point2.h"
+#include "graphics/linemesh.h"
+#include "graphics/quadmesh.h"
+#include "graphics/trianglemesh.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -49,80 +48,32 @@ using namespace Graphics;
 struct Painter::Internal
 {
 	void
-	drawPointGraphic(const PointGraphic &g)
+	drawLineMesh(const LineMesh &g)
 	{
-		UNUSED(g);
-		static const GLfloat l_buffer[2] = {0, 0};
-		glVertexPointer(2, GL_FLOAT, 0, l_buffer);
-		glDrawArrays(GL_POINTS, 0, 2);
+		glVertexPointer(2, GL_FLOAT, 0, g.vertexDataArray());
+		glDrawArrays(GL_LINES, 0, 4);
 	}
 
 	void
-	drawLineGraphic(const LineGraphic &g)
+	drawTriangleMesh(const TriangleMesh &g)
 	{
-		GLfloat l_buffer[4];
-
-		for (int i = 0, j = 0; i < 2; ++i) {
-			const Math::Vector2 &l_p = g[i];
-			l_buffer[j++] = static_cast<GLfloat>(l_p.rx());
-			l_buffer[j++] = static_cast<GLfloat>(l_p.ry());
-		}
-
-		glVertexPointer(2, GL_FLOAT, 0, l_buffer);
-		glDrawArrays(GL_LINES, 0, 2);
-	}
-
-	void
-	drawTriangleGraphic(const TriangleGraphic &g)
-	{
-		GLfloat l_buffer[6];
-		GLfloat l_texcoords[6] = { 0,0, 1,0, 1,1 };
-
-		for (int i = 0, j = 0; i < 3; ++i) {
-			const Math::Vector2 &l_p = g[i];
-			l_buffer[j++] = static_cast<GLfloat>(l_p.rx());
-			l_buffer[j++] = static_cast<GLfloat>(l_p.ry());
-		}
-
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, l_buffer);
-		glTexCoordPointer(2, GL_FLOAT, 0, l_texcoords);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glVertexPointer(2, GL_FLOAT, 0, g.vertexDataArray());
+		glTexCoordPointer(2, GL_FLOAT, 0, g.textureCoordArray());
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 
 	void
-	drawQuadGraphic(const QuadGraphic &g)
+	drawQuadMesh(const QuadMesh &g)
 	{
-		GLfloat l_buffer[8];
-		GLfloat l_texcoords[8] = { 0,0, 1,0, 1,1 ,0,1 };
-		static const GLubyte l_indices[6] = { 1, 0, 2, 3, 2, 0 };
-
-		for (int i = 0, j = 0; i < 4; ++i) {
-			const Math::Vector2 &l_p = g[i];
-			l_buffer[j++] = static_cast<GLfloat>(l_p.rx());
-			l_buffer[j++] = static_cast<GLfloat>(l_p.ry());
-		}
-
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, l_buffer);
-		glTexCoordPointer(2, GL_FLOAT, 0, l_texcoords);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, l_indices);
+		glVertexPointer(2, GL_FLOAT, 0, g.vertexDataArray());
+		glTexCoordPointer(2, GL_FLOAT, 0, g.textureCoordArray());
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 
-	void
-	drawPolygonGraphic(const PolygonGraphic &g)
-	{
-		glBegin(GL_POLYGON);
-		const int l_c = g.count();
-		for (int i = 0; i < l_c; ++i) {
-			const Math::Vector2 &l_p = g[i];
-			glVertex2f(static_cast<GLfloat>(l_p.rx()),
-			           static_cast<GLfloat>(l_p.ry()));
-		}
-		glEnd();
-	}
 } MGP;
 
 void
@@ -138,12 +89,16 @@ Painter::Finalize(void)
 }
 
 void
-Painter::Draw(const IGraphic &g, const Math::Point2 &o)
+Painter::Draw(const IMesh &g, const Math::Point2 &o)
 {
 	const bool  l_texture = (g.texture());
 	const float l_rotate_angle = g.rotation();
 
+	float l_scale[2];
+	g.scale(l_scale[0], l_scale[1]);
+
 	glPushMatrix();
+	glLoadIdentity();
 	glTranslatef(o.rx(), o.ry(), 0.f);
 
 	/* set blending */
@@ -161,18 +116,18 @@ Painter::Draw(const IGraphic &g, const Math::Point2 &o)
 	if (l_rotate_angle)
 		glRotatef(l_rotate_angle, 0, 0, 1);
 
+	/* set scale */
+	if (l_scale[0] != 1 || l_scale[1] != 1)
+		glScalef(l_scale[0], l_scale[1], 1);
+
 	/* actually draw graphic */
-	if (g.type() == QuadGraphic::Type)
-		MGP.drawQuadGraphic(static_cast<const QuadGraphic &>(g));
-	else if (g.type() == LineGraphic::Type)
-		MGP.drawLineGraphic(static_cast<const LineGraphic &>(g));
-	else if (g.type() == TriangleGraphic::Type)
-		MGP.drawTriangleGraphic(static_cast<const TriangleGraphic &>(g));
-	else if (g.type() == PolygonGraphic::Type)
-		MGP.drawPolygonGraphic(static_cast<const PolygonGraphic &>(g));
-	else if (g.type() == PointGraphic::Type)
-		MGP.drawPointGraphic(static_cast<const PointGraphic &>(g));
-	else WARNING1("Unknown graphic type");
+	if (g.type() == QuadMesh::Type)
+		MGP.drawQuadMesh(static_cast<const QuadMesh &>(g));
+	else if (g.type() == LineMesh::Type)
+		MGP.drawLineMesh(static_cast<const LineMesh &>(g));
+	else if (g.type() == TriangleMesh::Type)
+		MGP.drawTriangleMesh(static_cast<const TriangleMesh &>(g));
+	else WARNING1("Unknown mesh type");
 
 	if (l_texture)
 		glBindTexture(GL_TEXTURE_2D, 0);

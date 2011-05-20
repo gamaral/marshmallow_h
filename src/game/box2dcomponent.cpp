@@ -35,7 +35,7 @@
  */
 
 #include "core/logger.h"
-#include "graphics/graphicbase.h"
+#include "graphics/meshbase.h"
 #include "game/box2dscenelayer.h"
 #include "game/entityscenelayer.h"
 #include "game/ientity.h"
@@ -96,7 +96,7 @@ Box2DComponent::update(TIME d)
 		b2BodyDef bodyDef;
 		bodyDef.type = static_cast<b2BodyType>(m_body_type);
 #define DEGREE_TO_RADIAN 0.0174532925f
-		if (m_render) bodyDef.angle = m_render->graphic()->rotation() * DEGREE_TO_RADIAN;
+		if (m_render) bodyDef.angle = m_render->mesh()->rotation() * DEGREE_TO_RADIAN;
 		bodyDef.position.Set
 		    (m_position->position().rx(),
 		     m_position->position().ry());
@@ -128,10 +128,10 @@ Box2DComponent::update(TIME d)
 	m_position->position().rx() = l_position.x;
 	m_position->position().ry() = l_position.y;
 
-	/* render graphic rotation */
+	/* render mesh rotation */
 	if (m_render) {
 #define RADIAN_TO_DEGREE 57.2957795f
-		Graphics::WeakGraphicBase l_gbase(m_render->graphic().staticCast<Graphics::GraphicBase>());
+		Graphics::WeakMeshBase l_gbase(m_render->mesh().staticCast<Graphics::MeshBase>());
 		if (l_gbase) l_gbase->setRotation(fmodf(l_angle * RADIAN_TO_DEGREE, 360.f));
 	}
 }

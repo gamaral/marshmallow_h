@@ -32,7 +32,7 @@
 #include "event/eventbase.h"
 #include "event/eventmanager.h"
 #include "graphics/painter.h"
-#include "graphics/quadgraphic.h"
+#include "graphics/quadmesh.h"
 #include "graphics/textureasset.h"
 #include "graphics/viewport.h"
 #include "game/enginebase.h"
@@ -142,9 +142,9 @@ public:
 			Math::Rect2 l_rect(Math::Size2(10, 10));
 			Game::RenderComponent *l_rcomponent =
 			    new Game::RenderComponent("render", *l_entity);
-			Graphics::SharedQuadGraphic l_graphic(new Graphics::QuadGraphic(l_rect));
+			Graphics::SharedQuadMesh l_graphic(new Graphics::QuadMesh(l_rect));
 			l_graphic->setTexture(m_asset);
-			l_rcomponent->graphic() = l_graphic.staticCast<Graphics::IGraphic>();
+			l_rcomponent->mesh() = l_graphic.staticCast<Graphics::IMesh>();
 			l_entity->pushComponent(l_rcomponent);
 
 			pushLayer(l_layer.staticCast<Game::ISceneLayer>());

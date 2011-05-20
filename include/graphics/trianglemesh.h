@@ -34,50 +34,53 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_POLYGONGRAPHIC_H
-#define GRAPHICS_POLYGONGRAPHIC_H 1
+#ifndef GRAPHICS_TRIANGLEMESH_H
+#define GRAPHICS_TRIANGLEMESH_H 1
 
-#include "graphics/graphicbase.h"
-
-#include "math/rect2.h"
-#include "math/polygon2.h"
+#include "graphics/meshbase.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
 
-	/*! @brief Graphics Polygon Graphic class */
-	class GRAPHICS_EXPORT PolygonGraphic : public GraphicBase
+	/*! @brief Graphics Triangle Mesh Class */
+	class GRAPHICS_EXPORT TriangleMesh : public MeshBase
 	{
-		Math::Polygon2 m_vectors;
+#define TRIANGLE_VERTEXES 3
+		float m_vertex[TRIANGLE_VERTEXES * 2];
+		float m_tcoord[TRIANGLE_VERTEXES * 2];
 
-		NO_COPY(PolygonGraphic);
+		NO_COPY(TriangleMesh);
 
 	public:
 
-		PolygonGraphic(const Math::Polygon2 &polygon);
-		PolygonGraphic(void);
-		virtual ~PolygonGraphic(void);
-
-		const Math::Polygon2 &vectors(void) const
-		    { return(m_vectors); }
-
-		int count(void) const
-		    { return(m_vectors.count()); }
-
-	public: /* operators */
-
-		const Math::Vector2 & operator[](int index) const
-		    { return(m_vectors[index]); }
+		TriangleMesh(const Math::Vector2 &p1,
+		             const Math::Vector2 &p2,
+		             const Math::Vector2 &p3);
+		TriangleMesh(void);
+		virtual ~TriangleMesh(void);
 
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
+		VIRTUAL Math::Vector2 vertex(int index) const;
+		VIRTUAL void textureCoord(int index, float &u, float &v) const;
+		VIRTUAL int size(void) const
+		    { return(TRIANGLE_VERTEXES); }
+
+		VIRTUAL const float * vertexDataArray(void) const
+		    { return(m_vertex); }
+		VIRTUAL const float * textureCoordArray(void) const
+		    { return(m_tcoord); }
+
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
+		VIRTUAL void setVertex(int index, Math::Vector2 &vertex);
+		VIRTUAL void setTextureCoord(int index, float u, float v);
 
 	public: /* static */
 

@@ -50,7 +50,7 @@ namespace Math
 namespace Graphics
 {
 
-	struct IGraphic;
+	struct IMesh;
 
 	enum BlendTypes {
 		NoBlending = 0,
@@ -65,7 +65,7 @@ namespace Graphics
 		static void Initialize(void);
 		static void Finalize(void);
 
-		static void Draw(const IGraphic &graphic, const Math::Point2 &origin);
+		static void Draw(const IMesh &graphic, const Math::Point2 &origin);
 		static void Blend(BlendTypes blend);
 
 		struct Internal;

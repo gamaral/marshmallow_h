@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/trianglegraphic.h"
+#include "graphics/linemesh.h"
 
 /*!
  * @file
@@ -37,32 +37,35 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const Core::Type TriangleGraphic::Type("Graphics::TriangleGraphic");
+const Core::Type LineMesh::Type("Graphics::LineMesh");
 
-TriangleGraphic::TriangleGraphic(const Math::Vector2 &p1,
-                                 const Math::Vector2 &p2,
-                                 const Math::Vector2 &p3)
-    : GraphicBase()
+LineMesh::LineMesh(const Math::Vector2 &p1,
+                         const Math::Vector2 &p2)
+    : MeshBase()
 {
-	m_points[0] = p1;
-	m_points[1] = p2;
-	m_points[2] = p3;
+	m_vertex[0] = p1.rx(); m_vertex[1] = p1.ry();
+	m_vertex[2] = p2.rx(); m_vertex[3] = p2.ry();
 }
 
-TriangleGraphic::TriangleGraphic(void)
-    : GraphicBase()
+LineMesh::LineMesh(void)
+    : MeshBase()
 {
-	m_points[0] = Math::Vector2::Null;
-	m_points[1] = Math::Vector2::Null;
-	m_points[2] = Math::Vector2::Null;
+	memset(m_vertex, 0, LINE_VERTEXES * 2);
 }
 
-TriangleGraphic::~TriangleGraphic(void)
+LineMesh::~LineMesh(void)
 {
+}
+
+Math::Vector2
+LineMesh::vertex(int i) const
+{
+	const int l_offset = (i % LINE_VERTEXES) * 2;
+	return(Math::Vector2(m_vertex[l_offset], m_vertex[l_offset + 1]));
 }
 
 bool
-TriangleGraphic::serialize(TinyXML::TiXmlElement &n) const
+LineMesh::serialize(TinyXML::TiXmlElement &n) const
 {
 	/* TODO: FILL IN */
 	UNUSED(n);
@@ -70,10 +73,18 @@ TriangleGraphic::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-TriangleGraphic::deserialize(TinyXML::TiXmlElement &n)
+LineMesh::deserialize(TinyXML::TiXmlElement &n)
 {
 	/* TODO: FILL IN */
 	UNUSED(n);
 	return(false);
+}
+
+void
+LineMesh::setVertex(int i, Math::Vector2 &v)
+{
+	const int l_offset = (i % LINE_VERTEXES) * 2;
+	m_vertex[l_offset] = v.rx();
+	m_vertex[l_offset + 1] = v.ry();
 }
 

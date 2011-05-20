@@ -34,55 +34,64 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_LINEGRAPHIC_H
-#define GRAPHICS_LINEGRAPHIC_H 1
+#ifndef GRAPHICS_QUADMESH_H
+#define GRAPHICS_QUADMESH_H 1
 
-#include "graphics/graphicbase.h"
+#include "graphics/meshbase.h"
 
-#include "math/vector2.h"
+#include "math/rect2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
 
-	/*! @brief Graphics Line Graphic class */
-	class GRAPHICS_EXPORT LineGraphic : public GraphicBase
+	/*! @brief Graphics Quad Mesh Class */
+	class GRAPHICS_EXPORT QuadMesh : public MeshBase
 	{
-		Math::Vector2 m_points[2];
+#define QUAD_VERTEXES 4
+		float m_vertex[QUAD_VERTEXES * 2];
+		float m_tcoord[QUAD_VERTEXES * 2];
 
-		NO_COPY(LineGraphic);
+		NO_COPY(QuadMesh);
 
 	public:
 
-		LineGraphic(const Math::Vector2 &p1,
-		            const Math::Vector2 &p2);
-		LineGraphic(void);
-		virtual ~LineGraphic(void);
-
-		const Math::Vector2 & beginning(void) const
-		    { return(m_points[0]); }
-
-		const Math::Vector2 & end(void) const
-		    { return(m_points[1]); }
-
-	public: /* operators */
-
-		const Math::Vector2 & operator[](int index) const
-		    { return(m_points[index % 2]); }
+		QuadMesh(const Math::Vector2 &tl,
+		         const Math::Vector2 &bl,
+		         const Math::Vector2 &br,
+		         const Math::Vector2 &tr);
+		QuadMesh(const Math::Rect2 &rect);
+		QuadMesh(void);
+		virtual ~QuadMesh(void);
 
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
+		VIRTUAL Math::Vector2 vertex(int index) const;
+		VIRTUAL void textureCoord(int index, float &u, float &v) const;
+		VIRTUAL int size(void) const
+		    { return(QUAD_VERTEXES); }
+
+		VIRTUAL const float * vertexDataArray(void) const
+		    { return(m_vertex); }
+		VIRTUAL const float * textureCoordArray(void) const
+		    { return(m_tcoord); }
+
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
+		VIRTUAL void setVertex(int index, Math::Vector2 &vertex);
+		VIRTUAL void setTextureCoord(int index, float u, float v);
 
 	public: /* static */
 
 		static const Core::Type Type;
 	};
+	typedef Core::Shared<QuadMesh> SharedQuadMesh;
+	typedef Core::Weak<QuadMesh> WeakQuadMesh;
 
 }
 

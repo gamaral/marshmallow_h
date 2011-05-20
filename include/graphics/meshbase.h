@@ -34,40 +34,72 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_POINTGRAPHIC_H
-#define GRAPHICS_POINTGRAPHIC_H 1
+#ifndef GRAPHICS_MESHBASE_H
+#define GRAPHICS_MESHBASE_H 1
 
-#include "graphics/graphicbase.h"
+#include "graphics/imesh.h"
 
-#include "math/point2.h"
+#include "core/shared.h"
+#include "math/vector2.h"
+#include "graphics/color.h"
+#include "graphics/textureasset.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
 
-	/*! @brief Graphics Point Graphic Class */
-	class GRAPHICS_EXPORT PointGraphic : public GraphicBase
+	/*! @brief Graphics Mesh Base Class */
+	class GRAPHICS_EXPORT MeshBase : public IMesh
 	{
-		NO_COPY(PointGraphic);
+		Graphics::Color m_color;
+		Graphics::SharedTextureAsset m_texture;
+		float m_scale[2];
+		float m_rotation;
+
+		NO_COPY(MeshBase);
 
 	public:
 
-		PointGraphic(void);
-		virtual ~PointGraphic(void);
+		MeshBase(void);
+		virtual ~MeshBase(void) {};
+
+		void setColor(const Graphics::Color &color);
+
+		void setTexture(SharedTextureAsset texture);
+
+		void setRotation(float angle);
+
+		void setScale(float x, float y)
+		    { m_scale[0] = x; m_scale[1] = y; }
+		
+	public: /* operators */
+
+		Math::Vector2 operator[](int index) const
+		    { return(vertex(index)); }
 
 	public: /* virtual */
 
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
+		virtual void setVertex(int index, Math::Vector2 &vertex) = 0;
+		virtual void setTextureCoord(int index, float u, float v) = 0;
+
+		VIRTUAL const Graphics::Color & color(void) const
+		    { return(m_color); }
+
+		VIRTUAL const SharedTextureAsset & texture(void) const
+		    { return(m_texture); }
+
+		VIRTUAL float rotation(void) const
+		    { return(m_rotation); }
+
+		VIRTUAL void scale(float &x, float &y) const
+		    { x = m_scale[0]; y = m_scale[1]; }
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
-
-	public: /* static */
-
-		static const Core::Type Type;
 	};
+	typedef Core::Shared<MeshBase> SharedMeshBase;
+	typedef Core::Weak<MeshBase> WeakMeshBase;
 
 }
 

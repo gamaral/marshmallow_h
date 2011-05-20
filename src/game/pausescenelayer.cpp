@@ -37,7 +37,7 @@
 #include "math/point2.h"
 #include "math/size2.h"
 #include "graphics/painter.h"
-#include "graphics/quadgraphic.h"
+#include "graphics/quadmesh.h"
 #include "graphics/viewport.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -54,22 +54,22 @@ PauseSceneLayer::~PauseSceneLayer(void)
 {
 }
 
-Graphics::SharedGraphic
-PauseSceneLayer::graphic(void) const
+Graphics::SharedMesh
+PauseSceneLayer::mesh(void) const
 {
-	return(m_graphic);
+	return(m_mesh);
 }
 
 void
 PauseSceneLayer::render(void)
 {
-	if (!m_graphic) {
+	if (!m_mesh) {
 		Math::Rect2 l_rect(Graphics::Viewport::Size());
-		Graphics::QuadGraphic *l_graphic = new Graphics::QuadGraphic(l_rect);
-		l_graphic->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.6f));
-		m_graphic = l_graphic;
+		Graphics::QuadMesh *l_mesh = new Graphics::QuadMesh(l_rect);
+		l_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.6f));
+		m_mesh = l_mesh;
 	}
 
-	Graphics::Painter::Draw(*m_graphic, Math::Point2(0,0));
+	Graphics::Painter::Draw(*m_mesh, Math::Point2(0,0));
 }
 

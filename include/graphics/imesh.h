@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_IGRAPHIC_H
-#define GRAPHICS_IGRAPHIC_H 1
+#ifndef GRAPHICS_IMESH_H
+#define GRAPHICS_IMESH_H 1
 
 #include "core/iserializable.h"
 
@@ -44,6 +44,11 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+namespace Math
+{
+	class Vector2;
+}
+
 namespace Graphics
 {
 	class Color;
@@ -51,22 +56,27 @@ namespace Graphics
 	class TextureAsset;
 	typedef Core::Shared<TextureAsset> SharedTextureAsset;
 
-	/*! @brief Graphics Graphic Interface */
-	struct GRAPHICS_EXPORT IGraphic : public Core::ISerializable
+	/*! @brief Graphics Mesh Interface */
+	struct GRAPHICS_EXPORT IMesh : public Core::ISerializable
 	{
-		virtual ~IGraphic(void) {};
+		virtual ~IMesh(void) {};
 
 		virtual const Core::Type & type(void) const = 0;
 
 		virtual const Graphics::Color & color(void) const = 0;
-
 		virtual const SharedTextureAsset & texture(void) const = 0;
 		virtual float rotation(void) const = 0;
+		virtual void scale(float &x, float &y) const = 0;
 
-		/* TODO: Create brush and/or pen shared classes */
+		virtual Math::Vector2 vertex(int index) const = 0;
+		virtual void textureCoord(int index, float &u, float &v) const = 0;
+		virtual int size(void) const = 0;
+
+		virtual const float * vertexDataArray(void) const = 0;
+		virtual const float * textureCoordArray(void) const = 0;
 	};
-	typedef Core::Shared<IGraphic> SharedGraphic;
-	typedef Core::Weak<IGraphic> WeakGraphic;
+	typedef Core::Shared<IMesh> SharedMesh;
+	typedef Core::Weak<IMesh> WeakMesh;
 
 }
 

@@ -34,11 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "graphics/linegraphic.h"
-#include "graphics/pointgraphic.h"
-#include "graphics/polygongraphic.h"
-#include "graphics/quadgraphic.h"
-#include "graphics/trianglegraphic.h"
+#include "graphics/linemesh.h"
+#include "graphics/quadmesh.h"
+#include "graphics/trianglemesh.h"
 #include "game/box2dcomponent.h"
 #include "game/box2dscenelayer.h"
 #include "game/entity.h"
@@ -101,19 +99,15 @@ FactoryBase::createComponent(const Core::Type &t,
 	return(SharedComponent());
 }
 
-Graphics::SharedGraphic
-FactoryBase::createGraphic(const Core::Type &type) const
+Graphics::SharedMesh
+FactoryBase::createMesh(const Core::Type &type) const
 {
-	if (Graphics::QuadGraphic::Type == type)
-		return(new Graphics::QuadGraphic);
-	else if (Graphics::PointGraphic::Type == type)
-		return(new Graphics::PointGraphic);
-	else if (Graphics::PolygonGraphic::Type == type)
-		return(new Graphics::PolygonGraphic);
-	else if (Graphics::TriangleGraphic::Type == type)
-		return(new Graphics::TriangleGraphic);
-	else if (Graphics::LineGraphic::Type == type)
-		return(new Graphics::LineGraphic);
-	return(Graphics::SharedGraphic());
+	if (Graphics::QuadMesh::Type == type)
+		return(new Graphics::QuadMesh);
+	else if (Graphics::TriangleMesh::Type == type)
+		return(new Graphics::TriangleMesh);
+	else if (Graphics::LineMesh::Type == type)
+		return(new Graphics::LineMesh);
+	return(Graphics::SharedMesh());
 }
 

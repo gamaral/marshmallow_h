@@ -70,7 +70,7 @@ namespace Game
 		VIRTUAL SharedComponent createComponent(const Core::Type &type,
 		    const Core::Identifier &identifier, IEntity &entity) const;
 
-		VIRTUAL Graphics::SharedGraphic createGraphic(const Core::Type &type) const;
+		VIRTUAL Graphics::SharedMesh createMesh(const Core::Type &type) const;
 
 	public: /* static */
 

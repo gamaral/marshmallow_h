@@ -35,7 +35,7 @@
  */
 
 #include "core/logger.h"
-#include "graphics/igraphic.h"
+#include "graphics/imesh.h"
 #include "graphics/painter.h"
 #include "game/factorybase.h"
 #include "game/ientity.h"
@@ -49,7 +49,7 @@ const Core::Type RenderComponent::Type("Game::RenderComponent");
 RenderComponent::RenderComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e),
       m_position(),
-      m_graphic()
+      m_mesh()
 {
 }
 
@@ -68,8 +68,8 @@ RenderComponent::update(TIME)
 void
 RenderComponent::render(void)
 {
-	if (m_position && m_graphic)
-		Graphics::Painter::Draw(*m_graphic, m_position->position());
+	if (m_position && m_mesh)
+		Graphics::Painter::Draw(*m_mesh, m_position->position());
 }
 
 bool
@@ -78,13 +78,13 @@ RenderComponent::serialize(TinyXML::TiXmlElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	TinyXML::TiXmlElement l_graphic("graphic");
-	if (m_graphic && !m_graphic->serialize(l_graphic)) {
+	TinyXML::TiXmlElement l_mesh("graphic");
+	if (m_mesh && !m_mesh->serialize(l_mesh)) {
 		WARNING("Render component '%s' serialization failed to serialize graphic!",
 		    id().str().c_str());
 		return(false);
 	}
-	n.InsertEndChild(l_graphic);
+	n.InsertEndChild(l_mesh);
 
 	return(true);
 }
@@ -102,22 +102,22 @@ RenderComponent::deserialize(TinyXML::TiXmlElement &n)
 		return(false);
 	}
 
-	const char *l_graphic_type = l_child->Attribute("type");
-	Graphics::SharedGraphic l_graphic =
-	    Game::FactoryBase::Instance()->createGraphic(l_graphic_type);
-	if (!l_graphic) {
+	const char *l_mesh_type = l_child->Attribute("type");
+	Graphics::SharedMesh l_mesh =
+	    Game::FactoryBase::Instance()->createMesh(l_mesh_type);
+	if (!l_mesh) {
 		WARNING("Render component '%s' has an unknown graphic type",
 		    id().str().c_str());
 		return(false);
 	}
 
-	if (!l_graphic->deserialize(*l_child)) {
+	if (!l_mesh->deserialize(*l_child)) {
 		WARNING("Render component '%s' deserialization of graphic failed",
 		    id().str().c_str());
 		return(false);
 	}
 
-	m_graphic = l_graphic;
+	m_mesh = l_mesh;
 
 	return(true);
 }

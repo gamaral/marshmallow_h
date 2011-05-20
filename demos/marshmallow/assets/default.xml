@@ -8,10 +8,10 @@
                 <entity id="background" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="0" y="0" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="0">
+                        <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/marshmallow/assets/kitchen.png" />
-                            <vector x="-35" y="30" />
                             <vector x="35" y="30" />
+                            <vector x="-35" y="30" />
                             <vector x="35" y="-30" />
                             <vector x="-35" y="-30" />
                         </graphic>
@@ -24,10 +24,10 @@
                 <entity id="marshmallow1" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="1.2" y="10" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="12">
+                        <graphic type="Graphics::QuadMesh" rotation="12">
                             <texture file="demos/engine/assets/mallow.png" />
-                            <vector x="-3" y="3" />
                             <vector x="3" y="3" />
+                            <vector x="-3" y="3" />
                             <vector x="3" y="-3" />
                             <vector x="-3" y="-3" />
                         </graphic>
@@ -37,10 +37,10 @@
                 <entity id="marshmallow2" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="-2" y="0" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="-50">
+                        <graphic type="Graphics::QuadMesh" rotation="-50">
                             <texture file="demos/engine/assets/mallow.png" />
-                            <vector x="-3" y="3" />
                             <vector x="3" y="3" />
+                            <vector x="-3" y="3" />
                             <vector x="3" y="-3" />
                             <vector x="-3" y="-3" />
                         </graphic>
@@ -50,10 +50,10 @@
                 <entity id="marshmallow3" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="-1" y="40" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="1">
+                        <graphic type="Graphics::QuadMesh" rotation="1">
                             <texture file="demos/engine/assets/mallow.png" />
-                            <vector x="-3" y="3" />
                             <vector x="3" y="3" />
+                            <vector x="-3" y="3" />
                             <vector x="3" y="-3" />
                             <vector x="-3" y="-3" />
                         </graphic>
@@ -63,10 +63,10 @@
                 <entity id="marshmallow4" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="-1.5" y="60" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="52">
+                        <graphic type="Graphics::QuadMesh" rotation="52">
                             <texture file="demos/engine/assets/mallow.png" />
-                            <vector x="-5" y="5" />
                             <vector x="5" y="5" />
+                            <vector x="-5" y="5" />
                             <vector x="5" y="-5" />
                             <vector x="-5" y="-5" />
                         </graphic>
@@ -76,10 +76,10 @@
                 <entity id="marshmallow5" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="-1" y="80" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadGraphic" rotation="20">
+                        <graphic type="Graphics::QuadMesh" rotation="20">
                             <texture file="demos/engine/assets/mallow.png" />
-                            <vector x="-1" y="1" />
                             <vector x="1" y="1" />
+                            <vector x="-1" y="1" />
                             <vector x="1" y="-1" />
                             <vector x="-1" y="-1" />
                         </graphic>
