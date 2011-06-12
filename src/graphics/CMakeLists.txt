@@ -4,12 +4,17 @@ include_directories(${TINYXML_INCLUDE_DIR})
 
 file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp)
 
+if(OPENGL_FOUND)
+	set(MARSHMALLOW_GRAPHICS_OPENGL_SRCS
+		opengl/painter.cpp
+		opengl/textureasset.cpp)
+endif()
+
 if(UNIX AND MARSHMALLOW_VIEWPORT_USE_GLX)
 	include_directories(${GLPNG_INCLUDE_DIR})
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-	                              viewport/glx.cpp
-	                              painter/opengl.cpp
-	                              textureasset/opengl.cpp)
+	                              ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
+	                              opengl/viewport-glx.cpp)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 	                              ${GLPNG_LIBRARIES}
 	                              ${OPENGL_LIBRARIES}
@@ -17,17 +22,16 @@ if(UNIX AND MARSHMALLOW_VIEWPORT_USE_GLX)
 elseif(WIN32 AND MARSHMALLOW_VIEWPORT_USE_WGL)
 	include_directories(${GLPNG_INCLUDE_DIR})
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-	                              viewport/wgl.cpp
-	                              painter/opengl.cpp
-	                              textureasset/opengl.cpp)
+	                              ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
+	                              opengl/viewport-wgl.cpp)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 	                              ${GLPNG_LIBRARIES}
 	                              ${OPENGL_LIBRARIES})
 elseif(MARSHMALLOW_VIEWPORT_USE_DUMMY)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-	                              viewport/dummy.cpp
-	                              painter/dummy.cpp
-	                              textureasset/dummy.cpp)
+	                              dummy/viewport.cpp
+	                              dummy/painter.cpp
+	                              dummy/textureasset.cpp)
 endif()
 
 add_library(marshmallow_graphics

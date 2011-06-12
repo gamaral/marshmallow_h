@@ -101,12 +101,12 @@ configure_file(
 
 if(UNIX)
 	configure_file(
-	    ${PROJECT_SOURCE_DIR}/src/core/environment/unix.h
+	    ${PROJECT_SOURCE_DIR}/src/core/unix/environment.h
 	    ${PROJECT_BINARY_DIR}/src/core/environment.h COPYONLY
 	)
 elseif(WIN32)
 	configure_file(
-	    ${PROJECT_SOURCE_DIR}/src/core/environment/win32.h
+	    ${PROJECT_SOURCE_DIR}/src/core/win32/environment.h
 	    ${PROJECT_BINARY_DIR}/src/core/environment.h COPYONLY
 	)
 endif()
