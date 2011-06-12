@@ -35,7 +35,7 @@
  */
 
 #include "core/logger.h"
-#include "graphics/igraphic.h"
+#include "graphics/imesh.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -51,7 +51,7 @@ Painter::Finalize(void)
 }
 
 void
-Painter::Draw(const IGraphic &, const Math::Point2&)
+Painter::Draw(const IMesh &, const Math::Point2&)
 {
 	INFO1("Drawing graphic");
 }
