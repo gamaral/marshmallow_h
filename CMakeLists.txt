@@ -39,7 +39,7 @@ endif()
 
 option(BUILD_SHARED_LIBS "Build a shared library" OFF)
 set(CMAKE_BUILD_TYPE_SHARED_LIBS ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
@@ -89,25 +89,25 @@ endif()
 ####################################################################### CONFIG #
 
 configure_file(
-	${PROJECT_SOURCE_DIR}/include/core/config.in.h
-	${PROJECT_BINARY_DIR}/include/core/config.h
+	${PROJECT_SOURCE_DIR}/src/core/config.in.h
+	${PROJECT_BINARY_DIR}/src/core/config.h
 )
 configure_file(
-	${PROJECT_SOURCE_DIR}/include/graphics/config.in.h
-	${PROJECT_BINARY_DIR}/include/graphics/config.h
+	${PROJECT_SOURCE_DIR}/src/graphics/config.in.h
+	${PROJECT_BINARY_DIR}/src/graphics/config.h
 )
 
 ##################################################################### PLATFORM #
 
 if(UNIX)
 	configure_file(
-	    ${PROJECT_SOURCE_DIR}/include/core/environment/unix.h
-	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
+	    ${PROJECT_SOURCE_DIR}/src/core/environment/unix.h
+	    ${PROJECT_BINARY_DIR}/src/core/environment.h COPYONLY
 	)
 elseif(WIN32)
 	configure_file(
-	    ${PROJECT_SOURCE_DIR}/include/core/environment/win32.h
-	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
+	    ${PROJECT_SOURCE_DIR}/src/core/environment/win32.h
+	    ${PROJECT_BINARY_DIR}/src/core/environment.h COPYONLY
 	)
 endif()
 
