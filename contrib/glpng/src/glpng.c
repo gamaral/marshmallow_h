@@ -272,8 +272,7 @@ int APIENTRY pngLoadRawF(FILE *fp, pngRawInfo *pinfo) {
 
 	if (pinfo == NULL) return 0;
 
-	fread(header, 1, 8, fp);
-	if (!png_check_sig(header, 8)) return 0;
+	if (fread(header, 1, 8, fp) != 8 || !png_check_sig(header, 8)) return 0;
 
 	png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	info = png_create_info_struct(png);
@@ -376,8 +375,7 @@ int APIENTRY pngLoadF(FILE *fp, int mipmap, int trans, pngInfo *pinfo) {
 
 	png_uint_32 i;
 
-	fread(header, 1, 8, fp);
-	if (!png_check_sig(header, 8)) return 0;
+	if (fread(header, 1, 8, fp) != 8 || !png_check_sig(header, 8)) return 0;
 
 	png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	info = png_create_info_struct(png);
