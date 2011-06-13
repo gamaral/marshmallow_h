@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/quadmesh.h"
+#include "graphics/factory.h"
 
 /*!
  * @file
@@ -34,59 +34,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "graphics/factory.h"
-#include "graphics/imeshdata.h"
-#include "graphics/textureasset.h"
+#include "core/shared.h"
+#include "graphics/dummy/meshdata.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const Core::Type QuadMesh::Type("Graphics::QuadMesh");
-
-QuadMesh::QuadMesh(const Math::Vector2 &tl,
-                   const Math::Vector2 &bl,
-                   const Math::Vector2 &br,
-                   const Math::Vector2 &tr)
-    : MeshBase(Factory::CreateMeshData(QUAD_VERTEXES))
+SharedMeshData
+Factory::CreateMeshData(int s)
 {
-	setVertex(0, tl);
-	setTextureCoord(0, 0, 0);
-	setVertex(1, bl);
-	setTextureCoord(1, 0, 1);
-	setVertex(2, tr);
-	setTextureCoord(2, 1, 0);
-	setVertex(3, br);
-	setTextureCoord(3, 1, 1);
-}
-
-QuadMesh::QuadMesh(const Math::Rect2  &r)
-    : MeshBase(Factory::CreateMeshData(QUAD_VERTEXES))
-{
-	setVertex(0, r.topLeft());
-	setTextureCoord(0, 0, 0);
-	setVertex(1, r.bottomLeft());
-	setTextureCoord(1, 0, 1);
-	setVertex(2, r.topRight());
-	setTextureCoord(2, 1, 0);
-	setVertex(3, r.bottomRight());
-	setTextureCoord(3, 1, 1);
-}
-
-QuadMesh::QuadMesh(void)
-    : MeshBase(Factory::CreateMeshData(QUAD_VERTEXES))
-{
-	setTextureCoord(0, 0, 0);
-	setTextureCoord(1, 0, 1);
-	setTextureCoord(2, 1, 0);
-	setTextureCoord(3, 1, 1);
-}
-
-QuadMesh::QuadMesh(Graphics::SharedMeshData d)
-    : MeshBase(d)
-{
-}
-
-QuadMesh::~QuadMesh(void)
-{
+	return(new Dummy::MeshData(s));
 }
 

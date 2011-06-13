@@ -10,10 +10,10 @@
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/marshmallow/assets/kitchen.png" />
-                            <vector x="2.66" y="2" />
                             <vector x="-2.66" y="2" />
-                            <vector x="2.66" y="-2" />
                             <vector x="-2.66" y="-2" />
+                            <vector x="2.66" y="2" />
+                            <vector x="2.66" y="-2" />
                         </graphic>
                     </component>
                 </entity>
@@ -26,10 +26,10 @@
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/engine/assets/mallow.png" />
-                            <vector x=".08" y=".08" />
                             <vector x="-.08" y=".08" />
-                            <vector x=".08" y="-.08" />
                             <vector x="-.08" y="-.08" />
+                            <vector x=".08" y=".08" />
+                            <vector x=".08" y="-.08" />
                         </graphic>
                     </component>
                     <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".1" height=".1" density="0.01" friction="1" />
@@ -40,10 +40,10 @@
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/angrymallows/assets/nullows.png" />
-                            <vector x=".1" y=".1" />
                             <vector x="-.1" y=".1" />
-                            <vector x=".1" y="-.1" />
                             <vector x="-.1" y="-.1" />
+                            <vector x=".1" y=".1" />
+                            <vector x=".1" y="-.1" />
                         </graphic>
                     </component>
                     <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
@@ -53,10 +53,10 @@
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/angrymallows/assets/nullows.png" />
-                            <vector x=".1" y=".1" />
                             <vector x="-.1" y=".1" />
-                            <vector x=".1" y="-.1" />
                             <vector x="-.1" y="-.1" />
+                            <vector x=".1" y=".1" />
+                            <vector x=".1" y="-.1" />
                         </graphic>
                     </component>
                     <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
@@ -66,10 +66,10 @@
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/angrymallows/assets/nullows.png" />
-                            <vector x=".1" y=".1" />
                             <vector x="-.1" y=".1" />
-                            <vector x=".1" y="-.1" />
                             <vector x="-.1" y="-.1" />
+                            <vector x=".1" y=".1" />
+                            <vector x=".1" y="-.1" />
                         </graphic>
                     </component>
                     <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
@@ -79,10 +79,10 @@
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/angrymallows/assets/nullows.png" />
-                            <vector x=".1" y=".1" />
                             <vector x="-.1" y=".1" />
-                            <vector x=".1" y="-.1" />
                             <vector x="-.1" y="-.1" />
+                            <vector x=".1" y=".1" />
+                            <vector x=".1" y="-.1" />
                         </graphic>
                     </component>
                     <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
@@ -92,10 +92,10 @@
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/angrymallows/assets/nullows.png" />
-                            <vector x=".1" y=".1" />
                             <vector x="-.1" y=".1" />
-                            <vector x=".1" y="-.1" />
                             <vector x="-.1" y="-.1" />
+                            <vector x=".1" y=".1" />
+                            <vector x=".1" y="-.1" />
                         </graphic>
                     </component>
                     <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
@@ -105,10 +105,10 @@
                     <component id="render" type="Game::RenderComponent">
                         <graphic type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/angrymallows/assets/nullows.png" />
-                            <vector x=".1" y=".1" />
                             <vector x="-.1" y=".1" />
-                            <vector x=".1" y="-.1" />
                             <vector x="-.1" y="-.1" />
+                            <vector x=".1" y=".1" />
+                            <vector x=".1" y="-.1" />
                         </graphic>
                     </component>
                     <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />

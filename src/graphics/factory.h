@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/linemesh.h"
+#pragma once
 
 /*!
  * @file
@@ -34,57 +34,25 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Graphics;
+#include "core/fd.h"
+#include "graphics/config.h"
 
-const Core::Type LineMesh::Type("Graphics::LineMesh");
+#ifndef GRAPHICS_FACTORY_H
+#define GRAPHICS_FACTORY_H 1
 
-LineMesh::LineMesh(const Math::Vector2 &p1,
-                         const Math::Vector2 &p2)
-    : MeshBase()
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Graphics
 {
-	m_vertex[0] = p1.rx(); m_vertex[1] = p1.ry();
-	m_vertex[2] = p2.rx(); m_vertex[3] = p2.ry();
+	struct IMeshData;
+	typedef Core::Shared<IMeshData> SharedMeshData;
+
+	namespace Factory
+	{
+		SharedMeshData CreateMeshData(int size);
+	}
 }
 
-LineMesh::LineMesh(void)
-    : MeshBase()
-{
-	memset(m_vertex, 0, LINE_VERTEXES * 2);
-}
+MARSHMALLOW_NAMESPACE_END
 
-LineMesh::~LineMesh(void)
-{
-}
-
-Math::Vector2
-LineMesh::vertex(int i) const
-{
-	const int l_offset = (i % LINE_VERTEXES) * 2;
-	return(Math::Vector2(m_vertex[l_offset], m_vertex[l_offset + 1]));
-}
-
-bool
-LineMesh::serialize(TinyXML::TiXmlElement &n) const
-{
-	/* TODO: FILL IN */
-	UNUSED(n);
-	return(false);
-}
-
-bool
-LineMesh::deserialize(TinyXML::TiXmlElement &n)
-{
-	/* TODO: FILL IN */
-	UNUSED(n);
-	return(false);
-}
-
-void
-LineMesh::setVertex(int i, Math::Vector2 &v)
-{
-	const int l_offset = (i % LINE_VERTEXES) * 2;
-	m_vertex[l_offset] = v.rx();
-	m_vertex[l_offset + 1] = v.ry();
-}
-
+#endif

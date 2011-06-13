@@ -34,9 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "graphics/linemesh.h"
 #include "graphics/quadmesh.h"
-#include "graphics/trianglemesh.h"
 #include "game/box2dcomponent.h"
 #include "game/box2dscenelayer.h"
 #include "game/entity.h"
@@ -100,14 +98,10 @@ FactoryBase::createComponent(const Core::Type &t,
 }
 
 Graphics::SharedMesh
-FactoryBase::createMesh(const Core::Type &type) const
+FactoryBase::createMesh(const Core::Type &t) const
 {
-	if (Graphics::QuadMesh::Type == type)
-		return(new Graphics::QuadMesh);
-	else if (Graphics::TriangleMesh::Type == type)
-		return(new Graphics::TriangleMesh);
-	else if (Graphics::LineMesh::Type == type)
-		return(new Graphics::LineMesh);
+	if (t == Graphics::QuadMesh::Type) return(new Graphics::QuadMesh);
 	return(Graphics::SharedMesh());
 }
+
 

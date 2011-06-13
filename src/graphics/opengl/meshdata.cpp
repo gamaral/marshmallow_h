@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "graphics/opengl/meshdata.h"
 
 /*!
  * @file
@@ -34,63 +34,72 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_LINEMESH_H
-#define GRAPHICS_LINEMESH_H 1
+#include <cstring>
 
-#include "graphics/meshbase.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics;
+using namespace OpenGL;
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
+MeshData::MeshData(int size)
+    : m_vertex(new GLfloat[size * 2]), // TODO: replace with custom allocator
+      m_tcoord(new GLfloat[size * 2]), // TODO: replace with custom allocator
+      m_size(size),
+      m_buffered(false)
 {
-
-	/*! @brief Graphics Line Mesh Class */
-	class GRAPHICS_EXPORT LineMesh : public MeshBase
-	{
-#define LINE_VERTEXES 2
-		float m_vertex[LINE_VERTEXES * 2];
-
-		NO_COPY(LineMesh);
-
-	public:
-
-		LineMesh(const Math::Vector2 &p1,
-		            const Math::Vector2 &p2);
-		LineMesh(void);
-		virtual ~LineMesh(void);
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-		VIRTUAL Math::Vector2 vertex(int index) const;
-
-		VIRTUAL void textureCoord(int, float &, float &) const
-		    {}
-
-		VIRTUAL int size(void) const
-		    { return(LINE_VERTEXES); }
-
-		VIRTUAL const float * vertexDataArray(void) const
-		    { return(m_vertex); }
-		VIRTUAL const float * textureCoordArray(void) const
-		    { return(0); }
-
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
-
-		VIRTUAL void setVertex(int index, Math::Vector2 &vertex);
-		VIRTUAL void setTextureCoord(int, float, float)
-		    {};
-
-	public: /* static */
-
-		static const Core::Type Type;
-	};
-
+	memset(m_vertex, 0, m_size * 2);
+	memset(m_tcoord, 0, m_size * 2);
 }
 
-MARSHMALLOW_NAMESPACE_END
+MeshData::~MeshData(void)
+{
+	delete[] m_vertex;
+	delete[] m_tcoord;
+}
 
-#endif
+void
+MeshData::setBuffered(bool v)
+{
+	if (m_buffered == v)
+		return;
+
+	m_buffered = v;
+
+	/* TODO Generate or delete VB object */
+}
+
+bool
+MeshData::vertex(int i, float &x, float &y) const
+{
+	const int l_offset = (i % m_size) * 2;
+	x = m_vertex[l_offset];
+	y = m_vertex[l_offset + 1];
+	return(true);
+}
+
+bool
+MeshData::setVertex(int i, float x, float y)
+{
+	const int l_offset = (i % m_size) * 2;
+	m_vertex[l_offset] = x;
+	m_vertex[l_offset + 1] = y;
+	return(true);
+}
+
+bool
+MeshData::textureCoord(int i, float &u, float &v) const
+{
+	const int l_offset = (i % m_size) * 2;
+	u = m_tcoord[l_offset];
+	v = m_tcoord[l_offset + 1];
+	return(true);
+}
+
+bool
+MeshData::setTextureCoord(int i, float u, float v)
+{
+	const int l_offset = (i % m_size) * 2;
+	m_tcoord[l_offset] = u;
+	m_tcoord[l_offset + 1] = v;
+	return(true);
+}
+

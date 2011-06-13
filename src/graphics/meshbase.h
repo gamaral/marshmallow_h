@@ -52,6 +52,7 @@ namespace Graphics
 	/*! @brief Graphics Mesh Base Class */
 	class GRAPHICS_EXPORT MeshBase : public IMesh
 	{
+		Graphics::SharedMeshData m_data;
 		Graphics::Color m_color;
 		Graphics::SharedTextureAsset m_texture;
 		float m_scale[2];
@@ -61,8 +62,8 @@ namespace Graphics
 
 	public:
 
-		MeshBase(void);
-		virtual ~MeshBase(void) {};
+		MeshBase(Graphics::SharedMeshData d);
+		virtual ~MeshBase(void);
 
 		void setColor(const Graphics::Color &color);
 
@@ -80,8 +81,13 @@ namespace Graphics
 
 	public: /* virtual */
 
-		virtual void setVertex(int index, Math::Vector2 &vertex) = 0;
-		virtual void setTextureCoord(int index, float u, float v) = 0;
+		virtual Math::Vector2 vertex(int index) const;
+		virtual void setVertex(int index, const Math::Vector2 &vertex);
+		virtual void textureCoord(int index, float &u, float &v) const;
+		virtual void setTextureCoord(int index, float u, float v);
+
+		VIRTUAL const Graphics::SharedMeshData &data(void) const
+		    { return(m_data); }
 
 		VIRTUAL const Graphics::Color & color(void) const
 		    { return(m_color); }

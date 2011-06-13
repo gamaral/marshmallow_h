@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "graphics/dummy/meshdata.h"
 
 /*!
  * @file
@@ -34,61 +34,60 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_TRIANGLEMESH_H
-#define GRAPHICS_TRIANGLEMESH_H 1
+#include <cstring>
 
-#include "graphics/meshbase.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics;
+using namespace Dummy;
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
+MeshData::MeshData(int size)
+    : m_vertex(new float[size * 2]), // TODO: replace with custom allocator
+      m_tcoord(new float[size * 2]), // TODO: replace with custom allocator
+      m_size(size)
 {
-
-	/*! @brief Graphics Triangle Mesh Class */
-	class GRAPHICS_EXPORT TriangleMesh : public MeshBase
-	{
-#define TRIANGLE_VERTEXES 3
-		float m_vertex[TRIANGLE_VERTEXES * 2];
-		float m_tcoord[TRIANGLE_VERTEXES * 2];
-
-		NO_COPY(TriangleMesh);
-
-	public:
-
-		TriangleMesh(const Math::Vector2 &p1,
-		             const Math::Vector2 &p2,
-		             const Math::Vector2 &p3);
-		TriangleMesh(void);
-		virtual ~TriangleMesh(void);
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-		VIRTUAL Math::Vector2 vertex(int index) const;
-		VIRTUAL void textureCoord(int index, float &u, float &v) const;
-		VIRTUAL int size(void) const
-		    { return(TRIANGLE_VERTEXES); }
-
-		VIRTUAL const float * vertexDataArray(void) const
-		    { return(m_vertex); }
-		VIRTUAL const float * textureCoordArray(void) const
-		    { return(m_tcoord); }
-
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
-
-		VIRTUAL void setVertex(int index, Math::Vector2 &vertex);
-		VIRTUAL void setTextureCoord(int index, float u, float v);
-
-	public: /* static */
-
-		static const Core::Type Type;
-	};
-
+	memset(m_vertex, 0, m_size * 2);
+	memset(m_tcoord, 0, m_size * 2);
 }
 
-MARSHMALLOW_NAMESPACE_END
+MeshData::~MeshData(void)
+{
+	delete[] m_vertex;
+	delete[] m_tcoord;
+}
 
-#endif
+bool
+MeshData::vertex(int i, float &x, float &y) const
+{
+	const int l_offset = (i % m_size) * 2;
+	x = m_vertex[l_offset];
+	y = m_vertex[l_offset + 1];
+	return(true);
+}
+
+bool
+MeshData::setVertex(int i, float x, float y)
+{
+	const int l_offset = (i % m_size) * 2;
+	m_vertex[l_offset] = x;
+	m_vertex[l_offset + 1] = y;
+	return(true);
+}
+
+bool
+MeshData::textureCoord(int i, float &u, float &v) const
+{
+	const int l_offset = (i % m_size) * 2;
+	u = m_tcoord[l_offset];
+	v = m_tcoord[l_offset + 1];
+	return(true);
+}
+
+bool
+MeshData::setTextureCoord(int i, float u, float v)
+{
+	const int l_offset = (i % m_size) * 2;
+	m_tcoord[l_offset] = u;
+	m_tcoord[l_offset + 1] = v;
+	return(true);
+}
+

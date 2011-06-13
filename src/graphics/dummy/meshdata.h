@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/quadmesh.h"
+#pragma once
 
 /*!
  * @file
@@ -34,59 +34,47 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "graphics/factory.h"
+#ifndef GRAPHICS_DUMMY_MESHDATA_H
+#define GRAPHICS_DUMMY_MESHDATA_H 1
+
 #include "graphics/imeshdata.h"
-#include "graphics/textureasset.h"
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Graphics;
+MARSHMALLOW_NAMESPACE_BEGIN
 
-const Core::Type QuadMesh::Type("Graphics::QuadMesh");
-
-QuadMesh::QuadMesh(const Math::Vector2 &tl,
-                   const Math::Vector2 &bl,
-                   const Math::Vector2 &br,
-                   const Math::Vector2 &tr)
-    : MeshBase(Factory::CreateMeshData(QUAD_VERTEXES))
+namespace Graphics
 {
-	setVertex(0, tl);
-	setTextureCoord(0, 0, 0);
-	setVertex(1, bl);
-	setTextureCoord(1, 0, 1);
-	setVertex(2, tr);
-	setTextureCoord(2, 1, 0);
-	setVertex(3, br);
-	setTextureCoord(3, 1, 1);
+
+namespace Dummy
+{
+
+	/*! @brief Graphics OpenGL Mesh Data Class */
+	class GRAPHICS_EXPORT MeshData : public IMeshData
+	{
+		float *m_vertex;
+		float *m_tcoord;
+		int m_size;
+
+	public:
+		MeshData(int size);
+		virtual ~MeshData(void);
+
+	public: /* virtual */
+		VIRTUAL bool vertex(int index, float &x, float &y) const;
+		VIRTUAL bool setVertex(int index, float x, float y);
+
+		VIRTUAL bool textureCoord(int index, float &u, float &v) const;
+		VIRTUAL bool setTextureCoord(int index, float u, float v);
+
+		VIRTUAL int size(void) const
+		    { return(m_size); }
+	};
+	typedef Core::Shared<MeshData> SharedMeshData;
+	typedef Core::Weak<MeshData> WeakMeshData;
+
 }
 
-QuadMesh::QuadMesh(const Math::Rect2  &r)
-    : MeshBase(Factory::CreateMeshData(QUAD_VERTEXES))
-{
-	setVertex(0, r.topLeft());
-	setTextureCoord(0, 0, 0);
-	setVertex(1, r.bottomLeft());
-	setTextureCoord(1, 0, 1);
-	setVertex(2, r.topRight());
-	setTextureCoord(2, 1, 0);
-	setVertex(3, r.bottomRight());
-	setTextureCoord(3, 1, 1);
 }
 
-QuadMesh::QuadMesh(void)
-    : MeshBase(Factory::CreateMeshData(QUAD_VERTEXES))
-{
-	setTextureCoord(0, 0, 0);
-	setTextureCoord(1, 0, 1);
-	setTextureCoord(2, 1, 0);
-	setTextureCoord(3, 1, 1);
-}
+MARSHMALLOW_NAMESPACE_END
 
-QuadMesh::QuadMesh(Graphics::SharedMeshData d)
-    : MeshBase(d)
-{
-}
-
-QuadMesh::~QuadMesh(void)
-{
-}
-
+#endif

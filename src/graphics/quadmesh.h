@@ -48,11 +48,8 @@ namespace Graphics
 
 	/*! @brief Graphics Quad Mesh Class */
 	class GRAPHICS_EXPORT QuadMesh : public MeshBase
-	{
 #define QUAD_VERTEXES 4
-		float m_vertex[QUAD_VERTEXES * 2];
-		float m_tcoord[QUAD_VERTEXES * 2];
-
+	{
 		NO_COPY(QuadMesh);
 
 	public:
@@ -63,6 +60,7 @@ namespace Graphics
 		         const Math::Vector2 &tr);
 		QuadMesh(const Math::Rect2 &rect);
 		QuadMesh(void);
+		QuadMesh(Graphics::SharedMeshData d);
 		virtual ~QuadMesh(void);
 
 	public: /* virtual */
@@ -70,21 +68,8 @@ namespace Graphics
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
-		VIRTUAL Math::Vector2 vertex(int index) const;
-		VIRTUAL void textureCoord(int index, float &u, float &v) const;
 		VIRTUAL int size(void) const
 		    { return(QUAD_VERTEXES); }
-
-		VIRTUAL const float * vertexDataArray(void) const
-		    { return(m_vertex); }
-		VIRTUAL const float * textureCoordArray(void) const
-		    { return(m_tcoord); }
-
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
-
-		VIRTUAL void setVertex(int index, Math::Vector2 &vertex);
-		VIRTUAL void setTextureCoord(int index, float u, float v);
 
 	public: /* static */
 

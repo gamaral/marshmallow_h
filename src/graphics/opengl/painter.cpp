@@ -38,38 +38,25 @@
 
 #include "core/logger.h"
 #include "math/point2.h"
-#include "graphics/linemesh.h"
 #include "graphics/quadmesh.h"
-#include "graphics/trianglemesh.h"
+#include "graphics/opengl/meshdata.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
 struct Painter::Internal
 {
-	void
-	drawLineMesh(const LineMesh &g)
-	{
-		glVertexPointer(2, GL_FLOAT, 0, g.vertexDataArray());
-		glDrawArrays(GL_LINES, 0, 4);
-	}
-
-	void
-	drawTriangleMesh(const TriangleMesh &g)
-	{
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, g.vertexDataArray());
-		glTexCoordPointer(2, GL_FLOAT, 0, g.textureCoordArray());
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
 
 	void
 	drawQuadMesh(const QuadMesh &g)
 	{
+		OpenGL::SharedMeshData l_data =
+			g.data().staticCast<OpenGL::MeshData>();
+		if (!l_data) return;
+
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, g.vertexDataArray());
-		glTexCoordPointer(2, GL_FLOAT, 0, g.textureCoordArray());
+		glVertexPointer(2, GL_FLOAT, 0, l_data->vertexDataArray());
+		glTexCoordPointer(2, GL_FLOAT, 0, l_data->textureCoordArray());
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
@@ -123,10 +110,6 @@ Painter::Draw(const IMesh &g, const Math::Point2 &o)
 	/* actually draw graphic */
 	if (g.type() == QuadMesh::Type)
 		MGP.drawQuadMesh(static_cast<const QuadMesh &>(g));
-	else if (g.type() == LineMesh::Type)
-		MGP.drawLineMesh(static_cast<const LineMesh &>(g));
-	else if (g.type() == TriangleMesh::Type)
-		MGP.drawTriangleMesh(static_cast<const TriangleMesh &>(g));
 	else WARNING1("Unknown mesh type");
 
 	if (l_texture)
