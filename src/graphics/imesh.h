@@ -51,8 +51,11 @@ namespace Math
 
 namespace Graphics
 {
-	struct IMeshData;
-	typedef Core::Shared<IMeshData> SharedMeshData;
+	struct ITextureCoordinateData;
+	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
+
+	struct IVertexData;
+	typedef Core::Shared<IVertexData> SharedVertexData;
 
 	class Color;
 
@@ -66,7 +69,8 @@ namespace Graphics
 
 		virtual const Core::Type & type(void) const = 0;
 
-		virtual const SharedMeshData &data(void) const = 0;
+		virtual const SharedTextureCoordinateData &textureCoordinateData(void) const = 0;
+		virtual const SharedVertexData &vertexData(void) const = 0;
 
 		virtual const Graphics::Color & color(void) const = 0;
 		virtual const SharedTextureAsset & texture(void) const = 0;
@@ -74,8 +78,8 @@ namespace Graphics
 		virtual void scale(float &x, float &y) const = 0;
 
 		virtual Math::Vector2 vertex(int index) const = 0;
-		virtual void textureCoord(int index, float &u, float &v) const = 0;
-		virtual int size(void) const = 0;
+		virtual void textureCoordinate(int index, float &u, float &v) const = 0;
+		virtual int count(void) const = 0;
 	};
 	typedef Core::Shared<IMesh> SharedMesh;
 	typedef Core::Weak<IMesh> WeakMesh;

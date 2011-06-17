@@ -34,12 +34,12 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_MESHDATA_H
-#define GRAPHICS_OPENGL_MESHDATA_H 1
+#ifndef GRAPHICS_OPENGL_TEXTURECOORDINATEDATA_H
+#define GRAPHICS_OPENGL_TEXTURECOORDINATEDATA_H 1
 
 #include <GL/gl.h>
 
-#include "graphics/imeshdata.h"
+#include "graphics/itexturecoordinatedata.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -50,22 +50,18 @@ namespace OpenGL
 {
 
 	/*! @brief Graphics OpenGL Mesh Data Class */
-	class GRAPHICS_EXPORT MeshData : public IMeshData
+	class GRAPHICS_EXPORT TextureCoordinateData : public ITextureCoordinateData
 	{
-		GLfloat *m_vertex;
-		GLfloat *m_tcoord;
-		int m_size;
+		GLfloat *m_data;
+		int m_count;
 		bool m_buffered;
 
 	public:
-		MeshData(int size);
-		virtual ~MeshData(void);
+		TextureCoordinateData(int count);
+		virtual ~TextureCoordinateData(void);
 
-		const float * vertexDataArray(void) const
-		    { return(m_vertex); }
-
-		const float * textureCoordArray(void) const
-		    { return(m_tcoord); }
+		const GLfloat * data(void) const
+		    { return(m_data); }
 
 		void setBuffered(bool value);
 
@@ -73,17 +69,14 @@ namespace OpenGL
 		    { return(m_buffered); }
 
 	public: /* virtual */
-		VIRTUAL bool vertex(int index, float &x, float &y) const;
-		VIRTUAL bool setVertex(int index, float x, float y);
+		VIRTUAL bool get(int index, float &u, float &v) const;
+		VIRTUAL bool set(int index, float u, float v);
 
-		VIRTUAL bool textureCoord(int index, float &u, float &v) const;
-		VIRTUAL bool setTextureCoord(int index, float u, float v);
-
-		VIRTUAL int size(void) const
-		    { return(m_size); }
+		VIRTUAL int count(void) const
+		    { return(m_count); }
 	};
-	typedef Core::Shared<MeshData> SharedMeshData;
-	typedef Core::Weak<MeshData> WeakMeshData;
+	typedef Core::Shared<TextureCoordinateData> SharedTextureCoordinateData;
+	typedef Core::Weak<TextureCoordinateData> WeakTextureCoordinateData;
 
 }
 

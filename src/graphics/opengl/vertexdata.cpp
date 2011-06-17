@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "graphics/opengl/vertexdata.h"
 
 /*!
  * @file
@@ -34,35 +34,51 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_IMESHDATA_H
-#define GRAPHICS_IMESHDATA_H 1
+#include <cstring>
 
-#include "core/fd.h"
-#include "graphics/config.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics;
+using namespace OpenGL;
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
+VertexData::VertexData(int c)
+    : m_data(new GLfloat[c * 2]), // TODO: replace with custom allocator
+      m_count(c),
+      m_buffered(false)
 {
-
-	/*! @brief Graphics Mesh Data Interface */
-	struct GRAPHICS_EXPORT IMeshData
-	{
-		virtual ~IMeshData(void) {};
-
-		virtual bool vertex(int index, float &x, float &y) const = 0;
-		virtual bool setVertex(int index, float x, float y) = 0;
-
-		virtual bool textureCoord(int index, float &u, float &v) const = 0;
-		virtual bool setTextureCoord(int index, float u, float v) = 0;
-
-		virtual int size(void) const = 0;
-	};
-	typedef Core::Shared<IMeshData> SharedMeshData;
-	typedef Core::Weak<IMeshData> WeakMeshData;
-
+	memset(m_data, 0, m_count * 2);
 }
 
-MARSHMALLOW_NAMESPACE_END
+VertexData::~VertexData(void)
+{
+	delete[] m_data;
+}
 
-#endif
+void
+VertexData::setBuffered(bool v)
+{
+	if (m_buffered == v)
+		return;
+
+	m_buffered = v;
+
+	/* TODO Generate or delete VB object */
+}
+
+bool
+VertexData::get(int i, float &x, float &y) const
+{
+	const int l_offset = (i % m_count) * 2;
+	x = m_data[l_offset];
+	y = m_data[l_offset + 1];
+	return(true);
+}
+
+bool
+VertexData::set(int i, float x, float y)
+{
+	const int l_offset = (i % m_count) * 2;
+	m_data[l_offset] = x;
+	m_data[l_offset + 1] = y;
+	return(true);
+}
+

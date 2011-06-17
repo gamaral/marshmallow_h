@@ -15,9 +15,10 @@ if(OPENGL_FOUND)
 
 	set(MARSHMALLOW_GRAPHICS_OPENGL_SRCS
 		opengl/factory.cpp
-		opengl/meshdata.cpp
 		opengl/painter.cpp
-		opengl/textureasset.cpp)
+		opengl/textureasset.cpp
+		opengl/texturecoordinatedata.cpp
+		opengl/vertexdata.cpp)
 
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 	                              ${GLPNG_LIBRARIES}
@@ -37,10 +38,11 @@ elseif(WIN32 AND MARSHMALLOW_VIEWPORT_USE_WGL)
 elseif(MARSHMALLOW_VIEWPORT_USE_DUMMY)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              dummy/factory.cpp
-	                              dummy/meshdata.cpp
-	                              dummy/viewport.cpp
 	                              dummy/painter.cpp
-	                              dummy/textureasset.cpp)
+	                              dummy/textureasset.cpp
+	                              dummy/texturecoordinatedata.cpp
+	                              dummy/vertexdata.cpp
+	                              dummy/viewport.cpp)
 endif()
 
 add_library(marshmallow_graphics

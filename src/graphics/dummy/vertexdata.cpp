@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/factory.h"
+#include "graphics/dummy/vertexdata.h"
 
 /*!
  * @file
@@ -34,22 +34,39 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/shared.h"
-#include "graphics/dummy/texturecoordinatedata.h"
-#include "graphics/dummy/vertexdata.h"
+#include <cstring>
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
+using namespace Dummy;
 
-SharedTextureCoordinateData
-Factory::CreateTextureCoordinateData(int c)
+VertexData::VertexData(int c)
+    : m_data(new float[c * 2]), // TODO: replace with custom allocator
+      m_count(c)
 {
-	return(new Dummy::TextureCoordinateData(c));
+	memset(m_data, 0, m_count * 2);
 }
 
-SharedVertexData
-Factory::CreateVertexData(int c)
+VertexData::~VertexData(void)
 {
-	return(new Dummy::VertexData(c));
+	delete[] m_data;
+}
+
+bool
+VertexData::get(int i, float &x, float &y) const
+{
+	const int l_offset = (i % m_count) * 2;
+	x = m_data[l_offset];
+	y = m_data[l_offset + 1];
+	return(true);
+}
+
+bool
+VertexData::set(int i, float x, float y)
+{
+	const int l_offset = (i % m_count) * 2;
+	m_data[l_offset] = x;
+	m_data[l_offset + 1] = y;
+	return(true);
 }
 

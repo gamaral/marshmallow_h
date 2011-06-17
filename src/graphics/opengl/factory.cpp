@@ -35,14 +35,21 @@
  */
 
 #include "core/shared.h"
-#include "graphics/opengl/meshdata.h"
+#include "graphics/opengl/texturecoordinatedata.h"
+#include "graphics/opengl/vertexdata.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-SharedMeshData
-Factory::CreateMeshData(int s)
+SharedTextureCoordinateData
+Factory::CreateTextureCoordinateData(int c)
 {
-	return(new OpenGL::MeshData(s));
+	return(new OpenGL::TextureCoordinateData(c));
+}
+
+SharedVertexData
+Factory::CreateVertexData(int c)
+{
+	return(new OpenGL::VertexData(c));
 }
 

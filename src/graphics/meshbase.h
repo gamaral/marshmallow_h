@@ -52,9 +52,10 @@ namespace Graphics
 	/*! @brief Graphics Mesh Base Class */
 	class GRAPHICS_EXPORT MeshBase : public IMesh
 	{
-		Graphics::SharedMeshData m_data;
-		Graphics::Color m_color;
-		Graphics::SharedTextureAsset m_texture;
+		SharedTextureCoordinateData m_tcdata;
+		SharedVertexData m_vdata;
+		Color m_color;
+		SharedTextureAsset m_texture;
 		float m_scale[2];
 		float m_rotation;
 
@@ -62,7 +63,7 @@ namespace Graphics
 
 	public:
 
-		MeshBase(Graphics::SharedMeshData d);
+		MeshBase(SharedTextureCoordinateData tc, SharedVertexData v);
 		virtual ~MeshBase(void);
 
 		void setColor(const Graphics::Color &color);
@@ -81,13 +82,14 @@ namespace Graphics
 
 	public: /* virtual */
 
-		virtual Math::Vector2 vertex(int index) const;
 		virtual void setVertex(int index, const Math::Vector2 &vertex);
-		virtual void textureCoord(int index, float &u, float &v) const;
-		virtual void setTextureCoord(int index, float u, float v);
+		virtual void setTextureCoordinate(int index, float u, float v);
 
-		VIRTUAL const Graphics::SharedMeshData &data(void) const
-		    { return(m_data); }
+		VIRTUAL const Graphics::SharedTextureCoordinateData &textureCoordinateData(void) const
+		    { return(m_tcdata); }
+
+		VIRTUAL const Graphics::SharedVertexData &vertexData(void) const
+		    { return(m_vdata); }
 
 		VIRTUAL const Graphics::Color & color(void) const
 		    { return(m_color); }
@@ -100,6 +102,9 @@ namespace Graphics
 
 		VIRTUAL void scale(float &x, float &y) const
 		    { x = m_scale[0]; y = m_scale[1]; }
+
+		VIRTUAL Math::Vector2 vertex(int index) const;
+		VIRTUAL void textureCoordinate(int index, float &u, float &v) const;
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);

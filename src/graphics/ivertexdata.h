@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/factory.h"
+#pragma once
 
 /*!
  * @file
@@ -34,22 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/shared.h"
-#include "graphics/dummy/texturecoordinatedata.h"
-#include "graphics/dummy/vertexdata.h"
+#ifndef GRAPHICS_IVERTEXDATA_H
+#define GRAPHICS_IVERTEXDATA_H 1
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Graphics;
+#include "core/fd.h"
+#include "graphics/config.h"
 
-SharedTextureCoordinateData
-Factory::CreateTextureCoordinateData(int c)
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Graphics
 {
-	return(new Dummy::TextureCoordinateData(c));
+
+	/*! @brief Graphics Vertex Data Interface */
+	struct GRAPHICS_EXPORT IVertexData
+	{
+		virtual ~IVertexData(void) {};
+
+		virtual bool get(int index, float &x, float &y) const = 0;
+		virtual bool set(int index, float x, float y) = 0;
+
+		virtual int count(void) const = 0;
+	};
+	typedef Core::Shared<IVertexData> SharedVertexData;
+	typedef Core::Weak<IVertexData> WeakVertexData;
+
 }
 
-SharedVertexData
-Factory::CreateVertexData(int c)
-{
-	return(new Dummy::VertexData(c));
-}
+MARSHMALLOW_NAMESPACE_END
 
+#endif

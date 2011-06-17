@@ -39,7 +39,8 @@
 #include "core/logger.h"
 #include "math/point2.h"
 #include "graphics/quadmesh.h"
-#include "graphics/opengl/meshdata.h"
+#include "graphics/opengl/texturecoordinatedata.h"
+#include "graphics/opengl/vertexdata.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -50,15 +51,25 @@ struct Painter::Internal
 	void
 	drawQuadMesh(const QuadMesh &g)
 	{
-		OpenGL::SharedMeshData l_data =
-			g.data().staticCast<OpenGL::MeshData>();
-		if (!l_data) return;
+		OpenGL::SharedVertexData l_vdata =
+			g.vertexData()
+			    .staticCast<OpenGL::VertexData>();
 
+		if (!l_vdata) return;
+
+		OpenGL::SharedTextureCoordinateData l_tcdata =
+			g.textureCoordinateData()
+			    .staticCast<OpenGL::TextureCoordinateData>();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, l_data->vertexDataArray());
-		glTexCoordPointer(2, GL_FLOAT, 0, l_data->textureCoordArray());
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
+
+		glVertexPointer(2, GL_FLOAT, 0, l_vdata->data());
+		glTexCoordPointer(2, GL_FLOAT, 0, l_tcdata->data());
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 
 } MGP;
@@ -66,13 +77,11 @@ struct Painter::Internal
 void
 Painter::Initialize(void)
 {
-	glEnableClientState(GL_VERTEX_ARRAY);
 }
 
 void
 Painter::Finalize(void)
 {
-	glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void

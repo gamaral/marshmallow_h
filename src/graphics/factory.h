@@ -44,12 +44,16 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-	struct IMeshData;
-	typedef Core::Shared<IMeshData> SharedMeshData;
+	struct ITextureCoordinateData;
+	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
+
+	struct IVertexData;
+	typedef Core::Shared<IVertexData> SharedVertexData;
 
 	namespace Factory
 	{
-		SharedMeshData CreateMeshData(int size);
+		SharedTextureCoordinateData CreateTextureCoordinateData(int count);
+		SharedVertexData CreateVertexData(int count);
 	}
 }
 

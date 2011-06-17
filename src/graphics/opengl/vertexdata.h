@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/factory.h"
+#pragma once
 
 /*!
  * @file
@@ -34,22 +34,54 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/shared.h"
-#include "graphics/dummy/texturecoordinatedata.h"
-#include "graphics/dummy/vertexdata.h"
+#ifndef GRAPHICS_OPENGL_VERTEXDATA_H
+#define GRAPHICS_OPENGL_VERTEXDATA_H 1
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Graphics;
+#include <GL/gl.h>
 
-SharedTextureCoordinateData
-Factory::CreateTextureCoordinateData(int c)
+#include "graphics/ivertexdata.h"
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Graphics
 {
-	return(new Dummy::TextureCoordinateData(c));
+
+namespace OpenGL
+{
+
+	/*! @brief Graphics OpenGL Vertex Data Class */
+	class GRAPHICS_EXPORT VertexData : public IVertexData
+	{
+		GLfloat *m_data;
+		int m_count;
+		bool m_buffered;
+
+	public:
+		VertexData(int count);
+		virtual ~VertexData(void);
+
+		const GLfloat * data(void) const
+		    { return(m_data); }
+
+		void setBuffered(bool value);
+
+		bool buffered(void) const
+		    { return(m_buffered); }
+
+	public: /* virtual */
+		VIRTUAL bool get(int index, float &x, float &y) const;
+		VIRTUAL bool set(int index, float x, float y);
+
+		VIRTUAL int count(void) const
+		    { return(m_count); }
+	};
+	typedef Core::Shared<VertexData> SharedVertexData;
+	typedef Core::Weak<VertexData> WeakVertexData;
+
 }
 
-SharedVertexData
-Factory::CreateVertexData(int c)
-{
-	return(new Dummy::VertexData(c));
 }
 
+MARSHMALLOW_NAMESPACE_END
+
+#endif

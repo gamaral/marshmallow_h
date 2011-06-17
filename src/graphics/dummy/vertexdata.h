@@ -34,10 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_DUMMY_MESHDATA_H
-#define GRAPHICS_DUMMY_MESHDATA_H 1
+#ifndef GRAPHICS_DUMMY_VERTEXDATA_H
+#define GRAPHICS_DUMMY_VERTEXDATA_H 1
 
-#include "graphics/imeshdata.h"
+#include "graphics/ivertexdata.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -47,29 +47,25 @@ namespace Graphics
 namespace Dummy
 {
 
-	/*! @brief Graphics OpenGL Mesh Data Class */
-	class GRAPHICS_EXPORT MeshData : public IMeshData
+	/*! @brief Graphics Dummy Vertex Data Class */
+	class GRAPHICS_EXPORT VertexData : public IVertexData
 	{
-		float *m_vertex;
-		float *m_tcoord;
-		int m_size;
+		float *m_data;
+		int m_count;
 
 	public:
-		MeshData(int size);
-		virtual ~MeshData(void);
+		VertexData(int count);
+		virtual ~VertexData(void);
 
 	public: /* virtual */
-		VIRTUAL bool vertex(int index, float &x, float &y) const;
-		VIRTUAL bool setVertex(int index, float x, float y);
+		VIRTUAL bool get(int index, float &x, float &y) const;
+		VIRTUAL bool set(int index, float x, float y);
 
-		VIRTUAL bool textureCoord(int index, float &u, float &v) const;
-		VIRTUAL bool setTextureCoord(int index, float u, float v);
-
-		VIRTUAL int size(void) const
-		    { return(m_size); }
+		VIRTUAL int count(void) const
+		    { return(m_count); }
 	};
-	typedef Core::Shared<MeshData> SharedMeshData;
-	typedef Core::Weak<MeshData> WeakMeshData;
+	typedef Core::Shared<VertexData> SharedVertexData;
+	typedef Core::Weak<VertexData> WeakVertexData;
 
 }
 

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/opengl/meshdata.h"
+#include "graphics/dummy/texturecoordinatedata.h"
 
 /*!
  * @file
@@ -38,68 +38,35 @@
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
-using namespace OpenGL;
+using namespace Dummy;
 
-MeshData::MeshData(int size)
-    : m_vertex(new GLfloat[size * 2]), // TODO: replace with custom allocator
-      m_tcoord(new GLfloat[size * 2]), // TODO: replace with custom allocator
-      m_size(size),
-      m_buffered(false)
+TextureCoordinateData::TextureCoordinateData(int c)
+    : m_data(new float[c * 2]), // TODO: replace with custom allocator
+      m_count(c)
 {
-	memset(m_vertex, 0, m_size * 2);
-	memset(m_tcoord, 0, m_size * 2);
+	memset(m_data, 0, m_count * 2);
 }
 
-MeshData::~MeshData(void)
+TextureCoordinateData::~TextureCoordinateData(void)
 {
-	delete[] m_vertex;
-	delete[] m_tcoord;
-}
-
-void
-MeshData::setBuffered(bool v)
-{
-	if (m_buffered == v)
-		return;
-
-	m_buffered = v;
-
-	/* TODO Generate or delete VB object */
+	delete[] m_data;
 }
 
 bool
-MeshData::vertex(int i, float &x, float &y) const
+TextureCoordinateData::get(int i, float &u, float &v) const
 {
-	const int l_offset = (i % m_size) * 2;
-	x = m_vertex[l_offset];
-	y = m_vertex[l_offset + 1];
+	const int l_offset = (i % m_count) * 2;
+	u = m_data[l_offset];
+	v = m_data[l_offset + 1];
 	return(true);
 }
 
 bool
-MeshData::setVertex(int i, float x, float y)
+TextureCoordinateData::set(int i, float u, float v)
 {
-	const int l_offset = (i % m_size) * 2;
-	m_vertex[l_offset] = x;
-	m_vertex[l_offset + 1] = y;
-	return(true);
-}
-
-bool
-MeshData::textureCoord(int i, float &u, float &v) const
-{
-	const int l_offset = (i % m_size) * 2;
-	u = m_tcoord[l_offset];
-	v = m_tcoord[l_offset + 1];
-	return(true);
-}
-
-bool
-MeshData::setTextureCoord(int i, float u, float v)
-{
-	const int l_offset = (i % m_size) * 2;
-	m_tcoord[l_offset] = u;
-	m_tcoord[l_offset + 1] = v;
+	const int l_offset = (i % m_count) * 2;
+	m_data[l_offset] = u;
+	m_data[l_offset + 1] = v;
 	return(true);
 }
 

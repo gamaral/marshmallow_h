@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/factory.h"
+#include "graphics/opengl/texturecoordinatedata.h"
 
 /*!
  * @file
@@ -34,22 +34,51 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/shared.h"
-#include "graphics/dummy/texturecoordinatedata.h"
-#include "graphics/dummy/vertexdata.h"
+#include <cstring>
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
+using namespace OpenGL;
 
-SharedTextureCoordinateData
-Factory::CreateTextureCoordinateData(int c)
+TextureCoordinateData::TextureCoordinateData(int c)
+    : m_data(new GLfloat[c * 2]), // TODO: replace with custom allocator
+      m_count(c),
+      m_buffered(false)
 {
-	return(new Dummy::TextureCoordinateData(c));
+	memset(m_data, 0, m_count * 2);
 }
 
-SharedVertexData
-Factory::CreateVertexData(int c)
+TextureCoordinateData::~TextureCoordinateData(void)
 {
-	return(new Dummy::VertexData(c));
+	delete[] m_data;
+}
+
+void
+TextureCoordinateData::setBuffered(bool v)
+{
+	if (m_buffered == v)
+		return;
+
+	m_buffered = v;
+
+	/* TODO Generate or delete VB object */
+}
+
+bool
+TextureCoordinateData::get(int i, float &u, float &v) const
+{
+	const int l_offset = (i % m_count) * 2;
+	u = m_data[l_offset];
+	v = m_data[l_offset + 1];
+	return(true);
+}
+
+bool
+TextureCoordinateData::set(int i, float u, float v)
+{
+	const int l_offset = (i % m_count) * 2;
+	m_data[l_offset] = u;
+	m_data[l_offset + 1] = v;
+	return(true);
 }
 
