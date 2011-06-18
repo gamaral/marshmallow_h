@@ -36,16 +36,19 @@
 
 #include <cstring>
 
+#include "graphics/opengl/extensions/vbo.h"
+
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 using namespace OpenGL;
 
 VertexData::VertexData(int c)
-    : m_data(new GLfloat[c * 2]), // TODO: replace with custom allocator
+#define AXES 2
+    : m_data(new GLfloat[c * AXES]), // TODO: replace with custom allocator
       m_count(c),
-      m_buffered(false)
+      m_bufferId(0)
 {
-	memset(m_data, 0, m_count * 2);
+	memset(m_data, 0, m_count * AXES);
 }
 
 VertexData::~VertexData(void)
@@ -54,20 +57,33 @@ VertexData::~VertexData(void)
 }
 
 void
-VertexData::setBuffered(bool v)
+VertexData::buffer(void)
 {
-	if (m_buffered == v)
+	if (!HasVectorBufferObjectSupport)
 		return;
 
-	m_buffered = v;
+	if (!isBuffered())
+		glGenBuffersARB(1, &m_bufferId);
 
-	/* TODO Generate or delete VB object */
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferId);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW_ARB);
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+}
+
+void
+VertexData::unbuffer(void)
+{
+	if (!HasVectorBufferObjectSupport || !isBuffered())
+		return;
+
+	glDeleteBuffersARB(1, &m_bufferId);
+	m_bufferId = 0;
 }
 
 bool
 VertexData::get(int i, float &x, float &y) const
 {
-	const int l_offset = (i % m_count) * 2;
+	const int l_offset = (i % m_count) * AXES;
 	x = m_data[l_offset];
 	y = m_data[l_offset + 1];
 	return(true);
@@ -76,9 +92,17 @@ VertexData::get(int i, float &x, float &y) const
 bool
 VertexData::set(int i, float x, float y)
 {
-	const int l_offset = (i % m_count) * 2;
+	const int l_offset = (i % m_count) * AXES;
 	m_data[l_offset] = x;
 	m_data[l_offset + 1] = y;
+
+	/* update vbo object */
+	if (isBuffered()) {
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferId);
+		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, l_offset * sizeof(GLfloat), AXES * sizeof(GLfloat), &m_data[l_offset]);
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+	}
+
 	return(true);
 }
 

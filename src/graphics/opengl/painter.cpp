@@ -38,12 +38,14 @@
 
 #include "core/logger.h"
 #include "math/point2.h"
-#include "graphics/quadmesh.h"
+#include "graphics/opengl/extensions/vbo.h"
 #include "graphics/opengl/texturecoordinatedata.h"
 #include "graphics/opengl/vertexdata.h"
+#include "graphics/quadmesh.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
+using namespace OpenGL;
 
 struct Painter::Internal
 {
@@ -62,14 +64,38 @@ struct Painter::Internal
 			    .staticCast<OpenGL::TextureCoordinateData>();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		if (l_tcdata)
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		/* vertex vbo check */
+		if (l_vdata->isBuffered())
+			glBindBufferARB(GL_ARRAY_BUFFER_ARB, l_vdata->bufferId());
 
 		glVertexPointer(2, GL_FLOAT, 0, l_vdata->data());
-		glTexCoordPointer(2, GL_FLOAT, 0, l_tcdata->data());
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		/* texture coordinate vbo check */
+		if (l_tcdata && l_tcdata->isBuffered())
+			glBindBufferARB(GL_ARRAY_BUFFER_ARB, l_tcdata->bufferId());
+		/* else vbo cleanup */
+		else if (l_vdata->isBuffered())
+			glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+		if (l_tcdata) {
+			glTexCoordPointer(2, GL_FLOAT, 0, l_tcdata->data());
+
+			/* vbo cleanup */
+			if (l_tcdata->isBuffered())
+				glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+		}
+
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, QUAD_VERTEXES);
+
+		if (l_tcdata)
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
 		glDisableClientState(GL_VERTEX_ARRAY);
+
 	}
 
 } MGP;

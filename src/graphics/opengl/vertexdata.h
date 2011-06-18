@@ -54,19 +54,25 @@ namespace OpenGL
 	{
 		GLfloat *m_data;
 		int m_count;
-		bool m_buffered;
+		GLuint m_bufferId;
 
 	public:
 		VertexData(int count);
 		virtual ~VertexData(void);
 
 		const GLfloat * data(void) const
-		    { return(m_data); }
+		    { return(isBuffered() ? 0 : m_data); }
 
-		void setBuffered(bool value);
+		/* VBO */
 
-		bool buffered(void) const
-		    { return(m_buffered); }
+		void buffer(void);
+		void unbuffer(void);
+
+		bool isBuffered(void) const
+		    { return(m_bufferId != 0); }
+
+		GLuint bufferId(void) const
+		    { return(m_bufferId); }
 
 	public: /* virtual */
 		VIRTUAL bool get(int index, float &x, float &y) const;

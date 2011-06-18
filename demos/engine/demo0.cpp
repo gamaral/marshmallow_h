@@ -142,9 +142,9 @@ public:
 			Math::Rect2 l_rect(Math::Size2(10, 10));
 			Game::RenderComponent *l_rcomponent =
 			    new Game::RenderComponent("render", *l_entity);
-			Graphics::SharedMeshBase l_graphic(new Graphics::QuadMesh(l_rect));
-			l_graphic->setTexture(m_asset);
-			l_rcomponent->mesh() = l_graphic.staticCast<Graphics::IMesh>();
+			Graphics::SharedMeshBase l_mesh(new Graphics::QuadMesh(l_rect));
+			l_mesh->setTexture(m_asset);
+			l_rcomponent->mesh() = l_mesh.staticCast<Graphics::IMesh>();
 			l_entity->pushComponent(l_rcomponent);
 
 			pushLayer(l_layer.staticCast<Game::ISceneLayer>());

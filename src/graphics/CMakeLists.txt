@@ -14,6 +14,7 @@ if(OPENGL_FOUND)
 	include_directories(${GLPNG_INCLUDE_DIR})
 
 	set(MARSHMALLOW_GRAPHICS_OPENGL_SRCS
+		opengl/extensions/vbo.cpp
 		opengl/factory.cpp
 		opengl/painter.cpp
 		opengl/textureasset.cpp

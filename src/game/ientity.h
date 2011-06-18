@@ -62,6 +62,7 @@ namespace Game
 		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;
 
+		/*! @brief Parent Game Layer */
 		virtual EntitySceneLayer &layer(void) = 0;
 
 		virtual void pushComponent(const SharedComponent &component) = 0;

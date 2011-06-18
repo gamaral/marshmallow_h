@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/opengl/texturecoordinatedata.h"
+#pragma once
 
 /*!
  * @file
@@ -34,75 +34,31 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cstring>
+#ifndef GRAPHICS_OPENGL_VBOEXT_H
+#define GRAPHICS_OPENGL_VBOEXT_H 1
 
-#include "graphics/opengl/extensions/vbo.h"
+#include <GL/gl.h>
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Graphics;
-using namespace OpenGL;
+MARSHMALLOW_NAMESPACE_BEGIN
 
-TextureCoordinateData::TextureCoordinateData(int c)
-#define AXES 2
-    : m_data(new GLfloat[c * AXES]), // TODO: replace with custom allocator
-      m_count(c),
-      m_bufferId(0)
+namespace Graphics
 {
-	memset(m_data, 0, m_count * AXES);
+
+namespace OpenGL
+{
+	extern PFNGLGENBUFFERSARBPROC glGenBuffersARB;
+	extern PFNGLBINDBUFFERARBPROC glBindBufferARB;
+	extern PFNGLBUFFERDATAARBPROC glBufferDataARB;
+	extern PFNGLBUFFERSUBDATAARBPROC glBufferSubDataARB;
+	extern PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB;
+	extern PFNGLGETBUFFERPARAMETERIVARBPROC glGetBufferParameterivARB;
+	extern PFNGLMAPBUFFERARBPROC glMapBufferARB;
+	extern PFNGLUNMAPBUFFERARBPROC glUnmapBufferARB;
+	extern bool HasVectorBufferObjectSupport;
 }
 
-TextureCoordinateData::~TextureCoordinateData(void)
-{
-	delete[] m_data;
 }
 
-void
-TextureCoordinateData::buffer(void)
-{
-	if (!HasVectorBufferObjectSupport)
-		return;
+MARSHMALLOW_NAMESPACE_END
 
-	if (!isBuffered())
-		glGenBuffersARB(1, &m_bufferId);
-
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferId);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW_ARB);
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-}
-
-void
-TextureCoordinateData::unbuffer(void)
-{
-	if (!HasVectorBufferObjectSupport || !isBuffered())
-		return;
-
-	glDeleteBuffersARB(1, &m_bufferId);
-	m_bufferId = 0;
-}
-
-bool
-TextureCoordinateData::get(int i, float &u, float &v) const
-{
-	const int l_offset = (i % m_count) * AXES;
-	u = m_data[l_offset];
-	v = m_data[l_offset + 1];
-	return(true);
-}
-
-bool
-TextureCoordinateData::set(int i, float u, float v)
-{
-	const int l_offset = (i % m_count) * AXES;
-	m_data[l_offset] = u;
-	m_data[l_offset + 1] = v;
-
-	/* update vbo object */
-	if (isBuffered()) {
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferId);
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, l_offset * sizeof(GLfloat), AXES * sizeof(GLfloat), &m_data[l_offset]);
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-	}
-
-	return(true);
-}
-
+#endif

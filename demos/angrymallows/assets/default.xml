@@ -1,10 +1,10 @@
 <marshmallow fps="60" ups="60" suspendable="t">
     <scenes>
-        <scene id="main" type="Game::Scene">
+        <scene id="mainScene" type="Game::Scene">
             <layer id="box2d" type="Game::Box2DSceneLayer">
                 <gravity x="0" y="-10" />
             </layer>
-            <layer id="main" type="Game::EntitySceneLayer">
+            <layer id="backgroundLayer01" type="Game::EntitySceneLayer">
                 <entity id="background" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="0" y="0" />
                     <component id="render" type="Game::RenderComponent">
@@ -17,10 +17,14 @@
                         </graphic>
                     </component>
                 </entity>
+            </layer>
+            <layer id="solidLayer" type="Game::EntitySceneLayer">
                 <entity id="floor" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="1.4" y="-0.92" />
                     <component id="physics" type="Game::Box2DComponent" body="static" width="4.8" height="0.1" />
                 </entity>
+            </layer>
+            <layer id="actorLayer" type="Game::EntitySceneLayer">
                 <entity id="player" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="-0.85" y="1" />
                     <component id="render" type="Game::RenderComponent">

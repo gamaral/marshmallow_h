@@ -34,6 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <GL/gl.h>
 #include <GL/glx.h>
 #include <GL/glu.h>
 #include <X11/X.h>
@@ -46,9 +47,11 @@
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
 #include "graphics/painter.h"
+#include "graphics/opengl/extensions/vbo.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
+using namespace OpenGL;
 
 const Core::Type Viewport::Type("GLX");
 
@@ -66,6 +69,7 @@ struct Viewport::Internal
 	float       vscale;
 	bool        fullscreen;
 	bool        loaded;
+	bool        vbo_supported;
 
 	Internal(void)
 	    : dvminfo(),
@@ -76,7 +80,8 @@ struct Viewport::Internal
 	      wm_delete(0),
 	      vscale(1),
 	      fullscreen(false),
-	      loaded(false)
+	      loaded(false),
+	      vbo_supported(false)
 	{
 		wsize[0] = wsize[1] = 0;
 
@@ -84,6 +89,62 @@ struct Viewport::Internal
 		camera[2] = 1.f;              // camera zoom
 
 		size[0] = size[1] = 0.f;
+	}
+
+	void
+	checkVertexBufferObject(void)
+	{
+		HasVectorBufferObjectSupport = false;
+
+		if (strstr(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)), "GL_ARB_vertex_buffer_object") == 0)
+			return;
+
+		glGenBuffersARB =
+		    reinterpret_cast<PFNGLGENBUFFERSARBPROC>
+		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glGenBuffersARB")));
+		glBindBufferARB =
+		    reinterpret_cast<PFNGLBINDBUFFERARBPROC>
+		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glBindBufferARB")));
+		glBufferDataARB =
+		    reinterpret_cast<PFNGLBUFFERDATAARBPROC>
+		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glBufferDataARB")));
+		glBufferSubDataARB =
+		    reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>
+		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glBufferSubDataARB")));
+		glDeleteBuffersARB =
+		    reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>
+		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glDeleteBuffersARB")));
+		glGetBufferParameterivARB =
+		    reinterpret_cast<PFNGLGETBUFFERPARAMETERIVARBPROC>
+		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glGetBufferParameterivARB")));
+		glMapBufferARB =
+		    reinterpret_cast<PFNGLMAPBUFFERARBPROC>
+		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glMapBufferARB")));
+		glUnmapBufferARB =
+		    reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>
+		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glUnmapBufferARB")));
+
+		if (glGenBuffersARB &&
+		    glBindBufferARB &&
+		    glBufferDataARB &&
+		    glBufferSubDataARB &&
+		    glDeleteBuffersARB &&
+		    glGetBufferParameterivARB &&
+		    glMapBufferARB &&
+		    glUnmapBufferARB) {
+			HasVectorBufferObjectSupport = true;
+			return;
+		}
+
+		/* clean up */
+		glGenBuffersARB = 0;
+		glBindBufferARB = 0;
+		glBufferDataARB = 0;
+		glBufferSubDataARB = 0;
+		glDeleteBuffersARB = 0;
+		glGetBufferParameterivARB = 0;
+		glMapBufferARB = 0;
+		glUnmapBufferARB = 0;
 	}
 
 	bool
@@ -95,6 +156,7 @@ struct Viewport::Internal
 		screen = 0;
 		window = 0;
 		wm_delete = 0;
+		vbo_supported = false;
 
 		fullscreen = f;
 		wsize[0] = w;
@@ -237,6 +299,7 @@ struct Viewport::Internal
 			destroyXWindow();
 			return(false);
 		}
+
 		if (!glXMakeCurrent(display, window, context)) {
 			ERROR1("Failed to make context current!");
 			destroyXWindow();
@@ -248,6 +311,9 @@ struct Viewport::Internal
 			destroyXWindow();
 			return(false);
 		}
+
+		/* check extensions */
+		checkVertexBufferObject();
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_LIGHTING);
