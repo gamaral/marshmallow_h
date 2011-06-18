@@ -40,7 +40,8 @@ using namespace Game;
 SceneLayerBase::SceneLayerBase(const Core::Identifier &i, IScene &s, int f)
     : m_id(i),
       m_scene(s),
-      m_flags(f)
+      m_flags(f),
+      m_killed(false)
 {
 }
 

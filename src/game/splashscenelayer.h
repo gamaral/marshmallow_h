@@ -34,47 +34,94 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_ISCENELAYER_H
-#define GAME_ISCENELAYER_H 1
+#ifndef GAME_SPLASHSCENELAYER_H
+#define GAME_SPLASHSCENELAYER_H 1
 
-#include "core/irenderable.h"
-#include "core/iserializable.h"
-#include "core/iupdateable.h"
+#include "game/scenelayerbase.h"
 
-#include "core/fd.h"
+#include "EASTL/list.h"
+using namespace eastl;
+
+#include "core/identifier.h"
+#include "core/shared.h"
+#include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Graphics
+{
+	class QuadMesh;
+	typedef Core::Shared<QuadMesh> SharedQuadMesh;
+}
 
 namespace Game
 {
 
-	struct IScene;
-
-	enum SceneLayerFlags {
-		       slfNone = 0,
-		slfUpdateBlock = 1,
-		slfRenderBlock = 2
-	};
-
-	/*! @brief Game Scene Interface */
-	struct GAME_EXPORT ISceneLayer : public Core::IRenderable,
-	                                 public Core::IUpdateable,
-	                                 public Core::ISerializable
+	/*! @brief Game Splash Scene Layer Class */
+	class GAME_EXPORT SplashSceneLayer : public SceneLayerBase
 	{
-		virtual ~ISceneLayer(void) {};
+		enum SplashState
+		{
+			ssStopped  = 0,
+			ssFadeIn   = 1,
+			ssExposure = 2,
+			ssFadeOut  = 3
+		};
 
-		virtual const Core::Identifier & id(void) const = 0;
-		virtual const Core::Type & type(void) const = 0;
+		Graphics::SharedQuadMesh m_mesh;
+		TIME m_exposure;
+		TIME m_fade;
+		TIME m_timer;
+		SplashState m_state;
+		bool m_autoRemove;
 
-		virtual IScene &scene(void) = 0;
+		NO_COPY(SplashSceneLayer);
 
-		virtual int flags(void) const = 0;
+	public:
 
-		virtual void kill(void) = 0;
-		virtual bool isZombie(void) const = 0;
+		SplashSceneLayer(const Core::Identifier &identifier,
+		    IScene &scene);
+		virtual ~SplashSceneLayer(void);
+
+		Graphics::SharedQuadMesh mesh(void) const;
+
+		TIME exposure(void) const
+		    { return(m_exposure); }
+		void setExposure(TIME t)
+		    { m_exposure = t; }
+
+		TIME fade(void) const
+		    { return(m_fade); }
+		void setFade(TIME t)
+		    { m_fade = t; }
+
+		bool autoRemove(void) const
+		    { return(m_autoRemove); }
+		void setAutoRemove(bool remove)
+		    { m_autoRemove = remove; }
+
+		void begin(void);
+		void skip(void);
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
+
+		VIRTUAL void render(void);
+		VIRTUAL void update(TIME delta);
+
+	public: /* static */
+
+		static const Core::Type Type;
+	
+	protected:
+
+		void setState(SplashState state);
+
 	};
-	typedef Core::Shared<ISceneLayer> SharedSceneLayer;
-	typedef Core::Weak<ISceneLayer> WeakSceneLayer;
+	typedef Core::Shared<SplashSceneLayer> SharedSplashSceneLayer;
+	typedef Core::Weak<SplashSceneLayer> WeakSplashSceneLayer;
 
 }
 

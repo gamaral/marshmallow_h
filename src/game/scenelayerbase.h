@@ -53,6 +53,7 @@ namespace Game
 		Core::Identifier m_id;
 		IScene &m_scene;
 		int m_flags;
+		bool m_killed;
 
 		NO_COPY(SceneLayerBase);
 
@@ -72,6 +73,11 @@ namespace Game
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
+		VIRTUAL void kill(void)
+		    { m_killed = true; }
+		VIRTUAL bool isZombie(void) const
+		    { return(m_killed); }
 
 		VIRTUAL int flags(void) const
 		    { return(m_flags); }

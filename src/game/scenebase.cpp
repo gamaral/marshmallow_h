@@ -73,7 +73,8 @@ SceneBase::removeLayer(const Core::Identifier &i)
 	/* maybe replace later with a map if required */
 	for (l_i = m_layers.begin(); l_i != l_c; ++l_i)
 		if ((*l_i)->id() == i) {
-			m_layers.remove(*l_i);
+			SharedSceneLayer l_slayer = *l_i;
+			m_layers.remove(l_slayer);
 			return;
 		}
 }
@@ -137,7 +138,18 @@ SceneBase::update(TIME d)
 		if ((*l_i)->flags() & slfUpdateBlock)
 			break;
 
-	do { (*l_i)->update(d); } while(l_i-- != l_b);
+	/* TODO: polish later if possible */
+	bool l_finished = false;
+	do {
+		if (l_i == l_b) l_finished = true;
+
+		SharedSceneLayer l_slayer = (*l_i--);
+
+		if (l_slayer->isZombie())
+			m_layers.remove(l_slayer);
+		else
+			l_slayer->update(d);
+	} while(!l_finished);
 }
 
 bool
