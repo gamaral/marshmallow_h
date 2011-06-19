@@ -62,10 +62,11 @@ namespace Game
 	{
 		enum SplashState
 		{
-			ssStopped  = 0,
+			ssInit     = 0,
 			ssFadeIn   = 1,
 			ssExposure = 2,
-			ssFadeOut  = 3
+			ssFadeOut  = 3,
+			ssFinished = 4
 		};
 
 		Graphics::SharedQuadMesh m_mesh;
@@ -73,7 +74,8 @@ namespace Game
 		TIME m_fade;
 		TIME m_timer;
 		SplashState m_state;
-		bool m_autoRemove;
+		bool m_autoBegin;
+		bool m_autoKill;
 
 		NO_COPY(SplashSceneLayer);
 
@@ -95,12 +97,12 @@ namespace Game
 		void setFade(TIME t)
 		    { m_fade = t; }
 
-		bool autoRemove(void) const
-		    { return(m_autoRemove); }
-		void setAutoRemove(bool remove)
-		    { m_autoRemove = remove; }
+		bool autoKill(void) const
+		    { return(m_autoKill); }
+		void setAutoKill(bool ak)
+		    { m_autoKill = ak; }
 
-		void begin(void);
+		void reset(void);
 		void skip(void);
 
 	public: /* virtual */
@@ -110,6 +112,9 @@ namespace Game
 
 		VIRTUAL void render(void);
 		VIRTUAL void update(TIME delta);
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
 	public: /* static */
 

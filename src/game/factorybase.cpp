@@ -44,6 +44,7 @@
 #include "game/positioncomponent.h"
 #include "game/rendercomponent.h"
 #include "game/scene.h"
+#include "game/splashscenelayer.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
@@ -75,6 +76,7 @@ FactoryBase::createSceneLayer(const Core::Type &t,
 	if (t == Box2DSceneLayer::Type) return(new Box2DSceneLayer(i, s));
 	else if (t == EntitySceneLayer::Type) return(new EntitySceneLayer(i, s));
 	else if (t == PauseSceneLayer::Type) return(new PauseSceneLayer(i, s));
+	else if (t == SplashSceneLayer::Type) return(new SplashSceneLayer(i, s));
 	return(SharedSceneLayer());
 }
 

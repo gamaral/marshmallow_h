@@ -78,9 +78,9 @@ RenderComponent::serialize(TinyXML::TiXmlElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	TinyXML::TiXmlElement l_mesh("graphic");
+	TinyXML::TiXmlElement l_mesh("mesh");
 	if (m_mesh && !m_mesh->serialize(l_mesh)) {
-		WARNING("Render component '%s' serialization failed to serialize graphic!",
+		WARNING("Render component '%s' serialization failed to serialize mesh!",
 		    id().str().c_str());
 		return(false);
 	}
@@ -95,9 +95,9 @@ RenderComponent::deserialize(TinyXML::TiXmlElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	TinyXML::TiXmlElement *l_child = n.FirstChildElement("graphic");
+	TinyXML::TiXmlElement *l_child = n.FirstChildElement("mesh");
 	if (!l_child) {
-		WARNING("Render component '%s' deserialized without a graphic!",
+		WARNING("Render component '%s' deserialized without a mesh!",
 		    id().str().c_str());
 		return(false);
 	}
@@ -106,13 +106,13 @@ RenderComponent::deserialize(TinyXML::TiXmlElement &n)
 	Graphics::SharedMesh l_mesh =
 	    Game::FactoryBase::Instance()->createMesh(l_mesh_type);
 	if (!l_mesh) {
-		WARNING("Render component '%s' has an unknown graphic type",
+		WARNING("Render component '%s' has an unknown mesh type",
 		    id().str().c_str());
 		return(false);
 	}
 
 	if (!l_mesh->deserialize(*l_child)) {
-		WARNING("Render component '%s' deserialization of graphic failed",
+		WARNING("Render component '%s' deserialization of mesh failed",
 		    id().str().c_str());
 		return(false);
 	}

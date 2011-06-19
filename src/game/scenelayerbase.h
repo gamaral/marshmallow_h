@@ -71,16 +71,16 @@ namespace Game
 		VIRTUAL IScene &scene(void)
 		    { return(m_scene); }
 
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		VIRTUAL int flags(void) const
+		    { return(m_flags); }
 
 		VIRTUAL void kill(void)
 		    { m_killed = true; }
 		VIRTUAL bool isZombie(void) const
 		    { return(m_killed); }
 
-		VIRTUAL int flags(void) const
-		    { return(m_flags); }
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 	};
 	typedef Core::Shared<SceneLayerBase> SharedSceneLayerBase;
 	typedef Core::Weak<SceneLayerBase> WeakSceneLayerBase;

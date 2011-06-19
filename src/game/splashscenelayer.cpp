@@ -34,6 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/logger.h"
 #include "math/point2.h"
 #include "math/size2.h"
 #include "graphics/painter.h"
@@ -48,11 +49,11 @@ const Core::Type SplashSceneLayer::Type("Game::SplashSceneLayer");
 
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock),
-      m_exposure(1.),
+      m_exposure(1.5),
       m_fade(1.),
       m_timer(0.),
-      m_state(ssStopped),
-      m_autoRemove(true)
+      m_state(ssInit),
+      m_autoKill(true)
 {
 	m_mesh = new Graphics::QuadMesh(Math::Rect2(Graphics::Viewport::Size()));;
 	m_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
@@ -69,9 +70,9 @@ SplashSceneLayer::mesh(void) const
 }
 
 void
-SplashSceneLayer::begin(void)
+SplashSceneLayer::reset(void)
 {
-	if (m_state != ssStopped)
+	if (m_state != ssFinished)
 		return;
 
 	setState(ssFadeIn);
@@ -80,7 +81,7 @@ SplashSceneLayer::begin(void)
 void
 SplashSceneLayer::skip(void)
 {
-	if (m_state == ssStopped)
+	if (m_state == ssInit || m_state == ssFinished)
 		return;
 
 	setState(ssFadeOut);
@@ -97,13 +98,16 @@ SplashSceneLayer::update(TIME d)
 {
 	float l_fiv;
 
-	if (m_state == ssStopped)
+	if (m_state == ssFinished)
 		return;
 
 	/* update timer */
 	m_timer += d;
 
 	switch (m_state) {
+	case ssInit:
+		setState(ssFadeIn);
+		break;
 	case ssFadeIn:
 		if (m_timer < m_fade) {
 			l_fiv = m_timer / m_fade;
@@ -114,13 +118,13 @@ SplashSceneLayer::update(TIME d)
 		if (m_timer < m_fade) {
 			l_fiv = 1.f - (m_timer / m_fade);
 			m_mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
-		} else setState(ssStopped);
+		} else setState(ssFinished);
 		break;
 	case ssExposure:
 		if (m_timer >= m_exposure)
 			setState(ssFadeOut);
 		break;
-	case ssStopped: break;
+	case ssFinished: break;
 	}
 }
 
@@ -132,14 +136,14 @@ SplashSceneLayer::setState(SplashState s)
 
 	switch (s) {
 	case ssFadeIn:
-		if (m_state == ssStopped) break;
-	case ssStopped:
-		if (m_autoRemove) {
+		if (m_state == ssInit || m_state == ssFinished) break;
+	case ssInit:
+		m_timer = 0.;
+		m_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
+		break;
+	case ssFinished:
+		if (m_autoKill)
 			kill();
-		} else {
-			m_timer = 0.;
-			m_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
-		}
 		break;
 	case ssFadeOut:
 		if (m_state == ssFadeIn) break;
@@ -150,5 +154,50 @@ SplashSceneLayer::setState(SplashState s)
 	}
 
 	m_state = s;
+}
+
+bool
+SplashSceneLayer::serialize(TinyXML::TiXmlElement &n) const
+{
+	if (!SceneLayerBase::serialize(n))
+		return(false);
+
+	n.SetDoubleAttribute("fade", m_fade);
+	n.SetDoubleAttribute("exposure", m_exposure);
+
+	n.SetAttribute("autokill", m_autoKill ? "true" : "false");
+
+	TinyXML::TiXmlElement l_mesh("mesh");
+	if (m_mesh && !m_mesh->serialize(l_mesh)) {
+		WARNING("Splash scene layer '%s' serialization failed to serialize mesh!",
+		    id().str().c_str());
+		return(false);
+	}
+	n.InsertEndChild(l_mesh);
+
+	return(true);
+}
+
+bool
+SplashSceneLayer::deserialize(TinyXML::TiXmlElement &n)
+{
+	if (!SceneLayerBase::deserialize(n))
+		return(false);
+
+	n.QueryFloatAttribute("fade", &m_fade);
+	n.QueryFloatAttribute("exposure", &m_exposure);
+
+	const char *l_autokill = n.Attribute("autokill");
+	m_autoKill = (l_autokill && l_autokill[0] == 't');
+
+	TinyXML::TiXmlElement *l_child = n.FirstChildElement("mesh");
+	if (!l_child) {
+		WARNING("Splash scene layer '%s' deserialized without a mesh!",
+		    id().str().c_str());
+		return(false);
+	}
+	m_mesh->deserialize(*l_child);
+
+	return(true);
 }
 

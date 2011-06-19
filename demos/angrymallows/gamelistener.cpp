@@ -70,18 +70,6 @@ GameListener::handleEvent(const Event::IEvent &e)
 			l_scene->removeLayer("pause");
 		else
 			l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
-	} else if (l_kevent.key() == Event::KEY_F1) {
-		Game::SharedScene l_scene = m_engine.sceneManager()->activeScene();
-		if (l_scene->getLayer("splash"))
-			l_scene->removeLayer("splash");
-		else {
-			Game::SplashSceneLayer *l_splashl = new Game::SplashSceneLayer("splash", *l_scene);
-			l_scene->pushLayer(l_splashl);
-			Graphics::SharedTextureAsset l_texture = new Graphics::TextureAsset;
-			l_texture->load("demos/angrymallows/assets/splash.png");
-			l_splashl->mesh()->setTexture(l_texture);
-			l_splashl->begin();
-		}
 	} else if (l_kevent.key() == Event::KEY_ESCAPE)
 		m_engine.stop();
 

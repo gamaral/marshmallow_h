@@ -7,13 +7,13 @@
                     <component id="movement" type="Game::MovementComponent" x="10" y="10" />
                     <component id="custom" type="BounceComponent" />
                     <component id="render" type="Game::RenderComponent">
-                        <graphic type="Graphics::QuadMesh" rotation="0">
+                        <mesh type="Graphics::QuadMesh" rotation="0">
                             <texture file="demos/engine/assets/mallow.png" />
                             <vector x="-3" y="3" />
                             <vector x="-3" y="-3" />
                             <vector x="3" y="3" />
                             <vector x="3" y="-3" />
-                        </graphic>
+                        </mesh>
                     </component>
                 </entity>
             </layer>
