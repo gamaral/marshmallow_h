@@ -36,6 +36,7 @@
 
 #include "core/shared.h"
 #include "graphics/opengl/texturecoordinatedata.h"
+#include "graphics/opengl/texturedata.h"
 #include "graphics/opengl/vertexdata.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -45,6 +46,12 @@ SharedTextureCoordinateData
 Factory::CreateTextureCoordinateData(int c)
 {
 	return(new OpenGL::TextureCoordinateData(c));
+}
+
+SharedTextureData
+Factory::CreateTextureData(void)
+{
+	return(new OpenGL::TextureData());
 }
 
 SharedVertexData

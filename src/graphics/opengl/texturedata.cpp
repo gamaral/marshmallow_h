@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "graphics/opengl/texturedata.h"
 
 /*!
  * @file
@@ -34,74 +34,70 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_TEXTURECOORDINATEDATA_H
-#define GRAPHICS_OPENGL_TEXTURECOORDINATEDATA_H 1
-
-#include "graphics/itexturecoordinatedata.h"
-
 #include <GL/gl.h>
+#include <GL/glpng.h>
 
 #include "core/identifier.h"
+#include "core/logger.h"
 
-MARSHMALLOW_NAMESPACE_BEGIN
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics;
+using namespace OpenGL;
 
-namespace Graphics
+const Core::Type TextureData::Type("Graphics::TextureData");
+
+TextureData::TextureData(void)
+    : m_id(),
+      m_size(),
+      m_texture_id(0)
 {
-
-namespace OpenGL
-{
-
-	/*! @brief Graphics OpenGL Texture Coordinate Data Class */
-	class GRAPHICS_EXPORT TextureCoordinateData : public ITextureCoordinateData
-	{
-		Core::Identifier m_id;
-		GLfloat *m_data;
-		int m_count;
-		GLuint m_bufferId;
-
-	public:
-		TextureCoordinateData(int count);
-		virtual ~TextureCoordinateData(void);
-
-		const GLfloat * data(void) const
-		    { return(isBuffered() ? 0 : m_data); }
-
-		/* VBO */
-
-		void buffer(void);
-		void unbuffer(void);
-
-		bool isBuffered(void) const
-		    { return(m_bufferId != 0); }
-
-		GLuint bufferId(void) const
-		    { return(m_bufferId); }
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-		VIRTUAL bool get(int index, float &u, float &v) const;
-		VIRTUAL bool set(int index, float u, float v);
-
-		VIRTUAL int count(void) const
-		    { return(m_count); }
-
-	public: /* static */
-
-		static const Core::Type Type;
-	};
-	typedef Core::Shared<TextureCoordinateData> SharedTextureCoordinateData;
-	typedef Core::Weak<TextureCoordinateData> WeakTextureCoordinateData;
-
 }
 
+TextureData::~TextureData(void)
+{
+	unload();
 }
 
-MARSHMALLOW_NAMESPACE_END
+bool
+TextureData::load(const Core::Identifier &i)
+{
+	if (m_texture_id) {
+		WARNING1("Load texture asset called on active texture.");
+		return(false);
+	}
 
-#endif
+	pngInfo pi;
+
+	glGenTextures(1, &m_texture_id);
+	glBindTexture(GL_TEXTURE_2D, m_texture_id);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+	if (!pngLoad(i.str().c_str(), PNG_BUILDMIPMAPS, PNG_ALPHA, &pi)) {
+		m_size = Math::Size2(0, 0);
+		INFO1("Failed to load texture.");
+		return(false);
+	}
+
+	m_size = Math::Size2(static_cast<float>(pi.Width), static_cast<float>(pi.Height));
+	m_id = i;
+
+	INFO1("Texture loaded.");
+
+	return(true);
+}
+
+void
+TextureData::unload(void)
+{
+	if (m_texture_id)
+		glDeleteTextures(1, &m_texture_id);
+
+	m_size = Math::Size2();
+	m_texture_id = 0;
+}
+

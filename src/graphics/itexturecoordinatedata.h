@@ -37,6 +37,8 @@
 #ifndef GRAPHICS_ITEXTURECOORDINATEDATA_H
 #define GRAPHICS_ITEXTURECOORDINATEDATA_H 1
 
+#include "core/iasset.h"
+
 #include "core/fd.h"
 #include "graphics/config.h"
 
@@ -46,7 +48,7 @@ namespace Graphics
 {
 
 	/*! @brief Graphics Texture Coordinate Data Interface */
-	struct GRAPHICS_EXPORT ITextureCoordinateData
+	struct GRAPHICS_EXPORT ITextureCoordinateData : public Core::IAsset
 	{
 		virtual ~ITextureCoordinateData(void) {};
 

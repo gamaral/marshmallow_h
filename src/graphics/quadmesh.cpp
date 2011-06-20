@@ -34,10 +34,11 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/type.h"
 #include "graphics/factory.h"
 #include "graphics/itexturecoordinatedata.h"
+#include "graphics/itexturedata.h"
 #include "graphics/ivertexdata.h"
-#include "graphics/textureasset.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -49,6 +50,7 @@ QuadMesh::QuadMesh(const Math::Vector2 &tl,
                    const Math::Vector2 &br,
                    const Math::Vector2 &tr)
     : MeshBase(Factory::CreateTextureCoordinateData(QUAD_VERTEXES),
+               Factory::CreateTextureData(),
                Factory::CreateVertexData(QUAD_VERTEXES))
 {
 	setVertex(0, tl);
@@ -63,6 +65,7 @@ QuadMesh::QuadMesh(const Math::Vector2 &tl,
 
 QuadMesh::QuadMesh(const Math::Rect2  &r)
     : MeshBase(Factory::CreateTextureCoordinateData(QUAD_VERTEXES),
+               Factory::CreateTextureData(),
                Factory::CreateVertexData(QUAD_VERTEXES))
 {
 	setVertex(0, r.topLeft());
@@ -77,6 +80,7 @@ QuadMesh::QuadMesh(const Math::Rect2  &r)
 
 QuadMesh::QuadMesh(void)
     : MeshBase(Factory::CreateTextureCoordinateData(QUAD_VERTEXES),
+               Factory::CreateTextureData(),
                Factory::CreateVertexData(QUAD_VERTEXES))
 {
 	setTextureCoordinate(0, 0, 0);
@@ -85,8 +89,8 @@ QuadMesh::QuadMesh(void)
 	setTextureCoordinate(3, 1, 1);
 }
 
-QuadMesh::QuadMesh(SharedTextureCoordinateData tc, SharedVertexData v)
-    : MeshBase(tc, v)
+QuadMesh::QuadMesh(SharedTextureCoordinateData tc, SharedTextureData t, SharedVertexData v)
+    : MeshBase(tc, t, v)
 {
 }
 

@@ -37,9 +37,11 @@
 #ifndef GRAPHICS_OPENGL_VERTEXDATA_H
 #define GRAPHICS_OPENGL_VERTEXDATA_H 1
 
+#include "graphics/ivertexdata.h"
+
 #include <GL/gl.h>
 
-#include "graphics/ivertexdata.h"
+#include "core/identifier.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -52,6 +54,7 @@ namespace OpenGL
 	/*! @brief Graphics OpenGL Vertex Data Class */
 	class GRAPHICS_EXPORT VertexData : public IVertexData
 	{
+		Core::Identifier m_id;
 		GLfloat *m_data;
 		int m_count;
 		GLuint m_bufferId;
@@ -75,11 +78,22 @@ namespace OpenGL
 		    { return(m_bufferId); }
 
 	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
+
 		VIRTUAL bool get(int index, float &x, float &y) const;
 		VIRTUAL bool set(int index, float x, float y);
 
 		VIRTUAL int count(void) const
 		    { return(m_count); }
+
+	public: /* static */
+
+		static const Core::Type Type;
 	};
 	typedef Core::Shared<VertexData> SharedVertexData;
 	typedef Core::Weak<VertexData> WeakVertexData;

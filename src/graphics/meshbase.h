@@ -42,7 +42,6 @@
 #include "core/shared.h"
 #include "math/vector2.h"
 #include "graphics/color.h"
-#include "graphics/textureasset.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -53,9 +52,9 @@ namespace Graphics
 	class GRAPHICS_EXPORT MeshBase : public IMesh
 	{
 		SharedTextureCoordinateData m_tcdata;
+		SharedTextureData m_tdata;
 		SharedVertexData m_vdata;
 		Color m_color;
-		SharedTextureAsset m_texture;
 		float m_scale[2];
 		float m_rotation;
 
@@ -63,12 +62,10 @@ namespace Graphics
 
 	public:
 
-		MeshBase(SharedTextureCoordinateData tc, SharedVertexData v);
+		MeshBase(SharedTextureCoordinateData tc, SharedTextureData t, SharedVertexData v);
 		virtual ~MeshBase(void);
 
 		void setColor(const Graphics::Color &color);
-
-		void setTexture(SharedTextureAsset texture);
 
 		void setRotation(float angle);
 
@@ -85,17 +82,17 @@ namespace Graphics
 		virtual void setVertex(int index, const Math::Vector2 &vertex);
 		virtual void setTextureCoordinate(int index, float u, float v);
 
-		VIRTUAL const Graphics::SharedTextureCoordinateData &textureCoordinateData(void) const
+		VIRTUAL const Graphics::SharedTextureCoordinateData & textureCoordinateData(void) const
 		    { return(m_tcdata); }
 
-		VIRTUAL const Graphics::SharedVertexData &vertexData(void) const
+		VIRTUAL const Graphics::SharedTextureData & textureData(void) const
+		    { return(m_tdata); }
+
+		VIRTUAL const Graphics::SharedVertexData & vertexData(void) const
 		    { return(m_vdata); }
 
 		VIRTUAL const Graphics::Color & color(void) const
 		    { return(m_color); }
-
-		VIRTUAL const SharedTextureAsset & texture(void) const
-		    { return(m_texture); }
 
 		VIRTUAL float rotation(void) const
 		    { return(m_rotation); }

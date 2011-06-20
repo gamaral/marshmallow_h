@@ -47,12 +47,16 @@ namespace Graphics
 	struct ITextureCoordinateData;
 	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
 
+	struct ITextureData;
+	typedef Core::Shared<ITextureData> SharedTextureData;
+
 	struct IVertexData;
 	typedef Core::Shared<IVertexData> SharedVertexData;
 
 	namespace Factory
 	{
 		SharedTextureCoordinateData CreateTextureCoordinateData(int count);
+		SharedTextureData CreateTextureData(void);
 		SharedVertexData CreateVertexData(int count);
 	}
 }

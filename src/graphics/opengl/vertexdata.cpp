@@ -42,6 +42,8 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 using namespace OpenGL;
 
+const Core::Type VertexData::Type("Graphics::VertexData");
+
 VertexData::VertexData(int c)
 #define AXES 2
     : m_data(new GLfloat[c * AXES]), // TODO: replace with custom allocator

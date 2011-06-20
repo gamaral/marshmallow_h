@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "graphics/dummy/texturedata.h"
 
 /*!
  * @file
@@ -34,74 +34,35 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_TEXTURECOORDINATEDATA_H
-#define GRAPHICS_OPENGL_TEXTURECOORDINATEDATA_H 1
-
-#include "graphics/itexturecoordinatedata.h"
-
-#include <GL/gl.h>
-
 #include "core/identifier.h"
+#include "core/logger.h"
 
-MARSHMALLOW_NAMESPACE_BEGIN
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics;
+using namespace Dummy;
 
-namespace Graphics
+const Core::Type TextureData::Type("Graphics::TextureData");
+
+TextureData::TextureData(void)
+    : m_id(),
+      m_size()
 {
-
-namespace OpenGL
-{
-
-	/*! @brief Graphics OpenGL Texture Coordinate Data Class */
-	class GRAPHICS_EXPORT TextureCoordinateData : public ITextureCoordinateData
-	{
-		Core::Identifier m_id;
-		GLfloat *m_data;
-		int m_count;
-		GLuint m_bufferId;
-
-	public:
-		TextureCoordinateData(int count);
-		virtual ~TextureCoordinateData(void);
-
-		const GLfloat * data(void) const
-		    { return(isBuffered() ? 0 : m_data); }
-
-		/* VBO */
-
-		void buffer(void);
-		void unbuffer(void);
-
-		bool isBuffered(void) const
-		    { return(m_bufferId != 0); }
-
-		GLuint bufferId(void) const
-		    { return(m_bufferId); }
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
-
-		VIRTUAL bool get(int index, float &u, float &v) const;
-		VIRTUAL bool set(int index, float u, float v);
-
-		VIRTUAL int count(void) const
-		    { return(m_count); }
-
-	public: /* static */
-
-		static const Core::Type Type;
-	};
-	typedef Core::Shared<TextureCoordinateData> SharedTextureCoordinateData;
-	typedef Core::Weak<TextureCoordinateData> WeakTextureCoordinateData;
-
 }
 
+TextureData::~TextureData(void)
+{
+	unload();
 }
 
-MARSHMALLOW_NAMESPACE_END
+bool
+TextureData::load(const Core::Identifier &i)
+{
+	m_id = i;
+	return(true);
+}
 
-#endif
+void
+TextureData::unload(void)
+{
+}
+

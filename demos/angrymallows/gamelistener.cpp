@@ -36,7 +36,6 @@
 
 #include <event/keyboardevent.h>
 #include <graphics/quadmesh.h>
-#include <graphics/textureasset.h>
 #include <game/iscene.h>
 #include <game/pausescenelayer.h>
 #include <game/splashscenelayer.h>

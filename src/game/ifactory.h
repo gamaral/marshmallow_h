@@ -43,6 +43,9 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
+	struct ITexture;
+	typedef Core::Shared<ITexture> SharedTexture;
+
 	struct IMesh;
 	typedef Core::Shared<IMesh> SharedMesh;
 }

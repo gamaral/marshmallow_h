@@ -45,6 +45,7 @@ namespace Core
 {
 
 	class StrHash;
+	typedef StrHash Identifier;
 	typedef StrHash Type;
 
 	template <class T> class Shared;
@@ -55,6 +56,7 @@ namespace Core
 	{
 		virtual ~IAsset(void) {};
 
+		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;
 	};
 	typedef Shared<IAsset> SharedAsset;

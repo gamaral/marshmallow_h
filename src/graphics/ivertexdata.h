@@ -37,6 +37,8 @@
 #ifndef GRAPHICS_IVERTEXDATA_H
 #define GRAPHICS_IVERTEXDATA_H 1
 
+#include "core/iasset.h"
+
 #include "core/fd.h"
 #include "graphics/config.h"
 
@@ -46,7 +48,7 @@ namespace Graphics
 {
 
 	/*! @brief Graphics Vertex Data Interface */
-	struct GRAPHICS_EXPORT IVertexData
+	struct GRAPHICS_EXPORT IVertexData : public Core::IAsset
 	{
 		virtual ~IVertexData(void) {};
 

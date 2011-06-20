@@ -34,66 +34,67 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_TEXTUREASSET_H
-#define GRAPHICS_TEXTUREASSET_H 1
+#ifndef GRAPHICS_OPENGL_TEXTUREDATA_H
+#define GRAPHICS_OPENGL_TEXTUREDATA_H 1
 
-#include "core/iasset.h"
+#include "graphics/itexturedata.h"
+
+#include <GL/gl.h>
 
 #include "core/identifier.h"
-#include "core/string.h"
 #include "math/size2.h"
+
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
 
-	/*! @brief Graphic Texture Asset Class */
-	class GRAPHICS_EXPORT TextureAsset : public Core::IAsset
+namespace OpenGL
+{
+
+	/*! @brief Graphic OpenGL Texture Data Class */
+	class GRAPHICS_EXPORT TextureData : public ITextureData
 	{
-		Core::String m_filename;
 		Core::Identifier m_id;
 		Math::Size2 m_size;
 		unsigned int m_texture_id;
 
-		NO_COPY(TextureAsset);
+		NO_COPY(TextureData);
 
 	public:
 
-		TextureAsset(void);
-		virtual ~TextureAsset(void);
+		TextureData(void);
+		virtual ~TextureData(void);
 
-		void load(const Core::String &filename);
-		void unload(void);
-
-		const Core::String &filename(void) const
-		    { return(m_filename); }
-
-		unsigned int tid(void) const
+		unsigned int textureId(void) const
 		    { return(m_texture_id); }
-
-		const Math::Size2 &size(void) const
-		    { return(m_size); }
 
 	public: /* virtual */
 
-		virtual const Core::Identifier & id(void) const
+		VIRTUAL const Core::Identifier & id(void) const
 		    { return(m_id); }
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type); }
 
-	public: /* operators */
+		VIRTUAL bool load(const Core::Identifier &id);
+		VIRTUAL void unload(void);
 
-		operator bool(void) const
-		    { return(m_texture_id); }
+		VIRTUAL bool isLoaded(void) const
+		    { return(m_texture_id != 0); }
+
+		VIRTUAL const Math::Size2 & size(void) const
+		    { return(m_size); }
 
 	public: /* static */
 
 		static const Core::Type Type;
 	};
-	typedef Core::Shared<TextureAsset> SharedTextureAsset;
-	typedef Core::Weak<TextureAsset> WeakTextureAsset;
+	typedef Core::Shared<TextureData> SharedTextureData;
+	typedef Core::Weak<TextureData> WeakTextureData;
+
+}
 
 }
 

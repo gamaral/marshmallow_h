@@ -60,7 +60,7 @@ namespace Graphics
 		         const Math::Vector2 &tr);
 		QuadMesh(const Math::Rect2 &rect);
 		QuadMesh(void);
-		QuadMesh(SharedTextureCoordinateData tc, SharedVertexData v);
+		QuadMesh(SharedTextureCoordinateData tc, SharedTextureData t, SharedVertexData v);
 		virtual ~QuadMesh(void);
 
 	public: /* virtual */

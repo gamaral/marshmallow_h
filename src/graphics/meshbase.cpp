@@ -35,18 +35,19 @@
  */
 
 #include "core/logger.h"
+#include "core/type.h"
 #include "graphics/itexturecoordinatedata.h"
+#include "graphics/itexturedata.h"
 #include "graphics/ivertexdata.h"
-#include "graphics/textureasset.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-MeshBase::MeshBase(SharedTextureCoordinateData tc, SharedVertexData v)
+MeshBase::MeshBase(SharedTextureCoordinateData tc, SharedTextureData t, SharedVertexData v)
     : m_tcdata(tc),
+      m_tdata(t),
       m_vdata(v),
       m_color(),
-      m_texture(),
       m_rotation(0)
 {
 	m_scale[0] = m_scale[1] = 1.f;
@@ -60,12 +61,6 @@ void
 MeshBase::setColor(const Graphics::Color &c)
 {
 	m_color = c;
-}
-
-void
-MeshBase::setTexture(Graphics::SharedTextureAsset t)
-{
-	m_texture = t;
 }
 
 void
@@ -121,9 +116,9 @@ MeshBase::serialize(TinyXML::TiXmlElement &n) const
 	n.InsertEndChild(l_color);
 
 	/* texture */
-	if (m_texture) {
+	if (m_tdata->isLoaded()) {
 		TinyXML::TiXmlElement l_texture("texture");
-		l_texture.SetAttribute("file", m_texture->filename().c_str());
+		l_texture.SetAttribute("id", m_tdata->id().str().c_str());
 		n.InsertEndChild(l_texture);
 	}
 
@@ -172,10 +167,8 @@ MeshBase::deserialize(TinyXML::TiXmlElement &n)
 	/* texture */
 	l_child = n.FirstChildElement("texture");
 	if (l_child) {
-		const char *l_file = l_child->Attribute("file");
-		TextureAsset *l_texture = new TextureAsset;
-		l_texture->load(l_file);
-		setTexture(l_texture);
+		const char *l_file = l_child->Attribute("id");
+		if (l_file) m_tdata->load(l_file);
 	}
 
 	/* texture coordinates */

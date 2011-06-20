@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/textureasset.h"
+#pragma once
 
 /*!
  * @file
@@ -34,38 +34,64 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cstring>
+#ifndef GRAPHICS_DUMMY_TEXTUREDATA_H
+#define GRAPHICS_DUMMY_TEXTUREDATA_H 1
 
-#include "core/logger.h"
+#include "graphics/itexturedata.h"
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Graphics;
+#include "core/identifier.h"
+#include "math/size2.h"
 
-const Core::Type TextureAsset::Type("Graphics::TextureAsset");
 
-TextureAsset::TextureAsset(void)
-    : m_filename(),
-      m_id(),
-      m_size(),
-      m_texture_id(0)
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Graphics
 {
+
+namespace Dummy
+{
+
+	/*! @brief Graphic Dummy Texture Data Class */
+	class GRAPHICS_EXPORT TextureData : public ITextureData
+	{
+		Core::Identifier m_id;
+		Math::Size2 m_size;
+
+		NO_COPY(TextureData);
+
+	public:
+
+		TextureData(void);
+		virtual ~TextureData(void);
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
+
+		VIRTUAL bool load(const Core::Identifier &id);
+		VIRTUAL void unload(void);
+
+		VIRTUAL bool isLoaded(void) const
+		    { return(m_id != 0); }
+
+		VIRTUAL const Math::Size2 & size(void) const
+		    { return(m_size); }
+
+	public: /* static */
+
+		static const Core::Type Type;
+	};
+	typedef Core::Shared<TextureData> SharedTextureData;
+	typedef Core::Weak<TextureData> WeakTextureData;
+
 }
 
-TextureAsset::~TextureAsset(void)
-{
-	unload();
 }
 
-void
-TextureAsset::load(const Core::String &f)
-{
-	INFO1("Texture loaded (not really).");
-	m_filename = f;
-}
+MARSHMALLOW_NAMESPACE_END
 
-void
-TextureAsset::unload(void)
-{
-	m_filename.clear();
-}
-
+#endif

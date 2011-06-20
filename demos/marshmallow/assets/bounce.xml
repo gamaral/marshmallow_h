@@ -8,7 +8,7 @@
                     <component id="custom" type="BounceComponent" />
                     <component id="render" type="Game::RenderComponent">
                         <mesh type="Graphics::QuadMesh" rotation="0">
-                            <texture file="demos/engine/assets/mallow.png" />
+                            <texture id="demos/engine/assets/mallow.png" />
                             <vector x="-3" y="3" />
                             <vector x="-3" y="-3" />
                             <vector x="3" y="3" />

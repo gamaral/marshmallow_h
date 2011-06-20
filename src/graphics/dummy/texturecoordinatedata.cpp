@@ -40,11 +40,14 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 using namespace Dummy;
 
+const Core::Type TextureCoordinateData::Type("Graphics::TextureCoordinateData");
+
 TextureCoordinateData::TextureCoordinateData(int c)
-    : m_data(new float[c * 2]), // TODO: replace with custom allocator
+#define AXES 2
+    : m_data(new float[c * AXES]), // TODO: replace with custom allocator
       m_count(c)
 {
-	memset(m_data, 0, m_count * 2);
+	memset(m_data, 0, m_count * AXES);
 }
 
 TextureCoordinateData::~TextureCoordinateData(void)
@@ -55,7 +58,7 @@ TextureCoordinateData::~TextureCoordinateData(void)
 bool
 TextureCoordinateData::get(int i, float &u, float &v) const
 {
-	const int l_offset = (i % m_count) * 2;
+	const int l_offset = (i % m_count) * AXES;
 	u = m_data[l_offset];
 	v = m_data[l_offset + 1];
 	return(true);
@@ -64,7 +67,7 @@ TextureCoordinateData::get(int i, float &u, float &v) const
 bool
 TextureCoordinateData::set(int i, float u, float v)
 {
-	const int l_offset = (i % m_count) * 2;
+	const int l_offset = (i % m_count) * AXES;
 	m_data[l_offset] = u;
 	m_data[l_offset + 1] = v;
 	return(true);

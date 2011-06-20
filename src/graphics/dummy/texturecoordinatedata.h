@@ -39,6 +39,8 @@
 
 #include "graphics/itexturecoordinatedata.h"
 
+#include "core/identifier.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
@@ -47,9 +49,10 @@ namespace Graphics
 namespace Dummy
 {
 
-	/*! @brief Graphics Dummy Mesh Data Class */
+	/*! @brief Graphics Dummy Texture Coordinate Data Class */
 	class GRAPHICS_EXPORT TextureCoordinateData : public ITextureCoordinateData
 	{
+		Core::Identifier m_id;
 		float *m_data;
 		int m_count;
 
@@ -57,12 +60,26 @@ namespace Dummy
 		TextureCoordinateData(int count);
 		virtual ~TextureCoordinateData(void);
 
+		const float * data(void) const
+		    { return(m_data); }
+
 	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
+
 		VIRTUAL bool get(int index, float &u, float &v) const;
 		VIRTUAL bool set(int index, float u, float v);
 
 		VIRTUAL int count(void) const
 		    { return(m_count); }
+
+	public: /* static */
+
+		static const Core::Type Type;
 	};
 	typedef Core::Shared<TextureCoordinateData> SharedTextureCoordinateData;
 	typedef Core::Weak<TextureCoordinateData> WeakTextureCoordinateData;

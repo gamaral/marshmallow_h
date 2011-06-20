@@ -39,6 +39,8 @@
 
 #include "graphics/ivertexdata.h"
 
+#include "core/identifier.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
@@ -50,6 +52,7 @@ namespace Dummy
 	/*! @brief Graphics Dummy Vertex Data Class */
 	class GRAPHICS_EXPORT VertexData : public IVertexData
 	{
+		Core::Identifier m_id;
 		float *m_data;
 		int m_count;
 
@@ -57,12 +60,26 @@ namespace Dummy
 		VertexData(int count);
 		virtual ~VertexData(void);
 
+		const float * data(void) const
+		    { return(m_data); }
+
 	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type); }
+
 		VIRTUAL bool get(int index, float &x, float &y) const;
 		VIRTUAL bool set(int index, float x, float y);
 
 		VIRTUAL int count(void) const
 		    { return(m_count); }
+
+	public: /* static */
+
+		static const Core::Type Type;
 	};
 	typedef Core::Shared<VertexData> SharedVertexData;
 	typedef Core::Weak<VertexData> WeakVertexData;

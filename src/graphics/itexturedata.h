@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/textureasset.h"
+#pragma once
 
 /*!
  * @file
@@ -34,71 +34,40 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <GL/gl.h>
-#include <GL/glpng.h>
+#ifndef GRAPHICS_ITEXTUREDATA_H
+#define GRAPHICS_ITEXTUREDATA_H 1
 
-#include <cstring>
+#include "core/iasset.h"
 
-#include "core/logger.h"
+#include "core/fd.h"
+#include "graphics/config.h"
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Graphics;
+MARSHMALLOW_NAMESPACE_BEGIN
 
-const Core::Type TextureAsset::Type("Graphics::TextureAsset");
-
-TextureAsset::TextureAsset(void)
-    : m_filename(),
-      m_id(),
-      m_size(),
-      m_texture_id(0)
+namespace Math
 {
+	class Size2;
 }
 
-TextureAsset::~TextureAsset(void)
+namespace Graphics
 {
-	unload();
+
+	/*! @brief Graphics Texture Data Interface */
+	struct GRAPHICS_EXPORT ITextureData : public Core::IAsset
+	{
+		virtual ~ITextureData(void) {};
+
+		virtual bool load(const Core::Identifier &id) = 0;
+		virtual void unload(void) = 0;
+		virtual bool isLoaded(void) const = 0;
+
+		virtual const Math::Size2 & size(void) const = 0;
+	};
+	typedef Core::Shared<ITextureData> SharedTextureData;
+	typedef Core::Weak<ITextureData> WeakTextureData;
+
 }
 
-void
-TextureAsset::load(const Core::String &f)
-{
-	if (m_texture_id) {
-		WARNING1("Load texture asset called on active texture.");
-		return;
-	}
+MARSHMALLOW_NAMESPACE_END
 
-	pngInfo pi;
-
-	glGenTextures(1, &m_texture_id);
-	glBindTexture(GL_TEXTURE_2D, m_texture_id);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-	if (!pngLoad(f.c_str(), PNG_BUILDMIPMAPS, PNG_ALPHA, &pi)) {
-		m_size = Math::Size2(0, 0);
-		INFO1("Failed to load texture.");
-		return;
-	}
-
-	m_id = Core::Identifier(f);
-	m_size = Math::Size2(static_cast<float>(pi.Width), static_cast<float>(pi.Height));
-	m_filename = f;
-	INFO1("Texture loaded.");
-}
-
-void
-TextureAsset::unload(void)
-{
-	if (m_texture_id)
-		glDeleteTextures(1, &m_texture_id);
-
-	m_id = Core::Identifier();
-	m_size = Math::Size2();
-	m_filename.clear();
-	m_texture_id = 0;
-}
-
+#endif

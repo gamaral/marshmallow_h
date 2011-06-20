@@ -37,9 +37,11 @@
 #include <GL/gl.h>
 
 #include "core/logger.h"
+#include "core/type.h"
 #include "math/point2.h"
 #include "graphics/opengl/extensions/vbo.h"
 #include "graphics/opengl/texturecoordinatedata.h"
+#include "graphics/opengl/texturedata.h"
 #include "graphics/opengl/vertexdata.h"
 #include "graphics/quadmesh.h"
 
@@ -49,6 +51,7 @@ using namespace OpenGL;
 
 struct Painter::Internal
 {
+	Core::Identifier last_texture_id;
 
 	void
 	drawQuadMesh(const QuadMesh &g)
@@ -113,7 +116,6 @@ Painter::Finalize(void)
 void
 Painter::Draw(const IMesh &g, const Math::Point2 &o)
 {
-	const bool  l_texture = (g.texture());
 	const float l_rotate_angle = g.rotation();
 
 	float l_scale[2];
@@ -131,8 +133,15 @@ Painter::Draw(const IMesh &g, const Math::Point2 &o)
 	glColor4f(l_color[0], l_color[1], l_color[2], l_color[3]);
 
 	/* set texture */
-	if (l_texture)
-		glBindTexture(GL_TEXTURE_2D, g.texture()->tid());
+	if (MGP.last_texture_id != g.textureData()->id()) {
+		MGP.last_texture_id = g.textureData()->id();
+		if (g.textureData()->isLoaded()) {
+			OpenGL::SharedTextureData l_data =
+				g.textureData()
+				    .staticCast<OpenGL::TextureData>();
+			glBindTexture(GL_TEXTURE_2D, l_data->textureId());
+		} else glBindTexture(GL_TEXTURE_2D, 0);
+	}
 
 	/* set rotation */
 	if (l_rotate_angle)
@@ -146,9 +155,6 @@ Painter::Draw(const IMesh &g, const Math::Point2 &o)
 	if (g.type() == QuadMesh::Type)
 		MGP.drawQuadMesh(static_cast<const QuadMesh &>(g));
 	else WARNING1("Unknown mesh type");
-
-	if (l_texture)
-		glBindTexture(GL_TEXTURE_2D, 0);
 
 	Blend(NoBlending);
 

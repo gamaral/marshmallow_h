@@ -36,6 +36,7 @@
 
 #include "core/shared.h"
 #include "graphics/dummy/texturecoordinatedata.h"
+#include "graphics/dummy/texturedata.h"
 #include "graphics/dummy/vertexdata.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -45,6 +46,12 @@ SharedTextureCoordinateData
 Factory::CreateTextureCoordinateData(int c)
 {
 	return(new Dummy::TextureCoordinateData(c));
+}
+
+SharedTextureData
+Factory::CreateTextureData(void)
+{
+	return(new Dummy::TextureData());
 }
 
 SharedVertexData

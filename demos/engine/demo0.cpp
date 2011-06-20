@@ -31,9 +31,9 @@
 #include "event/debugeventlistener.h"
 #include "event/eventbase.h"
 #include "event/eventmanager.h"
+#include "graphics/itexturedata.h"
 #include "graphics/painter.h"
 #include "graphics/quadmesh.h"
-#include "graphics/textureasset.h"
 #include "graphics/viewport.h"
 #include "game/enginebase.h"
 #include "game/entity.h"
@@ -101,14 +101,12 @@ public:
 class DemoScene : public Game::SceneBase
 {
 	bool m_init;
-	Graphics::SharedTextureAsset m_asset; // move to scene asset manager
 
 public:
 
 	DemoScene(void)
 	: SceneBase("DemoScene"),
-	  m_init(false),
-	  m_asset(new Graphics::TextureAsset)
+	  m_init(false)
 	  {}
 	
 	virtual ~DemoScene(void) {};
@@ -138,12 +136,11 @@ public:
 			DemoBounceComponent *l_bcomponent = new DemoBounceComponent(*l_entity);
 			l_entity->pushComponent(l_bcomponent);
 
-			m_asset->load("demos/engine/assets/mallow.png");
 			Math::Rect2 l_rect(Math::Size2(10, 10));
 			Game::RenderComponent *l_rcomponent =
 			    new Game::RenderComponent("render", *l_entity);
 			Graphics::SharedMeshBase l_mesh(new Graphics::QuadMesh(l_rect));
-			l_mesh->setTexture(m_asset);
+			l_mesh->textureData()->load("demos/engine/assets/mallow.png");
 			l_rcomponent->mesh() = l_mesh.staticCast<Graphics::IMesh>();
 			l_entity->pushComponent(l_rcomponent);
 

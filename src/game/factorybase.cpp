@@ -106,4 +106,3 @@ FactoryBase::createMesh(const Core::Type &t) const
 	return(Graphics::SharedMesh());
 }
 
-

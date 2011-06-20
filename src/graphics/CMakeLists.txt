@@ -17,8 +17,8 @@ if(OPENGL_FOUND)
 		opengl/extensions/vbo.cpp
 		opengl/factory.cpp
 		opengl/painter.cpp
-		opengl/textureasset.cpp
 		opengl/texturecoordinatedata.cpp
+		opengl/texturedata.cpp
 		opengl/vertexdata.cpp)
 
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
@@ -40,8 +40,8 @@ elseif(MARSHMALLOW_VIEWPORT_USE_DUMMY)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              dummy/factory.cpp
 	                              dummy/painter.cpp
-	                              dummy/textureasset.cpp
 	                              dummy/texturecoordinatedata.cpp
+	                              dummy/texturedata.cpp
 	                              dummy/vertexdata.cpp
 	                              dummy/viewport.cpp)
 endif()

@@ -40,11 +40,14 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 using namespace Dummy;
 
+const Core::Type VertexData::Type("Graphics::VertexData");
+
 VertexData::VertexData(int c)
-    : m_data(new float[c * 2]), // TODO: replace with custom allocator
+#define AXES 2
+    : m_data(new float[c * AXES]), // TODO: replace with custom allocator
       m_count(c)
 {
-	memset(m_data, 0, m_count * 2);
+	memset(m_data, 0, m_count * AXES);
 }
 
 VertexData::~VertexData(void)
@@ -55,7 +58,7 @@ VertexData::~VertexData(void)
 bool
 VertexData::get(int i, float &x, float &y) const
 {
-	const int l_offset = (i % m_count) * 2;
+	const int l_offset = (i % m_count) * AXES;
 	x = m_data[l_offset];
 	y = m_data[l_offset + 1];
 	return(true);
@@ -64,7 +67,7 @@ VertexData::get(int i, float &x, float &y) const
 bool
 VertexData::set(int i, float x, float y)
 {
-	const int l_offset = (i % m_count) * 2;
+	const int l_offset = (i % m_count) * AXES;
 	m_data[l_offset] = x;
 	m_data[l_offset + 1] = y;
 	return(true);

@@ -101,6 +101,9 @@ namespace Core
 
 		bool operator ==(const Shared &rhs) const
 		    { return(this == &rhs || m_data == rhs.m_data); }
+
+		bool operator !=(const Shared &rhs) const
+		    { return(this != &rhs && m_data != rhs.m_data); }
 	};
 
 	template <class T>
@@ -216,6 +219,9 @@ namespace Core
 
 		bool operator ==(const Weak &rhs) const
 		    { return(this == &rhs || m_data == rhs.m_data); }
+
+		bool operator !=(const Weak &rhs) const
+		    { return(this != &rhs && m_data != rhs.m_data); }
 	};
 
 	template <class T>
