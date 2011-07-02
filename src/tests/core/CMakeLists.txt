@@ -1,0 +1,6 @@
+add_executable(marshmallow_test_core_hash01 hash01.cpp)
+
+target_link_libraries(marshmallow_test_core_hash01 marshmallow_core)
+
+add_test(NAME marshmallow_test_core_hash01 COMMAND marshmallow_test_core_hash01)
+

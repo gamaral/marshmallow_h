@@ -13,4 +13,5 @@ add_subdirectory(math)
 add_subdirectory(event)
 add_subdirectory(graphics)
 add_subdirectory(game)
+add_subdirectory(tests)
 

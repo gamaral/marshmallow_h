@@ -26,7 +26,12 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include <cassert>
+#include <cstdio>
+
+#include "core/hash.h"
+#include "core/strhash.h"
+#include "../common.h"
 
 /*!
  * @file
@@ -34,72 +39,33 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_HASH_H
-#define CORE_HASH_H 1
+MARSHMALLOW_NAMESPACE_USE;
 
-#include "core/global.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
+void
+hash_compare_nullcompare(void)
 {
-
-	/*! @brief Hash Class */
-	class CORE_EXPORT Hash
-	{
-		UID   m_result;
-
-	public:
-
-		/*! @brief Hash Contructor */
-		Hash(void);
-
-		/*!
-		 * @brief Hash Contructor
-		 * @param d Data to hash
-		 * @param length Data length
-		 */
-		Hash(const char *d, size_t length, UID mask);
-
-		/*!
-		 * @brief Hash Copy Contructor
-		 * @param copy Hash
-		 */
-		Hash(const Hash &copy);
-		virtual ~Hash(void);
-
-		/*! @brief Datum */
-		UID result(void) const
-		    { return(m_result); }
-
-	public: /* operator */
-
-		operator UID() const
-		    { return(m_result); }
-
-		Marshmallow::Core::Hash & operator=(const Marshmallow::Core::Hash &rhs);
-
-		bool operator==(const Hash &rhs) const
-		    { return(m_result == rhs.m_result); }
-
-		bool operator!=(const Hash &rhs) const
-		    { return(m_result != rhs.m_result); }
-
-		bool operator<(const Hash &rhs) const
-		    { return(m_result < rhs.m_result); }
-
-	public: /* static */
-
-		/*! @brief One-at-a-Time Hash */
-		static UID Algorithm(const char *data, size_t length, UID mask);
-
-	protected:
-
-		void rehash(const char *d, size_t length, UID mask);
-	};
-
+	TEST("ZERO SAME AS NULL-HASH",
+	     0 == Core::Hash());
 }
 
-MARSHMALLOW_NAMESPACE_END
+void
+strhash_compare_test(void)
+{
+	TEST("STRHASH TEST SAME AS STRHASH TEST",
+	     Core::StrHash("test") == Core::StrHash("test"));
+	TEST("STRHASH TSET NOT SAME AS STRHASH TEST",
+	     Core::StrHash("tset") != Core::StrHash("test"));
+}
 
-#endif
+int
+main(int argc, char *argv[])
+{
+	UNUSED(argc);
+	UNUSED(argv);
+
+	hash_compare_nullcompare();
+	strhash_compare_test();
+
+	return(TEST_EXITCODE);
+}
+
