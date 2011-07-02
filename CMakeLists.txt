@@ -38,6 +38,7 @@ endif()
 ######################################################################## CMAKE #
 
 option(BUILD_SHARED_LIBS "Build a shared library" OFF)
+option(BUILD_UNIT_TESTS "Build unit tests" OFF)
 set(CMAKE_BUILD_TYPE_SHARED_LIBS ON)
 set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)

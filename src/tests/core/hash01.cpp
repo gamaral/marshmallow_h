@@ -26,9 +26,6 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include <cassert>
-#include <cstdio>
-
 #include "core/hash.h"
 #include "core/strhash.h"
 #include "../common.h"

@@ -1,3 +1,5 @@
+#include <cstdio>
+
 static const char * s_test_format = "[%s] : %s \"%s\"\n";
 static const char * s_str_passed  = "PASS";
 static const char * s_str_failed  = "FAIL";
