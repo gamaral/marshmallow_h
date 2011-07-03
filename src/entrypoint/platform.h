@@ -34,65 +34,14 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_PLATFORM_H
-#define CORE_PLATFORM_H 1
+#ifndef ENTRYPOINT_PLATFORM_H
+#define ENTRYPOINT_PLATFORM_H 1
 
-#include "core/string.h"
+#include <core/global.h>
 
-#define NOW Core::Platform::TimeStamp
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
-{
-	/*! @brief Platform specific class */
-	struct CORE_EXPORT Platform
-	{
-		/*! @brief Platform internal structure */
-		struct Internal;
-
-		/*!
-		 * @brief Platform specific initialization
-		 */
-		static void Initialize(void);
-
-		/*!
-		 * @brief Platform specific finalization
-		 */
-		static void Finalize(void);
-
-		/****************************************************** time */
-
-		/*!
-		 * @brief Sleep in milliseconds
-		 */
-		static void Sleep(TIME timeout);
-
-		/*!
-		 * @brief Start system time
-		 */
-		static time_t StartTime(void);
-
-		/*!
-		 * @brief Milliseconds since StartTime()
-		 */
-		static TIME TimeStamp(void);
-
-		/*!
-		 * @brief Reinterpret an internal timestamp
-		 * @return Internal timestamp in system timestamp and string
-		 *         formats.
-		 */
-		static TimeData TimeStampToTimeData(TIME timestamp);
-
-		/*************************************************** location */
-
-		static String TemporaryDirectory(void);
-
-	};
-
-}
-
-MARSHMALLOW_NAMESPACE_END
+/*!
+ * @brief Marshmallow Entrypoint
+ */
+int ENTRYPOINT_EXPORT MMain(int argc, char *argv[]);
 
 #endif

@@ -123,11 +123,3 @@ Platform::TemporaryDirectory(void)
 	return("/tmp/");
 }
 
-/**************************************************************** ENTRY POINT */
-
-int
-main(int argc, const char *argv[])
-{
-	return(Main(argc, argv));
-}
-

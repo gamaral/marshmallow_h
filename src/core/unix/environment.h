@@ -69,6 +69,7 @@
 /******************************************************************** unused */
 
 #define CORE_EXPORT
+#define ENTRYPOINT_EXPORT
 #define MATH_EXPORT
 #define EVENT_EXPORT
 #define GRAPHICS_EXPORT

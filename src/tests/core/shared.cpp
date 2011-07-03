@@ -70,10 +70,8 @@ weak_basic_test(void)
 	     !valid);
 }
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
 int
-Main(int argc, const char *argv[])
+MMain(int argc, char *argv[])
 {
 	UNUSED(argc);
 	UNUSED(argv);
@@ -83,6 +81,4 @@ Main(int argc, const char *argv[])
 
 	return(TEST_EXITCODE);
 }
-
-MARSHMALLOW_NAMESPACE_END
 

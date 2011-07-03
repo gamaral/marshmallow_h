@@ -70,6 +70,12 @@
 #   define CORE_EXPORT
 #endif
 
+#ifdef ENTRYPOINT_LIBRARY
+#   define ENTRYPOINT_EXPORT DLL_EXPORT
+#else
+#   define ENTRYPOINT_EXPORT
+#endif
+
 #ifdef MATH_LIBRARY
 #   define MATH_EXPORT DLL_EXPORT
 #else

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Platform.
  */
 
-#pragma once
+#include "entrypoint/platform.h"
 
 /*!
  * @file
@@ -34,65 +34,24 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_PLATFORM_H
-#define CORE_PLATFORM_H 1
+#include <windows.h>
 
-#include "core/string.h"
-
-#define NOW Core::Platform::TimeStamp
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
+#ifdef NDEBUG
+int
+WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	/*! @brief Platform specific class */
-	struct CORE_EXPORT Platform
-	{
-		/*! @brief Platform internal structure */
-		struct Internal;
-
-		/*!
-		 * @brief Platform specific initialization
-		 */
-		static void Initialize(void);
-
-		/*!
-		 * @brief Platform specific finalization
-		 */
-		static void Finalize(void);
-
-		/****************************************************** time */
-
-		/*!
-		 * @brief Sleep in milliseconds
-		 */
-		static void Sleep(TIME timeout);
-
-		/*!
-		 * @brief Start system time
-		 */
-		static time_t StartTime(void);
-
-		/*!
-		 * @brief Milliseconds since StartTime()
-		 */
-		static TIME TimeStamp(void);
-
-		/*!
-		 * @brief Reinterpret an internal timestamp
-		 * @return Internal timestamp in system timestamp and string
-		 *         formats.
-		 */
-		static TimeData TimeStampToTimeData(TIME timestamp);
-
-		/*************************************************** location */
-
-		static String TemporaryDirectory(void);
-
-	};
-
+	int l_exitcode;
+	int l_argc;
+	LPWSTR *l_argv = CommandLineToArgvW(GetCommandLineW(), &l_argc);
+	l_exitcode = MMain(l_argc, l_argv);
+	LocalFree(l_argv);
+	return(l_exitcode);
 }
-
-MARSHMALLOW_NAMESPACE_END
-
+#else
+int
+main(int argc, char *argv[])
+{
+	return(MMain(argc, argv));
+}
 #endif
+

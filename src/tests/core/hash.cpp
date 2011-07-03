@@ -56,10 +56,8 @@ strhash_compare_test(void)
 	     Core::StrHash("tset") != Core::StrHash("test"));
 }
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
 int
-Main(int argc, const char *argv[])
+MMain(int argc, char *argv[])
 {
 	UNUSED(argc);
 	UNUSED(argv);
@@ -69,6 +67,4 @@ Main(int argc, const char *argv[])
 
 	return(TEST_EXITCODE);
 }
-
-MARSHMALLOW_NAMESPACE_END
 

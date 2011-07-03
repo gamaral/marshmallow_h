@@ -191,13 +191,9 @@ public:
 	}
 };
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
 int
-Main(int argc, const char *argv[])
+MMain(int argc, char *argv[])
 {
 	return(Demo().run());
 }
-
-MARSHMALLOW_NAMESPACE_END
 

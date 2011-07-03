@@ -1,0 +1,14 @@
+add_definitions(-DENTRYPOINT_LIBRARY)
+
+file(GLOB MARSHMALLOW_ENTRYPOINT_SRCS *.cpp)
+
+if(UNIX)
+	set(MARSHMALLOW_ENTRYPOINT_SRCS ${MARSHMALLOW_ENTRYPOINT_SRCS} unix/platform.cpp)
+else(WIN32)
+	set(MARSHMALLOW_ENTRYPOINT_SRCS ${MARSHMALLOW_ENTRYPOINT_SRCS} win32/platform.cpp)
+endif()
+
+add_library(marshmallow_entrypoint STATIC
+	${MARSHMALLOW_ENTRYPOINT_SRCS}
+)
+

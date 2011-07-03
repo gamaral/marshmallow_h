@@ -9,6 +9,7 @@ include_directories(${PROJECT_BINARY_DIR}/src
                     ${EASTL_INCLUDE_DIR})
 
 add_subdirectory(core)
+add_subdirectory(entrypoint)
 add_subdirectory(math)
 add_subdirectory(event)
 add_subdirectory(graphics)
