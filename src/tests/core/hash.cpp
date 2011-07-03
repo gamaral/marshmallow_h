@@ -39,10 +39,12 @@
 MARSHMALLOW_NAMESPACE_USE;
 
 void
-hash_compare_nullcompare(void)
+hash_compare_test(void)
 {
 	TEST("ZERO SAME AS NULL-HASH",
 	     0 == Core::Hash());
+	TEST("ZERO NOT SAME AS TEST HASH",
+	     0 != Core::Hash("test", 4, ~static_cast<UID>(0)));
 }
 
 void
@@ -60,7 +62,7 @@ main(int argc, char *argv[])
 	UNUSED(argc);
 	UNUSED(argv);
 
-	hash_compare_nullcompare();
+	hash_compare_test();
 	strhash_compare_test();
 
 	return(TEST_EXITCODE);

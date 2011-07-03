@@ -26,7 +26,8 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include <cstdio>
+#include "core/shared.h"
+#include "../common.h"
 
 /*!
  * @file
@@ -34,11 +35,50 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-static const char * s_test_format = "[%s] : %s \"%s\"\n";
-static const char * s_str_passed  = "PASS";
-static const char * s_str_failed  = "FAIL";
-static bool s_passed = true;
+MARSHMALLOW_NAMESPACE_USE;
 
-#define TEST(x, y) fprintf(stderr, s_test_format, y ? s_str_passed : s_str_failed, __FUNCTION__, x); s_passed &= (y)
-#define TEST_EXITCODE s_passed ? 0 : -1
+void
+shared_basic_test(void)
+{
+	TEST("TEST INVALID SHARED POINTER",
+	     !Core::Shared<int>());
+
+	Core::Shared<int> valid(new int);
+	TEST("TEST VALID SHARED POINTER",
+	     valid);
+
+	/* clear valid shared pointer */
+	valid.clear();
+	TEST("TEST INVALIDATED SHARED POINTER",
+	     !valid);
+}
+
+void
+weak_basic_test(void)
+{
+	TEST("TEST INVALID WEAK POINTER",
+	     !Core::Weak<int>());
+
+	Core::Shared<int> svalid(new int);
+	Core::Weak<int> valid(svalid);
+	TEST("TEST VALID WEAK POINTER",
+	     valid);
+
+	/* clear valid weak pointer */
+	valid.clear();
+	TEST("TEST INVALIDATED WEAK POINTER",
+	     !valid);
+}
+
+int
+main(int argc, char *argv[])
+{
+	UNUSED(argc);
+	UNUSED(argv);
+
+	shared_basic_test();
+	weak_basic_test();
+
+	return(TEST_EXITCODE);
+}
 

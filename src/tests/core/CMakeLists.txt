@@ -1,6 +1,9 @@
-add_executable(marshmallow_test_core_hash01 hash01.cpp)
+add_executable(marshmallow_test_core_hash hash.cpp)
+add_executable(marshmallow_test_core_shared shared.cpp)
 
-target_link_libraries(marshmallow_test_core_hash01 marshmallow_core)
+target_link_libraries(marshmallow_test_core_hash marshmallow_core)
+target_link_libraries(marshmallow_test_core_shared marshmallow_core)
 
-add_test(NAME marshmallow_test_core_hash01 COMMAND marshmallow_test_core_hash01)
+add_test(NAME marshmallow_test_core_hash   COMMAND marshmallow_test_core_hash)
+add_test(NAME marshmallow_test_core_shared COMMAND marshmallow_test_core_shared)
 
