@@ -39,7 +39,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const Core::Type Viewport::Type("DUMMY");
+const Core::Type Viewport::sType("DUMMY");
 
 struct Viewport::Internal
 {
@@ -116,6 +116,12 @@ Viewport::MapToWorld(int x)
 int
 Viewport::MapFromWorld(float x)
 {
-	return(static_cast<int>(trunc(x)));
+	return(static_cast<int>(floor(x)));
+}
+
+const Core::Type &
+Viewport::Type(void)
+{
+	return(sType);
 }
 

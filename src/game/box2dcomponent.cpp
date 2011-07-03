@@ -46,7 +46,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type Box2DComponent::Type("Game::Box2DComponent");
+const Core::Type Box2DComponent::sType("Game::Box2DComponent");
 
 Box2DComponent::Box2DComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e),
@@ -184,5 +184,11 @@ Box2DComponent::deserialize(TinyXML::TiXmlElement &n)
 	n.QueryFloatAttribute("friction", &m_friction);
 
 	return(true);
+}
+
+const Core::Type &
+Box2DComponent::Type(void)
+{
+	return(sType);
 }
 

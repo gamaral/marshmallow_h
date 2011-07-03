@@ -74,8 +74,8 @@ operator delete[](void *ptr)
 }
 
 void *
-operator new[](size_t size, const char* pName, int flags, unsigned debugFlags,
-    const char* file, int line)
+operator new[](size_t size, const char *pName, int flags, unsigned debugFlags,
+    const char *file, int line)
 {
 	/* TODO: Replace with custom allocator */
 	UNUSED(pName);
@@ -88,7 +88,7 @@ operator new[](size_t size, const char* pName, int flags, unsigned debugFlags,
 
 void *
 operator new[](size_t size, size_t alignment, size_t alignmentOffset, const
-    char* pName, int flags, unsigned debugFlags, const char* file, int line)
+    char *pName, int flags, unsigned debugFlags, const char *file, int line)
 {
 	/* TODO: Replace with custom allocator */
 	UNUSED(alignment);
@@ -102,7 +102,7 @@ operator new[](size_t size, size_t alignment, size_t alignmentOffset, const
 }
 
 int
-Vsnprintf8(char8_t*  pDestination, size_t n, const char8_t*  pFormat, va_list arguments)
+Vsnprintf8(char8_t *pDestination, size_t n, const char8_t *pFormat, va_list arguments)
 {
 	return(vsnprintf(pDestination, n, pFormat, arguments));
 }

@@ -38,7 +38,7 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Event;
 
-const Type UpdateEvent::Type("Event::UpdateEvent");
+const Type UpdateEvent::sType("Event::UpdateEvent");
 
 UpdateEvent::UpdateEvent(TIME d)
     : EventBase(0, HighestPriority),
@@ -48,5 +48,11 @@ UpdateEvent::UpdateEvent(TIME d)
 
 UpdateEvent::~UpdateEvent(void)
 {
+}
+
+const Core::Type &
+UpdateEvent::Type(void)
+{
+	return(sType);
 }
 

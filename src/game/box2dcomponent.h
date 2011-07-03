@@ -94,7 +94,7 @@ namespace Game
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
+		    { return(Type()); }
 
 		VIRTUAL void update(TIME delta);
 
@@ -103,7 +103,11 @@ namespace Game
 
 	public: /* static */
 
-		static const Core::Type Type;
+		static const Core::Type & Type(void);
+
+	private: /* static */
+
+		static const Core::Type sType;
 	};
 	typedef Core::Shared<Box2DComponent> SharedBox2DComponent;
 	typedef Core::Weak<Box2DComponent> WeakBox2DComponent;

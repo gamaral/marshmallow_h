@@ -30,5 +30,5 @@ file(GLOB MARSHMALLOW_TINYXML_SRCS src/*)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_library(marshmallow_tinyxml ${MARSHMALLOW_TINYXML_SRCS})
+add_library(marshmallow_tinyxml STATIC ${MARSHMALLOW_TINYXML_SRCS})
 

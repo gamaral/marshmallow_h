@@ -41,7 +41,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type EntitySceneLayer::Type("Game::EntitySceneLayer");
+const Core::Type EntitySceneLayer::sType("Game::EntitySceneLayer");
 
 EntitySceneLayer::EntitySceneLayer(const Core::Identifier &i, IScene &s, int f)
     : SceneLayerBase(i, s, f),
@@ -168,5 +168,11 @@ EntitySceneLayer::deserialize(TinyXML::TiXmlElement &n)
 	}
 	
 	return(true);
+}
+
+const Core::Type &
+EntitySceneLayer::Type(void)
+{
+	return(sType);
 }
 

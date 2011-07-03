@@ -51,17 +51,15 @@ endif()
 
 ###################################################################### CONTRIB #
 
-set(EASTL_LIBRARIES marshmallow_eastl CACHE INTERNAL "")
-set(EASTL_INCLUDE_DIR
-    "${PROJECT_SOURCE_DIR}/contrib/eastl/include" CACHE INTERNAL "")
+set(EASTL_LIBRARIES "" CACHE INTERNAL "")
+set(EASTL_INCLUDE_DIR "" CACHE INTERNAL "")
+set(EASTL_DEFENITIONS "" CACHE INTERNAL "")
 
-set(TINYXML_LIBRARIES marshmallow_tinyxml CACHE INTERNAL "")
-set(TINYXML_INCLUDE_DIR
-    "${PROJECT_SOURCE_DIR}/contrib/tinyxml/include" CACHE INTERNAL "")
+set(TINYXML_LIBRARIES "" CACHE INTERNAL "")
+set(TINYXML_INCLUDE_DIR "" CACHE INTERNAL "")
 
-set(GLPNG_LIBRARIES marshmallow_glpng CACHE INTERNAL "")
-set(GLPNG_INCLUDE_DIR
-    "${PROJECT_SOURCE_DIR}/contrib/glpng/include" CACHE INTERNAL "")
+set(GLPNG_LIBRARIES "" CACHE INTERNAL "")
+set(GLPNG_INCLUDE_DIR "" CACHE INTERNAL "")
 
 ############################################################### GLOBAL OPTIONS #
 
@@ -144,4 +142,3 @@ endif()
 add_subdirectory(contrib)
 add_subdirectory(src)
 add_subdirectory(demos)
-

@@ -97,8 +97,7 @@ namespace Event
 
 	public: /* static */
 
-		static EventManager *Instance(void)
-		    { return(s_instance); }
+		static EventManager *Instance(void);
 
 	};
 	typedef Core::Shared<EventManager> SharedEventManager;

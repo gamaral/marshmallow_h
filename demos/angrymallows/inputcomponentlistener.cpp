@@ -50,7 +50,7 @@ InputComponentListener::~InputComponentListener(void)
 bool
 InputComponentListener::handleEvent(const Event::IEvent &e)
 {
-	if (e.type() != Event::KeyboardEvent::Type)
+	if (e.type() != Event::KeyboardEvent::Type())
 		return(false);
 
 	const Event::KeyboardEvent &l_kevent =

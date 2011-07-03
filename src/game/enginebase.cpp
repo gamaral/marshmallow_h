@@ -314,3 +314,8 @@ EngineBase::deserialize(TinyXML::TiXmlElement &n)
 	return(true);
 }
 
+EngineBase *
+EngineBase::Instance(void)
+{
+	return(s_instance);
+}

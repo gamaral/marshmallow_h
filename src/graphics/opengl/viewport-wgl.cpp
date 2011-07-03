@@ -47,7 +47,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
-const Core::Type Viewport::Type("WGL");
+const Core::Type Viewport::sType("WGL");
 
 struct Viewport::Internal
 {
@@ -402,5 +402,11 @@ int
 Viewport::MapFromWorld(float x)
 {
 	return(static_cast<int>(floor(static_cast<float>(x) * MVI.vscale)));
+}
+
+const Core::Type &
+Viewport::Type(void)
+{
+	return(sType);
 }
 

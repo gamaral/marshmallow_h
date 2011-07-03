@@ -67,7 +67,7 @@ namespace Game
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
+		    { return(Type()); }
 
 		VIRTUAL void update(TIME d);
 
@@ -76,7 +76,11 @@ namespace Game
 
 	public: /* static */
 
-		static const Core::Type Type;
+		static const Core::Type & Type(void);
+
+	private: /* static */
+
+		static const Core::Type sType;
 	};
 	typedef Core::Shared<MovementComponent> SharedMovementComponent;
 	typedef Core::Weak<MovementComponent> WeakMovementComponent;

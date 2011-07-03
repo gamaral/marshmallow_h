@@ -40,7 +40,7 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Event;
 
-const Type QuitEvent::Type("Event::QuitEvent");
+const Type QuitEvent::sType("Event::QuitEvent");
 
 QuitEvent::QuitEvent(int c, TIME t)
     : EventBase(t, HighPriority),
@@ -50,5 +50,11 @@ QuitEvent::QuitEvent(int c, TIME t)
 
 QuitEvent::~QuitEvent(void)
 {
+}
+
+const Core::Type &
+QuitEvent::Type(void)
+{
+	return(sType);
 }
 

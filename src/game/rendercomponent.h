@@ -72,7 +72,7 @@ namespace Game
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
+		    { return(Type()); }
 
 		VIRTUAL void render(void);
 		VIRTUAL void update(TIME d);
@@ -82,7 +82,11 @@ namespace Game
 
 	public: /* static */
 
-		static const Core::Type Type;
+		static const Core::Type & Type(void);
+
+	private: /* static */
+
+		static const Core::Type sType;
 	};
 	typedef Core::Shared<RenderComponent> SharedRenderComponent;
 	typedef Core::Weak<RenderComponent> WeakRenderComponent;

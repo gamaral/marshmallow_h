@@ -26,8 +26,8 @@
 # or implied, of Marshmallow Engine.
 #
 
+# PNG
 find_package(PNG)
-
 add_definitions(${PNG_DEFINITIONS})
 
 include_directories(${PNG_INCLUDE_DIR}

@@ -65,7 +65,7 @@ SharedScene
 FactoryBase::createScene(const Core::Type &t,
     const Core::Identifier &i) const
 {
-	if (t == Scene::Type) return(new Scene(i));
+	if (t == Scene::Type()) return(new Scene(i));
 	return(SharedScene());
 }
 
@@ -73,10 +73,10 @@ SharedSceneLayer
 FactoryBase::createSceneLayer(const Core::Type &t,
     const Core::Identifier &i, IScene &s) const
 {
-	if (t == Box2DSceneLayer::Type) return(new Box2DSceneLayer(i, s));
-	else if (t == EntitySceneLayer::Type) return(new EntitySceneLayer(i, s));
-	else if (t == PauseSceneLayer::Type) return(new PauseSceneLayer(i, s));
-	else if (t == SplashSceneLayer::Type) return(new SplashSceneLayer(i, s));
+	if (t == Box2DSceneLayer::Type()) return(new Box2DSceneLayer(i, s));
+	else if (t == EntitySceneLayer::Type()) return(new EntitySceneLayer(i, s));
+	else if (t == PauseSceneLayer::Type()) return(new PauseSceneLayer(i, s));
+	else if (t == SplashSceneLayer::Type()) return(new SplashSceneLayer(i, s));
 	return(SharedSceneLayer());
 }
 
@@ -84,7 +84,7 @@ SharedEntity
 FactoryBase::createEntity(const Core::Type &t,
     const Core::Identifier &i, EntitySceneLayer &l) const
 {
-	if (t == Entity::Type) return(new Entity(i, l));
+	if (t == Entity::Type()) return(new Entity(i, l));
 	return(SharedEntity());
 }
 
@@ -92,17 +92,17 @@ SharedComponent
 FactoryBase::createComponent(const Core::Type &t,
     const Core::Identifier &i, IEntity &e) const
 {
-	if (t == Box2DComponent::Type) return(new Box2DComponent(i, e));
-	else if (t == MovementComponent::Type) return(new MovementComponent(i, e));
-	else if (t == RenderComponent::Type) return(new RenderComponent(i, e));
-	else if (t == PositionComponent::Type) return(new PositionComponent(i, e));
+	if (t == Box2DComponent::Type()) return(new Box2DComponent(i, e));
+	else if (t == MovementComponent::Type()) return(new MovementComponent(i, e));
+	else if (t == RenderComponent::Type()) return(new RenderComponent(i, e));
+	else if (t == PositionComponent::Type()) return(new PositionComponent(i, e));
 	return(SharedComponent());
 }
 
 Graphics::SharedMesh
 FactoryBase::createMesh(const Core::Type &t) const
 {
-	if (t == Graphics::QuadMesh::Type) return(new Graphics::QuadMesh);
+	if (t == Graphics::QuadMesh::Type()) return(new Graphics::QuadMesh);
 	return(Graphics::SharedMesh());
 }
 

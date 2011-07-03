@@ -12,7 +12,7 @@ set(BOX2D_General_HDRS
 
 include_directories( ../ )
 
-add_library(marshmallow_box2d
+add_library(marshmallow_box2d STATIC
 	${BOX2D_Joints_SRCS}
 	${BOX2D_Contacts_SRCS}
 	${BOX2D_Dynamics_SRCS}

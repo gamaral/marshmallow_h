@@ -57,12 +57,15 @@ namespace Game
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
+		    { return(Type()); }
 
 	public: /* static */
 
-		static const Core::Type Type;
+		static const Core::Type & Type(void);
 
+	private: /* static */
+
+		static const Core::Type sType;
 	};
 
 }

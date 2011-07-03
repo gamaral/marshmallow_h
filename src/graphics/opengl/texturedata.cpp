@@ -44,7 +44,7 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 using namespace OpenGL;
 
-const Core::Type TextureData::Type("Graphics::TextureData");
+const Core::Type TextureData::sType("Graphics::TextureData");
 
 TextureData::TextureData(void)
     : m_id(),
@@ -99,5 +99,11 @@ TextureData::unload(void)
 
 	m_size = Math::Size2();
 	m_texture_id = 0;
+}
+
+const Core::Type &
+TextureData::Type(void)
+{
+	return(sType);
 }
 

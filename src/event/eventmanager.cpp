@@ -194,6 +194,12 @@ EventManager::execute(TIME timeout)
 	return(false);
 }
 
+EventManager *
+EventManager::Instance(void)
+{
+	return(s_instance);
+}
+
 /******************************************************************** helpers */
 
 bool
@@ -201,4 +207,3 @@ SortSharedEvent(const SharedEvent& lhs, const SharedEvent& rhs) {
 	return(lhs->priority() > rhs->priority() ||
 	    lhs->timeStamp() < rhs->timeStamp());
 }
-

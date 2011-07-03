@@ -38,7 +38,7 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Event;
 
-const Type RenderEvent::Type("Event::RenderEvent");
+const Type RenderEvent::sType("Event::RenderEvent");
 
 RenderEvent::RenderEvent(void)
     : EventBase(0, HighestPriority)
@@ -47,5 +47,11 @@ RenderEvent::RenderEvent(void)
 
 RenderEvent::~RenderEvent(void)
 {
+}
+
+const Core::Type &
+RenderEvent::Type(void)
+{
+	return(sType);
 }
 

@@ -40,7 +40,7 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 using namespace Dummy;
 
-const Core::Type TextureCoordinateData::Type("Graphics::TextureCoordinateData");
+const Core::Type TextureCoordinateData::sType("Graphics::TextureCoordinateData");
 
 TextureCoordinateData::TextureCoordinateData(int c)
 #define AXES 2
@@ -71,5 +71,11 @@ TextureCoordinateData::set(int i, float u, float v)
 	m_data[l_offset] = u;
 	m_data[l_offset + 1] = v;
 	return(true);
+}
+
+const Core::Type &
+TextureCoordinateData::Type(void)
+{
+	return(sType);
 }
 

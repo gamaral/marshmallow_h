@@ -6,9 +6,15 @@ file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp)
 
 set(MARSHMALLOW_GRAPHICS_LIBS
 	marshmallow_core
-	marshmallow_eastl
 	marshmallow_event
 	marshmallow_math)
+
+# TINYXML
+set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS} ${TINYXML_LIBRARIES})
+
+# EASTL
+add_definitions(${EASTL_DEFINITIONS})
+set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS} ${EASTL_LIBRARIES})
 
 if(OPENGL_FOUND)
 	include_directories(${GLPNG_INCLUDE_DIR})
@@ -51,4 +57,3 @@ add_library(marshmallow_graphics
 )
 
 target_link_libraries(marshmallow_graphics ${MARSHMALLOW_GRAPHICS_LIBS})
-

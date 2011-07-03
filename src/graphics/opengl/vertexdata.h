@@ -83,7 +83,7 @@ namespace OpenGL
 		    { return(m_id); }
 
 		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
+		    { return(Type()); }
 
 		VIRTUAL bool get(int index, float &x, float &y) const;
 		VIRTUAL bool set(int index, float x, float y);
@@ -93,7 +93,11 @@ namespace OpenGL
 
 	public: /* static */
 
-		static const Core::Type Type;
+		static const Core::Type & Type(void);
+
+	private: /* static */
+
+		static const Core::Type sType;
 	};
 	typedef Core::Shared<VertexData> SharedVertexData;
 	typedef Core::Weak<VertexData> WeakVertexData;

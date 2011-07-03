@@ -62,14 +62,18 @@ namespace Game
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
+		    { return(Type()); }
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
 	public: /* static */
 
-		static const Core::Type Type;
+		static const Core::Type & Type(void);
+
+	private: /* static */
+
+		static const Core::Type sType;
 	};
 	typedef Core::Shared<PositionComponent> SharedPositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;

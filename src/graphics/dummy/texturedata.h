@@ -70,7 +70,7 @@ namespace Dummy
 		    { return(m_id); }
 
 		VIRTUAL const Core::Type & type(void) const
-		    { return(Type); }
+		    { return(Type()); }
 
 		VIRTUAL bool load(const Core::Identifier &id);
 		VIRTUAL void unload(void);
@@ -83,7 +83,11 @@ namespace Dummy
 
 	public: /* static */
 
-		static const Core::Type Type;
+		static const Core::Type & Type(void);
+
+	private: /* static */
+
+		static const Core::Type sType;
 	};
 	typedef Core::Shared<TextureData> SharedTextureData;
 	typedef Core::Weak<TextureData> WeakTextureData;

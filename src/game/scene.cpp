@@ -37,7 +37,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type Scene::Type("Game::Scene");
+const Core::Type Scene::sType("Game::Scene");
 
 Scene::Scene(const Core::Identifier &i)
     : SceneBase(i)
@@ -46,5 +46,11 @@ Scene::Scene(const Core::Identifier &i)
 
 Scene::~Scene(void)
 {
+}
+
+const Core::Type &
+Scene::Type(void)
+{
+	return(sType);
 }
 

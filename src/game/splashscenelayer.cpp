@@ -45,7 +45,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type SplashSceneLayer::Type("Game::SplashSceneLayer");
+const Core::Type SplashSceneLayer::sType("Game::SplashSceneLayer");
 
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock),
@@ -199,5 +199,11 @@ SplashSceneLayer::deserialize(TinyXML::TiXmlElement &n)
 	m_mesh->deserialize(*l_child);
 
 	return(true);
+}
+
+const Core::Type &
+SplashSceneLayer::Type(void)
+{
+	return(sType);
 }
 

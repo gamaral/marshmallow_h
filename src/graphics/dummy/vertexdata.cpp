@@ -40,7 +40,7 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 using namespace Dummy;
 
-const Core::Type VertexData::Type("Graphics::VertexData");
+const Core::Type VertexData::sType("Graphics::VertexData");
 
 VertexData::VertexData(int c)
 #define AXES 2
@@ -71,5 +71,11 @@ VertexData::set(int i, float x, float y)
 	m_data[l_offset] = x;
 	m_data[l_offset + 1] = y;
 	return(true);
+}
+
+const Core::Type &
+VertexData::Type(void)
+{
+	return(sType);
 }
 

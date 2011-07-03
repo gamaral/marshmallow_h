@@ -152,7 +152,7 @@ Painter::Draw(const IMesh &g, const Math::Point2 &o)
 		glScalef(l_scale[0], l_scale[1], 1);
 
 	/* actually draw graphic */
-	if (g.type() == QuadMesh::Type)
+	if (g.type() == QuadMesh::Type())
 		MGP.drawQuadMesh(static_cast<const QuadMesh &>(g));
 	else WARNING1("Unknown mesh type");
 

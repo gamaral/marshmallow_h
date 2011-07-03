@@ -44,7 +44,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type RenderComponent::Type("Game::RenderComponent");
+const Core::Type RenderComponent::sType("Game::RenderComponent");
 
 RenderComponent::RenderComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e),
@@ -120,5 +120,11 @@ RenderComponent::deserialize(TinyXML::TiXmlElement &n)
 	m_mesh = l_mesh;
 
 	return(true);
+}
+
+const Core::Type &
+RenderComponent::Type(void)
+{
+	return(sType);
 }
 

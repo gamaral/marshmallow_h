@@ -66,7 +66,7 @@ Demo::initialize(void)
 		return(false);
 
 	m_listener = new GameListener(*this);
-	Game::EngineBase::Instance()->eventManager()->connect(m_listener, Event::KeyboardEvent::Type);
+	Game::EngineBase::Instance()->eventManager()->connect(m_listener, Event::KeyboardEvent::Type());
 
 	{	/* derialization test */
 		TinyXML::TiXmlDocument l_document;

@@ -56,7 +56,7 @@ InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
       m_left(false),
       m_right(false)
 {
-	Game::EngineBase::Instance()->eventManager()->connect(m_listener, Event::KeyboardEvent::Type);
+	Game::EngineBase::Instance()->eventManager()->connect(m_listener, Event::KeyboardEvent::Type());
 }
 
 InputComponent::~InputComponent(void)

@@ -153,8 +153,7 @@ namespace Game
 
 	public: /* static */
 
-		static EngineBase * Instance(void)
-		    { return(s_instance); }
+		static EngineBase * Instance(void);
 	};
 
 }

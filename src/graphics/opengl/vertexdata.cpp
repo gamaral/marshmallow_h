@@ -42,7 +42,7 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 using namespace OpenGL;
 
-const Core::Type VertexData::Type("Graphics::VertexData");
+const Core::Type VertexData::sType("Graphics::VertexData");
 
 VertexData::VertexData(int c)
 #define AXES 2
@@ -106,5 +106,11 @@ VertexData::set(int i, float x, float y)
 	}
 
 	return(true);
+}
+
+const Core::Type &
+VertexData::Type(void)
+{
+	return(sType);
 }
 

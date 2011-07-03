@@ -43,7 +43,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type PauseSceneLayer::Type("Game::PauseSceneLayer");
+const Core::Type PauseSceneLayer::sType("Game::PauseSceneLayer");
 
 PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock)
@@ -71,5 +71,11 @@ PauseSceneLayer::render(void)
 	}
 
 	Graphics::Painter::Draw(*m_mesh, Math::Point2(0,0));
+}
+
+const Core::Type &
+PauseSceneLayer::Type(void)
+{
+	return(sType);
 }
 

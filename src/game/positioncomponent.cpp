@@ -37,7 +37,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type PositionComponent::Type("Game::PositionComponent");
+const Core::Type PositionComponent::sType("Game::PositionComponent");
 
 PositionComponent::PositionComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e),
@@ -69,5 +69,11 @@ PositionComponent::deserialize(TinyXML::TiXmlElement &n)
 	n.QueryFloatAttribute("x", &m_position.rx());
 	n.QueryFloatAttribute("y", &m_position.ry());
 	return(true);
+}
+
+const Core::Type &
+PositionComponent::Type(void)
+{
+	return(sType);
 }
 

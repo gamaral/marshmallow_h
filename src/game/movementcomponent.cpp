@@ -40,7 +40,7 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
 
-const Core::Type MovementComponent::Type("Game::MovementComponent");
+const Core::Type MovementComponent::sType("Game::MovementComponent");
 
 MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e),
@@ -87,5 +87,11 @@ MovementComponent::deserialize(TinyXML::TiXmlElement &n)
 	n.QueryFloatAttribute("x", &m_direction.rx());
 	n.QueryFloatAttribute("y", &m_direction.ry());
 	return(true);
+}
+
+const Core::Type &
+MovementComponent::Type(void)
+{
+	return(sType);
 }
 

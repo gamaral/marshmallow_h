@@ -53,7 +53,7 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 using namespace OpenGL;
 
-const Core::Type Viewport::Type("GLX");
+const Core::Type Viewport::sType("GLX");
 
 struct Viewport::Internal
 {
@@ -607,5 +607,11 @@ int
 Viewport::MapFromWorld(float x)
 {
 	return(static_cast<int>(floor(static_cast<float>(x) * MVI.vscale)));
+}
+
+const Core::Type &
+Viewport::Type(void)
+{
+	return(sType);
 }
 

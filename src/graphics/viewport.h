@@ -50,7 +50,7 @@ namespace Graphics
 	/*! @brief Graphics Viewport Interface */
 	struct GRAPHICS_EXPORT Viewport
 	{
-		static const Core::Type Type;
+		static const Core::Type & Type(void);
 
 		static bool Initialize(int width = DEFAULT_VIEWPORT_WIDTH,
 		                      int height = DEFAULT_VIEWPORT_HEIGHT,
@@ -76,7 +76,11 @@ namespace Graphics
 		static float MapToWorld(int x);
 		static int MapFromWorld(float x);
 
+	private: /* static */
+
 		struct Internal;
+
+		static const Core::Type sType;
 	};
 
 }

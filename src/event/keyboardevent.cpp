@@ -40,7 +40,7 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 using namespace Event;
 
-const Type KeyboardEvent::Type("Event::KeyboardEvent");
+const Type KeyboardEvent::sType("Event::KeyboardEvent");
 
 KeyboardEvent::KeyboardEvent(KBKeys k, KBActions a, TIME t)
     : EventBase(t, HighPriority),
@@ -51,5 +51,11 @@ KeyboardEvent::KeyboardEvent(KBKeys k, KBActions a, TIME t)
 
 KeyboardEvent::~KeyboardEvent(void)
 {
+}
+
+const Core::Type &
+KeyboardEvent::Type(void)
+{
+	return(sType);
 }
 
