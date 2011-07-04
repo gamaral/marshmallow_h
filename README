@@ -41,8 +41,9 @@ Windows
     X11-WGL (wiggle) is turned OFF by default, you will need to turn it ON using
     ccmake/cmake-gui.
 
-    Configure and Generate a MSVC++ 2010 solution.
-    (I've only tested it on Windows 7 with MSVC++ 2010).
-
+    Configure and Generate a VS 2008/2010 solution, or generate makefiles to build
+    from the command line using nmake or jom (https://qt.gitorious.org/qt-labs/jom)
+    
     MinGW also works.
 
+    Tested platforms are Win7 x86/x64
