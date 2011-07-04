@@ -76,6 +76,34 @@ struct Viewport::Internal
 		size[0] = size[1] = 0.f;
 	}
 
+	static LRESULT CALLBACK
+	WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		switch (uMsg) {
+		case WM_CLOSE: {
+			Event::QuitEvent event(-1);
+			Event::EventManager::Instance()->dispatch(event);
+			return(0);
+		} break;
+
+		case WM_SIZE:
+			return(0);
+		break;
+
+		case WM_SYSCOMMAND:
+			switch (wParam) {
+			case SC_MONITORPOWER:
+			case SC_SCREENSAVE:
+				if (MVI.fullscreen)
+					return(0);
+			break;
+			}
+		break;
+		}
+
+		return(DefWindowProc(hwnd, uMsg, wParam, lParam));
+	}
+
 	bool
 	createWindow(int w, int h, int d, bool f)
 	{
@@ -260,7 +288,7 @@ struct Viewport::Internal
 	{
 		const float aratio =
 		    (static_cast<float>(wrect.bottom - wrect.top) /
-		    (static_cast<float>(wrect.right - wrect.left));
+		     static_cast<float>(wrect.right - wrect.left));
 
 		size[0] = DEFAULT_VIEWPORT_VWIDTH * camera[2];
 		size[1] = (DEFAULT_VIEWPORT_VWIDTH * aratio) * camera[2];
@@ -275,34 +303,6 @@ struct Viewport::Internal
 		glMatrixMode(GL_MODELVIEW);
 	}
 	
-	static LRESULT CALLBACK
-	WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-	{
-		switch (uMsg) {
-		case WM_CLOSE: {
-			Event::QuitEvent event(-1);
-			Event::EventManager::Instance()->dispatch(event);
-			return(0);
-		} break;
-
-		case WM_SIZE:
-			return(0);
-		break;
-
-		case WM_SYSCOMMAND:
-			switch (wParam) {
-			case SC_MONITORPOWER:
-			case SC_SCREENSAVE:
-				if (MVI.fullscreen)
-					return(0);
-			break;
-			}
-		break;
-		}
-
-		return(DefWindowProc(hwnd, uMsg, wParam, lParam));
-	}
-
 } MVI;
 
 

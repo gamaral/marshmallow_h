@@ -49,6 +49,13 @@ if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 	set(CMAKE_CXX_FLAGS "-fno-rtti -fno-exceptions ${CMAKE_CXX_FLAGS}")
 endif()
 
+####################################################################### GLOBAL #
+
+if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
+	set(CMAKE_C_FLAGS_DEBUG "-fpic ${CMAKE_C_FLAGS_DEBUG}")
+	set(CMAKE_CXX_FLAGS_DEBUG "-fpic ${CMAKE_CXX_FLAGS_DEBUG}")
+endif()
+
 ###################################################################### CONTRIB #
 
 set(EASTL_LIBRARIES "" CACHE INTERNAL "")

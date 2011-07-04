@@ -96,9 +96,12 @@ Demo::second(void)
 	serialize(l_root);
 	l_document.InsertEndChild(l_root);
 
+	char l_name[255];
+	sprintf(l_name, "marshmallow%02d.xml", m_stop_timer);
+
 	Core::String l_filename;
 	l_filename.append(Core::Platform::TemporaryDirectory());
-	l_filename.append_sprintf("marshmallow%02d.xml", m_stop_timer);
+	l_filename.append(l_name);
 	l_document.SaveFile(l_filename.c_str());
 
 	if (++m_stop_timer == 8)

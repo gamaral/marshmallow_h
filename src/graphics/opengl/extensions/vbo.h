@@ -39,6 +39,8 @@
 
 #include <GL/gl.h>
 
+#include "glext.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics

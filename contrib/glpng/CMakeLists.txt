@@ -45,7 +45,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
 	endif()
 endif()
 
-add_library(marshmallow_glpng ${MARSHMALLOW_GLPNG_SRCS})
+add_library(marshmallow_glpng STATIC ${MARSHMALLOW_GLPNG_SRCS})
 
 target_link_libraries(marshmallow_glpng ${ZLIB_LIBRARIES}
                                         ${PNG_LIBRARIES}
