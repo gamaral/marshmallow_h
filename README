@@ -36,7 +36,8 @@ Windows
 -------
 
     Run CMakeGui with `source` set to project root and `output` to the build
-    directory.
+    directory. Make sure to run the configure step at least twice after changing the backend
+    or you might get issues with libpng not being found.
 
     X11-WGL (wiggle) is turned OFF by default, you will need to turn it ON using
     ccmake/cmake-gui.
