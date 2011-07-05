@@ -37,7 +37,7 @@
 int
 MMain(int argc, char *argv[])
 {
-	const char *l_filename("demos/angrymallows/assets/default.xml");
+	const char *l_filename("../demos/angrymallows/assets/default.xml");
 	if (argc > 1) l_filename = argv[1];
 
 	return(Demo(l_filename).run());
