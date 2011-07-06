@@ -1,12 +1,7 @@
 Marshmallow Engine
 ==================
 
-  IMAGINE AN UNDER CONSTRUCTION GIF HERE. :)
-
-  -> Currently only Linux and Mac OSX (X11-GLX viewport) are working.
-
-  * Should be pretty easy to get SDL viewport working on both Mac OSX and Wimp Lo
-    while I work on WGL and CGL.
+About: http://bit.ly/marshmallow_h
 
 Building
 ========
