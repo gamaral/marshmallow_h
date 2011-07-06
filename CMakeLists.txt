@@ -52,6 +52,10 @@ endif()
 
 ####################################################################### GLOBAL #
 
+if (BUILD_UNIT_TESTS)
+	enable_testing()
+endif (BUILD_UNIT_TESTS)
+
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 	set(CMAKE_C_FLAGS_DEBUG "-fpic ${CMAKE_C_FLAGS_DEBUG}")
 	set(CMAKE_CXX_FLAGS_DEBUG "-fpic ${CMAKE_CXX_FLAGS_DEBUG}")
