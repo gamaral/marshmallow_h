@@ -99,6 +99,13 @@ struct Viewport::Internal
 			break;
 			}
 		break;
+
+		case WM_KEYDOWN:
+			MVI.handleKeyEvent( static_cast<int>(wParam), true );
+			break;
+		case WM_KEYUP:
+			MVI.handleKeyEvent( static_cast<int>(wParam), false );
+			break;
 		}
 
 		return(DefWindowProc(hwnd, uMsg, wParam, lParam));
@@ -303,6 +310,91 @@ struct Viewport::Internal
 		glMatrixMode(GL_MODELVIEW);
 	}
 	
+	void
+	handleKeyEvent( int keyCode, bool keyPressed )
+	{
+		Event::KBKeys l_key = Event::KEY_NONE;
+		Event::KBActions l_action =
+		    (keyPressed ? Event::KeyPressed : Event::KeyReleased);
+
+		// win32 virtual key codes for alphanumerical chars correspond to the char itself
+		if ( (keyCode >= '0' && keyCode <= '9') ||
+			 (keyCode >= 'a' && keyCode <= 'z') ) {
+			l_key = static_cast<Event::KBKeys>(keyCode);
+		} else {
+			switch (keyCode) {
+//			case XK_Alt_L:        l_key = Event::KEY_ALT_L; break;
+//			case XK_Alt_R:        l_key = Event::KEY_ALT_R; break;
+			case VK_BACK:         l_key = Event::KEY_BACKSPACE; break;
+			case VK_CAPITAL:      l_key = Event::KEY_CAPS_LOCK; break;
+			case VK_CLEAR:        l_key = Event::KEY_CLEAR; break;
+			case VK_LCONTROL:     l_key = Event::KEY_CONTROL_R; break;
+			case VK_RCONTROL:     l_key = Event::KEY_CONTROL_L; break;
+			case VK_DELETE:       l_key = Event::KEY_DELETE; break;
+			case VK_DOWN:         l_key = Event::KEY_DOWN; break;
+			case VK_END:          l_key = Event::KEY_END; break;
+			case VK_ESCAPE:       l_key = Event::KEY_ESCAPE; break;
+			case VK_HELP:         l_key = Event::KEY_HELP; break;
+			case VK_HOME:         l_key = Event::KEY_HOME; break;
+			case VK_INSERT:       l_key = Event::KEY_INSERT; break;
+			case VK_LEFT:         l_key = Event::KEY_LEFT; break;
+			case VK_MENU:         l_key = Event::KEY_MENU; break;
+			case VK_NUMLOCK:      l_key = Event::KEY_NUM_LOCK; break;
+			case VK_NEXT:         l_key = Event::KEY_PAGE_DOWN; break;
+			case VK_PRIOR:        l_key = Event::KEY_PAGE_UP; break;
+			case VK_PAUSE:        l_key = Event::KEY_PAUSE; break;
+			case VK_PRINT:        l_key = Event::KEY_PRINT; break;
+			case VK_RETURN:       l_key = Event::KEY_RETURN; break;
+			case VK_RIGHT:        l_key = Event::KEY_RIGHT; break;
+			case VK_SCROLL:       l_key = Event::KEY_SCROLL_LOCK; break;
+			case VK_LSHIFT:       l_key = Event::KEY_SHIFT_L; break;
+			case VK_RSHIFT:       l_key = Event::KEY_SHIFT_R; break;
+			case VK_TAB:          l_key = Event::KEY_TAB; break;
+			case VK_UP:           l_key = Event::KEY_UP; break;
+//			case XK_backslash:    l_key = Event::KEY_BACKSLASH; break;
+//			case XK_bracketleft:  l_key = Event::KEY_BRACKETLEFT; break;
+//			case XK_bracketright: l_key = Event::KEY_BRACKETRIGHT; break;
+//			case XK_equal:        l_key = Event::KEY_EQUAL; break;
+//			case XK_less:         l_key = Event::KEY_LESS; break;
+//			case XK_quotedbl:     l_key = Event::KEY_DBLQUOTE; break;
+//			case XK_semicolon:    l_key = Event::KEY_SEMICOLON; break;
+			case VK_SPACE:        l_key = Event::KEY_SPACE; break;
+			case VK_F1:           l_key = Event::KEY_F1; break;
+			case VK_F2:           l_key = Event::KEY_F2; break;
+			case VK_F3:           l_key = Event::KEY_F3; break;
+			case VK_F4:           l_key = Event::KEY_F4; break;
+			case VK_F5:           l_key = Event::KEY_F5; break;
+			case VK_F6:           l_key = Event::KEY_F6; break;
+			case VK_F7:           l_key = Event::KEY_F7; break;
+			case VK_F8:           l_key = Event::KEY_F8; break;
+			case VK_F9:           l_key = Event::KEY_F9; break;
+			case VK_F10:          l_key = Event::KEY_F10; break;
+			case VK_F11:          l_key = Event::KEY_F11; break;
+			case VK_F12:          l_key = Event::KEY_F12; break;
+			case VK_F13:          l_key = Event::KEY_F13; break;
+			case VK_F14:          l_key = Event::KEY_F14; break;
+			case VK_F15:          l_key = Event::KEY_F15; break;
+			case VK_NUMPAD0:      l_key = Event::KEY_K0; break;
+			case VK_NUMPAD1:      l_key = Event::KEY_K1; break;
+			case VK_NUMPAD2:      l_key = Event::KEY_K2; break;
+			case VK_NUMPAD3:      l_key = Event::KEY_K3; break;
+			case VK_NUMPAD4:      l_key = Event::KEY_K4; break;
+			case VK_NUMPAD5:      l_key = Event::KEY_K5; break;
+			case VK_NUMPAD6:      l_key = Event::KEY_K6; break;
+			case VK_NUMPAD7:      l_key = Event::KEY_K7; break;
+			case VK_NUMPAD8:      l_key = Event::KEY_K8; break;
+			case VK_NUMPAD9:      l_key = Event::KEY_K9; break;
+			case VK_DECIMAL:      l_key = Event::KEY_KDECIMAL; break;
+			case VK_DIVIDE:       l_key = Event::KEY_KDIVIDE; break;
+			case VK_MULTIPLY:     l_key = Event::KEY_KMULTIPLY; break;
+			default: WARNING1("Unknown key pressed!");
+			}
+		}
+
+		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
+		Event::EventManager::Instance()->queue(event);
+	}
+
 } MVI;
 
 
