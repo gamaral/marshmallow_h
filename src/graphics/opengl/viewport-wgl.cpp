@@ -293,12 +293,8 @@ struct Viewport::Internal
 	void
 	adjustView(void)
 	{
-		const float aratio =
-		    (static_cast<float>(wrect.bottom - wrect.top) /
-		     static_cast<float>(wrect.right - wrect.left));
-
 		size[0] = DEFAULT_VIEWPORT_VWIDTH * camera[2];
-		size[1] = (DEFAULT_VIEWPORT_VWIDTH * aratio) * camera[2];
+		size[1] = DEFAULT_VIEWPORT_VHEIGHT * camera[2];
 		vscale = static_cast<float>(wrect.right - wrect.left) / size[0];
 
 		const float l_hw = size[0] / 2.f;

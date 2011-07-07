@@ -46,10 +46,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
-if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
-	set(CMAKE_CXX_FLAGS "-fno-rtti -fno-exceptions ${CMAKE_CXX_FLAGS}")
-endif()
-
 ####################################################################### GLOBAL #
 
 if (BUILD_UNIT_TESTS)
@@ -57,8 +53,8 @@ if (BUILD_UNIT_TESTS)
 endif (BUILD_UNIT_TESTS)
 
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
-	set(CMAKE_C_FLAGS_DEBUG "-fpic ${CMAKE_C_FLAGS_DEBUG}")
-	set(CMAKE_CXX_FLAGS_DEBUG "-fpic ${CMAKE_CXX_FLAGS_DEBUG}")
+	set(CMAKE_CXX_FLAGS "-fpic -fno-rtti -fno-exceptions ${CMAKE_CXX_FLAGS}")
+	set(CMAKE_C_FLAGS "-fpic ${CMAKE_C_FLAGS_DEBUG}")
 endif()
 
 ###################################################################### CONTRIB #
@@ -81,6 +77,7 @@ option(MARSHMALLOW_DEBUG "Marshmallow Debugging" OFF)
 
 set(MARSHMALLOW_VIEWPORT_HEIGHT "480" CACHE STRING "Viewport window height")
 set(MARSHMALLOW_VIEWPORT_WIDTH  "640" CACHE STRING "Viewport window width")
+set(MARSHMALLOW_VIEWPORT_VHEIGHT "60.0f" CACHE STRING "Viewport virtual height")
 set(MARSHMALLOW_VIEWPORT_VWIDTH "80.0f" CACHE STRING "Viewport virtual width")
 set(MARSHMALLOW_VIEWPORT_DEPTH  "24" CACHE STRING "Viewport default depth")
 option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode" OFF)
