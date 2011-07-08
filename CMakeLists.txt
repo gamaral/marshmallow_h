@@ -53,8 +53,12 @@ if (BUILD_UNIT_TESTS)
 endif (BUILD_UNIT_TESTS)
 
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
-	set(CMAKE_CXX_FLAGS "-fpic -fno-rtti -fno-exceptions ${CMAKE_CXX_FLAGS}")
-	set(CMAKE_C_FLAGS "-fpic ${CMAKE_C_FLAGS_DEBUG}")
+	set(CMAKE_CXX_FLAGS "-fno-rtti -fno-exceptions ${CMAKE_CXX_FLAGS}")
+
+	if (BUILD_SHARED_LIBS)
+		set(CMAKE_CXX_FLAGS "-fpic ${CMAKE_CXX_FLAGS}")
+		set(CMAKE_C_FLAGS "-fpic ${CMAKE_C_FLAGS_DEBUG}")
+	endif(BUILD_SHARED_LIBS)
 endif()
 
 ###################################################################### CONTRIB #
