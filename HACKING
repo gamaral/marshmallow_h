@@ -1,6 +1,15 @@
 Marshmallow Engine
 ==================
 
+Submodules
+----------
+
+git submodule init
+git submodule update
+
+Coding Standard
+---------------
+
 [work in progress]
 
 Things to keep in mind while working on Marshmallow:
