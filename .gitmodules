@@ -1,0 +1,3 @@
+[submodule "contrib/box2d/code"]
+	path = contrib/box2d/code
+	url = git://github.com/gamaral/Box2D.git
