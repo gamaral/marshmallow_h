@@ -1,7 +1,5 @@
 add_definitions(-DGRAPHICS_LIBRARY)
 
-include_directories(${TINYXML_INCLUDE_DIR})
-
 file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp)
 
 set(MARSHMALLOW_GRAPHICS_LIBS
@@ -10,11 +8,10 @@ set(MARSHMALLOW_GRAPHICS_LIBS
 	marshmallow_math)
 
 # TINYXML
+include_directories(${TINYXML_INCLUDE_DIR})
 set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS} ${TINYXML_LIBRARIES})
 
-# EASTL
-add_definitions(${EASTL_DEFINITIONS})
-set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS} ${EASTL_LIBRARIES})
+include(EASTL)
 
 if(OPENGL_FOUND)
 	include_directories(${GLPNG_INCLUDE_DIR})
@@ -52,8 +49,6 @@ elseif(MARSHMALLOW_VIEWPORT_USE_DUMMY)
 	                              dummy/viewport.cpp)
 endif()
 
-add_library(marshmallow_graphics
-	${MARSHMALLOW_GRAPHICS_SRCS}
-)
+add_library(marshmallow_graphics ${MARSHMALLOW_GRAPHICS_SRCS})
 
 target_link_libraries(marshmallow_graphics ${MARSHMALLOW_GRAPHICS_LIBS})

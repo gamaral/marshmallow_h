@@ -5,8 +5,7 @@ if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 endif()
 
 include_directories(${PROJECT_BINARY_DIR}/src
-                    ${PROJECT_SOURCE_DIR}/src
-                    ${EASTL_INCLUDE_DIR})
+                    ${PROJECT_SOURCE_DIR}/src)
 
 add_subdirectory(core)
 add_subdirectory(entrypoint)

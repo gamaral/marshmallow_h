@@ -1,9 +1,7 @@
-include_directories(${BOX2D_INCLUDE_DIRS})
-
 file(GLOB MARSHMALLOW_DEMO0_SRCS *.cpp)
 
-# EASTL
-add_definitions(${EASTL_DEFINITIONS})
+include(EASTL)
+include(Box2D)
 
 add_executable(marshmallow_demo0 ${MARSHMALLOW_DEMO0_SRCS})
 

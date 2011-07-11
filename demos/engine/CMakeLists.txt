@@ -1,5 +1,4 @@
-# EASTL
-add_definitions(${EASTL_DEFINITIONS})
+include(EASTL)
 
 add_executable(engine_demo0 "demo0.cpp")
 

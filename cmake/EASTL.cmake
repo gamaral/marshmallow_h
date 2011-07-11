@@ -25,14 +25,31 @@
 # authors and should not be interpreted as representing official policies, either expressed
 # or implied, of Marshmallow Engine.
 #
+#=============================================================================
+#
+#  EASTL_DEFINITIONS
+#  EASTL_INCLUDE_DIRS
+#  EASTL_LIBRARIES
+#
+#=============================================================================
 
-include(EASTL)
+if(NOT DEFINED EASTL_LIBRARIES)
+	set(EASTL_BASE "${PROJECT_SOURCE_DIR}/contrib/eastl/code" CACHE STRING "")
+	set(EASTL_INCLUDE_DIR ${EASTL_BASE}/include CACHE STRING "")
+	set(EASTL_LIBRARY marshmallow_eastl CACHE STRING "")
 
-file(GLOB MARSHMALLOW_EASTL_SRCS ${EASTL_BASE}/src/*.cpp)
+	if(BUILD_SHARED_LIBS)
+		set(EASTL_DEFINITIONS "-DEASTL_DLL=1")
+	endif()
 
-if(WIN32 AND BUILD_SHARED_LIBS)
-	add_definitions("-DEASTL_API=__declspec(dllexport)")
+	set(EASTL_INCLUDE_DIRS ${EASTL_INCLUDE_DIR} CACHE STRING "")
+	set(EASTL_LIBRARIES ${EASTL_LIBRARY} CACHE STRING "")
+
+	mark_as_advanced(EASTL_BASE EASTL_INCLUDE_DIR EASTL_LIBRARY EASTL_INCLUDE_DIRS EASTL_LIBRARIES)
+
+	message(STATUS "EASTL from ${EASTL_BASE}")
 endif()
 
-add_library(${EASTL_LIBRARY} ${MARSHMALLOW_EASTL_SRCS})
+include_directories(${EASTL_INCLUDE_DIRS})
+add_definitions(${EASTL_DEFINITIONS})
 

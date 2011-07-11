@@ -63,10 +63,6 @@ endif()
 
 ###################################################################### CONTRIB #
 
-set(EASTL_LIBRARIES "" CACHE INTERNAL "")
-set(EASTL_INCLUDE_DIR "" CACHE INTERNAL "")
-set(EASTL_DEFENITIONS "" CACHE INTERNAL "")
-
 set(TINYXML_LIBRARIES "" CACHE INTERNAL "")
 set(TINYXML_INCLUDE_DIR "" CACHE INTERNAL "")
 

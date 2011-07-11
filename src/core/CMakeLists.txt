@@ -4,7 +4,7 @@ file(GLOB MARSHMALLOW_CORE_SRCS *.cpp)
 set(MARSHMALLOW_CORE_LIBS "")
 
 # EASTL
-add_definitions(${EASTL_DEFINITIONS})
+include(EASTL)
 set(MARSHMALLOW_CORE_LIBS ${MARSHMALLOW_CORE_LIBS} ${EASTL_LIBRARIES})
 
 # platform specific implementations
@@ -15,9 +15,7 @@ else(WIN32)
 	set(MARSHMALLOW_CORE_LIBS ${MARSHMALLOW_CORE_LIBS} Winmm)
 endif()
 
-add_library(marshmallow_core
-	${MARSHMALLOW_CORE_SRCS}
-)
+add_library(marshmallow_core ${MARSHMALLOW_CORE_SRCS})
 
 target_link_libraries(marshmallow_core ${MARSHMALLOW_CORE_LIBS})
 

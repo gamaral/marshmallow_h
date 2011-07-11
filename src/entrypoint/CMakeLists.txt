@@ -8,7 +8,5 @@ else(WIN32)
 	set(MARSHMALLOW_ENTRYPOINT_SRCS ${MARSHMALLOW_ENTRYPOINT_SRCS} win32/platform.cpp)
 endif()
 
-add_library(marshmallow_entrypoint STATIC
-	${MARSHMALLOW_ENTRYPOINT_SRCS}
-)
+add_library(marshmallow_entrypoint STATIC ${MARSHMALLOW_ENTRYPOINT_SRCS})
 
