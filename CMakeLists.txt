@@ -93,6 +93,8 @@ option(MARSHMALLOW_VIEWPORT_USE_GLX "Use GLX Viewport (unix)" OFF)
 option(MARSHMALLOW_CONTRIB_ZLIB "Use bundled ZLIB" ON)
 option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG" ON)
 
+option(MARSHMALLOW_WITH_BOX2D "Use Box2D" ON)
+
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	option(MARSHMALLOW_DEBUG "Marshmallow Debugging" ON)
 	set(MARSHMALLOW_DEBUG_VERBOSITY "2" CACHE STRING "Verbosity Level")

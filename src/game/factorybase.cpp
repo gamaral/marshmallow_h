@@ -35,8 +35,6 @@
  */
 
 #include "graphics/quadmesh.h"
-#include "game/box2dcomponent.h"
-#include "game/box2dscenelayer.h"
 #include "game/entity.h"
 #include "game/entityscenelayer.h"
 #include "game/movementcomponent.h"
@@ -45,6 +43,11 @@
 #include "game/rendercomponent.h"
 #include "game/scene.h"
 #include "game/splashscenelayer.h"
+
+#if MARSHMALLOW_WITH_BOX2D
+#   include "game/box2d/box2dcomponent.h"
+#   include "game/box2d/box2dscenelayer.h"
+#endif
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
@@ -73,10 +76,12 @@ SharedSceneLayer
 FactoryBase::createSceneLayer(const Core::Type &t,
     const Core::Identifier &i, IScene &s) const
 {
-	if (t == Box2DSceneLayer::Type()) return(new Box2DSceneLayer(i, s));
-	else if (t == EntitySceneLayer::Type()) return(new EntitySceneLayer(i, s));
+	if (t == EntitySceneLayer::Type()) return(new EntitySceneLayer(i, s));
 	else if (t == PauseSceneLayer::Type()) return(new PauseSceneLayer(i, s));
 	else if (t == SplashSceneLayer::Type()) return(new SplashSceneLayer(i, s));
+#if MARSHMALLOW_WITH_BOX2D
+	else if (t == Box2DSceneLayer::Type()) return(new Box2DSceneLayer(i, s));
+#endif
 	return(SharedSceneLayer());
 }
 
@@ -92,10 +97,12 @@ SharedComponent
 FactoryBase::createComponent(const Core::Type &t,
     const Core::Identifier &i, IEntity &e) const
 {
-	if (t == Box2DComponent::Type()) return(new Box2DComponent(i, e));
-	else if (t == MovementComponent::Type()) return(new MovementComponent(i, e));
+	if (t == MovementComponent::Type()) return(new MovementComponent(i, e));
 	else if (t == RenderComponent::Type()) return(new RenderComponent(i, e));
 	else if (t == PositionComponent::Type()) return(new PositionComponent(i, e));
+#if MARSHMALLOW_WITH_BOX2D
+	else if (t == Box2DComponent::Type()) return(new Box2DComponent(i, e));
+#endif
 	return(SharedComponent());
 }
 

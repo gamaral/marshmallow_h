@@ -1,5 +1,5 @@
 # Copyright 2011 Marshmallow Engine. All rights reserved.
-# Copyright 2011 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
+# Copyright 2011 Guillermo A. Amaral B. (gamaral) <g@maral.me>
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -25,46 +25,30 @@
 # authors and should not be interpreted as representing official policies, either expressed
 # or implied, of Marshmallow Engine.
 #
+#=============================================================================
+#
+#  BOX2D_INCLUDE_DIRS
+#  BOX2D_LIBRARIES
+#  BOX2D_FOUND
+#
+#=============================================================================
 
-# EASTL
-set(EASTL_LIBRARIES marshmallow_eastl)
-set(EASTL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/eastl/include")
-if(BUILD_SHARED_LIBS)
-	set(EASTL_DEFINITIONS "-DEASTL_DLL=1")
-endif(BUILD_SHARED_LIBS)
-add_subdirectory(eastl)
-set(EASTL_LIBRARIES ${EASTL_LIBRARIES} PARENT_SCOPE)
-set(EASTL_INCLUDE_DIR ${EASTL_INCLUDE_DIR} PARENT_SCOPE)
-set(EASTL_DEFINITIONS "${EASTL_DEFINITIONS}" PARENT_SCOPE)
+if(MARSHMALLOW_WITH_BOX2D)
+    set(BOX2D_FOUND ON CACHE BOOL "")
 
-# TinyXML
-set(TINYXML_LIBRARIES marshmallow_tinyxml)
-set(TINYXML_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tinyxml/include")
-add_subdirectory(tinyxml)
-set(TINYXML_LIBRARIES ${TINYXML_LIBRARIES} PARENT_SCOPE)
-set(TINYXML_INCLUDE_DIR ${TINYXML_INCLUDE_DIR} PARENT_SCOPE)
+    set(BOX2D_BASE "${PROJECT_SOURCE_DIR}/contrib/box2d/code/Box2D")
+    set(BOX2D_INCLUDE_DIR ${BOX2D_BASE} CACHE STRING "")
+    set(BOX2D_LIBRARY marshmallow_box2d CACHE STRING "")
 
-# Box2D
-if (MARSHMALLOW_WITH_BOX2D)
-	add_subdirectory(box2d)
-endif()
+    set(BOX2D_INCLUDE_DIRS ${BOX2D_INCLUDE_DIR} CACHE STRING "")
+    set(BOX2D_LIBRARIES ${BOX2D_LIBRARY} CACHE STRING "")
 
+    include_directories(${BOX2D_INCLUDE_DIRS})
 
-# ZLIB
-if (MARSHMALLOW_CONTRIB_ZLIB AND ZLIB_FOUND)
-	add_subdirectory(zlib)
-endif()
+    message(STATUS "Including Box2D from ${BOX2D_BASE}")
+else(MARSHMALLOW_WITH_BOX2D)
+    set(BOX2D_FOUND OFF CACHE BOOL "")
+endif(MARSHMALLOW_WITH_BOX2D)
 
-# LIBPNG
-if(MARSHMALLOW_CONTRIB_LIBPNG AND PNG_FOUND)
-	add_subdirectory(libpng)
-endif()
+mark_as_advanced(BOX2D_FOUND BOX2D_INCLUDE_DIR BOX2D_LIBRARY BOX2D_INCLUDE_DIRS BOX2D_LIBRARIES)
 
-# GLPNG
-if(OPENGL_FOUND)
-	set(GLPNG_LIBRARIES marshmallow_glpng)
-	set(GLPNG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/glpng/include")
-	add_subdirectory(glpng)
-	set(GLPNG_LIBRARIES ${GLPNG_LIBRARIES} PARENT_SCOPE)
-	set(GLPNG_INCLUDE_DIR ${GLPNG_INCLUDE_DIR} PARENT_SCOPE)
-endif()

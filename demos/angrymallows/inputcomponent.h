@@ -40,7 +40,7 @@
 #include <game/componentbase.h>
 
 #include <event/ieventlistener.h>
-#include <game/box2dcomponent.h>
+#include <game/box2d/box2dcomponent.h>
 #include <game/positioncomponent.h>
 
 MARSHMALLOW_NAMESPACE_USE;

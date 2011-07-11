@@ -1,3 +1,5 @@
+include_directories(${BOX2D_INCLUDE_DIRS})
+
 file(GLOB ANGRYMALLOWS_DEMO_SRCS *.cpp)
 
 # EASTL

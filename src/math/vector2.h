@@ -39,7 +39,9 @@
 
 #include "core/global.h"
 
+#if MARSHMALLOW_WITH_BOX2D
 struct b2Vec2;
+#endif
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -89,7 +91,10 @@ namespace Math
 
 		operator bool(void) const
 		    { return(m_value[0] || m_value[1]); }
+
+#if MARSHMALLOW_WITH_BOX2D
 		operator b2Vec2(void) const;
+#endif
 
 		bool operator==(const Vector2 &rhs) const
 		    { return(m_value[0] == rhs.m_value[0] &&

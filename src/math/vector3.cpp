@@ -34,7 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <Box2D/Common/b2Math.h>
+#if MARSHMALLOW_WITH_BOX2D
+#   include <Box2D/Common/b2Math.h>
+#endif
 
 #include <cmath>
 
@@ -91,6 +93,13 @@ Vector3::magnitude2(void) const
 	     + powf(m_value[1], 2)
 	     + powf(m_value[2], 2));
 }
+
+#if MARSHMALLOW_WITH_BOX2D
+Vector3::operator b2Vec3(void) const
+{
+	return(b2Vec3(m_value[0], m_value[1], m_value[2]));
+}
+#endif
 
 Vector3 &
 Vector3::operator+=(const Vector3 &rhs)

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/box2dscenelayer.h"
+#include "game/box2d/box2dscenelayer.h"
 
 /*!
  * @file

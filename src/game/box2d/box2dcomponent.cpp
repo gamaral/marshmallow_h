@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/box2dcomponent.h"
+#include "game/box2d/box2dcomponent.h"
 
 /*!
  * @file
@@ -36,7 +36,7 @@
 
 #include "core/logger.h"
 #include "graphics/meshbase.h"
-#include "game/box2dscenelayer.h"
+#include "game/box2d/box2dscenelayer.h"
 #include "game/entityscenelayer.h"
 #include "game/ientity.h"
 #include "game/iscene.h"

@@ -1,3 +1,5 @@
+include_directories(${BOX2D_INCLUDE_DIRS})
+
 file(GLOB MARSHMALLOW_DEMO0_SRCS *.cpp)
 
 # EASTL

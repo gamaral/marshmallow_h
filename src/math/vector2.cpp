@@ -34,7 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <Box2D/Common/b2Math.h>
+#if MARSHMALLOW_WITH_BOX2D
+#   include <Box2D/Common/b2Math.h>
+#endif
 
 #include <cmath>
 
@@ -102,10 +104,12 @@ Vector2::dot(const Vector2 &b) const
 	return((rx() * b.rx()) + (ry() * b.ry()));
 }
 
+#if MARSHMALLOW_WITH_BOX2D
 Vector2::operator b2Vec2(void) const
 {
 	return(b2Vec2(m_value[0], m_value[1]));
 }
+#endif
 
 Vector2 &
 Vector2::operator*=(float rhs)
