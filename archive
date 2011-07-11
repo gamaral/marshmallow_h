@@ -1,0 +1,4 @@
+#!/bin/sh
+
+exec git ls-files --cached --full-name --no-empty-directory | xargs tar --exclude=".git*" -cvf archive.tar
+
