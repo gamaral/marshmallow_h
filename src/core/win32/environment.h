@@ -59,42 +59,48 @@
 
 /******************************************************************** exports */
 
-#define DLL_EXPORT __declspec(dllexport)
+#ifdef MARSHMALLOW_DLL
+#   define DLL_EXPORT __declspec(dllexport)
+#   define DLL_IMPORT __declspec(dllimport)
+#else
+#   define DLL_EXPORT
+#   define DLL_IMPORT
+#endif
 
 #ifdef CORE_LIBRARY
 #   define CORE_EXPORT DLL_EXPORT
 #else
-#   define CORE_EXPORT
+#   define CORE_EXPORT DLL_IMPORT
 #endif
 
 #ifdef ENTRYPOINT_LIBRARY
 #   define ENTRYPOINT_EXPORT DLL_EXPORT
 #else
-#   define ENTRYPOINT_EXPORT
+#   define ENTRYPOINT_EXPORT DLL_IMPORT
 #endif
 
 #ifdef MATH_LIBRARY
 #   define MATH_EXPORT DLL_EXPORT
 #else
-#   define MATH_EXPORT
+#   define MATH_EXPORT DLL_IMPORT
 #endif
 
 #ifdef EVENT_LIBRARY
 #   define EVENT_EXPORT DLL_EXPORT
 #else
-#   define EVENT_EXPORT
+#   define EVENT_EXPORT DLL_IMPORT
 #endif
 
 #ifdef GRAPHICS_LIBRARY
 #   define GRAPHICS_EXPORT DLL_EXPORT
 #else
-#   define GRAPHICS_EXPORT
+#   define GRAPHICS_EXPORT DLL_IMPORT
 #endif
 
 #ifdef GAME_LIBRARY
 #   define GAME_EXPORT DLL_EXPORT
 #else
-#   define GAME_EXPORT
+#   define GAME_EXPORT DLL_IMPORT
 #endif
 
 #endif
