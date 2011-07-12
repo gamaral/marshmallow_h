@@ -1,3 +1,7 @@
+====================================================================================
+                                 Marshmallow Engine
+====================================================================================
+            “The only game engine that tastes better slightly burned!”
 
 Graphics
 ========
@@ -33,3 +37,4 @@ Resource Manager
   Weak is kept for lookup.
   Update checks for invalid weak pointers
 
+vim:syn=notes:

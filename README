@@ -1,7 +1,24 @@
-Marshmallow Engine
-==================
+====================================================================================
+                                 Marshmallow Engine
+====================================================================================
+            “The only game engine that tastes better slightly burned!”
 
-About: http://bit.ly/marshmallow_h
+About
+=====
+
+Marshmallow is a game engine for 8-bit and 16-bit style 2D video games, it won’t
+be limited to such, but most of the base features will focus on that era of
+gaming.
+
+    http://bit.ly/marshmallow_h
+
+Source
+======
+
+    $ git clone --recursive git://github.com/gamaral/Marshmallow-Engine.git
+
+    Notice the *--recursive* switch, it's needed so that submodules get checked
+    out along with the main repository.
 
 Building
 ========
@@ -13,7 +30,7 @@ Run the following from project root:
 
     ./configure && make -C build
 
-    X11-XGL is turned OFF by default, you will need to turn it ON using
+    X11-GLX is turned OFF by default, you will need to turn it ON using
     ccmake/cmake-gui or by passing the following argument to the configuration
     script: -DMARSHMALLOW_VIEWPORT_USE_X11_GLX:BOOL=ON (remember to reconfigure
     more than one to allow cmake to look for dependencies)
@@ -39,7 +56,9 @@ Windows
 
     Configure and Generate a VS 2008/2010 solution, or generate makefiles to build
     from the command line using nmake or jom (https://qt.gitorious.org/qt-labs/jom)
-    
+
     MinGW also works.
 
     Tested platforms are Win7 x86/x64
+
+vim:syn=notes:

@@ -1,16 +1,17 @@
-Marshmallow Engine
-==================
+====================================================================================
+                                 Marshmallow Engine
+====================================================================================
+            “The only game engine that tastes better slightly burned!”
 
 Submodules
 ----------
 
-git submodule init
-git submodule update
+    $ git submodule update --init
 
 Coding Standard
 ---------------
 
-[work in progress]
+    [work in progress]
 
 Things to keep in mind while working on Marshmallow:
 
@@ -21,3 +22,4 @@ Things to keep in mind while working on Marshmallow:
 
     - Indentation: Tab indentation, 4 space softtabs and no spaces before tabs.
 
+vim:syn=notes:
