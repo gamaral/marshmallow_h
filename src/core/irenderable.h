@@ -47,7 +47,7 @@ namespace Core
 	template <class T> class Weak;
 
 	/*! @brief Renderable Interface */
-	struct CORE_EXPORT IRenderable
+	struct IRenderable
 	{
 		virtual ~IRenderable(void) {};
 

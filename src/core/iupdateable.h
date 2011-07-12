@@ -47,7 +47,7 @@ namespace Core
 	template <class T> class Weak;
 
 	/*! @brief Updateable Interface */
-	struct CORE_EXPORT IUpdateable
+	struct IUpdateable
 	{
 		virtual ~IUpdateable(void) {};
 

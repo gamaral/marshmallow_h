@@ -52,7 +52,7 @@ namespace Core
 	template <class T> class Weak;
 
 	/*! @brief Assets Asset Interface */
-	struct CORE_EXPORT IAsset
+	struct IAsset
 	{
 		virtual ~IAsset(void) {};
 
