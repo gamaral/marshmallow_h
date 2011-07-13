@@ -87,13 +87,14 @@ SplashSceneLayer::reset(void)
 	setState(ssFadeIn);
 }
 
-void
+bool
 SplashSceneLayer::skip(void)
 {
-	if (m_state == ssInit || m_state == ssFinished)
-		return;
+	if (m_state != ssExposure)
+		return(false);
 
 	setState(ssFadeOut);
+	return(true);
 }
 
 void
@@ -155,7 +156,6 @@ SplashSceneLayer::setState(SplashState s)
 			kill();
 		break;
 	case ssFadeOut:
-		if (m_state == ssFadeIn) break;
 	case ssExposure:
 		m_timer = 0.;
 		m_mesh->setColor(Graphics::Color(1.f, 1.f, 1.f, 1.f));
@@ -219,11 +219,8 @@ SplashSceneLayer::Type(void)
 bool
 SplashSceneLayer::handleEvent(const Event::IEvent &e)
 {
-	if ((m_state == ssFadeIn || m_state == ssExposure) &&
-	    e.type() == Event::KeyboardEvent::Type()) {
-		skip();
-		return(true);
-	}
+	if (e.type() == Event::KeyboardEvent::Type())
+		return(skip());
 	return(false);
 }
 

@@ -106,7 +106,7 @@ namespace Game
 		    { m_autoKill = ak; }
 
 		void reset(void);
-		void skip(void);
+		bool skip(void);
 
 	public: /* virtual */
 
