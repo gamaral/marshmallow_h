@@ -36,10 +36,11 @@
 
 #include "core/logger.h"
 #include "event/eventmanager.h"
+#include "event/proxyeventlistener.h"
+#include "event/quitevent.h"
 #include "event/renderevent.h"
 #include "event/updateevent.h"
 #include "graphics/viewport.h"
-#include "game/engineeventlistener.h"
 #include "game/factory.h"
 #include "game/scenemanager.h"
 
@@ -57,7 +58,7 @@ EngineBase *EngineBase::s_instance = 0;
 EngineBase::EngineBase(float f, float u, bool s)
     : m_event_manager(),
       m_scene_manager(),
-      m_event_listener(),
+      m_event_proxy(new Event::ProxyEventListener(*this)),
       m_factory(),
       m_fps(f),
       m_ups(u),
@@ -89,8 +90,6 @@ EngineBase::initialize(void)
 		return(false);
 	}
 
-	m_event_listener = new EngineEventListener(*this);
-
 	if (!m_event_manager)
 		m_event_manager = new Event::EventManager("EngineBase.EventManager");
 	if (!m_scene_manager)
@@ -98,7 +97,7 @@ EngineBase::initialize(void)
 	if (!m_factory)
 		m_factory = new Factory();
 
-	eventManager()->connect(m_event_listener, "Event::QuitEvent");
+	eventManager()->connect(m_event_proxy, Event::QuitEvent::Type());
 
 	return(true);
 }
@@ -312,6 +311,17 @@ EngineBase::deserialize(TinyXML::TiXmlElement &n)
 		return(false);
 	
 	return(true);
+}
+
+bool
+EngineBase::handleEvent(const Event::IEvent &e)
+{
+	if (e.type() == Core::Type("Event::QuitEvent")) {
+		const Event::QuitEvent *l_qe = static_cast<const Event::QuitEvent *>(&e);
+		stop(l_qe ? l_qe->code() : 0);
+		return(true);
+	}
+	return(false);
 }
 
 EngineBase *

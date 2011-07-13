@@ -36,10 +36,11 @@
 
 #include "core/logger.h"
 #include "event/eventmanager.h"
-#include "event/rendereventlistener.h"
-#include "event/updateeventlistener.h"
-#include "game/iscene.h"
+#include "event/proxyeventlistener.h"
+#include "event/renderevent.h"
+#include "event/updateevent.h"
 #include "game/factorybase.h"
+#include "game/iscene.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -48,17 +49,16 @@ using namespace Game;
 SceneManager::SceneManager(void)
     : m_stack(),
       m_active(),
-      m_renderListener(new Event::RenderEventListener(*this)),
-      m_updateListener(new Event::UpdateEventListener(*this))
+      m_event_proxy(new Event::ProxyEventListener(*this))
 {
-	Event::EventManager::Instance()->connect(m_renderListener, "Event::RenderEvent");
-	Event::EventManager::Instance()->connect(m_updateListener, "Event::UpdateEvent");
+	Event::EventManager::Instance()->connect(m_event_proxy, Event::RenderEvent::Type());
+	Event::EventManager::Instance()->connect(m_event_proxy, Event::UpdateEvent::Type());
 }
 
 SceneManager::~SceneManager(void)
 {
-	Event::EventManager::Instance()->disconnect(m_updateListener, "Event::UpdateEvent");
-	Event::EventManager::Instance()->disconnect(m_renderListener, "Event::RenderEvent");
+	Event::EventManager::Instance()->disconnect(m_event_proxy, Event::UpdateEvent::Type());
+	Event::EventManager::Instance()->disconnect(m_event_proxy, Event::RenderEvent::Type());
 
 	m_stack.clear();
 }
@@ -162,5 +162,16 @@ SceneManager::deserialize(TinyXML::TiXmlElement &n)
 	}
 	
 	return(true);
+}
+
+bool
+SceneManager::handleEvent(const Event::IEvent &e)
+{
+	if (e.type() == Event::RenderEvent::Type())
+		render();
+	else if (e.type() == Event::UpdateEvent::Type())
+		update(static_cast<const Event::UpdateEvent &>(e).delta());
+
+	return(false);
 }
 

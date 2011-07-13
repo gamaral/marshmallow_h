@@ -68,7 +68,7 @@ namespace Game
 		static EngineBase *s_instance;
 		Event::SharedEventManager  m_event_manager;
 		Game::SharedSceneManager   m_scene_manager;
-		Event::SharedEventListener m_event_listener;
+		Event::SharedEventListener m_event_proxy;
 		Game::SharedFactory        m_factory;
 		float  m_fps;
 		float  m_ups;
@@ -150,6 +150,8 @@ namespace Game
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
+		VIRTUAL bool handleEvent(const Event::IEvent &event);
 
 	public: /* static */
 

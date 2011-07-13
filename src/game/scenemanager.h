@@ -43,6 +43,7 @@ using namespace eastl;
 #include "core/irenderable.h"
 #include "core/iserializable.h"
 #include "core/iupdateable.h"
+#include "event/ieventlistener.h"
 
 #include "core/shared.h"
 
@@ -61,15 +62,15 @@ namespace Game
 	/*! @brief Game Scene Manager */
 	class GAME_EXPORT SceneManager : public Core::IRenderable,
                                          public Core::IUpdateable,
-	                                 public Core::ISerializable
+	                                 public Core::ISerializable,
+	                                 public Event::IEventListener
 	{
 		typedef Core::Shared<IScene> SharedScene;
 		typedef list<SharedScene> SceneStack;
 
 		SceneStack  m_stack;
 		SharedScene m_active;
-		Event::SharedEventListener m_renderListener;
-		Event::SharedEventListener m_updateListener;
+		Event::SharedEventListener m_event_proxy;
 
 		NO_COPY(SceneManager);
 
@@ -90,6 +91,8 @@ namespace Game
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
+		VIRTUAL bool handleEvent(const Event::IEvent &event);
 	};
 	typedef Core::Shared<SceneManager> SharedSceneManager;
 

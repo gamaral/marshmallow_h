@@ -72,7 +72,7 @@ namespace Game
 		};
 
 		Graphics::SharedQuadMesh m_mesh;
-		Event::SharedEventListener m_proxy;
+		Event::SharedEventListener m_event_proxy;
 		TIME m_exposure;
 		TIME m_fade;
 		TIME m_timer;

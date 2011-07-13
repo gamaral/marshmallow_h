@@ -37,10 +37,11 @@
 #ifndef GAME_IENGINE_H
 #define GAME_IENGINE_H 1
 
+#include "core/fd.h"
 #include "core/irenderable.h"
 #include "core/iserializable.h"
 #include "core/iupdateable.h"
-#include "core/fd.h"
+#include "event/ieventlistener.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -61,7 +62,8 @@ namespace Game
 	/*! @brief Game Engine Interface */
 	struct GAME_EXPORT IEngine : public Core::IRenderable,
 	                             public Core::IUpdateable,
-	                             public Core::ISerializable
+	                             public Core::ISerializable,
+	                             public Event::IEventListener
 	{
 		virtual ~IEngine(void) {};
 
