@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "gamelistener.h"
+#pragma once
 
 /*!
  * @file
@@ -34,45 +34,37 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <event/keyboardevent.h>
-#include <graphics/quadmesh.h>
-#include <game/iscene.h>
-#include <game/pausescenelayer.h>
-#include <game/splashscenelayer.h>
+#ifndef EVENT_PROXYEVENTLISTENER_H
+#define EVENT_PROXYEVENTLISTENER_H 1
 
-#include "game.h"
+#include "event/ieventlistener.h"
 
-GameListener::GameListener(Game::IEngine &e)
-    : m_engine(e)
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Event
 {
+
+	/*! @brief Proxy Event Listener Class */
+	class EVENT_EXPORT ProxyEventListener : public IEventListener
+	{
+		IEventListener &m_owner;
+
+		NO_COPY(ProxyEventListener);
+
+	public:
+
+		ProxyEventListener(IEventListener &owner)
+		    : m_owner(owner) {}
+		virtual ~ProxyEventListener(void) {}
+
+	public: /* virtual */
+
+		VIRTUAL bool handleEvent(const IEvent &event)
+		    { return(m_owner.handleEvent(event)); }
+	};
+
 }
 
-GameListener::~GameListener(void)
-{
-}
+MARSHMALLOW_NAMESPACE_END
 
-bool
-GameListener::handleEvent(const Event::IEvent &e)
-{
-	if (e.type() != Event::KeyboardEvent::Type())
-		return(false);
-
-	const Event::KeyboardEvent &l_kevent =
-	    static_cast<const Event::KeyboardEvent &>(e);
-
-	if (l_kevent.action() != Event::KeyPressed)
-		return(false);
-
-	if (l_kevent.key() == Event::KEY_RETURN) {
-		Game::SharedScene l_scene = m_engine.sceneManager()->activeScene();
-		if (l_scene->getLayer("pause"))
-			l_scene->removeLayer("pause");
-		else
-			l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
-	} else if (l_kevent.key() == Event::KEY_ESCAPE) {
-		m_engine.stop();
-	} else return(false);
-
-	return(true);
-}
-
+#endif

@@ -124,7 +124,7 @@ EventManager::dispatch(const IEvent &event)
 	EventListenerList::iterator l_listenersi;
 
 	for (l_listenersi = l_listeners->begin();
-	    l_handled || (l_listenersi != l_listeners->end());) {
+	    !l_handled && (l_listenersi != l_listeners->end());) {
 		if (*l_listenersi)
 			l_handled = (*l_listenersi++)->handleEvent(event);
 		else

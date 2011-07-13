@@ -201,7 +201,7 @@ namespace Core
 	public: /* operator */
 
 		operator bool(void) const
-		    { return(m_data != 0 && m_data->ptr != 0); }
+		    { return(m_data && m_data->ptr); }
 
 		operator Shared<T>(void) const
 		    { assert(m_data && m_data->ptr);
@@ -228,7 +228,7 @@ namespace Core
 	Weak<T>::Weak(const Weak &copy)
 	    : m_data(copy.m_data)
 	{
-		if (copy) ++m_data->wrefs;
+		if (m_data) ++m_data->wrefs;
 	}
 
 	template <class T>

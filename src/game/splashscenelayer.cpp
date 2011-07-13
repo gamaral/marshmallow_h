@@ -35,11 +35,16 @@
  */
 
 #include "core/logger.h"
-#include "math/point2.h"
-#include "math/size2.h"
+#include "event/eventmanager.h"
+#include "event/ievent.h"
+#include "event/keyboardevent.h"
+#include "event/proxyeventlistener.h"
 #include "graphics/painter.h"
 #include "graphics/quadmesh.h"
 #include "graphics/viewport.h"
+#include "math/point2.h"
+#include "math/size2.h"
+#include "game/engine.h"
 #include "game/iscene.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -49,6 +54,7 @@ const Core::Type SplashSceneLayer::sType("Game::SplashSceneLayer");
 
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock),
+      m_proxy(new Event::ProxyEventListener(*this)),
       m_exposure(1.5),
       m_fade(1.),
       m_timer(0.),
@@ -57,10 +63,13 @@ SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
 {
 	m_mesh = new Graphics::QuadMesh(Math::Rect2(Graphics::Viewport::Size()));;
 	m_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
+
+	Game::EngineBase::Instance()->eventManager()->connect(m_proxy, Event::KeyboardEvent::Type());
 }
 
 SplashSceneLayer::~SplashSceneLayer(void)
 {
+	Game::EngineBase::Instance()->eventManager()->disconnect(m_proxy, Event::KeyboardEvent::Type());
 }
 
 Graphics::SharedQuadMesh
@@ -205,5 +214,16 @@ const Core::Type &
 SplashSceneLayer::Type(void)
 {
 	return(sType);
+}
+
+bool
+SplashSceneLayer::handleEvent(const Event::IEvent &e)
+{
+	if ((m_state == ssFadeIn || m_state == ssExposure) &&
+	    e.type() == Event::KeyboardEvent::Type()) {
+		skip();
+		return(true);
+	}
+	return(false);
 }
 

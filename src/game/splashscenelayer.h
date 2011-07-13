@@ -38,6 +38,7 @@
 #define GAME_SPLASHSCENELAYER_H 1
 
 #include "game/scenelayerbase.h"
+#include "event/ieventlistener.h"
 
 #include "EASTL/list.h"
 using namespace eastl;
@@ -58,7 +59,8 @@ namespace Game
 {
 
 	/*! @brief Game Splash Scene Layer Class */
-	class GAME_EXPORT SplashSceneLayer : public SceneLayerBase
+	class GAME_EXPORT SplashSceneLayer : public SceneLayerBase,
+	                                     public Event::IEventListener
 	{
 		enum SplashState
 		{
@@ -70,6 +72,7 @@ namespace Game
 		};
 
 		Graphics::SharedQuadMesh m_mesh;
+		Event::SharedEventListener m_proxy;
 		TIME m_exposure;
 		TIME m_fade;
 		TIME m_timer;
@@ -115,6 +118,8 @@ namespace Game
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
+		VIRTUAL bool handleEvent(const Event::IEvent &event);
 
 	public: /* static */
 
