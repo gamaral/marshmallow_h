@@ -39,13 +39,13 @@ MARSHMALLOW_NAMESPACE_USE;
 #include <core/logger.h>
 #include <event/keyboardevent.h>
 #include <graphics/viewport.h>
+#include <game/iscene.h>
+#include <game/pausescenelayer.h>
 
 #include "customfactory.h"
-#include "gamelistener.h"
 
 Demo::Demo(const char *f)
     : EngineBase(),
-      m_listener(),
       m_filename(STRDUP(f)),
       m_stop_timer(0)
 {
@@ -65,8 +65,7 @@ Demo::initialize(void)
 	if (!EngineBase::initialize())
 		return(false);
 
-	m_listener = new GameListener(*this);
-	Game::EngineBase::Instance()->eventManager()->connect(m_listener, Event::KeyboardEvent::Type());
+	Game::EngineBase::Instance()->eventManager()->connect(eventListener(), Event::KeyboardEvent::Type());
 
 	{	/* derialization test */
 		TinyXML::TiXmlDocument l_document;
@@ -99,5 +98,33 @@ Demo::second(void)
 		WARNING1("Stopping engine (auto-shutdown)");
 		stop();
 	}
+}
+
+bool
+Demo::handleEvent(const Event::IEvent &e)
+{
+	if (EngineBase::handleEvent(e))
+		return(true);
+
+	if (e.type() != Event::KeyboardEvent::Type())
+		return(false);
+
+	const Event::KeyboardEvent &l_kevent =
+	    static_cast<const Event::KeyboardEvent &>(e);
+
+	if (l_kevent.action() != Event::KeyPressed)
+		return(false);
+
+	if (l_kevent.key() == Event::KEY_RETURN) {
+		Game::SharedScene l_scene = sceneManager()->activeScene();
+		if (l_scene->getLayer("pause"))
+			l_scene->removeLayer("pause");
+		else
+			l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
+	} else if (l_kevent.key() == Event::KEY_ESCAPE) {
+		stop();
+	} else return(false);
+
+	return(true);
 }
 

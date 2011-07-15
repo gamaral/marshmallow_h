@@ -6,7 +6,6 @@ include_directories(${PROJECT_BINARY_DIR}/src
 add_subdirectory(engine)
 
 if (MARSHMALLOW_WITH_BOX2D)
-	add_subdirectory(marshmallow)
 	add_subdirectory(angrymallows)
 endif()
 

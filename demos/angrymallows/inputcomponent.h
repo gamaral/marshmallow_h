@@ -38,18 +38,19 @@
 #define INPUTCOMPONENT_H 1
 
 #include <game/componentbase.h>
-
 #include <event/ieventlistener.h>
+
 #include <game/box2d/box2dcomponent.h>
 #include <game/positioncomponent.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 
-class InputComponent : public Game::ComponentBase
+class InputComponent : public Game::ComponentBase,
+                       public Event::IEventListener
 {
 	Game::WeakPositionComponent m_position;
 	Game::WeakBox2DComponent m_body;
-	Event::SharedEventListener m_listener;
+	Event::SharedEventListener m_event_proxy;
 
 	enum State {
 		ICFalling,
@@ -85,6 +86,8 @@ public: /* virtual */
 	    { return(Type); }
 
 	VIRTUAL void update(TIME d);
+
+	VIRTUAL bool handleEvent(const Event::IEvent &event);
 
 public: /* static */
 

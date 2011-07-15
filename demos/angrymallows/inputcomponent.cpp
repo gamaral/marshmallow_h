@@ -40,23 +40,22 @@
 #include <math/size2.h>
 #include <event/eventmanager.h>
 #include <event/keyboardevent.h>
+#include <event/proxyeventlistener.h>
 #include <graphics/viewport.h>
 #include <game/enginebase.h>
 #include <game/ientity.h>
-
-#include "inputcomponentlistener.h"
 
 const Core::Type InputComponent::Type("InputComponent");
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e),
       m_state(ICJumping),
-      m_listener(new InputComponentListener(*this)),
+      m_event_proxy(new Event::ProxyEventListener(*this)),
       m_jump(false),
       m_left(false),
       m_right(false)
 {
-	Game::EngineBase::Instance()->eventManager()->connect(m_listener, Event::KeyboardEvent::Type());
+	Game::EngineBase::Instance()->eventManager()->connect(m_event_proxy, Event::KeyboardEvent::Type());
 }
 
 InputComponent::~InputComponent(void)
@@ -100,5 +99,24 @@ InputComponent::update(TIME d)
 			break;
 		}
 	}
+}
+
+bool
+InputComponent::handleEvent(const Event::IEvent &e)
+{
+	if (e.type() != Event::KeyboardEvent::Type())
+		return(false);
+
+	const Event::KeyboardEvent &l_kevent =
+	    static_cast<const Event::KeyboardEvent &>(e);
+
+	if (l_kevent.key() == Event::KEY_SPACE)
+		jump(l_kevent.action() == Event::KeyPressed);
+	else if (l_kevent.key() == Event::KEY_LEFT)
+		left(l_kevent.action() == Event::KeyPressed);
+	else if (l_kevent.key() == Event::KEY_RIGHT)
+		right(l_kevent.action() == Event::KeyPressed);
+
+	return(false);
 }
 

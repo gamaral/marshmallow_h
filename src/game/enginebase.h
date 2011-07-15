@@ -107,6 +107,12 @@ namespace Game
 		void setFactory(const SharedFactory &factory);
 
 		/*!
+		 * @brief Engine Event Listener
+		 */
+		const Event::SharedEventListener & eventListener(void)
+		    { return(m_event_proxy); }
+
+		/*!
 		 * @brief Target frames per second
 		 */
 		float fps(void) const
