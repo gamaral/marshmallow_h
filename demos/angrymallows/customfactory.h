@@ -60,6 +60,8 @@ public: /* virtual */
 	VIRTUAL Game::SharedComponent createComponent(const Core::Type &type,
 	    const Core::Identifier &identifier, Game::IEntity &entity) const;
 
+	VIRTUAL Game::SharedSceneLayer createSceneLayer(const Core::Type &type,
+	    const Core::Identifier &identifier, Game::IScene &scene) const;
 };
 
 #endif

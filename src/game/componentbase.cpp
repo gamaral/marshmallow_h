@@ -62,4 +62,3 @@ ComponentBase::deserialize(TinyXML::TiXmlElement &n)
 	return(true);
 }
 
-

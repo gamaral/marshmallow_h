@@ -35,6 +35,8 @@
  */
 
 #include "inputcomponent.h"
+#include "snatchcomponent.h"
+#include "snatcherlayer.h"
 
 Game::SharedComponent
 CustomFactory::createComponent(const Core::Type &t,
@@ -42,6 +44,16 @@ CustomFactory::createComponent(const Core::Type &t,
 {
 	if (InputComponent::Type == t)
 		return(new InputComponent(i, e));
+	else if (SnatchComponent::Type() == t)
+		return(new SnatchComponent(i, e));
 	else return(FactoryBase::createComponent(t, i, e));
+}
+
+Game::SharedSceneLayer
+CustomFactory::createSceneLayer(const Core::Type &t,
+    const Core::Identifier &i, Game::IScene &s) const
+{
+	if (t == SnatcherLayer::Type()) return(new SnatcherLayer(i, s));
+	else return(FactoryBase::createSceneLayer(t, i, s));
 }
 

@@ -49,6 +49,8 @@ const Core::Type InputComponent::Type("InputComponent");
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e),
+      m_linear_impulse(1.f),
+      m_angular_impulse(1.f),
       m_state(ICJumping),
       m_event_proxy(new Event::ProxyEventListener(*this)),
       m_jump(false),
@@ -85,16 +87,17 @@ InputComponent::update(TIME d)
 			if (l_vel.y >= 0) m_state = ICStanding;
 			break;
 		case ICStanding:
+			const float l_mass = m_body->body()->GetMass();
 			if (m_jump) {
-				m_body->body()->ApplyLinearImpulse(b2Vec2(0, 0.0004), m_body->body()->GetWorldCenter());
+				m_body->body()->ApplyLinearImpulse(b2Vec2(0, l_mass * 2.f), m_body->body()->GetWorldCenter());
 				m_state = ICJumping;
 			}
 
-			if (m_left && l_vel.x > -.4f)
-				m_body->body()->ApplyAngularImpulse(0.000001);
+			if (m_left && l_vel.x > -.5f)
+				m_body->body()->ApplyAngularImpulse(l_mass *  0.008f);
 
-			if (m_right && l_vel.x < .4f)
-				m_body->body()->ApplyAngularImpulse(-0.000001);
+			if (m_right && l_vel.x < .5f)
+				m_body->body()->ApplyAngularImpulse(l_mass * -0.008f);
 
 			break;
 		}
@@ -118,5 +121,27 @@ InputComponent::handleEvent(const Event::IEvent &e)
 		right(l_kevent.action() == Event::KeyPressed);
 
 	return(false);
+}
+
+bool
+InputComponent::serialize(TinyXML::TiXmlElement &n) const
+{
+	if (!ComponentBase::serialize(n))
+		return(false);
+
+	n.SetDoubleAttribute("linear", m_linear_impulse);
+	n.SetDoubleAttribute("angular", m_angular_impulse);
+	return(true);
+}
+
+bool
+InputComponent::deserialize(TinyXML::TiXmlElement &n)
+{
+	if (!ComponentBase::deserialize(n))
+		return(false);
+
+	n.QueryFloatAttribute("linear", &m_linear_impulse);
+	n.QueryFloatAttribute("angular", &m_angular_impulse);
+	return(true);
 }
 

@@ -2,8 +2,9 @@
     <scenes>
         <scene id="mainScene" type="Game::Scene">
             <layer id="box2d" type="Game::Box2DSceneLayer">
-                <gravity x="0" y="-10" />
+                <gravity x="0" y="-5" />
             </layer>
+            <layer id="snatcher" type="SnatcherLayer" />
             <layer id="backgroundLayer01" type="Game::EntitySceneLayer">
                 <entity id="background" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="0" y="0" />
@@ -36,8 +37,9 @@
                             <vector x=".08" y="-.08" />
                         </mesh>
                     </component>
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".1" height=".1" density="0.01" friction="1" />
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".1" height=".1" density="0.01" friction="10" />
                     <component id="input" type="InputComponent" />
+                    <component id="snatch" type="SnatchComponent" />
                 </entity>
                 <entity id="marshmallow1" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="0" y="-0.5" />
@@ -50,7 +52,8 @@
                             <vector x=".1" y="-.1" />
                         </mesh>
                     </component>
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="5" />
+                    <component id="snatch" type="SnatchComponent" />
                 </entity>
                 <entity id="marshmallow2" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="-0.13" y="-0.65" />
@@ -63,7 +66,8 @@
                             <vector x=".1" y="-.1" />
                         </mesh>
                     </component>
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="5" />
+                    <component id="snatch" type="SnatchComponent" />
                 </entity>
                 <entity id="marshmallow3" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x=".11" y="-0.65" />
@@ -76,7 +80,8 @@
                             <vector x=".1" y="-.1" />
                         </mesh>
                     </component>
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="5" />
+                    <component id="snatch" type="SnatchComponent" />
                 </entity>
                 <entity id="marshmallow4" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="-0.25" y="-0.79" />
@@ -89,7 +94,8 @@
                             <vector x=".1" y="-.1" />
                         </mesh>
                     </component>
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="5" />
+                    <component id="snatch" type="SnatchComponent" />
                 </entity>
                 <entity id="marshmallow5" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="0" y="-0.79" />
@@ -102,7 +108,8 @@
                             <vector x=".1" y="-.1" />
                         </mesh>
                     </component>
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="5" />
+                    <component id="snatch" type="SnatchComponent" />
                 </entity>
                 <entity id="marshmallow6" type="Game::Entity">
                     <component id="origin" type="Game::PositionComponent" x="0.25" y="-0.79" />
@@ -115,7 +122,8 @@
                             <vector x=".1" y="-.1" />
                         </mesh>
                     </component>
-                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.3" />
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="5" />
+                    <component id="snatch" type="SnatchComponent" />
                 </entity>
             </layer>
             <layer id="splash2" type="Game::SplashSceneLayer" fade="1.0" exposure="1.5" autokill="true">

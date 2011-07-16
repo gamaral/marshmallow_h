@@ -48,15 +48,18 @@ MARSHMALLOW_NAMESPACE_USE;
 class InputComponent : public Game::ComponentBase,
                        public Event::IEventListener
 {
-	Game::WeakPositionComponent m_position;
-	Game::WeakBox2DComponent m_body;
-	Event::SharedEventListener m_event_proxy;
-
 	enum State {
 		ICFalling,
 		ICStanding,
 		ICJumping
 	};
+
+	Game::WeakPositionComponent m_position;
+	Game::WeakBox2DComponent m_body;
+	Event::SharedEventListener m_event_proxy;
+
+	float m_linear_impulse;
+	float m_angular_impulse;
 
 	State m_state;
 
@@ -88,6 +91,9 @@ public: /* virtual */
 	VIRTUAL void update(TIME d);
 
 	VIRTUAL bool handleEvent(const Event::IEvent &event);
+
+	VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+	VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
 public: /* static */
 
