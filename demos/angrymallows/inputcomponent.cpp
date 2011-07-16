@@ -49,8 +49,8 @@ const Core::Type InputComponent::Type("InputComponent");
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e),
-      m_linear_impulse(1.f),
-      m_angular_impulse(1.f),
+      m_linear_impulse(2.f),
+      m_angular_impulse(0.008f),
       m_state(ICJumping),
       m_event_proxy(new Event::ProxyEventListener(*this)),
       m_jump(false),
@@ -89,15 +89,16 @@ InputComponent::update(TIME d)
 		case ICStanding:
 			const float l_mass = m_body->body()->GetMass();
 			if (m_jump) {
-				m_body->body()->ApplyLinearImpulse(b2Vec2(0, l_mass * 2.f), m_body->body()->GetWorldCenter());
+				m_body->body()->ApplyLinearImpulse(b2Vec2(0, l_mass * m_linear_impulse),
+				    m_body->body()->GetWorldCenter());
 				m_state = ICJumping;
 			}
 
 			if (m_left && l_vel.x > -.5f)
-				m_body->body()->ApplyAngularImpulse(l_mass *  0.008f);
+				m_body->body()->ApplyAngularImpulse(l_mass *  m_angular_impulse);
 
 			if (m_right && l_vel.x < .5f)
-				m_body->body()->ApplyAngularImpulse(l_mass * -0.008f);
+				m_body->body()->ApplyAngularImpulse(l_mass * -m_angular_impulse);
 
 			break;
 		}
