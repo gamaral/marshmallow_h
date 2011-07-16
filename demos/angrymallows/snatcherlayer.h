@@ -54,13 +54,15 @@ class SnatcherLayer : public Game::SceneLayerBase,
 
 	enum SnatchState {
 		ssIdle = 0,
-		ssNext = 1
+		ssNext = 1,
+		ssTimeout = 2
 	};
 
 	Event::SharedEventListener m_event_proxy;
 	typedef eastl::vector<Core::Identifier> UIDList;
 	UIDList m_entities;
 	SnatchState m_state;
+	TIME m_timeout;
 	int m_active;
 
 public:
@@ -86,6 +88,10 @@ public: /* static */
 
 	static const Core::Type & Type(void)
 	    { return(sType); }
+
+protected:
+
+	void setState(SnatchState state);
 
 private: /* static */
 

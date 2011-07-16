@@ -50,6 +50,7 @@ SnatcherLayer::SnatcherLayer(const Core::Identifier &i, Game::IScene &s)
     : Game::SceneLayerBase(i, s),
       m_event_proxy(new Event::ProxyEventListener(*this)),
       m_state(ssIdle),
+      m_timeout(0),
       m_active(0)
 {
 	Game::EngineBase::Instance()->eventManager()->connect(m_event_proxy, Event::KeyboardEvent::Type());
@@ -79,16 +80,18 @@ SnatcherLayer::deregisterEntity(Game::IEntity &e)
 }
 
 void
-SnatcherLayer::update(TIME)
+SnatcherLayer::update(TIME t)
 {
 	/* XXX: LATE NIGHT HACK */
 	switch (m_state) {
-	case ssIdle: break;
-	case ssNext:
+	case ssNext: {
 		const int l_ecount = m_entities.size();
 		if (l_ecount == 0) break;
 
-		/* localte entity layer */
+		/*
+		 * locate entity layer
+		 * TODO: make member variables
+		 */
 		Game::SharedSceneLayer l_layer = scene().getLayerType(Game::EntitySceneLayer::Type());
 		Game::SharedEntitySceneLayer l_entityLayer = l_layer.staticCast<Game::EntitySceneLayer>();
 		Game::WeakEntity l_entity;
@@ -109,7 +112,15 @@ SnatcherLayer::update(TIME)
 		l_entity = l_entityLayer->getEntity(m_entities[m_active]);
 		if (l_entity) l_entity->pushComponent(new InputComponent("input", *l_entity));
 
-		m_state = ssIdle;
+		setState(ssTimeout);
+		} /* NOTICE: FALLTHROUGH */
+	case ssTimeout:
+		m_timeout += t;
+		if (m_timeout >= 0.5f)
+			setState(ssIdle);
+
+		/* NOTICE: FALLTHROUGH */
+	case ssIdle:
 		break;
 	}
 }
@@ -128,3 +139,22 @@ SnatcherLayer::handleEvent(const Event::IEvent &e)
 
 	return(false);
 }
+
+void
+SnatcherLayer::setState(SnatchState s)
+{
+	if (s == m_state)
+		return;
+
+	switch (s) {
+	case ssTimeout:
+		m_timeout = 0;
+
+		/* NOTICE: FALLTHROUGH */
+	case ssNext:
+	case ssIdle:
+	break;
+	}
+	m_state = s;
+}
+

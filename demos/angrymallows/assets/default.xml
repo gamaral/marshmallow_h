@@ -27,7 +27,7 @@
             </layer>
             <layer id="actorLayer" type="Game::EntitySceneLayer">
                 <entity id="player" type="Game::Entity">
-                    <component id="origin" type="Game::PositionComponent" x="-0.85" y="1" />
+                    <component id="origin" type="Game::PositionComponent" x="-0.9" y="1" />
                     <component id="render" type="Game::RenderComponent">
                         <mesh type="Graphics::QuadMesh" rotation="0">
                             <texture id="../demos/engine/assets/mallow.png" />
@@ -124,6 +124,32 @@
                     </component>
                     <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="5" />
                     <component id="snatch" type="SnatchComponent" />
+                </entity>
+                <entity id="marshmallow7" type="Game::Entity">
+                    <component id="origin" type="Game::PositionComponent" x="0.8" y="-0.5" />
+                    <component id="render" type="Game::RenderComponent">
+                        <mesh type="Graphics::QuadMesh" rotation="0">
+                            <texture id="../demos/angrymallows/assets/icelows.png" />
+                            <vector x="-.1" y=".1" />
+                            <vector x="-.1" y="-.1" />
+                            <vector x=".1" y=".1" />
+                            <vector x=".1" y="-.1" />
+                        </mesh>
+                    </component>
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width=".13" height=".13" density="0.002" friction="0.01" />
+                    <component id="snatch" type="SnatchComponent" />
+                </entity>
+                <entity id="plank" type="Game::Entity">
+                    <component id="render" type="Game::RenderComponent">
+                        <mesh type="Graphics::QuadMesh" rotation="0">
+                            <vector x="-.64" y=".01" />
+                            <vector x="-.64" y="-.01" />
+                            <vector x=".64" y=".01" />
+                            <vector x=".64" y="-.01" />
+                        </mesh>
+                    </component>
+                    <component id="origin" type="Game::PositionComponent" x="0" y="-0.5" />
+                    <component id="physics" type="Game::Box2DComponent" body="dynamic" width="1.28" height=".03" density="0.001" friction="1" />
                 </entity>
             </layer>
             <layer id="splash2" type="Game::SplashSceneLayer" fade="1.0" exposure="1.5" autokill="true">
