@@ -37,4 +37,11 @@ Resource Manager
   Weak is kept for lookup.
   Update checks for invalid weak pointers
 
+Tiles
+=====
+
+    Add Tile Map Layer (depends on Tileset)
+
+    Add Tiled TMX format parser.
+
 vim:syn=notes:

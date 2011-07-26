@@ -34,56 +34,53 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_STRHASH_H
-#define CORE_STRHASH_H 1
+#ifndef GRAPHICS_TILESETBASE_H
+#define GRAPHICS_TILESETBASE_H 1
 
-#include "core/hash.h"
-#include "core/string.h"
+#include "graphics/itileset.h"
+
+#include <EASTL/map.h>
+using namespace eastl;
+
+#include "core/shared.h"
+#include "math/size2.h"
+#include "graphics/itexturedata.h"
+#include "graphics/itexturecoordinatedata.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core
+namespace Graphics
 {
-
-	/*! @brief Event StrHash Class */
-	class CORE_EXPORT StrHash : public Hash
+	/*! @brief Graphics Tileset Base Class */
+	class GRAPHICS_EXPORT TilesetBase : public ITileset
 	{
-		Core::String m_str;
+		typedef map<int, SharedTextureCoordinateData> TextureCoordinateMap;
+		TextureCoordinateMap m_cache;
+
+		Math::Size2 m_tile_size;
+		SharedTextureData m_texture_data;
+
+		int m_tile_count;
 
 	public:
+		TilesetBase(void);
+		virtual ~TilesetBase(void);
 
-		StrHash(void);
+		void reset(void);
 
-		/*!
-		 * @param str String used for hash
-		 */
-		StrHash(const char *str);
+		void setTextureData(const SharedTextureData &tileset);
+		void setTileSize(const Math::Size2 &size);
 
-		/*!
-		 * @param str String used for hash
-		 */
-		StrHash(const Core::String &str);
-		StrHash(const StrHash &copy);
-		virtual ~StrHash(void);
+	public: /* virtual */
 
-		/*! @brief Unique ID */
-		UID uid(void) const
-		    { return(result()); }
-
-		/*! @brief Hashed String */
-		const Core::String &str(void) const
-		    { return(m_str); }
-
-	public: /* operator */
-
-		operator const Core::String &() const
-		    { return(m_str); }
-
-		operator const char *() const
-		    { return(m_str.c_str()); }
-
-		Marshmallow::Core::StrHash & operator=(const Marshmallow::Core::StrHash &rhs);
+		VIRTUAL const SharedTextureData & textureData(void) const
+		    { return(m_texture_data); }
+		VIRTUAL const Math::Size2 & tileSize(void) const
+		    { return(m_tile_size); }
+		VIRTUAL SharedTextureCoordinateData getCoordinate(int tile);
 	};
+	typedef Core::Shared<TilesetBase> SharedTilesetBase;
+	typedef Core::Weak<TilesetBase> WeakTilesetBase;
 
 }
 

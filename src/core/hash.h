@@ -58,6 +58,7 @@ namespace Core
 		 * @brief Hash Contructor
 		 * @param d Data to hash
 		 * @param length Data length
+		 * @param mask UID mask
 		 */
 		Hash(const char *d, size_t length, UID mask);
 

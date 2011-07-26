@@ -34,56 +34,44 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_STRHASH_H
-#define CORE_STRHASH_H 1
+#ifndef GRAPHICS_ITILESET_H
+#define GRAPHICS_ITILESET_H 1
 
-#include "core/hash.h"
-#include "core/string.h"
+#include "core/iserializable.h"
+
+#include "core/fd.h"
+#include "graphics/config.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core
+namespace Math
 {
+	class Size2;
+}
 
-	/*! @brief Event StrHash Class */
-	class CORE_EXPORT StrHash : public Hash
+namespace Graphics
+{
+	struct ITextureCoordinateData;
+	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
+
+	struct ITextureData;
+	typedef Core::Shared<ITextureData> SharedTextureData;
+
+	/*! @brief Graphics Tileset Interface */
+	struct GRAPHICS_EXPORT ITileset : public Core::ISerializable
 	{
-		Core::String m_str;
+		virtual ~ITileset(void) {};
 
-	public:
+		virtual const SharedTextureData & textureData(void) const = 0;
+		virtual const Math::Size2 & tileSize(void) const = 0;
 
-		StrHash(void);
-
-		/*!
-		 * @param str String used for hash
+		/*! @brief Get tile coordinates
+		 *  @param tile Tile index, top-to-bottom wrapping from left-to-right.
 		 */
-		StrHash(const char *str);
-
-		/*!
-		 * @param str String used for hash
-		 */
-		StrHash(const Core::String &str);
-		StrHash(const StrHash &copy);
-		virtual ~StrHash(void);
-
-		/*! @brief Unique ID */
-		UID uid(void) const
-		    { return(result()); }
-
-		/*! @brief Hashed String */
-		const Core::String &str(void) const
-		    { return(m_str); }
-
-	public: /* operator */
-
-		operator const Core::String &() const
-		    { return(m_str); }
-
-		operator const char *() const
-		    { return(m_str.c_str()); }
-
-		Marshmallow::Core::StrHash & operator=(const Marshmallow::Core::StrHash &rhs);
+		virtual SharedTextureCoordinateData getCoordinate(int tile) = 0;
 	};
+	typedef Core::Shared<ITileset> SharedTileset;
+	typedef Core::Weak<ITileset> WeakTileset;
 
 }
 

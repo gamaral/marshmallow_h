@@ -34,56 +34,19 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef CORE_STRHASH_H
-#define CORE_STRHASH_H 1
+#ifndef GRAPHICS_TILESET_H
+#define GRAPHICS_TILESET_H 1
 
-#include "core/hash.h"
-#include "core/string.h"
+#include "graphics/tilesetbase.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Core
+namespace Graphics
 {
 
-	/*! @brief Event StrHash Class */
-	class CORE_EXPORT StrHash : public Hash
-	{
-		Core::String m_str;
-
-	public:
-
-		StrHash(void);
-
-		/*!
-		 * @param str String used for hash
-		 */
-		StrHash(const char *str);
-
-		/*!
-		 * @param str String used for hash
-		 */
-		StrHash(const Core::String &str);
-		StrHash(const StrHash &copy);
-		virtual ~StrHash(void);
-
-		/*! @brief Unique ID */
-		UID uid(void) const
-		    { return(result()); }
-
-		/*! @brief Hashed String */
-		const Core::String &str(void) const
-		    { return(m_str); }
-
-	public: /* operator */
-
-		operator const Core::String &() const
-		    { return(m_str); }
-
-		operator const char *() const
-		    { return(m_str.c_str()); }
-
-		Marshmallow::Core::StrHash & operator=(const Marshmallow::Core::StrHash &rhs);
-	};
+	typedef TilesetBase Tileset;
+	typedef Core::Shared<Tileset> SharedTileset;
+	typedef Core::Weak<Tileset> WeakTileset;
 
 }
 
