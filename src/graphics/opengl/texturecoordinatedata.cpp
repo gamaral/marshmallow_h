@@ -46,7 +46,8 @@ const Core::Type TextureCoordinateData::sType("Graphics::TextureCoordinateData")
 
 TextureCoordinateData::TextureCoordinateData(int c)
 #define AXES 2
-    : m_data(new GLfloat[c * AXES]), // TODO: replace with custom allocator
+    : m_id(),
+      m_data(new GLfloat[c * AXES]), // TODO: replace with custom allocator
       m_count(c),
       m_bufferId(0)
 {

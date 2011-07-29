@@ -59,6 +59,8 @@ namespace OpenGL
 		int m_count;
 		GLuint m_bufferId;
 
+		NO_COPY(TextureCoordinateData);
+		NO_ASSIGN(TextureCoordinateData);
 	public:
 		TextureCoordinateData(int count);
 		virtual ~TextureCoordinateData(void);

@@ -59,6 +59,8 @@ namespace OpenGL
 		int m_count;
 		GLuint m_bufferId;
 
+		NO_COPY(VertexData);
+		NO_ASSIGN(VertexData);
 	public:
 		VertexData(int count);
 		virtual ~VertexData(void);

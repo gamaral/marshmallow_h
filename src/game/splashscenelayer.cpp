@@ -54,11 +54,13 @@ const Core::Type SplashSceneLayer::sType("Game::SplashSceneLayer");
 
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock),
+      m_mesh(),
       m_event_proxy(new Event::ProxyEventListener(*this)),
       m_exposure(1.5),
       m_fade(1.),
       m_timer(0.),
       m_state(ssInit),
+      m_autoBegin(),
       m_autoKill(true)
 {
 	m_mesh = new Graphics::QuadMesh(Math::Rect2(Graphics::Viewport::Size()));;

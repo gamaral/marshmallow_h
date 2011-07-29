@@ -46,7 +46,8 @@ using namespace Game;
 const Core::Type PauseSceneLayer::sType("Game::PauseSceneLayer");
 
 PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, IScene &s)
-    : SceneLayerBase(i, s, slfUpdateBlock)
+    : SceneLayerBase(i, s, slfUpdateBlock),
+      m_mesh()
 {
 }
 

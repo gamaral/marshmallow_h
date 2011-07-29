@@ -53,6 +53,11 @@ struct Painter::Internal
 {
 	Core::Identifier last_texture_id;
 
+	Internal(void)
+	    : last_texture_id()
+	{
+	}
+
 	void
 	drawQuadMesh(const QuadMesh &g)
 	{
