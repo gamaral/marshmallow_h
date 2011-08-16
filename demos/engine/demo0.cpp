@@ -140,7 +140,7 @@ public:
 			Game::RenderComponent *l_rcomponent =
 			    new Game::RenderComponent("render", *l_entity);
 			Graphics::SharedMeshBase l_mesh(new Graphics::QuadMesh(l_rect));
-			l_mesh->textureData()->load("../demos/engine/assets/mallow.png");
+			l_mesh->textureData()->load("assets/mallow.png");
 			l_rcomponent->mesh() = l_mesh.staticCast<Graphics::IMesh>();
 			l_entity->pushComponent(l_rcomponent);
 
@@ -194,6 +194,7 @@ public:
 int
 MMain(int argc, char *argv[])
 {
+	CHDIR(DEMO_CWD);
 	return(Demo().run());
 }
 

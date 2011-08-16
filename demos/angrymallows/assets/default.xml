@@ -10,7 +10,7 @@
                     <component id="origin" type="Game::PositionComponent" x="0" y="0" />
                     <component id="render" type="Game::RenderComponent">
                         <mesh type="Graphics::QuadMesh" rotation="0">
-                            <texture id="../demos/angrymallows/assets/kitchen.png" />
+                            <texture id="assets/kitchen.png" />
                             <vector x="-2.66" y="2" />
                             <vector x="-2.66" y="-2" />
                             <vector x="2.66" y="2" />
@@ -30,7 +30,7 @@
                     <component id="origin" type="Game::PositionComponent" x="-0.9" y="1" />
                     <component id="render" type="Game::RenderComponent">
                         <mesh type="Graphics::QuadMesh" rotation="0">
-                            <texture id="../demos/engine/assets/mallow.png" />
+                            <texture id="assets/mallow.png" />
                             <vector x="-.08" y=".08" />
                             <vector x="-.08" y="-.08" />
                             <vector x=".08" y=".08" />
@@ -45,7 +45,7 @@
                     <component id="origin" type="Game::PositionComponent" x="0" y="-0.5" />
                     <component id="render" type="Game::RenderComponent">
                         <mesh type="Graphics::QuadMesh" rotation="0">
-                            <texture id="../demos/angrymallows/assets/nullows.png" />
+                            <texture id="assets/nullows.png" />
                             <vector x="-.1" y=".1" />
                             <vector x="-.1" y="-.1" />
                             <vector x=".1" y=".1" />
@@ -59,7 +59,7 @@
                     <component id="origin" type="Game::PositionComponent" x="-0.13" y="-0.65" />
                     <component id="render" type="Game::RenderComponent">
                         <mesh type="Graphics::QuadMesh" rotation="0">
-                            <texture id="../demos/angrymallows/assets/nullows.png" />
+                            <texture id="assets/nullows.png" />
                             <vector x="-.1" y=".1" />
                             <vector x="-.1" y="-.1" />
                             <vector x=".1" y=".1" />
@@ -73,7 +73,7 @@
                     <component id="origin" type="Game::PositionComponent" x=".11" y="-0.65" />
                     <component id="render" type="Game::RenderComponent">
                         <mesh type="Graphics::QuadMesh" rotation="0">
-                            <texture id="../demos/angrymallows/assets/nullows.png" />
+                            <texture id="assets/nullows.png" />
                             <vector x="-.1" y=".1" />
                             <vector x="-.1" y="-.1" />
                             <vector x=".1" y=".1" />
@@ -87,7 +87,7 @@
                     <component id="origin" type="Game::PositionComponent" x="-0.25" y="-0.79" />
                     <component id="render" type="Game::RenderComponent">
                         <mesh type="Graphics::QuadMesh" rotation="0">
-                            <texture id="../demos/angrymallows/assets/nullows.png" />
+                            <texture id="assets/nullows.png" />
                             <vector x="-.1" y=".1" />
                             <vector x="-.1" y="-.1" />
                             <vector x=".1" y=".1" />
@@ -101,7 +101,7 @@
                     <component id="origin" type="Game::PositionComponent" x="0" y="-0.79" />
                     <component id="render" type="Game::RenderComponent">
                         <mesh type="Graphics::QuadMesh" rotation="0">
-                            <texture id="../demos/angrymallows/assets/nullows.png" />
+                            <texture id="assets/nullows.png" />
                             <vector x="-.1" y=".1" />
                             <vector x="-.1" y="-.1" />
                             <vector x=".1" y=".1" />
@@ -115,7 +115,7 @@
                     <component id="origin" type="Game::PositionComponent" x="0.25" y="-0.79" />
                     <component id="render" type="Game::RenderComponent">
                         <mesh type="Graphics::QuadMesh" rotation="0">
-                            <texture id="../demos/angrymallows/assets/nullows.png" />
+                            <texture id="assets/nullows.png" />
                             <vector x="-.1" y=".1" />
                             <vector x="-.1" y="-.1" />
                             <vector x=".1" y=".1" />
@@ -129,7 +129,7 @@
                     <component id="origin" type="Game::PositionComponent" x="0.8" y="-0.5" />
                     <component id="render" type="Game::RenderComponent">
                         <mesh type="Graphics::QuadMesh" rotation="0">
-                            <texture id="../demos/angrymallows/assets/icelows.png" />
+                            <texture id="assets/icelows.png" />
                             <vector x="-.1" y=".1" />
                             <vector x="-.1" y="-.1" />
                             <vector x=".1" y=".1" />
@@ -154,7 +154,7 @@
             </layer>
             <layer id="splash2" type="Game::SplashSceneLayer" fade="1.0" exposure="1.5" autokill="true">
                 <mesh type="Graphics::QuadMesh" rotation="0">
-                    <texture id="../demos/angrymallows/assets/splash2.png" />
+                    <texture id="assets/splash2.png" />
                     <vector x="-.1" y=".05" />
                     <vector x="-.1" y="-.05" />
                     <vector x=".1" y=".05" />
@@ -163,7 +163,7 @@
             </layer>
             <layer id="splash1" type="Game::SplashSceneLayer" fade="1.0" exposure="1.5" autokill="true">
                 <mesh type="Graphics::QuadMesh" rotation="20">
-                    <texture id="../demos/angrymallows/assets/splash1.png" />
+                    <texture id="assets/splash1.png" />
                     <vector x="-1.3" y="1.1" />
                     <vector x="-1.3" y="-.9" />
                     <vector x="1.3" y="1.1" />

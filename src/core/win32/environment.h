@@ -38,6 +38,7 @@
 #define CORE_ENVIRONMENT_H 1
 
 #include <ctime>
+#include <direct.h>
 #include <stdint.h>
 #include <windows.h>
 
@@ -55,7 +56,8 @@
 #define WCHAR    wchar_t
 #define UID      uint32_t
 
-#define STRDUP _strdup
+#define CHDIR   _chdir
+#define STRDUP  _strdup
 
 /******************************************************************** exports */
 

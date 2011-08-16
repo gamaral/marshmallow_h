@@ -61,7 +61,8 @@
 /******************************************************************** defines */
 
 #define INFINITE TIME_MAX
-#define STRDUP strdup
+#define CHDIR    chdir
+#define STRDUP   strdup
 
 /******************************************************************** unused */
 

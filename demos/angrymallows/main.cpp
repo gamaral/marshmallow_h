@@ -37,7 +37,8 @@
 int
 MMain(int argc, char *argv[])
 {
-	const char *l_filename("../demos/angrymallows/assets/default.xml");
+	CHDIR(DEMO_CWD);
+	const char *l_filename("assets/default.xml");
 	if (argc > 1) l_filename = argv[1];
 
 	return(Demo(l_filename).run());
