@@ -64,6 +64,8 @@ namespace Dummy
 		TextureData(void);
 		virtual ~TextureData(void);
 
+		void setSize(const Math::Size2 &size);
+
 	public: /* virtual */
 
 		VIRTUAL const Core::Identifier & id(void) const

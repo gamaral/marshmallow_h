@@ -45,8 +45,6 @@ namespace Graphics
 {
 
 	typedef TilesetBase Tileset;
-	typedef Core::Shared<Tileset> SharedTileset;
-	typedef Core::Weak<Tileset> WeakTileset;
 
 }
 

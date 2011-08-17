@@ -65,10 +65,13 @@ namespace Graphics
 		virtual const SharedTextureData & textureData(void) const = 0;
 		virtual const Math::Size2 & tileSize(void) const = 0;
 
-		/*! @brief Get tile coordinates
-		 *  @param tile Tile index, top-to-bottom wrapping from left-to-right.
+		virtual int spacing(void) const = 0;
+		virtual int margin(void) const = 0;
+
+		/*! @brief Get tile texture coordinate data
+		 *  @param index Tile index, top-to-bottom wrapping from left-to-right.
 		 */
-		virtual SharedTextureCoordinateData getCoordinate(int tile) = 0;
+		virtual SharedTextureCoordinateData getTextureCoordinateData(int index) = 0;
 	};
 	typedef Core::Shared<ITileset> SharedTileset;
 	typedef Core::Weak<ITileset> WeakTileset;

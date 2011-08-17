@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/tilemapscenelayer.h"
 
 /*!
  * @file
@@ -34,71 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_TILESETBASE_H
-#define GRAPHICS_TILESETBASE_H 1
+#include "graphics/painter.h"
+#include "graphics/quadmesh.h"
+#include "graphics/viewport.h"
 
-#include "graphics/itileset.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-#include <EASTL/map.h>
-using namespace eastl;
+const Core::Type TilemapSceneLayer::sType("Game::TilemapSceneLayer");
 
-#include "core/shared.h"
-#include "math/size2.h"
-#include "graphics/itexturedata.h"
-#include "graphics/itexturecoordinatedata.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
+TilemapSceneLayer::TilemapSceneLayer(const Core::Identifier &i, IScene &s)
+    : SceneLayerBase(i, s)
 {
-	/*! @brief Graphics Tileset Base Class */
-	class GRAPHICS_EXPORT TilesetBase : public ITileset
-	{
-		typedef map<int, SharedTextureCoordinateData> TextureCoordinateMap;
-		TextureCoordinateMap m_cache;
-
-		Math::Size2 m_tile_size;
-		SharedTextureData m_texture_data;
-
-		Math::Size2 m_rmargin;
-		Math::Size2 m_rspacing;
-		Math::Size2 m_tile_rsize;
-
-		int m_margin;
-		int m_spacing;
-		int m_tile_cols;
-
-	public:
-		TilesetBase(void);
-		virtual ~TilesetBase(void);
-
-		void reset(void);
-
-		void setTextureData(const SharedTextureData &tileset);
-		void setTileSize(const Math::Size2 &size);
-		void setMargin(int margin);
-		void setSpacing(int spacing);
-
-	public: /* virtual */
-
-		VIRTUAL const SharedTextureData & textureData(void) const
-		    { return(m_texture_data); }
-		VIRTUAL const Math::Size2 & tileSize(void) const
-		    { return(m_tile_size); }
-		VIRTUAL int spacing(void) const
-		    { return(m_spacing); }
-		VIRTUAL int margin(void) const
-		    { return(m_margin); }
-		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(int index);
-		
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
-	};
-	typedef Core::Shared<TilesetBase> SharedTilesetBase;
-	typedef Core::Weak<TilesetBase> WeakTilesetBase;
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+TilemapSceneLayer::~TilemapSceneLayer(void)
+{
+}
 
-#endif
+void
+TilemapSceneLayer::render(void)
+{
+}
+
+const Core::Type &
+TilemapSceneLayer::Type(void)
+{
+	return(sType);
+}
+

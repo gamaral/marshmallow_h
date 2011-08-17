@@ -40,6 +40,8 @@ Resource Manager
 Tiles
 =====
 
+    Add Tileset Collection (special type of Tileset)
+
     Add Tile Map Layer (depends on Tileset)
 
     Add Tiled TMX format parser.

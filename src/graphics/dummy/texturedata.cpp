@@ -45,13 +45,19 @@ const Core::Type TextureData::sType("Graphics::TextureData");
 
 TextureData::TextureData(void)
     : m_id(),
-      m_size()
+      m_size(Math::Size2(1024.f, 1024.f))
 {
 }
 
 TextureData::~TextureData(void)
 {
 	unload();
+}
+
+void
+TextureData::setSize(const Math::Size2 &s)
+{
+	m_size = s;
 }
 
 bool

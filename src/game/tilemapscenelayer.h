@@ -34,68 +34,52 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_TILESETBASE_H
-#define GRAPHICS_TILESETBASE_H 1
+#ifndef GAME_TILEMAPSCENELAYER_H
+#define GAME_TILEMAPSCENELAYER_H 1
 
-#include "graphics/itileset.h"
+#include "game/scenelayerbase.h"
 
-#include <EASTL/map.h>
+#include "EASTL/list.h"
 using namespace eastl;
 
+#include "core/identifier.h"
 #include "core/shared.h"
-#include "math/size2.h"
-#include "graphics/itexturedata.h"
-#include "graphics/itexturecoordinatedata.h"
+#include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Graphics
+namespace Game
 {
-	/*! @brief Graphics Tileset Base Class */
-	class GRAPHICS_EXPORT TilesetBase : public ITileset
+
+	/*! @brief Game Tilemap Scene Layer Class */
+	class GAME_EXPORT TilemapSceneLayer : public SceneLayerBase
 	{
-		typedef map<int, SharedTextureCoordinateData> TextureCoordinateMap;
-		TextureCoordinateMap m_cache;
-
-		Math::Size2 m_tile_size;
-		SharedTextureData m_texture_data;
-
-		Math::Size2 m_rmargin;
-		Math::Size2 m_rspacing;
-		Math::Size2 m_tile_rsize;
-
-		int m_margin;
-		int m_spacing;
-		int m_tile_cols;
+		NO_COPY(TilemapSceneLayer);
 
 	public:
-		TilesetBase(void);
-		virtual ~TilesetBase(void);
 
-		void reset(void);
-
-		void setTextureData(const SharedTextureData &tileset);
-		void setTileSize(const Math::Size2 &size);
-		void setMargin(int margin);
-		void setSpacing(int spacing);
+		TilemapSceneLayer(const Core::Identifier &identifier,
+		    IScene &scene);
+		virtual ~TilemapSceneLayer(void);
 
 	public: /* virtual */
 
-		VIRTUAL const SharedTextureData & textureData(void) const
-		    { return(m_texture_data); }
-		VIRTUAL const Math::Size2 & tileSize(void) const
-		    { return(m_tile_size); }
-		VIRTUAL int spacing(void) const
-		    { return(m_spacing); }
-		VIRTUAL int margin(void) const
-		    { return(m_margin); }
-		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(int index);
-		
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
+
+		VIRTUAL void render(void);
+		VIRTUAL void update(TIME) {};
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
+
+	private: /* static */
+
+		static const Core::Type sType;
 	};
-	typedef Core::Shared<TilesetBase> SharedTilesetBase;
-	typedef Core::Weak<TilesetBase> WeakTilesetBase;
+	typedef Core::Shared<TilemapSceneLayer> SharedTilemapSceneLayer;
+	typedef Core::Weak<TilemapSceneLayer> WeakTilemapSceneLayer;
 
 }
 
