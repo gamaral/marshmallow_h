@@ -58,6 +58,8 @@ TilemapSceneLayer::TilemapSceneLayer(const Core::Identifier &i, IScene &s)
 
 TilemapSceneLayer::~TilemapSceneLayer(void)
 {
+	delete [] m_data;
+	m_data = 0;
 }
 
 Graphics::SharedTileset
