@@ -46,7 +46,8 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
-	class Size2;
+	template <typename T> class Size2;
+	typedef Size2<int> Size2i;
 }
 
 namespace Graphics
@@ -63,7 +64,7 @@ namespace Graphics
 		virtual ~ITileset(void) {};
 
 		virtual const SharedTextureData & textureData(void) const = 0;
-		virtual const Math::Size2 & tileSize(void) const = 0;
+		virtual const Math::Size2i & tileSize(void) const = 0;
 
 		virtual int spacing(void) const = 0;
 		virtual int margin(void) const = 0;

@@ -61,35 +61,6 @@ TilesetBase::~TilesetBase(void)
 }
 
 void
-TilesetBase::reset(void)
-{
-	/* clear current tile data and cache */
-	m_tile_cols = 0;
-	m_cache.clear();
-
-	if (!m_texture_data)
-		return;
-
-	const Math::Size2 l_size = m_texture_data->size();
-
-	/* calculate sizes relative to the texture */
-
-	m_rmargin.rheight() = static_cast<float>(m_margin) / l_size.rheight();
-	m_rmargin.rwidth() = static_cast<float>(m_margin) / l_size.rwidth();
-
-	m_rspacing.rheight() = static_cast<float>(m_spacing) / l_size.rheight();
-	m_rspacing.rwidth() = static_cast<float>(m_spacing) / l_size.rwidth();
-
-	m_tile_rsize.rheight() = static_cast<float>(m_tile_size.rheight()) / l_size.rheight();
-	m_tile_rsize.rwidth() = static_cast<float>(m_tile_size.rwidth()) / l_size.rwidth();
-
-	/* calculate max cols */
-
-	m_tile_cols = (static_cast<int>(l_size.rwidth()) - m_margin) /
-	              (static_cast<int>(m_tile_size.rwidth()) + m_spacing);
-}
-
-void
 TilesetBase::setTextureData(const SharedTextureData &ts)
 {
 	if (ts == m_texture_data)
@@ -102,7 +73,7 @@ TilesetBase::setTextureData(const SharedTextureData &ts)
 }
 
 void
-TilesetBase::setTileSize(const Math::Size2 &s)
+TilesetBase::setTileSize(const Math::Size2i &s)
 {
 	m_tile_size = s;
 	reset();
@@ -144,17 +115,17 @@ TilesetBase::getTextureCoordinateData(int i)
 		 *
 		 */
 
-		float l_left = m_rmargin.rwidth() +
+		float l_left = m_rmargin.rheight() +
 		    (static_cast<float>(l_col) *
 		        (m_tile_rsize.rwidth() + m_rspacing.rwidth()));
-		float l_top = m_rmargin.rheight() +
+		float l_top = m_rmargin.rwidth() +
 		    (static_cast<float>(l_row) *
 		        (m_tile_rsize.rheight() + m_rspacing.rheight()));
 
-		l_data->set(0, l_top, l_left);
-		l_data->set(1, l_top + m_tile_rsize.rheight(), l_left);
-		l_data->set(2, l_top, l_left + m_tile_rsize.rwidth());
-		l_data->set(3, l_top + m_tile_rsize.rheight(), l_left + m_tile_rsize.rwidth());
+		l_data->set(0, l_left, l_top);
+		l_data->set(1, l_left, l_top + m_tile_rsize.rheight());
+		l_data->set(2, l_left + m_tile_rsize.rwidth(), l_top);
+		l_data->set(3, l_left + m_tile_rsize.rwidth(), l_top + m_tile_rsize.rheight());
 
 		m_cache[i] = l_data;
 		return(l_data);
@@ -181,5 +152,40 @@ TilesetBase::deserialize(TinyXML::TiXmlElement &n)
 	/* TODO: Implement */
 
 	return(false);
+}
+
+void
+TilesetBase::reset(void)
+{
+	/* clear current tile data and cache */
+	m_tile_cols = 0;
+	m_cache.clear();
+
+	if (!m_texture_data)
+		return;
+
+	const Math::Size2i l_size = m_texture_data->size();
+
+	/* calculate sizes relative to the texture */
+
+	m_rmargin.rwidth() = static_cast<float>(m_margin) /
+	                     static_cast<float>(l_size.rwidth());
+	m_rmargin.rheight() = static_cast<float>(m_margin) /
+	                      static_cast<float>(l_size.rheight());
+
+	m_rspacing.rwidth() = static_cast<float>(m_spacing) /
+	                      static_cast<float>(l_size.rwidth());
+	m_rspacing.rheight() = static_cast<float>(m_spacing) /
+	                       static_cast<float>(l_size.rheight());
+
+	m_tile_rsize.rwidth() = static_cast<float>(m_tile_size.rwidth()) /
+	                        static_cast<float>(l_size.rwidth());
+	m_tile_rsize.rheight() = static_cast<float>(m_tile_size.rheight()) /
+	                         static_cast<float>(l_size.rheight());
+
+	/* calculate max cols */
+
+	m_tile_cols = (static_cast<int>(l_size.rwidth()) - m_margin) /
+	              (static_cast<int>(m_tile_size.rwidth()) + m_spacing);
 }
 

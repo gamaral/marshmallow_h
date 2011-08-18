@@ -27,6 +27,7 @@
  */
 
 #include "core/logger.h"
+#include "math/size2.h"
 #include "math/vector2.h"
 #include "event/debugeventlistener.h"
 #include "event/eventbase.h"
@@ -77,7 +78,7 @@ public:
 			INFO("Current position %f, %f",
 			    m_position->position().rx(), m_position->position().ry());
 
-			Math::Size2 l_vpsize = Graphics::Viewport::Size();
+			Math::Size2f l_vpsize = Graphics::Viewport::Size();
 
 			Math::Point2  &pos = m_position->position();
 			Math::Vector2 &dir = m_movement->direction();
@@ -136,7 +137,7 @@ public:
 			DemoBounceComponent *l_bcomponent = new DemoBounceComponent(*l_entity);
 			l_entity->pushComponent(l_bcomponent);
 
-			Math::Rect2 l_rect(Math::Size2(10, 10));
+			Math::Rect2 l_rect(Math::Size2f(10.f, 10.f));
 			Game::RenderComponent *l_rcomponent =
 			    new Game::RenderComponent("render", *l_entity);
 			Graphics::SharedMeshBase l_mesh(new Graphics::QuadMesh(l_rect));

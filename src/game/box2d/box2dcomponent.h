@@ -62,7 +62,7 @@ namespace Game
 		WeakBox2DSceneLayer m_b2layer;
 		WeakPositionComponent m_position;
 		WeakRenderComponent m_render;
-		Math::Size2 m_size;
+		Math::Size2f m_size;
 		b2Body* m_body;
 		int   m_body_type;
 		float m_density;
@@ -88,7 +88,7 @@ namespace Game
 		float & friction(void)
 		    { return(m_friction); }
 
-		Math::Size2 &size(void)
+		Math::Size2f &size(void)
 		    { return(m_size); }
 
 	public: /* virtual */

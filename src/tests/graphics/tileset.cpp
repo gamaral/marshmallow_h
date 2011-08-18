@@ -30,6 +30,7 @@
 #include "graphics/dummy/texturedata.h"
 #include "graphics/itexturecoordinatedata.h"
 #include "graphics/tileset.h"
+#include "math/size2.h"
 #include "../common.h"
 
 /*!
@@ -45,10 +46,10 @@ tileset_fixed_test(void)
 {
 	Graphics::Dummy::SharedTextureData l_textureData = new Graphics::Dummy::TextureData;
 	l_textureData->load("100x100");
-	l_textureData->setSize(Math::Size2(100.f, 100.f));
+	l_textureData->setSize(Math::Size2i(100, 100));
 
 	Graphics::Tileset l_tileset;
-	l_tileset.setTileSize(Math::Size2(10.f, 10.f));
+	l_tileset.setTileSize(Math::Size2i(10, 10));
 	l_tileset.setTextureData(l_textureData.staticCast<Graphics::ITextureData>());
 
 	Graphics::SharedTextureCoordinateData tcd;
@@ -60,10 +61,10 @@ tileset_fixed_test(void)
 	    (l_u == 0.f) && (l_v == 0.f));
 	tcd->get(1, l_u, l_v);
 	TEST("TILESET 100-10 FIXED INDEX 0 TEST 1",
-	    (l_u == 0.1f) && (l_v == 0.f));
+	    (l_u == 0.0f) && (l_v == 0.1f));
 	tcd->get(2, l_u, l_v);
 	TEST("TILESET 100-10 FIXED INDEX 0 TEST 2",
-	    (l_u == 0.f) && (l_v == 0.1f));
+	    (l_u == 0.1f) && (l_v == 0.f));
 	tcd->get(3, l_u, l_v);
 	TEST("TILESET 100-10 FIXED INDEX 0 TEST 3",
 	    (l_u == 0.1f) && (l_v == 0.1f));
@@ -74,10 +75,10 @@ tileset_fixed_test(void)
 	    (l_u >= 0.9f) && (l_u < 0.900001f) && (l_v >= 0.9f) && (l_v < 0.900001f));
 	tcd->get(1, l_u, l_v);
 	TEST("TILESET 100-10 FIXED INDEX 99 TEST 1",
-	    (l_u >= 1.0f) && (l_u < 1.000001f) && (l_v >= 0.9f) && (l_v < 0.900001f));
+	    (l_u >= 0.9f) && (l_u < 0.900001f) && (l_v >= 1.0f) && (l_v < 1.000001f));
 	tcd->get(2, l_u, l_v);
 	TEST("TILESET 100-10 FIXED INDEX 99 TEST 2",
-	    (l_u >= 0.9f) && (l_u < 0.900001f) && (l_v >= 1.0f) && (l_v < 1.000001f));
+	    (l_u >= 1.0f) && (l_u < 1.000001f) && (l_v >= 0.9f) && (l_v < 0.900001f));
 	tcd->get(3, l_u, l_v);
 	TEST("TILESET 100-10 FIXED INDEX 99 TEST 3",
 	    (l_u >= 1.0f) && (l_u < 1.000001f) && (l_v >= 1.0f) && (l_v < 1.000001f));
@@ -88,11 +89,11 @@ tileset_spacing_test(void)
 {
 	Graphics::Dummy::SharedTextureData l_textureData = new Graphics::Dummy::TextureData;
 	l_textureData->load("100x100");
-	l_textureData->setSize(Math::Size2(100.f, 100.f));
+	l_textureData->setSize(Math::Size2i(100, 100));
 
 	Graphics::Tileset l_tileset;
 	l_tileset.setSpacing(1);
-	l_tileset.setTileSize(Math::Size2(10.f, 10.f));
+	l_tileset.setTileSize(Math::Size2i(10, 10));
 	l_tileset.setTextureData(l_textureData.staticCast<Graphics::ITextureData>());
 
 	Graphics::SharedTextureCoordinateData tcd;
@@ -104,10 +105,10 @@ tileset_spacing_test(void)
 	    (l_u == 0.f) && (l_v == 0.f));
 	tcd->get(1, l_u, l_v);
 	TEST("TILESET 100-10 SPACING 1 INDEX 0 TEST 1",
-	    (l_u == 0.1f) && (l_v == 0.f));
+	    (l_u == 0.f) && (l_v == 0.1f));
 	tcd->get(2, l_u, l_v);
 	TEST("TILESET 100-10 SPACING 1 INDEX 0 TEST 2",
-	    (l_u == 0.f) && (l_v == 0.1f));
+	    (l_u == 0.1f) && (l_v == 0.f));
 	tcd->get(3, l_u, l_v);
 	TEST("TILESET 100-10 SPACING 1 INDEX 0 TEST 3",
 	    (l_u == 0.1f) && (l_v == 0.1f));
@@ -118,10 +119,10 @@ tileset_spacing_test(void)
 	    (l_u >= 0.880000f) && (l_u < 0.880001f) && (l_v >= 0.880000f) && (l_v < 0.880001f));
 	tcd->get(1, l_u, l_v);
 	TEST("TILESET 100-10 SPACING 1 INDEX 80 TEST 1",
-	    (l_u >= 0.980000f) && (l_u < 0.980001f) && (l_v >= 0.880000f) && (l_v < 0.880001f));
+	    (l_u >= 0.880000f) && (l_u < 0.880001f) && (l_v >= 0.980000f) && (l_v < 0.980001f));
 	tcd->get(2, l_u, l_v);
 	TEST("TILESET 100-10 SPACING 1 INDEX 80 TEST 2",
-	    (l_u >= 0.880000f) && (l_u < 0.880001f) && (l_v >= 0.980000f) && (l_v < 0.980001f));
+	    (l_u >= 0.980000f) && (l_u < 0.980001f) && (l_v >= 0.880000f) && (l_v < 0.880001f));
 	tcd->get(3, l_u, l_v);
 	TEST("TILESET 100-10 SPACING 1 INDEX 80 TEST 3",
 	    (l_u >= 0.980000f) && (l_u < 0.980001f) && (l_v >= 0.980000f) && (l_v < 0.980001f));
@@ -132,11 +133,11 @@ tileset_margin_test(void)
 {
 	Graphics::Dummy::SharedTextureData l_textureData = new Graphics::Dummy::TextureData;
 	l_textureData->load("100x100");
-	l_textureData->setSize(Math::Size2(100.f, 100.f));
+	l_textureData->setSize(Math::Size2i(100, 100));
 
 	Graphics::Tileset l_tileset;
 	l_tileset.setMargin(10);
-	l_tileset.setTileSize(Math::Size2(10.f, 10.f));
+	l_tileset.setTileSize(Math::Size2i(10, 10));
 	l_tileset.setTextureData(l_textureData.staticCast<Graphics::ITextureData>());
 
 	Graphics::SharedTextureCoordinateData tcd;
@@ -148,10 +149,10 @@ tileset_margin_test(void)
 	    (l_u == 0.1f) && (l_v == 0.1f));
 	tcd->get(1, l_u, l_v);
 	TEST("TILESET 100-10 MARGIN 1 INDEX 0 TEST 1",
-	    (l_u == 0.2f) && (l_v == 0.1f));
+	    (l_u == 0.1f) && (l_v == 0.2f));
 	tcd->get(2, l_u, l_v);
 	TEST("TILESET 100-10 MARGIN 1 INDEX 0 TEST 2",
-	    (l_u == 0.1f) && (l_v == 0.2f));
+	    (l_u == 0.2f) && (l_v == 0.1f));
 	tcd->get(3, l_u, l_v);
 	TEST("TILESET 100-10 MARGIN 1 INDEX 0 TEST 3",
 	    (l_u == 0.2f) && (l_v == 0.2f));
@@ -162,10 +163,10 @@ tileset_margin_test(void)
 	    (l_u >= 0.900000f) && (l_u < 0.900001f) && (l_v >= 0.900000f) && (l_v < 0.900001f));
 	tcd->get(1, l_u, l_v);
 	TEST("TILESET 100-10 MARGIN 1 INDEX 80 TEST 1",
-	    (l_u >= 1.000000f) && (l_u < 1.000001f) && (l_v >= 0.900000f) && (l_v < 0.900001f));
+	    (l_u >= 0.900000f) && (l_u < 0.900001f) && (l_v >= 1.0f) && (l_v < 1.000001f));
 	tcd->get(2, l_u, l_v);
 	TEST("TILESET 100-10 MARGIN 1 INDEX 80 TEST 2",
-	    (l_u >= 0.900000f) && (l_u < 0.900001f) && (l_v >= 1.0f) && (l_v < 1.000001f));
+	    (l_u >= 1.000000f) && (l_u < 1.000001f) && (l_v >= 0.900000f) && (l_v < 0.900001f));
 	tcd->get(3, l_u, l_v);
 	TEST("TILESET 100-10 MARGIN 1 INDEX 80 TEST 3",
 	    (l_u >= 1.0f) && (l_u < 1.000001f) && (l_v >= 1.0f) && (l_v < 1.000001f));

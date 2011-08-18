@@ -70,8 +70,8 @@ namespace Graphics
 		static const Math::Vector3 Camera(void);
 		static void SetCamera(const Math::Vector3 &camera);
 
-		static const Math::Size2 Size(void);
-		static const Math::Size2 WindowSize(void);
+		static const Math::Size2f Size(void);
+		static const Math::Size2i WindowSize(void);
 
 		static float MapToWorld(int x);
 		static int MapFromWorld(float x);

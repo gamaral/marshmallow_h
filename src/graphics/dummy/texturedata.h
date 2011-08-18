@@ -55,7 +55,7 @@ namespace Dummy
 	class GRAPHICS_EXPORT TextureData : public ITextureData
 	{
 		Core::Identifier m_id;
-		Math::Size2 m_size;
+		Math::Size2i m_size;
 
 		NO_COPY(TextureData);
 
@@ -64,7 +64,7 @@ namespace Dummy
 		TextureData(void);
 		virtual ~TextureData(void);
 
-		void setSize(const Math::Size2 &size);
+		void setSize(const Math::Size2i &size);
 
 	public: /* virtual */
 
@@ -80,7 +80,7 @@ namespace Dummy
 		VIRTUAL bool isLoaded(void) const
 		    { return(m_id != 0); }
 
-		VIRTUAL const Math::Size2 & size(void) const
+		VIRTUAL const Math::Size2i & size(void) const
 		    { return(m_size); }
 
 	public: /* static */

@@ -57,7 +57,7 @@ namespace OpenGL
 	class GRAPHICS_EXPORT TextureData : public ITextureData
 	{
 		Core::Identifier m_id;
-		Math::Size2 m_size;
+		Math::Size2i m_size;
 		unsigned int m_texture_id;
 
 		NO_COPY(TextureData);
@@ -84,7 +84,7 @@ namespace OpenGL
 		VIRTUAL bool isLoaded(void) const
 		    { return(m_texture_id != 0); }
 
-		VIRTUAL const Math::Size2 & size(void) const
+		VIRTUAL const Math::Size2i & size(void) const
 		    { return(m_size); }
 
 	public: /* static */

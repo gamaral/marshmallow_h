@@ -74,7 +74,7 @@ MeshBase::vertex(int i) const
 {
 	Math::Vector2 l_vector;
 	if (!m_vdata->get(i, l_vector.rx(), l_vector.ry()))
-		WARNING("Failed to retreave values for vertex %d", i);
+		WARNING("Failed to retrieve values for vertex %d", i);
 	return(l_vector);
 }
 
@@ -90,7 +90,7 @@ void
 MeshBase::textureCoordinate(int i, float &u, float &v) const
 {
 	if (!m_tcdata->get(i, u, v))
-		WARNING("Failed to retreave values for vertex %d", i);
+		WARNING("Failed to retrieve values for vertex %d", i);
 }
 
 void

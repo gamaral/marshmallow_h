@@ -45,40 +45,77 @@ namespace Math
 {
 
 	/*! @brief 3D Size */
+	template <typename T = float>
 	class MATH_EXPORT Size3
 	{
-		float m_value[3];
+		T m_value[3];
 
 	public:
-		Size3(float width = 0., float height = 0., float depth = 0.);
+		Size3(T width = 0., T height = 0., T depth = 0.);
 		Size3(const Size3 &copy);
 
-		float & rwidth(void)
+		T & rwidth(void)
 		    { return(m_value[0]); }
-		float & rheight(void)
+		T & rheight(void)
 		    { return(m_value[1]); }
-		float & rdepth(void)
+		T & rdepth(void)
 		    { return(m_value[2]); }
 
-		const float & rwidth(void) const
+		const T & rwidth(void) const
 		    { return(m_value[0]); }
-		const float & rheight(void) const
+		const T & rheight(void) const
 		    { return(m_value[1]); }
-		const float & rdepth(void) const
+		const T & rdepth(void) const
 		    { return(m_value[2]); }
 
-		float width(void) const
+		T width(void) const
 		    { return(m_value[0]); }
-		float height(void) const
+		T height(void) const
 		    { return(m_value[1]); }
-		float depth(void) const
+		T depth(void) const
 		    { return(m_value[2]); }
 
-		float & operator[](int i)
+		T & operator[](int i)
 		    { return(m_value[i % 3]); }
 
-		float volume(void) const;
+		T volume(void) const;
+
+		template <typename U>
+		Size3<U> staticCast(void) const;
 	};
+	typedef Size3<float> Size3f;
+	typedef Size3<int>   Size3i;
+
+	template <typename T>
+	Size3<T>::Size3(T aw, T ah, T ad)
+	{
+		m_value[0] = aw;
+		m_value[1] = ah;
+		m_value[2] = ad;
+	}
+
+	template <typename T>
+	Size3<T>::Size3(const Size3 &copy)
+	{
+		m_value[0] = copy.m_value[0];
+		m_value[1] = copy.m_value[1];
+		m_value[2] = copy.m_value[2];
+	}
+
+	template <typename T> T
+	Size3<T>::volume(void) const
+	{
+		return(m_value[0] * m_value[1] * m_value[2]);
+	}
+
+	template <typename T>
+	template <typename U> Size3<U>
+	Size3<T>::staticCast(void) const
+	{
+		return(Size3<U>(static_cast<U>(m_value[0]),
+		                static_cast<U>(m_value[1]),
+		                static_cast<U>(m_value[2]));
+	}
 
 }
 

@@ -46,7 +46,8 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
-	class Size2;
+	template <typename T> class Size2;
+	typedef Size2<int> Size2i;
 }
 
 namespace Graphics
@@ -61,7 +62,7 @@ namespace Graphics
 		virtual void unload(void) = 0;
 		virtual bool isLoaded(void) const = 0;
 
-		virtual const Math::Size2 & size(void) const = 0;
+		virtual const Math::Size2i & size(void) const = 0;
 	};
 	typedef Core::Shared<ITextureData> SharedTextureData;
 	typedef Core::Weak<ITextureData> WeakTextureData;

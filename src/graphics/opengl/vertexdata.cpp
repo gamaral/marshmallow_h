@@ -36,6 +36,7 @@
 
 #include <cstring>
 
+#include "core/logger.h"
 #include "graphics/opengl/extensions/vbo.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -52,10 +53,12 @@ VertexData::VertexData(int c)
       m_bufferId(0)
 {
 	memset(m_data, 0, m_count * AXES);
+	buffer();
 }
 
 VertexData::~VertexData(void)
 {
+	unbuffer();
 	delete[] m_data;
 }
 
@@ -71,6 +74,8 @@ VertexData::buffer(void)
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferId);
 	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW_ARB);
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+	INFO("Buffered data. ID: %d", m_bufferId);
 }
 
 void
@@ -78,6 +83,8 @@ VertexData::unbuffer(void)
 {
 	if (!HasVectorBufferObjectSupport || !isBuffered())
 		return;
+
+	INFO("Unbuffered data. ID: %d", m_bufferId);
 
 	glDeleteBuffersARB(1, &m_bufferId);
 	m_bufferId = 0;

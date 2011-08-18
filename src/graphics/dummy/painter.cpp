@@ -34,8 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/type.h"
 #include "core/logger.h"
 #include "graphics/imesh.h"
+#include "math/point2.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -51,8 +53,10 @@ Painter::Finalize(void)
 }
 
 void
-Painter::Draw(const IMesh &, const Math::Point2&)
+Painter::Draw(const IMesh &m, const Math::Point2 &p)
 {
-	INFO1("Drawing graphic");
+	UNUSED(m);
+	UNUSED(p);
+	INFO("Drawind %s at (%f, %f)", m.type().str().c_str(), p.rx(), p.ry());
 }
 

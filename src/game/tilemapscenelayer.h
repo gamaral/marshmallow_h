@@ -39,12 +39,14 @@
 
 #include "game/scenelayerbase.h"
 
-#include "EASTL/list.h"
+#include "EASTL/map.h"
 using namespace eastl;
 
 #include "core/identifier.h"
 #include "core/shared.h"
 #include "core/type.h"
+#include "graphics/ivertexdata.h"
+#include "graphics/tileset.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -56,11 +58,41 @@ namespace Game
 	{
 		NO_COPY(TilemapSceneLayer);
 
+		typedef map<int, Graphics::SharedTileset> TilesetCollection;
+		TilesetCollection m_tilesets;
+
+		typedef map<int, Graphics::SharedVertexData> VertexDataCache;
+		VertexDataCache m_vertexes;
+
+		Math::Size2f m_hrtile_size;
+		Math::Size2f m_rtile_size;
+
+		Math::Size2i m_tile_size;
+		Math::Size2i m_size;
+
+		UINT16 *m_data;
+
 	public:
 
 		TilemapSceneLayer(const Core::Identifier &identifier,
 		    IScene &scene);
 		virtual ~TilemapSceneLayer(void);
+
+		Graphics::SharedTileset tileset(int index, int *offset = 0);
+		void attachTileset(int offset, Graphics::SharedTileset tileset);
+		void dettachTileset(int offset);
+
+		const Math::Size2i & tileSize(void) const
+		    { return(m_tile_size); }
+		void setTileSize(const Math::Size2i &size);
+
+		const Math::Size2i & size(void) const
+		    { return(m_size); }
+		void setSize(const Math::Size2i &size);
+
+		const UINT16 * data(void) const
+		    { return(m_data); }
+		void setData(UINT16 *data);
 
 	public: /* virtual */
 
@@ -73,6 +105,12 @@ namespace Game
 	public: /* static */
 
 		static const Core::Type & Type(void);
+
+	protected:
+
+		void recalculateAllVertexData();
+		void recalculateRelativeTileSize();
+		void recalculateVertexData(int offset);
 
 	private: /* static */
 

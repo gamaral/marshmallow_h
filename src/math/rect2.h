@@ -50,14 +50,14 @@ namespace Math
 	/*! @brief 2D Rect */
 	class MATH_EXPORT Rect2
 	{
-		Size2 m_size;
+		Size2f m_size;
 
 	public:
 
-		Rect2(const Size2 &size);
+		Rect2(const Size2f &size);
 		Rect2(const Rect2 &copy);
 
-		const Size2 & size(void) const
+		const Size2f & size(void) const
 		    { return(m_size); }
 
 		Vector2 topLeft(void) const;

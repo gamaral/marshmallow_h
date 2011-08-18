@@ -95,16 +95,16 @@ Viewport::SetCamera(const Math::Vector3 &)
 {
 }
 
-const Math::Size2
+const Math::Size2f
 Viewport::Size(void)
 {
-	return(Math::Size2(DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT));
+	return(Math::Size2f(DEFAULT_VIEWPORT_VWIDTH, DEFAULT_VIEWPORT_VHEIGHT));
 }
 
-const Math::Size2
+const Math::Size2i
 Viewport::WindowSize(void)
 {
-	return(Math::Size2(DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT));
+	return(Math::Size2i(DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT));
 }
 
 float

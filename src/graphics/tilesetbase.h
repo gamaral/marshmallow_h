@@ -57,12 +57,12 @@ namespace Graphics
 		typedef map<int, SharedTextureCoordinateData> TextureCoordinateMap;
 		TextureCoordinateMap m_cache;
 
-		Math::Size2 m_tile_size;
+		Math::Size2i m_tile_size;
 		SharedTextureData m_texture_data;
 
-		Math::Size2 m_rmargin;
-		Math::Size2 m_rspacing;
-		Math::Size2 m_tile_rsize;
+		Math::Size2f m_rmargin;
+		Math::Size2f m_rspacing;
+		Math::Size2f m_tile_rsize;
 
 		int m_margin;
 		int m_spacing;
@@ -72,10 +72,8 @@ namespace Graphics
 		TilesetBase(void);
 		virtual ~TilesetBase(void);
 
-		void reset(void);
-
 		void setTextureData(const SharedTextureData &tileset);
-		void setTileSize(const Math::Size2 &size);
+		void setTileSize(const Math::Size2i &size);
 		void setMargin(int margin);
 		void setSpacing(int spacing);
 
@@ -83,7 +81,7 @@ namespace Graphics
 
 		VIRTUAL const SharedTextureData & textureData(void) const
 		    { return(m_texture_data); }
-		VIRTUAL const Math::Size2 & tileSize(void) const
+		VIRTUAL const Math::Size2i & tileSize(void) const
 		    { return(m_tile_size); }
 		VIRTUAL int spacing(void) const
 		    { return(m_spacing); }
@@ -93,6 +91,11 @@ namespace Graphics
 		
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
+	protected:
+
+		void reset(void);
+
 	};
 	typedef Core::Shared<TilesetBase> SharedTilesetBase;
 	typedef Core::Weak<TilesetBase> WeakTilesetBase;

@@ -320,6 +320,7 @@ struct Viewport::Internal
 		glDisable(GL_BLEND);
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 		/* initialize context */
 		glViewport(0, 0, w, h);
@@ -581,17 +582,17 @@ Viewport::SetCamera(const Math::Vector3 &c)
 	MVI.adjustView();
 }
 
-const Math::Size2
+const Math::Size2f
 Viewport::Size(void)
 {
-	return(Math::Size2(MVI.size[0], MVI.size[1]));
+	return(Math::Size2f(MVI.size[0], MVI.size[1]));
 }
 
-const Math::Size2
+const Math::Size2i
 Viewport::WindowSize(void)
 {
-	return(Math::Size2(static_cast<float>(MVI.wsize[0]),
-	                   static_cast<float>(MVI.wsize[1])));
+	return(Math::Size2i(MVI.wsize[0],
+	                    MVI.wsize[1]));
 }
 
 float

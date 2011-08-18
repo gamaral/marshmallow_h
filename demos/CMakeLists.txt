@@ -4,6 +4,7 @@ include_directories(${PROJECT_BINARY_DIR}/src
                     ${TINYXML_INCLUDE_DIR})
 
 add_subdirectory(engine)
+add_subdirectory(tilemap)
 
 if (MARSHMALLOW_WITH_BOX2D)
 	add_subdirectory(angrymallows)

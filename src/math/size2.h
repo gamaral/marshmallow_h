@@ -45,36 +45,75 @@ namespace Math
 {
 
 	/*! @brief 2D Size */
+	template <typename T = float>
 	class MATH_EXPORT Size2
 	{
-		float m_value[2];
+		T m_value[2];
 
 	public:
-		Size2(float width = 0., float height = 0.);
+		Size2(T width = 0, T height = 0);
 		Size2(const Size2 &copy);
 
-		float & rwidth(void)
+		T & rwidth(void)
 		    { return(m_value[0]); }
-		float & rheight(void)
+		T & rheight(void)
 		    { return(m_value[1]); }
 
-		const float & rwidth(void) const
+		const T & rwidth(void) const
 		    { return(m_value[0]); }
-		const float & rheight(void) const
+		const T & rheight(void) const
 		    { return(m_value[1]); }
 
-		float width(void) const
+		T width(void) const
 		    { return(m_value[0]); }
-		float height(void) const
+		T height(void) const
 		    { return(m_value[1]); }
 
-		float area(void) const;
+		T area(void) const;
+
+		template <typename U>
+		Size2<U> staticCast(void) const;
 
 	public: /* operators */
 
-		float & operator[](int i)
+		T & operator[](int i)
 		    { return(m_value[i % 2]); }
+
+		Size2<T> operator*(const T& c) const
+		    { return(Size2<T>(m_value[0] * c, m_value[1] * c)); }
+
+		Size2<T> operator/(const T& c) const
+		    { return(Size2<T>(m_value[0] / c, m_value[1] / c)); }
 	};
+	typedef Size2<float> Size2f;
+	typedef Size2<int>   Size2i;
+
+	template <typename T>
+	Size2<T>::Size2(T aw, T ah)
+	{
+		m_value[0] = aw;
+		m_value[1] = ah;
+	}
+
+	template <typename T>
+	Size2<T>::Size2(const Size2 &copy)
+	{
+		m_value[0] = copy.m_value[0];
+		m_value[1] = copy.m_value[1];
+	}
+
+	template <typename T> T
+	Size2<T>::area(void) const
+	{
+		return(m_value[0] * m_value[1]);
+	}
+
+	template <typename T>
+	template <typename U> Size2<U>
+	Size2<T>::staticCast(void) const
+	{
+		return(Size2<U>(static_cast<U>(m_value[0]), static_cast<U>(m_value[1])));
+	}
 
 }
 

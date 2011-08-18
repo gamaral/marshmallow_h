@@ -71,19 +71,19 @@ TextureData::load(const Core::Identifier &i)
 	glGenTextures(1, &m_texture_id);
 	glBindTexture(GL_TEXTURE_2D, m_texture_id);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
 	if (!pngLoad(i.str().c_str(), PNG_BUILDMIPMAPS, PNG_ALPHA, &pi)) {
-		m_size = Math::Size2(0, 0);
+		m_size = Math::Size2i(0, 0);
 		INFO1("Failed to load texture.");
 		return(false);
 	}
 
-	m_size = Math::Size2(static_cast<float>(pi.Width), static_cast<float>(pi.Height));
+	m_size = Math::Size2i(pi.Width, pi.Height);
 	m_id = i;
 
 	INFO1("Texture loaded.");
@@ -97,7 +97,7 @@ TextureData::unload(void)
 	if (m_texture_id)
 		glDeleteTextures(1, &m_texture_id);
 
-	m_size = Math::Size2();
+	m_size = Math::Size2i();
 	m_texture_id = 0;
 }
 

@@ -153,7 +153,7 @@ Painter::Draw(const IMesh &g, const Math::Point2 &o)
 		glRotatef(l_rotate_angle, 0, 0, 1);
 
 	/* set scale */
-	if (l_scale[0] != 1 || l_scale[1] != 1)
+	if (l_scale[0] != 1.f || l_scale[1] != 1.f)
 		glScalef(l_scale[0], l_scale[1], 1);
 
 	/* actually draw graphic */

@@ -464,20 +464,20 @@ Viewport::SetCamera(const Math::Vector3 &c)
 	MVI.adjustView();
 }
 
-const Math::Size2
+const Math::Size2f
 Viewport::Size(void)
 {
-	return(Math::Size2(MVI.size[0], MVI.size[1]));
+	return(Math::Size2f(MVI.size[0], MVI.size[1]));
 }
 
-const Math::Size2
+const Math::Size2i
 Viewport::WindowSize(void)
 {
 	if (MVI.loaded)
-		return(Math::Size2(static_cast<float>(MVI.wrect.right - MVI.wrect.left),
-		                   static_cast<float>(MVI.wrect.bottom - MVI.wrect.top)));
+		return(Math::Size2i(MVI.wrect.right - MVI.wrect.left,
+		                    MVI.wrect.bottom - MVI.wrect.top));
 
-	return(Math::Size2());
+	return(Math::Size2i());
 }
 
 float
