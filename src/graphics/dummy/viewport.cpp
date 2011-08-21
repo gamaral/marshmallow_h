@@ -52,14 +52,14 @@ Viewport::Initialize(int w, int h, int d, bool f)
 	UNUSED(h);
 	UNUSED(d);
 	UNUSED(f);
-	INFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
+	MMINFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
 	return(true);
 }
 
 void
 Viewport::Finalize(void)
 {
-	INFO1("Dummy viewport finalized");
+	MMINFO1("Dummy viewport finalized");
 }
 
 bool
@@ -69,7 +69,7 @@ Viewport::Redisplay(int w, int h, int d, bool f)
 	UNUSED(h);
 	UNUSED(d);
 	UNUSED(f);
-	INFO("Dummy viewport redisplayed using a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
+	MMINFO("Dummy viewport redisplayed using a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
 	return(true);
 }
 

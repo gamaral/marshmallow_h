@@ -184,12 +184,12 @@ SceneBase::deserialize(TinyXML::TiXmlElement &n)
 		    FactoryBase::Instance()->createSceneLayer(l_type, l_id, *this);
 
 		if (!l_layer) {
-			WARNING("SceneLayer '%s' of type '%s' creation failed", l_id, l_type);
+			MMWARNING("SceneLayer '%s' of type '%s' creation failed", l_id, l_type);
 			continue;
 		}
 
 		if (!l_layer->deserialize(*l_child)) {
-			WARNING("SceneLayer '%s' of type '%s' failed deserialization", l_id, l_type);
+			MMWARNING("SceneLayer '%s' of type '%s' failed deserialization", l_id, l_type);
 			continue;
 		}
 

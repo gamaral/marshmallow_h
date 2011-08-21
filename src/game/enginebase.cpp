@@ -71,7 +71,7 @@ EngineBase::EngineBase(float f, float u, bool s)
 	if (!s_instance)
 		s_instance = this;
 	else
-		WARNING1("Started a second engine!");
+		MMWARNING1("Started a second engine!");
 }
 
 EngineBase::~EngineBase(void)
@@ -86,7 +86,7 @@ EngineBase::initialize(void)
 	Platform::Initialize();
 
 	if (!Viewport::Initialize()) {
-		ERROR1("Failed to initialize engine!");
+		MMERROR1("Failed to initialize engine!");
 		return(false);
 	}
 
@@ -135,7 +135,7 @@ int
 EngineBase::run(void)
 {
 	if (!initialize()) {
-		ERROR1("Engine initialization failed");
+		MMERROR1("Engine initialization failed");
 		finalize();
 		return(-1);
 	}
@@ -178,14 +178,14 @@ EngineBase::run(void)
 			m_frame_rate++;
 			l_render -= l_render_target;
 			if (l_render > l_render_target / 2)
-				INFO1("Skipping render frame."), l_render = 0;
+				MMINFO1("Skipping render frame."), l_render = 0;
 		}
 
 		if (l_update >= l_update_target) {
 			update(l_update / MILLISECONDS_PER_SECOND);
 			l_update -= l_update_target;
 			if (l_update > l_update_target / 2)
-				INFO1("Skipping update frame."), l_update = 0;
+				MMINFO1("Skipping update frame."), l_update = 0;
 		}
 
 		if (l_second >= l_second_target) {
@@ -210,7 +210,7 @@ EngineBase::run(void)
 void
 EngineBase::stop(int ec)
 {
-	INFO1("EngineBase stopped");
+	MMINFO1("EngineBase stopped");
 	m_exit_code = ec;
 	m_running = false;
 }
@@ -239,13 +239,13 @@ EngineBase::tick(TIME t)
 	TIMEOUT_INIT;
 	Viewport::Tick(TIMEOUT_DEC(t));
 	if (m_event_manager) m_event_manager->execute(TIMEOUT_DEC(t));
-	else WARNING1("No event manager!");
+	else MMWARNING1("No event manager!");
 }
 
 void
 EngineBase::second(void)
 {
-	WARNING("FPS %d!", m_frame_rate);
+	MMWARNING("FPS %d!", m_frame_rate);
 	m_frame_rate = 0;
 }
 
@@ -276,7 +276,7 @@ EngineBase::serialize(TinyXML::TiXmlElement &n) const
 		TinyXML::TiXmlElement l_element("scenes");
 
 		if (!m_scene_manager->serialize(l_element)) {
-			WARNING1("Scene Manager serialization failed");
+			MMWARNING1("Scene Manager serialization failed");
 			return(false);
 		}
 

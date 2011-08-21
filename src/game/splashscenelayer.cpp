@@ -180,7 +180,7 @@ SplashSceneLayer::serialize(TinyXML::TiXmlElement &n) const
 
 	TinyXML::TiXmlElement l_mesh("mesh");
 	if (m_mesh && !m_mesh->serialize(l_mesh)) {
-		WARNING("Splash scene layer '%s' serialization failed to serialize mesh!",
+		MMWARNING("Splash scene layer '%s' serialization failed to serialize mesh!",
 		    id().str().c_str());
 		return(false);
 	}
@@ -203,7 +203,7 @@ SplashSceneLayer::deserialize(TinyXML::TiXmlElement &n)
 
 	TinyXML::TiXmlElement *l_child = n.FirstChildElement("mesh");
 	if (!l_child) {
-		WARNING("Splash scene layer '%s' deserialized without a mesh!",
+		MMWARNING("Splash scene layer '%s' deserialized without a mesh!",
 		    id().str().c_str());
 		return(false);
 	}

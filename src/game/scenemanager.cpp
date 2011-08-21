@@ -86,7 +86,7 @@ SceneManager::popScene(void)
 	if (!m_stack.empty()) {
 		m_active = m_stack.front();
 		m_stack.pop_front();
-	} else WARNING1("Scene stack is empty!");
+	} else MMWARNING1("Scene stack is empty!");
 }
 
 SharedScene
@@ -149,12 +149,12 @@ SceneManager::deserialize(TinyXML::TiXmlElement &n)
 		    FactoryBase::Instance()->createScene(l_type, l_id);
 
 		if (!l_scene) {
-			WARNING("Scene '%s' of type '%s' creation failed", l_id, l_type);
+			MMWARNING("Scene '%s' of type '%s' creation failed", l_id, l_type);
 			continue;
 		}
 
 		if (!l_scene->deserialize(*l_child)) {
-			WARNING("Scene '%s' of type '%s' failed deserialization", l_id, l_type);
+			MMWARNING("Scene '%s' of type '%s' failed deserialization", l_id, l_type);
 			continue;
 		}
 

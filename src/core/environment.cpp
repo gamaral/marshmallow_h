@@ -44,7 +44,7 @@ operator new(size_t size)
 {
 	/* TODO: Replace with custom allocator */
 	void *ptr = malloc(size);
-	INFO("Requested allocation of %lu bytes - returning %p.", size, ptr);
+	MMINFO("Requested allocation of %lu bytes - returning %p.", size, ptr);
 	return(ptr);
 }
 
@@ -53,7 +53,7 @@ operator new[](size_t size)
 {
 	/* TODO: Replace with custom allocator */
 	void *ptr = malloc(size);
-	INFO("Requested array allocation of %lu bytes - returning %p.", size, ptr);
+	MMINFO("Requested array allocation of %lu bytes - returning %p.", size, ptr);
 	return(ptr);
 }
 
@@ -61,7 +61,7 @@ void
 operator delete(void *ptr)
 {
 	/* TODO: Replace with memory manager */
-	INFO("Requested deallocation of %p.", ptr);
+	MMINFO("Requested deallocation of %p.", ptr);
 	free(ptr);
 }
 
@@ -69,7 +69,7 @@ void
 operator delete[](void *ptr)
 {
 	/* TODO: Replace with custom allocator */
-	INFO("Requested array deallocation of %p.", ptr);
+	MMINFO("Requested array deallocation of %p.", ptr);
 	free(ptr);
 }
 

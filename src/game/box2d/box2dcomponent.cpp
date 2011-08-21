@@ -86,7 +86,7 @@ Box2DComponent::update(TIME d)
 		m_b2layer = l_layer.cast<Box2DSceneLayer>();
 
 		if (!m_b2layer) {
-			WARNING1("Box2DComponent used with non Box2D Scene!");
+			MMWARNING1("Box2DComponent used with non Box2D Scene!");
 			return;
 		}
 

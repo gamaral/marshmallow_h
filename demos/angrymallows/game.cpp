@@ -70,7 +70,7 @@ Demo::initialize(void)
 	{	/* derialization test */
 		TinyXML::TiXmlDocument l_document;
 		if (!l_document.LoadFile(m_filename)) {
-			ERROR("Failed to load '%s'", m_filename);
+			MMERROR("Failed to load '%s'", m_filename);
 			return(false);
 		}
 		TinyXML::TiXmlElement *l_root = l_document.FirstChildElement("marshmallow");
@@ -95,7 +95,7 @@ Demo::second(void)
 	EngineBase::second();
 
 	if (++m_stop_timer == 120) {
-		WARNING1("Stopping engine (auto-shutdown)");
+		MMWARNING1("Stopping engine (auto-shutdown)");
 		stop();
 	}
 }

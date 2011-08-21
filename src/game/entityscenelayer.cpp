@@ -155,12 +155,12 @@ EntitySceneLayer::deserialize(TinyXML::TiXmlElement &n)
 		    FactoryBase::Instance()->createEntity(l_type, l_id, *this);
 
 		if (!l_entity) {
-			WARNING("Entity '%s' of type '%s' creation failed", l_id, l_type);
+			MMWARNING("Entity '%s' of type '%s' creation failed", l_id, l_type);
 			continue;
 		}
 
 		if (!l_entity->deserialize(*l_child)) {
-			WARNING("Entity '%s' of type '%s' failed deserialization", l_id, l_type);
+			MMWARNING("Entity '%s' of type '%s' failed deserialization", l_id, l_type);
 			continue;
 		}
 

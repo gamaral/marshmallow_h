@@ -48,26 +48,26 @@
  * TODO: Replace with Core::Logger
  */
 
-#define FATAL(x,...) fprintf(stderr, "%s [%s:%d]: FATAL: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__),exit(-1)
-#define FATAL1(x) fprintf(stderr, "%s [%s:%d]: FATAL: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__),exit(-1)
+#define MMFATAL(x,...) fprintf(stderr, "%s [%s:%d]: FATAL: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__),exit(-1)
+#define MMFATAL1(x) fprintf(stderr, "%s [%s:%d]: FATAL: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__),exit(-1)
 
-#define ERROR(x,...) fprintf(stderr, "%s [%s:%d]: ERROR: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
-#define ERROR1(x) fprintf(stderr, "%s [%s:%d]: ERROR: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
+#define MMERROR(x,...) fprintf(stderr, "%s [%s:%d]: ERROR: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
+#define MMERROR1(x) fprintf(stderr, "%s [%s:%d]: ERROR: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
 
 #if defined(DEBUG) && DEBUG_VERBOSITY >= 1
-#   define WARNING(x,...) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
-#   define WARNING1(x) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
+#   define MMWARNING(x,...) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
+#   define MMWARNING1(x) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
 #else
-#   define WARNING(x,...) (void)0
-#   define WARNING1(x) (void)0
+#   define MMWARNING(x,...) (void)0
+#   define MMWARNING1(x) (void)0
 #endif
 
 #if defined(DEBUG) && DEBUG_VERBOSITY >= 2
-#   define INFO(x,...) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
-#   define INFO1(x) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
+#   define MMINFO(x,...) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
+#   define MMINFO1(x) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
 #else
-#   define INFO(...) (void)0
-#   define INFO1(...) (void)0
+#   define MMINFO(...) (void)0
+#   define MMINFO1(...) (void)0
 #endif
 
 #endif

@@ -74,8 +74,8 @@ public:
 			    cast<Game::MovementComponent>();
 
 		if (m_position && m_movement) {
-			INFO("DELTA: %f", d);
-			INFO("Current position %f, %f",
+			MMINFO("DELTA: %f", d);
+			MMINFO("Current position %f, %f",
 			    m_position->position().rx(), m_position->position().ry());
 
 			Math::Size2f l_vpsize = Graphics::Viewport::Size();

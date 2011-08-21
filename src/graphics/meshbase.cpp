@@ -74,7 +74,7 @@ MeshBase::vertex(int i) const
 {
 	Math::Vector2 l_vector;
 	if (!m_vdata->get(i, l_vector.rx(), l_vector.ry()))
-		WARNING("Failed to retrieve values for vertex %d", i);
+		MMWARNING("Failed to retrieve values for vertex %d", i);
 	return(l_vector);
 }
 
@@ -82,7 +82,7 @@ void
 MeshBase::setVertex(int i, const Math::Vector2 &v)
 {
 	if (!m_vdata->set(i, v.rx(), v.ry()))
-		WARNING("Failed to assign values (%f, %f) to vertex %d",
+		MMWARNING("Failed to assign values (%f, %f) to vertex %d",
 		    v.rx(), v.ry(), i);
 }
 
@@ -90,14 +90,14 @@ void
 MeshBase::textureCoordinate(int i, float &u, float &v) const
 {
 	if (!m_tcdata->get(i, u, v))
-		WARNING("Failed to retrieve values for vertex %d", i);
+		MMWARNING("Failed to retrieve values for vertex %d", i);
 }
 
 void
 MeshBase::setTextureCoordinate(int i, float u, float v)
 {
 	if (!m_tcdata->set(i, u, v))
-		WARNING("Failed to assign values (%f, %f) to texture coordinate %d",
+		MMWARNING("Failed to assign values (%f, %f) to texture coordinate %d",
 		    u, v, i);
 }
 
@@ -130,7 +130,7 @@ MeshBase::serialize(TinyXML::TiXmlElement &n) const
 			l_vector.SetDoubleAttribute("u", l_u);
 			l_vector.SetDoubleAttribute("v", l_v);
 			n.InsertEndChild(l_vector);
-		} else WARNING("Failed to serialize text coord %d", i);
+		} else MMWARNING("Failed to serialize text coord %d", i);
 	}
 
 	/* vertexes */
@@ -141,7 +141,7 @@ MeshBase::serialize(TinyXML::TiXmlElement &n) const
 			l_vector.SetDoubleAttribute("x", l_x);
 			l_vector.SetDoubleAttribute("y", l_y);
 			n.InsertEndChild(l_vector);
-		} else WARNING("Failed to serialize vertex %d", i);
+		} else MMWARNING("Failed to serialize vertex %d", i);
 	}
 
 	return(true);
@@ -179,7 +179,7 @@ MeshBase::deserialize(TinyXML::TiXmlElement &n)
 		l_child->QueryFloatAttribute("u", &l_u);
 		l_child->QueryFloatAttribute("v", &l_v);
 		if (!m_tcdata->set(l_i++, l_u, l_v)) {
-			WARNING1("Failed to assign texture coordinate data.");
+			MMWARNING1("Failed to assign texture coordinate data.");
 			break;
 		}
 	}
@@ -192,7 +192,7 @@ MeshBase::deserialize(TinyXML::TiXmlElement &n)
 		l_child->QueryFloatAttribute("x", &l_x);
 		l_child->QueryFloatAttribute("y", &l_y);
 		if (!m_vdata->set(l_i++, l_x, l_y)) {
-			WARNING1("Failed to assign vertex data.");
+			MMWARNING1("Failed to assign vertex data.");
 			break;
 		}
 	}

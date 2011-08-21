@@ -168,12 +168,12 @@ EntityBase::deserialize(TinyXML::TiXmlElement &n)
 		    FactoryBase::Instance()->createComponent(l_type, l_id, *this);
 
 		if (!l_component) {
-			WARNING("Component '%s' of type '%s' creation failed", l_id, l_type);
+			MMWARNING("Component '%s' of type '%s' creation failed", l_id, l_type);
 			continue;
 		}
 
 		if (!l_component->deserialize(*l_child)) {
-			WARNING("Component '%s' of type '%s' failed deserialization", l_id, l_type);
+			MMWARNING("Component '%s' of type '%s' failed deserialization", l_id, l_type);
 			continue;
 		}
 

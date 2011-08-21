@@ -63,7 +63,7 @@ EventManager::~EventManager(void)
 bool
 EventManager::connect(const WeakEventListener &handler, const Core::Type &t)
 {
-	INFO("Connecting `%p` handler to event type `%s`", static_cast<const void *>(&handler), t.str().c_str());
+	MMINFO("Connecting `%p` handler to event type `%s`", static_cast<const void *>(&handler), t.str().c_str());
 
 	EventListenerMap::const_iterator l_elmapi =
 	    m_elmap.find(t.uid());
@@ -80,11 +80,11 @@ EventManager::connect(const WeakEventListener &handler, const Core::Type &t)
 	if (l_listenersi == l_listeners->end())
 		l_listeners->push_back(handler);
 	else {
-		WARNING1("Failed! Listener already connected to this event type.");
+		MMWARNING1("Failed! Listener already connected to this event type.");
 		return(false);
 	}
 
-	INFO("Connected! Current listener count is: %d", l_listeners->size());
+	MMINFO("Connected! Current listener count is: %d", l_listeners->size());
 
 	return(true);
 }
@@ -92,20 +92,20 @@ EventManager::connect(const WeakEventListener &handler, const Core::Type &t)
 bool
 EventManager::disconnect(const WeakEventListener &handler, const Core::Type &t)
 {
-	INFO("Disconnecting `%p` handler from event type `%s`", static_cast<const void *>(&handler), t.str().c_str());
+	MMINFO("Disconnecting `%p` handler from event type `%s`", static_cast<const void *>(&handler), t.str().c_str());
 
 	EventListenerMap::const_iterator l_elmapi =
 	    m_elmap.find(t.uid());
 
 	/* if this is a new type, assign a new EventListenerList */
 	if (l_elmapi == m_elmap.end()) {
-		WARNING1("Failed! Event type not in registry.");
+		MMWARNING1("Failed! Event type not in registry.");
 		return(false);
 	}
 
 	SharedEventListenerList l_listeners(m_elmap[t.uid()]);
 	l_listeners->remove(handler);
-	INFO("Disconnected! Current listener count is: %d", l_listeners->size());
+	MMINFO("Disconnected! Current listener count is: %d", l_listeners->size());
 
 	return(true);
 }
