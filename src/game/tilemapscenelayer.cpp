@@ -51,6 +51,7 @@ TilemapSceneLayer::TilemapSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s),
       m_tile_size(24, 24),
       m_size(100, 100),
+      m_opacity(1.0f),
       m_data(0)
 {
 	recalculateRelativeTileSize();
@@ -114,6 +115,12 @@ TilemapSceneLayer::setSize(const Math::Size2i &s)
 }
 
 void
+TilemapSceneLayer::setOpacity(float a)
+{
+	m_opacity = a;
+}
+
+void
 TilemapSceneLayer::setData(UINT16 *d)
 {
 	delete [] m_data;
@@ -125,9 +132,11 @@ TilemapSceneLayer::render(void)
 {
 	if (!m_data) return;
 
+	Graphics::Color l_color(1.f, 1.f, 1.f, m_opacity);
+
 	for (int l_r = 0; l_r < m_size.rheight(); ++l_r) {
-		
 		const int l_roffset = l_r * m_size.rwidth();
+
 		for (int l_c = 0; l_c < m_size.rwidth(); ++l_c) {
 			int l_tindex = m_data[l_roffset + l_c];
 			int l_tioffset;
@@ -143,6 +152,7 @@ TilemapSceneLayer::render(void)
 				float l_thw, l_thh;
 
 				Graphics::QuadMesh l_mesh(l_tcd, l_ts->textureData(), l_svdata);
+				l_mesh.setColor(l_color);
 				l_svdata->get(2, l_thw, l_thh);
 
 				const Math::Size2f &l_vsize = Graphics::Viewport::Size();

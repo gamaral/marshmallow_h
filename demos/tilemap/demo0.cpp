@@ -65,16 +65,34 @@ public:
 			l_tileset->setTextureData(l_texture);
 			l_tileset->setTileSize(Math::Size2i(24, 24));
 
-			Game::SharedTilemapSceneLayer l_tslayer = new Game::TilemapSceneLayer("tilemap", *this);
+			Game::SharedTilemapSceneLayer l_tslayer;
+			UINT16 *l_data;
+
+			/* layer 1 */
+			l_tslayer = new Game::TilemapSceneLayer("bottom", *this);
 			l_tslayer->setSize(Math::Size2i(20, 15));
 			l_tslayer->setTileSize(Math::Size2i(24, 24));
-			l_tslayer->attachTileset(0, l_tileset.staticCast<Graphics::ITileset>());
+			l_tslayer->attachTileset(1, l_tileset.staticCast<Graphics::ITileset>());
 
 			/* generate random tilemap */
-			UINT16 *l_data = new UINT16[l_tslayer->size().area()];
+			l_data = new UINT16[l_tslayer->size().area()];
 			for (int i = 0; i < l_tslayer->size().area(); ++i)
-				l_data[i] = rand() % 72; // 8 * 9 sample tileset
+				l_data[i] = 1 /*offset*/ + rand() % 72 /* 8x9 sample tileset */;
+			l_tslayer->setData(l_data);
 
+			pushLayer(l_tslayer.staticCast<Game::ISceneLayer>());
+
+			/* layer 2 */
+			l_tslayer = new Game::TilemapSceneLayer("overlay", *this);
+			l_tslayer->setOpacity(0.15f);
+			l_tslayer->setSize(Math::Size2i(20, 15));
+			l_tslayer->setTileSize(Math::Size2i(24, 24));
+			l_tslayer->attachTileset(1, l_tileset.staticCast<Graphics::ITileset>());
+
+			/* generate random tilemap */
+			l_data = new UINT16[l_tslayer->size().area()];
+			for (int i = 0; i < l_tslayer->size().area(); ++i)
+				l_data[i] = rand() % 2 /* 0 = nothing, 1 = some tile */;
 			l_tslayer->setData(l_data);
 
 			pushLayer(l_tslayer.staticCast<Game::ISceneLayer>());
@@ -115,7 +133,7 @@ public:
 	{
 		EngineBase::second();
 
-		if (++m_stop_timer == 10)
+		if (++m_stop_timer == 4)
 			stop();
 	}
 };

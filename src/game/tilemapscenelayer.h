@@ -70,6 +70,8 @@ namespace Game
 		Math::Size2i m_tile_size;
 		Math::Size2i m_size;
 
+		float m_opacity;
+
 		UINT16 *m_data;
 
 	public:
@@ -89,6 +91,10 @@ namespace Game
 		const Math::Size2i & size(void) const
 		    { return(m_size); }
 		void setSize(const Math::Size2i &size);
+
+		float opacity(void) const
+		    { return (m_opacity); }
+		void setOpacity(float alpha);
 
 		const UINT16 * data(void) const
 		    { return(m_data); }

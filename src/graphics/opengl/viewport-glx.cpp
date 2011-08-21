@@ -320,7 +320,6 @@ struct Viewport::Internal
 		glDisable(GL_BLEND);
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 		/* initialize context */
 		glViewport(0, 0, w, h);
