@@ -55,9 +55,9 @@ namespace Graphics
 
 	namespace Factory
 	{
-		SharedTextureCoordinateData CreateTextureCoordinateData(int count);
-		SharedTextureData CreateTextureData(void);
-		SharedVertexData CreateVertexData(int count);
+	    GRAPHICS_EXPORT SharedTextureCoordinateData CreateTextureCoordinateData(int count);
+	    GRAPHICS_EXPORT SharedTextureData CreateTextureData(void);
+	    GRAPHICS_EXPORT SharedVertexData CreateVertexData(int count);
 	}
 }
 
