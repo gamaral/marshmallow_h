@@ -54,7 +54,7 @@
 #define MMERROR(x,...) fprintf(stderr, "%s [%s:%d]: ERROR: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
 #define MMERROR1(x) fprintf(stderr, "%s [%s:%d]: ERROR: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
 
-#if defined(DEBUG) && DEBUG_VERBOSITY >= 1
+#if MMDEBUG && MMDEBUG_VERBOSITY >= 1
 #   define MMWARNING(x,...) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
 #   define MMWARNING1(x) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
 #else
@@ -62,7 +62,7 @@
 #   define MMWARNING1(x) (void)0
 #endif
 
-#if defined(DEBUG) && DEBUG_VERBOSITY >= 2
+#if MMDEBUG && MMDEBUG_VERBOSITY >= 2
 #   define MMINFO(x,...) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
 #   define MMINFO1(x) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
 #else

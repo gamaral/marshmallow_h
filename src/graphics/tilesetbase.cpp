@@ -96,7 +96,7 @@ TilesetBase::setSpacing(int s)
 SharedTextureCoordinateData
 TilesetBase::getTextureCoordinateData(int i)
 {
-	if (!m_texture_data)
+	if (!m_texture_data || !m_texture_data->isLoaded() || !m_tile_cols)
 		return(SharedTextureCoordinateData());
 
 	TextureCoordinateMap::iterator l_cached_i = m_cache.find(i);

@@ -58,7 +58,8 @@ public:
 			m_init = true;
 
 			Graphics::SharedTextureData l_texture = Graphics::Factory::CreateTextureData();
-			assert(l_texture->load("assets/sewer_tileset.png") && "Failed to load tilemap asset!");
+			l_texture->load("assets/sewer_tileset.png");
+			assert(l_texture->isLoaded() && "Failed to load tilemap asset!");
 
 			Graphics::SharedTilesetBase l_tileset = new Graphics::Tileset;
 			l_tileset->setTextureData(l_texture);
