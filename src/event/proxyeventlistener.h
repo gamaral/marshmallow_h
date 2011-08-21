@@ -45,7 +45,7 @@ namespace Event
 {
 
 	/*! @brief Proxy Event Listener Class */
-	class EVENT_EXPORT ProxyEventListener : public IEventListener
+	class ProxyEventListener : public IEventListener
 	{
 		IEventListener &m_owner;
 
