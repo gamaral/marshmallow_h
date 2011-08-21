@@ -48,11 +48,12 @@ const Core::Type SnatcherLayer::sType("SnatcherLayer");
 
 SnatcherLayer::SnatcherLayer(const Core::Identifier &i, Game::IScene &s)
     : Game::SceneLayerBase(i, s),
-      m_event_proxy(new Event::ProxyEventListener(*this)),
+      m_event_proxy(),
       m_state(ssIdle),
       m_timeout(0),
       m_active(0)
 {
+	m_event_proxy = new Event::ProxyEventListener(*this);
 	Game::EngineBase::Instance()->eventManager()->connect(m_event_proxy, Event::KeyboardEvent::Type());
 }
 

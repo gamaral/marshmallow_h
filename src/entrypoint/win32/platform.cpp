@@ -40,18 +40,14 @@
 int
 WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	int l_exitcode;
-	int l_argc;
-	LPWSTR *l_argv = CommandLineToArgvW(GetCommandLineW(), &l_argc);
-	l_exitcode = MMain(l_argc, l_argv);
-	LocalFree(l_argv);
-	return(l_exitcode);
+	char *noargs[] = {0};
+	return(MMain(0, noargs));
 }
-#else
+#endif
+
 int
 main(int argc, char *argv[])
 {
 	return(MMain(argc, argv));
 }
-#endif
 
