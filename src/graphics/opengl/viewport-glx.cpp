@@ -164,7 +164,7 @@ struct Viewport::Internal
 
 		/* open display */
 		if (!(display = XOpenDisplay(0))) {
-			ERROR1("Unable to open X Display.");
+			MMERROR1("Unable to open X Display.");
 			destroyXWindow();
 			return(false);
 		}
@@ -173,7 +173,7 @@ struct Viewport::Internal
 		GLint gattr[] = {GLX_RGBA, GLX_DEPTH_SIZE, d, GLX_DOUBLEBUFFER, None};
 		XVisualInfo *l_vinfo;
 		if(!(l_vinfo = glXChooseVisual(display, 0, gattr))) {
-			ERROR1("Unable to choose X Visual Info.");
+			MMERROR1("Unable to choose X Visual Info.");
 			destroyXWindow();
 			return(false);
 		}
@@ -208,7 +208,7 @@ struct Viewport::Internal
 			XF86VidModeGetAllModeLines(display, screen, &l_mode_count, &l_modes);
 			dvminfo.dotclock = 0;
 			for (int i = 0; i < l_mode_count; ++i) {
-				INFO("Display mode %dx%d [%d]",
+				MMINFO("Display mode %dx%d [%d]",
 				    l_modes[i]->hdisplay,
 				    l_modes[i]->vdisplay, i);
 
@@ -216,19 +216,19 @@ struct Viewport::Internal
 				    l_modes[i]->hdisplay == l_cmline.hdisplay &&
 				    l_modes[i]->vdisplay == l_cmline.vdisplay &&
 				    static_cast<int>(l_modes[i]->dotclock) == l_cdotclock) {
-					INFO1("Found current display mode");
+					MMINFO1("Found current display mode");
 					dvminfo = *l_modes[i];
 				}
 				if (l_mode_selected == -1 &&
 				    l_modes[i]->hdisplay == w &&
 				    l_modes[i]->vdisplay == h) {
-					INFO1("Found appropriate display mode");
+					MMINFO1("Found appropriate display mode");
 					l_mode_selected = i;
 				}
 			}
 
 			if (l_mode_selected == -1) {
-				ERROR1("Unable to find a suitable display mode.");
+				MMERROR1("Unable to find a suitable display mode.");
 				destroyXWindow();
 				return(false);
 			}
@@ -275,7 +275,7 @@ struct Viewport::Internal
 			/* set size hints */
 			XSizeHints *l_size_hints;
 			if(!(l_size_hints = XAllocSizeHints())) {
-				ERROR1("Unable to allocate window size hints.");
+				MMERROR1("Unable to allocate window size hints.");
 				destroyXWindow();
 				return(false);
 			}
@@ -295,19 +295,19 @@ struct Viewport::Internal
 
 		/* create context */
 		if (!(context = glXCreateContext(display, l_vinfo, 0, GL_TRUE))) {
-			ERROR1("Failed to create context!");
+			MMERROR1("Failed to create context!");
 			destroyXWindow();
 			return(false);
 		}
 
 		if (!glXMakeCurrent(display, window, context)) {
-			ERROR1("Failed to make context current!");
+			MMERROR1("Failed to make context current!");
 			destroyXWindow();
 			return(false);
 		}
 
 		if (!glXIsDirect(display, context)) {
-			ERROR1("GLX context doesn't support direct rendering.");
+			MMERROR1("GLX context doesn't support direct rendering.");
 			destroyXWindow();
 			return(false);
 		}
@@ -331,7 +331,7 @@ struct Viewport::Internal
 		glFlush();
 
 		if(glGetError() != GL_NO_ERROR) {
-			ERROR1("GLX failed during initialization.");
+			MMERROR1("GLX failed during initialization.");
 			destroyXWindow();
 			return(false);
 		}
@@ -489,7 +489,7 @@ struct Viewport::Internal
 		case XK_KP_Decimal:   l_key = Event::KEY_KDECIMAL; break;
 		case XK_KP_Divide:    l_key = Event::KEY_KDIVIDE; break;
 		case XK_KP_Multiply:  l_key = Event::KEY_KMULTIPLY; break;
-		default: WARNING1("Unknown key pressed!");
+		default: MMWARNING1("Unknown key pressed!");
 		}
 
 		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
@@ -552,7 +552,7 @@ Viewport::Tick(TIME t)
 			/* TODO: Send Events */
 			break;
 
-		default: INFO1("Unknown viewport event received."); break;
+		default: MMINFO1("Unknown viewport event received."); break;
 		}
 	}
 }

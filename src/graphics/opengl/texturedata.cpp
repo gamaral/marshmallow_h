@@ -62,7 +62,7 @@ bool
 TextureData::load(const Core::Identifier &i)
 {
 	if (m_texture_id) {
-		WARNING1("Load texture asset called on active texture.");
+		MMWARNING1("Load texture asset called on active texture.");
 		return(false);
 	}
 
@@ -79,14 +79,14 @@ TextureData::load(const Core::Identifier &i)
 
 	if (!pngLoad(i.str().c_str(), PNG_BUILDMIPMAPS, PNG_ALPHA, &pi)) {
 		m_size = Math::Size2i(0, 0);
-		INFO1("Failed to load texture.");
+		MMINFO1("Failed to load texture.");
 		return(false);
 	}
 
 	m_size = Math::Size2i(pi.Width, pi.Height);
 	m_id = i;
 
-	INFO1("Texture loaded.");
+	MMINFO1("Texture loaded.");
 
 	return(true);
 }

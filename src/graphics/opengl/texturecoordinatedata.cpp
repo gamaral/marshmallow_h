@@ -75,7 +75,7 @@ TextureCoordinateData::buffer(void)
 	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW_ARB);
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
-	INFO("Buffered data. ID: %d", m_bufferId);
+	MMINFO("Buffered data. ID: %d", m_bufferId);
 }
 
 void
@@ -84,7 +84,7 @@ TextureCoordinateData::unbuffer(void)
 	if (!HasVectorBufferObjectSupport || !isBuffered())
 		return;
 
-	INFO("Unbuffered data. ID: %d", m_bufferId);
+	MMINFO("Unbuffered data. ID: %d", m_bufferId);
 
 	glDeleteBuffersARB(1, &m_bufferId);
 	m_bufferId = 0;

@@ -133,7 +133,7 @@ struct Viewport::Internal
 		l_wc.lpszClassName = "marshmallow_wgl";
 
 		if (!(RegisterClass(&l_wc))) {
-			ERROR("Failed to register window class.");
+			MMERROR("Failed to register window class.");
 			return false;
 		}
 	
@@ -148,7 +148,7 @@ struct Viewport::Internal
 			l_dm.dmFields     = DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT;
 
 			if (ChangeDisplaySettings(&l_dm, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL) {
-				ERROR("Failed to switch modes for fullscreen viewport");
+				MMERROR("Failed to switch modes for fullscreen viewport");
 				fullscreen = false;
 			} else {
 				ShowCursor(false);
@@ -184,14 +184,14 @@ struct Viewport::Internal
 		    wrect.left, wrect.top, wrect.right - wrect.left,
 		    wrect.bottom - wrect.top, 0, 0, l_wc.hInstance, 0);
 		if (!window) {
-			ERROR1("Failed to create window");
+			MMERROR1("Failed to create window");
 			destroyWindow();
 			return(false);
 		}
 
 		/* create device context */
 		if (!(dcontext = GetDC(window))) {
-			ERROR1("Failed to create device context");
+			MMERROR1("Failed to create device context");
 			destroyWindow();
 			return(false);
 		}
@@ -209,27 +209,27 @@ struct Viewport::Internal
 	
 		unsigned int l_pfindex;
 		if (!(l_pfindex = ChoosePixelFormat(dcontext, &l_pfd))) {
-			ERROR1("Failed to select a pixel format");
+			MMERROR1("Failed to select a pixel format");
 			destroyWindow();
 			return(false);
 		}
 
 		if(!SetPixelFormat(dcontext, l_pfindex, &l_pfd)) {
-			ERROR1("Failed to bind pixel format to window context");
+			MMERROR1("Failed to bind pixel format to window context");
 			destroyWindow();
 			return(false);
 		}
 
 		/* create wiggle context */
 		if (!(context = wglCreateContext(dcontext))) {
-			ERROR1("Failed to create OpenGL context");
+			MMERROR1("Failed to create OpenGL context");
 			destroyWindow();
 			return(false);
 		}
 
 		/* make wgl context current */
 		if(!wglMakeCurrent(dcontext, context)) {
-			ERROR1("Failed to set current OpenGL context");
+			MMERROR1("Failed to set current OpenGL context");
 			destroyWindow();
 			return(false);
 		}
@@ -252,7 +252,7 @@ struct Viewport::Internal
 		adjustView();
 		SwapBuffer();
 
-		if( glGetError() != GL_NO_ERROR )
+		if(glGetError() != GL_NO_ERROR)
 			return(false);
 
 		return(loaded = true);
@@ -268,24 +268,24 @@ struct Viewport::Internal
 
 		if (context) {
 			if (!wglMakeCurrent(0, 0))
-				WARNING1("Failed to unset current OpenGL context");
+				MMWARNING1("Failed to unset current OpenGL context");
 
 			if (!wglDeleteContext(context))
-				WARNING1("Failed to delete OpenGL context");
+				MMWARNING1("Failed to delete OpenGL context");
 
 			context = 0;
 		}
 
 		if (dcontext && !ReleaseDC(window, dcontext))
-			WARNING1("Failed to release device context");
+			MMWARNING1("Failed to release device context");
 		dcontext = 0;
 
 		if (window && !DestroyWindow(window))
-			WARNING1("Failed to destroy window");
+			MMWARNING1("Failed to destroy window");
 		window = 0;
 
 		if (!UnregisterClass("marshmallow_wgl", GetModuleHandle(0)))
-			WARNING1("Failed to unregister window class");
+			MMWARNING1("Failed to unregister window class");
 
 		loaded = false;
 	}
@@ -383,7 +383,7 @@ struct Viewport::Internal
 			case VK_DECIMAL:      l_key = Event::KEY_KDECIMAL; break;
 			case VK_DIVIDE:       l_key = Event::KEY_KDIVIDE; break;
 			case VK_MULTIPLY:     l_key = Event::KEY_KMULTIPLY; break;
-			default: WARNING1("Unknown key pressed!");
+			default: MMWARNING1("Unknown key pressed!");
 			}
 		}
 

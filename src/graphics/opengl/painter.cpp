@@ -159,7 +159,7 @@ Painter::Draw(const IMesh &g, const Math::Point2 &o)
 	/* actually draw graphic */
 	if (g.type() == QuadMesh::Type())
 		MGP.drawQuadMesh(static_cast<const QuadMesh &>(g));
-	else WARNING1("Unknown mesh type");
+	else MMWARNING1("Unknown mesh type");
 
 	Blend(NoBlending);
 
