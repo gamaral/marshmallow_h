@@ -58,7 +58,7 @@ EngineBase *EngineBase::s_instance = 0;
 EngineBase::EngineBase(float f, float u, bool s)
     : m_event_manager(),
       m_scene_manager(),
-      m_event_proxy(new Event::ProxyEventListener(*this)),
+      m_event_proxy(),
       m_factory(),
       m_fps(f),
       m_ups(u),
@@ -68,6 +68,7 @@ EngineBase::EngineBase(float f, float u, bool s)
       m_suspendable(s),
       m_running(false)
 {
+	m_event_proxy = new Event::ProxyEventListener(*this);
 	if (!s_instance)
 		s_instance = this;
 	else

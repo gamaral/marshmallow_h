@@ -49,8 +49,9 @@ using namespace Game;
 SceneManager::SceneManager(void)
     : m_stack(),
       m_active(),
-      m_event_proxy(new Event::ProxyEventListener(*this))
+      m_event_proxy()
 {
+	m_event_proxy = new Event::ProxyEventListener(*this);
 	Event::EventManager::Instance()->connect(m_event_proxy, Event::RenderEvent::Type());
 	Event::EventManager::Instance()->connect(m_event_proxy, Event::UpdateEvent::Type());
 }

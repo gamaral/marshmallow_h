@@ -55,7 +55,7 @@ const Core::Type SplashSceneLayer::sType("Game::SplashSceneLayer");
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock),
       m_mesh(),
-      m_event_proxy(new Event::ProxyEventListener(*this)),
+      m_event_proxy(),
       m_exposure(1.5),
       m_fade(1.),
       m_timer(0.),
@@ -63,6 +63,7 @@ SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
       m_autoBegin(),
       m_autoKill(true)
 {
+	m_event_proxy = new Event::ProxyEventListener(*this);
 	m_mesh = new Graphics::QuadMesh(Math::Rect2(Graphics::Viewport::Size()));;
 	m_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
 
