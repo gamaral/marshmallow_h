@@ -1,6 +1,6 @@
 include(EASTL)
 
-add_definitions('-DDEMO_CWD="${CMAKE_CURRENT_SOURCE_DIR}"')
+add_definitions(-DDEMO_CWD=\\"${CMAKE_CURRENT_SOURCE_DIR}\\")
 
 add_executable(tilemap_demo0 "demo0.cpp")
 
