@@ -46,13 +46,17 @@ namespace Math
 
 	/*! @brief 2D Size */
 	template <typename T = float>
-	class MATH_EXPORT Size2
+	class Size2
 	{
 		T m_value[2];
 
 	public:
-		Size2(T width = 0, T height = 0);
-		Size2(const Size2 &copy);
+		Size2(T width = 0, T height = 0)
+		    { m_value[0] = width; m_value[1] = height; }
+
+		Size2(const Size2 &copy)
+		    { m_value[0] = copy.m_value[0]; m_value[1] = copy.m_value[1]; }
+
 
 		T & rwidth(void)
 		    { return(m_value[0]); }
@@ -69,10 +73,13 @@ namespace Math
 		T height(void) const
 		    { return(m_value[1]); }
 
-		T area(void) const;
+		T area(void) const
+		    { return(m_value[0] * m_value[1]); }
 
 		template <typename U>
-		Size2<U> staticCast(void) const;
+		Size2<U> staticCast(void) const
+		    { return(Size2<U>(static_cast<U>(m_value[0]), static_cast<U>(m_value[1]))); }
+
 
 	public: /* operators */
 
@@ -87,34 +94,6 @@ namespace Math
 	};
 	typedef Size2<float> Size2f;
 	typedef Size2<int>   Size2i;
-
-	template <typename T>
-	Size2<T>::Size2(T aw, T ah)
-	{
-		m_value[0] = aw;
-		m_value[1] = ah;
-	}
-
-	template <typename T>
-	Size2<T>::Size2(const Size2 &copy)
-	{
-		m_value[0] = copy.m_value[0];
-		m_value[1] = copy.m_value[1];
-	}
-
-	template <typename T> T
-	Size2<T>::area(void) const
-	{
-		return(m_value[0] * m_value[1]);
-	}
-
-	template <typename T>
-	template <typename U> Size2<U>
-	Size2<T>::staticCast(void) const
-	{
-		return(Size2<U>(static_cast<U>(m_value[0]), static_cast<U>(m_value[1])));
-	}
-
 }
 
 MARSHMALLOW_NAMESPACE_END
