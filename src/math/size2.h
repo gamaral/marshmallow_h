@@ -51,8 +51,12 @@ namespace Math
 		T m_value[2];
 
 	public:
-		Size2(T width = 0, T height = 0)
-		    { m_value[0] = width; m_value[1] = height; }
+		/*! @brief Size2 template constructor
+		 *  @param w Width
+		 *  @param h Height
+		 */
+		Size2(T w = 0, T h = 0)
+		    { m_value[0] = w; m_value[1] = h; }
 
 		Size2(const Size2 &copy)
 		    { m_value[0] = copy.m_value[0]; m_value[1] = copy.m_value[1]; }

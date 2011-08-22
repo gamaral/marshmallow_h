@@ -49,14 +49,15 @@ const Core::Type InputComponent::Type("InputComponent");
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e),
+      m_event_proxy(),
       m_linear_impulse(2.f),
       m_angular_impulse(0.008f),
       m_state(ICJumping),
-      m_event_proxy(new Event::ProxyEventListener(*this)),
       m_jump(false),
       m_left(false),
       m_right(false)
 {
+	m_event_proxy = new Event::ProxyEventListener(*this);
 	Game::EngineBase::Instance()->eventManager()->connect(m_event_proxy, Event::KeyboardEvent::Type());
 }
 
@@ -65,7 +66,7 @@ InputComponent::~InputComponent(void)
 }
 
 void
-InputComponent::update(TIME d)
+InputComponent::update(TIME)
 {
 	if (!m_position)
 		m_position = entity().getComponentType("Game::PositionComponent").

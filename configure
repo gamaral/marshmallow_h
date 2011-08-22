@@ -8,9 +8,16 @@ if [ ${CMAKE} == "" ]; then
 	exit -1
 fi
 
+DEBUG_FLAGS="-g -O0 -fno-exceptions -Wextra -Wall -W -pedantic -Wshadow -Wcast-qual -Wwrite-strings -Wconversion -Wno-variadic-macros -Wno-long-long"
+#DEBUG_C_FLAGS="${DEBUG_FLAGS} -ansi"
+DEBUG_CXX_FLAGS="${DEBUG_FLAGS}"
+#DEBUG_CXX_FLAGS="${DEBUG_CXX_FLAGS} -Weffc++ -Wold-style-cast"
+
 cd build
 cmake .. \
-    -DCMAKE_BUILD_TYPE:STRING="Debug" \
+    -DCMAKE_BUILD_TYPE="Debug" \
+    #-DCMAKE_C_FLAGS_DEBUG="${DEBUG_C_FLAGS}" \
+    -DCMAKE_CXX_FLAGS_DEBUG="${DEBUG_CXX_FLAGS}" \
     ${@}
 [ $? -eq 0 ] && echo && echo "Completed successfully! :)"
 cd ..

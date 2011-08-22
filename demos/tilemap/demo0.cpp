@@ -77,7 +77,7 @@ public:
 			/* generate random tilemap */
 			l_data = new UINT16[l_tslayer->size().area()];
 			for (int i = 0; i < l_tslayer->size().area(); ++i)
-				l_data[i] = 1 /*offset*/ + rand() % 72 /* 8x9 sample tileset */;
+				l_data[i] = static_cast<UINT16>(1 /*offset*/ + rand() % 72) /* 8x9 sample tileset */;
 			l_tslayer->setData(l_data);
 
 			pushLayer(l_tslayer.staticCast<Game::ISceneLayer>());
@@ -92,7 +92,7 @@ public:
 			/* generate random tilemap */
 			l_data = new UINT16[l_tslayer->size().area()];
 			for (int i = 0; i < l_tslayer->size().area(); ++i)
-				l_data[i] = rand() % 2 /* 0 = nothing, 1 = some tile */;
+				l_data[i] = static_cast<UINT16>(rand() % 2) /* 0 = nothing, 1 = some tile */;
 			l_tslayer->setData(l_data);
 
 			pushLayer(l_tslayer.staticCast<Game::ISceneLayer>());
@@ -141,6 +141,8 @@ public:
 int
 MMain(int argc, char *argv[])
 {
+	UNUSED(argc);
+	UNUSED(argv);
 	CHDIR(DEMO_CWD);
 	return(Demo().run());
 }

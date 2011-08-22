@@ -195,6 +195,8 @@ public:
 int
 MMain(int argc, char *argv[])
 {
+	UNUSED(argc);
+	UNUSED(argv);
 	CHDIR(DEMO_CWD);
 	return(Demo().run());
 }

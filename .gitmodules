@@ -1,7 +1,7 @@
 [submodule "contrib/box2d/code"]
 	path = contrib/box2d/code
 	url = git://github.com/gamaral/Box2D.git
-	branch = gamaral
+	branch = master
 [submodule "contrib/eastl/code"]
 	path = contrib/eastl/code
 	url = git://github.com/gamaral/EASTL.git
