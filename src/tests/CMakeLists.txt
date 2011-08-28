@@ -1,11 +1,6 @@
 if (BUILD_UNIT_TESTS)
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/tests)
 	add_subdirectory(core)
-
-	if (MARSHMALLOW_VIEWPORT_USE_DUMMY)
-		add_subdirectory(graphics)
-	else (MARSHMALLOW_VIEWPORT_USE_DUMMY)
-		message(WARNING "GRAPHIC UNIT TESTS require the use of MARSHMALLOW_VIEWPORT_USE_DUMMY, skipped!")
-	endif (MARSHMALLOW_VIEWPORT_USE_DUMMY)
+	add_subdirectory(graphics)
 endif (BUILD_UNIT_TESTS)
 

@@ -29,17 +29,13 @@ if(OPENGL_FOUND)
 	                              ${OPENGL_LIBRARIES})
 endif()
 
-if(MARSHMALLOW_VIEWPORT_USE_DUMMY)
-	message(WARNING "You currently have MARSHMALLOW_VIEWPORT_USE_DUMMY enabled!\n"
-	                "Please don't forget to select your TARGET VIEWPORT.")
-	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-	                              dummy/factory.cpp
-	                              dummy/painter.cpp
-	                              dummy/texturecoordinatedata.cpp
-	                              dummy/texturedata.cpp
-	                              dummy/vertexdata.cpp
-	                              dummy/viewport.cpp)
-elseif(UNIX AND MARSHMALLOW_VIEWPORT_USE_GLX)
+# Used directly by tests and deserializers.
+set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
+	                      dummy/texturecoordinatedata.cpp
+	                      dummy/texturedata.cpp
+	                      dummy/vertexdata.cpp)
+
+if(UNIX AND MARSHMALLOW_VIEWPORT_USE_GLX)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
 	                              opengl/viewport-glx.cpp)
@@ -49,6 +45,13 @@ elseif(WIN32 AND MARSHMALLOW_VIEWPORT_USE_WGL)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
 	                              opengl/viewport-wgl.cpp)
+elseif(MARSHMALLOW_VIEWPORT_USE_DUMMY)
+	message(WARNING "You currently only have MARSHMALLOW_VIEWPORT_USE_DUMMY enabled!\n"
+	                "Please don't forget to select your TARGET VIEWPORT.")
+	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
+	                              dummy/factory.cpp
+	                              dummy/painter.cpp
+	                              dummy/viewport.cpp)
 endif()
 
 add_library(marshmallow_graphics ${MARSHMALLOW_GRAPHICS_SRCS})
