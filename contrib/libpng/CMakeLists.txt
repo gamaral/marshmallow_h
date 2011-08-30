@@ -24,13 +24,6 @@ else()
   set(LIBPNG_M_LIBRARY "")
 endif()
 
-# COMMAND LINE OPTIONS
-if(BUILD_SHARED_LIBS)
-  set(CMAKE_C_FLAGS "-fPIC")
-else()
-  set(CMAKE_C_FLAG "-Wl," )
-endif()
-
 option(LIBPNG_NO_CONSOLE_IO "FIXME" YES)
 option(LIBPNG_NO_STDIO      "FIXME" YES)
 option(LIBPNG_DEBUG         "Build with debug output" NO)
@@ -107,7 +100,7 @@ if(MSVC)
   add_definitions(-DLIBPNG_NO_MODULEDEF -D_CRT_SECURE_NO_DEPRECATE)
 endif(MSVC)
 
-if(BUILD_SHARED_LIBS OR  NOT MSVC)
+if(BUILD_SHARED_LIBS)
   #if building msvc static this has NOT to be defined
   add_definitions(-DZLIB_DLL)
 endif()

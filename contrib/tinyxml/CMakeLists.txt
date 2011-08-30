@@ -30,5 +30,12 @@ file(GLOB MARSHMALLOW_TINYXML_SRCS src/*)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
+	if (BUILD_SHARED_LIBS)
+		set(CMAKE_CXX_FLAGS "-fPIC ${CMAKE_CXX_FLAGS}")
+		set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
+	endif()
+endif()
+
 add_library(marshmallow_tinyxml STATIC ${MARSHMALLOW_TINYXML_SRCS})
 

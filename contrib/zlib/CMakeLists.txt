@@ -97,5 +97,7 @@ string(REGEX REPLACE ".*#define[ \t]+ZLIB_VERSION[ \t]+\"([0-9A-Za-z.]+)\".*"
 
 add_library(marshmallow_zlib ${ZLIB_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
 
-set_target_properties(marshmallow_zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
+if (BUILD_SHARED_LIBS)
+    set_target_properties(marshmallow_zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
+endif()
 
