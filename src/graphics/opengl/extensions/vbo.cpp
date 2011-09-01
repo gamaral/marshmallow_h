@@ -34,9 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <GL/gl.h>
+#define GL_GLEXT_PROTOTYPES
 
-#include "glext.h"
+#include <GL/gl.h>
+#include <GL/glext.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
