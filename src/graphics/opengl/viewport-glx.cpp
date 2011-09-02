@@ -36,24 +36,50 @@
 
 #include <GL/gl.h>
 #include <GL/glx.h>
-#include <GL/glu.h>
 #include <X11/X.h>
 #include <X11/XKBlib.h>
 #define XMD_H
 #include <X11/extensions/xf86vmode.h>
 
 #include "core/logger.h"
+
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
-#include "graphics/painter.h"
+
 #include "graphics/opengl/extensions/vbo.h"
+#include "graphics/painter.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 using namespace OpenGL;
 
 const Core::Type Viewport::sType("GLX");
+
+namespace {
+
+bool
+isExtensionSupported(const char *list, const char *extension)
+{
+	assert(list && extension
+	    && 0 == strchr(extension, ' ')
+	    && "Invalid list and/or extension");
+
+	const char *start = list;
+	const char *where, *terminator;
+
+	while ((where = strstr( start, extension ))) {
+		terminator = where + strlen( extension );
+
+		if ((where == start || *(where - 1) == ' ')
+		    && (*terminator == ' ' || *terminator == '\0'))
+			return(true);
+	}
+
+	return(false);
+}
+
+} // namespace
 
 struct Viewport::Internal
 {
@@ -96,7 +122,8 @@ struct Viewport::Internal
 	{
 		HasVectorBufferObjectSupport = false;
 
-		if (strstr(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)), "GL_ARB_vertex_buffer_object") == 0)
+		if (!isExtensionSupported
+		    (reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)), "GL_ARB_vertex_buffer_object"))
 			return;
 
 		glGenBuffersARB =
@@ -237,6 +264,10 @@ struct Viewport::Internal
 			XF86VidModeSetViewPort(display, screen, 0, 0);
 			XFree(l_modes);
 
+			/* allow display to settle after vidmode switch */
+			XSync(display, False);
+			sleep(2);
+
 			/* create a fullscreen window */
 			l_swattr.override_redirect = true;
 			window = XCreateWindow
@@ -327,7 +358,6 @@ struct Viewport::Internal
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		adjustView();
 		SwapBuffer();
-		glFlush();
 
 		if(glGetError() != GL_NO_ERROR) {
 			MMERROR1("GLX failed during initialization.");
