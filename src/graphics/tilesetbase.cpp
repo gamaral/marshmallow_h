@@ -61,6 +61,12 @@ TilesetBase::~TilesetBase(void)
 }
 
 void
+TilesetBase::setName(const Core::Identifier &n)
+{
+    m_name = n;
+}
+
+void
 TilesetBase::setTextureData(const SharedTextureData &ts)
 {
 	if (ts == m_texture_data)

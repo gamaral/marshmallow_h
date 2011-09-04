@@ -27,12 +27,14 @@
  */
 
 #include "core/identifier.h"
+
+#include "graphics/factory.h"
+#include "graphics/tileset.h"
+
 #include "game/enginebase.h"
 #include "game/scenebase.h"
 #include "game/scenemanager.h"
 #include "game/tilemapscenelayer.h"
-#include "graphics/factory.h"
-#include "graphics/tileset.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -66,7 +68,7 @@ public:
 			l_tileset->setTileSize(Math::Size2i(24, 24));
 
 			Game::SharedTilemapSceneLayer l_tslayer;
-			UINT16 *l_data;
+			UINT32 *l_data;
 
 			/* layer 1 */
 			l_tslayer = new Game::TilemapSceneLayer("bottom", *this);
@@ -75,9 +77,9 @@ public:
 			l_tslayer->attachTileset(1, l_tileset.staticCast<Graphics::ITileset>());
 
 			/* generate random tilemap */
-			l_data = new UINT16[l_tslayer->size().area()];
+			l_data = new UINT32[l_tslayer->size().area()];
 			for (int i = 0; i < l_tslayer->size().area(); ++i)
-				l_data[i] = static_cast<UINT16>(1 /*offset*/ + rand() % 72) /* 8x9 sample tileset */;
+				l_data[i] = static_cast<UINT32>(1 /*offset*/ + rand() % 72) /* 8x9 sample tileset */;
 			l_tslayer->setData(l_data);
 
 			pushLayer(l_tslayer.staticCast<Game::ISceneLayer>());
@@ -90,9 +92,9 @@ public:
 			l_tslayer->attachTileset(1, l_tileset.staticCast<Graphics::ITileset>());
 
 			/* generate random tilemap */
-			l_data = new UINT16[l_tslayer->size().area()];
+			l_data = new UINT32[l_tslayer->size().area()];
 			for (int i = 0; i < l_tslayer->size().area(); ++i)
-				l_data[i] = static_cast<UINT16>(rand() % 2) /* 0 = nothing, 1 = some tile */;
+				l_data[i] = static_cast<UINT32>(rand() % 2) /* 0 = nothing, 1 = some tile */;
 			l_tslayer->setData(l_data);
 
 			pushLayer(l_tslayer.staticCast<Game::ISceneLayer>());
@@ -109,7 +111,6 @@ public:
 class Demo : public Game::EngineBase
 {
 	int m_stop_timer;
-	Event::SharedEventListener m_debugListener;
 
 public:
 

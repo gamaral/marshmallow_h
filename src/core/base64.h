@@ -26,89 +26,33 @@
  * or implied, of Marshmallow Engine.
  */
 
+#pragma once
+
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#pragma once
+#ifndef CORE_BASE64_H
+#define CORE_BASE64_H 1
 
-#ifndef CORE_ENVIRONMENT_H
-#define CORE_ENVIRONMENT_H 1
+#include "core/global.h"
 
-#include <ctime>
-#include <direct.h>
-#include <stdint.h>
-#include <windows.h>
+MARSHMALLOW_NAMESPACE_BEGIN
 
-#define CHAR     char
-#define INT16    int16_t
-#define INT32    int32_t
-#define INT64    int64_t
-#define INT8     int8_t
-#define TIME     float
-#define TIME_MAX FLT_MAX
-#define UINT16   uint16_t
-#define UINT32   uint32_t
-#define UINT64   uint64_t
-#define UINT8    uint8_t
-#define WCHAR    wchar_t
-#define UID      uint32_t
+namespace Core
+{
+	namespace Base64
+	{
+		/*! @brief Base64 decoder */
+		CORE_EXPORT size_t Decode(const char *in, size_t in_size, char **out);
 
-#define CHDIR   _chdir
-#define STRDUP  _strdup
+		/*! @brief Base64 encoder */
+		CORE_EXPORT size_t Encode(const char *in, size_t in_size, char **out);
+	}
+}
 
-/******************************************************************** exports */
-
-#ifdef MARSHMALLOW_DLL
-#   define DLL_EXPORT __declspec(dllexport)
-#   define DLL_IMPORT __declspec(dllimport)
-#else
-#   define DLL_EXPORT
-#   define DLL_IMPORT
-#endif
-
-#ifdef CORE_LIBRARY
-#   define CORE_EXPORT DLL_EXPORT
-#else
-#   define CORE_EXPORT DLL_IMPORT
-#endif
-
-#ifdef ENTRYPOINT_LIBRARY
-#   define ENTRYPOINT_EXPORT DLL_EXPORT
-#else
-#   define ENTRYPOINT_EXPORT DLL_IMPORT
-#endif
-
-#ifdef MATH_LIBRARY
-#   define MATH_EXPORT DLL_EXPORT
-#else
-#   define MATH_EXPORT DLL_IMPORT
-#endif
-
-#ifdef EVENT_LIBRARY
-#   define EVENT_EXPORT DLL_EXPORT
-#else
-#   define EVENT_EXPORT DLL_IMPORT
-#endif
-
-#ifdef GRAPHICS_LIBRARY
-#   define GRAPHICS_EXPORT DLL_EXPORT
-#else
-#   define GRAPHICS_EXPORT DLL_IMPORT
-#endif
-
-#ifdef GAME_LIBRARY
-#   define GAME_EXPORT DLL_EXPORT
-#else
-#   define GAME_EXPORT DLL_IMPORT
-#endif
-
-#ifdef EXTRA_EXPORT
-#   define EXTRA_EXPORT DLL_EXPORT
-#else
-#   define EXTRA_EXPORT DLL_IMPORT
-#endif
+MARSHMALLOW_NAMESPACE_END
 
 #endif

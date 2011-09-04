@@ -1,14 +1,26 @@
 include(EASTL)
 
 add_executable(tilemap_demo0 "demo0.cpp")
+add_executable(tilemap_demo1 "demo1.cpp")
 
 set_target_properties(tilemap_demo0 PROPERTIES
     COMPILE_FLAGS -DDEMO_CWD=\\"${CMAKE_CURRENT_SOURCE_DIR}\\")
 
+set_target_properties(tilemap_demo1 PROPERTIES
+    COMPILE_FLAGS -DDEMO_CWD=\\"${CMAKE_CURRENT_SOURCE_DIR}\\")
+
 if(WIN32 AND NOT CMAKE_BUILD_TYPE MATCHES Debug)
 	set_target_properties(tilemap_demo0 PROPERTIES WIN32_EXECUTABLE ON)
+	set_target_properties(tilemap_demo1 PROPERTIES WIN32_EXECUTABLE ON)
 endif()
 
 target_link_libraries(tilemap_demo0 marshmallow_entrypoint
-                                    marshmallow_game)
+                                    marshmallow_game
+)
+
+target_link_libraries(tilemap_demo1 marshmallow_entrypoint
+                                    marshmallow_game
+                                    marshmallow_extra
+)
+
 

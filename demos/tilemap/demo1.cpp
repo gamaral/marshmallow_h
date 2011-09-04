@@ -26,60 +26,68 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include <core/identifier.h>
 
-/*!
- * @file
- *
- * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
- */
+#include <graphics/factory.h>
+#include <graphics/tileset.h>
+#include <graphics/viewport.h>
 
-#ifndef GRAPHICS_ITILESET_H
-#define GRAPHICS_ITILESET_H 1
+#include <game/enginebase.h>
+#include <game/scene.h>
+#include <game/scenemanager.h>
+#include <game/tilemapscenelayer.h>
 
-#include "core/iserializable.h"
+#include <extra/tmxloader.h>
 
-#include "core/fd.h"
-#include "graphics/config.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Math
+class Demo : public Game::EngineBase
 {
-	template <typename T> class Size2;
-	typedef Size2<int> Size2i;
-}
+	int m_stop_timer;
 
-namespace Graphics
-{
-	struct ITextureCoordinateData;
-	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
+public:
 
-	struct ITextureData;
-	typedef Core::Shared<ITextureData> SharedTextureData;
-
-	/*! @brief Graphics Tileset Interface */
-	struct GRAPHICS_EXPORT ITileset : public Core::ISerializable
+	Demo(void)
+	: EngineBase(),
+	  m_stop_timer(0)
 	{
-		virtual ~ITileset(void) {};
+	}
 
-		virtual const Core::Identifier & name(void) const = 0;
-		virtual const SharedTextureData & textureData(void) const = 0;
-		virtual const Math::Size2i & tileSize(void) const = 0;
+	VIRTUAL bool initialize(void)
+	{
+		EngineBase::initialize();
 
-		virtual int spacing(void) const = 0;
-		virtual int margin(void) const = 0;
+		Game::SharedScene l_scene(new Game::Scene("main"));
 
-		/*! @brief Get tile texture coordinate data
-		 *  @param index Tile index, top-to-bottom wrapping from left-to-right.
-		 */
-		virtual SharedTextureCoordinateData getTextureCoordinateData(int index) = 0;
-	};
-	typedef Core::Shared<ITileset> SharedTileset;
-	typedef Core::Weak<ITileset> WeakTileset;
+		/* load tmx tilemap */
+		Extra::TMXLoader m_tmxloader(*l_scene);
+		m_tmxloader.load("assets/sewers.tmx");
+		assert(m_tmxloader.isLoaded() && "TMX tilemap failed to load.");
 
+		sceneManager()->pushScene(l_scene);
+
+		Graphics::Viewport::SetCamera(Math::Vector3(0, -10, 0.4f));
+
+		return(true);
+	}
+
+	VIRTUAL void second(void)
+	{
+		EngineBase::second();
+
+		if (++m_stop_timer == 4)
+			stop();
+	}
+};
+
+int
+MMain(int argc, char *argv[])
+{
+	UNUSED(argc);
+	UNUSED(argv);
+	CHDIR(DEMO_CWD);
+
+	return(Demo().run());
 }
 
-MARSHMALLOW_NAMESPACE_END
-
-#endif

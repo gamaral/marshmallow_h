@@ -49,10 +49,11 @@ const Core::Type TilemapSceneLayer::sType("Game::TilemapSceneLayer");
 
 TilemapSceneLayer::TilemapSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s),
+      m_data(0),
       m_tile_size(24, 24),
       m_size(100, 100),
       m_opacity(1.0f),
-      m_data(0)
+      m_visible(true)
 {
 	recalculateRelativeTileSize();
 }
@@ -69,7 +70,7 @@ TilemapSceneLayer::tileset(int i, int *o)
 	TilesetCollection::iterator l_i;
 	TilesetCollection::const_iterator l_end = m_tilesets.end();
 
-	int l_offset = -1;
+	int l_offset = 0;
 	Graphics::SharedTileset l_ts;
 
 	for (l_i = m_tilesets.begin(); l_i != l_end; ++l_i)
@@ -78,7 +79,7 @@ TilemapSceneLayer::tileset(int i, int *o)
 			l_ts = l_i->second;
 		}
 
-	if (l_offset >= 0) {
+	if (l_offset > 0) {
 		if (o) *o = l_offset;
 		return(l_ts);
 	} else return(Graphics::SharedTileset());
@@ -121,7 +122,13 @@ TilemapSceneLayer::setOpacity(float a)
 }
 
 void
-TilemapSceneLayer::setData(UINT16 *d)
+TilemapSceneLayer::setVisibility(bool value)
+{
+	m_visible = value;
+}
+
+void
+TilemapSceneLayer::setData(UINT32 *d)
 {
 	delete [] m_data;
 	m_data = d;
@@ -130,7 +137,7 @@ TilemapSceneLayer::setData(UINT16 *d)
 void
 TilemapSceneLayer::render(void)
 {
-	if (!m_data) return;
+	if (!m_data || !m_visible) return;
 
 	Graphics::Color l_color(1.f, 1.f, 1.f, m_opacity);
 
@@ -140,6 +147,9 @@ TilemapSceneLayer::render(void)
 		for (int l_c = 0; l_c < m_size.rwidth(); ++l_c) {
 			int l_tindex = m_data[l_roffset + l_c];
 			int l_tioffset;
+
+			if (!l_tindex)
+				continue;
 
 			Graphics::SharedTileset l_ts = tileset(l_tindex, &l_tioffset);
 			Graphics::SharedTextureCoordinateData l_tcd;
@@ -157,7 +167,7 @@ TilemapSceneLayer::render(void)
 
 				const Math::Size2f &l_vsize = Graphics::Viewport::Size();
 				const float l_x = (static_cast<float>(l_c) * m_rtile_size.rwidth()) + l_thw - (l_vsize.width() / 2.0f);
-				const float l_y = (static_cast<float>(l_r + 1) * m_rtile_size.rheight()) - l_thh - (l_vsize.height() / 2.0f);
+				const float l_y = (l_vsize.height() - (static_cast<float>(l_r + 1) * m_rtile_size.rheight()) - l_thh - (l_vsize.height() / 2.0f));
 				Graphics::Painter::Draw(l_mesh, Math::Point2(l_x, l_y));
 			}
 		}

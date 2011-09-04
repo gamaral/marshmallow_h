@@ -26,89 +26,71 @@
  * or implied, of Marshmallow Engine.
  */
 
+#include <cstring>
+
+#include "core/base64.h"
+#include "../common.h"
+
+static const char  base64a[] = "MTIzNDU2";
+static const char ubase64a[] = "123456";
+static const char  base64b[] = "MTIzNDU=";
+static const char ubase64b[] = "12345";
+static const char  base64c[] = "MTIzNA==";
+static const char ubase64c[] = "1234";
+
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#pragma once
+MARSHMALLOW_NAMESPACE_USE;
 
-#ifndef CORE_ENVIRONMENT_H
-#define CORE_ENVIRONMENT_H 1
+void
+base64_decode_test(void)
+{
+	char *out;
 
-#include <ctime>
-#include <direct.h>
-#include <stdint.h>
-#include <windows.h>
+	Core::Base64::Decode(base64a, strlen(base64a), &out);
+	TEST("DECODE TEST A", 0 == strcmp(out, ubase64a));
+	delete[] out;
 
-#define CHAR     char
-#define INT16    int16_t
-#define INT32    int32_t
-#define INT64    int64_t
-#define INT8     int8_t
-#define TIME     float
-#define TIME_MAX FLT_MAX
-#define UINT16   uint16_t
-#define UINT32   uint32_t
-#define UINT64   uint64_t
-#define UINT8    uint8_t
-#define WCHAR    wchar_t
-#define UID      uint32_t
+	Core::Base64::Decode(base64b, strlen(base64b), &out);
+	TEST("DECODE TEST B", 0 == strcmp(out, ubase64b));
+	delete[] out;
 
-#define CHDIR   _chdir
-#define STRDUP  _strdup
+	Core::Base64::Decode(base64c, strlen(base64c), &out);
+	TEST("DECODE TEST C", 0 == strcmp(out, ubase64c));
+	delete[] out;
+}
 
-/******************************************************************** exports */
+void
+base64_encode_test(void)
+{
+	char *out;
 
-#ifdef MARSHMALLOW_DLL
-#   define DLL_EXPORT __declspec(dllexport)
-#   define DLL_IMPORT __declspec(dllimport)
-#else
-#   define DLL_EXPORT
-#   define DLL_IMPORT
-#endif
+	Core::Base64::Encode(ubase64a, strlen(ubase64a), &out);
+	TEST("ENCODE TEST A", 0 == strcmp(out, base64a));
+	delete[] out;
 
-#ifdef CORE_LIBRARY
-#   define CORE_EXPORT DLL_EXPORT
-#else
-#   define CORE_EXPORT DLL_IMPORT
-#endif
+	Core::Base64::Encode(ubase64b, strlen(ubase64b), &out);
+	TEST("ENCODE TEST B", 0 == strcmp(out, base64b));
+	delete[] out;
 
-#ifdef ENTRYPOINT_LIBRARY
-#   define ENTRYPOINT_EXPORT DLL_EXPORT
-#else
-#   define ENTRYPOINT_EXPORT DLL_IMPORT
-#endif
+	Core::Base64::Encode(ubase64c, strlen(ubase64c), &out);
+	TEST("ENCODE TEST C", 0 == strcmp(out, base64c));
+	delete[] out;
+}
 
-#ifdef MATH_LIBRARY
-#   define MATH_EXPORT DLL_EXPORT
-#else
-#   define MATH_EXPORT DLL_IMPORT
-#endif
+int
+MMain(int argc, char *argv[])
+{
+	UNUSED(argc);
+	UNUSED(argv);
 
-#ifdef EVENT_LIBRARY
-#   define EVENT_EXPORT DLL_EXPORT
-#else
-#   define EVENT_EXPORT DLL_IMPORT
-#endif
+	base64_decode_test();
+	base64_encode_test();
 
-#ifdef GRAPHICS_LIBRARY
-#   define GRAPHICS_EXPORT DLL_EXPORT
-#else
-#   define GRAPHICS_EXPORT DLL_IMPORT
-#endif
+	return(TEST_EXITCODE);
+}
 
-#ifdef GAME_LIBRARY
-#   define GAME_EXPORT DLL_EXPORT
-#else
-#   define GAME_EXPORT DLL_IMPORT
-#endif
-
-#ifdef EXTRA_EXPORT
-#   define EXTRA_EXPORT DLL_EXPORT
-#else
-#   define EXTRA_EXPORT DLL_IMPORT
-#endif
-
-#endif

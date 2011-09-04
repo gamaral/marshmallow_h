@@ -26,89 +26,43 @@
  * or implied, of Marshmallow Engine.
  */
 
+#include "core/zlib.h"
+
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#pragma once
+#include <zlib.h>
 
-#ifndef CORE_ENVIRONMENT_H
-#define CORE_ENVIRONMENT_H 1
+MARSHMALLOW_NAMESPACE_USE;
 
-#include <ctime>
-#include <direct.h>
-#include <stdint.h>
-#include <windows.h>
+size_t
+Core::Zlib::Inflate(const char *in, size_t in_size, size_t out_size, char **out)
+{
+	*out = new char[out_size];
+	if (Z_OK != uncompress(reinterpret_cast<Bytef *>(*out), &out_size,
+	                       reinterpret_cast<const Bytef *>(in), in_size)) {
+		delete *out;
+		*out = 0;
+		return(0);
+	}
+	return(out_size);
+}
 
-#define CHAR     char
-#define INT16    int16_t
-#define INT32    int32_t
-#define INT64    int64_t
-#define INT8     int8_t
-#define TIME     float
-#define TIME_MAX FLT_MAX
-#define UINT16   uint16_t
-#define UINT32   uint32_t
-#define UINT64   uint64_t
-#define UINT8    uint8_t
-#define WCHAR    wchar_t
-#define UID      uint32_t
+size_t
+Core::Zlib::Deflate(const char *in, size_t in_size, char **out)
+{
+	size_t l_out_size = compressBound(in_size);
+	*out = new char[l_out_size];
+	if(Z_OK != compress(reinterpret_cast<Bytef *>(*out), &l_out_size,
+	                    reinterpret_cast<const Bytef *>(in), in_size)) {
+		delete *out;
+		*out = 0;
+		return(0);
+	}
+	return(l_out_size);
+}
 
-#define CHDIR   _chdir
-#define STRDUP  _strdup
 
-/******************************************************************** exports */
-
-#ifdef MARSHMALLOW_DLL
-#   define DLL_EXPORT __declspec(dllexport)
-#   define DLL_IMPORT __declspec(dllimport)
-#else
-#   define DLL_EXPORT
-#   define DLL_IMPORT
-#endif
-
-#ifdef CORE_LIBRARY
-#   define CORE_EXPORT DLL_EXPORT
-#else
-#   define CORE_EXPORT DLL_IMPORT
-#endif
-
-#ifdef ENTRYPOINT_LIBRARY
-#   define ENTRYPOINT_EXPORT DLL_EXPORT
-#else
-#   define ENTRYPOINT_EXPORT DLL_IMPORT
-#endif
-
-#ifdef MATH_LIBRARY
-#   define MATH_EXPORT DLL_EXPORT
-#else
-#   define MATH_EXPORT DLL_IMPORT
-#endif
-
-#ifdef EVENT_LIBRARY
-#   define EVENT_EXPORT DLL_EXPORT
-#else
-#   define EVENT_EXPORT DLL_IMPORT
-#endif
-
-#ifdef GRAPHICS_LIBRARY
-#   define GRAPHICS_EXPORT DLL_EXPORT
-#else
-#   define GRAPHICS_EXPORT DLL_IMPORT
-#endif
-
-#ifdef GAME_LIBRARY
-#   define GAME_EXPORT DLL_EXPORT
-#else
-#   define GAME_EXPORT DLL_IMPORT
-#endif
-
-#ifdef EXTRA_EXPORT
-#   define EXTRA_EXPORT DLL_EXPORT
-#else
-#   define EXTRA_EXPORT DLL_IMPORT
-#endif
-
-#endif

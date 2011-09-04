@@ -34,78 +34,72 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_TILESETBASE_H
-#define GRAPHICS_TILESETBASE_H 1
+#ifndef EXTRA_TMXLOADER_H
+#define EXTRA_TMXLOADER_H 1
 
-#include "graphics/itileset.h"
-
-#include <EASTL/map.h>
+#include "EASTL/list.h"
+#include "EASTL/map.h"
 using namespace eastl;
 
-#include "core/identifier.h"
 #include "core/shared.h"
-
+#include "game/iscenelayer.h"
 #include "math/size2.h"
 
-#include "graphics/itexturedata.h"
-#include "graphics/itexturecoordinatedata.h"
+namespace TinyXML { class TiXmlElement; }
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-	/*! @brief Graphics Tileset Base Class */
-	class GRAPHICS_EXPORT TilesetBase : public ITileset
+	struct ITileset;
+	typedef Core::Shared<ITileset> SharedTileset;
+}
+
+namespace Game
+{
+	typedef list<SharedSceneLayer> SharedSceneLayerList;
+}
+
+namespace Extra
+{
+
+	/*! @brief Extra TMX Loader Class */
+	class EXTRA_EXPORT TMXLoader
 	{
-		typedef map<int, SharedTextureCoordinateData> TextureCoordinateMap;
-		TextureCoordinateMap m_cache;
+		NO_COPY(TMXLoader);
 
-		Core::Identifier m_name;
+		Game::IScene &m_scene;
+
+		typedef map<int, Graphics::SharedTileset> TilesetCollection;
+		TilesetCollection m_tilesets;
+
+		Game::SharedSceneLayerList m_layers;
+		bool m_is_loaded;
+
+		Math::Size2i m_map_size;
 		Math::Size2i m_tile_size;
-		SharedTextureData m_texture_data;
-
-		Math::Size2f m_rmargin;
-		Math::Size2f m_rspacing;
-		Math::Size2f m_tile_rsize;
-
-		int m_margin;
-		int m_spacing;
-		int m_tile_cols;
 
 	public:
-		TilesetBase(void);
-		virtual ~TilesetBase(void);
 
-		void setName(const Core::Identifier &name);
-		void setTextureData(const SharedTextureData &tileset);
-		void setTileSize(const Math::Size2i &size);
-		void setMargin(int margin);
-		void setSpacing(int spacing);
+		TMXLoader(Game::IScene &scene);
+		virtual ~TMXLoader(void);
 
-	public: /* virtual */
+		bool load(const char *file);
+		bool isLoaded(void) const
+		    { return(m_is_loaded); }
 
-		VIRTUAL const Core::Identifier & name(void) const
-		    { return(m_name); }
-		VIRTUAL const SharedTextureData & textureData(void) const
-		    { return(m_texture_data); }
-		VIRTUAL const Math::Size2i & tileSize(void) const
-		    { return(m_tile_size); }
-		VIRTUAL int spacing(void) const
-		    { return(m_spacing); }
-		VIRTUAL int margin(void) const
-		    { return(m_margin); }
-		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(int index);
-		
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		const Game::SharedSceneLayerList & layers(void) const
+		    { return(m_layers); }
 
-	protected:
+	private:
 
-		void reset(void);
+		bool processMap(TinyXML::TiXmlElement &element);
+		bool processLayer(TinyXML::TiXmlElement &element);
+		bool processTileset(TinyXML::TiXmlElement &element);
 
 	};
-	typedef Core::Shared<TilesetBase> SharedTilesetBase;
-	typedef Core::Weak<TilesetBase> WeakTilesetBase;
+	typedef Core::Shared<TMXLoader> SharedTMXLoader;
+	typedef Core::Weak<TMXLoader> WeakTMXLoader;
 
 }
 

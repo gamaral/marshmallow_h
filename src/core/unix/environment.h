@@ -72,5 +72,6 @@
 #define EVENT_EXPORT
 #define GRAPHICS_EXPORT
 #define GAME_EXPORT
+#define EXTRA_EXPORT
 
 #endif

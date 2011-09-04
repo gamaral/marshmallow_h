@@ -64,6 +64,8 @@ namespace Game
 		typedef map<int, Graphics::SharedVertexData> VertexDataCache;
 		VertexDataCache m_vertexes;
 
+		UINT32 *m_data;
+
 		Math::Size2f m_hrtile_size;
 		Math::Size2f m_rtile_size;
 
@@ -71,8 +73,7 @@ namespace Game
 		Math::Size2i m_size;
 
 		float m_opacity;
-
-		UINT16 *m_data;
+		bool m_visible;
 
 	public:
 
@@ -83,6 +84,10 @@ namespace Game
 		Graphics::SharedTileset tileset(int index, int *offset = 0);
 		void attachTileset(int offset, Graphics::SharedTileset tileset);
 		void dettachTileset(int offset);
+
+		const UINT32 * data(void) const
+		    { return(m_data); }
+		void setData(UINT32 *data);
 
 		const Math::Size2i & tileSize(void) const
 		    { return(m_tile_size); }
@@ -96,9 +101,9 @@ namespace Game
 		    { return (m_opacity); }
 		void setOpacity(float alpha);
 
-		const UINT16 * data(void) const
-		    { return(m_data); }
-		void setData(UINT16 *data);
+		bool visible(void) const
+		    { return (m_visible); }
+		void setVisibility(bool value);
 
 	public: /* virtual */
 

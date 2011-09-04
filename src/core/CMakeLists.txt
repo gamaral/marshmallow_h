@@ -7,6 +7,10 @@ set(MARSHMALLOW_CORE_LIBS "")
 include(EASTL)
 set(MARSHMALLOW_CORE_LIBS ${MARSHMALLOW_CORE_LIBS} ${EASTL_LIBRARIES})
 
+find_package(ZLIB)
+include_directories(${ZLIB_INCLUDE_DIR})
+set(MARSHMALLOW_CORE_LIBS ${MARSHMALLOW_CORE_LIBS} ${ZLIB_LIBRARIES})
+
 # platform specific implementations
 if(UNIX)
 	set(MARSHMALLOW_CORE_SRCS ${MARSHMALLOW_CORE_SRCS} unix/platform.cpp)

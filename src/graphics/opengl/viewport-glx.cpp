@@ -177,13 +177,13 @@ struct Viewport::Internal
 	bool
 	createXWindow(int w, int h, int d, bool f)
 	{
-		loaded = false;
 		context = 0;
 		display = 0;
+		loaded = false;
 		screen = 0;
+		vbo_supported = false;
 		window = 0;
 		wm_delete = 0;
-		vbo_supported = false;
 
 		fullscreen = f;
 		wsize[0] = w;
@@ -384,11 +384,11 @@ struct Viewport::Internal
 
 		context = 0;
 		display = 0;
-		display = 0;
+		loaded = false;
 		screen = 0;
+		vbo_supported = false;
 		window = 0;
 		wm_delete = 0;
-		loaded = false;
 	}
 
 	void
