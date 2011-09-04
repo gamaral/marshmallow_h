@@ -76,7 +76,7 @@ public:
 	{
 		EngineBase::second();
 
-		if (++m_stop_timer == 4)
+		if (++m_stop_timer == 10)
 			stop();
 	}
 };
