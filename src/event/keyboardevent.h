@@ -43,7 +43,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-
 	enum KBActions
 	{
 		KeyReleased     = 0,
@@ -167,21 +166,22 @@ namespace Event
 	/*! @brief Keyboard Event Class */
 	class EVENT_EXPORT KeyboardEvent : public EventBase
 	{
-		KBKeys m_key;
-		KBActions m_action;
-
+		NO_ASSIGN(KeyboardEvent);
 		NO_COPY(KeyboardEvent);
+
+		KBActions m_action;
+		KBKeys    m_key;
 
 	public:
 
-		KeyboardEvent(KBKeys key, KBActions action, TIME timeout = 0);
+		KeyboardEvent(KBKeys key, KBActions action, TIME timestamp = 0);
 		virtual ~KeyboardEvent(void);
-
-		KBKeys key(void) const
-		    { return(m_key); }
 
 		KBActions action(void) const
 		    { return(m_action); }
+
+		KBKeys key(void) const
+		    { return(m_key); }
 
 	public: /* virtual */
 
@@ -196,7 +196,6 @@ namespace Event
 
 		static const Core::Type sType;
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

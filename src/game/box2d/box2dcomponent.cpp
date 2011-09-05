@@ -34,8 +34,12 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <Box2D/Box2D.h>
+
 #include "core/logger.h"
+
 #include "graphics/meshbase.h"
+
 #include "game/box2d/box2dscenelayer.h"
 #include "game/entityscenelayer.h"
 #include "game/ientity.h"

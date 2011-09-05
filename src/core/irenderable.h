@@ -37,7 +37,8 @@
 #ifndef CORE_IRENDERABLE_H
 #define CORE_IRENDERABLE_H 1
 
-#include "core/global.h"
+#include "core/environment.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -47,7 +48,7 @@ namespace Core
 	template <class T> class Weak;
 
 	/*! @brief Renderable Interface */
-	struct IRenderable
+	struct CORE_EXPORT IRenderable
 	{
 		virtual ~IRenderable(void) {};
 

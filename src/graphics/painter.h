@@ -37,7 +37,10 @@
 #ifndef GRAPHICS_PAINTER_H
 #define GRAPHICS_PAINTER_H 1
 
+#include "core/environment.h"
 #include "core/global.h"
+#include "core/namespace.h"
+
 #include "graphics/config.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN

@@ -35,15 +35,20 @@
  */
 
 #include "core/logger.h"
+#include "core/weak.h"
+
+#include "math/point2.h"
+#include "math/size2.h"
+
 #include "event/eventmanager.h"
 #include "event/ievent.h"
 #include "event/keyboardevent.h"
 #include "event/proxyeventlistener.h"
+
 #include "graphics/painter.h"
 #include "graphics/quadmesh.h"
 #include "graphics/viewport.h"
-#include "math/point2.h"
-#include "math/size2.h"
+
 #include "game/engine.h"
 #include "game/iscene.h"
 

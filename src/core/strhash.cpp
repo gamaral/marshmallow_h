@@ -41,28 +41,28 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
 StrHash::StrHash(void)
-    : Hash(),
-      m_str()
+    : Hash()
+    , m_str()
 {
 }
 
 StrHash::StrHash(const char *s)
-    : Hash(),
-      m_str(s)
+    : Hash()
+    , m_str(s)
 {
 	rehash(s, m_str.length(), ~static_cast<UID>(0));
 }
 
 StrHash::StrHash(const Core::String &s)
-    : Hash(),
-      m_str(s)
+    : Hash()
+    , m_str(s)
 {
 	rehash(m_str.c_str(), m_str.length(), ~static_cast<UID>(0));
 }
 
 StrHash::StrHash(const StrHash &c)
-    : Hash(c),
-      m_str(c.m_str)
+    : Hash(c)
+    , m_str(c.m_str)
 {
 }
 

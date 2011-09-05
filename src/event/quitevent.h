@@ -43,17 +43,17 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-
 	/*! @brief Quit Event Class */
 	class EVENT_EXPORT QuitEvent : public EventBase
 	{
-		int m_code;
-
+		NO_ASSIGN(QuitEvent);
 		NO_COPY(QuitEvent);
+
+		int m_code;
 
 	public:
 
-		QuitEvent(int code = 0, TIME timeout = 0);
+		QuitEvent(int code = 0, TIME timestamp = 0);
 		virtual ~QuitEvent(void);
 
 		int code(void) const
@@ -72,7 +72,6 @@ namespace Event
 
 		static const Core::Type sType;
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

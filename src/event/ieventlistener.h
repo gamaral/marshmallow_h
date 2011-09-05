@@ -37,8 +37,9 @@
 #ifndef EVENT_IEVENTLISTENER_H
 #define EVENT_IEVENTLISTENER_H 1
 
-#include "core/global.h"
+#include "core/environment.h"
 #include "core/fd.h"
+#include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -59,7 +60,6 @@ namespace Event
 	};
 	typedef Core::Shared<IEventListener> SharedEventListener;
 	typedef Core::Weak<IEventListener> WeakEventListener;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

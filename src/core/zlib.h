@@ -37,7 +37,8 @@
 #ifndef CORE_ZLIB_H
 #define CORE_ZLIB_H 1
 
-#include "core/global.h"
+#include "core/environment.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -45,10 +46,35 @@ namespace Core
 {
 	namespace Zlib
 	{
-		/*! @brief Zlib inflate */
+		/*! @brief Zlib inflate
+		 *  @param in In buffer
+		 *  @param in_size In buffer size
+		 *  @param out_size Out buffer max size estimate
+		 *  @param out Out buffer pointer
+		 *
+		 *  Inflate a zlib compressed buffer, out buffer allocation is
+		 *  handled by the function.
+		 *
+		 *  Deallocation will be automatic by the double buffered
+		 *  allocator. (not yet implemented)
+		 *
+		 *  @return Actual out buffer size
+		 */
 		CORE_EXPORT size_t Inflate(const char *in, size_t in_size, size_t out_size, char **out);
 
-		/*! @brief Zlib deflate */
+		/*! @brief Zlib deflate
+		 *  @param in In buffer
+		 *  @param in_size In buffer size
+		 *  @param out Out buffer pointer
+		 *
+		 *  Deflate a buffer using zlib compression, out buffer
+		 *  allocation is handled by the function.
+		 *
+		 *  Deallocation will be automatic by the double buffered
+		 *  allocator. (not yet implemented)
+		 *
+		 *  @return Actual Out buffer size
+		 */
 		CORE_EXPORT size_t Deflate(const char *in, size_t in_size, char **out);
 	}
 }

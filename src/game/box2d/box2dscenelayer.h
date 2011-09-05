@@ -37,9 +37,10 @@
 #ifndef GAME_BOX2DSCENELAYER_H
 #define GAME_BOX2DSCENELAYER_H 1
 
-#include <Box2D/Box2D.h>
-
 #include "game/scenelayerbase.h"
+
+/* Box2D */
+class b2World;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -51,9 +52,11 @@ namespace Game
 	/*! @brief Game Box2D Powered Scene Layer Class */
 	class GAME_EXPORT Box2DSceneLayer : public SceneLayerBase
 	{
-		b2World m_world;
+		struct Internal;
+		Internal *m_internal;
 
 		NO_COPY(Box2DSceneLayer);
+		NO_ASSIGN(Box2DSceneLayer);
 
 	public:
 
@@ -64,8 +67,7 @@ namespace Game
 		Math::Vector2 gravity(void) const;
 		void setGravity(const Math::Vector2 &gravity);
 
-		b2World &world(void)
-		    { return(m_world); }
+		b2World &world(void);
 
 	public: /* virtual */
 

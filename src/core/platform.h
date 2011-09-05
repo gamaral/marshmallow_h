@@ -37,61 +37,68 @@
 #ifndef CORE_PLATFORM_H
 #define CORE_PLATFORM_H 1
 
+#include "core/environment.h"
+#include "core/namespace.h"
 #include "core/string.h"
 
 #define NOW Core::Platform::TimeStamp
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+struct TimeData;
+
 namespace Core
 {
 	/*! @brief Platform specific class */
-	struct CORE_EXPORT Platform
+	namespace Platform
 	{
-		/*! @brief Platform internal structure */
-		struct Internal;
-
 		/*!
 		 * @brief Platform specific initialization
 		 */
-		static void Initialize(void);
+		CORE_EXPORT void Initialize(void);
 
 		/*!
 		 * @brief Platform specific finalization
 		 */
-		static void Finalize(void);
+		CORE_EXPORT void Finalize(void);
 
 		/****************************************************** time */
 
 		/*!
 		 * @brief Sleep in milliseconds
 		 */
-		static void Sleep(TIME timeout);
+		CORE_EXPORT void Sleep(TIME timeout);
 
 		/*!
 		 * @brief Start system time
 		 */
-		static time_t StartTime(void);
+		CORE_EXPORT time_t StartTime(void);
 
 		/*!
 		 * @brief Milliseconds since StartTime()
 		 */
-		static TIME TimeStamp(void);
+		CORE_EXPORT TIME TimeStamp(void);
 
 		/*!
 		 * @brief Reinterpret an internal timestamp
 		 * @return Internal timestamp in system timestamp and string
 		 *         formats.
 		 */
-		static TimeData TimeStampToTimeData(TIME timestamp);
+		CORE_EXPORT TimeData TimeStampToTimeData(TIME timestamp);
 
 		/*************************************************** location */
 
-		static String TemporaryDirectory(void);
-
-	};
-
+		CORE_EXPORT String TemporaryDirectory(void);
+	}
 }
+
+/*! @brief Time Data Struct */
+struct TimeData
+{
+    char string[21];
+    time_t system;
+    TIME internal;
+};
 
 MARSHMALLOW_NAMESPACE_END
 

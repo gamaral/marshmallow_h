@@ -37,6 +37,7 @@
 #ifndef GAME_IFACTORY_H
 #define GAME_IFACTORY_H 1
 
+#include "core/environment.h"
 #include "core/fd.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN

@@ -43,8 +43,8 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
-const Vector2 Vector2::Null(0, 0);
-const Vector2 Vector2::One(1, 1);
+const Vector2 Vector2::Null(0.f, 0.f);
+const Vector2 Vector2::One(1.f, 1.f);
 
 Vector2::Vector2(float ax, float ay)
 {
@@ -102,6 +102,21 @@ float
 Vector2::dot(const Vector2 &b) const
 {
 	return((rx() * b.rx()) + (ry() * b.ry()));
+}
+
+Vector2 &
+Vector2::operator=(const Vector2 &rhs)
+{
+	m_value[0] = rhs.m_value[0];
+	m_value[1] = rhs.m_value[1];
+	return(*this);
+}
+
+bool
+Vector2::operator==(const Vector2 &rhs) const
+{
+	return(m_value[0] == rhs.m_value[0]
+	    && m_value[1] == rhs.m_value[1]);
 }
 
 #if MARSHMALLOW_WITH_BOX2D

@@ -37,7 +37,6 @@
 #include "core/platform.h"
 
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
 using namespace Event;
 
 EventBase::EventBase(TIME t, UINT8 p)

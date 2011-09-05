@@ -37,8 +37,8 @@
 #ifndef CORE_ENVIRONMENT_H
 #define CORE_ENVIRONMENT_H 1
 
-#include <ctime>
 #include <climits>
+#include <ctime>
 #include <stdint.h>
 #include <unistd.h>
 
@@ -51,23 +51,23 @@
 #define INT8     int8_t
 #define TIME     float
 #define TIME_MAX FLT_MAX
+#define UID      uint32_t
 #define UINT16   uint16_t
 #define UINT32   uint32_t
 #define UINT64   uint64_t
 #define UINT8    uint8_t
 #define WCHAR    wchar_t
-#define UID      uint32_t
 
 /******************************************************************** defines */
 
-#define INFINITE TIME_MAX
 #define CHDIR    chdir
+#define INFINITE TIME_MAX
 #define STRDUP   strdup
 
 /******************************************************************** unused */
 
-#define CORE_EXPORT
 #define ENTRYPOINT_EXPORT
+#define CORE_EXPORT
 #define MATH_EXPORT
 #define EVENT_EXPORT
 #define GRAPHICS_EXPORT

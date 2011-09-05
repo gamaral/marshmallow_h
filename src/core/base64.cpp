@@ -37,31 +37,38 @@
 #include "core/logger.h"
 
 MARSHMALLOW_NAMESPACE_USE;
+using namespace Core;
+
+/******************************************************************************/
 
 namespace
 {
 
-static const char encode64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-static const unsigned char decode64[] = {
-    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-    0 , 0 , 0 , 62, 0 , 0 , 0 , 63, 52, 53,
-    54, 55, 56, 57, 58, 59, 60, 61, 0 , 0 ,
-    0 , 0 , 0 , 0 , 0 , 0 , 1 , 2 , 3 , 4 ,
-    5 , 6 , 7 , 8 , 9 , 10, 11, 12, 13, 14,
-    15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-    25, 0 , 0 , 0 , 0 , 0 , 0 , 26, 27, 28,
-    29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-    39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
-    49, 50, 51
-};
+	static const char s_encoder64[] =
+	    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+	static const char s_decoder64[] = {
+	    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+	    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+	    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+	    0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+	    0 , 0 , 0 , 62, 0 , 0 , 0 , 63, 52, 53,
+	    54, 55, 56, 57, 58, 59, 60, 61, 0 , 0 ,
+	    0 , 0 , 0 , 0 , 0 , 0 , 1 , 2 , 3 , 4 ,
+	    5 , 6 , 7 , 8 , 9 , 10, 11, 12, 13, 14,
+	    15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+	    25, 0 , 0 , 0 , 0 , 0 , 0 , 26, 27, 28,
+	    29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
+	    39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
+	    49, 50, 51
+	};
 
 } // namespace
 
+/******************************************************************************/
+
 size_t
-Core::Base64::Decode(const char *in, size_t in_size, char **out)
+Base64::Decode(const char *in, size_t in_size, char **out)
 {
 	/* check in buffer */
 	if (in_size % 4) {
@@ -76,21 +83,21 @@ Core::Base64::Decode(const char *in, size_t in_size, char **out)
 	else if (in[in_size - 1] == '=')
 	    l_out_size -= 1;
 
-	/* TODO(gamaral) replace with allocator */
+	/* TODO(gamaral) replace with double buffered allocator */
 	*out = new char[l_out_size];
 
 	char *l_out = *out;
 
 	for (size_t i = 0; i < in_size; i = i + 4) {
 		l_out[0] = static_cast<char>
-		    ( decode64[static_cast<int>(in[i])]   << 2
-		    | decode64[static_cast<int>(in[i+1])] >> 4);
+		    ( s_decoder64[static_cast<int>(in[i])]   << 2
+		    | s_decoder64[static_cast<int>(in[i+1])] >> 4);
 		l_out[1] = static_cast<char>
-		    ( decode64[static_cast<int>(in[i+1])] << 4
-		    | decode64[static_cast<int>(in[i+2])] >> 2);
+		    ( s_decoder64[static_cast<int>(in[i+1])] << 4
+		    | s_decoder64[static_cast<int>(in[i+2])] >> 2);
 		l_out[2] = static_cast<char>
-		    ( decode64[static_cast<int>(in[i+2])] << 6
-		    | decode64[static_cast<int>(in[i+3])]);
+		    ( s_decoder64[static_cast<int>(in[i+2])] << 6
+		    | s_decoder64[static_cast<int>(in[i+3])]);
 		l_out += 3;
 	}
 
@@ -101,11 +108,11 @@ Core::Base64::Decode(const char *in, size_t in_size, char **out)
 }
 
 size_t
-Core::Base64::Encode(const char *in, size_t in_size, char **out)
+Base64::Encode(const char *in, size_t in_size, char **out)
 {
 	const size_t l_out_size = ((in_size * 4) / 3) + (in_size % 3 ? 3 : 0);
 
-	/* TODO(gamaral) replace with allocator */
+	/* TODO(gamaral) replace with double buffered allocator */
 	*out = new char[l_out_size + 1 /* null-term */];
 
 	char *l_out = *out;
@@ -114,13 +121,13 @@ Core::Base64::Encode(const char *in, size_t in_size, char **out)
 		const size_t l_pad = (i + 3 < in_size ? 0 : (i + 3) - in_size);
 
 		l_out[0] = static_cast<char>
-		    (encode64[in[i] >> 2]);
+		    (s_encoder64[in[i] >> 2]);
 		l_out[1] = static_cast<char>
-		    (encode64[((in[i] & 0x03) << 4) | ((in[i+1] & 0xF0) >> 4)]);
+		    (s_encoder64[((in[i] & 0x03) << 4) | ((in[i+1] & 0xF0) >> 4)]);
 		l_out[2] = (2 == l_pad ? '=' : static_cast<char>
-		    (encode64[((in[i+1] & 0x0F) << 2) | ((in[i+2] & 0xC0) >> 6)]));
+		    (s_encoder64[((in[i+1] & 0x0F) << 2) | ((in[i+2] & 0xC0) >> 6)]));
 		l_out[3] = (1 <= l_pad ? '=' : static_cast<char>
-		    (encode64[in[i+2] & 0x3F]));
+		    (s_encoder64[in[i+2] & 0x3F]));
 		l_out += 4;
 	}
 

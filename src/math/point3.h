@@ -37,13 +37,14 @@
 #ifndef MATH_POINT3_H
 #define MATH_POINT3_H 1
 
+#include "core/environment.h"
 #include "core/global.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
-
 	class Vector3;
 
 	/*! @brief 3D Point */
@@ -83,6 +84,9 @@ namespace Math
 
 	public: /* operators */
 
+		Point3 & operator=(const Point3 &rhs);
+		bool operator==(const Point3 &rhs) const;
+
 		Point3 & operator+=(const Vector3 &rhs);
 		Point3 & operator-=(const Vector3 &rhs);
 		Point3 operator+(const Vector3 &rhs) const;
@@ -92,7 +96,6 @@ namespace Math
 
 		static const Point3 Null;
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

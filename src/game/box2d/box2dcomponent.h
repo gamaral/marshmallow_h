@@ -39,8 +39,11 @@
 
 #include "game/componentbase.h"
 
+#include "core/weak.h"
+
 #include "math/size2.h"
 
+/* Box2D */
 struct b2Body;
 
 MARSHMALLOW_NAMESPACE_BEGIN

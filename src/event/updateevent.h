@@ -46,9 +46,10 @@ namespace Event
 	/*! @brief Update Event Class */
 	class EVENT_EXPORT UpdateEvent : public EventBase
 	{
-		TIME m_delta;
-
+		NO_ASSIGN(UpdateEvent);
 		NO_COPY(UpdateEvent);
+
+		TIME m_delta;
 
 	public:
 
@@ -71,7 +72,6 @@ namespace Event
 
 		static const Core::Type sType;
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

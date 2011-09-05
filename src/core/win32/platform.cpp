@@ -34,23 +34,20 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <windows.h>
 #include <time.h>
+#include <windows.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
+/******************************************************************************/
 
-struct Platform::Internal
+namespace
 {
-	Internal(void);
-	time_t start_time;
-} platform_internal;
+	static time_t s_start_time = time(0);
+} // namespace
 
-Platform::Internal::Internal(void)
-    : start_time(time(0))
-{
-}
+/******************************************************************************/
 
 void
 Platform::Initialize(void)
@@ -71,7 +68,7 @@ Platform::Sleep(TIME t)
 time_t
 Platform::StartTime(void)
 {
-	return(platform_internal.start_time);
+	return(platform_internal.s_start_time);
 }
 
 TIME
@@ -90,7 +87,7 @@ Platform::TimeStamp(void)
 #define MICROSECONDS_PER_MILLISECOND 1000.0
 #define MILLISECONDS_PER_SECOND 1000.0
 	l_mseconds = (l_micro_seconds / MICROSECONDS_PER_MILLISECOND)
-	    -(platform_internal.start_time * MILLISECONDS_PER_SECOND);
+	    -(platform_internal.s_start_time * MILLISECONDS_PER_SECOND);
 	return(l_mseconds);
 }
 

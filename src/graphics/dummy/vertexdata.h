@@ -39,6 +39,7 @@
 
 #include "graphics/ivertexdata.h"
 
+#include "core/global.h"
 #include "core/identifier.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN

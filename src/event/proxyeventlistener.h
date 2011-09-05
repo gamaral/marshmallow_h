@@ -47,14 +47,16 @@ namespace Event
 	/*! @brief Proxy Event Listener Class */
 	class ProxyEventListener : public IEventListener
 	{
-		IEventListener &m_owner;
-
+		NO_ASSIGN(ProxyEventListener);
 		NO_COPY(ProxyEventListener);
+
+		IEventListener &m_owner;
 
 	public:
 
 		ProxyEventListener(IEventListener &owner)
 		    : m_owner(owner) {}
+
 		virtual ~ProxyEventListener(void) {}
 
 	public: /* virtual */

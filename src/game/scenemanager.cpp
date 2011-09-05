@@ -35,10 +35,13 @@
  */
 
 #include "core/logger.h"
+#include "core/weak.h"
+
 #include "event/eventmanager.h"
 #include "event/proxyeventlistener.h"
 #include "event/renderevent.h"
 #include "event/updateevent.h"
+
 #include "game/factorybase.h"
 #include "game/iscene.h"
 

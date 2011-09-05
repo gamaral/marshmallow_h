@@ -47,13 +47,13 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-
 	/*! @brief Debug Event Listener */
 	class EVENT_EXPORT DebugEventListener : public IEventListener
 	{
-		std::ofstream m_filestream;
-
+		NO_ASSIGN(DebugEventListener);
 		NO_COPY(DebugEventListener);
+
+		std::ofstream m_filestream;
 
 	public:
 
@@ -64,7 +64,6 @@ namespace Event
 
 		VIRTUAL bool handleEvent(const IEvent &event);
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

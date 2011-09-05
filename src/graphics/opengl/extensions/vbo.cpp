@@ -39,26 +39,24 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 
+#include "core/namespace.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-
-namespace OpenGL
-{
-
-PFNGLGENBUFFERSARBPROC glGenBuffersARB = 0;
-PFNGLBINDBUFFERARBPROC glBindBufferARB = 0;
-PFNGLBUFFERDATAARBPROC glBufferDataARB = 0;
-PFNGLBUFFERSUBDATAARBPROC glBufferSubDataARB = 0;
-PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB = 0;
-PFNGLGETBUFFERPARAMETERIVARBPROC glGetBufferParameterivARB = 0;
-PFNGLMAPBUFFERARBPROC glMapBufferARB = 0;
-PFNGLUNMAPBUFFERARBPROC glUnmapBufferARB = 0;
-bool HasVectorBufferObjectSupport = false;
-
-}
-
+	namespace OpenGL
+	{
+		PFNGLGENBUFFERSARBPROC glGenBuffersARB = 0;
+		PFNGLBINDBUFFERARBPROC glBindBufferARB = 0;
+		PFNGLBUFFERDATAARBPROC glBufferDataARB = 0;
+		PFNGLBUFFERSUBDATAARBPROC glBufferSubDataARB = 0;
+		PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB = 0;
+		PFNGLGETBUFFERPARAMETERIVARBPROC glGetBufferParameterivARB = 0;
+		PFNGLMAPBUFFERARBPROC glMapBufferARB = 0;
+		PFNGLUNMAPBUFFERARBPROC glUnmapBufferARB = 0;
+		bool HasVectorBufferObjectSupport = false;
+	}
 }
 
 MARSHMALLOW_NAMESPACE_END

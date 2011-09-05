@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <Box2D/Box2D.h>
+
 #include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -41,9 +43,17 @@ using namespace Game;
 
 const Core::Type Box2DSceneLayer::sType("Game::Box2DSceneLayer");
 
+struct Box2DSceneLayer::Internal
+{
+	b2World world;
+
+	Internal()
+	: world(b2Vec2(0.f, -10.f)) {}
+};
+
 Box2DSceneLayer::Box2DSceneLayer(const Core::Identifier &i, IScene &s)
-    : SceneLayerBase(i, s),
-      m_world(b2Vec2(0.f, -10.f), true)
+    : SceneLayerBase(i, s)
+    , m_internal(new Internal)
 {
 }
 
@@ -54,26 +64,32 @@ Box2DSceneLayer::~Box2DSceneLayer(void)
 void
 Box2DSceneLayer::update(TIME d)
 {
-	m_world.Step
+	m_internal->world.Step
 	    (static_cast<float>(d),
 #define VELOCITY_ITERATIONS 10.f
 	     VELOCITY_ITERATIONS,
 #define POSITION_ITERATIONS 8.f
 	     POSITION_ITERATIONS);
-	m_world.ClearForces();
+	m_internal->world.ClearForces();
 }
 
 Math::Vector2
 Box2DSceneLayer::gravity(void) const
 {
-	b2Vec2 l_gravity = m_world.GetGravity();
+	b2Vec2 l_gravity = m_internal->world.GetGravity();
 	return(Math::Vector2(l_gravity.x, l_gravity.y));
 }
 
 void
 Box2DSceneLayer::setGravity(const Math::Vector2 &g)
 {
-	m_world.SetGravity(g);
+	m_internal->world.SetGravity(g);
+}
+
+b2World &
+Box2DSceneLayer::world(void)
+{
+	return(m_internal->world);
 }
 
 bool
@@ -83,7 +99,7 @@ Box2DSceneLayer::serialize(TinyXML::TiXmlElement &n) const
 		return(false);
 
 	TinyXML::TiXmlElement l_child("gravity");
-	b2Vec2 l_gravity = m_world.GetGravity();
+	b2Vec2 l_gravity = m_internal->world.GetGravity();
 	l_child.SetDoubleAttribute("x", l_gravity.x);
 	l_child.SetDoubleAttribute("y", l_gravity.y);
 	n.InsertEndChild(l_child);
@@ -102,7 +118,7 @@ Box2DSceneLayer::deserialize(TinyXML::TiXmlElement &n)
 		float l_x, l_y;
 		l_child->QueryFloatAttribute("x", &l_x);
 		l_child->QueryFloatAttribute("y", &l_y);
-		m_world.SetGravity(b2Vec2(l_x, l_y));
+		m_internal->world.SetGravity(b2Vec2(l_x, l_y));
 	}
 	
 	return(true);

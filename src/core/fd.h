@@ -37,9 +37,11 @@
 #ifndef CORE_FD_H
 #define CORE_FD_H 1
 
-#include "core/global.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+/*! Core Package */
 namespace Core
 {
 	class StrHash;
@@ -49,6 +51,7 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 }
+
 MARSHMALLOW_NAMESPACE_END
 
 #endif

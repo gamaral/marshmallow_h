@@ -36,6 +36,7 @@
 
 #include "core/platform.h"
 #include "core/type.h"
+
 #include "event/ievent.h"
 
 MARSHMALLOW_NAMESPACE_USE;

@@ -26,8 +26,8 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "core/global.h"
 #include "core/logger.h"
+#include "core/global.h"
 
 /*!
  * @file
@@ -35,9 +35,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-/********************************************************* memory allocation */
-
 MARSHMALLOW_NAMESPACE_USE;
+
+/********************************************************* memory allocation */
 
 void *
 operator new(size_t size)
@@ -72,6 +72,8 @@ operator delete[](void *ptr)
 	MMINFO("Requested array deallocation of %p.", ptr);
 	free(ptr);
 }
+
+/********************************************************************** eastl */
 
 void *
 operator new[](size_t size, const char *pName, int flags, unsigned debugFlags,

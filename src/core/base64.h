@@ -37,7 +37,8 @@
 #ifndef CORE_BASE64_H
 #define CORE_BASE64_H 1
 
-#include "core/global.h"
+#include "core/environment.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -45,10 +46,34 @@ namespace Core
 {
 	namespace Base64
 	{
-		/*! @brief Base64 decoder */
+		/*! @brief Base64 decoder
+		 *  @param in In buffer
+		 *  @param in_size In buffer size
+		 *  @param out Out buffer pointer
+		 *
+		 *  Decode a Base64 buffer, out buffer allocation is handled by
+		 *  the function.
+		 *
+		 *  Deallocation will be automatic by the double buffered
+		 *  allocator. (not yet implemented)
+		 *
+		 *  @return Out buffer size
+		 */
 		CORE_EXPORT size_t Decode(const char *in, size_t in_size, char **out);
 
-		/*! @brief Base64 encoder */
+		/*! @brief Base64 encoder
+		 *  @param in In buffer
+		 *  @param in_size In buffer size
+		 *  @param out Out buffer pointer
+		 *
+		 *  Encode buffer as Base64, out buffer allocation is handled by
+		 *  the function.
+		 *
+		 *  Deallocation will be automatic by the double buffered
+		 *  allocator. (not yet implemented)
+		 *
+		 *  @return Out buffer size
+		 */
 		CORE_EXPORT size_t Encode(const char *in, size_t in_size, char **out);
 	}
 }

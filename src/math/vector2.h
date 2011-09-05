@@ -37,8 +37,11 @@
 #ifndef MATH_VECTOR2_H
 #define MATH_VECTOR2_H 1
 
+#include "core/environment.h"
 #include "core/global.h"
+#include "core/namespace.h"
 
+/* Box2D */
 #if MARSHMALLOW_WITH_BOX2D
 struct b2Vec2;
 #endif
@@ -47,7 +50,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
-
 	/*! @brief 2D Vector */
 	class MATH_EXPORT Vector2
 	{
@@ -89,16 +91,15 @@ namespace Math
 
 	public: /* operators */
 
+		Vector2 & operator=(const Vector2 &rhs);
+		bool operator==(const Vector2 &rhs) const;
+
 		operator bool(void) const
 		    { return(m_value[0] || m_value[1]); }
 
 #if MARSHMALLOW_WITH_BOX2D
 		operator b2Vec2(void) const;
 #endif
-
-		bool operator==(const Vector2 &rhs) const
-		    { return(m_value[0] == rhs.m_value[0] &&
-		             m_value[1] == rhs.m_value[1]); }
 
 		Vector2 & operator*=(float rhs);
 		Vector2 & operator+=(const Vector2 &rhs);
@@ -113,7 +114,6 @@ namespace Math
 		static const Vector2 One;
 
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

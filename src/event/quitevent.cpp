@@ -37,10 +37,9 @@
 #include "core/platform.h"
 
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
 using namespace Event;
 
-const Type QuitEvent::sType("Event::QuitEvent");
+const Core::Type QuitEvent::sType("Event::QuitEvent");
 
 QuitEvent::QuitEvent(int c, TIME t)
     : EventBase(t, HighPriority),

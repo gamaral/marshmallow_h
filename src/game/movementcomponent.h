@@ -39,6 +39,8 @@
 
 #include "game/componentbase.h"
 
+#include "core/weak.h"
+
 #include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN

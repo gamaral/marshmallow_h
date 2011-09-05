@@ -39,7 +39,7 @@
 
 #include <EASTL/string.h>
 
-#include "core/global.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

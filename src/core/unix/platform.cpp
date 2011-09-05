@@ -35,7 +35,6 @@
  */
 
 #include <sys/time.h>
-
 #include <cmath>
 #include <ctime>
 #include <unistd.h>
@@ -43,21 +42,19 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
-struct Platform::Internal
-{
-	Internal(void);
-	time_t start_time;
-} platform_internal;
+/******************************************************************************/
 
-Platform::Internal::Internal(void)
-    : start_time(time(0))
+namespace
 {
-}
+	static time_t s_start_time = time(0);
+} // namespace
+
+/******************************************************************************/
 
 void
 Platform::Initialize(void)
 {
-	srand(static_cast<unsigned int>(platform_internal.start_time));
+	srand(static_cast<unsigned int>(s_start_time));
 }
 
 void
@@ -81,7 +78,7 @@ Platform::Sleep(TIME timeout)
 time_t
 Platform::StartTime(void)
 {
-	return(platform_internal.start_time);
+	return(s_start_time);
 }
 
 TIME
@@ -89,7 +86,7 @@ Platform::TimeStamp(void)
 {
 	struct timeval time;
 	gettimeofday(&time, 0);
-	return(static_cast<TIME>((time.tv_sec - platform_internal.start_time) * 1000)
+	return(static_cast<TIME>((time.tv_sec - s_start_time) * 1000)
 	    + (static_cast<TIME>(time.tv_usec) / 1000.0f));
 }
 
@@ -107,8 +104,8 @@ Platform::TimeStampToTimeData(TIME timestamp)
 	gmtime_r(&l_ts.system, &l_time);
 
 	sprintf(l_ts.string, "%04d-%02d-%02dT%02d:%02d:%02dZ",
-		l_time.tm_year+1900,
-		l_time.tm_mon+1,
+		l_time.tm_year + 1900,
+		l_time.tm_mon  + 1,
 		l_time.tm_mday,
 		l_time.tm_hour,
 		l_time.tm_min,

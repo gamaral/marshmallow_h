@@ -37,7 +37,8 @@
 #ifndef CORE_HASH_H
 #define CORE_HASH_H 1
 
-#include "core/global.h"
+#include "core/environment.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

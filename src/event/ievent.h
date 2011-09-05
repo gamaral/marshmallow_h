@@ -37,8 +37,9 @@
 #ifndef EVENT_IEVENT_H
 #define EVENT_IEVENT_H 1
 
-#include "core/global.h"
+#include "core/environment.h"
 #include "core/fd.h"
+#include "core/global.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

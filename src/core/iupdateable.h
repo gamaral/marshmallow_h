@@ -37,7 +37,8 @@
 #ifndef CORE_IUPDATEABLE_H
 #define CORE_IUPDATEABLE_H 1
 
-#include "core/global.h"
+#include "core/environment.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -47,7 +48,7 @@ namespace Core
 	template <class T> class Weak;
 
 	/*! @brief Updateable Interface */
-	struct IUpdateable
+	struct CORE_EXPORT IUpdateable
 	{
 		virtual ~IUpdateable(void) {};
 

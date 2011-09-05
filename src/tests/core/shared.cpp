@@ -27,6 +27,8 @@
  */
 
 #include "core/shared.h"
+#include "core/weak.h"
+
 #include "../common.h"
 
 /*!

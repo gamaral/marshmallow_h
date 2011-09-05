@@ -26,8 +26,10 @@
  * or implied, of Marshmallow Engine.
  */
 
+#include "core/global.h"
 #include "core/hash.h"
 #include "core/strhash.h"
+
 #include "../common.h"
 
 /*!

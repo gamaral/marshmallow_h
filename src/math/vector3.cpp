@@ -94,6 +94,23 @@ Vector3::magnitude2(void) const
 	     + powf(m_value[2], 2));
 }
 
+Vector3 &
+Vector3::operator=(const Vector3 &rhs)
+{
+	m_value[0] = rhs.m_value[0];
+	m_value[1] = rhs.m_value[1];
+	m_value[2] = rhs.m_value[2];
+	return(*this);
+}
+
+bool
+Vector3::operator==(const Vector3 &rhs) const
+{
+	return(m_value[0] == rhs.m_value[0]
+	    && m_value[1] == rhs.m_value[1]
+	    && m_value[2] == rhs.m_value[2]);
+}
+
 #if MARSHMALLOW_WITH_BOX2D
 Vector3::operator b2Vec3(void) const
 {

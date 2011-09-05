@@ -34,6 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/environment.h"
 #include "core/fd.h"
 #include "graphics/config.h"
 

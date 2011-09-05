@@ -37,13 +37,14 @@
 #ifndef MATH_SIZE2_H
 #define MATH_SIZE2_H 1
 
+#include "core/environment.h"
 #include "core/global.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
-
 	/*! @brief 2D Size */
 	template <typename T = float>
 	class Size2
@@ -56,10 +57,12 @@ namespace Math
 		 *  @param h Height
 		 */
 		Size2(T w = 0, T h = 0)
-		    { m_value[0] = w; m_value[1] = h; }
+		    { m_value[0] = w;
+		      m_value[1] = h; }
 
 		Size2(const Size2 &copy)
-		    { m_value[0] = copy.m_value[0]; m_value[1] = copy.m_value[1]; }
+		    { m_value[0] = copy.m_value[0];
+		      m_value[1] = copy.m_value[1]; }
 
 
 		T & rwidth(void)
@@ -87,13 +90,22 @@ namespace Math
 
 	public: /* operators */
 
+		Size2<T> & operator=(const Size2<T> &rhs)
+		    { m_value[0] = rhs.m_value[0];
+		      m_value[1] = rhs.m_value[1];
+		      return(*this); }
+
+		bool operator==(const Size2<T> &rhs) const
+		    { return( m_value[0] == rhs.m_value[0]
+		           && m_value[1] == rhs.m_value[1]); }
+
 		T & operator[](int i)
 		    { return(m_value[i % 2]); }
 
-		Size2<T> operator*(const T& c) const
+		Size2<T> operator*(const T &c) const
 		    { return(Size2<T>(m_value[0] * c, m_value[1] * c)); }
 
-		Size2<T> operator/(const T& c) const
+		Size2<T> operator/(const T &c) const
 		    { return(Size2<T>(m_value[0] / c, m_value[1] / c)); }
 	};
 	typedef Size2<float> Size2f;

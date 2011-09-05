@@ -37,15 +37,14 @@
 #include "core/platform.h"
 
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
 using namespace Event;
 
-const Type KeyboardEvent::sType("Event::KeyboardEvent");
+const Core::Type KeyboardEvent::sType("Event::KeyboardEvent");
 
 KeyboardEvent::KeyboardEvent(KBKeys k, KBActions a, TIME t)
-    : EventBase(t, HighPriority),
-      m_key(k),
-      m_action(a)
+    : EventBase(t, HighPriority)
+    , m_action(a)
+    , m_key(k)
 {
 }
 

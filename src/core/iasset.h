@@ -37,13 +37,13 @@
 #ifndef CORE_IASSET_H
 #define CORE_IASSET_H 1
 
-#include "core/global.h"
+#include "core/environment.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core
 {
-
 	class StrHash;
 	typedef StrHash Identifier;
 	typedef StrHash Type;
@@ -52,7 +52,7 @@ namespace Core
 	template <class T> class Weak;
 
 	/*! @brief Assets Asset Interface */
-	struct IAsset
+	struct CORE_EXPORT IAsset
 	{
 		virtual ~IAsset(void) {};
 
@@ -61,7 +61,6 @@ namespace Core
 	};
 	typedef Shared<IAsset> SharedAsset;
 	typedef Weak<IAsset> WeakAsset;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

@@ -37,8 +37,12 @@
 MARSHMALLOW_NAMESPACE_USE;
 
 #include <core/logger.h>
+#include <core/weak.h>
+
 #include <event/keyboardevent.h>
+
 #include <graphics/viewport.h>
+
 #include <game/iscene.h>
 #include <game/pausescenelayer.h>
 

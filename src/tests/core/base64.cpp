@@ -29,6 +29,8 @@
 #include <cstring>
 
 #include "core/base64.h"
+#include "core/global.h"
+
 #include "../common.h"
 
 static const char  base64a[] = "MTIzNDU2";

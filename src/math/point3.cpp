@@ -56,6 +56,23 @@ Point3::Point3(const Point3 &copy)
 }
 
 Point3 &
+Point3::operator=(const Point3 &rhs)
+{
+	m_value[0] += rhs.m_value[0];
+	m_value[1] += rhs.m_value[1];
+	m_value[2] += rhs.m_value[2];
+	return(*this);
+}
+
+bool
+Point3::operator==(const Point3 &rhs) const
+{
+	return( m_value[0] == rhs.m_value[0]
+	     && m_value[1] == rhs.m_value[1]
+	     && m_value[2] == rhs.m_value[2]);
+}
+
+Point3 &
 Point3::operator+=(const Vector3 &rhs)
 {
 	m_value[0] += rhs.rx();

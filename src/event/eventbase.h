@@ -59,14 +59,23 @@ namespace Event
 	/*! @brief Event Base Class */
 	class EVENT_EXPORT EventBase : public IEvent
 	{
+		NO_ASSIGN(EventBase);
+		NO_COPY(EventBase);
+
 		TIME m_timestamp;
 		UINT8 m_priority;
 
-		NO_COPY(EventBase);
-
 	public:
 
-		EventBase(TIME timeout = 0, UINT8 priority = 0);
+		/*! @brief Event constructor
+		 *
+		 *  @param timestamp Event engine will process this message at
+		 *                   timestamp, use 0 for NOW.
+		 *
+		 *  @param priority  Use a higher value to get higher priority.
+		 */
+
+		EventBase(TIME timestamp = 0, UINT8 priority = 0);
 		virtual ~EventBase(void);
 
 	public: /* virtual */
@@ -76,9 +85,7 @@ namespace Event
 
 		VIRTUAL TIME timeStamp(void) const
 		    { return(m_timestamp); }
-
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

@@ -39,12 +39,14 @@
 
 #include "EASTL/list.h"
 #include "EASTL/map.h"
-using namespace eastl;
 
 #include "core/shared.h"
-#include "game/iscenelayer.h"
+
 #include "math/size2.h"
 
+#include "game/iscenelayer.h"
+
+/* TinyXML */
 namespace TinyXML { class TiXmlElement; }
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -57,7 +59,7 @@ namespace Graphics
 
 namespace Game
 {
-	typedef list<SharedSceneLayer> SharedSceneLayerList;
+	typedef eastl::list<SharedSceneLayer> SharedSceneLayerList;
 }
 
 namespace Extra
@@ -66,14 +68,17 @@ namespace Extra
 	/*! @brief Extra TMX Loader Class */
 	class EXTRA_EXPORT TMXLoader
 	{
+		NO_ASSIGN(TMXLoader);
 		NO_COPY(TMXLoader);
+
+		typedef eastl::map<int, Graphics::SharedTileset> TilesetCollection;
 
 		Game::IScene &m_scene;
 
-		typedef map<int, Graphics::SharedTileset> TilesetCollection;
 		TilesetCollection m_tilesets;
 
 		Game::SharedSceneLayerList m_layers;
+
 		bool m_is_loaded;
 
 		Math::Size2i m_map_size;

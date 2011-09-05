@@ -37,13 +37,14 @@
 #ifndef MATH_POINT2_H
 #define MATH_POINT2_H 1
 
+#include "core/environment.h"
 #include "core/global.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
-
 	class Vector2;
 
 	/*! @brief 2D Point */
@@ -77,6 +78,9 @@ namespace Math
 
 	public: /* operators */
 
+		Point2 & operator=(const Point2 &rhs);
+		bool operator==(const Point2 &rhs) const;
+
 		Point2 & operator+=(const Vector2 &rhs);
 		Point2 & operator-=(const Vector2 &rhs);
 		Point2 operator+(const Vector2 &rhs) const;
@@ -86,7 +90,6 @@ namespace Math
 
 		static const Point2 Null;
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

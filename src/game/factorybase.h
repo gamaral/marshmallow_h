@@ -39,6 +39,8 @@
 
 #include "game/ifactory.h"
 
+#include "core/global.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game

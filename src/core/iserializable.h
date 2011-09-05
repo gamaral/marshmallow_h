@@ -39,7 +39,8 @@
 
 #include <tinyxml.h>
 
-#include "core/global.h"
+#include "core/environment.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -49,7 +50,7 @@ namespace Core
 	template <class T> class Weak;
 
 	/*! @brief Serializable Interface */
-	struct ISerializable
+	struct CORE_EXPORT ISerializable
 	{
 		virtual ~ISerializable(void) {};
 

@@ -37,7 +37,9 @@
 #ifndef MATH_VECTOR3_H
 #define MATH_VECTOR3_H 1
 
+#include "core/environment.h"
 #include "core/global.h"
+#include "core/namespace.h"
 
 #if MARSHMALLOW_WITH_BOX2D
 struct b2Vec3;
@@ -92,17 +94,15 @@ namespace Math
 
 	public: /* operators */
 
+		Vector3 & operator=(const Vector3 &rhs);
+		bool operator==(const Vector3 &rhs) const;
+
 		operator bool(void) const
 		    { return(m_value[0] || m_value[1] || m_value[2]); }
 
 #if MARSHMALLOW_WITH_BOX2D
 		operator b2Vec3(void) const;
 #endif
-
-		bool operator==(const Vector3 &rhs) const
-		    { return(m_value[0] == rhs.m_value[0] &&
-		             m_value[1] == rhs.m_value[1] &&
-		             m_value[2] == rhs.m_value[2]); }
 
 		Vector3 & operator+=(const Vector3 &rhs);
 		Vector3 & operator-=(const Vector3 &rhs);

@@ -35,22 +35,32 @@
  */
 
 #include "core/logger.h"
+#include "core/weak.h"
+
 #include "event/ievent.h"
 #include "event/ieventlistener.h"
 
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
 using namespace Event;
-using namespace eastl;
 
-static bool SortSharedEvent(const SharedEvent& lhs, const SharedEvent& rhs);
+/******************************************************************************/
+
+namespace {
+	bool
+	SortSharedEvent(const SharedEvent& lhs, const SharedEvent& rhs) {
+		return(lhs->priority() > rhs->priority()
+		   || lhs->timeStamp() < rhs->timeStamp());
+	}
+} // namespace
+
+/******************************************************************************/
 
 EventManager * EventManager::s_instance(0);
 
 EventManager::EventManager(const Core::Identifier &i)
-    : m_elmap(),
-      m_id(i),
-      m_active_queue(0)
+    : m_elmap()
+    , m_id(i)
+    , m_active_queue(0)
 {
 	if (!s_instance) s_instance = this;
 }
@@ -200,10 +210,3 @@ EventManager::Instance(void)
 	return(s_instance);
 }
 
-/******************************************************************** helpers */
-
-bool
-SortSharedEvent(const SharedEvent& lhs, const SharedEvent& rhs) {
-	return(lhs->priority() > rhs->priority() ||
-	    lhs->timeStamp() < rhs->timeStamp());
-}

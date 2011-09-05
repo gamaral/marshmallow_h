@@ -42,6 +42,8 @@
 #include <stdint.h>
 #include <windows.h>
 
+/********************************************************************** types */
+
 #define CHAR     char
 #define INT16    int16_t
 #define INT32    int32_t
@@ -49,12 +51,14 @@
 #define INT8     int8_t
 #define TIME     float
 #define TIME_MAX FLT_MAX
+#define UID      uint32_t
 #define UINT16   uint16_t
 #define UINT32   uint32_t
 #define UINT64   uint64_t
 #define UINT8    uint8_t
 #define WCHAR    wchar_t
-#define UID      uint32_t
+
+/******************************************************************** defines */
 
 #define CHDIR   _chdir
 #define STRDUP  _strdup
@@ -69,16 +73,16 @@
 #   define DLL_IMPORT
 #endif
 
-#ifdef CORE_LIBRARY
-#   define CORE_EXPORT DLL_EXPORT
-#else
-#   define CORE_EXPORT DLL_IMPORT
-#endif
-
 #ifdef ENTRYPOINT_LIBRARY
 #   define ENTRYPOINT_EXPORT DLL_EXPORT
 #else
 #   define ENTRYPOINT_EXPORT DLL_IMPORT
+#endif
+
+#ifdef CORE_LIBRARY
+#   define CORE_EXPORT DLL_EXPORT
+#else
+#   define CORE_EXPORT DLL_IMPORT
 #endif
 
 #ifdef MATH_LIBRARY

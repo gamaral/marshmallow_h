@@ -44,7 +44,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
-
 	class Vector2;
 
 	/*! @brief 2D Rect */
@@ -67,8 +66,13 @@ namespace Math
 
 		float area(void) const
 		    { return(m_size.area()); }
-	};
 
+	public: /* operators */
+
+		Rect2 & operator=(const Rect2 &rhs)
+		    { m_size = rhs.m_size;
+		      return(*this); }
+	};
 }
 
 MARSHMALLOW_NAMESPACE_END

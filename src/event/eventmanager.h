@@ -39,10 +39,9 @@
 
 #include "EASTL/hash_map.h"
 #include "EASTL/list.h"
-using namespace eastl;
 
-#include "core/global.h"
 #include "core/fd.h"
+#include "core/global.h"
 #include "core/identifier.h"
 #include "core/shared.h"
 
@@ -61,19 +60,20 @@ namespace Event
 	/*! @brief Event Manager */
 	class EVENT_EXPORT EventManager
 	{
-		typedef list<WeakEventListener> EventListenerList;
-		typedef Core::Shared<EventListenerList> SharedEventListenerList;
-		typedef hash_map<UID, SharedEventListenerList> EventListenerMap;
-
-		typedef list<SharedEvent> EventList;
+		NO_ASSIGN(EventManager);
+		NO_COPY(EventManager);
 
 		static EventManager *s_instance;
+
+		typedef eastl::list<WeakEventListener> EventListenerList;
+		typedef Core::Shared<EventListenerList> SharedEventListenerList;
+		typedef eastl::hash_map<UID, SharedEventListenerList> EventListenerMap;
+		typedef eastl::list<SharedEvent> EventList;
+
 		EventListenerMap m_elmap;
 		EventList m_queue[2];
 		Core::Identifier m_id;
 		UINT8 m_active_queue;
-
-		NO_COPY(EventManager);
 
 	public:
 

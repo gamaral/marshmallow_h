@@ -43,15 +43,14 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
-
 	/*! @brief 3D Size */
 	template <typename T = float>
-	class MATH_EXPORT Size3
+	class Size3
 	{
 		T m_value[3];
 
 	public:
-		Size3(T width = 0., T height = 0., T depth = 0.);
+		Size3(T width = 0, T height = 0, T depth = 0);
 		Size3(const Size3 &copy);
 
 		T & rwidth(void)
@@ -75,13 +74,32 @@ namespace Math
 		T depth(void) const
 		    { return(m_value[2]); }
 
-		T & operator[](int i)
-		    { return(m_value[i % 3]); }
-
 		T volume(void) const;
 
 		template <typename U>
 		Size3<U> staticCast(void) const;
+
+	public: /* operators */
+
+		Size3<T> & operator=(const Size3<T> &rhs)
+		    { m_value[0] = rhs.m_value[0];
+		      m_value[1] = rhs.m_value[1];
+		      m_value[2] = rhs.m_value[2];
+		      return(*this); }
+
+		bool operator==(const Size3<T> &rhs) const
+		    { return( m_value[0] == rhs.m_value[0]
+		           && m_value[1] == rhs.m_value[1]
+		           && m_value[2] == rhs.m_value[2]); }
+
+		T & operator[](int i)
+		    { return(m_value[i % 3]); }
+
+		Size3<T> operator*(const T &c) const
+		    { return(Size3<T>(m_value[0] * c, m_value[1] * c, m_value[2] * c)); }
+
+		Size3<T> operator/(const T &c) const
+		    { return(Size3<T>(m_value[0] / c, m_value[1] / c, m_value[2] / c)); }
 	};
 	typedef Size3<float> Size3f;
 	typedef Size3<int>   Size3i;
@@ -116,7 +134,6 @@ namespace Math
 		                static_cast<U>(m_value[1]),
 		                static_cast<U>(m_value[2]));
 	}
-
 }
 
 MARSHMALLOW_NAMESPACE_END

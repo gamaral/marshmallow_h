@@ -35,12 +35,16 @@
  */
 
 #include "core/logger.h"
+#include "core/weak.h"
+
 #include "event/eventmanager.h"
 #include "event/proxyeventlistener.h"
 #include "event/quitevent.h"
 #include "event/renderevent.h"
 #include "event/updateevent.h"
+
 #include "graphics/viewport.h"
+
 #include "game/factory.h"
 #include "game/scenemanager.h"
 

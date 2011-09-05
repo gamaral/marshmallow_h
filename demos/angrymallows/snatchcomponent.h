@@ -39,6 +39,8 @@
 
 #include <game/componentbase.h>
 
+#include <core/weak.h>
+
 #include "snatcherlayer.h"
 
 MARSHMALLOW_NAMESPACE_USE;

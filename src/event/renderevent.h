@@ -46,7 +46,7 @@ namespace Event
 	/*! @brief Render Event Class */
 	class EVENT_EXPORT RenderEvent : public EventBase
 	{
-
+		NO_ASSIGN(RenderEvent);
 		NO_COPY(RenderEvent);
 
 	public:
@@ -67,7 +67,6 @@ namespace Event
 
 		static const Core::Type sType;
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

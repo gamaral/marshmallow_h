@@ -65,4 +65,3 @@ Core::Zlib::Deflate(const char *in, size_t in_size, char **out)
 	return(l_out_size);
 }
 
-
