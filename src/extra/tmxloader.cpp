@@ -238,8 +238,10 @@ TMXLoader::processTileset(TiXmlElement &e)
 
 	Graphics::Tileset *l_tileset = new Graphics::Tileset;
 	l_tileset->setName(l_name);
-	l_tileset->setTextureData(l_texture);
+	l_tileset->setMargin(l_margin);
+	l_tileset->setSpacing(l_spacing);
 	l_tileset->setTileSize(Math::Size2i(l_tile_width, l_tile_height));
+	l_tileset->setTextureData(l_texture);
 	m_tilesets[l_first_gid] = l_tileset;
 
 	return(true);

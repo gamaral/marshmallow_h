@@ -64,9 +64,10 @@ namespace Graphics
 		Math::Size2i m_tile_size;
 		SharedTextureData m_texture_data;
 
-		Math::Size2f m_rmargin;
-		Math::Size2f m_rspacing;
-		Math::Size2f m_tile_rsize;
+		float *m_offset_col;
+		float *m_offset_row;
+		float m_spacing_col;
+		float m_spacing_row;
 
 		int m_margin;
 		int m_spacing;

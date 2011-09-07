@@ -26,18 +26,18 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "core/identifier.h"
+#include <core/identifier.h>
 
-#include "graphics/factory.h"
-#include "graphics/tileset.h"
+#include <graphics/factory.h>
+#include <graphics/tileset.h>
+#include <graphics/viewport.h>
 
-#include "game/enginebase.h"
-#include "game/scenebase.h"
-#include "game/scenemanager.h"
-#include "game/tilemapscenelayer.h"
+#include <game/enginebase.h>
+#include <game/scenebase.h>
+#include <game/scenemanager.h>
+#include <game/tilemapscenelayer.h>
 
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
 
 class DemoScene : public Game::SceneBase
 {
@@ -72,7 +72,7 @@ public:
 
 			/* layer 1 */
 			l_tslayer = new Game::TilemapSceneLayer("bottom", *this);
-			l_tslayer->setSize(Math::Size2i(20, 15));
+			l_tslayer->setSize(Math::Size2i(20, 20));
 			l_tslayer->setTileSize(Math::Size2i(24, 24));
 			l_tslayer->attachTileset(1, l_tileset.staticCast<Graphics::ITileset>());
 

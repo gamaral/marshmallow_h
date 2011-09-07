@@ -67,13 +67,14 @@ namespace Game
 		UINT32 *m_data;
 
 		Math::Size2f m_hrtile_size;
+		Math::Size2f m_hrsize;
 		Math::Size2f m_rtile_size;
 
 		Math::Size2i m_tile_size;
 		Math::Size2i m_size;
 
 		float m_opacity;
-		bool m_visible;
+		bool  m_visible;
 
 	public:
 

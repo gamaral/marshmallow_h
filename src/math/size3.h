@@ -132,7 +132,7 @@ namespace Math
 	{
 		return(Size3<U>(static_cast<U>(m_value[0]),
 		                static_cast<U>(m_value[1]),
-		                static_cast<U>(m_value[2]));
+		                static_cast<U>(m_value[2])));
 	}
 }
 
