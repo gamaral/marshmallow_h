@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/sizecomponent.h"
 
 /*!
  * @file
@@ -34,80 +34,46 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EXTRA_TMXLOADER_H
-#define EXTRA_TMXLOADER_H 1
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-#include "EASTL/list.h"
-#include "EASTL/map.h"
+const Core::Type SizeComponent::sType("Game::SizeComponent");
 
-#include "core/shared.h"
-
-#include "math/size2.h"
-
-#include "game/iscenelayer.h"
-
-/* TinyXML */
-namespace TinyXML { class TiXmlElement; }
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
+SizeComponent::SizeComponent(const Core::Identifier &i, IEntity &e)
+    : ComponentBase(i, e),
+      m_size()
 {
-	struct ITileset;
-	typedef Core::Shared<ITileset> SharedTileset;
 }
 
-namespace Game
+SizeComponent::~SizeComponent(void)
 {
-	typedef eastl::list<SharedSceneLayer> SharedSceneLayerList;
 }
 
-namespace Extra
+bool
+SizeComponent::serialize(TinyXML::TiXmlElement &n) const
 {
-	/*! @brief Extra TMX Loader Class */
-	class EXTRA_EXPORT TMXLoader
-	{
-		NO_ASSIGN(TMXLoader);
-		NO_COPY(TMXLoader);
+	if (!ComponentBase::serialize(n))
+	    return(false);
 
-		typedef eastl::map<int, Graphics::SharedTileset> TilesetCollection;
-
-		Game::IScene &m_scene;
-
-		TilesetCollection m_tilesets;
-
-		Game::SharedSceneLayerList m_layers;
-
-		bool m_is_loaded;
-
-		Math::Size2f m_conv_ratio;
-		Math::Size2f m_hrmap_size;
-		Math::Size2i m_map_size;
-		Math::Size2i m_tile_size;
-
-	public:
-
-		TMXLoader(Game::IScene &scene);
-		virtual ~TMXLoader(void);
-
-		bool load(const char *file);
-		bool isLoaded(void) const
-		    { return(m_is_loaded); }
-
-		const Game::SharedSceneLayerList & layers(void) const
-		    { return(m_layers); }
-
-	private:
-
-		bool processLayer(TinyXML::TiXmlElement &element);
-		bool processMap(TinyXML::TiXmlElement &element);
-		bool processObjectGroup(TinyXML::TiXmlElement &element);
-		bool processTileset(TinyXML::TiXmlElement &element);
-	};
-	typedef Core::Shared<TMXLoader> SharedTMXLoader;
-	typedef Core::Weak<TMXLoader> WeakTMXLoader;
+	n.SetDoubleAttribute("width", m_size.rwidth());
+	n.SetDoubleAttribute("height", m_size.rheight());
+	return(true);
 }
 
-MARSHMALLOW_NAMESPACE_END
+bool
+SizeComponent::deserialize(TinyXML::TiXmlElement &n)
+{
+	if (!ComponentBase::deserialize(n))
+	    return(false);
 
-#endif
+	n.QueryFloatAttribute("width",  &m_size.rwidth());
+	n.QueryFloatAttribute("height", &m_size.rheight());
+	return(true);
+}
+
+const Core::Type &
+SizeComponent::Type(void)
+{
+	return(sType);
+}
+

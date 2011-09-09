@@ -1,5 +1,5 @@
 ====================================================================================
-                                 Marshmallow Engine
+                             Marshmallow Game Engine
 ====================================================================================
             “The only game engine that tastes better slightly burned!”
 
@@ -15,7 +15,7 @@ gaming.
 Source
 ======
 
-    $ git clone --recursive git://github.com/gamaral/Marshmallow-Engine.git
+    $ git clone --recursive git://github.com/gamaral/marshmallow_h.git
 
     Notice the *--recursive* switch, it's needed so that submodules get checked
     out along with the main repository.

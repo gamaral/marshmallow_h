@@ -34,78 +34,50 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef EXTRA_TMXLOADER_H
-#define EXTRA_TMXLOADER_H 1
+#ifndef GAME_SIZECOMPONENT_H
+#define GAME_SIZECOMPONENT_H 1
 
-#include "EASTL/list.h"
-#include "EASTL/map.h"
-
-#include "core/shared.h"
+#include "game/componentbase.h"
 
 #include "math/size2.h"
 
-#include "game/iscenelayer.h"
-
-/* TinyXML */
-namespace TinyXML { class TiXmlElement; }
-
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
-	struct ITileset;
-	typedef Core::Shared<ITileset> SharedTileset;
-}
 
 namespace Game
 {
-	typedef eastl::list<SharedSceneLayer> SharedSceneLayerList;
-}
 
-namespace Extra
-{
-	/*! @brief Extra TMX Loader Class */
-	class EXTRA_EXPORT TMXLoader
+	/*! @brief Game Size Component Class */
+	class GAME_EXPORT SizeComponent : public ComponentBase
 	{
-		NO_ASSIGN(TMXLoader);
-		NO_COPY(TMXLoader);
-
-		typedef eastl::map<int, Graphics::SharedTileset> TilesetCollection;
-
-		Game::IScene &m_scene;
-
-		TilesetCollection m_tilesets;
-
-		Game::SharedSceneLayerList m_layers;
-
-		bool m_is_loaded;
-
-		Math::Size2f m_conv_ratio;
-		Math::Size2f m_hrmap_size;
-		Math::Size2i m_map_size;
-		Math::Size2i m_tile_size;
+		Math::Size2f m_size;
+		NO_COPY(SizeComponent);
 
 	public:
+		SizeComponent(const Core::Identifier &i, IEntity &entity);
+		virtual ~SizeComponent(void);
 
-		TMXLoader(Game::IScene &scene);
-		virtual ~TMXLoader(void);
+		Math::Size2f & size(void)
+			{ return(m_size); }
 
-		bool load(const char *file);
-		bool isLoaded(void) const
-		    { return(m_is_loaded); }
+	public: /* virtual */
 
-		const Game::SharedSceneLayerList & layers(void) const
-		    { return(m_layers); }
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
 
-	private:
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
-		bool processLayer(TinyXML::TiXmlElement &element);
-		bool processMap(TinyXML::TiXmlElement &element);
-		bool processObjectGroup(TinyXML::TiXmlElement &element);
-		bool processTileset(TinyXML::TiXmlElement &element);
+	public: /* static */
+
+		static const Core::Type & Type(void);
+
+	private: /* static */
+
+		static const Core::Type sType;
 	};
-	typedef Core::Shared<TMXLoader> SharedTMXLoader;
-	typedef Core::Weak<TMXLoader> WeakTMXLoader;
+	typedef Core::Shared<SizeComponent> SharedSizeComponent;
+	typedef Core::Weak<SizeComponent> WeakSizeComponent;
+
 }
 
 MARSHMALLOW_NAMESPACE_END

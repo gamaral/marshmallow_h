@@ -67,7 +67,7 @@ public:
 
 		sceneManager()->pushScene(l_scene);
 
-		Graphics::Viewport::SetCamera(Math::Vector3(10, 50, 1));
+		Graphics::Viewport::SetCamera(Math::Vector3(0, 50, 1));
 
 		return(true);
 	}

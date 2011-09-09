@@ -43,14 +43,21 @@ using namespace TinyXML;
 
 #include "graphics/factory.h"
 #include "graphics/tileset.h"
+#include "graphics/viewport.h"
 
-#include "game/tilemapscenelayer.h"
+#include "game/entity.h"
+#include "game/entityscenelayer.h"
 #include "game/iscene.h"
+#include "game/positioncomponent.h"
+#include "game/sizecomponent.h"
+#include "game/tilemapscenelayer.h"
 
 #define TMXLAYER_DATA_NODE    "data"
 #define TMXLAYER_NODE         "layer"
 #define TMXTILESET_IMAGE_NODE "image"
 #define TMXTILESET_NODE       "tileset"
+#define TMXOBJECTGROUP_NODE   "objectgroup"
+#define TMXOBJECTGROUP_OBJECT_NODE "object"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Extra;
@@ -58,6 +65,10 @@ using namespace Extra;
 TMXLoader::TMXLoader(Game::IScene &s)
     : m_scene(s)
     , m_is_loaded(false)
+    , m_conv_ratio(0, 0)
+    , m_hrmap_size(0, 0)
+    , m_map_size(0, 0)
+    , m_tile_size(0, 0)
 {
 }
 
@@ -89,12 +100,16 @@ TMXLoader::load(const char *f)
 		l_tileset = l_tileset->NextSiblingElement(TMXTILESET_NODE);
 	}
 
-	/* parse layers */
-	TiXmlElement *l_layer = l_root->FirstChildElement(TMXLAYER_NODE);
-	while (l_layer) {
-		if (!processLayer(*l_layer))
+	/* parse layers and object groups */
+	TiXmlElement *l_element = l_root->FirstChildElement();
+	while (l_element) {
+		if (0 == strcmp(l_element->Value(), TMXLAYER_NODE)
+		    && !processLayer(*l_element))
 			return(false);
-		l_layer = l_layer->NextSiblingElement(TMXLAYER_NODE);
+		else if (0 == strcmp(l_element->Value(), TMXOBJECTGROUP_NODE)
+		    && !processObjectGroup(*l_element))
+			return(false);
+		l_element = l_element->NextSiblingElement();
 	}
 
 	/* attach layers to scene */
@@ -115,6 +130,23 @@ TMXLoader::processMap(TiXmlElement &m)
 		MMWARNING1("Map element is missing one or more required attributes.");
 		return(false);
 	}
+
+	const Math::Size2f &l_vsize = Graphics::Viewport::Size();
+	const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
+
+	/* calculate pixels per viewport coordinate ratio */
+	m_conv_ratio.rwidth() =
+	    static_cast<float>(l_vsize.rwidth())
+	        / static_cast<float>(l_wsize.rwidth());
+	m_conv_ratio.rheight() =
+	    static_cast<float>(l_vsize.rheight())
+	        / static_cast<float>(l_wsize.rheight());
+
+	/* calculate half-relative map size (used to offset coordinates) */
+	m_hrmap_size.rwidth() = m_conv_ratio.rwidth()
+	    * static_cast<float>(m_map_size.rwidth() * m_tile_size.rwidth());
+	m_hrmap_size.rheight() = m_conv_ratio.rheight()
+	    * static_cast<float>(m_map_size.rheight() * m_tile_size.rheight());
 
 	return(true);
 }
@@ -194,6 +226,71 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 	TilesetCollection::iterator l_tileset_i;
 	for (l_tileset_i = m_tilesets.begin(); l_tileset_i != m_tilesets.end(); ++l_tileset_i)
 		l_layer->attachTileset(l_tileset_i->first, l_tileset_i->second);
+
+	m_layers.push_back(l_layer);
+
+	return(true);
+}
+
+bool
+TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
+{
+	const char *l_name;
+
+	if ((!(l_name = e.Attribute("name")))) {
+		MMWARNING1("Object group element is missing one or more required attributes.");
+		return(false);
+	}
+
+	Game::EntitySceneLayer *l_layer = new Game::EntitySceneLayer(l_name, m_scene);
+
+	TiXmlElement *l_object = e.FirstChildElement(TMXOBJECTGROUP_OBJECT_NODE);
+	while (l_object) {
+		const char *l_object_name;
+		const char *l_object_type;
+		int l_object_x;
+		int l_object_y;
+		int l_object_width = 0;
+		int l_object_height = 0;
+
+		l_object_name = l_object->Attribute("name");
+		l_object_type = l_object->Attribute("type");
+		l_object->QueryIntAttribute("width", &l_object_width);
+		l_object->QueryIntAttribute("height", &l_object_height);
+
+		if ((TIXML_SUCCESS != l_object->QueryIntAttribute("x", &l_object_x))
+		 || (TIXML_SUCCESS != l_object->QueryIntAttribute("y", &l_object_y))) {
+			MMWARNING1("Object element is missing one or more required attributes.");
+			return(false);
+		    }
+
+		/* offset position (0 in the middle) */
+		l_object_x -= (m_map_size.rwidth() * m_tile_size.rwidth()) / 2;
+		l_object_y -= (m_map_size.rheight() * m_tile_size.rheight()) / 2;
+		l_object_y *= -1; /* invert top/bottom */
+
+		Game::Entity *l_entity = new Game::Entity(l_object_name ? l_object_name : "", *l_layer);
+		Math::Size2f l_object_rsize(m_conv_ratio.rwidth() * static_cast<float>(l_object_width), m_conv_ratio.rheight() * static_cast<float>(l_object_height));
+
+		Game::PositionComponent *l_pos_component = new Game::PositionComponent("position", *l_entity);
+		l_pos_component->position().rx() = m_conv_ratio.rwidth() * static_cast<float>(l_object_x);
+		l_pos_component->position().ry() = m_conv_ratio.rheight() * static_cast<float>(l_object_y);
+
+		/* center position in object (offset) */
+		l_pos_component->position().rx() += l_object_rsize.rwidth()  / 2.f;
+		l_pos_component->position().ry() -= l_object_rsize.rheight() / 2.f;
+		l_entity->pushComponent(l_pos_component);
+
+		if (l_object_width && l_object_height) {
+			Game::SizeComponent *l_size = new Game::SizeComponent("size", *l_entity);
+			l_size->size() = l_object_rsize;
+			l_entity->pushComponent(l_size);
+		}
+
+		l_layer->addEntity(l_entity);
+
+		l_object = l_object->NextSiblingElement(TMXOBJECTGROUP_OBJECT_NODE);
+	}
 
 	m_layers.push_back(l_layer);
 
