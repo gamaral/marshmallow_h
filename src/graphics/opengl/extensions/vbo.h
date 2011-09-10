@@ -37,10 +37,8 @@
 #ifndef GRAPHICS_OPENGL_VBOEXT_H
 #define GRAPHICS_OPENGL_VBOEXT_H 1
 
-#define GL_GLEXT_PROTOTYPES
-
 #include <GL/gl.h>
-#include <GL/glext.h>
+#include "glext.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

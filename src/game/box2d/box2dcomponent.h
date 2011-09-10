@@ -44,7 +44,7 @@
 #include "math/size2.h"
 
 /* Box2D */
-struct b2Body;
+class b2Body;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

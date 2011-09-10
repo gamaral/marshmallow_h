@@ -68,7 +68,7 @@ Platform::Sleep(TIME t)
 time_t
 Platform::StartTime(void)
 {
-	return(platform_internal.s_start_time);
+	return(s_start_time);
 }
 
 TIME
@@ -87,7 +87,7 @@ Platform::TimeStamp(void)
 #define MICROSECONDS_PER_MILLISECOND 1000.0
 #define MILLISECONDS_PER_SECOND 1000.0
 	l_mseconds = (l_micro_seconds / MICROSECONDS_PER_MILLISECOND)
-	    -(platform_internal.s_start_time * MILLISECONDS_PER_SECOND);
+	    -(s_start_time * MILLISECONDS_PER_SECOND);
 	return(l_mseconds);
 }
 

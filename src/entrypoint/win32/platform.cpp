@@ -36,7 +36,7 @@
 
 #include <windows.h>
 
-#ifdef NDEBUG
+#ifndef DEBUG
 int
 WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {

@@ -41,20 +41,21 @@ MARSHMALLOW_NAMESPACE_USE;
 size_t
 Core::Zlib::Inflate(const char *in, size_t in_size, size_t out_size, char **out)
 {
+	uLongf l_out_size = out_size;
 	*out = new char[out_size];
-	if (Z_OK != uncompress(reinterpret_cast<Bytef *>(*out), &out_size,
+	if (Z_OK != uncompress(reinterpret_cast<Bytef *>(*out), &l_out_size,
 	                       reinterpret_cast<const Bytef *>(in), in_size)) {
 		delete *out;
 		*out = 0;
 		return(0);
 	}
-	return(out_size);
+	return(l_out_size);
 }
 
 size_t
 Core::Zlib::Deflate(const char *in, size_t in_size, char **out)
 {
-	size_t l_out_size = compressBound(in_size);
+	uLongf l_out_size = compressBound(in_size);
 	*out = new char[l_out_size];
 	if(Z_OK != compress(reinterpret_cast<Bytef *>(*out), &l_out_size,
 	                    reinterpret_cast<const Bytef *>(in), in_size)) {

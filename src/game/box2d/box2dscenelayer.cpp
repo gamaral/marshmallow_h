@@ -66,9 +66,9 @@ Box2DSceneLayer::update(TIME d)
 {
 	m_internal->world.Step
 	    (static_cast<float>(d),
-#define VELOCITY_ITERATIONS 10.f
+#define VELOCITY_ITERATIONS 10
 	     VELOCITY_ITERATIONS,
-#define POSITION_ITERATIONS 8.f
+#define POSITION_ITERATIONS 8
 	     POSITION_ITERATIONS);
 	m_internal->world.ClearForces();
 }
