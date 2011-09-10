@@ -15,9 +15,6 @@
   <object type="collider" x="100" y="195" width="67" height="140"/>
   <object type="collider" x="98" y="2" width="70" height="141"/>
   <object type="collider" x="3" y="1" width="45" height="333"/>
-  <object x="1188" y="1186"/>
-  <object x="4" y="1187"/>
-  <object x="1193" y="6"/>
  </objectgroup>
  <layer name="Top" width="50" height="50" opacity="0.49">
   <data encoding="base64" compression="zlib">

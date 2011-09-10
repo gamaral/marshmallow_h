@@ -66,11 +66,7 @@ namespace Graphics
 
 		float *m_offset_col;
 		float *m_offset_row;
-		float m_spacing_col;
-		float m_spacing_row;
 
-		int m_margin;
-		int m_spacing;
 		int m_tile_cols;
 
 	public:
@@ -80,8 +76,6 @@ namespace Graphics
 		void setName(const Core::Identifier &name);
 		void setTextureData(const SharedTextureData &tileset);
 		void setTileSize(const Math::Size2i &size);
-		void setMargin(int margin);
-		void setSpacing(int spacing);
 
 	public: /* virtual */
 
@@ -91,10 +85,6 @@ namespace Graphics
 		    { return(m_texture_data); }
 		VIRTUAL const Math::Size2i & tileSize(void) const
 		    { return(m_tile_size); }
-		VIRTUAL int spacing(void) const
-		    { return(m_spacing); }
-		VIRTUAL int margin(void) const
-		    { return(m_margin); }
 		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(int index);
 		
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;

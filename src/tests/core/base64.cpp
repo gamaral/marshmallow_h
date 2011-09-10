@@ -51,7 +51,7 @@ MARSHMALLOW_NAMESPACE_USE;
 void
 base64_decode_test(void)
 {
-	char *out;
+	char *out = 0;
 
 	Core::Base64::Decode(base64a, strlen(base64a), &out);
 	TEST("DECODE TEST A", 0 == strcmp(out, ubase64a));

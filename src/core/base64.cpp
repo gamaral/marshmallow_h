@@ -87,22 +87,28 @@ Base64::Decode(const char *in, size_t in_size, char **out)
 	*out = new char[l_out_size];
 
 	char *l_out = *out;
+	char *l_out_max = *out + l_out_size - 1 /* null-term */;
 
 	for (size_t i = 0; i < in_size; i = i + 4) {
 		l_out[0] = static_cast<char>
 		    ( s_decoder64[static_cast<int>(in[i])]   << 2
 		    | s_decoder64[static_cast<int>(in[i+1])] >> 4);
-		l_out[1] = static_cast<char>
+
+		if (++l_out >= l_out_max) break;
+		*l_out = static_cast<char>
 		    ( s_decoder64[static_cast<int>(in[i+1])] << 4
 		    | s_decoder64[static_cast<int>(in[i+2])] >> 2);
-		l_out[2] = static_cast<char>
+
+		if (++l_out >= l_out_max) break;
+		*l_out = static_cast<char>
 		    ( s_decoder64[static_cast<int>(in[i+2])] << 6
 		    | s_decoder64[static_cast<int>(in[i+3])]);
-		l_out += 3;
+
+		++l_out;
 	}
 
 	/* null-term */
-	*l_out = '\0';
+	*l_out_max = '\0';
 
 	return(l_out_size);
 }

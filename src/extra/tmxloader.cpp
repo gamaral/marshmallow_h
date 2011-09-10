@@ -302,8 +302,6 @@ TMXLoader::processTileset(TiXmlElement &e)
 {
 	int l_first_gid;
 	const char *l_name;
-	int l_margin = 0;
-	int l_spacing = 0;
 	int l_tile_height;
 	int l_tile_width;
 
@@ -314,8 +312,8 @@ TMXLoader::processTileset(TiXmlElement &e)
 		MMWARNING1("Tileset element is missing one or more required attributes.");
 		return(false);
 	}
-	e.QueryIntAttribute("margin", &l_margin);
-	e.QueryIntAttribute("spacing", &l_spacing);
+	if (e.Attribute("margin") || e.Attribute("spacing"))
+		MMWARNING1("Tileset requires margin and/or spacing, both are not supported.");
 
 	TiXmlElement *l_image = e.FirstChildElement(TMXTILESET_IMAGE_NODE);
 	if (!l_image) {
@@ -335,8 +333,6 @@ TMXLoader::processTileset(TiXmlElement &e)
 
 	Graphics::Tileset *l_tileset = new Graphics::Tileset;
 	l_tileset->setName(l_name);
-	l_tileset->setMargin(l_margin);
-	l_tileset->setSpacing(l_spacing);
 	l_tileset->setTileSize(Math::Size2i(l_tile_width, l_tile_height));
 	l_tileset->setTextureData(l_texture);
 	m_tilesets[l_first_gid] = l_tileset;
