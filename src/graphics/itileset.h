@@ -64,6 +64,7 @@ namespace Graphics
 		virtual ~ITileset(void) {};
 
 		virtual const Core::Identifier & name(void) const = 0;
+		virtual const Math::Size2i & size(void) const = 0;
 		virtual const SharedTextureData & textureData(void) const = 0;
 		virtual const Math::Size2i & tileSize(void) const = 0;
 

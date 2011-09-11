@@ -48,11 +48,11 @@ using namespace Graphics;
 TilesetBase::TilesetBase()
     : m_cache()
     , m_name()
-    , m_tile_size(24, 24)
+    , m_size(64, 64)
     , m_texture_data()
+    , m_tile_size(16, 16)
     , m_offset_col(0)
     , m_offset_row(0)
-    , m_tile_cols(0)
 {
 }
 
@@ -71,6 +71,13 @@ TilesetBase::setName(const Core::Identifier &n)
 }
 
 void
+TilesetBase::setSize(const Math::Size2i &s)
+{
+	m_size = s;
+	reset();
+}
+
+void
 TilesetBase::setTextureData(const SharedTextureData &ts)
 {
 	if (ts == m_texture_data)
@@ -82,17 +89,10 @@ TilesetBase::setTextureData(const SharedTextureData &ts)
 	reset();
 }
 
-void
-TilesetBase::setTileSize(const Math::Size2i &s)
-{
-	m_tile_size = s;
-	reset();
-}
-
 SharedTextureCoordinateData
 TilesetBase::getTextureCoordinateData(int i)
 {
-	if (!m_texture_data || !m_texture_data->isLoaded() || !m_tile_cols)
+	if (!m_texture_data || !m_texture_data->isLoaded())
 		return(SharedTextureCoordinateData());
 
 	TextureCoordinateMap::iterator l_cached_i = m_cache.find(i);
@@ -104,8 +104,8 @@ TilesetBase::getTextureCoordinateData(int i)
 
 		/* calculate row and column */
 
-		const int l_row = i / m_tile_cols;
-		const int l_col = i % m_tile_cols;
+		const int l_row = i / m_size.rwidth();
+		const int l_col = i % m_size.rwidth();
 
 		const float &l_left  = m_offset_col[l_col];
 		const float &l_top   = m_offset_row[l_row];
@@ -154,19 +154,15 @@ TilesetBase::reset(void)
 
 	m_offset_col = 0;
 	m_offset_row = 0;
-	m_tile_cols = 0;
-
 	m_cache.clear();
 
 	if (!m_texture_data)
 		return;
 
-	const Math::Size2i l_size = m_texture_data->size();
+	/* calculate tile size */
 
-	/* calculate max cols */
-
-	m_tile_cols = l_size.rwidth() / m_tile_size.rwidth();
-	int l_tile_rows = l_size.rheight() / m_tile_size.rheight();
+	m_tile_size.rwidth()  = m_texture_data->size().rwidth()  / m_size.rwidth();
+	m_tile_size.rheight() = m_texture_data->size().rheight() / m_size.rheight();
 
 	/*
 	 * we generate the tile offsets, the extra offset (+1) acts as the limit
@@ -175,18 +171,14 @@ TilesetBase::reset(void)
 	 * left/top = offset, right/bottom = (offset+1).
 	 */
 
-	m_offset_col = new float[m_tile_cols + 1];
-	for (int i = 0; i <= m_tile_cols; ++i) {
+	m_offset_col = new float[m_size.rwidth() + 1];
+	for (int i = m_size.rwidth(); i >= 0; --i)
 		m_offset_col[i] =
-		    static_cast<float>(i * m_tile_size.rwidth())
-		  / static_cast<float>(l_size.rwidth());
-	}
+		    static_cast<float>(i) / static_cast<float>(m_size.rwidth());
 
-	m_offset_row = new float[l_tile_rows + 1];
-	for (int i = 0; i <= l_tile_rows; ++i) {
+	m_offset_row = new float[m_size.rheight() + 1];
+	for (int i = m_size.rheight(); i >= 0; --i)
 		m_offset_row[i] =
-		    static_cast<float>(i * m_tile_size.rheight())
-		  / static_cast<float>(l_size.rheight());
-	}
+		    static_cast<float>(i) / static_cast<float>(m_size.rheight());
 }
 

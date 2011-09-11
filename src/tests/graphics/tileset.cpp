@@ -49,7 +49,7 @@ tileset_fixed_test(void)
 	l_textureData->setSize(Math::Size2i(128, 128));
 
 	Graphics::Tileset l_tileset;
-	l_tileset.setTileSize(Math::Size2i(16, 16));
+	l_tileset.setSize(Math::Size2i(8, 8));
 	l_tileset.setTextureData(l_textureData.staticCast<Graphics::ITextureData>());
 
 	Graphics::SharedTextureCoordinateData tcd;

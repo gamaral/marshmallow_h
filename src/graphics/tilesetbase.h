@@ -61,21 +61,20 @@ namespace Graphics
 		TextureCoordinateMap m_cache;
 
 		Core::Identifier m_name;
-		Math::Size2i m_tile_size;
+		Math::Size2i m_size;
 		SharedTextureData m_texture_data;
+		Math::Size2i m_tile_size;
 
 		float *m_offset_col;
 		float *m_offset_row;
-
-		int m_tile_cols;
 
 	public:
 		TilesetBase(void);
 		virtual ~TilesetBase(void);
 
 		void setName(const Core::Identifier &name);
+		void setSize(const Math::Size2i &size);
 		void setTextureData(const SharedTextureData &tileset);
-		void setTileSize(const Math::Size2i &size);
 
 	public: /* virtual */
 
@@ -83,9 +82,11 @@ namespace Graphics
 		    { return(m_name); }
 		VIRTUAL const SharedTextureData & textureData(void) const
 		    { return(m_texture_data); }
+		VIRTUAL const Math::Size2i & size(void) const
+		    { return(m_size); }
+		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(int index);
 		VIRTUAL const Math::Size2i & tileSize(void) const
 		    { return(m_tile_size); }
-		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(int index);
 		
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
