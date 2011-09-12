@@ -42,13 +42,16 @@ using namespace TinyXML;
 #include "core/zlib.h"
 
 #include "graphics/factory.h"
+#include "graphics/quadmesh.h"
 #include "graphics/tileset.h"
 #include "graphics/viewport.h"
 
 #include "game/entity.h"
 #include "game/entityscenelayer.h"
+#include "game/factory.h"
 #include "game/iscene.h"
 #include "game/positioncomponent.h"
+#include "game/rendercomponent.h"
 #include "game/sizecomponent.h"
 #include "game/tilemapscenelayer.h"
 
@@ -248,44 +251,104 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 	while (l_object) {
 		const char *l_object_name;
 		const char *l_object_type;
+		int l_object_gid;
 		int l_object_x;
 		int l_object_y;
-		int l_object_width = 0;
-		int l_object_height = 0;
+		int l_object_width = m_tile_size.rwidth();
+		int l_object_height = m_tile_size.rheight();
 
 		l_object_name = l_object->Attribute("name");
 		l_object_type = l_object->Attribute("type");
-		l_object->QueryIntAttribute("width", &l_object_width);
-		l_object->QueryIntAttribute("height", &l_object_height);
+
+		Game::SharedEntity l_entity = Game::Factory::Instance()->
+		    createEntity(l_object_type, l_object_name ? l_object_name : "", *l_layer);
+		if (!l_entity) {
+			MMWARNING("Object '%s' of type '%s' was left unhandled.", l_object_name, l_object_type);
+			return(false);
+		}
 
 		if ((TIXML_SUCCESS != l_object->QueryIntAttribute("x", &l_object_x))
 		 || (TIXML_SUCCESS != l_object->QueryIntAttribute("y", &l_object_y))) {
 			MMWARNING1("Object element is missing one or more required attributes.");
 			return(false);
-		    }
+		}
 
-		/* offset position (0 in the middle) */
-		l_object_x -= (m_map_size.rwidth() * m_tile_size.rwidth()) / 2;
+		/* map offset position (0 in the middle) */
+		l_object_x -= (m_map_size.rwidth()  * m_tile_size.rwidth())  / 2;
 		l_object_y -= (m_map_size.rheight() * m_tile_size.rheight()) / 2;
 		l_object_y *= -1; /* invert top/bottom */
 
-		Game::Entity *l_entity = new Game::Entity(l_object_name ? l_object_name : "", *l_layer);
-		Math::Size2f l_object_rsize(m_conv_ratio.rwidth() * static_cast<float>(l_object_width), m_conv_ratio.rheight() * static_cast<float>(l_object_height));
+		/* object size (later initialized) */
+		Math::Size2f l_object_rsize;
+		Math::Size2f l_object_hrsize;
 
+		/* create render component (for gid)  */
+		if (TIXML_SUCCESS == l_object->QueryIntAttribute("gid", &l_object_gid)) {
+			int l_ts_firstgid = -1;
+
+			/* look for appropriate tileset */
+			TilesetCollection::iterator l_tileset_i;
+			for (l_tileset_i = m_tilesets.begin(); l_tileset_i != m_tilesets.end(); ++l_tileset_i)
+				if (l_tileset_i->first > l_ts_firstgid && l_tileset_i->first <= l_object_gid)
+					l_ts_firstgid = l_tileset_i->first;
+
+			if (l_ts_firstgid == -1) {
+				MMWARNING1("Object tile GID tileset was not found.");
+				return(false);
+			}
+
+			Graphics::SharedTileset l_tileset = m_tilesets[l_ts_firstgid];
+
+			/* calculate object size from tileset */
+			l_object_width  = l_tileset->tileSize().width();
+			l_object_height = l_tileset->tileSize().height();
+			l_object_rsize.rwidth()  = m_conv_ratio.rwidth()  * static_cast<float>(l_object_width);
+			l_object_rsize.rheight() = m_conv_ratio.rheight() * static_cast<float>(l_object_height);
+			l_object_hrsize = l_object_rsize / 2.f;
+
+			/* generate tile mesh */
+
+			Game::RenderComponent *l_render = new Game::RenderComponent("render", *l_entity);
+
+			Graphics::SharedVertexData l_vdata = Graphics::Factory::CreateVertexData(QUAD_VERTEXES);
+			l_vdata->set(0, -l_object_hrsize.rwidth(),  l_object_hrsize.rheight());
+			l_vdata->set(1, -l_object_hrsize.rwidth(), -l_object_hrsize.rheight());
+			l_vdata->set(2,  l_object_hrsize.rwidth(),  l_object_hrsize.rheight());
+			l_vdata->set(3,  l_object_hrsize.rwidth(), -l_object_hrsize.rheight());
+
+			Graphics::SharedTextureCoordinateData l_tdata =
+			    l_tileset->getTextureCoordinateData(l_object_gid - l_ts_firstgid);
+
+			l_render->mesh() =
+			    new Graphics::QuadMesh(l_tdata, l_tileset->textureData(), l_vdata);
+
+			l_entity->pushComponent(l_render);
+		} else {
+			l_object->QueryIntAttribute("width",  &l_object_width);
+			l_object->QueryIntAttribute("height", &l_object_height);
+
+			/* calculate object size */
+			l_object_rsize.rwidth()  = m_conv_ratio.rwidth()  * static_cast<float>(l_object_width);
+			l_object_rsize.rheight() = m_conv_ratio.rheight() * static_cast<float>(l_object_height);
+			l_object_hrsize = l_object_rsize / 2.f;
+		}
+
+		/* create position component */
 		Game::PositionComponent *l_pos_component = new Game::PositionComponent("position", *l_entity);
-		l_pos_component->position().rx() = m_conv_ratio.rwidth() * static_cast<float>(l_object_x);
+		l_pos_component->position().rx() = m_conv_ratio.rwidth()  * static_cast<float>(l_object_x);
 		l_pos_component->position().ry() = m_conv_ratio.rheight() * static_cast<float>(l_object_y);
 
-		/* center position in object (offset) */
-		l_pos_component->position().rx() += l_object_rsize.rwidth()  / 2.f;
-		l_pos_component->position().ry() -= l_object_rsize.rheight() / 2.f;
+		/* centere position for object (offset) */
+		l_pos_component->position().rx() += l_object_hrsize.rwidth();
+		l_pos_component->position().ry() += l_object_hrsize.rheight();
+
 		l_entity->pushComponent(l_pos_component);
 
-		if (l_object_width && l_object_height) {
-			Game::SizeComponent *l_size = new Game::SizeComponent("size", *l_entity);
-			l_size->size() = l_object_rsize;
-			l_entity->pushComponent(l_size);
-		}
+		/* create size component */
+		Game::SizeComponent *l_size = new Game::SizeComponent("size", *l_entity);
+		l_size->size() = l_object_rsize;
+		l_entity->pushComponent(l_size);
+
 
 		l_layer->addEntity(l_entity);
 

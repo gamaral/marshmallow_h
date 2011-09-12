@@ -226,12 +226,12 @@ TilemapSceneLayer::recalculateVertexData(int o)
 	const int l_tswscale = m_tilesets[o]->tileSize().rwidth() / m_tile_size.rwidth();
 	const int l_tshscale = m_tilesets[o]->tileSize().rheight() / m_tile_size.rheight();
 
-	float l_vwidth = (static_cast<float>(l_tswscale) * m_rtile_size.rwidth());
+	float l_vwidth  = (static_cast<float>(l_tswscale) * m_rtile_size.rwidth());
 	float l_vheight = (static_cast<float>(l_tshscale) * m_rtile_size.rheight());
 
 	/* anchor to (0,0) */
-	m_vertexes[o]->set(0,        0, l_vheight);
-	m_vertexes[o]->set(1,        0, 0);
+	m_vertexes[o]->set(0, 0,        l_vheight);
+	m_vertexes[o]->set(1, 0,        0);
 	m_vertexes[o]->set(2, l_vwidth, l_vheight);
 	m_vertexes[o]->set(3, l_vwidth, 0);
 }

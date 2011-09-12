@@ -26,78 +26,22 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include <core/identifier.h>
-
-#include <graphics/factory.h>
-#include <graphics/tileset.h>
-#include <graphics/viewport.h>
-
-#include <game/box2d/box2dscenelayer.h>
-#include <game/enginebase.h>
-#include <game/scene.h>
-#include <game/scenemanager.h>
-#include <game/tilemapscenelayer.h>
-
-#include <extra/tmxloader.h>
-
 #include "customfactory.h"
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
+/*!
+ * @file
+ *
+ * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
+ */
 
-class Demo : public Game::EngineBase
+#include "box2dcolliderentity.h"
+
+Game::SharedEntity
+CustomFactory::createEntity(const Core::Type &t, const Core::Identifier &i,
+    Game::EntitySceneLayer &l) const
 {
-	int m_stop_timer;
-
-public:
-
-	Demo(void)
-	: EngineBase(),
-	  m_stop_timer(0)
-	{
-	}
-
-	VIRTUAL bool initialize(void)
-	{
-		setFactory(new CustomFactory);
-
-		if (!EngineBase::initialize())
-			return(false);
-
-		Game::SharedScene l_scene(new Game::Scene("main"));
-
-		/* box2d layer */
-		Game::SharedSceneLayer l_box2d_layer(new Game::Box2DSceneLayer("box2d", *l_scene));
-		l_scene->pushLayer(l_box2d_layer);
-
-		/* load tmx tilemap */
-		Extra::TMXLoader m_tmxloader(*l_scene);
-		m_tmxloader.load("assets/sewers.tmx");
-		assert(m_tmxloader.isLoaded() && "TMX tilemap failed to load.");
-
-		sceneManager()->pushScene(l_scene);
-
-		Graphics::Viewport::SetCamera(Math::Vector3(0, 50, 0.75));
-
-		return(true);
-	}
-
-	VIRTUAL void second(void)
-	{
-		EngineBase::second();
-
-		if (++m_stop_timer == 10)
-			stop();
-	}
-};
-
-int
-MMain(int argc, char *argv[])
-{
-	UNUSED(argc);
-	UNUSED(argv);
-	CHDIR(DEMO_CWD);
-
-	return(Demo().run());
+	if (Box2DColliderEntity::Type() == t)
+		return(new Box2DColliderEntity(i, l));
+	else return(FactoryBase::createEntity(t, i, l));
 }
 

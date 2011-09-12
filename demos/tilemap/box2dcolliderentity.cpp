@@ -26,78 +26,46 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include <core/identifier.h>
+#include "box2dcolliderentity.h"
 
-#include <graphics/factory.h>
-#include <graphics/tileset.h>
-#include <graphics/viewport.h>
+/*!
+ * @file
+ *
+ * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
+ */
 
-#include <game/box2d/box2dscenelayer.h>
-#include <game/enginebase.h>
-#include <game/scene.h>
-#include <game/scenemanager.h>
-#include <game/tilemapscenelayer.h>
+#include <game/box2d/box2dcomponent.h>
+#include <game/sizecomponent.h>
 
-#include <extra/tmxloader.h>
+const Core::Type Box2DColliderEntity::sType("Box2DColliderEntity");
 
-#include "customfactory.h"
-
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
-
-class Demo : public Game::EngineBase
+Box2DColliderEntity::Box2DColliderEntity(const Core::Identifier &i, Game::EntitySceneLayer &l)
+    : Game::EntityBase(i, l)
+    , m_init(false)
 {
-	int m_stop_timer;
+	m_box2d_component = new Game::Box2DComponent("box2d", *this);
+	pushComponent(m_box2d_component);
+}
 
-public:
-
-	Demo(void)
-	: EngineBase(),
-	  m_stop_timer(0)
-	{
-	}
-
-	VIRTUAL bool initialize(void)
-	{
-		setFactory(new CustomFactory);
-
-		if (!EngineBase::initialize())
-			return(false);
-
-		Game::SharedScene l_scene(new Game::Scene("main"));
-
-		/* box2d layer */
-		Game::SharedSceneLayer l_box2d_layer(new Game::Box2DSceneLayer("box2d", *l_scene));
-		l_scene->pushLayer(l_box2d_layer);
-
-		/* load tmx tilemap */
-		Extra::TMXLoader m_tmxloader(*l_scene);
-		m_tmxloader.load("assets/sewers.tmx");
-		assert(m_tmxloader.isLoaded() && "TMX tilemap failed to load.");
-
-		sceneManager()->pushScene(l_scene);
-
-		Graphics::Viewport::SetCamera(Math::Vector3(0, 50, 0.75));
-
-		return(true);
-	}
-
-	VIRTUAL void second(void)
-	{
-		EngineBase::second();
-
-		if (++m_stop_timer == 10)
-			stop();
-	}
-};
-
-int
-MMain(int argc, char *argv[])
+Box2DColliderEntity::~Box2DColliderEntity(void)
 {
-	UNUSED(argc);
-	UNUSED(argv);
-	CHDIR(DEMO_CWD);
+}
 
-	return(Demo().run());
+void
+Box2DColliderEntity::update(TIME d)
+{
+	if (!m_init) {
+		m_size_component = getComponentType(Game::SizeComponent::Type());
+		m_init = (m_size_component);
+	} else {
+		Game::SharedBox2DComponent l_box2d_component =
+		    m_size_component.staticCast<Game::Box2DComponent>();
+		Game::SharedSizeComponent l_size_component =
+		    m_size_component.staticCast<Game::SizeComponent>();
+
+		l_box2d_component->size() = l_size_component->size();
+	}
+
+	Game::EntityBase::update(d);
 }
 

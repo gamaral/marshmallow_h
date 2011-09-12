@@ -1,7 +1,9 @@
 include(EASTL)
 
 add_executable(tilemap_demo0 "demo0.cpp")
-add_executable(tilemap_demo1 "demo1.cpp")
+add_executable(tilemap_demo1 "demo1.cpp"
+                             "box2dcolliderentity.cpp"
+                             "customfactory.cpp")
 
 set_target_properties(tilemap_demo0 PROPERTIES
     COMPILE_FLAGS -DDEMO_CWD=\\"${CMAKE_CURRENT_SOURCE_DIR}\\")

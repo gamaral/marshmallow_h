@@ -108,8 +108,8 @@ Box2DComponent::update(TIME d)
 
 		/* create shape */
 		b2PolygonShape l_dynamicBox;
-		l_dynamicBox.SetAsBox(m_size.width() / 2.f,
-				      m_size.height() / 2.f);
+		l_dynamicBox.SetAsBox(m_size.width()  / 2.f,
+		                      m_size.height() / 2.f);
 
 		/* create fixture */
 		b2FixtureDef l_fixtureDef;

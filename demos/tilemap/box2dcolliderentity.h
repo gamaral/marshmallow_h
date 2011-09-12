@@ -26,78 +26,50 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include <core/identifier.h>
+#pragma once
 
-#include <graphics/factory.h>
-#include <graphics/tileset.h>
-#include <graphics/viewport.h>
+/*!
+ * @file
+ *
+ * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
+ */
 
-#include <game/box2d/box2dscenelayer.h>
-#include <game/enginebase.h>
-#include <game/scene.h>
-#include <game/scenemanager.h>
-#include <game/tilemapscenelayer.h>
+#ifndef TILEMAP_BOX2DCOLLIDERENTITY_H
+#define TILEMAP_BOX2DCOLLIDERENTITY_H 1
 
-#include <extra/tmxloader.h>
-
-#include "customfactory.h"
+#include <game/entitybase.h>
 
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Core;
 
-class Demo : public Game::EngineBase
+class GAME_EXPORT Box2DColliderEntity : public Game::EntityBase
 {
-	int m_stop_timer;
+	NO_ASSIGN(Box2DColliderEntity);
+	NO_COPY(Box2DColliderEntity);
+
+	Game::SharedComponent m_box2d_component;
+	Game::SharedComponent m_size_component;
+	bool m_init;
 
 public:
 
-	Demo(void)
-	: EngineBase(),
-	  m_stop_timer(0)
-	{
-	}
+	Box2DColliderEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);
+	virtual ~Box2DColliderEntity(void);
 
-	VIRTUAL bool initialize(void)
-	{
-		setFactory(new CustomFactory);
+public: /* virtual */
 
-		if (!EngineBase::initialize())
-			return(false);
+	VIRTUAL const Core::Type & type(void) const
+	    { return(sType); }
 
-		Game::SharedScene l_scene(new Game::Scene("main"));
+	VIRTUAL void update(TIME delta);
 
-		/* box2d layer */
-		Game::SharedSceneLayer l_box2d_layer(new Game::Box2DSceneLayer("box2d", *l_scene));
-		l_scene->pushLayer(l_box2d_layer);
+public: /* static */
 
-		/* load tmx tilemap */
-		Extra::TMXLoader m_tmxloader(*l_scene);
-		m_tmxloader.load("assets/sewers.tmx");
-		assert(m_tmxloader.isLoaded() && "TMX tilemap failed to load.");
+	static const Core::Type & Type(void)
+	    { return(sType); }
 
-		sceneManager()->pushScene(l_scene);
+private: /* static */
 
-		Graphics::Viewport::SetCamera(Math::Vector3(0, 50, 0.75));
-
-		return(true);
-	}
-
-	VIRTUAL void second(void)
-	{
-		EngineBase::second();
-
-		if (++m_stop_timer == 10)
-			stop();
-	}
+	static const Core::Type sType;
 };
 
-int
-MMain(int argc, char *argv[])
-{
-	UNUSED(argc);
-	UNUSED(argv);
-	CHDIR(DEMO_CWD);
-
-	return(Demo().run());
-}
-
+#endif
