@@ -282,9 +282,22 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 		Math::Size2f l_object_rsize;
 		Math::Size2f l_object_hrsize;
 
-		/* create render component (for gid)  */
-		if (TIXML_SUCCESS == l_object->QueryIntAttribute("gid", &l_object_gid)) {
+		/* standard object */
+		if (TIXML_SUCCESS != l_object->QueryIntAttribute("gid", &l_object_gid)) {
+			l_object->QueryIntAttribute("width",  &l_object_width);
+			l_object->QueryIntAttribute("height", &l_object_height);
+
+			/* calculate object size */
+			l_object_rsize.rwidth()  = m_conv_ratio.rwidth()  * static_cast<float>(l_object_width);
+			l_object_rsize.rheight() = m_conv_ratio.rheight() * static_cast<float>(l_object_height);
+			l_object_hrsize = l_object_rsize / 2.f;
+
+		/* tile object */
+		} else {
 			int l_ts_firstgid = -1;
+
+			/* offset position to top-left (later centered) */
+			l_object_y += l_object_height;
 
 			/* look for appropriate tileset */
 			TilesetCollection::iterator l_tileset_i;
@@ -323,14 +336,6 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 			    new Graphics::QuadMesh(l_tdata, l_tileset->textureData(), l_vdata);
 
 			l_entity->pushComponent(l_render);
-		} else {
-			l_object->QueryIntAttribute("width",  &l_object_width);
-			l_object->QueryIntAttribute("height", &l_object_height);
-
-			/* calculate object size */
-			l_object_rsize.rwidth()  = m_conv_ratio.rwidth()  * static_cast<float>(l_object_width);
-			l_object_rsize.rheight() = m_conv_ratio.rheight() * static_cast<float>(l_object_height);
-			l_object_hrsize = l_object_rsize / 2.f;
 		}
 
 		/* create position component */
@@ -340,7 +345,7 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 
 		/* centere position for object (offset) */
 		l_pos_component->position().rx() += l_object_hrsize.rwidth();
-		l_pos_component->position().ry() += l_object_hrsize.rheight();
+		l_pos_component->position().ry() -= l_object_hrsize.rheight();
 
 		l_entity->pushComponent(l_pos_component);
 
