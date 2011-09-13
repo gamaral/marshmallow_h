@@ -83,10 +83,12 @@ namespace Math
 		T area(void) const
 		    { return(m_value[0] * m_value[1]); }
 
+		void zero(void)
+		    { m_value[0] = m_value[1] = 0; }
+
 		template <typename U>
 		Size2<U> staticCast(void) const
 		    { return(Size2<U>(static_cast<U>(m_value[0]), static_cast<U>(m_value[1]))); }
-
 
 	public: /* operators */
 
@@ -107,6 +109,12 @@ namespace Math
 
 		Size2<T> operator/(const T &c) const
 		    { return(Size2<T>(m_value[0] / c, m_value[1] / c)); }
+
+	public: /* static */
+
+		static const Size2<T> &Zero(void)
+		    { static Size2<T> sZero(0, 0);
+		      return(sZero); }
 	};
 	typedef Size2<float> Size2f;
 	typedef Size2<int>   Size2i;

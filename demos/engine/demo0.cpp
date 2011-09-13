@@ -26,25 +26,30 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "core/logger.h"
-#include "math/size2.h"
-#include "math/vector2.h"
-#include "event/debugeventlistener.h"
-#include "event/eventbase.h"
-#include "event/eventmanager.h"
-#include "graphics/itexturedata.h"
-#include "graphics/painter.h"
-#include "graphics/quadmesh.h"
-#include "graphics/viewport.h"
-#include "game/enginebase.h"
-#include "game/entity.h"
-#include "game/entityscenelayer.h"
-#include "game/icomponent.h"
-#include "game/movementcomponent.h"
-#include "game/positioncomponent.h"
-#include "game/rendercomponent.h"
-#include "game/scenebase.h"
-#include "game/scenemanager.h"
+#include <core/identifier.h>
+#include <core/logger.h>
+
+#include <math/size2.h>
+#include <math/vector2.h>
+
+#include <event/debugeventlistener.h>
+#include <event/eventbase.h>
+#include <event/eventmanager.h>
+
+#include <graphics/itexturedata.h>
+#include <graphics/painter.h>
+#include <graphics/quadmesh.h>
+#include <graphics/viewport.h>
+
+#include <game/enginebase.h>
+#include <game/entity.h>
+#include <game/entityscenelayer.h>
+#include <game/icomponent.h>
+#include <game/movementcomponent.h>
+#include <game/positioncomponent.h>
+#include <game/rendercomponent.h>
+#include <game/scenebase.h>
+#include <game/scenemanager.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -197,7 +202,8 @@ MMain(int argc, char *argv[])
 {
 	UNUSED(argc);
 	UNUSED(argv);
-	CHDIR(DEMO_CWD);
+	if (-1 == CHDIR(DEMO_CWD))
+		MMFATAL("Failed to change working directory: ""%s"". ABORT!", DEMO_CWD);
 	return(Demo().run());
 }
 

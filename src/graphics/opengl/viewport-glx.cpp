@@ -41,6 +41,8 @@
 #define XMD_H
 #include <X11/extensions/xf86vmode.h>
 
+#include <EASTL/list.h>
+
 #include "core/logger.h"
 
 #include "event/eventmanager.h"
@@ -410,6 +412,9 @@ struct Viewport::Internal
 	void
 	handleKeyEvent(XKeyEvent &key)
 	{
+		typedef eastl::list<Event::KBKeys> KeyList;
+		static KeyList s_keys_pressed;
+
 		Event::KBKeys l_key = Event::KEY_NONE;
 		Event::KBActions l_action =
 		    (key.type == KeyPress ? Event::KeyPressed : Event::KeyReleased);
@@ -521,8 +526,24 @@ struct Viewport::Internal
 		default: MMWARNING1("Unknown key pressed!");
 		}
 
-		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
-		Event::EventManager::Instance()->queue(event);
+		bool l_key_pressed = false;
+		KeyList::const_iterator l_pressed_key_i;
+		for (l_pressed_key_i = s_keys_pressed.begin();
+		     l_pressed_key_i != s_keys_pressed.end();
+		     ++l_pressed_key_i)
+			if (*l_pressed_key_i == l_key) {
+				l_key_pressed = true;
+				break;
+			}
+		
+		if ((l_key_pressed  && l_action != Event::KeyPressed)
+		 || (!l_key_pressed && l_action == Event::KeyPressed)) {
+			Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
+			Event::EventManager::Instance()->queue(event);
+
+			if (l_key_pressed) s_keys_pressed.remove(l_key);
+			else s_keys_pressed.push_front(l_key);
+		}
 	}
 
 } MVI;

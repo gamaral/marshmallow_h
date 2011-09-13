@@ -32,12 +32,16 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <core/logger.h>
+
 #include "game.h"
 
 int
 MMain(int argc, char *argv[])
 {
-	CHDIR(DEMO_CWD);
+	if (-1 == CHDIR(DEMO_CWD))
+		MMFATAL("Failed to change working directory: ""%s"". ABORT!", DEMO_CWD);
+
 	const char *l_filename("assets/default.xml");
 	if (argc > 1) l_filename = argv[1];
 

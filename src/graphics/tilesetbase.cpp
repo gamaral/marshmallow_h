@@ -48,13 +48,17 @@ using namespace Graphics;
 TilesetBase::TilesetBase()
     : m_cache()
     , m_name()
-    , m_size(64, 64)
-    , m_texture_data()
+    , m_size()
     , m_tile_size(16, 16)
+    , m_texture_data()
+    , m_margin(0)
+    , m_spacing(0)
     , m_adjust_col(0)
     , m_adjust_row(0)
     , m_offset_col(0)
     , m_offset_row(0)
+    , m_spacing_col(0)
+    , m_spacing_row(0)
 {
 }
 
@@ -73,9 +77,23 @@ TilesetBase::setName(const Core::Identifier &n)
 }
 
 void
-TilesetBase::setSize(const Math::Size2i &s)
+TilesetBase::setTileSize(const Math::Size2i &s)
 {
-	m_size = s;
+	m_tile_size = s;
+	reset();
+}
+
+void
+TilesetBase::setMargin(int m)
+{
+	m_margin = m;
+	reset();
+}
+
+void
+TilesetBase::setSpacing(int s)
+{
+	m_spacing = s;
 	reset();
 }
 
@@ -109,11 +127,10 @@ TilesetBase::getTextureCoordinateData(int i)
 		const int l_row = i / m_size.rwidth();
 		const int l_col = i % m_size.rwidth();
 
-		
-		const float &l_left  = m_offset_col[l_col] + m_adjust_col;
-		const float &l_top   = m_offset_row[l_row] + m_adjust_row;
-		const float l_right  = m_offset_col[l_col + 1] - m_adjust_col;
-		const float l_bottom = m_offset_row[l_row + 1] - m_adjust_row;
+		const float l_left   = m_offset_col[l_col] + m_adjust_col;
+		const float l_top    = m_offset_row[l_row] + m_adjust_row;
+		const float l_right  = m_offset_col[l_col + 1] - m_spacing_col - m_adjust_col;
+		const float l_bottom = m_offset_row[l_row + 1] - m_spacing_row - m_adjust_row;
 
 		l_data->set(0, l_left,  l_top);
 		l_data->set(1, l_left,  l_bottom);
@@ -155,37 +172,47 @@ TilesetBase::reset(void)
 	delete[] m_offset_col;
 	delete[] m_offset_row;
 
-	m_adjust_col = 0;
-	m_adjust_row = 0;
-	m_offset_col = 0;
-	m_offset_row = 0;
+	m_adjust_col  = 0;
+	m_adjust_row  = 0;
+	m_offset_col  = 0;
+	m_offset_row  = 0;
+	m_spacing_col = 0;
+	m_spacing_row = 0;
+	m_size.zero();
 	m_cache.clear();
 
 	if (!m_texture_data)
 		return;
 
-	/* calculate tile size */
+	/* calculate size */
 
-	m_tile_size.rwidth()  = m_texture_data->size().rwidth()  / m_size.rwidth();
-	m_tile_size.rheight() = m_texture_data->size().rheight() / m_size.rheight();
+	const Math::Size2i &l_texture_size = m_texture_data->size();
+	m_size.rwidth() = (l_texture_size.rwidth() - m_margin + m_spacing)
+	                / (m_tile_size.rwidth() + m_spacing);
+	m_size.rheight() = (l_texture_size.rheight() - m_margin + m_spacing)
+	                 / (m_tile_size.rheight() + m_spacing);
 
 	/*
 	 * we generate the tile offsets, the extra offset (+1) acts as the limit
 	 * for the last row/column.
-	 *
-	 * left/top = offset, right/bottom = (offset+1).
 	 */
 
-	m_adjust_col = .01f / static_cast<float>(m_size.rwidth());
+	m_adjust_col = .01f / static_cast<float>(m_tile_size.rwidth());
 	m_offset_col = new float[m_size.rwidth() + 1];
+	m_spacing_col = static_cast<float>(m_spacing)
+	              / static_cast<float>(l_texture_size.rwidth());
 	for (int i = m_size.rwidth(); i >= 0; --i)
 		m_offset_col[i] =
-		    static_cast<float>(i) / static_cast<float>(m_size.rwidth());
+		    static_cast<float>(m_margin + (i * (m_tile_size.rwidth() + m_spacing)))
+		  / static_cast<float>(l_texture_size.rwidth());
 
-	m_adjust_row = .01f / static_cast<float>(m_size.rheight());
+	m_adjust_row = .01f / static_cast<float>(m_tile_size.rheight());
 	m_offset_row = new float[m_size.rheight() + 1];
+	m_spacing_row = static_cast<float>(m_spacing)
+	              / static_cast<float>(l_texture_size.rheight());
 	for (int i = m_size.rheight(); i >= 0; --i)
 		m_offset_row[i] =
-		    static_cast<float>(i) / static_cast<float>(m_size.rheight());
+		    static_cast<float>(m_margin + (i * (m_tile_size.rheight() + m_spacing)))
+		  / static_cast<float>(l_texture_size.rheight());
 }
 

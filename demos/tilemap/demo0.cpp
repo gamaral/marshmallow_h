@@ -27,10 +27,10 @@
  */
 
 #include <core/identifier.h>
+#include <core/logger.h>
 
 #include <graphics/factory.h>
 #include <graphics/tileset.h>
-#include <graphics/viewport.h>
 
 #include <game/enginebase.h>
 #include <game/scenebase.h>
@@ -64,8 +64,8 @@ public:
 			assert(l_texture->isLoaded() && "Failed to load tilemap asset!");
 
 			Graphics::SharedTilesetBase l_tileset = new Graphics::Tileset;
+			l_tileset->setTileSize(Math::Size2i(24, 24));
 			l_tileset->setTextureData(l_texture);
-			l_tileset->setSize(Math::Size2i(8, 16));
 
 			Game::SharedTilemapSceneLayer l_tslayer;
 			UINT32 *l_data;
@@ -144,7 +144,8 @@ MMain(int argc, char *argv[])
 {
 	UNUSED(argc);
 	UNUSED(argv);
-	CHDIR(DEMO_CWD);
+	if (-1 == CHDIR(DEMO_CWD))
+		MMFATAL("Failed to change working directory: ""%s"". ABORT!", DEMO_CWD);
 	return(Demo().run());
 }
 

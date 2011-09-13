@@ -166,8 +166,8 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 		return(false);
 	}
 
-	e.QueryFloatAttribute("opacity", &l_opacity);
-	e.QueryIntAttribute("visible", &l_visible);
+	IGNORE e.QueryFloatAttribute("opacity", &l_opacity);
+	IGNORE e.QueryIntAttribute("visible", &l_visible);
 
 	TiXmlElement *l_data = e.FirstChildElement(TMXLAYER_DATA_NODE);
 
@@ -370,8 +370,10 @@ TMXLoader::processTileset(TiXmlElement &e)
 {
 	int l_first_gid;
 	const char *l_name;
-	int l_tile_height;
 	int l_tile_width;
+	int l_tile_height;
+	int l_tile_margin = 0;
+	int l_tile_spacing = 0;
 
 	if ((TIXML_SUCCESS != e.QueryIntAttribute("firstgid", &l_first_gid))
 	 || (!(l_name = e.Attribute("name")))
@@ -380,8 +382,10 @@ TMXLoader::processTileset(TiXmlElement &e)
 		MMWARNING1("Tileset element is missing one or more required attributes.");
 		return(false);
 	}
-	if (e.Attribute("margin") || e.Attribute("spacing"))
-		MMWARNING1("Tileset requires margin and/or spacing, both are not supported.");
+
+	/* check for margin and spacing */
+	IGNORE e.QueryIntAttribute("margin", &l_tile_margin);
+	IGNORE e.QueryIntAttribute("spacing", &l_tile_spacing);
 
 	TiXmlElement *l_image = e.FirstChildElement(TMXTILESET_IMAGE_NODE);
 	if (!l_image) {
@@ -401,8 +405,9 @@ TMXLoader::processTileset(TiXmlElement &e)
 
 	Graphics::Tileset *l_tileset = new Graphics::Tileset;
 	l_tileset->setName(l_name);
-	l_tileset->setSize(Math::Size2i(l_texture->size().rwidth()  / l_tile_width,
-	                                l_texture->size().rheight() / l_tile_height));
+	l_tileset->setMargin(l_tile_margin);
+	l_tileset->setSpacing(l_tile_spacing);
+	l_tileset->setTileSize(Math::Size2i(l_tile_width, l_tile_height));
 	l_tileset->setTextureData(l_texture);
 	m_tilesets[l_first_gid] = l_tileset;
 

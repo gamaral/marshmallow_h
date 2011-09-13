@@ -60,35 +60,46 @@ namespace Graphics
 		typedef map<int, SharedTextureCoordinateData> TextureCoordinateMap;
 		TextureCoordinateMap m_cache;
 
-		Core::Identifier m_name;
-		Math::Size2i m_size;
+		Core::Identifier  m_name;
+		Math::Size2i      m_size;
+		Math::Size2i      m_tile_size;
 		SharedTextureData m_texture_data;
-		Math::Size2i m_tile_size;
 
-		float m_adjust_col;
-		float m_adjust_row;
+		int m_margin;
+		int m_spacing;
+
+		float  m_adjust_col;
+		float  m_adjust_row;
 		float *m_offset_col;
 		float *m_offset_row;
+		float  m_spacing_col;
+		float  m_spacing_row;
 
 	public:
 		TilesetBase(void);
 		virtual ~TilesetBase(void);
 
 		void setName(const Core::Identifier &name);
-		void setSize(const Math::Size2i &size);
 		void setTextureData(const SharedTextureData &tileset);
+		void setTileSize(const Math::Size2i &size);
+		void setMargin(int margin);
+		void setSpacing(int spacing);
 
 	public: /* virtual */
 
 		VIRTUAL const Core::Identifier & name(void) const
 		    { return(m_name); }
-		VIRTUAL const SharedTextureData & textureData(void) const
-		    { return(m_texture_data); }
 		VIRTUAL const Math::Size2i & size(void) const
 		    { return(m_size); }
-		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(int index);
+		VIRTUAL const SharedTextureData & textureData(void) const
+		    { return(m_texture_data); }
 		VIRTUAL const Math::Size2i & tileSize(void) const
 		    { return(m_tile_size); }
+		VIRTUAL int spacing(void) const
+		    { return(m_spacing); }
+		VIRTUAL int margin(void) const
+		    { return(m_margin); }
+		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(int index);
 		
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);

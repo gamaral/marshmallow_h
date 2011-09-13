@@ -27,6 +27,7 @@
  */
 
 #include <core/identifier.h>
+#include <core/logger.h>
 
 #include <math/vector2.h>
 
@@ -54,7 +55,7 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(),
+	: EngineBase(60, 60, false),
 	  m_stop_timer(0)
 	{
 	}
@@ -81,7 +82,7 @@ public:
 
 		sceneManager()->pushScene(l_scene);
 
-		Graphics::Viewport::SetCamera(Math::Vector3(0, 50, 0.25f));
+		Graphics::Viewport::SetCamera(Math::Vector3(0, 0, 0.25));
 
 		return(true);
 	}
@@ -90,7 +91,7 @@ public:
 	{
 		EngineBase::second();
 
-		if (++m_stop_timer == 60)
+		if (++m_stop_timer == 20)
 			stop();
 	}
 };
@@ -100,7 +101,9 @@ MMain(int argc, char *argv[])
 {
 	UNUSED(argc);
 	UNUSED(argv);
-	CHDIR(DEMO_CWD);
+
+	if (-1 == CHDIR(DEMO_CWD))
+		MMFATAL("Failed to change working directory: ""%s"". ABORT!", DEMO_CWD);
 
 	return(Demo().run());
 }

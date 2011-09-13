@@ -59,6 +59,8 @@ Box2DSceneLayer::Box2DSceneLayer(const Core::Identifier &i, IScene &s)
 
 Box2DSceneLayer::~Box2DSceneLayer(void)
 {
+	delete m_internal;
+	m_internal = 0;
 }
 
 void

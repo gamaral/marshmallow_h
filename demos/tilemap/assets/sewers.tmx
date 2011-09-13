@@ -9,12 +9,12 @@
   </data>
  </layer>
  <objectgroup name="Objects" width="50" height="50">
-  <object type="Box2DColliderEntity" x="506" y="3" width="357" height="148"/>
-  <object type="Box2DColliderEntity" x="290" y="-1" width="68" height="343"/>
-  <object type="Box2DColliderEntity" x="241" y="495" width="117" height="111"/>
-  <object type="Box2DColliderEntity" x="100" y="195" width="66" height="120"/>
+  <object type="Box2DColliderEntity" x="506" y="1" width="356" height="148"/>
+  <object type="Box2DColliderEntity" x="290" y="-1" width="68" height="341"/>
+  <object type="Box2DColliderEntity" x="242" y="495" width="116" height="111"/>
+  <object type="Box2DColliderEntity" x="99" y="193" width="67" height="119"/>
   <object type="Box2DColliderEntity" x="98" y="2" width="67" height="125"/>
-  <object type="Box2DColliderEntity" x="3" y="1" width="45" height="333"/>
+  <object type="Box2DColliderEntity" x="-1" y="1" width="48" height="312"/>
   <object name="player" type="PlayerEntity" gid="73" x="490" y="276"/>
  </objectgroup>
  <layer name="Top" width="50" height="50" opacity="0.49">

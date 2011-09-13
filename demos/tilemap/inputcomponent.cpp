@@ -54,6 +54,10 @@ const Core::Type InputComponent::Type("InputComponent");
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
     , m_linear_impulse(2.f)
+    , m_down(false)
+    , m_left(false)
+    , m_right(false)
+    , m_up(false)
 {
 	m_event_proxy = new Event::ProxyEventListener(*this);
 	Game::EngineBase::Instance()->eventManager()->connect(m_event_proxy, Event::KeyboardEvent::Type());

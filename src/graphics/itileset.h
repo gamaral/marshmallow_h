@@ -67,6 +67,8 @@ namespace Graphics
 		virtual const Math::Size2i & size(void) const = 0;
 		virtual const SharedTextureData & textureData(void) const = 0;
 		virtual const Math::Size2i & tileSize(void) const = 0;
+		virtual int spacing(void) const = 0;
+		virtual int margin(void) const = 0;
 
 		/*! @brief Get tile texture coordinate data
 		 *  @param index Tile index, top-to-bottom wrapping from left-to-right.

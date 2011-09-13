@@ -41,6 +41,7 @@
 #define NO_COPY(x) x(const x&)
 #define NO_ASSIGN(x) x& operator=(const x&)
 
+#define IGNORE (void)
 #define UNUSED(x) (void)x
 #define MIN(x,y) (x < y ? x : y)
 #define MAX(x,y) (x > y ? x : y)
