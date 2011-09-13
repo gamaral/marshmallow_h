@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "customfactory.h"
+#include "playerentity.h"
 
 /*!
  * @file
@@ -34,17 +34,64 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "box2dcolliderentity.h"
-#include "playerentity.h"
+#include <Box2D/Box2D.h>
 
-Game::SharedEntity
-CustomFactory::createEntity(const Core::Type &t, const Core::Identifier &i,
-    Game::EntitySceneLayer &l) const
+#include <core/logger.h>
+
+#include <graphics/viewport.h>
+
+#include <game/box2d/box2dcomponent.h>
+#include <game/positioncomponent.h>
+#include <game/sizecomponent.h>
+
+#include "inputcomponent.h"
+
+const Core::Type PlayerEntity::sType("PlayerEntity");
+
+PlayerEntity::PlayerEntity(const Core::Identifier &i, Game::EntitySceneLayer &l)
+    : Game::EntityBase(i, l)
+    , m_init(false)
 {
-	if (Box2DColliderEntity::Type() == t)
-		return(new Box2DColliderEntity(i, l));
-	else if (PlayerEntity::Type() == t)
-		return(new PlayerEntity(i, l));
-	else return(FactoryBase::createEntity(t, i, l));
+}
+
+PlayerEntity::~PlayerEntity(void)
+{
+}
+
+void
+PlayerEntity::update(TIME d)
+{
+	if (!m_init) {
+		Game::SharedSizeComponent l_size_component =
+		    getComponentType(Game::SizeComponent::Type()).staticCast<Game::SizeComponent>();
+		if (!l_size_component) {
+			MMERROR1("Player entity requires a size component to be present");
+			return;
+		}
+
+		/* create box2d component */
+		Game::SharedBox2DComponent l_box2d_component =
+		    new Game::Box2DComponent("box2d", *this);
+		l_box2d_component->bodyType() = b2_dynamicBody;
+		l_box2d_component->size() = l_size_component->size();
+		l_box2d_component->density() = 1.0;
+		pushComponent(l_box2d_component.staticCast<Game::IComponent>());
+
+		/* input component */
+		pushComponent(new InputComponent("input", *this));
+
+		m_init = true;
+	} else {
+		Game::SharedPositionComponent l_pos_component =
+		    getComponentType(Game::PositionComponent::Type()).staticCast<Game::PositionComponent>();
+		if (l_pos_component) {
+			Math::Vector3 l_camera = Graphics::Viewport::Camera();
+			l_camera.rx() = l_pos_component->position().x();
+			l_camera.ry() = l_pos_component->position().y();
+			Graphics::Viewport::SetCamera(l_camera);
+		}
+	}
+
+	Game::EntityBase::update(d);
 }
 

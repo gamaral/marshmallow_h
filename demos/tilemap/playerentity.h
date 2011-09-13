@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "customfactory.h"
+#pragma once
 
 /*!
  * @file
@@ -34,17 +34,40 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "box2dcolliderentity.h"
-#include "playerentity.h"
+#ifndef TILEMAP_PLAYERENTITY_H
+#define TILEMAP_PLAYERENTITY_H 1
 
-Game::SharedEntity
-CustomFactory::createEntity(const Core::Type &t, const Core::Identifier &i,
-    Game::EntitySceneLayer &l) const
+#include <game/entitybase.h>
+
+MARSHMALLOW_NAMESPACE_USE;
+
+class GAME_EXPORT PlayerEntity : public Game::EntityBase
 {
-	if (Box2DColliderEntity::Type() == t)
-		return(new Box2DColliderEntity(i, l));
-	else if (PlayerEntity::Type() == t)
-		return(new PlayerEntity(i, l));
-	else return(FactoryBase::createEntity(t, i, l));
-}
+	NO_ASSIGN(PlayerEntity);
+	NO_COPY(PlayerEntity);
 
+	bool m_init;
+
+public:
+
+	PlayerEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);
+	virtual ~PlayerEntity(void);
+
+public: /* virtual */
+
+	VIRTUAL const Core::Type & type(void) const
+	    { return(sType); }
+
+	VIRTUAL void update(TIME delta);
+
+public: /* static */
+
+	static const Core::Type & Type(void)
+	    { return(sType); }
+
+private: /* static */
+
+	static const Core::Type sType;
+};
+
+#endif

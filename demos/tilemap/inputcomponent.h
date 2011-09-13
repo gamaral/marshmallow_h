@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "customfactory.h"
+#pragma once
 
 /*!
  * @file
@@ -34,17 +34,51 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "box2dcolliderentity.h"
-#include "playerentity.h"
+#ifndef TILEMAP_INPUTCOMPONENT_H
+#define TILEMAP_INPUTCOMPONENT_H 1
 
-Game::SharedEntity
-CustomFactory::createEntity(const Core::Type &t, const Core::Identifier &i,
-    Game::EntitySceneLayer &l) const
+#include <game/componentbase.h>
+#include <event/ieventlistener.h>
+
+#include <game/box2d/box2dcomponent.h>
+#include <game/positioncomponent.h>
+
+MARSHMALLOW_NAMESPACE_USE;
+
+class InputComponent : public Game::ComponentBase,
+                       public Event::IEventListener
 {
-	if (Box2DColliderEntity::Type() == t)
-		return(new Box2DColliderEntity(i, l));
-	else if (PlayerEntity::Type() == t)
-		return(new PlayerEntity(i, l));
-	else return(FactoryBase::createEntity(t, i, l));
-}
+	NO_ASSIGN(InputComponent);
+	NO_COPY(InputComponent);
+
+	Game::WeakPositionComponent m_position;
+	Game::WeakBox2DComponent m_body;
+	Event::SharedEventListener m_event_proxy;
+
+	float m_linear_impulse;
+	bool  m_down;
+	bool  m_left;
+	bool  m_right;
+	bool  m_up;
+
+public:
+
+	InputComponent(const Core::Identifier &identifier, Game::IEntity &entity);
+	virtual ~InputComponent(void);
+
+public: /* virtual */
+
+	VIRTUAL const Core::Type & type(void) const
+	    { return(Type); }
+
+	VIRTUAL void update(TIME d);
+
+	VIRTUAL bool handleEvent(const Event::IEvent &event);
+
+public: /* static */
+
+	static const Core::Type Type;
+};
+
+#endif
 

@@ -34,6 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <Box2D/Box2D.h>
+
+#include <core/logger.h>
+
 #include <game/box2d/box2dcomponent.h>
 #include <game/sizecomponent.h>
 
@@ -43,8 +47,6 @@ Box2DColliderEntity::Box2DColliderEntity(const Core::Identifier &i, Game::Entity
     : Game::EntityBase(i, l)
     , m_init(false)
 {
-	m_box2d_component = new Game::Box2DComponent("box2d", *this);
-	pushComponent(m_box2d_component);
 }
 
 Box2DColliderEntity::~Box2DColliderEntity(void)
@@ -55,15 +57,19 @@ void
 Box2DColliderEntity::update(TIME d)
 {
 	if (!m_init) {
-		m_size_component = getComponentType(Game::SizeComponent::Type());
-		m_init = (m_size_component);
-	} else {
-		Game::SharedBox2DComponent l_box2d_component =
-		    m_size_component.staticCast<Game::Box2DComponent>();
 		Game::SharedSizeComponent l_size_component =
-		    m_size_component.staticCast<Game::SizeComponent>();
+		    getComponentType(Game::SizeComponent::Type()).staticCast<Game::SizeComponent>();
+		if (!l_size_component) {
+			MMERROR1("Collider entity requires a size component to be present");
+			return;
+		}
 
+		Game::SharedBox2DComponent l_box2d_component =
+		    new Game::Box2DComponent("box2d", *this);
+		l_box2d_component->bodyType() = b2_staticBody;
 		l_box2d_component->size() = l_size_component->size();
+		pushComponent(l_box2d_component.staticCast<Game::IComponent>());
+		m_init = true;
 	}
 
 	Game::EntityBase::update(d);

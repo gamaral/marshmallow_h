@@ -28,6 +28,8 @@
 
 #include <core/identifier.h>
 
+#include <math/vector2.h>
+
 #include <graphics/factory.h>
 #include <graphics/tileset.h>
 #include <graphics/viewport.h>
@@ -63,12 +65,15 @@ public:
 
 		if (!EngineBase::initialize())
 			return(false);
+		Graphics::Viewport::Redisplay(640.f, 480.f);
 
 		Game::SharedScene l_scene(new Game::Scene("main"));
 
 		/* box2d layer */
-		Game::SharedSceneLayer l_box2d_layer(new Game::Box2DSceneLayer("box2d", *l_scene));
-		l_scene->pushLayer(l_box2d_layer);
+		Game::SharedBox2DSceneLayer l_box2d_layer
+		    (new Game::Box2DSceneLayer("box2d", *l_scene));
+		l_box2d_layer->setGravity(Math::Vector2(0., 0.));
+		l_scene->pushLayer(l_box2d_layer.staticCast<Game::ISceneLayer>());
 
 		/* load tmx tilemap */
 		Extra::TMXLoader m_tmxloader(*l_scene);
@@ -77,7 +82,7 @@ public:
 
 		sceneManager()->pushScene(l_scene);
 
-		Graphics::Viewport::SetCamera(Math::Vector3(0, 50, 0.75));
+		Graphics::Viewport::SetCamera(Math::Vector3(0, 50, 0.25));
 
 		return(true);
 	}
@@ -86,7 +91,7 @@ public:
 	{
 		EngineBase::second();
 
-		if (++m_stop_timer == 10)
+		if (++m_stop_timer == 60)
 			stop();
 	}
 };

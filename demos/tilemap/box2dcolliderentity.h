@@ -46,8 +46,6 @@ class GAME_EXPORT Box2DColliderEntity : public Game::EntityBase
 	NO_ASSIGN(Box2DColliderEntity);
 	NO_COPY(Box2DColliderEntity);
 
-	Game::SharedComponent m_box2d_component;
-	Game::SharedComponent m_size_component;
 	bool m_init;
 
 public:
