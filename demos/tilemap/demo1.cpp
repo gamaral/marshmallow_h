@@ -65,7 +65,6 @@ public:
 
 		if (!EngineBase::initialize())
 			return(false);
-		Graphics::Viewport::Redisplay(640.f, 480.f);
 
 		Game::SharedScene l_scene(new Game::Scene("main"));
 
@@ -82,7 +81,7 @@ public:
 
 		sceneManager()->pushScene(l_scene);
 
-		Graphics::Viewport::SetCamera(Math::Vector3(0, 50, 0.25));
+		Graphics::Viewport::SetCamera(Math::Vector3(0, 50, 0.25f));
 
 		return(true);
 	}

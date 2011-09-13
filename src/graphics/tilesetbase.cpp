@@ -51,6 +51,8 @@ TilesetBase::TilesetBase()
     , m_size(64, 64)
     , m_texture_data()
     , m_tile_size(16, 16)
+    , m_adjust_col(0)
+    , m_adjust_row(0)
     , m_offset_col(0)
     , m_offset_row(0)
 {
@@ -107,10 +109,11 @@ TilesetBase::getTextureCoordinateData(int i)
 		const int l_row = i / m_size.rwidth();
 		const int l_col = i % m_size.rwidth();
 
-		const float &l_left  = m_offset_col[l_col];
-		const float &l_top   = m_offset_row[l_row];
-		const float l_right  = m_offset_col[l_col + 1];
-		const float l_bottom = m_offset_row[l_row + 1];
+		
+		const float &l_left  = m_offset_col[l_col] + m_adjust_col;
+		const float &l_top   = m_offset_row[l_row] + m_adjust_row;
+		const float l_right  = m_offset_col[l_col + 1] - m_adjust_col;
+		const float l_bottom = m_offset_row[l_row + 1] - m_adjust_row;
 
 		l_data->set(0, l_left,  l_top);
 		l_data->set(1, l_left,  l_bottom);
@@ -152,6 +155,8 @@ TilesetBase::reset(void)
 	delete[] m_offset_col;
 	delete[] m_offset_row;
 
+	m_adjust_col = 0;
+	m_adjust_row = 0;
 	m_offset_col = 0;
 	m_offset_row = 0;
 	m_cache.clear();
@@ -171,11 +176,13 @@ TilesetBase::reset(void)
 	 * left/top = offset, right/bottom = (offset+1).
 	 */
 
+	m_adjust_col = .01f / static_cast<float>(m_size.rwidth());
 	m_offset_col = new float[m_size.rwidth() + 1];
 	for (int i = m_size.rwidth(); i >= 0; --i)
 		m_offset_col[i] =
 		    static_cast<float>(i) / static_cast<float>(m_size.rwidth());
 
+	m_adjust_row = .01f / static_cast<float>(m_size.rheight());
 	m_offset_row = new float[m_size.rheight() + 1];
 	for (int i = m_size.rheight(); i >= 0; --i)
 		m_offset_row[i] =

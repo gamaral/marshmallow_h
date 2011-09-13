@@ -65,6 +65,8 @@ namespace Graphics
 		SharedTextureData m_texture_data;
 		Math::Size2i m_tile_size;
 
+		float m_adjust_col;
+		float m_adjust_row;
 		float *m_offset_col;
 		float *m_offset_row;
 
