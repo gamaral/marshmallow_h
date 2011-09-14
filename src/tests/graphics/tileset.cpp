@@ -177,8 +177,8 @@ tileset_margin_test(void)
 int
 MMain(int argc, char *argv[])
 {
-	UNUSED(argc);
-	UNUSED(argv);
+	MMUNUSED(argc);
+	MMUNUSED(argv);
 
 	tileset_fixed_test();
 	tileset_spacing_test();

@@ -48,10 +48,10 @@ struct Viewport::Internal
 bool
 Viewport::Initialize(int w, int h, int d, bool f)
 {
-	UNUSED(w);
-	UNUSED(h);
-	UNUSED(d);
-	UNUSED(f);
+	MMUNUSED(w);
+	MMUNUSED(h);
+	MMUNUSED(d);
+	MMUNUSED(f);
 	MMINFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
 	return(true);
 }
@@ -65,10 +65,10 @@ Viewport::Finalize(void)
 bool
 Viewport::Redisplay(int w, int h, int d, bool f)
 {
-	UNUSED(w);
-	UNUSED(h);
-	UNUSED(d);
-	UNUSED(f);
+	MMUNUSED(w);
+	MMUNUSED(h);
+	MMUNUSED(d);
+	MMUNUSED(f);
 	MMINFO("Dummy viewport redisplayed using a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
 	return(true);
 }
@@ -76,7 +76,7 @@ Viewport::Redisplay(int w, int h, int d, bool f)
 void
 Viewport::Tick(TIME t)
 {
-	UNUSED(t);
+	MMUNUSED(t);
 }
 
 void

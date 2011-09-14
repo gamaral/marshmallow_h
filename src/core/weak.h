@@ -120,7 +120,7 @@ namespace Core
 	template <class U> Weak<U>
 	Weak<T>::staticCast(void) const
 	{
-		UNUSED(static_cast<U *>(raw()));
+		MMUNUSED(static_cast<U *>(raw()));
 		return(Weak<U>(m_data));
 	}
 

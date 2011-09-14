@@ -147,7 +147,7 @@ TilesetBase::getTextureCoordinateData(int i)
 bool
 TilesetBase::serialize(TinyXML::TiXmlElement &n) const
 {
-	UNUSED(n);
+	MMUNUSED(n);
 
 	/* TODO: Implement */
 
@@ -157,7 +157,7 @@ TilesetBase::serialize(TinyXML::TiXmlElement &n) const
 bool
 TilesetBase::deserialize(TinyXML::TiXmlElement &n)
 {
-	UNUSED(n);
+	MMUNUSED(n);
 
 	/* TODO: Implement */
 

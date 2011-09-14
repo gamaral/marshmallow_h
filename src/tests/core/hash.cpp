@@ -61,8 +61,8 @@ strhash_compare_test(void)
 int
 MMain(int argc, char *argv[])
 {
-	UNUSED(argc);
-	UNUSED(argv);
+	MMUNUSED(argc);
+	MMUNUSED(argv);
 
 	hash_compare_test();
 	strhash_compare_test();

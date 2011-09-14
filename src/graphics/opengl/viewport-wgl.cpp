@@ -73,12 +73,12 @@ struct Viewport::Internal
 	{
 		wrect.bottom = wrect.left = wrect.top = wrect.bottom = 0;
 
-		camera[0] = camera[1] = 0.f;  // camera x y
+		camera[0] = camera[1] = .0f;  // camera x y
 		camera[2] = 1.f;              // camera zoom
 
-		visible[0] = visible[1] = visible[2] = visible[3] = 0.f;
+		visible[0] = visible[1] = visible[2] = visible[3] = .0f;
 
-		size[0] = size[1] = 0.f;
+		size[0] = size[1] = .0f;
 	}
 
 	static LRESULT CALLBACK
@@ -454,7 +454,7 @@ void
 Viewport::SwapBuffer(void)
 {
 	SwapBuffers(MVI.dcontext);
-	glClearColor(.0, .0, .0, .0);
+	glClearColor(.0f, .0f, .0f, .0f);
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 }

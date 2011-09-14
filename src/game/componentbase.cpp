@@ -58,7 +58,7 @@ ComponentBase::serialize(TinyXML::TiXmlElement &n) const
 bool
 ComponentBase::deserialize(TinyXML::TiXmlElement &n)
 {
-	UNUSED(n);
+	MMUNUSED(n);
 	return(true);
 }
 

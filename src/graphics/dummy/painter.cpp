@@ -55,8 +55,8 @@ Painter::Finalize(void)
 void
 Painter::Draw(const IMesh &m, const Math::Point2 &p)
 {
-	UNUSED(m);
-	UNUSED(p);
+	MMUNUSED(m);
+	MMUNUSED(p);
 	MMINFO("Drawind %s at (%f, %f)", m.type().str().c_str(), p.rx(), p.ry());
 }
 

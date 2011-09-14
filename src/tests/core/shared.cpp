@@ -75,8 +75,8 @@ weak_basic_test(void)
 int
 MMain(int argc, char *argv[])
 {
-	UNUSED(argc);
-	UNUSED(argv);
+	MMUNUSED(argc);
+	MMUNUSED(argv);
 
 	shared_basic_test();
 	weak_basic_test();

@@ -156,7 +156,7 @@ EngineBase::run(void)
 	TIME l_second_target = MILLISECONDS_PER_SECOND;
 
 	TIME l_tick;
-	TIME l_tick_target = MIN(l_render_target, l_update_target) / static_cast<TIME>(3.0);
+	TIME l_tick_target = MMMIN(l_render_target, l_update_target) / static_cast<TIME>(3.0);
 
 	m_delta_time = 0;
 	m_running = true;

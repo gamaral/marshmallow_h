@@ -56,7 +56,7 @@ MovementComponent::~MovementComponent(void)
 void
 MovementComponent::update(TIME d)
 {
-	UNUSED(d);
+	MMUNUSED(d);
 
 	if (!m_position)
 		m_position = entity().getComponentType("Game::PositionComponent").

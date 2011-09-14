@@ -68,7 +68,7 @@ public:
 
 	VIRTUAL void update(TIME d)
 	{
-		UNUSED(d);
+		MMUNUSED(d);
 
 		if (!m_position)
 			m_position = entity().getComponentType("Game::PositionComponent").
@@ -200,8 +200,8 @@ public:
 int
 MMain(int argc, char *argv[])
 {
-	UNUSED(argc);
-	UNUSED(argv);
+	MMUNUSED(argc);
+	MMUNUSED(argv);
 	if (-1 == CHDIR(DEMO_CWD))
 		MMFATAL("Failed to change working directory: ""%s"". ABORT!", DEMO_CWD);
 	return(Demo().run());

@@ -146,8 +146,8 @@ public:
 int
 MMain(int argc, char *argv[])
 {
-	UNUSED(argc);
-	UNUSED(argv);
+	MMUNUSED(argc);
+	MMUNUSED(argv);
 	if (-1 == CHDIR(DEMO_CWD))
 		MMFATAL("Failed to change working directory: ""%s"". ABORT!", DEMO_CWD);
 	return(Demo().run());

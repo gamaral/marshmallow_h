@@ -132,7 +132,7 @@ namespace Core
 	template <class U> Shared<U>
 	Shared<T>::staticCast(void) const
 	{
-		UNUSED(static_cast<U *>(raw()));
+		MMUNUSED(static_cast<U *>(raw()));
 		return(Shared<U>(m_data));
 	}
 

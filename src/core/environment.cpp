@@ -80,11 +80,11 @@ operator new[](size_t size, const char *pName, int flags, unsigned debugFlags,
     const char *file, int line)
 {
 	/* TODO: Replace with custom allocator */
-	UNUSED(pName);
-	UNUSED(flags);
-	UNUSED(debugFlags);
-	UNUSED(file);
-	UNUSED(line);
+	MMUNUSED(pName);
+	MMUNUSED(flags);
+	MMUNUSED(debugFlags);
+	MMUNUSED(file);
+	MMUNUSED(line);
 	return(new char[size]);
 }
 
@@ -93,13 +93,13 @@ operator new[](size_t size, size_t alignment, size_t alignmentOffset, const
     char *pName, int flags, unsigned debugFlags, const char *file, int line)
 {
 	/* TODO: Replace with custom allocator */
-	UNUSED(alignment);
-	UNUSED(alignmentOffset);
-	UNUSED(pName);
-	UNUSED(flags);
-	UNUSED(debugFlags);
-	UNUSED(file);
-	UNUSED(line);
+	MMUNUSED(alignment);
+	MMUNUSED(alignmentOffset);
+	MMUNUSED(pName);
+	MMUNUSED(flags);
+	MMUNUSED(debugFlags);
+	MMUNUSED(file);
+	MMUNUSED(line);
 	return(new char[size]);
 }
 

@@ -60,7 +60,7 @@ SceneLayerBase::serialize(TinyXML::TiXmlElement &n) const
 bool
 SceneLayerBase::deserialize(TinyXML::TiXmlElement &n)
 {
-	UNUSED(n);
+	MMUNUSED(n);
 	return(true);
 }
 

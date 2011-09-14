@@ -87,8 +87,8 @@ base64_encode_test(void)
 int
 MMain(int argc, char *argv[])
 {
-	UNUSED(argc);
-	UNUSED(argv);
+	MMUNUSED(argc);
+	MMUNUSED(argv);
 
 	base64_decode_test();
 	base64_encode_test();

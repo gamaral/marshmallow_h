@@ -41,10 +41,10 @@
 #define NO_COPY(x) x(const x&)
 #define NO_ASSIGN(x) x& operator=(const x&)
 
-#define IGNORE (void)
-#define UNUSED(x) (void)x
-#define MIN(x,y) (x < y ? x : y)
-#define MAX(x,y) (x > y ? x : y)
+#define MMIGNORE (void)
+#define MMUNUSED(x) (void)x
+#define MMMIN(x,y) (x < y ? x : y)
+#define MMMAX(x,y) (x > y ? x : y)
 
 #define TIMEOUT_INIT const TIME l_start_time = Core::Platform::TimeStamp()
 #define TIMEOUT_DEC(x) (x -= (NOW() - l_start_time))

@@ -166,8 +166,8 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 		return(false);
 	}
 
-	IGNORE e.QueryFloatAttribute("opacity", &l_opacity);
-	IGNORE e.QueryIntAttribute("visible", &l_visible);
+	MMIGNORE e.QueryFloatAttribute("opacity", &l_opacity);
+	MMIGNORE e.QueryIntAttribute("visible", &l_visible);
 
 	TiXmlElement *l_data = e.FirstChildElement(TMXLAYER_DATA_NODE);
 
@@ -384,8 +384,8 @@ TMXLoader::processTileset(TiXmlElement &e)
 	}
 
 	/* check for margin and spacing */
-	IGNORE e.QueryIntAttribute("margin", &l_tile_margin);
-	IGNORE e.QueryIntAttribute("spacing", &l_tile_spacing);
+	MMIGNORE e.QueryIntAttribute("margin", &l_tile_margin);
+	MMIGNORE e.QueryIntAttribute("spacing", &l_tile_spacing);
 
 	TiXmlElement *l_image = e.FirstChildElement(TMXTILESET_IMAGE_NODE);
 	if (!l_image) {

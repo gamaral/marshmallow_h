@@ -73,7 +73,7 @@ Box2DComponent::~Box2DComponent(void)
 void
 Box2DComponent::update(TIME d)
 {
-	UNUSED(d);
+	MMUNUSED(d);
 
 	if (!m_position) {
 		m_position = entity().getComponentType("Game::PositionComponent").
