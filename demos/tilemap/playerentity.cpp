@@ -85,10 +85,10 @@ PlayerEntity::update(TIME d)
 		Game::SharedPositionComponent l_pos_component =
 		    getComponentType(Game::PositionComponent::Type()).staticCast<Game::PositionComponent>();
 		if (l_pos_component) {
-			Math::Vector3 l_camera = Graphics::Viewport::Camera();
-			l_camera.rx() = l_pos_component->position().x();
-			l_camera.ry() = l_pos_component->position().y();
-			Graphics::Viewport::SetCamera(l_camera);
+			Math::Triplet l_camera = Graphics::Viewport::Camera();
+			l_camera[0] = l_pos_component->position().x();
+			l_camera[1] = l_pos_component->position().y();
+			Graphics::Viewport::MoveCamera(l_camera);
 		}
 	}
 

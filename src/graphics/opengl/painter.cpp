@@ -159,7 +159,7 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 
 	glPushMatrix();
 	glLoadIdentity();
-	glTranslatef(o.rx(), o.ry(), 0.f);
+	glTranslatef(o.x(), o.y(), 0.f);
 
 	/* set blending */
 	Blend(AlphaBlending);

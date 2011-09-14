@@ -88,7 +88,7 @@ Demo::initialize(void)
 		l_document.InsertEndChild(l_root);
 	}
 
-	Graphics::Viewport::SetCamera(Math::Vector3(0, 0, 0.035f));
+	Graphics::Viewport::MoveCamera(Math::Triplet(0, 0, 0.035f));
 
 	return(true);
 }

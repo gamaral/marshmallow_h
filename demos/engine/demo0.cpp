@@ -81,19 +81,19 @@ public:
 		if (m_position && m_movement) {
 			MMINFO("DELTA: %f", d);
 			MMINFO("Current position %f, %f",
-			    m_position->position().rx(), m_position->position().ry());
+			    m_position->position().x(), m_position->position().y());
 
 			Math::Size2f l_vpsize = Graphics::Viewport::Size();
 
 			Math::Point2  &pos = m_position->position();
 			Math::Vector2 &dir = m_movement->direction();
 
-			if ((pos.rx() <= -l_vpsize.width() / 2 && dir.rx() < 0)
-			 || (pos.rx() >=  l_vpsize.width() / 2 && dir.rx() > 0))
-				dir.rx() *= -0.95f;
-			if ((pos.ry() <= -l_vpsize.height() / 2 && dir.ry() < 0)
-			 || (pos.ry() >=  l_vpsize.height() / 2 && dir.ry() > 0))
-				dir.ry() *= -0.95f;
+			if ((pos.x() <= -l_vpsize.width() / 2 && dir.x() < 0)
+			 || (pos.x() >=  l_vpsize.width() / 2 && dir.x() > 0))
+				dir[0] *= -0.95f;
+			if ((pos.y() <= -l_vpsize.height() / 2 && dir.y() < 0)
+			 || (pos.y() >=  l_vpsize.height() / 2 && dir.y() > 0))
+				dir[1] *= -0.95f;
 		}
 	}
 
@@ -134,9 +134,9 @@ public:
 			    new Game::MovementComponent("movement", *l_entity);
 			l_mcomponent->direction() = Math::Vector2(15, 15);
 			if (rand() % 2)
-			    l_mcomponent->direction().rx() *= -1;
+			    l_mcomponent->direction()[0] *= -1;
 			if (rand() % 2)
-			    l_mcomponent->direction().ry() *= -1;
+			    l_mcomponent->direction()[1] *= -1;
 			l_entity->pushComponent(l_mcomponent);
 
 			DemoBounceComponent *l_bcomponent = new DemoBounceComponent(*l_entity);

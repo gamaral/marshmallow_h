@@ -37,9 +37,7 @@
 #ifndef MATH_POINT3_H
 #define MATH_POINT3_H 1
 
-#include "core/environment.h"
-#include "core/global.h"
-#include "core/namespace.h"
+#include "math/tuple3.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -48,53 +46,19 @@ namespace Math
 	class Vector3;
 
 	/*! @brief 3D Point */
-	class MATH_EXPORT Point3
+	class MATH_EXPORT Point3 : public Tuple3
 	{
-		float m_value[3];
-
 	public:
-		Point3(float x = 0., float y = 0., float z = 0.);
+		Point3(float x = 0.f, float y = 0.f, float z = 0.f);
 		Point3(const Point3 &copy);
-
-		float & rx(void)
-		    { return(m_value[0]); }
-		float & ry(void)
-		    { return(m_value[1]); }
-		float & rz(void)
-		    { return(m_value[2]); }
-
-		const float & rx(void) const
-		    { return(m_value[0]); }
-		const float & ry(void) const
-		    { return(m_value[1]); }
-		const float & rz(void) const
-		    { return(m_value[2]); }
-
-		float x(void) const
-		    { return(m_value[0]); }
-		float y(void) const
-		    { return(m_value[1]); }
-		float z(void) const
-		    { return(m_value[2]); }
-
-		float & operator[](int i)
-		    { return(m_value[i % 3]); }
 
 		Vector3 difference(const Point3 &rhs) const;
 
-	public: /* operators */
-
-		Point3 & operator=(const Point3 &rhs);
-		bool operator==(const Point3 &rhs) const;
-
-		Point3 & operator+=(const Vector3 &rhs);
-		Point3 & operator-=(const Vector3 &rhs);
-		Point3 operator+(const Vector3 &rhs) const;
-		Point3 operator-(const Vector3 &rhs) const;
-
 	public: /* static */
 
-		static const Point3 Null;
+		static const Point3 & Zero(void)
+		    { static Point3 s_zero(0.f, 0.f, 0.f);
+		      return(s_zero); }
 	};
 }
 

@@ -459,14 +459,14 @@ Viewport::SwapBuffer(void)
 	glLoadIdentity();
 }
 
-const Math::Vector3
+const Math::Triplet
 Viewport::Camera(void)
 {
-	return(Math::Vector3(MVI.camera[0], MVI.camera[1], MVI.camera[2]));
+	return(Math::Triplet(MVI.camera[0], MVI.camera[1], MVI.camera[2]));
 }
 
 void
-Viewport::SetCamera(const Math::Vector3 &c)
+Viewport::MoveCamera(const Math::Triplet &c)
 {
 	MVI.camera[0] = c[0];
 	MVI.camera[1] = c[1];

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/viewport.h"
+#include "math/tuple3.h"
 
 /*!
  * @file
@@ -34,102 +34,77 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/logger.h"
+#if MARSHMALLOW_WITH_BOX2D
+#   include <Box2D/Common/b2Math.h>
+#endif
+
+#include <cmath>
 
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Graphics;
+using namespace Math;
 
-const Core::Type Viewport::sType("DUMMY");
-
-struct Viewport::Internal
+Tuple3::Tuple3(float ax, float ay, float az)
 {
-};
+	m_value[0] = ax;
+	m_value[1] = ay;
+	m_value[2] = az;
+}
+
+Tuple3::Tuple3(const Tuple3 &c)
+{
+	m_value[0] = c.m_value[0];
+	m_value[1] = c.m_value[1];
+	m_value[2] = c.m_value[2];
+}
+
+Tuple3 &
+Tuple3::operator=(const Tuple3 &rhs)
+{
+	m_value[0] = rhs.m_value[0];
+	m_value[1] = rhs.m_value[1];
+	m_value[2] = rhs.m_value[2];
+	return(*this);
+}
 
 bool
-Viewport::Initialize(int w, int h, int d, bool f)
+Tuple3::operator==(const Tuple3 &rhs) const
 {
-	UNUSED(w);
-	UNUSED(h);
-	UNUSED(d);
-	UNUSED(f);
-	MMINFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
-	return(true);
+	return(m_value[0] == rhs.m_value[0]
+	    && m_value[1] == rhs.m_value[1]
+	    && m_value[2] == rhs.m_value[2]);
 }
 
-void
-Viewport::Finalize(void)
+Tuple3 &
+Tuple3::operator+=(const Tuple3 &rhs)
 {
-	MMINFO1("Dummy viewport finalized");
+	m_value[0] += rhs.m_value[0];
+	m_value[1] += rhs.m_value[1];
+	m_value[2] += rhs.m_value[2];
+	return(*this);
 }
 
-bool
-Viewport::Redisplay(int w, int h, int d, bool f)
+Tuple3 &
+Tuple3::operator-=(const Tuple3 &rhs)
 {
-	UNUSED(w);
-	UNUSED(h);
-	UNUSED(d);
-	UNUSED(f);
-	MMINFO("Dummy viewport redisplayed using a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
-	return(true);
+	m_value[0] -= rhs.m_value[0];
+	m_value[1] -= rhs.m_value[1];
+	m_value[2] -= rhs.m_value[2];
+	return(*this);
 }
 
-void
-Viewport::Tick(TIME t)
+Tuple3
+Tuple3::operator+(const Tuple3 &rhs) const
 {
-	UNUSED(t);
+	return(Tuple3(m_value[0] + rhs.m_value[0],
+	              m_value[1] + rhs.m_value[1],
+	              m_value[2] + rhs.m_value[2]));
 }
 
-void
-Viewport::SwapBuffer(void)
+Tuple3
+Tuple3::operator-(const Tuple3 &rhs) const
 {
-}
-
-const Math::Triplet
-Viewport::Camera(void)
-{
-	return(Math::Triplet(0.f, 0.f, 1.f));
-}
-
-void
-Viewport::MoveCamera(const Math::Triplet &)
-{
-}
-
-const float *
-Viewport::VisibleArea(void)
-{
-	static float s_visible[4] = {-DEFAULT_VIEWPORT_VWIDTH / 2,  DEFAULT_VIEWPORT_VHEIGHT / 2,
-	                              DEFAULT_VIEWPORT_VWIDTH / 2, -DEFAULT_VIEWPORT_VHEIGHT / 2};
-	return(s_visible);
-}
-
-const Math::Size2f
-Viewport::Size(void)
-{
-	return(Math::Size2f(DEFAULT_VIEWPORT_VWIDTH, DEFAULT_VIEWPORT_VHEIGHT));
-}
-
-const Math::Size2i
-Viewport::WindowSize(void)
-{
-	return(Math::Size2i(DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT));
-}
-
-float
-Viewport::MapToWorld(int x)
-{
-	return(static_cast<float>(x));
-}
-
-int
-Viewport::MapFromWorld(float x)
-{
-	return(static_cast<int>(floor(x)));
-}
-
-const Core::Type &
-Viewport::Type(void)
-{
-	return(sType);
+	return(Tuple3(m_value[0] - rhs.m_value[0],
+	              m_value[1] - rhs.m_value[1],
+	              m_value[2] - rhs.m_value[2]));
 }
 

@@ -55,8 +55,8 @@ PositionComponent::serialize(TinyXML::TiXmlElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	n.SetDoubleAttribute("x", m_position.rx());
-	n.SetDoubleAttribute("y", m_position.ry());
+	n.SetDoubleAttribute("x", m_position.x());
+	n.SetDoubleAttribute("y", m_position.y());
 	return(true);
 }
 
@@ -66,8 +66,8 @@ PositionComponent::deserialize(TinyXML::TiXmlElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	n.QueryFloatAttribute("x", &m_position.rx());
-	n.QueryFloatAttribute("y", &m_position.ry());
+	n.QueryFloatAttribute("x", &m_position[0]);
+	n.QueryFloatAttribute("y", &m_position[1]);
 	return(true);
 }
 

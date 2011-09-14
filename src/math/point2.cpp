@@ -39,62 +39,19 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
-const Point2 Point2::Null(0, 0);
-
 Point2::Point2(float ax, float ay)
+    : Tuple2(ax, ay)
 {
-	m_value[0] = ax;
-	m_value[1] = ay;
 }
 
-Point2::Point2(const Point2 &copy)
+Point2::Point2(const Point2 &c)
+    : Tuple2(c)
 {
-	m_value[0] = copy.m_value[0];
-	m_value[1] = copy.m_value[1];
 }
 
-Point2 &
-Point2::operator=(const Point2 &rhs)
+Vector2
+Point2::difference(const Point2 &rhs) const
 {
-	m_value[0] += rhs.m_value[0];
-	m_value[1] += rhs.m_value[1];
-	return(*this);
-}
-
-bool
-Point2::operator==(const Point2 &rhs) const
-{
-	return( m_value[0] == rhs.m_value[0]
-	        && m_value[1] == rhs.m_value[1]);
-}
-
-Point2 &
-Point2::operator+=(const Vector2 &rhs)
-{
-	m_value[0] += rhs.rx();
-	m_value[1] += rhs.ry();
-	return(*this);
-}
-
-Point2 &
-Point2::operator-=(const Vector2 &rhs)
-{
-	m_value[0] -= rhs.rx();
-	m_value[1] -= rhs.ry();
-	return(*this);
-}
-
-Point2
-Point2::operator+(const Vector2 &rhs) const
-{
-	return(Point2(m_value[0] + rhs.rx(),
-	              m_value[1] + rhs.ry()));
-}
-
-Point2
-Point2::operator-(const Vector2 &rhs) const
-{
-	return(Point2(m_value[0] - rhs.rx(),
-	              m_value[1] - rhs.ry()));
+	return(Vector2(rhs - *this));
 }
 

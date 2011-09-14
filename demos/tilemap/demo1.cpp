@@ -82,7 +82,7 @@ public:
 
 		sceneManager()->pushScene(l_scene);
 
-		Graphics::Viewport::SetCamera(Math::Vector3(0, 0, 0.25));
+		Graphics::Viewport::MoveCamera(Math::Triplet(0, 0, 0.25));
 
 		return(true);
 	}

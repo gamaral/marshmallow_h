@@ -37,9 +37,7 @@
 #ifndef MATH_VECTOR2_H
 #define MATH_VECTOR2_H 1
 
-#include "core/environment.h"
-#include "core/global.h"
-#include "core/namespace.h"
+#include "math/tuple2.h"
 
 /* Box2D */
 #if MARSHMALLOW_WITH_BOX2D
@@ -51,34 +49,11 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Math
 {
 	/*! @brief 2D Vector */
-	class MATH_EXPORT Vector2
+	class MATH_EXPORT Vector2 : public Tuple2
 	{
-		float m_value[2];
-
 	public:
-		Vector2(float x = 0., float y = 0.);
+		Vector2(float x = 0.f, float y = 0.f);
 		Vector2(const Vector2 &copy);
-
-		float & rx(void)
-		    { return(m_value[0]); }
-		float & ry(void)
-		    { return(m_value[1]); }
-
-		const float & rx(void) const
-		    { return(m_value[0]); }
-		const float & ry(void) const
-		    { return(m_value[1]); }
-
-		float x(void) const
-		    { return(m_value[0]); }
-		float y(void) const
-		    { return(m_value[1]); }
-
-		float & operator[](int i)
-		    { return(m_value[i % 2]); }
-
-		float operator[](int i) const
-		    { return(m_value[i % 2]); }
 
 		Vector2 normalized(void) const;
 		Vector2 & normalize(void);
@@ -91,28 +66,19 @@ namespace Math
 
 	public: /* operators */
 
-		Vector2 & operator=(const Vector2 &rhs);
-		bool operator==(const Vector2 &rhs) const;
-
-		operator bool(void) const
-		    { return(m_value[0] || m_value[1]); }
-
 #if MARSHMALLOW_WITH_BOX2D
 		operator b2Vec2(void) const;
 #endif
 
-		Vector2 & operator*=(float rhs);
-		Vector2 & operator+=(const Vector2 &rhs);
-		Vector2 & operator-=(const Vector2 &rhs);
-		Vector2 operator*(float rhs) const;
-		Vector2 operator+(const Vector2 &rhs) const;
-		Vector2 operator-(const Vector2 &rhs) const;
-
 	public: /* static */
 
-		static const Vector2 Null;
-		static const Vector2 One;
+		static const Vector2 & Zero(void)
+		    { static Vector2 s_zero(0.f, 0.f);
+		      return(s_zero); }
 
+		static const Vector2 & One(void)
+		    { static Vector2 s_one(1.f, 1.f);
+		      return(s_one); }
 	};
 }
 

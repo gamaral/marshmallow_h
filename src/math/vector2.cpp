@@ -43,19 +43,14 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
-const Vector2 Vector2::Null(0.f, 0.f);
-const Vector2 Vector2::One(1.f, 1.f);
-
 Vector2::Vector2(float ax, float ay)
+    : Tuple2(ax, ay)
 {
-	m_value[0] = ax;
-	m_value[1] = ay;
 }
 
-Vector2::Vector2(const Vector2 &copy)
+Vector2::Vector2(const Vector2 &c)
+    : Tuple2(c)
 {
-	m_value[0] = copy.m_value[0];
-	m_value[1] = copy.m_value[1];
 }
 
 Vector2
@@ -95,28 +90,13 @@ Vector2::magnitude2(void) const
 float
 Vector2::cross(const Vector2 &b) const
 {
-	return((rx() * b.ry()) - (ry() * b.rx()));
+	return((x() * b.y()) - (y() * b.x()));
 }
 
 float
 Vector2::dot(const Vector2 &b) const
 {
-	return((rx() * b.rx()) + (ry() * b.ry()));
-}
-
-Vector2 &
-Vector2::operator=(const Vector2 &rhs)
-{
-	m_value[0] = rhs.m_value[0];
-	m_value[1] = rhs.m_value[1];
-	return(*this);
-}
-
-bool
-Vector2::operator==(const Vector2 &rhs) const
-{
-	return(m_value[0] == rhs.m_value[0]
-	    && m_value[1] == rhs.m_value[1]);
+	return((x() * b.x()) + (y() * b.y()));
 }
 
 #if MARSHMALLOW_WITH_BOX2D
@@ -125,48 +105,4 @@ Vector2::operator b2Vec2(void) const
 	return(b2Vec2(m_value[0], m_value[1]));
 }
 #endif
-
-Vector2 &
-Vector2::operator*=(float rhs)
-{
-	m_value[0] *= rhs;
-	m_value[1] *= rhs;
-	return(*this);
-}
-
-Vector2 &
-Vector2::operator+=(const Vector2 &rhs)
-{
-	m_value[0] += rhs.m_value[0];
-	m_value[1] += rhs.m_value[1];
-	return(*this);
-}
-
-Vector2 &
-Vector2::operator-=(const Vector2 &rhs)
-{
-	m_value[0] -= rhs.m_value[0];
-	m_value[1] -= rhs.m_value[1];
-	return(*this);
-}
-
-Vector2
-Vector2::operator*(float rhs) const
-{
-	return(Vector2(m_value[0] * rhs, m_value[1] * rhs));
-}
-
-Vector2
-Vector2::operator+(const Vector2 &rhs) const
-{
-	return(Vector2(m_value[0] + rhs.m_value[0],
-	               m_value[1] + rhs.m_value[1]));
-}
-
-Vector2
-Vector2::operator-(const Vector2 &rhs) const
-{
-	return(Vector2(m_value[0] - rhs.m_value[0],
-	               m_value[1] - rhs.m_value[1]));
-}
 

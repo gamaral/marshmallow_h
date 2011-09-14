@@ -53,28 +53,17 @@ namespace Math
 		Size3(T width = 0, T height = 0, T depth = 0);
 		Size3(const Size3 &copy);
 
-		T & rwidth(void)
+		const T & width(void) const
 		    { return(m_value[0]); }
-		T & rheight(void)
+		const T & height(void) const
 		    { return(m_value[1]); }
-		T & rdepth(void)
-		    { return(m_value[2]); }
-
-		const T & rwidth(void) const
-		    { return(m_value[0]); }
-		const T & rheight(void) const
-		    { return(m_value[1]); }
-		const T & rdepth(void) const
-		    { return(m_value[2]); }
-
-		T width(void) const
-		    { return(m_value[0]); }
-		T height(void) const
-		    { return(m_value[1]); }
-		T depth(void) const
+		const T & depth(void) const
 		    { return(m_value[2]); }
 
 		T volume(void) const;
+
+		void zero(void)
+		    { m_value[0] = m_value[1] = m_value[2] = 0; }
 
 		template <typename U>
 		Size3<U> staticCast(void) const;
@@ -95,11 +84,20 @@ namespace Math
 		T & operator[](int i)
 		    { return(m_value[i % 3]); }
 
+		const T & operator[](int i) const
+		    { return(m_value[i % 3]); }
+
 		Size3<T> operator*(const T &c) const
 		    { return(Size3<T>(m_value[0] * c, m_value[1] * c, m_value[2] * c)); }
 
 		Size3<T> operator/(const T &c) const
 		    { return(Size3<T>(m_value[0] / c, m_value[1] / c, m_value[2] / c)); }
+
+	public: /* static */
+
+		static const Size3<T> &Zero(void)
+		    { static Size3<T> s_zero(0, 0, 0);
+		      return(s_zero); }
 	};
 	typedef Size3<float> Size3f;
 	typedef Size3<int>   Size3i;

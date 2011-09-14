@@ -40,8 +40,7 @@
 #include "core/type.h"
 
 #include "math/size2.h"
-#include "math/vector2.h"
-#include "math/vector3.h"
+#include "math/triplet.h"
 
 #include "graphics/config.h"
 
@@ -70,8 +69,8 @@ namespace Graphics
 
 		static void SwapBuffer(void);
 
-		static const Math::Vector3 Camera(void);
-		static void SetCamera(const Math::Vector3 &camera);
+		static const Math::Triplet Camera(void);
+		static void MoveCamera(const Math::Triplet &camera);
 
 		static const float * VisibleArea(void);
 

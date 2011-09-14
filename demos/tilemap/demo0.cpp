@@ -31,6 +31,7 @@
 
 #include <graphics/factory.h>
 #include <graphics/tileset.h>
+#include <graphics/viewport.h>
 
 #include <game/enginebase.h>
 #include <game/scenebase.h>
@@ -72,7 +73,7 @@ public:
 
 			/* layer 1 */
 			l_tslayer = new Game::TilemapSceneLayer("bottom", *this);
-			l_tslayer->setSize(Math::Size2i(20, 20));
+			l_tslayer->setSize(Math::Size2i(80, 60));
 			l_tslayer->setTileSize(Math::Size2i(24, 24));
 			l_tslayer->attachTileset(1, l_tileset.staticCast<Graphics::ITileset>());
 
@@ -87,7 +88,7 @@ public:
 			/* layer 2 */
 			l_tslayer = new Game::TilemapSceneLayer("overlay", *this);
 			l_tslayer->setOpacity(0.15f);
-			l_tslayer->setSize(Math::Size2i(20, 15));
+			l_tslayer->setSize(Math::Size2i(80, 60));
 			l_tslayer->setTileSize(Math::Size2i(24, 24));
 			l_tslayer->attachTileset(1, l_tileset.staticCast<Graphics::ITileset>());
 
@@ -115,13 +116,14 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(),
+	: EngineBase(1, 1),
 	  m_stop_timer(0)
 	{
 	}
 
 	VIRTUAL bool initialize(void)
 	{
+		MMINFO1("FYI - Engine set to 1 FPS");
 		EngineBase::initialize();
 
 		Game::SharedScene l_scene(new DemoScene);
@@ -134,8 +136,10 @@ public:
 	{
 		EngineBase::second();
 
-		if (++m_stop_timer == 4)
+		if (++m_stop_timer == 30)
 			stop();
+
+		Graphics::Viewport::MoveCamera(Math::Triplet(0, 0, 1.f - m_stop_timer/30.f));
 	}
 };
 

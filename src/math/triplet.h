@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/viewport.h"
+#pragma once
 
 /*!
  * @file
@@ -34,102 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/logger.h"
+#ifndef MATH_TRIPLET_H
+#define MATH_TRIPLET_H 1
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Graphics;
+#include "math/tuple3.h"
 
-const Core::Type Viewport::sType("DUMMY");
-
-struct Viewport::Internal
-{
-};
-
-bool
-Viewport::Initialize(int w, int h, int d, bool f)
-{
-	UNUSED(w);
-	UNUSED(h);
-	UNUSED(d);
-	UNUSED(f);
-	MMINFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
-	return(true);
-}
-
-void
-Viewport::Finalize(void)
-{
-	MMINFO1("Dummy viewport finalized");
-}
-
-bool
-Viewport::Redisplay(int w, int h, int d, bool f)
-{
-	UNUSED(w);
-	UNUSED(h);
-	UNUSED(d);
-	UNUSED(f);
-	MMINFO("Dummy viewport redisplayed using a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
-	return(true);
-}
-
-void
-Viewport::Tick(TIME t)
-{
-	UNUSED(t);
-}
-
-void
-Viewport::SwapBuffer(void)
-{
-}
-
-const Math::Triplet
-Viewport::Camera(void)
-{
-	return(Math::Triplet(0.f, 0.f, 1.f));
-}
-
-void
-Viewport::MoveCamera(const Math::Triplet &)
-{
-}
-
-const float *
-Viewport::VisibleArea(void)
-{
-	static float s_visible[4] = {-DEFAULT_VIEWPORT_VWIDTH / 2,  DEFAULT_VIEWPORT_VHEIGHT / 2,
-	                              DEFAULT_VIEWPORT_VWIDTH / 2, -DEFAULT_VIEWPORT_VHEIGHT / 2};
-	return(s_visible);
-}
-
-const Math::Size2f
-Viewport::Size(void)
-{
-	return(Math::Size2f(DEFAULT_VIEWPORT_VWIDTH, DEFAULT_VIEWPORT_VHEIGHT));
-}
-
-const Math::Size2i
-Viewport::WindowSize(void)
-{
-	return(Math::Size2i(DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT));
-}
-
-float
-Viewport::MapToWorld(int x)
-{
-	return(static_cast<float>(x));
-}
-
-int
-Viewport::MapFromWorld(float x)
-{
-	return(static_cast<int>(floor(x)));
-}
-
-const Core::Type &
-Viewport::Type(void)
-{
-	return(sType);
-}
-
+#endif

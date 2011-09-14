@@ -55,8 +55,8 @@ SizeComponent::serialize(TinyXML::TiXmlElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	n.SetDoubleAttribute("width", m_size.rwidth());
-	n.SetDoubleAttribute("height", m_size.rheight());
+	n.SetDoubleAttribute("width", m_size.width());
+	n.SetDoubleAttribute("height", m_size.height());
 	return(true);
 }
 
@@ -66,8 +66,8 @@ SizeComponent::deserialize(TinyXML::TiXmlElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	n.QueryFloatAttribute("width",  &m_size.rwidth());
-	n.QueryFloatAttribute("height", &m_size.rheight());
+	n.QueryFloatAttribute("width",  &m_size[0]);
+	n.QueryFloatAttribute("height", &m_size[1]);
 	return(true);
 }
 

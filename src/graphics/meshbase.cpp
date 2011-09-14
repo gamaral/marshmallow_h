@@ -73,7 +73,7 @@ Math::Vector2
 MeshBase::vertex(int i) const
 {
 	Math::Vector2 l_vector;
-	if (!m_vdata->get(i, l_vector.rx(), l_vector.ry()))
+	if (!m_vdata->get(i, l_vector[0], l_vector[1]))
 		MMWARNING("Failed to retrieve values for vertex %d", i);
 	return(l_vector);
 }
@@ -81,9 +81,9 @@ MeshBase::vertex(int i) const
 void
 MeshBase::setVertex(int i, const Math::Vector2 &v)
 {
-	if (!m_vdata->set(i, v.rx(), v.ry()))
+	if (!m_vdata->set(i, v.x(), v.y()))
 		MMWARNING("Failed to assign values (%f, %f) to vertex %d",
-		    v.rx(), v.ry(), i);
+		    v.x(), v.y(), i);
 }
 
 void

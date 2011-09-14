@@ -39,6 +39,11 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
+Rect2::Rect2(float w, float h)
+    : m_size(w, h)
+{
+}
+
 Rect2::Rect2(const Size2f &s)
     : m_size(s)
 {

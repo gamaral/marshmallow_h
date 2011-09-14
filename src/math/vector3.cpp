@@ -43,21 +43,14 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
-const Vector3 Vector3::Null(0, 0, 0);
-const Vector3 Vector3::One(1, 1, 1);
-
 Vector3::Vector3(float ax, float ay, float az)
+    : Tuple3(ax, ay, az)
 {
-	m_value[0] = ax;
-	m_value[1] = ay;
-	m_value[2] = az;
 }
 
-Vector3::Vector3(const Vector3 &copy)
+Vector3::Vector3(const Vector3 &c)
+    : Tuple3(c)
 {
-	m_value[0] = copy.m_value[0];
-	m_value[1] = copy.m_value[1];
-	m_value[2] = copy.m_value[2];
 }
 
 Vector3
@@ -94,61 +87,10 @@ Vector3::magnitude2(void) const
 	     + powf(m_value[2], 2));
 }
 
-Vector3 &
-Vector3::operator=(const Vector3 &rhs)
-{
-	m_value[0] = rhs.m_value[0];
-	m_value[1] = rhs.m_value[1];
-	m_value[2] = rhs.m_value[2];
-	return(*this);
-}
-
-bool
-Vector3::operator==(const Vector3 &rhs) const
-{
-	return(m_value[0] == rhs.m_value[0]
-	    && m_value[1] == rhs.m_value[1]
-	    && m_value[2] == rhs.m_value[2]);
-}
-
 #if MARSHMALLOW_WITH_BOX2D
 Vector3::operator b2Vec3(void) const
 {
 	return(b2Vec3(m_value[0], m_value[1], m_value[2]));
 }
 #endif
-
-Vector3 &
-Vector3::operator+=(const Vector3 &rhs)
-{
-	m_value[0] += rhs.m_value[0];
-	m_value[1] += rhs.m_value[1];
-	m_value[2] += rhs.m_value[2];
-	return(*this);
-}
-
-Vector3 &
-Vector3::operator-=(const Vector3 &rhs)
-{
-	m_value[0] -= rhs.m_value[0];
-	m_value[1] -= rhs.m_value[1];
-	m_value[2] -= rhs.m_value[2];
-	return(*this);
-}
-
-Vector3
-Vector3::operator+(const Vector3 &rhs) const
-{
-	return(Vector3(m_value[0] + rhs.m_value[0],
-	               m_value[1] + rhs.m_value[1],
-	               m_value[2] + rhs.m_value[2]));
-}
-
-Vector3
-Vector3::operator-(const Vector3 &rhs) const
-{
-	return(Vector3(m_value[0] - rhs.m_value[0],
-	               m_value[1] - rhs.m_value[1],
-	               m_value[2] - rhs.m_value[2]));
-}
 

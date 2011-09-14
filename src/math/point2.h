@@ -37,9 +37,7 @@
 #ifndef MATH_POINT2_H
 #define MATH_POINT2_H 1
 
-#include "core/environment.h"
-#include "core/global.h"
-#include "core/namespace.h"
+#include "math/tuple2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -48,47 +46,21 @@ namespace Math
 	class Vector2;
 
 	/*! @brief 2D Point */
-	class MATH_EXPORT Point2
+	class MATH_EXPORT Point2 : public Tuple2
 	{
 		float m_value[2];
 
 	public:
-		Point2(float x = 0., float y = 0.);
+		Point2(float x = 0.f, float y = 0.f);
 		Point2(const Point2 &copy);
-
-		float & rx(void)
-		    { return(m_value[0]); }
-		float & ry(void)
-		    { return(m_value[1]); }
-
-		const float & rx(void) const
-		    { return(m_value[0]); }
-		const float & ry(void) const
-		    { return(m_value[1]); }
-
-		float x(void) const
-		    { return(m_value[0]); }
-		float y(void) const
-		    { return(m_value[1]); }
-
-		float & operator[](int i)
-		    { return(m_value[i % 2]); }
 
 		Vector2 difference(const Point2 &rhs) const;
 
-	public: /* operators */
-
-		Point2 & operator=(const Point2 &rhs);
-		bool operator==(const Point2 &rhs) const;
-
-		Point2 & operator+=(const Vector2 &rhs);
-		Point2 & operator-=(const Vector2 &rhs);
-		Point2 operator+(const Vector2 &rhs) const;
-		Point2 operator-(const Vector2 &rhs) const;
-
 	public: /* static */
 
-		static const Point2 Null;
+		static const Point2 & Zero(void)
+		    { static Point2 s_zero(0.f, 0.f);
+		      return(s_zero); }
 	};
 }
 

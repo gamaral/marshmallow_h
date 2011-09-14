@@ -53,8 +53,9 @@ namespace Math
 
 	public:
 
-		Rect2(const Size2f &size);
-		Rect2(const Rect2 &copy);
+		Rect2(float width, float height);
+		explicit Rect2(const Size2f &size);
+		explicit Rect2(const Rect2 &copy);
 
 		const Size2f & size(void) const
 		    { return(m_size); }

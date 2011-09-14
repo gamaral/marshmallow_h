@@ -126,10 +126,10 @@ TMXLoader::load(const char *f)
 bool
 TMXLoader::processMap(TiXmlElement &m)
 {
-	if ((TIXML_SUCCESS != m.QueryIntAttribute("width", &m_map_size.rwidth()))
-	 || (TIXML_SUCCESS != m.QueryIntAttribute("height", &m_map_size.rheight()))
-	 || (TIXML_SUCCESS != m.QueryIntAttribute("tilewidth", &m_tile_size.rwidth()))
-	 || (TIXML_SUCCESS != m.QueryIntAttribute("tileheight", &m_tile_size.rheight()))) {
+	if ((TIXML_SUCCESS != m.QueryIntAttribute("width", &m_map_size[0]))
+	 || (TIXML_SUCCESS != m.QueryIntAttribute("height", &m_map_size[1]))
+	 || (TIXML_SUCCESS != m.QueryIntAttribute("tilewidth", &m_tile_size[0]))
+	 || (TIXML_SUCCESS != m.QueryIntAttribute("tileheight", &m_tile_size[1]))) {
 		MMWARNING1("Map element is missing one or more required attributes.");
 		return(false);
 	}
@@ -138,18 +138,18 @@ TMXLoader::processMap(TiXmlElement &m)
 	const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
 
 	/* calculate pixels per viewport coordinate ratio */
-	m_conv_ratio.rwidth() =
-	    static_cast<float>(l_vsize.rwidth())
-	        / static_cast<float>(l_wsize.rwidth());
-	m_conv_ratio.rheight() =
-	    static_cast<float>(l_vsize.rheight())
-	        / static_cast<float>(l_wsize.rheight());
+	m_conv_ratio[0] =
+	    static_cast<float>(l_vsize.width())
+	        / static_cast<float>(l_wsize.width());
+	m_conv_ratio[1] =
+	    static_cast<float>(l_vsize.height())
+	        / static_cast<float>(l_wsize.height());
 
 	/* calculate half-relative map size (used to offset coordinates) */
-	m_hrmap_size.rwidth() = m_conv_ratio.rwidth()
-	    * static_cast<float>(m_map_size.rwidth() * m_tile_size.rwidth());
-	m_hrmap_size.rheight() = m_conv_ratio.rheight()
-	    * static_cast<float>(m_map_size.rheight() * m_tile_size.rheight());
+	m_hrmap_size[0] = m_conv_ratio.width()
+	    * static_cast<float>(m_map_size.width() * m_tile_size.width());
+	m_hrmap_size[1] = m_conv_ratio.height()
+	    * static_cast<float>(m_map_size.height() * m_tile_size.height());
 
 	return(true);
 }
@@ -197,7 +197,7 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 		if (0 == strcmp(l_data_compression, TMXDATA_COMPRESSION_ZLIB)) {
 			char *l_inflated_data;
 			if (0 < Core::Zlib::Inflate(l_decoded_data, l_decoded_data_size,
-			    m_map_size.rwidth() * m_map_size.rheight() * 4, &l_inflated_data))
+			    m_map_size.width() * m_map_size.height() * 4, &l_inflated_data))
 				l_data_array = l_inflated_data;
 		}
 #define TMXDATA_COMPRESSION_GZIP "gzip"
@@ -254,8 +254,8 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 		int l_object_gid;
 		int l_object_x;
 		int l_object_y;
-		int l_object_width = m_tile_size.rwidth();
-		int l_object_height = m_tile_size.rheight();
+		int l_object_width = m_tile_size.width();
+		int l_object_height = m_tile_size.height();
 
 		l_object_name = l_object->Attribute("name");
 		l_object_type = l_object->Attribute("type");
@@ -274,8 +274,8 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 		}
 
 		/* map offset position (0 in the middle) */
-		l_object_x -= (m_map_size.rwidth()  * m_tile_size.rwidth())  / 2;
-		l_object_y -= (m_map_size.rheight() * m_tile_size.rheight()) / 2;
+		l_object_x -= (m_map_size.width()  * m_tile_size.width())  / 2;
+		l_object_y -= (m_map_size.height() * m_tile_size.height()) / 2;
 		l_object_y *= -1; /* invert top/bottom */
 
 		/* object size (later initialized) */
@@ -288,8 +288,8 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 			l_object->QueryIntAttribute("height", &l_object_height);
 
 			/* calculate object size */
-			l_object_rsize.rwidth()  = m_conv_ratio.rwidth()  * static_cast<float>(l_object_width);
-			l_object_rsize.rheight() = m_conv_ratio.rheight() * static_cast<float>(l_object_height);
+			l_object_rsize[0] = m_conv_ratio.width()  * static_cast<float>(l_object_width);
+			l_object_rsize[1] = m_conv_ratio.height() * static_cast<float>(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
 		/* tile object */
@@ -315,8 +315,8 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 			/* calculate object size from tileset */
 			l_object_width  = l_tileset->tileSize().width();
 			l_object_height = l_tileset->tileSize().height();
-			l_object_rsize.rwidth()  = m_conv_ratio.rwidth()  * static_cast<float>(l_object_width);
-			l_object_rsize.rheight() = m_conv_ratio.rheight() * static_cast<float>(l_object_height);
+			l_object_rsize[0] = m_conv_ratio.width()  * static_cast<float>(l_object_width);
+			l_object_rsize[1] = m_conv_ratio.height() * static_cast<float>(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
 			/* generate tile mesh */
@@ -324,10 +324,10 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 			Game::RenderComponent *l_render = new Game::RenderComponent("render", *l_entity);
 
 			Graphics::SharedVertexData l_vdata = Graphics::Factory::CreateVertexData(QUAD_VERTEXES);
-			l_vdata->set(0, -l_object_hrsize.rwidth(),  l_object_hrsize.rheight());
-			l_vdata->set(1, -l_object_hrsize.rwidth(), -l_object_hrsize.rheight());
-			l_vdata->set(2,  l_object_hrsize.rwidth(),  l_object_hrsize.rheight());
-			l_vdata->set(3,  l_object_hrsize.rwidth(), -l_object_hrsize.rheight());
+			l_vdata->set(0, -l_object_hrsize.width(),  l_object_hrsize.height());
+			l_vdata->set(1, -l_object_hrsize.width(), -l_object_hrsize.height());
+			l_vdata->set(2,  l_object_hrsize.width(),  l_object_hrsize.height());
+			l_vdata->set(3,  l_object_hrsize.width(), -l_object_hrsize.height());
 
 			Graphics::SharedTextureCoordinateData l_tdata =
 			    l_tileset->getTextureCoordinateData(l_object_gid - l_ts_firstgid);
@@ -340,12 +340,12 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 
 		/* create position component */
 		Game::PositionComponent *l_pos_component = new Game::PositionComponent("position", *l_entity);
-		l_pos_component->position().rx() = m_conv_ratio.rwidth()  * static_cast<float>(l_object_x);
-		l_pos_component->position().ry() = m_conv_ratio.rheight() * static_cast<float>(l_object_y);
+		l_pos_component->position()[0] = m_conv_ratio.width()  * static_cast<float>(l_object_x);
+		l_pos_component->position()[1] = m_conv_ratio.height() * static_cast<float>(l_object_y);
 
 		/* centere position for object (offset) */
-		l_pos_component->position().rx() += l_object_hrsize.rwidth();
-		l_pos_component->position().ry() -= l_object_hrsize.rheight();
+		l_pos_component->position()[0] += l_object_hrsize.width();
+		l_pos_component->position()[1] -= l_object_hrsize.height();
 
 		l_entity->pushComponent(l_pos_component);
 

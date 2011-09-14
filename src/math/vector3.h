@@ -37,9 +37,7 @@
 #ifndef MATH_VECTOR3_H
 #define MATH_VECTOR3_H 1
 
-#include "core/environment.h"
-#include "core/global.h"
-#include "core/namespace.h"
+#include "math/tuple3.h"
 
 #if MARSHMALLOW_WITH_BOX2D
 struct b2Vec3;
@@ -51,40 +49,11 @@ namespace Math
 {
 
 	/*! @brief 3D Vector */
-	class MATH_EXPORT Vector3
+	class MATH_EXPORT Vector3 : public Tuple3
 	{
-		float m_value[3];
-
 	public:
-		Vector3(float x = 0., float y = 0., float z = 0.);
+		Vector3(float x = 0.f, float y = 0.f, float z = 0.f);
 		Vector3(const Vector3 &copy);
-
-		float & rx(void)
-		    { return(m_value[0]); }
-		float & ry(void)
-		    { return(m_value[1]); }
-		float & rz(void)
-		    { return(m_value[2]); }
-
-		const float & rx(void) const
-		    { return(m_value[0]); }
-		const float & ry(void) const
-		    { return(m_value[1]); }
-		const float & rz(void) const
-		    { return(m_value[2]); }
-
-		float x(void) const
-		    { return(m_value[0]); }
-		float y(void) const
-		    { return(m_value[1]); }
-		float z(void) const
-		    { return(m_value[2]); }
-
-		float & operator[](int i)
-		    { return(m_value[i % 3]); }
-
-		float operator[](int i) const
-		    { return(m_value[i % 3]); }
 
 		Vector3 normalized(void) const;
 		Vector3 & normalize(void);
@@ -94,25 +63,19 @@ namespace Math
 
 	public: /* operators */
 
-		Vector3 & operator=(const Vector3 &rhs);
-		bool operator==(const Vector3 &rhs) const;
-
-		operator bool(void) const
-		    { return(m_value[0] || m_value[1] || m_value[2]); }
-
 #if MARSHMALLOW_WITH_BOX2D
 		operator b2Vec3(void) const;
 #endif
 
-		Vector3 & operator+=(const Vector3 &rhs);
-		Vector3 & operator-=(const Vector3 &rhs);
-		Vector3 operator+(const Vector3 &rhs) const;
-		Vector3 operator-(const Vector3 &rhs) const;
-
 	public: /* static */
 
-		static const Vector3 Null;
-		static const Vector3 One;
+		static const Vector3 & Zero(void)
+		    { static Vector3 s_zero(0.f, 0.f, 0.f);
+		      return(s_zero); }
+
+		static const Vector3 & One(void)
+		    { static Vector3 s_one(1.f, 1.f, 1.f);
+		      return(s_one); }
 	};
 
 }

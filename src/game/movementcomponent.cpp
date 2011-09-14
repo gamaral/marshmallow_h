@@ -43,9 +43,9 @@ using namespace Game;
 const Core::Type MovementComponent::sType("Game::MovementComponent");
 
 MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e),
-      m_position(),
-      m_direction()
+    : ComponentBase(i, e)
+    , m_position()
+    , m_direction()
 {
 }
 
@@ -73,8 +73,8 @@ MovementComponent::serialize(TinyXML::TiXmlElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	n.SetDoubleAttribute("x", m_direction.rx());
-	n.SetDoubleAttribute("y", m_direction.ry());
+	n.SetDoubleAttribute("x", m_direction.x());
+	n.SetDoubleAttribute("y", m_direction.y());
 	return(true);
 }
 
@@ -84,8 +84,8 @@ MovementComponent::deserialize(TinyXML::TiXmlElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	n.QueryFloatAttribute("x", &m_direction.rx());
-	n.QueryFloatAttribute("y", &m_direction.ry());
+	n.QueryFloatAttribute("x", &m_direction[0]);
+	n.QueryFloatAttribute("y", &m_direction[1]);
 	return(true);
 }
 

@@ -64,20 +64,9 @@ namespace Math
 		    { m_value[0] = copy.m_value[0];
 		      m_value[1] = copy.m_value[1]; }
 
-
-		T & rwidth(void)
+		const T & width(void) const
 		    { return(m_value[0]); }
-		T & rheight(void)
-		    { return(m_value[1]); }
-
-		const T & rwidth(void) const
-		    { return(m_value[0]); }
-		const T & rheight(void) const
-		    { return(m_value[1]); }
-
-		T width(void) const
-		    { return(m_value[0]); }
-		T height(void) const
+		const T & height(void) const
 		    { return(m_value[1]); }
 
 		T area(void) const
@@ -104,6 +93,9 @@ namespace Math
 		T & operator[](int i)
 		    { return(m_value[i % 2]); }
 
+		const T & operator[](int i) const
+		    { return(m_value[i % 2]); }
+
 		Size2<T> operator*(const T &c) const
 		    { return(Size2<T>(m_value[0] * c, m_value[1] * c)); }
 
@@ -113,8 +105,8 @@ namespace Math
 	public: /* static */
 
 		static const Size2<T> &Zero(void)
-		    { static Size2<T> sZero(0, 0);
-		      return(sZero); }
+		    { static Size2<T> s_zero(0, 0);
+		      return(s_zero); }
 	};
 	typedef Size2<float> Size2f;
 	typedef Size2<int>   Size2i;

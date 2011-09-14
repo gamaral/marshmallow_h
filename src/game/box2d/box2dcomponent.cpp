@@ -102,8 +102,8 @@ Box2DComponent::update(TIME d)
 #define DEGREE_TO_RADIAN 0.0174532925f
 		if (m_render) bodyDef.angle = m_render->mesh()->rotation() * DEGREE_TO_RADIAN;
 		bodyDef.position.Set
-		    (m_position->position().rx(),
-		     m_position->position().ry());
+		    (m_position->position().x(),
+		     m_position->position().y());
 		m_body = l_world.CreateBody(&bodyDef);
 
 		/* create shape */
@@ -129,8 +129,8 @@ Box2DComponent::update(TIME d)
 	float32 l_angle = m_body->GetAngle();
 
 	/* entity position */
-	m_position->position().rx() = l_position.x;
-	m_position->position().ry() = l_position.y;
+	m_position->position()[0] = l_position.x;
+	m_position->position()[1] = l_position.y;
 
 	/* render mesh rotation */
 	if (m_render) {
@@ -181,8 +181,8 @@ Box2DComponent::deserialize(TinyXML::TiXmlElement &n)
 	if (l_body && l_body[0] == 'd')
 	    m_body_type = b2_dynamicBody;
 
-	n.QueryFloatAttribute("width", &m_size.rwidth());
-	n.QueryFloatAttribute("height", &m_size.rheight());
+	n.QueryFloatAttribute("width", &m_size[0]);
+	n.QueryFloatAttribute("height", &m_size[1]);
 
 	n.QueryFloatAttribute("density", &m_density);
 	n.QueryFloatAttribute("friction", &m_friction);

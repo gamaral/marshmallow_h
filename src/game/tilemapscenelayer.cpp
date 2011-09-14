@@ -145,10 +145,10 @@ TilemapSceneLayer::render(void)
 
 	Graphics::Color l_color(1.f, 1.f, 1.f, m_opacity);
 
-	for (int l_r = 0; l_r < m_size.rheight(); ++l_r) {
-		const int l_roffset = l_r * m_size.rwidth();
+	for (int l_r = 0; l_r < m_size.height(); ++l_r) {
+		const int l_roffset = l_r * m_size.width();
 
-		for (int l_c = 0; l_c < m_size.rwidth(); ++l_c) {
+		for (int l_c = 0; l_c < m_size.width(); ++l_c) {
 			int l_tindex = m_data[l_roffset + l_c];
 			int l_tioffset;
 
@@ -167,15 +167,15 @@ TilemapSceneLayer::render(void)
 				Graphics::QuadMesh l_mesh(l_tcd, l_ts->textureData(), l_svdata);
 				l_mesh.setColor(l_color);
 
-				float l_x = static_cast<float>(l_c) * m_rtile_size.rwidth();
-				float l_y = static_cast<float>(m_size.rheight() - l_r) * m_rtile_size.rheight();
+				float l_x = static_cast<float>(l_c) * m_rtile_size.width();
+				float l_y = static_cast<float>(m_size.height() - l_r) * m_rtile_size.height();
 
 				/* offset to center of viewport */
-				l_x -= m_hrsize.rwidth();
-				l_y -= m_hrsize.rheight();
+				l_x -= m_hrsize.width();
+				l_y -= m_hrsize.height();
 
 				/* offset to bottom of tile (we draw up) */
-				l_y -= m_rtile_size.rheight();
+				l_y -= m_rtile_size.height();
 
 				Graphics::Painter::Draw(l_mesh, Math::Point2(l_x, l_y));
 			}
@@ -203,17 +203,17 @@ TilemapSceneLayer::recalculateRelativeTileSize()
 	 * map tile size from pixels to virtual coordinates.
 	 * vTS (vcoord) = (TS (pixels) * vSize (vcoord)) / wSize (pixels)
 	 */
-	m_rtile_size.rwidth() =
-	    (static_cast<float>(m_tile_size.rwidth()) * l_vsize.rwidth())
-	        / static_cast<float>(l_wsize.rwidth());
-	m_rtile_size.rheight() =
-	    (static_cast<float>(m_tile_size.rheight()) * l_vsize.rheight())
-	        / static_cast<float>(l_wsize.rheight());
+	m_rtile_size[0] =
+	    (static_cast<float>(m_tile_size.width()) * l_vsize.width())
+	        / static_cast<float>(l_wsize.width());
+	m_rtile_size[1] =
+	    (static_cast<float>(m_tile_size.height()) * l_vsize.height())
+	        / static_cast<float>(l_wsize.height());
 	m_hrtile_size = m_rtile_size / 2.0f;
 
 	/* calculate relative map size */
-	m_hrsize.rwidth()  = m_hrtile_size.rwidth()  * static_cast<float>(m_size.rwidth());
-	m_hrsize.rheight() = m_hrtile_size.rheight() * static_cast<float>(m_size.rheight());
+	m_hrsize[0] = m_hrtile_size.width()  * static_cast<float>(m_size.width());
+	m_hrsize[1] = m_hrtile_size.height() * static_cast<float>(m_size.height());
 }
 
 void
@@ -226,11 +226,11 @@ TilemapSceneLayer::recalculateVertexData(int o)
 	 * tileset tile size should be scale of the map tile size
 	 * tts (32x32) / mts (16x16) = 2x scale
 	 */
-	const int l_tswscale = m_tilesets[o]->tileSize().rwidth() / m_tile_size.rwidth();
-	const int l_tshscale = m_tilesets[o]->tileSize().rheight() / m_tile_size.rheight();
+	const int l_tswscale = m_tilesets[o]->tileSize().width() / m_tile_size.width();
+	const int l_tshscale = m_tilesets[o]->tileSize().height() / m_tile_size.height();
 
-	float l_vwidth  = (static_cast<float>(l_tswscale) * m_rtile_size.rwidth());
-	float l_vheight = (static_cast<float>(l_tshscale) * m_rtile_size.rheight());
+	float l_vwidth  = (static_cast<float>(l_tswscale) * m_rtile_size.width());
+	float l_vheight = (static_cast<float>(l_tshscale) * m_rtile_size.height());
 
 	/* anchor to (0,0) */
 	m_vertexes[o]->set(0, 0,        l_vheight);

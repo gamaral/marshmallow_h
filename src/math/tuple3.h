@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/viewport.h"
+#pragma once
 
 /*!
  * @file
@@ -34,102 +34,68 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/logger.h"
+#ifndef MATH_TUPLE3_H
+#define MATH_TUPLE3_H 1
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Graphics;
+#include "core/environment.h"
+#include "core/global.h"
+#include "core/namespace.h"
 
-const Core::Type Viewport::sType("DUMMY");
+MARSHMALLOW_NAMESPACE_BEGIN
 
-struct Viewport::Internal
+namespace Math
 {
-};
+	/*! @brief 3D Tuple */
+	class MATH_EXPORT Tuple3
+	{
+	public:
+		Tuple3(float x = 0.f, float y = 0.f, float z = 0.f);
+		Tuple3(const Tuple3 &copy);
 
-bool
-Viewport::Initialize(int w, int h, int d, bool f)
-{
-	UNUSED(w);
-	UNUSED(h);
-	UNUSED(d);
-	UNUSED(f);
-	MMINFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
-	return(true);
+		const float & x(void) const
+		    { return(m_value[0]); }
+		const float & y(void) const
+		    { return(m_value[1]); }
+		const float & z(void) const
+		    { return(m_value[2]); }
+
+	public: /* operators */
+
+		Tuple3 & operator=(const Tuple3 &rhs);
+		bool operator==(const Tuple3 &rhs) const;
+
+		float & operator[](int i)
+		    { return(m_value[i % 3]); }
+
+		const float & operator[](int i) const
+		    { return(m_value[i % 3]); }
+
+		operator bool(void) const
+		    { return(m_value[0] || m_value[1] || m_value[2]); }
+
+		Tuple3 & operator+=(const Tuple3 &rhs);
+		Tuple3 & operator-=(const Tuple3 &rhs);
+		Tuple3 operator+(const Tuple3 &rhs) const;
+		Tuple3 operator-(const Tuple3 &rhs) const;
+
+	public: /* static */
+
+		static const Tuple3 & Zero(void)
+		    { static Tuple3 s_zero(0.f, 0.f, 0.f);
+		      return(s_zero); }
+
+		static const Tuple3 & One(void)
+		    { static Tuple3 s_one(1.f, 1.f, 1.f);
+		      return(s_one); }
+
+	protected:
+
+		float m_value[3];
+	};
+	typedef Tuple3 Triple;
+	typedef Tuple3 Triplet;
 }
 
-void
-Viewport::Finalize(void)
-{
-	MMINFO1("Dummy viewport finalized");
-}
+MARSHMALLOW_NAMESPACE_END
 
-bool
-Viewport::Redisplay(int w, int h, int d, bool f)
-{
-	UNUSED(w);
-	UNUSED(h);
-	UNUSED(d);
-	UNUSED(f);
-	MMINFO("Dummy viewport redisplayed using a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
-	return(true);
-}
-
-void
-Viewport::Tick(TIME t)
-{
-	UNUSED(t);
-}
-
-void
-Viewport::SwapBuffer(void)
-{
-}
-
-const Math::Triplet
-Viewport::Camera(void)
-{
-	return(Math::Triplet(0.f, 0.f, 1.f));
-}
-
-void
-Viewport::MoveCamera(const Math::Triplet &)
-{
-}
-
-const float *
-Viewport::VisibleArea(void)
-{
-	static float s_visible[4] = {-DEFAULT_VIEWPORT_VWIDTH / 2,  DEFAULT_VIEWPORT_VHEIGHT / 2,
-	                              DEFAULT_VIEWPORT_VWIDTH / 2, -DEFAULT_VIEWPORT_VHEIGHT / 2};
-	return(s_visible);
-}
-
-const Math::Size2f
-Viewport::Size(void)
-{
-	return(Math::Size2f(DEFAULT_VIEWPORT_VWIDTH, DEFAULT_VIEWPORT_VHEIGHT));
-}
-
-const Math::Size2i
-Viewport::WindowSize(void)
-{
-	return(Math::Size2i(DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT));
-}
-
-float
-Viewport::MapToWorld(int x)
-{
-	return(static_cast<float>(x));
-}
-
-int
-Viewport::MapFromWorld(float x)
-{
-	return(static_cast<int>(floor(x)));
-}
-
-const Core::Type &
-Viewport::Type(void)
-{
-	return(sType);
-}
-
+#endif
