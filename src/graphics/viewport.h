@@ -73,7 +73,7 @@ namespace Graphics
 		static const Math::Vector3 Camera(void);
 		static void SetCamera(const Math::Vector3 &camera);
 
-		static void VisibleArea(float *left, float *top, float *right, float *bottom);
+		static const float * VisibleArea(void);
 
 		static const Math::Size2f Size(void);
 		static const Math::Size2i WindowSize(void);

@@ -68,7 +68,7 @@ namespace Graphics
 		static void Initialize(void);
 		static void Finalize(void);
 
-		static void Draw(const IMesh &graphic, const Math::Point2 &origin);
+		static void Draw(const IMesh &mesh, const Math::Point2 &origin);
 		static void Blend(BlendTypes blend);
 
 		struct Internal;

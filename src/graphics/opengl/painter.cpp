@@ -38,12 +38,15 @@
 
 #include "core/logger.h"
 #include "core/type.h"
+
 #include "math/point2.h"
+
 #include "graphics/opengl/extensions/vbo.h"
 #include "graphics/opengl/texturecoordinatedata.h"
 #include "graphics/opengl/texturedata.h"
 #include "graphics/opengl/vertexdata.h"
 #include "graphics/quadmesh.h"
+#include "graphics/viewport.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -106,6 +109,31 @@ struct Painter::Internal
 
 	}
 
+	bool
+	isMeshVisible(const IMesh &m, const Math::Point2 &o)
+	{
+		/*
+		 * get visible coordinates (l,t,r,b)
+		 */
+		const float *l_visible = Graphics::Viewport::VisibleArea();
+		float l_width, l_height;
+
+		if (QuadMesh::Type() == m.type()) {
+			const Math::Vector2 &l_tl = m.vertex(0 /* top-left */ );
+			const Math::Vector2 &l_br = m.vertex(3 /* bottom-right */);
+
+			l_width = l_br.x() - l_tl.x();
+			l_height = l_tl.y() - l_br.y();
+		}
+		else {
+			MMWARNING1("Unknown mesh type, ignoring width/height");
+			l_width = l_height = 0;
+		}
+
+		return (o.x() >= l_visible[0] - l_width  && o.x() <= l_visible[2] + l_width
+		     && o.y() <= l_visible[1] + l_height && o.y() >= l_visible[3] - l_height);
+	}
+
 } MGP;
 
 void
@@ -119,12 +147,15 @@ Painter::Finalize(void)
 }
 
 void
-Painter::Draw(const IMesh &g, const Math::Point2 &o)
+Painter::Draw(const IMesh &m, const Math::Point2 &o)
 {
-	const float l_rotate_angle = g.rotation();
+	if (!MGP.isMeshVisible(m, o))
+		return;
+
+	const float l_rotate_angle = m.rotation();
 
 	float l_scale[2];
-	g.scale(l_scale[0], l_scale[1]);
+	m.scale(l_scale[0], l_scale[1]);
 
 	glPushMatrix();
 	glLoadIdentity();
@@ -134,15 +165,15 @@ Painter::Draw(const IMesh &g, const Math::Point2 &o)
 	Blend(AlphaBlending);
 
 	/* set color */
-	const Graphics::Color &l_color = g.color();
+	const Graphics::Color &l_color = m.color();
 	glColor4f(l_color[0], l_color[1], l_color[2], l_color[3]);
 
 	/* set texture */
-	if (MGP.last_texture_id != g.textureData()->id()) {
-		MGP.last_texture_id = g.textureData()->id();
-		if (g.textureData()->isLoaded()) {
+	if (MGP.last_texture_id != m.textureData()->id()) {
+		MGP.last_texture_id = m.textureData()->id();
+		if (m.textureData()->isLoaded()) {
 			OpenGL::SharedTextureData l_data =
-				g.textureData()
+				m.textureData()
 				    .staticCast<OpenGL::TextureData>();
 			glBindTexture(GL_TEXTURE_2D, l_data->textureId());
 		} else glBindTexture(GL_TEXTURE_2D, 0);
@@ -157,8 +188,8 @@ Painter::Draw(const IMesh &g, const Math::Point2 &o)
 		glScalef(l_scale[0], l_scale[1], 1);
 
 	/* actually draw graphic */
-	if (g.type() == QuadMesh::Type())
-		MGP.drawQuadMesh(static_cast<const QuadMesh &>(g));
+	if (QuadMesh::Type() == m.type())
+		MGP.drawQuadMesh(static_cast<const QuadMesh &>(m));
 	else MMWARNING1("Unknown mesh type");
 
 	Blend(NoBlending);

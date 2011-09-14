@@ -36,11 +36,12 @@
 
 #include <cassert>
 
+#include "math/point2.h"
+
 #include "graphics/factory.h"
 #include "graphics/painter.h"
 #include "graphics/quadmesh.h"
 #include "graphics/viewport.h"
-#include "math/point2.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
@@ -144,12 +145,6 @@ TilemapSceneLayer::render(void)
 
 	Graphics::Color l_color(1.f, 1.f, 1.f, m_opacity);
 
-	/* get visible coordinates (l,t,r,b) */
-	float l_visible[4];
-	Graphics::Viewport::VisibleArea(&l_visible[0], &l_visible[1], &l_visible[2], &l_visible[3]);
-	l_visible[0] -= m_rtile_size.rwidth();
-	l_visible[3] -= m_rtile_size.rheight();
-
 	for (int l_r = 0; l_r < m_size.rheight(); ++l_r) {
 		const int l_roffset = l_r * m_size.rwidth();
 
@@ -182,9 +177,7 @@ TilemapSceneLayer::render(void)
 				/* offset to bottom of tile (we draw up) */
 				l_y -= m_rtile_size.rheight();
 
-				if ((l_x >= l_visible[0] && l_x <= l_visible[2])
-				 && (l_y <= l_visible[1] && l_y >= l_visible[3]))
-					Graphics::Painter::Draw(l_mesh, Math::Point2(l_x, l_y));
+				Graphics::Painter::Draw(l_mesh, Math::Point2(l_x, l_y));
 			}
 		}
 	}

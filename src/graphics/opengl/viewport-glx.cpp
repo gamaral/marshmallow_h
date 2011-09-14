@@ -641,13 +641,10 @@ Viewport::SetCamera(const Math::Vector3 &c)
 	MVI.adjustView();
 }
 
-void
-Viewport::VisibleArea(float *l, float *t, float *r, float *b)
+const float *
+Viewport::VisibleArea(void)
 {
-	if (l) *l = MVI.visible[0];
-	if (t) *t = MVI.visible[1];
-	if (r) *r = MVI.visible[2];
-	if (b) *b = MVI.visible[3];
+	return(MVI.visible);
 }
 
 const Math::Size2f

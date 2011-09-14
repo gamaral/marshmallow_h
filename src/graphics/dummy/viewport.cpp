@@ -95,13 +95,12 @@ Viewport::SetCamera(const Math::Vector3 &)
 {
 }
 
-void
-Viewport::VisibleArea(float *l, float *t, float *r, float *b)
+const float *
+Viewport::VisibleArea(void)
 {
-	if (l) *l = - DEFAULT_VIEWPORT_VWIDTH  / 2;
-	if (t) *t =   DEFAULT_VIEWPORT_VHEIGHT / 2;
-	if (r) *r =   DEFAULT_VIEWPORT_VWIDTH  / 2;
-	if (b) *b = - DEFAULT_VIEWPORT_VHEIGHT / 2;
+	static float s_visible[4] = {-DEFAULT_VIEWPORT_VWIDTH / 2,  DEFAULT_VIEWPORT_VHEIGHT / 2,
+	                              DEFAULT_VIEWPORT_VWIDTH / 2, -DEFAULT_VIEWPORT_VHEIGHT / 2};
+	return(s_visible);
 }
 
 const Math::Size2f
