@@ -144,6 +144,12 @@ TilemapSceneLayer::render(void)
 
 	Graphics::Color l_color(1.f, 1.f, 1.f, m_opacity);
 
+	/* get visible coordinates (l,t,r,b) */
+	float l_visible[4];
+	Graphics::Viewport::VisibleArea(&l_visible[0], &l_visible[1], &l_visible[2], &l_visible[3]);
+	l_visible[0] -= m_rtile_size.rwidth();
+	l_visible[3] -= m_rtile_size.rheight();
+
 	for (int l_r = 0; l_r < m_size.rheight(); ++l_r) {
 		const int l_roffset = l_r * m_size.rwidth();
 
@@ -169,12 +175,16 @@ TilemapSceneLayer::render(void)
 				float l_x = static_cast<float>(l_c) * m_rtile_size.rwidth();
 				float l_y = static_cast<float>(m_size.rheight() - l_r) * m_rtile_size.rheight();
 
-				/* offset */
+				/* offset to center of viewport */
 				l_x -= m_hrsize.rwidth();
 				l_y -= m_hrsize.rheight();
+
+				/* offset to bottom of tile (we draw up) */
 				l_y -= m_rtile_size.rheight();
 
-				Graphics::Painter::Draw(l_mesh, Math::Point2(l_x, l_y));
+				if ((l_x >= l_visible[0] && l_x <= l_visible[2])
+				 && (l_y <= l_visible[1] && l_y >= l_visible[3]))
+					Graphics::Painter::Draw(l_mesh, Math::Point2(l_x, l_y));
 			}
 		}
 	}

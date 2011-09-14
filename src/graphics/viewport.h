@@ -38,8 +38,11 @@
 #define GRAPHICS_VIEWPORT_H 1
 
 #include "core/type.h"
+
 #include "math/size2.h"
+#include "math/vector2.h"
 #include "math/vector3.h"
+
 #include "graphics/config.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -69,6 +72,8 @@ namespace Graphics
 
 		static const Math::Vector3 Camera(void);
 		static void SetCamera(const Math::Vector3 &camera);
+
+		static void VisibleArea(float *left, float *top, float *right, float *bottom);
 
 		static const Math::Size2f Size(void);
 		static const Math::Size2i WindowSize(void);

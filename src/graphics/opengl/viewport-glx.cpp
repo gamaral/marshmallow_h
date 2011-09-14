@@ -95,6 +95,7 @@ struct Viewport::Internal
 	float       camera[3];
 	float       size[2];
 	float       vscale;
+	float       visible[4];
 	bool        fullscreen;
 	bool        loaded;
 	bool        vbo_supported;
@@ -115,6 +116,8 @@ struct Viewport::Internal
 
 		camera[0] = camera[1] = 0.f;  // camera x y
 		camera[2] = 1.f;              // camera zoom
+
+		visible[0] = visible[1] = visible[2] = visible[3] = 0.f;
 
 		size[0] = size[1] = 0.f;
 	}
@@ -405,7 +408,13 @@ struct Viewport::Internal
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(-l_hw + camera[0], l_hw + camera[0], -l_hh + camera[1], l_hh + camera[1], -1.f, 1.f);
+
+		visible[0] = -l_hw + camera[0];
+		visible[1] =  l_hh + camera[1];
+		visible[2] =  l_hw + camera[0];
+		visible[3] = -l_hh + camera[1];
+
+		glOrtho(visible[0], visible[2], visible[3], visible[1], -1.f, 1.f);
 		glMatrixMode(GL_MODELVIEW);
 	}
 
@@ -630,6 +639,15 @@ Viewport::SetCamera(const Math::Vector3 &c)
 	MVI.camera[2] = c[2];
 
 	MVI.adjustView();
+}
+
+void
+Viewport::VisibleArea(float *l, float *t, float *r, float *b)
+{
+	if (l) *l = MVI.visible[0];
+	if (t) *t = MVI.visible[1];
+	if (r) *r = MVI.visible[2];
+	if (b) *b = MVI.visible[3];
 }
 
 const Math::Size2f
