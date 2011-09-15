@@ -42,7 +42,7 @@
 #define NO_ASSIGN(x) x& operator=(const x&)
 
 #define MMIGNORE (void)
-#define MMUNUSED(x) (void)x
+#define MMUNUSED(x) static_cast<void>(x)
 #define MMMIN(x,y) (x < y ? x : y)
 #define MMMAX(x,y) (x > y ? x : y)
 

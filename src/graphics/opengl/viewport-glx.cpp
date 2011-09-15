@@ -34,12 +34,12 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <GL/gl.h>
-#include <GL/glx.h>
 #include <X11/X.h>
 #include <X11/XKBlib.h>
 #define XMD_H
 #include <X11/extensions/xf86vmode.h>
+#include <GL/gl.h>
+#include <GL/glx.h>
 
 #include <EASTL/list.h>
 
@@ -54,82 +54,292 @@
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
-using namespace OpenGL;
+using namespace Graphics::OpenGL;
 
-const Core::Type Viewport::sType("GLX");
+/******************************************************************************/
 
-namespace {
-
-bool
-isExtensionSupported(const char *list, const char *extension)
+namespace
 {
-	assert(list && extension
-	    && 0 == strchr(extension, ' ')
-	    && "Invalid list and/or extension");
+	struct ViewportData {
+		XF86VidModeModeInfo dvminfo;
+		Window        window;
+		Display      *display;
+		Math::Size2i  wsize;
+		int           screen;
+		GLXContext    context;
+		Atom          wm_delete;
+		Math::Triplet camera;
+		Math::Size2f  size;
+		Math::Point2  visible[2];
+		bool          fullscreen;
+		bool          loaded;
+		bool          vbo_supported;
+	} s_data;
 
-	const char *start = list;
-	const char *where, *terminator;
+	bool CheckVBOSupport(void);
+	void UpdateViewport(void);
+	void HandleKeyEvent(XKeyEvent &key);
 
-	while ((where = strstr( start, extension ))) {
-		terminator = where + strlen( extension );
-
-		if ((where == start || *(where - 1) == ' ')
-		    && (*terminator == ' ' || *terminator == '\0'))
-			return(true);
+	void InitializeViewport(void)
+	{
+		s_data.camera[0] = s_data.camera[1] = .0f; // camera x y
+		s_data.camera[2] = 1.f;                    // camera zoom
+		s_data.context = 0;
+		s_data.display = 0;
+		s_data.fullscreen = false;
+		s_data.loaded = false;
+		s_data.screen = 0;
+		s_data.size.zero();
+		s_data.vbo_supported = false;
+		s_data.visible[0] = s_data.visible[1] = Math::Point2::Zero();
+		s_data.window = 0;
+		s_data.wm_delete = 0;
+		s_data.wsize[0] = s_data.wsize[1] = 0;
 	}
 
-	return(false);
-}
-
-} // namespace
-
-struct Viewport::Internal
-{
-	XF86VidModeModeInfo dvminfo;
-	Window      window;
-	Display    *display;
-	int         wsize[2];
-	int         screen;
-	GLXContext  context;
-	Atom        wm_delete;
-	float       camera[3];
-	float       size[2];
-	float       vscale;
-	float       visible[4];
-	bool        fullscreen;
-	bool        loaded;
-	bool        vbo_supported;
-
-	Internal(void)
-	    : dvminfo(),
-	      window(0),
-	      display(0),
-	      screen(0),
-	      context(0),
-	      wm_delete(0),
-	      vscale(1),
-	      fullscreen(false),
-	      loaded(false),
-	      vbo_supported(false)
+	bool
+	CreateWindow(int w, int h, int d, bool f)
 	{
-		wsize[0] = wsize[1] = 0;
+		s_data.context   = 0;
+		s_data.display   = 0;
+		s_data.loaded    = false;
+		s_data.screen    = 0;
+		s_data.window    = 0;
+		s_data.wm_delete = 0;
 
-		camera[0] = camera[1] = .0f;  // camera x y
-		camera[2] = 1.f;              // camera zoom
+		s_data.fullscreen = f;
+		s_data.wsize[0] = w;
+		s_data.wsize[1] = h;
 
-		visible[0] = visible[1] = visible[2] = visible[3] = .0f;
+		/* open display */
+		if (!(s_data.display = XOpenDisplay(0))) {
+			MMERROR1("Unable to open X Display.");
+			return(false);
+		}
 
-		size[0] = size[1] = .0f;
+		/* get visual info */
+		GLint gattr[] = {GLX_RGBA, GLX_DEPTH_SIZE, d, GLX_DOUBLEBUFFER, None};
+		XVisualInfo *l_vinfo;
+		if(!(l_vinfo = glXChooseVisual(s_data.display, 0, gattr))) {
+			MMERROR1("Unable to choose X Visual Info.");
+			return(false);
+		}
+		s_data.screen = l_vinfo->screen;
+
+		/* get root window */
+		Window l_rwindow = RootWindow(s_data.display, s_data.screen);
+		
+		/* window attributes */
+		XSetWindowAttributes l_swattr;
+		l_swattr.colormap =
+		    XCreateColormap(s_data.display, l_rwindow, l_vinfo->visual, AllocNone);
+		l_swattr.background_pixel =
+		    BlackPixel(s_data.display, s_data.screen);
+		l_swattr.border_pixel =
+		    BlackPixel(s_data.display, s_data.screen);
+		l_swattr.event_mask =
+			ButtonPressMask |
+			ButtonReleaseMask |
+			KeyPressMask |
+			KeyReleaseMask |
+			PointerMotionMask |
+			StructureNotifyMask;
+
+		/* create window */
+		if (s_data.fullscreen) {
+			/* get display modes */
+			XF86VidModeModeLine l_cmline;
+			int l_cdotclock;
+			XF86VidModeModeInfo **l_modes;
+			int l_mode_count;
+			int l_mode_selected = -1;
+
+			XF86VidModeGetModeLine(s_data.display, s_data.screen, &l_cdotclock, &l_cmline);
+			XF86VidModeGetAllModeLines(s_data.display, s_data.screen, &l_mode_count, &l_modes);
+			s_data.dvminfo.dotclock = 0;
+			for (int i = 0; i < l_mode_count; ++i) {
+				MMINFO("Display mode %dx%d [%d]",
+				    l_modes[i]->hdisplay,
+				    l_modes[i]->vdisplay, i);
+
+				if (!s_data.dvminfo.dotclock &&
+				    l_modes[i]->hdisplay == l_cmline.hdisplay &&
+				    l_modes[i]->vdisplay == l_cmline.vdisplay &&
+				    static_cast<int>(l_modes[i]->dotclock) == l_cdotclock) {
+					MMINFO1("Found current display mode");
+					s_data.dvminfo = *l_modes[i];
+				}
+				if (l_mode_selected == -1 &&
+				    l_modes[i]->hdisplay == w &&
+				    l_modes[i]->vdisplay == h) {
+					MMINFO1("Found appropriate display mode");
+					l_mode_selected = i;
+				}
+			}
+
+			if (l_mode_selected == -1) {
+				MMERROR1("Unable to find a suitable display mode.");
+				return(false);
+			}
+
+			XF86VidModeSwitchToMode(s_data.display, s_data.screen, l_modes[l_mode_selected]);
+			XF86VidModeSetViewPort(s_data.display, s_data.screen, 0, 0);
+			XFree(l_modes);
+
+			/* allow display to settle after vidmode switch */
+			XSync(s_data.display, False);
+			sleep(2);
+
+			/* create a fullscreen window */
+			l_swattr.override_redirect = true;
+			s_data.window = XCreateWindow
+			   (s_data.display,
+			    l_rwindow,
+			    0, 0, w, h, 0,
+			    d,
+			    InputOutput,
+			    l_vinfo->visual,
+			    CWBackPixel|CWBorderPixel|CWColormap|
+			    CWEventMask|CWOverrideRedirect,
+			    &l_swattr);
+			XMapRaised(s_data.display, s_data.window);
+			XWarpPointer(s_data.display, None, s_data.window, 0, 0, 0, 0, 0, 0);
+			XGrabKeyboard(s_data.display, s_data.window, true, GrabModeAsync,
+			    GrabModeAsync, CurrentTime);
+			XGrabPointer(s_data.display, s_data.window, true,
+			    ButtonPressMask, GrabModeAsync, GrabModeAsync,
+			    s_data.window, None, CurrentTime);
+
+		} else {
+			s_data.window = XCreateWindow
+			   (s_data.display,
+			    l_rwindow,
+			    (DisplayWidth(s_data.display, s_data.screen) - w) / 2,
+			    (DisplayHeight(s_data.display, s_data.screen) - h) / 2,
+			    w, h,
+			    1,
+			    d,
+			    InputOutput,
+			    l_vinfo->visual,
+			    CWBackPixel|CWBorderPixel|CWColormap|CWEventMask,
+			    &l_swattr);
+			XMapRaised(s_data.display, s_data.window);
+
+			/* set size hints */
+			XSizeHints *l_size_hints;
+			if(!(l_size_hints = XAllocSizeHints())) {
+				MMERROR1("Unable to allocate window size hints.");
+				return(false);
+			}
+			l_size_hints->flags = PMinSize|PMaxSize;
+			l_size_hints->min_width = w;
+			l_size_hints->min_height = h;
+			l_size_hints->max_width = w;
+			l_size_hints->max_height = h;
+			XSetWMNormalHints(s_data.display, s_data.window, l_size_hints);
+			XFree(l_size_hints);
+		}
+		XkbSetDetectableAutoRepeat(s_data.display, true, 0);
+
+		/* catch window manager delete event */
+		s_data.wm_delete = XInternAtom(s_data.display, "WM_DELETE_WINDOW", false);
+		XSetWMProtocols(s_data.display, s_data.window, &s_data.wm_delete, 1);
+
+		/* create context */
+		if (!(s_data.context = glXCreateContext(s_data.display, l_vinfo, 0, GL_TRUE))) {
+			MMERROR1("Failed to create context!");
+			return(false);
+		}
+
+		if (!glXMakeCurrent(s_data.display, s_data.window, s_data.context)) {
+			MMERROR1("Failed to make context current!");
+			return(false);
+		}
+
+		if (!glXIsDirect(s_data.display, s_data.context)) {
+			MMERROR1("GLX context doesn't support direct rendering.");
+			return(false);
+		}
+
+		/* check extensions */
+
+		s_data.vbo_supported = CheckVBOSupport();
+
+		/* set defaults */
+
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_BLEND);
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_TEXTURE_2D);
+
+		/* initialize context */
+
+		glViewport(0, 0, w, h);
+		glClearColor(.0f, .0f, .0f, .0f);
+		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		UpdateViewport();
+		Viewport::SwapBuffer();
+
+		if(glGetError() != GL_NO_ERROR) {
+			MMERROR1("GLX failed during initialization.");
+			return(false);
+		}
+
+		return(s_data.loaded = true);
 	}
 
 	void
-	checkVertexBufferObject(void)
+	DestroyWindow(void)
+	{
+		if (s_data.display) {
+			glXMakeCurrent(s_data.display, None, 0);
+			if (s_data.context) glXDestroyContext(s_data.display, s_data.context);
+			if (s_data.fullscreen) {
+				XF86VidModeSwitchToMode(s_data.display, s_data.screen, &s_data.dvminfo);
+				XF86VidModeSetViewPort(s_data.display, s_data.screen, 0, 0);
+			}
+			if (s_data.window) XDestroyWindow(s_data.display, s_data.window);
+			XCloseDisplay(s_data.display);
+		}
+
+		s_data.context = 0;
+		s_data.display = 0;
+		s_data.loaded = false;
+		s_data.screen = 0;
+		s_data.window = 0;
+		s_data.wm_delete = 0;
+	}
+
+	bool
+	IsExtensionSupported(const char *list, const char *extension)
+	{
+		assert(list && extension
+		    && 0 == strchr(extension, ' ')
+		    && "Invalid list and/or extension");
+
+		const char *start = list;
+		const char *where, *terminator;
+
+		while ((where = strstr( start, extension ))) {
+			terminator = where + strlen( extension );
+
+			if ((where == start || *(where - 1) == ' ')
+			    && (*terminator == ' ' || *terminator == '\0'))
+				return(true);
+		}
+
+		return(false);
+	}
+
+	bool
+	CheckVBOSupport(void)
 	{
 		HasVectorBufferObjectSupport = false;
 
-		if (!isExtensionSupported
+		if (!IsExtensionSupported
 		    (reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)), "GL_ARB_vertex_buffer_object"))
-			return;
+			return(false);
 
 		glGenBuffersARB =
 		    reinterpret_cast<PFNGLGENBUFFERSARBPROC>
@@ -156,270 +366,56 @@ struct Viewport::Internal
 		    reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>
 		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glUnmapBufferARB")));
 
-		if (glGenBuffersARB &&
-		    glBindBufferARB &&
-		    glBufferDataARB &&
-		    glBufferSubDataARB &&
-		    glDeleteBuffersARB &&
-		    glGetBufferParameterivARB &&
-		    glMapBufferARB &&
-		    glUnmapBufferARB) {
+		if (glGenBuffersARB
+		 && glBindBufferARB
+		 && glBufferDataARB
+		 && glBufferSubDataARB
+		 && glDeleteBuffersARB
+		 && glGetBufferParameterivARB
+		 && glMapBufferARB
+		 && glUnmapBufferARB) {
 			HasVectorBufferObjectSupport = true;
-			return;
+			return(true);
 		}
 
 		/* clean up */
-		glGenBuffersARB = 0;
-		glBindBufferARB = 0;
-		glBufferDataARB = 0;
+		glBindBufferARB    = 0;
+		glBufferDataARB    = 0;
 		glBufferSubDataARB = 0;
 		glDeleteBuffersARB = 0;
+		glGenBuffersARB    = 0;
 		glGetBufferParameterivARB = 0;
-		glMapBufferARB = 0;
-		glUnmapBufferARB = 0;
-	}
-
-	bool
-	createXWindow(int w, int h, int d, bool f)
-	{
-		context = 0;
-		display = 0;
-		loaded = false;
-		screen = 0;
-		vbo_supported = false;
-		window = 0;
-		wm_delete = 0;
-
-		fullscreen = f;
-		wsize[0] = w;
-		wsize[1] = h;
-
-		/* open display */
-		if (!(display = XOpenDisplay(0))) {
-			MMERROR1("Unable to open X Display.");
-			destroyXWindow();
-			return(false);
-		}
-
-		/* get visual info */
-		GLint gattr[] = {GLX_RGBA, GLX_DEPTH_SIZE, d, GLX_DOUBLEBUFFER, None};
-		XVisualInfo *l_vinfo;
-		if(!(l_vinfo = glXChooseVisual(display, 0, gattr))) {
-			MMERROR1("Unable to choose X Visual Info.");
-			destroyXWindow();
-			return(false);
-		}
-		screen = l_vinfo->screen;
-
-		/* get root window */
-		Window rwindow = RootWindow(display, screen);
-		
-		/* window attributes */
-		XSetWindowAttributes l_swattr;
-		l_swattr.colormap = XCreateColormap(display, rwindow, l_vinfo->visual, AllocNone);
-		l_swattr.background_pixel = BlackPixel(display, screen);
-		l_swattr.border_pixel = BlackPixel(display, screen);
-		l_swattr.event_mask =
-			ButtonPressMask |
-			ButtonReleaseMask |
-			KeyPressMask |
-			KeyReleaseMask |
-			PointerMotionMask |
-			StructureNotifyMask;
-
-		/* create window */
-		if (fullscreen) {
-			/* get display modes */
-			XF86VidModeModeLine l_cmline;
-			int l_cdotclock;
-			XF86VidModeModeInfo **l_modes;
-			int l_mode_count;
-			int l_mode_selected = -1;
-
-			XF86VidModeGetModeLine(display, screen, &l_cdotclock, &l_cmline);
-			XF86VidModeGetAllModeLines(display, screen, &l_mode_count, &l_modes);
-			dvminfo.dotclock = 0;
-			for (int i = 0; i < l_mode_count; ++i) {
-				MMINFO("Display mode %dx%d [%d]",
-				    l_modes[i]->hdisplay,
-				    l_modes[i]->vdisplay, i);
-
-				if (!dvminfo.dotclock &&
-				    l_modes[i]->hdisplay == l_cmline.hdisplay &&
-				    l_modes[i]->vdisplay == l_cmline.vdisplay &&
-				    static_cast<int>(l_modes[i]->dotclock) == l_cdotclock) {
-					MMINFO1("Found current display mode");
-					dvminfo = *l_modes[i];
-				}
-				if (l_mode_selected == -1 &&
-				    l_modes[i]->hdisplay == w &&
-				    l_modes[i]->vdisplay == h) {
-					MMINFO1("Found appropriate display mode");
-					l_mode_selected = i;
-				}
-			}
-
-			if (l_mode_selected == -1) {
-				MMERROR1("Unable to find a suitable display mode.");
-				destroyXWindow();
-				return(false);
-			}
-
-			XF86VidModeSwitchToMode(display, screen, l_modes[l_mode_selected]);
-			XF86VidModeSetViewPort(display, screen, 0, 0);
-			XFree(l_modes);
-
-			/* allow display to settle after vidmode switch */
-			XSync(display, False);
-			sleep(2);
-
-			/* create a fullscreen window */
-			l_swattr.override_redirect = true;
-			window = XCreateWindow
-			   (display,
-			    rwindow,
-			    0, 0, w, h, 0,
-			    d,
-			    InputOutput,
-			    l_vinfo->visual,
-			    CWBackPixel|CWBorderPixel|CWColormap|
-			    CWEventMask|CWOverrideRedirect,
-			    &l_swattr);
-			XMapRaised(display, window);
-			XWarpPointer(display, None, window, 0, 0, 0, 0, 0, 0);
-			XGrabKeyboard(display, window, true, GrabModeAsync,
-			    GrabModeAsync, CurrentTime);
-			XGrabPointer(display, window, true,
-			    ButtonPressMask, GrabModeAsync, GrabModeAsync,
-			    window, None, CurrentTime);
-
-		} else {
-			window = XCreateWindow
-			   (display,
-			    rwindow,
-			    (DisplayWidth(display, screen) - w) / 2,
-			    (DisplayHeight(display, screen) - h) / 2,
-			    w, h,
-			    1,
-			    d,
-			    InputOutput,
-			    l_vinfo->visual,
-			    CWBackPixel|CWBorderPixel|CWColormap|CWEventMask,
-			    &l_swattr);
-			XMapRaised(display, window);
-
-			/* set size hints */
-			XSizeHints *l_size_hints;
-			if(!(l_size_hints = XAllocSizeHints())) {
-				MMERROR1("Unable to allocate window size hints.");
-				destroyXWindow();
-				return(false);
-			}
-			l_size_hints->flags = PMinSize|PMaxSize;
-			l_size_hints->min_width = w;
-			l_size_hints->min_height = h;
-			l_size_hints->max_width = w;
-			l_size_hints->max_height = h;
-			XSetWMNormalHints(display, window, l_size_hints);
-			XFree(l_size_hints);
-		}
-		XkbSetDetectableAutoRepeat(display, true, 0);
-
-		/* catch window manager delete event */
-		wm_delete = XInternAtom(display, "WM_DELETE_WINDOW", false);
-		XSetWMProtocols(display, window, &wm_delete, 1);
-
-		/* create context */
-		if (!(context = glXCreateContext(display, l_vinfo, 0, GL_TRUE))) {
-			MMERROR1("Failed to create context!");
-			destroyXWindow();
-			return(false);
-		}
-
-		if (!glXMakeCurrent(display, window, context)) {
-			MMERROR1("Failed to make context current!");
-			destroyXWindow();
-			return(false);
-		}
-
-		if (!glXIsDirect(display, context)) {
-			MMERROR1("GLX context doesn't support direct rendering.");
-			destroyXWindow();
-			return(false);
-		}
-
-		/* check extensions */
-		checkVertexBufferObject();
-
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_LIGHTING);
-		glDisable(GL_BLEND);
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_TEXTURE_2D);
-
-		/* initialize context */
-		glViewport(0, 0, w, h);
-		glClearColor(0., 0., 0., 0.);
-		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-		adjustView();
-		SwapBuffer();
-
-		if(glGetError() != GL_NO_ERROR) {
-			MMERROR1("GLX failed during initialization.");
-			destroyXWindow();
-			return(false);
-		}
-
-		return(loaded = true);
+		glMapBufferARB     = 0;
+		glUnmapBufferARB   = 0;
+		return(false);
 	}
 
 	void
-	destroyXWindow(void)
+	UpdateViewport(void)
 	{
-		if (display) {
-			glXMakeCurrent(display, None, 0);
-			if (context) glXDestroyContext(display, context);
-			if (fullscreen) {
-				XF86VidModeSwitchToMode(display, screen, &dvminfo);
-				XF86VidModeSetViewPort(display, screen, 0, 0);
-			}
-			if (window) XDestroyWindow(display, window);
-			XCloseDisplay(display);
-		}
+		s_data.size[0] = DEFAULT_VIEWPORT_VWIDTH * s_data.camera[2];
+		s_data.size[1] = DEFAULT_VIEWPORT_VHEIGHT * s_data.camera[2];
 
-		context = 0;
-		display = 0;
-		loaded = false;
-		screen = 0;
-		vbo_supported = false;
-		window = 0;
-		wm_delete = 0;
-	}
+		const float l_hw = s_data.size[0] / 2.f;
+		const float l_hh = s_data.size[1] / 2.f;
 
-	void
-	adjustView(void)
-	{
-		size[0] = DEFAULT_VIEWPORT_VWIDTH * camera[2];
-		size[1] = DEFAULT_VIEWPORT_VHEIGHT * camera[2];
-		vscale = static_cast<float>(wsize[0]) / size[0];
+		/* update visible area */
+		s_data.visible[0][0] = -l_hw + s_data.camera[0];
+		s_data.visible[0][1] =  l_hh + s_data.camera[1];
+		s_data.visible[1][0] =  l_hw + s_data.camera[0];
+		s_data.visible[1][1] = -l_hh + s_data.camera[1];
 
-		const float l_hw = size[0] / 2.f;
-		const float l_hh = size[1] / 2.f;
+		/* update projection */
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-
-		visible[0] = -l_hw + camera[0];
-		visible[1] =  l_hh + camera[1];
-		visible[2] =  l_hw + camera[0];
-		visible[3] = -l_hh + camera[1];
-
-		glOrtho(visible[0], visible[2], visible[3], visible[1], -1.f, 1.f);
+		glOrtho(s_data.visible[0].x(), s_data.visible[1].x(),
+		        s_data.visible[1].y(), s_data.visible[0].y(), -1.f, 1.f);
 		glMatrixMode(GL_MODELVIEW);
 	}
 
 	void
-	handleKeyEvent(XKeyEvent &key)
+	HandleKeyEvent(XKeyEvent &key)
 	{
 		typedef eastl::list<Event::KBKeys> KeyList;
 		static KeyList s_keys_pressed;
@@ -545,7 +541,7 @@ struct Viewport::Internal
 				break;
 			}
 		
-		if ((l_key_pressed  && l_action != Event::KeyPressed)
+		if (( l_key_pressed && l_action != Event::KeyPressed)
 		 || (!l_key_pressed && l_action == Event::KeyPressed)) {
 			Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
 			Event::EventManager::Instance()->queue(event);
@@ -554,31 +550,41 @@ struct Viewport::Internal
 			else s_keys_pressed.push_front(l_key);
 		}
 	}
+} // namespace
 
-} MVI;
+/******************************************************************************/
 
 bool
 Viewport::Initialize(int w, int h, int d, bool f)
 {
-	bool l_success = MVI.createXWindow(w, h, d, f);
+	InitializeViewport();
 
-	if (l_success) Painter::Initialize();
+	if (!CreateWindow(w, h, d, f)) {
+		DestroyWindow();
+		return(false);
+	}
 
-	return(l_success);
+	Painter::Initialize();
+	return(true);
 }
 
 void
 Viewport::Finalize(void)
 {
 	Painter::Finalize();
-	MVI.destroyXWindow();
+	DestroyWindow();
 }
 
 bool
 Viewport::Redisplay(int w, int h, int d, bool f)
 {
-	MVI.destroyXWindow();
-	return(MVI.createXWindow(w, h, d, f));
+	DestroyWindow();
+
+	if(!CreateWindow(w, h, d, f)) {
+		DestroyWindow();
+		return(false);
+	}
+	return(true);
 }
 
 void
@@ -587,20 +593,20 @@ Viewport::Tick(TIME t)
 	TIMEOUT_INIT;
 	XEvent e;
 
-	while(TIMEOUT_DEC(t) > 0 && XPending(MVI.display)) {
-		XNextEvent(MVI.display, &e);
+	while(TIMEOUT_DEC(t) > 0 && XPending(s_data.display)) {
+		XNextEvent(s_data.display, &e);
 
 		switch(e.type) {
 		case ClientMessage: {
 			XClientMessageEvent &client = e.xclient;
-			if (static_cast<Atom>(client.data.l[0]) == MVI.wm_delete) {
-				Event::QuitEvent event(-1);
-				Event::EventManager::Instance()->dispatch(event);
+			if (static_cast<Atom>(client.data.l[0]) == s_data.wm_delete) {
+				Event::QuitEvent l_event(-1);
+				Event::EventManager::Instance()->dispatch(l_event);
 			}
 		} break;
 
 		case KeyPress:
-		case KeyRelease: MVI.handleKeyEvent(e.xkey); break;
+		case KeyRelease: HandleKeyEvent(e.xkey); break;
 
 		case ButtonPress:
 		case ButtonRelease:
@@ -619,62 +625,50 @@ Viewport::Tick(TIME t)
 void
 Viewport::SwapBuffer(void)
 {
-	glXSwapBuffers(MVI.display, MVI.window);
+	glXSwapBuffers(s_data.display, s_data.window);
 	glClearColor(.0f, .0f, .0f, .0f);
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 }
 
-const Math::Triplet
+const Math::Triplet &
 Viewport::Camera(void)
 {
-	return(Math::Triplet(MVI.camera[0], MVI.camera[1], MVI.camera[2]));
+	return(s_data.camera);
 }
 
 void
 Viewport::MoveCamera(const Math::Triplet &c)
 {
-	MVI.camera[0] = c[0];
-	MVI.camera[1] = c[1];
-	MVI.camera[2] = c[2];
-
-	MVI.adjustView();
+	s_data.camera[0] = c[0];
+	s_data.camera[1] = c[1];
+	s_data.camera[2] = c[2];
+	UpdateViewport();
 }
 
-const float *
-Viewport::VisibleArea(void)
+void
+Viewport::VisibleArea(Math::Point2 *tl, Math::Point2 *br)
 {
-	return(MVI.visible);
+	if (tl) *tl = s_data.visible[0];
+	if (br) *br = s_data.visible[1];
 }
 
-const Math::Size2f
+const Math::Size2f &
 Viewport::Size(void)
 {
-	return(Math::Size2f(MVI.size[0], MVI.size[1]));
+	return(s_data.size);
 }
 
-const Math::Size2i
+const Math::Size2i &
 Viewport::WindowSize(void)
 {
-	return(Math::Size2i(MVI.wsize[0],
-	                    MVI.wsize[1]));
-}
-
-float
-Viewport::MapToWorld(int x)
-{
-	return(static_cast<float>(x) / MVI.vscale);
-}
-
-int
-Viewport::MapFromWorld(float x)
-{
-	return(static_cast<int>(floor(static_cast<float>(x) * MVI.vscale)));
+	return(s_data.wsize);
 }
 
 const Core::Type &
 Viewport::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("GLX");
+	return(s_type);
 }
 

@@ -49,20 +49,17 @@
 #include "graphics/viewport.h"
 
 MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics::OpenGL;
 using namespace Graphics;
-using namespace OpenGL;
 
-struct Painter::Internal
+/******************************************************************************/
+
+namespace
 {
-	Core::Identifier last_texture_id;
-
-	Internal(void)
-	    : last_texture_id()
-	{
-	}
+	static Core::Identifier s_last_texture_id;
 
 	void
-	drawQuadMesh(const QuadMesh &g)
+	DrawQuadMesh(const QuadMesh &g)
 	{
 		OpenGL::SharedVertexData l_vdata =
 			g.vertexData()
@@ -110,12 +107,13 @@ struct Painter::Internal
 	}
 
 	bool
-	isMeshVisible(const IMesh &m, const Math::Point2 &o)
+	IsMeshVisible(const IMesh &m, const Math::Point2 &o)
 	{
 		/*
-		 * get visible coordinates (l,t,r,b)
+		 * get visible coordinates
 		 */
-		const float *l_visible = Graphics::Viewport::VisibleArea();
+		Math::Point2 l_visible[2];
+		Graphics::Viewport::VisibleArea(&l_visible[0], &l_visible[1]);
 		float l_width, l_height;
 
 		if (QuadMesh::Type() == m.type()) {
@@ -130,11 +128,12 @@ struct Painter::Internal
 			l_width = l_height = 0;
 		}
 
-		return (o.x() >= l_visible[0] - l_width  && o.x() <= l_visible[2] + l_width
-		     && o.y() <= l_visible[1] + l_height && o.y() >= l_visible[3] - l_height);
+		return (o.x() >= l_visible[0].x() - l_width  && o.x() <= l_visible[1].x() + l_width
+		     && o.y() <= l_visible[0].y() + l_height && o.y() >= l_visible[1].y() - l_height);
 	}
+} // namespace
 
-} MGP;
+/******************************************************************************/
 
 void
 Painter::Initialize(void)
@@ -149,7 +148,7 @@ Painter::Finalize(void)
 void
 Painter::Draw(const IMesh &m, const Math::Point2 &o)
 {
-	if (!MGP.isMeshVisible(m, o))
+	if (!IsMeshVisible(m, o))
 		return;
 
 	const float l_rotate_angle = m.rotation();
@@ -169,8 +168,8 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 	glColor4f(l_color[0], l_color[1], l_color[2], l_color[3]);
 
 	/* set texture */
-	if (MGP.last_texture_id != m.textureData()->id()) {
-		MGP.last_texture_id = m.textureData()->id();
+	if (s_last_texture_id != m.textureData()->id()) {
+		s_last_texture_id = m.textureData()->id();
 		if (m.textureData()->isLoaded()) {
 			OpenGL::SharedTextureData l_data =
 				m.textureData()
@@ -189,7 +188,7 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 
 	/* actually draw graphic */
 	if (QuadMesh::Type() == m.type())
-		MGP.drawQuadMesh(static_cast<const QuadMesh &>(m));
+		DrawQuadMesh(static_cast<const QuadMesh &>(m));
 	else MMWARNING1("Unknown mesh type");
 
 	Blend(NoBlending);

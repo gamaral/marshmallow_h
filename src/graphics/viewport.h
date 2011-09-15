@@ -39,6 +39,7 @@
 
 #include "core/type.h"
 
+#include "math/point2.h"
 #include "math/size2.h"
 #include "math/triplet.h"
 
@@ -50,42 +51,47 @@ namespace Graphics
 {
 
 	/*! @brief Graphics Viewport Interface */
-	struct GRAPHICS_EXPORT Viewport
+	namespace Viewport
 	{
-		static const Core::Type & Type(void);
+		GRAPHICS_EXPORT
+		const Core::Type & Type(void);
 
-		static bool Initialize(int width = DEFAULT_VIEWPORT_WIDTH,
-		                      int height = DEFAULT_VIEWPORT_HEIGHT,
-		                       int depth = DEFAULT_VIEWPORT_DEPTH,
-		                 bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
-		static void Finalize(void);
+		GRAPHICS_EXPORT
+		bool Initialize(int width = DEFAULT_VIEWPORT_WIDTH,
+		               int height = DEFAULT_VIEWPORT_HEIGHT,
+		                int depth = DEFAULT_VIEWPORT_DEPTH,
+		          bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
 
-		static bool Redisplay(int width = DEFAULT_VIEWPORT_WIDTH,
-		                     int height = DEFAULT_VIEWPORT_HEIGHT,
-		                      int depth = DEFAULT_VIEWPORT_DEPTH,
-		                bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
+		GRAPHICS_EXPORT
+		void Finalize(void);
 
-		static void Tick(TIME timeout);
+		GRAPHICS_EXPORT
+		bool Redisplay(int width = DEFAULT_VIEWPORT_WIDTH,
+		              int height = DEFAULT_VIEWPORT_HEIGHT,
+		               int depth = DEFAULT_VIEWPORT_DEPTH,
+		         bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
 
-		static void SwapBuffer(void);
+		GRAPHICS_EXPORT
+		void Tick(TIME timeout);
 
-		static const Math::Triplet Camera(void);
-		static void MoveCamera(const Math::Triplet &camera);
+		GRAPHICS_EXPORT
+		void SwapBuffer(void);
 
-		static const float * VisibleArea(void);
+		GRAPHICS_EXPORT
+		const Math::Triplet & Camera(void);
 
-		static const Math::Size2f Size(void);
-		static const Math::Size2i WindowSize(void);
+		GRAPHICS_EXPORT
+		void MoveCamera(const Math::Triplet &camera);
 
-		static float MapToWorld(int x);
-		static int MapFromWorld(float x);
+		GRAPHICS_EXPORT
+		void VisibleArea(Math::Point2 *tl, Math::Point2 *br);
 
-	private: /* static */
+		GRAPHICS_EXPORT
+		const Math::Size2f & Size(void);
 
-		struct Internal;
-
-		static const Core::Type sType;
-	};
+		GRAPHICS_EXPORT
+		const Math::Size2i & WindowSize(void);
+	}
 
 }
 

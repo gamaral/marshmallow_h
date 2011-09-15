@@ -71,15 +71,15 @@ namespace Core
 		    { return(result()); }
 
 		/*! @brief Hashed String */
-		const Core::String &str(void) const
+		const Core::String & str(void) const
 		    { return(m_str); }
 
 	public: /* operator */
 
-		operator const Core::String &(void) const
+		operator const Core::String & (void) const
 		    { return(m_str); }
 
-		operator const char *(void) const
+		operator const char * (void) const
 		    { return(m_str.c_str()); }
 
 		Marshmallow::Core::StrHash & operator=(const Marshmallow::Core::StrHash &rhs);

@@ -44,90 +44,64 @@
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
 
+#include "graphics/opengl/extensions/vbo.h"
 #include "graphics/painter.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
+using namespace Graphics::OpenGL;
 
-const Core::Type Viewport::sType("WGL");
+/******************************************************************************/
 
-struct Viewport::Internal
+namespace
 {
-	HDC   dcontext;
-	HGLRC context;
-	HWND  window;
-	RECT  wrect;
-	float camera[3];
-	float size[2];
-	float vscale;
-	float visible[4];
-	bool  fullscreen;
-	bool  loaded;
+	struct ViewportData {
+		HDC           dcontext;
+		HGLRC         context;
+		HWND          window;
+		Math::Size2i  wsize;
+		Math::Triplet camera;
+		Math::Size2f  size;
+		Math::Point2  visible[2];
+		bool          fullscreen;
+		bool          loaded;
+		bool          vbo_supported;
+	} s_data;
 
-	Internal(void)
-	    : dcontext(0),
-	      context(0),
-	      window(0),
-	      vscale(1),
-	      loaded(false)
+	bool CheckVBOSupport(void);
+	void UpdateViewport(void);
+	void HandleKeyEvent(int keycode, bool down);
+	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	void InitializeViewport(void)
 	{
-		wrect.bottom = wrect.left = wrect.top = wrect.bottom = 0;
-
-		camera[0] = camera[1] = .0f;  // camera x y
-		camera[2] = 1.f;              // camera zoom
-
-		visible[0] = visible[1] = visible[2] = visible[3] = .0f;
-
-		size[0] = size[1] = .0f;
-	}
-
-	static LRESULT CALLBACK
-	WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-	{
-		switch (uMsg) {
-		case WM_CLOSE: {
-			Event::QuitEvent event(-1);
-			Event::EventManager::Instance()->dispatch(event);
-			return(0);
-		} break;
-
-		case WM_SIZE:
-			return(0);
-		break;
-
-		case WM_SYSCOMMAND:
-			switch (wParam) {
-			case SC_MONITORPOWER:
-			case SC_SCREENSAVE:
-				if (MVI.fullscreen)
-					return(0);
-			break;
-			}
-		break;
-
-		case WM_KEYDOWN:
-			MVI.handleKeyEvent( static_cast<int>(wParam), true );
-			break;
-		case WM_KEYUP:
-			MVI.handleKeyEvent( static_cast<int>(wParam), false );
-			break;
-		}
-
-		return(DefWindowProc(hwnd, uMsg, wParam, lParam));
+		s_data.camera[0] = s_data.camera[1] = .0f; // camera x y
+		s_data.camera[2] = 1.f;                    // camera zoom
+		s_data.dcontext = 0;
+		s_data.context = 0;
+		s_data.window = 0;
+		s_data.fullscreen = false;
+		s_data.loaded = false;
+		s_data.size.zero();
+		s_data.vbo_supported = false;
+		s_data.visible[0] = s_data.visible[1] = Math::Point2::Zero();
 	}
 
 	bool
-	createWindow(int w, int h, int d, bool f)
+	CreateWWindow(int w, int h, int d, bool f)
 	{
-		loaded = false;
-		fullscreen = f;
-		context = 0;
-		dcontext = 0;
-		window = 0;
+		s_data.context     = 0;
+		s_data.dcontext    = 0;
+		s_data.loaded      = false;
+		s_data.window      = 0;
+
+		s_data.fullscreen  = f;
+		s_data.wsize[0]    = w;
+		s_data.wsize[1]    = h;
 
 		WNDCLASS l_wc;
-		l_wc.style         = CS_HREDRAW|CS_VREDRAW|CS_OWNDC;
-		l_wc.lpfnWndProc   = (WNDPROC) WindowProc;
+		l_wc.style         = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+		l_wc.lpfnWndProc   = reinterpret_cast<WNDPROC>(WindowProc);
 		l_wc.cbClsExtra    = 0;
 		l_wc.cbWndExtra    = 0;
 		l_wc.hInstance     = GetModuleHandle(0);
@@ -142,7 +116,7 @@ struct Viewport::Internal
 			return false;
 		}
 	
-		if (fullscreen) {
+		if (s_data.fullscreen) {
 			DEVMODE l_dm;
 			memset(&l_dm, 0, sizeof(l_dm));
 
@@ -154,16 +128,16 @@ struct Viewport::Internal
 
 			if (ChangeDisplaySettings(&l_dm, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL) {
 				MMERROR("Failed to switch modes for fullscreen viewport");
-				fullscreen = false;
+				s_data.fullscreen = false;
 			} else {
 				ShowCursor(false);
 			}
 		}
 
 		DWORD l_wstyle[2];
-		l_wstyle[0] = WS_CLIPSIBLINGS|WS_CLIPCHILDREN;
+		l_wstyle[0] = WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 		l_wstyle[1] = WS_EX_APPWINDOW;
-		if (fullscreen) l_wstyle[0] |= WS_POPUP;
+		if (s_data.fullscreen) l_wstyle[0] |= WS_POPUP;
 		else {
 			l_wstyle[0] |= WS_OVERLAPPEDWINDOW;
 			l_wstyle[1] |= WS_EX_WINDOWEDGE;
@@ -178,26 +152,25 @@ struct Viewport::Internal
 		}
 
 		/* create window rect */
-		wrect.left   = ((l_warea.right - l_warea.left) - w) / 2;
-		wrect.right  = wrect.left + w;
-		wrect.top    = ((l_warea.bottom - l_warea.top) - h) / 2;
-		wrect.bottom = wrect.top + h;
-		AdjustWindowRectEx(&wrect, l_wstyle[0], false, l_wstyle[1]);
+		RECT l_wrect;
+		l_wrect.left   = ((l_warea.right - l_warea.left) - w) / 2;
+		l_wrect.right  = l_wrect.left + w;
+		l_wrect.top    = ((l_warea.bottom - l_warea.top) - h) / 2;
+		l_wrect.bottom = l_wrect.top  + h;
+		AdjustWindowRectEx(&l_wrect, l_wstyle[0], false, l_wstyle[1]);
 
 		/* create actual window */
-		window = CreateWindowEx(l_wstyle[1], "marshmallow_wgl", 0, l_wstyle[0],
-		    wrect.left, wrect.top, wrect.right - wrect.left,
-		    wrect.bottom - wrect.top, 0, 0, l_wc.hInstance, 0);
-		if (!window) {
+		s_data.window = CreateWindowEx(l_wstyle[1], "marshmallow_wgl", 0, l_wstyle[0],
+		    l_wrect.left, l_wrect.top, l_wrect.right - l_wrect.left,
+		    l_wrect.bottom - l_wrect.top, 0, 0, l_wc.hInstance, 0);
+		if (!s_data.window) {
 			MMERROR1("Failed to create window");
-			destroyWindow();
 			return(false);
 		}
 
 		/* create device context */
-		if (!(dcontext = GetDC(window))) {
+		if (!(s_data.dcontext = GetDC(s_data.window))) {
 			MMERROR1("Failed to create device context");
-			destroyWindow();
 			return(false);
 		}
 
@@ -206,132 +179,229 @@ struct Viewport::Internal
 		memset(&l_pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
 		l_pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR);
 		l_pfd.nVersion   = 1;
-		l_pfd.dwFlags    = PFD_DRAW_TO_WINDOW|PFD_SUPPORT_OPENGL|PFD_DOUBLEBUFFER;
+		l_pfd.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
 		l_pfd.iPixelType = PFD_TYPE_RGBA;
 		l_pfd.cColorBits = d;
 		l_pfd.cDepthBits = 16;
 		l_pfd.iLayerType = PFD_MAIN_PLANE;
 	
 		unsigned int l_pfindex;
-		if (!(l_pfindex = ChoosePixelFormat(dcontext, &l_pfd))) {
+		if (!(l_pfindex = ChoosePixelFormat(s_data.dcontext, &l_pfd))) {
 			MMERROR1("Failed to select a pixel format");
-			destroyWindow();
 			return(false);
 		}
 
-		if(!SetPixelFormat(dcontext, l_pfindex, &l_pfd)) {
+		if(!SetPixelFormat(s_data.dcontext, l_pfindex, &l_pfd)) {
 			MMERROR1("Failed to bind pixel format to window context");
-			destroyWindow();
 			return(false);
 		}
 
 		/* create wiggle context */
-		if (!(context = wglCreateContext(dcontext))) {
+		if (!(s_data.context = wglCreateContext(s_data.dcontext))) {
 			MMERROR1("Failed to create OpenGL context");
-			destroyWindow();
 			return(false);
 		}
 
 		/* make wgl context current */
-		if(!wglMakeCurrent(dcontext, context)) {
+		if(!wglMakeCurrent(s_data.dcontext, s_data.context)) {
 			MMERROR1("Failed to set current OpenGL context");
-			destroyWindow();
 			return(false);
 		}
 
-		ShowWindow(window, SW_SHOW);
-		SetForegroundWindow(window);
-		SetFocus(window);
+		ShowWindow(s_data.window, SW_SHOW);
+		SetForegroundWindow(s_data.window);
+		SetFocus(s_data.window);
+
+		/* check extensions */
+
+		s_data.vbo_supported = CheckVBOSupport();
+
+		/* set defaults */
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_LIGHTING);
-		glEnable(GL_BLEND);
+		glDisable(GL_BLEND);
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
 
 		/* initialize context */
 
 		glViewport(0, 0, w, h);
-		glClearColor(0., 0., 0., 0.);
+		glClearColor(.0f, .0f, .0f, .0f);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-		adjustView();
-		SwapBuffer();
+		UpdateViewport();
+		Viewport::SwapBuffer();
 
-		if(glGetError() != GL_NO_ERROR)
+		if(glGetError() != GL_NO_ERROR) {
+			MMERROR1("WGL failed during initialization.");
 			return(false);
+		}
 
-		return(loaded = true);
+		return(s_data.loaded = true);
 	}
 
 	void
-	destroyWindow(void)
+	DestroyWWindow(void)
 	{
-		if (fullscreen) {
+		if (s_data.fullscreen) {
 			ShowCursor(true);
 			ChangeDisplaySettings(0, 0);
 		}
 
-		if (context) {
+		if (s_data.context) {
 			if (!wglMakeCurrent(0, 0))
 				MMWARNING1("Failed to unset current OpenGL context");
 
-			if (!wglDeleteContext(context))
+			if (!wglDeleteContext(s_data.context))
 				MMWARNING1("Failed to delete OpenGL context");
 
-			context = 0;
+			s_data.context = 0;
 		}
 
-		if (dcontext && !ReleaseDC(window, dcontext))
+		if (s_data.dcontext && !ReleaseDC(s_data.window, s_data.dcontext))
 			MMWARNING1("Failed to release device context");
-		dcontext = 0;
+		s_data.dcontext = 0;
 
-		if (window && !DestroyWindow(window))
+		if (s_data.window && !DestroyWindow(s_data.window))
 			MMWARNING1("Failed to destroy window");
-		window = 0;
+		s_data.window = 0;
 
 		if (!UnregisterClass("marshmallow_wgl", GetModuleHandle(0)))
 			MMWARNING1("Failed to unregister window class");
 
-		loaded = false;
+		s_data.context   = 0;
+		s_data.dcontext  = 0;
+		s_data.loaded    = false;
+		s_data.window    = 0;
+	}
+
+	bool
+	IsExtensionSupported(const char *list, const char *extension)
+	{
+		assert(list && extension
+		    && 0 == strchr(extension, ' ')
+		    && "Invalid list and/or extension");
+
+		const char *start = list;
+		const char *where, *terminator;
+
+		while ((where = strstr( start, extension ))) {
+			terminator = where + strlen( extension );
+
+			if ((where == start || *(where - 1) == ' ')
+			    && (*terminator == ' ' || *terminator == '\0'))
+				return(true);
+		}
+
+		return(false);
+	}
+
+	bool
+	CheckVBOSupport(void)
+	{
+		HasVectorBufferObjectSupport = false;
+
+		if (!IsExtensionSupported
+		    (reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)), "GL_ARB_vertex_buffer_object"))
+			return(false);
+
+		glGenBuffersARB =
+		    reinterpret_cast<PFNGLGENBUFFERSARBPROC>
+		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glGenBuffersARB")));
+		glBindBufferARB =
+		    reinterpret_cast<PFNGLBINDBUFFERARBPROC>
+		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glBindBufferARB")));
+		glBufferDataARB =
+		    reinterpret_cast<PFNGLBUFFERDATAARBPROC>
+		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glBufferDataARB")));
+		glBufferSubDataARB =
+		    reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>
+		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glBufferSubDataARB")));
+		glDeleteBuffersARB =
+		    reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>
+		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glDeleteBuffersARB")));
+		glGetBufferParameterivARB =
+		    reinterpret_cast<PFNGLGETBUFFERPARAMETERIVARBPROC>
+		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glGetBufferParameterivARB")));
+		glMapBufferARB =
+		    reinterpret_cast<PFNGLMAPBUFFERARBPROC>
+		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glMapBufferARB")));
+		glUnmapBufferARB =
+		    reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>
+		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glUnmapBufferARB")));
+
+		if (glGenBuffersARB
+		 && glBindBufferARB
+		 && glBufferDataARB
+		 && glBufferSubDataARB
+		 && glDeleteBuffersARB
+		 && glGetBufferParameterivARB
+		 && glMapBufferARB
+		 && glUnmapBufferARB) {
+			HasVectorBufferObjectSupport = true;
+			return(true);
+		}
+
+		/* clean up */
+		glBindBufferARB    = 0;
+		glBufferDataARB    = 0;
+		glBufferSubDataARB = 0;
+		glDeleteBuffersARB = 0;
+		glGenBuffersARB    = 0;
+		glGetBufferParameterivARB = 0;
+		glMapBufferARB     = 0;
+		glUnmapBufferARB   = 0;
+		return(false);
 	}
 
 	void
-	adjustView(void)
+	UpdateViewport(void)
 	{
-		size[0] = DEFAULT_VIEWPORT_VWIDTH * camera[2];
-		size[1] = DEFAULT_VIEWPORT_VHEIGHT * camera[2];
-		vscale = static_cast<float>(wrect.right - wrect.left) / size[0];
+		s_data.size[0] = DEFAULT_VIEWPORT_VWIDTH  * s_data.camera[2];
+		s_data.size[1] = DEFAULT_VIEWPORT_VHEIGHT * s_data.camera[2];
 
-		const float l_hw = size[0] / 2.f;
-		const float l_hh = size[1] / 2.f;
+		const float l_hw = s_data.size[0] / 2.f;
+		const float l_hh = s_data.size[1] / 2.f;
+
+		/* update visible area */
+
+		s_data.visible[0][0] = -l_hw + s_data.camera[0];
+		s_data.visible[0][1] =  l_hh + s_data.camera[1];
+		s_data.visible[1][0] =  l_hw + s_data.camera[0];
+		s_data.visible[1][1] = -l_hh + s_data.camera[1];
+
+		/* update projection */
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-
-		visible[0] = -l_hw + camera[0];
-		visible[1] =  l_hh + camera[1];
-		visible[2] =  l_hw + camera[0];
-		visible[3] = -l_hh + camera[1];
-
-		glOrtho(visible[0], visible[2], visible[3], visible[1], -1.f, 1.f);
+		glOrtho(s_data.visible[0].x(), s_data.visible[1].x(),
+		        s_data.visible[1].y(), s_data.visible[0].y(), -1.f, 1.f);
 		glMatrixMode(GL_MODELVIEW);
 	}
-	
+
 	void
-	handleKeyEvent( int keyCode, bool keyPressed )
+	HandleKeyEvent(int keycode, bool down)
 	{
+		typedef eastl::list<Event::KBKeys> KeyList;
+		static KeyList s_keys_pressed;
+
 		Event::KBKeys l_key = Event::KEY_NONE;
 		Event::KBActions l_action =
-		    (keyPressed ? Event::KeyPressed : Event::KeyReleased);
+		    (down ? Event::KeyPressed : Event::KeyReleased);
 
-		// win32 virtual key codes for alphanumerical chars correspond to the char itself
-		if ( (keyCode >= '0' && keyCode <= '9') ||
-			 (keyCode >= 'a' && keyCode <= 'z') ) {
-			l_key = static_cast<Event::KBKeys>(keyCode);
+		/*
+		 * Win32 virtual key codes for alphanumerical chars correspond
+		 * to character values themselfs
+		 */
+		if ((keycode >= '0' && keycode <= '9') ||
+		    (keycode >= 'a' && keycode <= 'z') ) {
+			l_key = static_cast<Event::KBKeys>(keycode);
 		} else {
-			switch (keyCode) {
-//			case XK_Alt_L:        l_key = Event::KEY_ALT_L; break;
-//			case XK_Alt_R:        l_key = Event::KEY_ALT_R; break;
+			switch (keycode) {
+#if 0
+			case XK_Alt_L:        l_key = Event::KEY_ALT_L; break;
+			case XK_Alt_R:        l_key = Event::KEY_ALT_R; break;
+#endif
 			case VK_BACK:         l_key = Event::KEY_BACKSPACE; break;
 			case VK_CAPITAL:      l_key = Event::KEY_CAPS_LOCK; break;
 			case VK_CLEAR:        l_key = Event::KEY_CLEAR; break;
@@ -358,13 +428,15 @@ struct Viewport::Internal
 			case VK_RSHIFT:       l_key = Event::KEY_SHIFT_R; break;
 			case VK_TAB:          l_key = Event::KEY_TAB; break;
 			case VK_UP:           l_key = Event::KEY_UP; break;
-//			case XK_backslash:    l_key = Event::KEY_BACKSLASH; break;
-//			case XK_bracketleft:  l_key = Event::KEY_BRACKETLEFT; break;
-//			case XK_bracketright: l_key = Event::KEY_BRACKETRIGHT; break;
-//			case XK_equal:        l_key = Event::KEY_EQUAL; break;
-//			case XK_less:         l_key = Event::KEY_LESS; break;
-//			case XK_quotedbl:     l_key = Event::KEY_DBLQUOTE; break;
-//			case XK_semicolon:    l_key = Event::KEY_SEMICOLON; break;
+#if 0
+			case XK_backslash:    l_key = Event::KEY_BACKSLASH; break;
+			case XK_bracketleft:  l_key = Event::KEY_BRACKETLEFT; break;
+			case XK_bracketright: l_key = Event::KEY_BRACKETRIGHT; break;
+			case XK_equal:        l_key = Event::KEY_EQUAL; break;
+			case XK_less:         l_key = Event::KEY_LESS; break;
+			case XK_quotedbl:     l_key = Event::KEY_DBLQUOTE; break;
+			case XK_semicolon:    l_key = Event::KEY_SEMICOLON; break;
+#endif
 			case VK_SPACE:        l_key = Event::KEY_SPACE; break;
 			case VK_F1:           l_key = Event::KEY_F1; break;
 			case VK_F2:           l_key = Event::KEY_F2; break;
@@ -398,35 +470,95 @@ struct Viewport::Internal
 			}
 		}
 
-		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
-		Event::EventManager::Instance()->queue(event);
+		bool l_key_pressed = false;
+		KeyList::const_iterator l_pressed_key_i;
+		for (l_pressed_key_i  = s_keys_pressed.begin();
+		     l_pressed_key_i != s_keys_pressed.end();
+		     ++l_pressed_key_i)
+			if (*l_pressed_key_i == l_key) {
+				l_key_pressed = true;
+				break;
+			}
+		
+		if (( l_key_pressed && l_action != Event::KeyPressed)
+		 || (!l_key_pressed && l_action == Event::KeyPressed)) {
+			Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
+			Event::EventManager::Instance()->queue(event);
+
+			if (l_key_pressed) s_keys_pressed.remove(l_key);
+			else s_keys_pressed.push_front(l_key);
+		}
 	}
 
-} MVI;
+	LRESULT CALLBACK
+	WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		switch (uMsg) {
+		case WM_CLOSE: {
+			Event::QuitEvent event(-1);
+			Event::EventManager::Instance()->dispatch(event);
+			return(0);
+		} break;
 
+		case WM_SIZE:
+			return(0);
+		break;
+
+		case WM_SYSCOMMAND:
+			switch (wParam) {
+			case SC_MONITORPOWER:
+			case SC_SCREENSAVE:
+				if (s_data.fullscreen)
+					return(0);
+			break;
+			}
+		break;
+
+		case WM_KEYDOWN:
+			HandleKeyEvent(static_cast<int>(wParam), true);
+			break;
+		case WM_KEYUP:
+			HandleKeyEvent(static_cast<int>(wParam), false);
+			break;
+		}
+
+		return(DefWindowProc(hwnd, uMsg, wParam, lParam));
+	}
+} // namespace
+
+/******************************************************************************/
 
 bool
 Viewport::Initialize(int w, int h, int d, bool f)
 {
-	bool l_success = MVI.createWindow(w, h, d, f);
+	InitializeViewport();
 
-	if (l_success) Painter::Initialize();
+	if (!CreateWWindow(w, h, d, f)) {
+		DestroyWWindow();
+		return(false);
+	}
 
-	return(l_success);
+	Painter::Initialize();
+	return(true);
 }
 
 void
 Viewport::Finalize(void)
 {
 	Painter::Finalize();
-	MVI.destroyWindow();
+	DestroyWWindow();
 }
 
 bool
 Viewport::Redisplay(int w, int h, int d, bool f)
 {
-	MVI.destroyWindow();
-	return(MVI.createWindow(w, h, d, f));
+	DestroyWWindow();
+
+	if(!CreateWWindow(w, h, d, f)) {
+		DestroyWWindow();
+		return(false);
+	}
+	return(true);
 }
 
 void
@@ -447,71 +579,55 @@ Viewport::Tick(TIME t)
 			DispatchMessage(&l_msg);
 		}
 	}
-
 }
 
 void
 Viewport::SwapBuffer(void)
 {
-	SwapBuffers(MVI.dcontext);
+	SwapBuffers(s_data.dcontext);
 	glClearColor(.0f, .0f, .0f, .0f);
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 }
 
-const Math::Triplet
+const Math::Triplet &
 Viewport::Camera(void)
 {
-	return(Math::Triplet(MVI.camera[0], MVI.camera[1], MVI.camera[2]));
+	return(s_data.camera);
 }
 
 void
 Viewport::MoveCamera(const Math::Triplet &c)
 {
-	MVI.camera[0] = c[0];
-	MVI.camera[1] = c[1];
-	MVI.camera[2] = c[2];
-
-	MVI.adjustView();
+	s_data.camera[0] = c[0];
+	s_data.camera[1] = c[1];
+	s_data.camera[2] = c[2];
+	UpdateViewport();
 }
 
-const float *
-Viewport::VisibleArea(void)
+void
+Viewport::VisibleArea(Math::Point2 *tl, Math::Point2 *br)
 {
-	return(MVI.visible);
+	if (tl) *tl = s_data.visible[0];
+	if (br) *br = s_data.visible[1];
 }
 
-const Math::Size2f
+const Math::Size2f &
 Viewport::Size(void)
 {
-	return(Math::Size2f(MVI.size[0], MVI.size[1]));
+	return(s_data.size);
 }
 
-const Math::Size2i
+const Math::Size2i &
 Viewport::WindowSize(void)
 {
-	if (MVI.loaded)
-		return(Math::Size2i(MVI.wrect.right - MVI.wrect.left,
-		                    MVI.wrect.bottom - MVI.wrect.top));
-
-	return(Math::Size2i());
-}
-
-float
-Viewport::MapToWorld(int x)
-{
-	return(static_cast<float>(x) / MVI.vscale);
-}
-
-int
-Viewport::MapFromWorld(float x)
-{
-	return(static_cast<int>(floor(static_cast<float>(x) * MVI.vscale)));
+	return(s_data.wsize);
 }
 
 const Core::Type &
 Viewport::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("WGL");
+	return(s_type);
 }
 

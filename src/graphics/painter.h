@@ -52,28 +52,24 @@ namespace Math
 
 namespace Graphics
 {
-
 	struct IMesh;
 
-	enum BlendTypes {
-		NoBlending = 0,
-		AdditiveBlending,
-		AlphaBlending,
-		MultiplyBlending
-	};
-
-	/*! @brief Graphics Painter */
-	struct GRAPHICS_EXPORT Painter
+	/*! @brief Graphics Painter Interface */
+	namespace Painter
 	{
-		static void Initialize(void);
-		static void Finalize(void);
+		enum BlendTypes {
+			NoBlending = 0,
+			AdditiveBlending,
+			AlphaBlending,
+			MultiplyBlending
+		};
 
-		static void Draw(const IMesh &mesh, const Math::Point2 &origin);
-		static void Blend(BlendTypes blend);
+		GRAPHICS_EXPORT void Initialize(void);
+		GRAPHICS_EXPORT void Finalize(void);
 
-		struct Internal;
-	};
-
+		GRAPHICS_EXPORT void Draw(const IMesh &mesh, const Math::Point2 &origin);
+		GRAPHICS_EXPORT void Blend(BlendTypes blend);
+	}
 }
 
 MARSHMALLOW_NAMESPACE_END
