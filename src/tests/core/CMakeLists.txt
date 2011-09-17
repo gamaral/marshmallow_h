@@ -6,12 +6,15 @@ include(EASTL)
 add_executable(marshmallow_test_core_hash hash.cpp)
 add_executable(marshmallow_test_core_shared shared.cpp)
 add_executable(marshmallow_test_core_base64 base64.cpp)
+add_executable(marshmallow_test_core_bufferio bufferio.cpp)
 
 target_link_libraries(marshmallow_test_core_hash ${MASHMALLOW_TEST_CORE_LIBS})
 target_link_libraries(marshmallow_test_core_shared ${MASHMALLOW_TEST_CORE_LIBS})
 target_link_libraries(marshmallow_test_core_base64 ${MASHMALLOW_TEST_CORE_LIBS})
+target_link_libraries(marshmallow_test_core_bufferio ${MASHMALLOW_TEST_CORE_LIBS})
 
-add_test(NAME marshmallow_test_core_hash   COMMAND marshmallow_test_core_hash)
-add_test(NAME marshmallow_test_core_shared COMMAND marshmallow_test_core_shared)
-add_test(NAME marshmallow_test_core_base64 COMMAND marshmallow_test_core_base64)
+add_test(NAME marshmallow_test_core_hash     COMMAND marshmallow_test_core_hash)
+add_test(NAME marshmallow_test_core_shared   COMMAND marshmallow_test_core_shared)
+add_test(NAME marshmallow_test_core_base64   COMMAND marshmallow_test_core_base64)
+add_test(NAME marshmallow_test_core_bufferio COMMAND marshmallow_test_core_bufferio)
 
