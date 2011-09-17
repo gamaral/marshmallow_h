@@ -9,11 +9,18 @@ add_executable(tilemap_demo1 "demo1.cpp"
                              "playerentity.cpp"
 )
 
-set_target_properties(tilemap_demo0 PROPERTIES
-    COMPILE_FLAGS -DDEMO_CWD=\\"${CMAKE_CURRENT_SOURCE_DIR}\\")
-
-set_target_properties(tilemap_demo1 PROPERTIES
-    COMPILE_FLAGS -DDEMO_CWD=\\"${CMAKE_CURRENT_SOURCE_DIR}\\")
+if (APPLE)
+	# Xcode workaround
+	set_target_properties(tilemap_demo0 PROPERTIES
+	    COMPILE_FLAGS -DDEMO_CWD=\\\\"${CMAKE_CURRENT_SOURCE_DIR}\\\\")
+	set_target_properties(tilemap_demo1 PROPERTIES
+	    COMPILE_FLAGS -DDEMO_CWD=\\\\"${CMAKE_CURRENT_SOURCE_DIR}\\\\")
+else()
+	set_target_properties(tilemap_demo0 PROPERTIES
+	    COMPILE_FLAGS -DDEMO_CWD=\\"${CMAKE_CURRENT_SOURCE_DIR}\\")
+	set_target_properties(tilemap_demo1 PROPERTIES
+	    COMPILE_FLAGS -DDEMO_CWD=\\"${CMAKE_CURRENT_SOURCE_DIR}\\")
+endif()
 
 if(WIN32 AND NOT CMAKE_BUILD_TYPE MATCHES Debug)
 	set_target_properties(tilemap_demo0 PROPERTIES WIN32_EXECUTABLE ON)
