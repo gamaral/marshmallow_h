@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/tilesetcomponent.h"
 
 /*!
  * @file
@@ -34,63 +34,41 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_MOVEMENTCOMPONENT_H
-#define GAME_MOVEMENTCOMPONENT_H 1
+#include "graphics/itileset.h"
 
-#include "game/componentbase.h"
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-#include "core/weak.h"
-
-#include "math/vector2.h"
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
+TilesetComponent::TilesetComponent(const Core::Identifier &i, IEntity &e)
+    : ComponentBase(i, e)
+    , m_tileset()
 {
-
-	class PositionComponent;
-	typedef Core::Weak<PositionComponent> WeakPositionComponent;
-
-	/*! @brief Game Movement Component Class */
-	class GAME_EXPORT MovementComponent : public ComponentBase
-	{
-		NO_ASSIGN(MovementComponent);
-		NO_COPY(MovementComponent);
-
-		WeakPositionComponent m_position;
-		Math::Vector2 m_direction;
-
-	public:
-
-		MovementComponent(const Core::Identifier &identifier, IEntity &entity);
-		virtual ~MovementComponent(void);
-
-		Math::Vector2 & direction(void)
-		    { return(m_direction); }
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type()); }
-
-		VIRTUAL void update(TIME d);
-
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
-
-	public: /* static */
-
-		static const Core::Type & Type(void);
-
-	private: /* static */
-
-		static const Core::Type sType;
-	};
-	typedef Core::Shared<MovementComponent> SharedMovementComponent;
-	typedef Core::Weak<MovementComponent> WeakMovementComponent;
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+TilesetComponent::~TilesetComponent(void)
+{
+}
 
-#endif
+bool
+TilesetComponent::serialize(TinyXML::TiXmlElement &n) const
+{
+	MMUNUSED(n);
+	/* TODO: IMPLEMENT */
+	return(false);
+}
+
+bool
+TilesetComponent::deserialize(TinyXML::TiXmlElement &n)
+{
+	MMUNUSED(n);
+	/* TODO: IMPLEMENT */
+	return(false);
+}
+
+const Core::Type &
+TilesetComponent::Type(void)
+{
+	static const Core::Type s_type("Game::TilesetComponent");
+	return(s_type);
+}
+

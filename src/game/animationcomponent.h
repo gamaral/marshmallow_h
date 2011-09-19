@@ -34,39 +34,73 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_MOVEMENTCOMPONENT_H
-#define GAME_MOVEMENTCOMPONENT_H 1
+#ifndef GAME_ANIMATIONCOMPONENT_H
+#define GAME_ANIMATIONCOMPONENT_H 1
 
 #include "game/componentbase.h"
 
+#include <EASTL/map.h>
+#include <EASTL/vector.h>
+
 #include "core/weak.h"
 
-#include "math/vector2.h"
-
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Graphics
+{
+	struct ITextureCoordinateData;
+	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
+}
 
 namespace Game
 {
 
-	class PositionComponent;
-	typedef Core::Weak<PositionComponent> WeakPositionComponent;
+	class RenderComponent;
+	typedef Core::Weak<RenderComponent> WeakRenderComponent;
 
-	/*! @brief Game Movement Component Class */
-	class GAME_EXPORT MovementComponent : public ComponentBase
+	class TilesetComponent;
+	typedef Core::Weak<TilesetComponent> WeakTilesetComponent;
+
+	struct GAME_EXPORT AnimationSequence;
+
+	/*! @brief Game Animation Component Class */
+	class GAME_EXPORT AnimationComponent : public ComponentBase
 	{
-		NO_ASSIGN(MovementComponent);
-		NO_COPY(MovementComponent);
+		NO_ASSIGN(AnimationComponent);
+		NO_COPY(AnimationComponent);
 
-		WeakPositionComponent m_position;
-		Math::Vector2 m_direction;
+		typedef eastl::pair<int, int> FrameEntry;
+		typedef eastl::vector<FrameEntry> FrameList;
+		typedef eastl::map<Core::Identifier, FrameList> AnimationFrames;
+		typedef eastl::map<Core::Identifier, float> AnimationFramerates;
+		AnimationFrames     m_animation_frames;
+		AnimationFramerates m_animation_framerate;
+		Graphics::SharedTextureCoordinateData m_stop_data;
+
+		WeakRenderComponent  m_render;
+		WeakTilesetComponent m_tileset;
+
+		TIME m_timestamp;
+		bool m_loop;
+		bool m_playing;
+
+		const FrameList *m_current_framelist;
+		float m_current_framerate;
+		int   m_current_frame_duration;
+		unsigned int m_current_frame_entries;
+		unsigned int m_current_frame_entry;
 
 	public:
 
-		MovementComponent(const Core::Identifier &identifier, IEntity &entity);
-		virtual ~MovementComponent(void);
+		AnimationComponent(const Core::Identifier &identifier, IEntity &entity);
+		virtual ~AnimationComponent(void);
 
-		Math::Vector2 & direction(void)
-		    { return(m_direction); }
+		void pushFrame(const Core::Identifier &animation, int tile, int duration = 1);
+		void popFrame(const Core::Identifier &animation);
+		void rate(const Core::Identifier &animation, float fps);
+
+		void play(const Core::Identifier &animation, bool loop = false);
+		void stop(int *tile = 0);
 
 	public: /* virtual */
 
@@ -81,14 +115,9 @@ namespace Game
 	public: /* static */
 
 		static const Core::Type & Type(void);
-
-	private: /* static */
-
-		static const Core::Type sType;
 	};
-	typedef Core::Shared<MovementComponent> SharedMovementComponent;
-	typedef Core::Weak<MovementComponent> WeakMovementComponent;
-
+	typedef Core::Shared<AnimationComponent> SharedAnimationComponent;
+	typedef Core::Weak<AnimationComponent> WeakAnimationComponent;
 }
 
 MARSHMALLOW_NAMESPACE_END

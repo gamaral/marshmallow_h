@@ -69,6 +69,12 @@ MeshBase::setRotation(float a)
 	m_rotation = a;
 }
 
+void
+MeshBase::setTextureCoordinateData(SharedTextureCoordinateData tc)
+{
+	m_tcdata = tc;
+}
+
 Math::Vector2
 MeshBase::vertex(int i) const
 {

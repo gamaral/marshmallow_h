@@ -71,6 +71,10 @@ namespace Graphics
 
 		void setScale(float x, float y)
 		    { m_scale[0] = x; m_scale[1] = y; }
+
+		/*! @brief Replace texture coordinate data */
+		void setTextureCoordinateData(SharedTextureCoordinateData tc);
+
 		
 	public: /* operators */
 

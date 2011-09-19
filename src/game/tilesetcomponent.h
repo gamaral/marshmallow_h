@@ -34,16 +34,20 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_MOVEMENTCOMPONENT_H
-#define GAME_MOVEMENTCOMPONENT_H 1
+#ifndef GAME_TILESETCOMPONENT_H
+#define GAME_TILESETCOMPONENT_H 1
 
 #include "game/componentbase.h"
 
 #include "core/weak.h"
 
-#include "math/vector2.h"
-
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Graphics
+{
+	struct ITileset;
+	typedef Core::Shared<ITileset> SharedTileset;
+}
 
 namespace Game
 {
@@ -51,29 +55,26 @@ namespace Game
 	class PositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
-	/*! @brief Game Movement Component Class */
-	class GAME_EXPORT MovementComponent : public ComponentBase
+	/*! @brief Game Tileset Component Class */
+	class GAME_EXPORT TilesetComponent : public ComponentBase
 	{
-		NO_ASSIGN(MovementComponent);
-		NO_COPY(MovementComponent);
+		NO_ASSIGN(TilesetComponent);
+		NO_COPY(TilesetComponent);
 
-		WeakPositionComponent m_position;
-		Math::Vector2 m_direction;
+		Graphics::SharedTileset m_tileset;
 
 	public:
 
-		MovementComponent(const Core::Identifier &identifier, IEntity &entity);
-		virtual ~MovementComponent(void);
+		TilesetComponent(const Core::Identifier &i, IEntity &entity);
+		virtual ~TilesetComponent(void);
 
-		Math::Vector2 & direction(void)
-		    { return(m_direction); }
+		Graphics::SharedTileset & tileset(void)
+			{ return(m_tileset); }
 
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
-
-		VIRTUAL void update(TIME d);
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
@@ -81,13 +82,9 @@ namespace Game
 	public: /* static */
 
 		static const Core::Type & Type(void);
-
-	private: /* static */
-
-		static const Core::Type sType;
 	};
-	typedef Core::Shared<MovementComponent> SharedMovementComponent;
-	typedef Core::Weak<MovementComponent> WeakMovementComponent;
+	typedef Core::Shared<TilesetComponent> SharedTilesetComponent;
+	typedef Core::Weak<TilesetComponent> WeakTilesetComponent;
 
 }
 

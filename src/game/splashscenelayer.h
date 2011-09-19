@@ -59,9 +59,12 @@ namespace Game
 {
 
 	/*! @brief Game Splash Scene Layer Class */
-	class GAME_EXPORT SplashSceneLayer : public SceneLayerBase,
-	                                     public Event::IEventListener
+	class GAME_EXPORT SplashSceneLayer : public SceneLayerBase
+	                                   , public Event::IEventListener
 	{
+		NO_ASSIGN(SplashSceneLayer);
+		NO_COPY(SplashSceneLayer);
+
 		enum SplashState
 		{
 			ssInit     = 0,
@@ -79,8 +82,6 @@ namespace Game
 		SplashState m_state;
 		bool m_autoBegin;
 		bool m_autoKill;
-
-		NO_COPY(SplashSceneLayer);
 
 	public:
 

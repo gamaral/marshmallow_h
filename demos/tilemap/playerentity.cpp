@@ -41,6 +41,7 @@
 #include <graphics/viewport.h>
 
 #include <game/box2d/box2dcomponent.h>
+#include <game/animationcomponent.h>
 #include <game/positioncomponent.h>
 #include <game/sizecomponent.h>
 
@@ -68,6 +69,13 @@ PlayerEntity::update(TIME d)
 			MMERROR1("Player entity requires a size component to be present");
 			return;
 		}
+
+		Game::SharedAnimationComponent l_animation_component =
+		    new Game::AnimationComponent("animation", *this);
+		l_animation_component->pushFrame("space", 72, 12);
+		l_animation_component->pushFrame("space", 73, 4);
+		pushComponent(l_animation_component.staticCast<Game::IComponent>());
+		l_animation_component->play("space", true);
 
 		/* create box2d component */
 		Game::SharedBox2DComponent l_box2d_component =

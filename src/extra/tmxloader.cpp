@@ -53,6 +53,7 @@ using namespace TinyXML;
 #include "game/positioncomponent.h"
 #include "game/rendercomponent.h"
 #include "game/sizecomponent.h"
+#include "game/tilesetcomponent.h"
 #include "game/tilemapscenelayer.h"
 
 #define TMXLAYER_DATA_NODE    "data"
@@ -318,6 +319,12 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 			l_object_rsize[0] = m_conv_ratio.width()  * static_cast<float>(l_object_width);
 			l_object_rsize[1] = m_conv_ratio.height() * static_cast<float>(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
+
+			/* attach tileset used */
+
+			Game::TilesetComponent *l_tscomponent = new Game::TilesetComponent("tileset", *l_entity);
+			l_tscomponent->tileset() = l_tileset;
+			l_entity->pushComponent(l_tscomponent);
 
 			/* generate tile mesh */
 
