@@ -197,7 +197,7 @@ TilesetBase::reset(void)
 	 * for the last row/column.
 	 */
 
-	m_adjust_col = .01f / static_cast<float>(m_tile_size.width());
+	m_adjust_col = .02f / static_cast<float>(m_tile_size.width());
 	m_offset_col = new float[m_size.width() + 1];
 	m_spacing_col = static_cast<float>(m_spacing)
 	              / static_cast<float>(l_texture_size.width());
@@ -206,7 +206,7 @@ TilesetBase::reset(void)
 		    static_cast<float>(m_margin + (i * (m_tile_size.width() + m_spacing)))
 		  / static_cast<float>(l_texture_size.width());
 
-	m_adjust_row = .01f / static_cast<float>(m_tile_size.height());
+	m_adjust_row = .02f / static_cast<float>(m_tile_size.height());
 	m_offset_row = new float[m_size.height() + 1];
 	m_spacing_row = static_cast<float>(m_spacing)
 	              / static_cast<float>(l_texture_size.height());

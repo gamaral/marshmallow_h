@@ -53,11 +53,12 @@ const Core::Type InputComponent::Type("InputComponent");
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
-    , m_linear_impulse(2.f)
+    , m_linear_impulse(1.f)
     , m_down(false)
     , m_left(false)
     , m_right(false)
     , m_up(false)
+    , m_direction(ICDRight)
 {
 	m_event_proxy = new Event::ProxyEventListener(*this);
 	Game::EngineBase::Instance()->eventManager()->connect(m_event_proxy, Event::KeyboardEvent::Type());
@@ -65,6 +66,15 @@ InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
 
 InputComponent::~InputComponent(void)
 {
+}
+
+bool
+InputComponent::inMotion(void) const
+{
+	return(((direction() == ICDDown)  && m_down)
+	    || ((direction() == ICDLeft)  && m_left)
+	    || ((direction() == ICDRight) && m_right)
+	    || ((direction() == ICDUp)    && m_up));
 }
 
 void
@@ -84,10 +94,26 @@ InputComponent::update(TIME)
 		const float l_mass = m_body->body()->GetMass();
 		b2Vec2 l_impulse(0, 0);
 
-		if (m_left)  l_impulse(0) = -m_linear_impulse;
-		if (m_right) l_impulse(0) =  m_linear_impulse;
-		if (m_up)    l_impulse(1) =  m_linear_impulse;
-		if (m_down)  l_impulse(1) = -m_linear_impulse;
+		if (inMotion())
+		switch (direction()) {
+		case  ICDDown:
+			if (l_vel.y > -4) l_impulse(1) = -m_linear_impulse;
+			l_impulse(0) = l_vel.x * -1;
+			break;
+		case  ICDLeft:
+			if (l_vel.x > -4) l_impulse(0) = -m_linear_impulse;
+			l_impulse(1) = l_vel.y * -1;
+			break;
+		case ICDRight:
+			if (l_vel.x <  4) l_impulse(0) = m_linear_impulse;
+			l_impulse(1) = l_vel.y * -1;
+			break;
+		case    ICDUp:
+			if (l_vel.y <  4) l_impulse(1) = m_linear_impulse;
+			l_impulse(0) = l_vel.x * -1;
+			break;
+		}
+		else l_impulse(0) = l_vel.x * -1, l_impulse(1) = l_vel.y * -1;
 
 		m_body->body()->ApplyLinearImpulse(l_impulse, m_body->body()->GetWorldCenter());
 	}
@@ -102,14 +128,29 @@ InputComponent::handleEvent(const Event::IEvent &e)
 	const Event::KeyboardEvent &l_kevent =
 	    static_cast<const Event::KeyboardEvent &>(e);
 
-	if (l_kevent.key() == Event::KEY_LEFT)
-		m_left  = (l_kevent.action() == Event::KeyPressed);
-	else if (l_kevent.key() == Event::KEY_RIGHT)
-		m_right = (l_kevent.action() == Event::KeyPressed);
-	else if (l_kevent.key() == Event::KEY_UP)
-		m_up    = (l_kevent.action() == Event::KeyPressed);
-	else if (l_kevent.key() == Event::KEY_DOWN)
-		m_down  = (l_kevent.action() == Event::KeyPressed);
+	if (l_kevent.key() == Event::KEY_DOWN) {
+		if (m_down = (l_kevent.action() == Event::KeyPressed))
+			m_direction_stack.push_front(ICDDown);
+		else m_direction_stack.remove(ICDDown);
+	}
+	else if (l_kevent.key() == Event::KEY_LEFT) {
+		if (m_left = (l_kevent.action() == Event::KeyPressed))
+			m_direction_stack.push_front(ICDLeft);
+		else m_direction_stack.remove(ICDLeft);
+	}
+	else if (l_kevent.key() == Event::KEY_RIGHT) {
+		if (m_right = (l_kevent.action() == Event::KeyPressed))
+			m_direction_stack.push_front(ICDRight);
+		else m_direction_stack.remove(ICDRight);
+	}
+	else if (l_kevent.key() == Event::KEY_UP) {
+		if (m_up = (l_kevent.action() == Event::KeyPressed))
+			m_direction_stack.push_front(ICDUp);
+		else m_direction_stack.remove(ICDUp);
+	}
+
+	if (m_direction_stack.size() > 0)
+		m_direction = m_direction_stack.front();
 
 	return(false);
 }

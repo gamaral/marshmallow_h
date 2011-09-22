@@ -41,6 +41,7 @@ MARSHMALLOW_NAMESPACE_USE;
 
 #include <event/keyboardevent.h>
 
+#include <graphics/transform.h>
 #include <graphics/viewport.h>
 
 #include <game/iscene.h>
@@ -88,7 +89,8 @@ Demo::initialize(void)
 		l_document.InsertEndChild(l_root);
 	}
 
-	Graphics::Viewport::MoveCamera(Math::Triplet(0, 0, 0.035f));
+	Graphics::Transform &l_camera = Graphics::Viewport::Camera();
+	l_camera.setScale(Math::Pair(30.f, 30.f));
 
 	return(true);
 }

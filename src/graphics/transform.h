@@ -34,69 +34,50 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef TILEMAP_INPUTCOMPONENT_H
-#define TILEMAP_INPUTCOMPONENT_H 1
+#ifndef GRAPHICS_TRANSFORM_H
+#define GRAPHICS_TRANSFORM_H 1
 
-#include <EASTL/list.h>
+#include "core/iserializable.h"
 
-#include <game/componentbase.h>
-#include <event/ieventlistener.h>
+#include "core/fd.h"
 
-#include <game/box2d/box2dcomponent.h>
-#include <game/positioncomponent.h>
+#include "math/pair.h"
+#include "math/vector2.h"
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_BEGIN
 
-class InputComponent : public Game::ComponentBase,
-                       public Event::IEventListener
+namespace Graphics
 {
-	NO_ASSIGN(InputComponent);
-	NO_COPY(InputComponent);
+	/*! @brief Graphics Transform */
+	class GRAPHICS_EXPORT Transform
+	{
+		NO_ASSIGN(Transform);
+		NO_COPY(Transform);
 
-	Game::WeakPositionComponent m_position;
-	Game::WeakBox2DComponent m_body;
-	Event::SharedEventListener m_event_proxy;
+		float m_rotation;
+		Math::Pair m_scale;
+		Math::Vector2 m_translation;
 
-	eastl::list<int> m_direction_stack;
-	float m_linear_impulse;
-	int   m_direction;
-	bool  m_down;
-	bool  m_left;
-	bool  m_right;
-	bool  m_up;
+	public:
+		Transform(void);
+		virtual ~Transform(void);
+		
+		float rotation(void) const
+		    { return(m_rotation); }
+		void setRotation(float value);
 
-public:
+		const Math::Pair & scale(void) const
+		    { return(m_scale); }
+		void setScale(const Math::Pair &value);
 
-	InputComponent(const Core::Identifier &identifier, Game::IEntity &entity);
-	virtual ~InputComponent(void);
-
-	enum Direction {
-		ICDDown  = 0,
-		ICDLeft  = 1,
-		ICDRight = 2,
-		ICDUp    = 3
+		const Math::Vector2 & translation(void) const
+		    { return(m_translation); }
+		void setTranslation(const Math::Vector2 &value);
 	};
+	typedef Core::Shared<Transform> SharedTransform;
+	typedef Core::Weak<Transform> WeakTransform;
+}
 
-	Direction direction(void) const
-	    { return(static_cast<Direction>(m_direction)); }
-
-	bool inMotion(void) const;
-
-public: /* virtual */
-
-	VIRTUAL const Core::Type & type(void) const
-	    { return(Type); }
-
-	VIRTUAL void update(TIME d);
-
-	VIRTUAL bool handleEvent(const Event::IEvent &event);
-
-public: /* static */
-
-	static const Core::Type Type;
-};
-typedef Core::Shared<InputComponent> SharedInputComponent;
-
+MARSHMALLOW_NAMESPACE_END
 
 #endif
-

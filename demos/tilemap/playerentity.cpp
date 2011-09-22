@@ -38,6 +38,7 @@
 
 #include <core/logger.h>
 
+#include <graphics/transform.h>
 #include <graphics/viewport.h>
 
 #include <game/box2d/box2dcomponent.h>
@@ -70,12 +71,29 @@ PlayerEntity::update(TIME d)
 			return;
 		}
 
-		Game::SharedAnimationComponent l_animation_component =
+		m_animation_component =
 		    new Game::AnimationComponent("animation", *this);
-		l_animation_component->pushFrame("space", 72, 12);
-		l_animation_component->pushFrame("space", 73, 4);
-		pushComponent(l_animation_component.staticCast<Game::IComponent>());
-		l_animation_component->play("space", true);
+		m_animation_component->pushFrame("stand-down", 72, 12);
+		m_animation_component->pushFrame("stand-down", 73, 4);
+		m_animation_component->pushFrame("walk-down", 74, 4);
+		m_animation_component->pushFrame("walk-down", 75, 4);
+		m_animation_component->rate("walk-down", 16);
+		m_animation_component->pushFrame("stand-left",  76, 12);
+		m_animation_component->pushFrame("stand-left",  77, 4);
+		m_animation_component->pushFrame("walk-left", 78, 4);
+		m_animation_component->pushFrame("walk-left", 79, 4);
+		m_animation_component->rate("walk-left", 16);
+		m_animation_component->pushFrame("stand-right", 72, 12);
+		m_animation_component->pushFrame("stand-right", 73, 4);
+		m_animation_component->pushFrame("walk-right", 74, 4);
+		m_animation_component->pushFrame("walk-right", 75, 4);
+		m_animation_component->rate("walk-right", 16);
+		m_animation_component->pushFrame("stand-up",  76, 12);
+		m_animation_component->pushFrame("stand-up",  77, 4);
+		m_animation_component->pushFrame("walk-up", 80, 4);
+		m_animation_component->pushFrame("walk-up", 81, 4);
+		m_animation_component->rate("walk-up", 16);
+		pushComponent(m_animation_component.staticCast<Game::IComponent>());
 
 		/* create box2d component */
 		Game::SharedBox2DComponent l_box2d_component =
@@ -86,17 +104,71 @@ PlayerEntity::update(TIME d)
 		pushComponent(l_box2d_component.staticCast<Game::IComponent>());
 
 		/* input component */
-		pushComponent(new InputComponent("input", *this));
+		m_input_component = new InputComponent("input", *this);
+		pushComponent(m_input_component.staticCast<Game::IComponent>());
+
+		m_direction = -1;
 
 		m_init = true;
 	} else {
+		/* make camera follow player */
 		Game::SharedPositionComponent l_pos_component =
 		    getComponentType(Game::PositionComponent::Type()).staticCast<Game::PositionComponent>();
 		if (l_pos_component) {
-			Math::Triplet l_camera = Graphics::Viewport::Camera();
-			l_camera[0] = l_pos_component->position().x();
-			l_camera[1] = l_pos_component->position().y();
-			Graphics::Viewport::MoveCamera(l_camera);
+			Graphics::Transform & l_camera = Graphics::Viewport::Camera();
+			l_camera.setTranslation(l_pos_component->position());
+		}
+
+		/* update animation */
+		switch(m_input_component->direction()) {
+		case InputComponent::ICDDown:
+			if (m_direction == InputComponent::ICDDown
+			 && m_in_motion == m_input_component->inMotion())
+				break;
+
+			m_in_motion = m_input_component->inMotion();
+			m_direction = InputComponent::ICDDown;
+			if (m_in_motion)
+				m_animation_component->play("walk-down", true);
+			else
+				m_animation_component->play("stand-down", true);
+			break;
+		case InputComponent::ICDLeft:
+			if (m_direction == InputComponent::ICDLeft
+			 && m_in_motion == m_input_component->inMotion())
+				break;
+
+			m_in_motion = m_input_component->inMotion();
+			m_direction = InputComponent::ICDLeft;
+			if (m_in_motion)
+				m_animation_component->play("walk-left", true);
+			else
+				m_animation_component->play("stand-left", true);
+			break;
+		case InputComponent::ICDRight:
+			if (m_direction == InputComponent::ICDRight
+			 && m_in_motion == m_input_component->inMotion())
+				break;
+
+			m_in_motion = m_input_component->inMotion();
+			m_direction = InputComponent::ICDRight;
+			if (m_in_motion)
+				m_animation_component->play("walk-right", true);
+			else
+				m_animation_component->play("stand-right", true);
+			break;
+		case InputComponent::ICDUp:
+			if (m_direction == InputComponent::ICDUp
+			 && m_in_motion == m_input_component->inMotion())
+				break;
+
+			m_in_motion = m_input_component->inMotion();
+			m_direction = InputComponent::ICDUp;
+			if (m_in_motion)
+				m_animation_component->play("walk-up", true);
+			else
+				m_animation_component->play("stand-up", true);
+			break;
 		}
 	}
 

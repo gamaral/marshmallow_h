@@ -126,6 +126,7 @@ namespace
 		else {
 			MMWARNING1("Unknown mesh type, ignoring width/height");
 			l_width = l_height = 0;
+			return(true);
 		}
 
 		return (o.x() >= l_visible[0].x() - l_width  && o.x() <= l_visible[1].x() + l_width
@@ -157,7 +158,6 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 	m.scale(l_scale[0], l_scale[1]);
 
 	glPushMatrix();
-	glLoadIdentity();
 	glTranslatef(o.x(), o.y(), 0.f);
 
 	/* set blending */

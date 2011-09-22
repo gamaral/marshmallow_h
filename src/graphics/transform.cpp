@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "transform.h"
 
 /*!
  * @file
@@ -34,69 +34,38 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef TILEMAP_INPUTCOMPONENT_H
-#define TILEMAP_INPUTCOMPONENT_H 1
-
-#include <EASTL/list.h>
-
-#include <game/componentbase.h>
-#include <event/ieventlistener.h>
-
-#include <game/box2d/box2dcomponent.h>
-#include <game/positioncomponent.h>
+#include "math/pair.h"
+#include "math/point2.h"
 
 MARSHMALLOW_NAMESPACE_USE;
+using namespace Graphics;
 
-class InputComponent : public Game::ComponentBase,
-                       public Event::IEventListener
+Transform::Transform(void)
+    : m_rotation(0.f)
+    , m_scale(Math::Pair::One())
+    , m_translation(Math::Vector2::Zero())
 {
-	NO_ASSIGN(InputComponent);
-	NO_COPY(InputComponent);
+}
 
-	Game::WeakPositionComponent m_position;
-	Game::WeakBox2DComponent m_body;
-	Event::SharedEventListener m_event_proxy;
+Transform::~Transform(void)
+{
+}
 
-	eastl::list<int> m_direction_stack;
-	float m_linear_impulse;
-	int   m_direction;
-	bool  m_down;
-	bool  m_left;
-	bool  m_right;
-	bool  m_up;
+void
+Transform::setScale(const Math::Pair &value)
+{
+	m_scale = value;
+}
 
-public:
+void
+Transform::setTranslation(const Math::Vector2 &value)
+{
+	m_translation = value;
+}
 
-	InputComponent(const Core::Identifier &identifier, Game::IEntity &entity);
-	virtual ~InputComponent(void);
-
-	enum Direction {
-		ICDDown  = 0,
-		ICDLeft  = 1,
-		ICDRight = 2,
-		ICDUp    = 3
-	};
-
-	Direction direction(void) const
-	    { return(static_cast<Direction>(m_direction)); }
-
-	bool inMotion(void) const;
-
-public: /* virtual */
-
-	VIRTUAL const Core::Type & type(void) const
-	    { return(Type); }
-
-	VIRTUAL void update(TIME d);
-
-	VIRTUAL bool handleEvent(const Event::IEvent &event);
-
-public: /* static */
-
-	static const Core::Type Type;
-};
-typedef Core::Shared<InputComponent> SharedInputComponent;
-
-
-#endif
+void
+Transform::setRotation(float value)
+{
+	m_rotation = value;
+}
 

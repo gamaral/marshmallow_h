@@ -55,3 +55,8 @@ Point2::difference(const Point2 &rhs) const
 	return(Vector2(rhs - *this));
 }
 
+Point2::operator Vector2(void) const
+{
+	return(Vector2(x(), y()));
+}
+

@@ -36,6 +36,8 @@
 
 #include "core/logger.h"
 
+#include "graphics/transform.h"
+
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
@@ -43,7 +45,7 @@ using namespace Graphics;
 
 namespace
 {
-	static Math::Triplet s_camera(0.f, 0.f, 1.f);
+	static Transform s_camera;
 } // namespace
 
 /******************************************************************************/
@@ -55,6 +57,11 @@ Viewport::Initialize(int w, int h, int d, bool f)
 	MMUNUSED(h);
 	MMUNUSED(d);
 	MMUNUSED(f);
+
+	s_camera.setRotation(.0f);
+	s_camera.setScale(Math::Pair::One());
+	s_camera.setTranslation(Math::Vector2::Zero());
+
 	MMINFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
 	return(true);
 }
@@ -87,16 +94,10 @@ Viewport::SwapBuffer(void)
 {
 }
 
-const Math::Triplet &
+Graphics::Transform &
 Viewport::Camera(void)
 {
 	return(s_camera);
-}
-
-void
-Viewport::MoveCamera(const Math::Triplet &c)
-{
-	s_camera = c;
 }
 
 void

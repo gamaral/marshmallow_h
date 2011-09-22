@@ -39,13 +39,31 @@
 
 #include <game/entitybase.h>
 
+
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game
+{
+	class AnimationComponent;
+	typedef Core::Shared<AnimationComponent> SharedAnimationComponent;
+}
+MARSHMALLOW_NAMESPACE_END
+
 MARSHMALLOW_NAMESPACE_USE;
 
-class GAME_EXPORT PlayerEntity : public Game::EntityBase
+
+class InputComponent;
+typedef Core::Shared<InputComponent> SharedInputComponent;
+
+class PlayerEntity : public Game::EntityBase
 {
 	NO_ASSIGN(PlayerEntity);
 	NO_COPY(PlayerEntity);
 
+	Game::SharedAnimationComponent m_animation_component;
+	SharedInputComponent m_input_component;
+
+	int m_direction;
+	bool m_in_motion;
 	bool m_init;
 
 public:

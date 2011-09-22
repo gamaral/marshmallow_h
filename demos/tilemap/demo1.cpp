@@ -33,6 +33,7 @@
 
 #include <graphics/factory.h>
 #include <graphics/tileset.h>
+#include <graphics/transform.h>
 #include <graphics/viewport.h>
 
 #include <game/box2d/box2dscenelayer.h>
@@ -55,7 +56,7 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(60, 60, false),
+	: EngineBase(60, 60, true),
 	  m_stop_timer(0)
 	{
 	}
@@ -82,7 +83,8 @@ public:
 
 		sceneManager()->pushScene(l_scene);
 
-		Graphics::Viewport::MoveCamera(Math::Triplet(0, 0, 0.25));
+		Graphics::Transform &l_camera = Graphics::Viewport::Camera();
+		l_camera.setScale(Math::Pair(4.f, 4.f));
 
 		return(true);
 	}

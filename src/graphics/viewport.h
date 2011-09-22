@@ -50,6 +50,8 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics
 {
 
+	class Transform;
+
 	/*! @brief Graphics Viewport Interface */
 	namespace Viewport
 	{
@@ -78,10 +80,7 @@ namespace Graphics
 		void SwapBuffer(void);
 
 		GRAPHICS_EXPORT
-		const Math::Triplet & Camera(void);
-
-		GRAPHICS_EXPORT
-		void MoveCamera(const Math::Triplet &camera);
+		Graphics::Transform & Camera(void);
 
 		GRAPHICS_EXPORT
 		void VisibleArea(Math::Point2 *tl, Math::Point2 *br);

@@ -56,6 +56,10 @@ namespace Math
 
 		Vector2 difference(const Point2 &rhs) const;
 
+	public: /* operators */
+
+		operator Vector2(void) const;
+
 	public: /* static */
 
 		static const Point2 & Zero(void)

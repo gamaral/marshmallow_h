@@ -31,6 +31,7 @@
 
 #include <graphics/factory.h>
 #include <graphics/tileset.h>
+#include <graphics/transform.h>
 #include <graphics/viewport.h>
 
 #include <game/enginebase.h>
@@ -139,7 +140,8 @@ public:
 		if (++m_stop_timer == 30)
 			stop();
 
-		Graphics::Viewport::MoveCamera(Math::Triplet(0, 0, 1.f - m_stop_timer/30.f));
+		Graphics::Transform &l_camera = Graphics::Viewport::Camera();
+		l_camera.setScale(Math::Pair(1.f + m_stop_timer / 30.f, 1.f + m_stop_timer / 30.f));
 	}
 };
 
