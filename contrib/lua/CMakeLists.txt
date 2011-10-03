@@ -27,8 +27,40 @@
 #
 
 find_package(Lua)
+include_directories(${LUA_INCLUDE_DIRS})
 
-file(GLOB LUA_SRCS ${LUA_BASE}/src/*.c)
+file(GLOB LUA_SRCS ${LUA_BASE}/src/lapi.c
+                   ${LUA_BASE}/src/lauxlib.c
+                   ${LUA_BASE}/src/lbaselib.c
+                   ${LUA_BASE}/src/lcode.c
+                   ${LUA_BASE}/src/ldblib.c
+                   ${LUA_BASE}/src/ldebug.c
+                   ${LUA_BASE}/src/ldo.c
+                   ${LUA_BASE}/src/ldump.c
+                   ${LUA_BASE}/src/lfunc.c
+                   ${LUA_BASE}/src/lgc.c
+                   ${LUA_BASE}/src/linit.c
+                   ${LUA_BASE}/src/liolib.c
+                   ${LUA_BASE}/src/llex.c
+                   ${LUA_BASE}/src/lmathlib.c
+                   ${LUA_BASE}/src/lmem.c
+                   ${LUA_BASE}/src/loadlib.c
+                   ${LUA_BASE}/src/lobject.c
+                   ${LUA_BASE}/src/lopcodes.c
+                   ${LUA_BASE}/src/loslib.c
+                   ${LUA_BASE}/src/lparser.c
+                   ${LUA_BASE}/src/lstate.c
+                   ${LUA_BASE}/src/lstring.c
+                   ${LUA_BASE}/src/lstrlib.c
+                   ${LUA_BASE}/src/ltable.c
+                   ${LUA_BASE}/src/ltablib.c
+                   ${LUA_BASE}/src/ltm.c
+                   ${LUA_BASE}/src/lundump.c
+                   ${LUA_BASE}/src/lvm.c
+                   ${LUA_BASE}/src/lzio.c
+                   ${LUA_BASE}/src/print.c
+)
+
 
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 	if (BUILD_SHARED_LIBS)
@@ -37,7 +69,5 @@ if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 	endif()
 endif()
 
-add_library(${LUA_LIBRARY} STATIC
-	${LUA_SRCS}
-)
+add_library(${LUA_LIBRARY} ${LUA_SRCS})
 
