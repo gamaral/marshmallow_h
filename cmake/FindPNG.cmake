@@ -13,6 +13,8 @@
 #=============================================================================
 # Copyright 2000-2009 Kitware, Inc., Insight Software Consortium
 # All rights reserved.
+# Copyright 2011 Marshmallow Engine.
+# Copyright 2011 Guillermo A. Amaral B. (gamaral) <g@maral.me>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -42,53 +44,48 @@
 #
 #=============================================================================
 
-if(PNG_FIND_QUIETLY)
-  set(_FIND_ZLIB_ARG QUIET)
-endif(PNG_FIND_QUIETLY)
-find_package(ZLIB ${_FIND_ZLIB_ARG})
+if(MARSHMALLOW_CONTRIB_LIBPNG)
+  set(PNG_FOUND ON)
+  set(PNG_PNG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/libpng/
+                          ${PROJECT_BINARY_DIR}/contrib/libpng/)
+  if(BUILD_SHARED_LIBS)
+    set(PNG_DEFINITIONS -DPNG_STATIC)
+  endif()
+  set(PNG_LIBRARY marshmallow_libpng)
+else()
+  if(PNG_FIND_QUIETLY)
+    set(_FIND_ZLIB_ARG QUIET)
+  endif(PNG_FIND_QUIETLY)
+  find_package(ZLIB ${_FIND_ZLIB_ARG})
 
-if(ZLIB_FOUND)
-  if(MARSHMALLOW_CONTRIB_LIBPNG)
-    set(PNG_FOUND ON CACHE BOOL "")
-    set(PNG_PNG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/libpng/
-                            ${PROJECT_BINARY_DIR}/contrib/libpng/
-                            CACHE STRING "")
-    if(BUILD_SHARED_LIBS)
-      set(PNG_DEFINITIONS -DPNG_STATIC CACHE STRING "")
-    endif()
-    set(PNG_LIBRARY marshmallow_libpng CACHE STRING "")
-    set(PNG_INCLUDE_DIR ${PNG_PNG_INCLUDE_DIR} ${ZLIB_INCLUDE_DIR} CACHE STRING "")
-    set(PNG_LIBRARIES ${PNG_LIBRARY} ${ZLIB_LIBRARY} CACHE STRING "")
-
-  else()
+  if(ZLIB_FOUND)
     find_path(PNG_PNG_INCLUDE_DIR png.h
     /usr/local/include/libpng             # OpenBSD
     )
 
     set(PNG_NAMES ${PNG_NAMES} png libpng png15 libpng15 png15d libpng15d png14 libpng14 png14d libpng14d png12 libpng12 png12d libpng12d)
-    find_library(PNG_LIBRARY NAMES ${PNG_NAMES} )
+    find_library(PNG_LIBRARY NAMES ${PNG_NAMES})
 
-    if (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
-        # png.h includes zlib.h. Sigh.
-        SET(PNG_INCLUDE_DIR ${PNG_PNG_INCLUDE_DIR} ${ZLIB_INCLUDE_DIR} )
-        SET(PNG_LIBRARIES ${PNG_LIBRARY} ${ZLIB_LIBRARY})
+    if(PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
+      set(PNG_FOUND ON)
+    endif()
+  endif(ZLIB_FOUND)
+endif()
 
-        if (CYGWIN)
-          if(BUILD_SHARED_LIBS)
-             # No need to define PNG_USE_DLL here, because it's default for Cygwin.
-          else(BUILD_SHARED_LIBS)
-            SET (PNG_DEFINITIONS -DPNG_STATIC)
-          endif(BUILD_SHARED_LIBS)
-        endif (CYGWIN)
+if (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
+    # png.h includes zlib.h. Sigh.
+    SET(PNG_INCLUDE_DIR ${PNG_PNG_INCLUDE_DIR} ${ZLIB_INCLUDE_DIR} )
+    SET(PNG_LIBRARIES ${PNG_LIBRARY} ${ZLIB_LIBRARY})
 
-    endif (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
-  endif()
-endif(ZLIB_FOUND)
+    if (CYGWIN)
+      if(BUILD_SHARED_LIBS)
+         # No need to define PNG_USE_DLL here, because it's default for Cygwin.
+      else(BUILD_SHARED_LIBS)
+        SET (PNG_DEFINITIONS -DPNG_STATIC)
+      endif(BUILD_SHARED_LIBS)
+    endif (CYGWIN)
+endif (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
 
-# handle the QUIETLY and REQUIRED arguments and set PNG_FOUND to TRUE if
-# all listed variables are TRUE
-include(${CMAKE_ROOT}/Modules/FindPackageHandleStandardArgs.cmake)
-find_package_handle_standard_args(PNG  DEFAULT_MSG  PNG_LIBRARY PNG_PNG_INCLUDE_DIR)
 
 mark_as_advanced(PNG_PNG_INCLUDE_DIR PNG_INCLUDE_DIR PNG_LIBRARY PNG_FOUND PNG_DEFINITIONS PNG_LIBRARIES)
 

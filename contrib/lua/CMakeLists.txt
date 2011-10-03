@@ -1,5 +1,5 @@
 # Copyright 2011 Marshmallow Engine. All rights reserved.
-# Copyright 2011 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
+# Copyright 2011 Guillermo A. Amaral B. (gamaral) <g@maral.me>
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -26,41 +26,18 @@
 # or implied, of Marshmallow Engine.
 #
 
-# EASTL
-add_subdirectory(eastl)
+find_package(Lua)
 
-# TinyXML
-set(TINYXML_LIBRARIES marshmallow_tinyxml)
-set(TINYXML_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tinyxml/include")
-add_subdirectory(tinyxml)
-set(TINYXML_LIBRARIES ${TINYXML_LIBRARIES} PARENT_SCOPE)
-set(TINYXML_INCLUDE_DIR ${TINYXML_INCLUDE_DIR} PARENT_SCOPE)
+file(GLOB LUA_SRCS ${LUA_BASE}/src/*.c)
 
-# Box2D
-if (MARSHMALLOW_WITH_BOX2D)
-	add_subdirectory(box2d)
+if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
+	if (BUILD_SHARED_LIBS)
+		set(CMAKE_CXX_FLAGS "-fPIC ${CMAKE_CXX_FLAGS}")
+		set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
+	endif()
 endif()
 
-# LIBPNG
-if(MARSHMALLOW_CONTRIB_LIBPNG AND PNG_FOUND)
-	add_subdirectory(libpng)
-endif()
+add_library(${LUA_LIBRARY} STATIC
+	${LUA_SRCS}
+)
 
-# Lua
-if (MARSHMALLOW_CONTRIB_LUA AND LUA_FOUND)
-	add_subdirectory(lua)
-endif()
-
-# ZLIB
-if (MARSHMALLOW_CONTRIB_ZLIB AND ZLIB_FOUND)
-	add_subdirectory(zlib)
-endif()
-
-# GLPNG
-if(OPENGL_FOUND)
-	set(GLPNG_LIBRARIES marshmallow_glpng)
-	set(GLPNG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/glpng/include")
-	add_subdirectory(glpng)
-	set(GLPNG_LIBRARIES ${GLPNG_LIBRARIES} PARENT_SCOPE)
-	set(GLPNG_INCLUDE_DIR ${GLPNG_INCLUDE_DIR} PARENT_SCOPE)
-endif()

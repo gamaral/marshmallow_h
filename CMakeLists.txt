@@ -82,8 +82,11 @@ option(MARSHMALLOW_VIEWPORT_USE_DUMMY "Use Dummy Viewport (testing)" ON)
 option(MARSHMALLOW_VIEWPORT_USE_WGL "Use WGL (Wiggle) Viewport (windows)" OFF)
 option(MARSHMALLOW_VIEWPORT_USE_GLX "Use GLX Viewport (unix)" OFF)
 
-option(MARSHMALLOW_CONTRIB_ZLIB "Use bundled ZLIB" ON)
 option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG" ON)
+option(MARSHMALLOW_CONTRIB_LUA "Use bundled LUA" ON)
+option(MARSHMALLOW_CONTRIB_ZLIB "Use bundled ZLIB" ON)
+
+find_package(Lua)
 
 option(MARSHMALLOW_WITH_BOX2D "Use Box2D" ON)
 

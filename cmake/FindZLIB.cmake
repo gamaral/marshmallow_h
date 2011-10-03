@@ -32,11 +32,10 @@
 #  License text for the above reference.)
 
 IF(MARSHMALLOW_CONTRIB_ZLIB)
-    SET(ZLIB_FOUND ON CACHE BOOL "")
+    SET(ZLIB_FOUND ON)
     SET(ZLIB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/zlib/
-                         ${PROJECT_BINARY_DIR}/contrib/zlib/
-                         CACHE STRING "")
-    SET(ZLIB_LIBRARY marshmallow_zlib CACHE STRING "")
+                         ${PROJECT_BINARY_DIR}/contrib/zlib/)
+    SET(ZLIB_LIBRARY marshmallow_zlib)
 ELSE()
     FIND_PATH(ZLIB_INCLUDE_DIR zlib.h
         "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\Zlib;InstallPath]/include"
@@ -69,13 +68,11 @@ ELSE()
         SET(ZLIB_MAJOR_VERSION "${ZLIB_VERSION_MAJOR}")
         SET(ZLIB_MINOR_VERSION "${ZLIB_VERSION_MINOR}")
         SET(ZLIB_PATCH_VERSION "${ZLIB_VERSION_PATCH}")
-    ENDIF()
 
-    # handle the QUIETLY and REQUIRED arguments and set ZLIB_FOUND to TRUE if 
-    # all listed variables are TRUE
-    INCLUDE(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(ZLIB REQUIRED_VARS ZLIB_INCLUDE_DIR ZLIB_LIBRARY
-                                           VERSION_VAR ZLIB_VERSION_STRING)
+        IF(ZLIB_LIBRARY)
+          SET(ZLIB_FOUND ON)
+        ENDIF()
+    ENDIF()
 ENDIF()
 
 IF(ZLIB_FOUND)
