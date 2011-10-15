@@ -3,11 +3,6 @@
 ====================================================================================
             “The only game engine that tastes better slightly burned!”
 
-Graphics
-========
-
-  Parse OpenGL extension string
-
 Allocators
 ==========
 
@@ -37,9 +32,41 @@ Resource Manager
   Weak is kept for lookup.
   Update checks for invalid weak pointers
 
-Tiles
-=====
+Presentation
+============
 
-    Add Tiled TMX format parser.
+  Text support.
+
+  Slide system.
+
+Concept
+-------
+
+    Probably a platformer, walk around passing a set of enemies and
+  challanges to get to the end and change slide (level).
+
+Topics
+------
+
+    Loading
+
+    Introduction
+
+    Target Platforms
+
+    Build System
+
+    Code Details
+
+    Repository
+
+    Open Invitation
+
+    Credits
+
+Text Component
+==============
+
+    Add TTF Support
 
 vim:syn=notes:

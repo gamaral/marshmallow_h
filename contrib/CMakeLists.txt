@@ -42,17 +42,17 @@ if (MARSHMALLOW_WITH_BOX2D)
 endif()
 
 # LIBPNG
-if(MARSHMALLOW_CONTRIB_LIBPNG AND PNG_FOUND)
+if(MARSHMALLOW_CONTRIB_LIBPNG)
 	add_subdirectory(libpng)
 endif()
 
 # Lua
-if (MARSHMALLOW_CONTRIB_LUA AND LUA_FOUND)
+if (MARSHMALLOW_CONTRIB_LUA)
 	add_subdirectory(lua)
 endif()
 
 # ZLIB
-if (MARSHMALLOW_CONTRIB_ZLIB AND ZLIB_FOUND)
+if (MARSHMALLOW_CONTRIB_ZLIB)
 	add_subdirectory(zlib)
 endif()
 
