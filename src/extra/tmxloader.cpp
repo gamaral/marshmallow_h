@@ -350,7 +350,7 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 		l_pos_component->position()[0] = m_conv_ratio.width()  * static_cast<float>(l_object_x);
 		l_pos_component->position()[1] = m_conv_ratio.height() * static_cast<float>(l_object_y);
 
-		/* centere position for object (offset) */
+		/* change position to center of object (offset) */
 		l_pos_component->position()[0] += l_object_hrsize.width();
 		l_pos_component->position()[1] -= l_object_hrsize.height();
 

@@ -68,14 +68,14 @@ public:
 			assert(l_texture->isLoaded() && "Failed to load tilemap asset!");
 
 			Graphics::SharedTilesetBase l_tileset = new Graphics::Tileset;
-			l_tileset->setTileSize(Math::Size2i(12, 24));
+			l_tileset->setTileSize(Math::Size2i(16, 32));
 			l_tileset->setTextureData(l_texture);
 
 			Game::SharedEntitySceneLayer l_elayer = new Game::EntitySceneLayer("entity", *this);
 			Game::SharedEntity l_entity = new Game::Entity("text", *l_elayer);
 			Game::SharedTextComponent l_tcomp = new Game::TextComponent("txt", *l_entity);
 			l_elayer->addEntity(l_entity);
-			l_tcomp->text() = "Hello World!\nMarshmallow";
+			l_tcomp->text() = "Hello World!\nScore: 1000";
 			l_tcomp->tileset() = l_tileset.staticCast<Graphics::ITileset>();
 			l_entity->pushComponent(l_tcomp.staticCast<Game::IComponent>());
 			pushLayer(l_elayer.staticCast<Game::ISceneLayer>());

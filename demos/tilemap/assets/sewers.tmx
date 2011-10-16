@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="24" tileheight="24">
- <tileset firstgid="1" name="sewer_tileset" tilewidth="24" tileheight="24">
+<map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="sewer_tileset" tilewidth="32" tileheight="32">
   <image source="assets/sewer_tileset.png" trans="ff00ff" width="192" height="384"/>
  </tileset>
  <layer name="Bottom" width="50" height="50">

@@ -11,10 +11,10 @@
                     <component id="render" type="Game::RenderComponent">
                         <mesh type="Graphics::QuadMesh" rotation="0">
                             <texture id="assets/kitchen.png" />
-                            <vector x="-2.66" y="2" />
-                            <vector x="-2.66" y="-2" />
-                            <vector x="2.66" y="2" />
-                            <vector x="2.66" y="-2" />
+                            <vector x="-2.15" y="0.85" />
+                            <vector x="-2.15" y="-1.15" />
+                            <vector x="1.85" y="0.85" />
+                            <vector x="1.85" y="-1.15" />
                         </mesh>
                     </component>
                 </entity>
@@ -164,10 +164,10 @@
             <layer id="splash1" type="Game::SplashSceneLayer" fade="1.0" exposure="1.5" autokill="true">
                 <mesh type="Graphics::QuadMesh" rotation="20">
                     <texture id="assets/splash1.png" />
-                    <vector x="-1.3" y="1.1" />
-                    <vector x="-1.3" y="-.9" />
-                    <vector x="1.3" y="1.1" />
-                    <vector x="1.3" y="-.9" />
+                    <vector x="-1" y="1" />
+                    <vector x="-1" y="-1" />
+                    <vector x="1" y="1" />
+                    <vector x="1" y="-1" />
                 </mesh>
             </layer>
         </scene>
