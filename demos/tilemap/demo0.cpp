@@ -66,7 +66,7 @@ public:
 			assert(l_texture->isLoaded() && "Failed to load tilemap asset!");
 
 			Graphics::SharedTilesetBase l_tileset = new Graphics::Tileset;
-			l_tileset->setTileSize(Math::Size2i(24, 24));
+			l_tileset->setTileSize(Math::Size2i(32, 32));
 			l_tileset->setTextureData(l_texture);
 
 			Game::SharedTilemapSceneLayer l_tslayer;
@@ -75,7 +75,7 @@ public:
 			/* layer 1 */
 			l_tslayer = new Game::TilemapSceneLayer("bottom", *this);
 			l_tslayer->setSize(Math::Size2i(80, 60));
-			l_tslayer->setTileSize(Math::Size2i(24, 24));
+			l_tslayer->setTileSize(Math::Size2i(32, 32));
 			l_tslayer->attachTileset(1, l_tileset.staticCast<Graphics::ITileset>());
 
 			/* generate random tilemap */
@@ -90,7 +90,7 @@ public:
 			l_tslayer = new Game::TilemapSceneLayer("overlay", *this);
 			l_tslayer->setOpacity(0.15f);
 			l_tslayer->setSize(Math::Size2i(80, 60));
-			l_tslayer->setTileSize(Math::Size2i(24, 24));
+			l_tslayer->setTileSize(Math::Size2i(32, 32));
 			l_tslayer->attachTileset(1, l_tileset.staticCast<Graphics::ITileset>());
 
 			/* generate random tilemap */
