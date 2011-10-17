@@ -90,11 +90,6 @@ find_package(Lua)
 
 option(MARSHMALLOW_WITH_BOX2D "Use Box2D" ON)
 
-if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-	option(MARSHMALLOW_DEBUG "Marshmallow Debugging" ON)
-	set(MARSHMALLOW_DEBUG_VERBOSITY "2" CACHE STRING "Verbosity Level")
-endif()
-
 ####################################################################### CONFIG #
 
 configure_file(

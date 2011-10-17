@@ -36,7 +36,13 @@
 
 #include <windows.h>
 
-#ifndef DEBUG
+#if MMDEBUG
+int
+main(int argc, char *argv[])
+{
+	return(MMain(argc, argv));
+}
+#else
 int
 WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -44,10 +50,4 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdS
 	return(MMain(0, noargs));
 }
 #endif
-
-int
-main(int argc, char *argv[])
-{
-	return(MMain(argc, argv));
-}
 

@@ -46,6 +46,7 @@
 
 #include "graphics/opengl/extensions/vbo.h"
 #include "graphics/painter.h"
+#include "graphics/transform.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -60,7 +61,7 @@ namespace
 		HGLRC         context;
 		HWND          window;
 		Math::Size2i  wsize;
-		Math::Triplet camera;
+		Transform     camera;
 		Math::Size2f  size;
 		Math::Point2  visible[2];
 		bool          fullscreen;
@@ -75,8 +76,10 @@ namespace
 
 	void InitializeViewport(void)
 	{
-		s_data.camera[0] = s_data.camera[1] = .0f; // camera x y
-		s_data.camera[2] = 1.f;                    // camera zoom
+		s_data.camera.setRotation(.0f);
+		s_data.camera.setScale(Math::Pair::One());
+		s_data.camera.setTranslation(Math::Vector2::Zero());
+
 		s_data.dcontext = 0;
 		s_data.context = 0;
 		s_data.window = 0;
@@ -357,25 +360,17 @@ namespace
 	void
 	UpdateViewport(void)
 	{
-		s_data.size[0] = DEFAULT_VIEWPORT_VWIDTH  * s_data.camera[2];
-		s_data.size[1] = DEFAULT_VIEWPORT_VHEIGHT * s_data.camera[2];
+		s_data.size[0] = DEFAULT_VIEWPORT_VWIDTH;
+		s_data.size[1] = DEFAULT_VIEWPORT_VHEIGHT;
 
 		const float l_hw = s_data.size[0] / 2.f;
 		const float l_hh = s_data.size[1] / 2.f;
-
-		/* update visible area */
-
-		s_data.visible[0][0] = -l_hw + s_data.camera[0];
-		s_data.visible[0][1] =  l_hh + s_data.camera[1];
-		s_data.visible[1][0] =  l_hw + s_data.camera[0];
-		s_data.visible[1][1] = -l_hh + s_data.camera[1];
 
 		/* update projection */
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(s_data.visible[0].x(), s_data.visible[1].x(),
-		        s_data.visible[1].y(), s_data.visible[0].y(), -1.f, 1.f);
+		glOrtho(-l_hw, l_hw, -l_hh, l_hh, -1.f, 1.f);
 		glMatrixMode(GL_MODELVIEW);
 	}
 
@@ -587,29 +582,35 @@ Viewport::SwapBuffer(void)
 	SwapBuffers(s_data.dcontext);
 	glClearColor(.0f, .0f, .0f, .0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	glLoadIdentity();
+	glRotatef(s_data.camera.rotation(), .0f, .0f, 1.f);
+	glScalef(s_data.camera.scale().x(), s_data.camera.scale().y(), 0.f);
+	glTranslatef(s_data.camera.translation().x() * -1, s_data.camera.translation().y() * -1, 0.f);
 }
 
-const Math::Triplet &
+Graphics::Transform &
 Viewport::Camera(void)
 {
 	return(s_data.camera);
 }
 
 void
-Viewport::MoveCamera(const Math::Triplet &c)
-{
-	s_data.camera[0] = c[0];
-	s_data.camera[1] = c[1];
-	s_data.camera[2] = c[2];
-	UpdateViewport();
-}
-
-void
 Viewport::VisibleArea(Math::Point2 *tl, Math::Point2 *br)
 {
-	if (tl) *tl = s_data.visible[0];
-	if (br) *br = s_data.visible[1];
+
+	const float l_hw = s_data.size[0] / (s_data.camera.scale().x() * 1.9f);
+	const float l_hh = s_data.size[1] / (s_data.camera.scale().y() * 1.9f);
+
+	if (tl) {
+		(*tl)[0] = -l_hw + s_data.camera.translation().x();
+		(*tl)[1] =  l_hh + s_data.camera.translation().y();
+	}
+
+	if (br) {
+		(*br)[0] =  l_hw + s_data.camera.translation().x();
+		(*br)[1] = -l_hh + s_data.camera.translation().y();
+	}
 }
 
 const Math::Size2f &

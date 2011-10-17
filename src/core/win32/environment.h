@@ -109,7 +109,7 @@
 #   define GAME_EXPORT DLL_IMPORT
 #endif
 
-#ifdef EXTRA_EXPORT
+#ifdef EXTRA_LIBRARY
 #   define EXTRA_EXPORT DLL_EXPORT
 #else
 #   define EXTRA_EXPORT DLL_IMPORT

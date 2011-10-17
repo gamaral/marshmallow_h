@@ -14,7 +14,7 @@ else ()
 	    COMPILE_FLAGS -DDEMO_CWD=\\"${CMAKE_CURRENT_SOURCE_DIR}\\")
 endif()
 
-if(WIN32 AND NOT CMAKE_BUILD_TYPE MATCHES Debug)
+if(WIN32 AND NOT MARSHMALLOW_DEBUG)
 	set_target_properties(angrymallows_demo PROPERTIES WIN32_EXECUTABLE ON)
 endif()
 

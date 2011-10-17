@@ -50,7 +50,7 @@ namespace Core
 	template <class T> class Weak;
 
 	/*! @brief Serializable Interface */
-	struct CORE_EXPORT ISerializable
+	struct ISerializable
 	{
 		virtual ~ISerializable(void) {};
 

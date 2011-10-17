@@ -62,7 +62,7 @@ namespace Core
 	};
 
 	/*! @brief Data IO Interface */
-	struct CORE_EXPORT IDataIO
+	struct IDataIO
 	{
 		virtual ~IDataIO(void) {};
 
