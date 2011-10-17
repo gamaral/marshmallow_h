@@ -108,6 +108,7 @@ void
 TilemapSceneLayer::setTileSize(const Math::Size2i &s)
 {
 	m_tile_size = s;
+	recalculateRelativeTileSize();
 	recalculateAllVertexData();
 }
 

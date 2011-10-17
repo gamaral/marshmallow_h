@@ -42,6 +42,8 @@
 #include "graphics/itexturecoordinatedata.h"
 #include "graphics/itexturedata.h"
 
+#define TILE_ADJUSTMENT 0.0008f
+
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
@@ -73,7 +75,7 @@ TilesetBase::~TilesetBase(void)
 void
 TilesetBase::setName(const Core::Identifier &n)
 {
-    m_name = n;
+	m_name = n;
 }
 
 void
@@ -197,7 +199,7 @@ TilesetBase::reset(void)
 	 * for the last row/column.
 	 */
 
-	m_adjust_col = .001f / static_cast<float>(m_tile_size.width());
+	m_adjust_col = TILE_ADJUSTMENT / static_cast<float>(m_tile_size.width());
 	m_offset_col = new float[m_size.width() + 1];
 	m_spacing_col = static_cast<float>(m_spacing)
 	              / static_cast<float>(l_texture_size.width());
@@ -206,7 +208,7 @@ TilesetBase::reset(void)
 		    static_cast<float>(m_margin + (i * (m_tile_size.width() + m_spacing)))
 		  / static_cast<float>(l_texture_size.width());
 
-	m_adjust_row = .001f / static_cast<float>(m_tile_size.height());
+	m_adjust_row = TILE_ADJUSTMENT / static_cast<float>(m_tile_size.height());
 	m_offset_row = new float[m_size.height() + 1];
 	m_spacing_row = static_cast<float>(m_spacing)
 	              / static_cast<float>(l_texture_size.height());
