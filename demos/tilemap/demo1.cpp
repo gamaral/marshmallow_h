@@ -49,6 +49,8 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
+#define TIMEOUT 16
+
 class Demo : public Game::EngineBase
 {
 	int m_stop_timer;
@@ -93,7 +95,7 @@ public:
 	{
 		EngineBase::second();
 
-		if (++m_stop_timer == 20)
+		if (++m_stop_timer == TIMEOUT)
 			stop();
 	}
 };

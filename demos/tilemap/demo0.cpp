@@ -39,6 +39,8 @@
 #include <game/scenemanager.h>
 #include <game/tilemapscenelayer.h>
 
+#define TIMEOUT 16
+
 MARSHMALLOW_NAMESPACE_USE;
 
 class DemoScene : public Game::SceneBase
@@ -117,14 +119,13 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(1, 1),
+	: EngineBase(60, 60),
 	  m_stop_timer(0)
 	{
 	}
 
 	VIRTUAL bool initialize(void)
 	{
-		MMINFO1("FYI - Engine set to 1 FPS");
 		EngineBase::initialize();
 
 		Game::SharedScene l_scene(new DemoScene);
@@ -137,11 +138,11 @@ public:
 	{
 		EngineBase::second();
 
-		if (++m_stop_timer == 30)
+		if (++m_stop_timer == TIMEOUT)
 			stop();
 
 		Graphics::Transform &l_camera = Graphics::Viewport::Camera();
-		l_camera.setScale(Math::Pair(1.f + m_stop_timer / 30.f, 1.f + m_stop_timer / 30.f));
+		l_camera.setScale(Math::Pair(1.f + m_stop_timer / 8.f, 1.f + m_stop_timer / 8.f));
 	}
 };
 

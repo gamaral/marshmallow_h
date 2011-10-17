@@ -41,6 +41,9 @@
 #include <game/scenemanager.h>
 #include <game/textcomponent.h>
 
+#define TIMEOUT 16
+#define MESSAGE "Marshmallow!\n123456790~!@#$%^\nSecond %d"
+
 MARSHMALLOW_NAMESPACE_USE;
 
 class DemoScene : public Game::SceneBase
@@ -75,7 +78,7 @@ public:
 			Game::SharedEntity l_entity = new Game::Entity("text", *l_elayer);
 			Game::SharedTextComponent l_tcomp = new Game::TextComponent("txt", *l_entity);
 			l_elayer->addEntity(l_entity);
-			l_tcomp->text() = "Hello World!\nScore: 1000";
+			l_tcomp->text() = "Hello World!";
 			l_tcomp->tileset() = l_tileset.staticCast<Graphics::ITileset>();
 			l_entity->pushComponent(l_tcomp.staticCast<Game::IComponent>());
 			pushLayer(l_elayer.staticCast<Game::ISceneLayer>());
@@ -96,14 +99,13 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(1, 1),
+	: EngineBase(60, 60),
 	  m_stop_timer(0)
 	{
 	}
 
 	VIRTUAL bool initialize(void)
 	{
-		MMINFO1("FYI - Engine set to 1 FPS");
 		EngineBase::initialize();
 
 		Game::SharedScene l_scene(new DemoScene);
@@ -116,11 +118,20 @@ public:
 	{
 		EngineBase::second();
 
-		if (++m_stop_timer == 30)
+		if (++m_stop_timer == TIMEOUT)
 			stop();
 
-		Graphics::Transform &l_camera = Graphics::Viewport::Camera();
-		l_camera.setScale(Math::Pair(1.f + m_stop_timer / 30.f, 1.f + m_stop_timer / 30.f));
+		Game::SharedEntitySceneLayer l_eslayer =
+		    sceneManager()->activeScene()->getLayer("entity").staticCast<Game::EntitySceneLayer>();
+
+		Game::SharedEntity l_entity = l_eslayer->getEntity("text");
+
+		Game::SharedTextComponent l_tcomp =
+		    l_entity->getComponent("txt").staticCast<Game::TextComponent>();
+
+		char l_message[60];
+		sprintf(l_message, MESSAGE, m_stop_timer);
+		l_tcomp->text() = l_message;
 	}
 };
 
