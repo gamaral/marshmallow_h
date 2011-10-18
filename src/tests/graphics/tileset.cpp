@@ -60,118 +60,30 @@ tileset_fixed_test(void)
 	tcd = l_tileset.getTextureCoordinateData(0);
 	tcd->get(0, l_u, l_v);
 	TEST("TILESET 128-16 FIXED INDEX 0 TEST 0",
-	    (l_u == 0.000625f) && (l_v == 0.000625f));
+	    (l_u == 0.000050f) && (l_v == 0.000050f));
 	tcd->get(1, l_u, l_v);
 	TEST("TILESET 128-16 FIXED INDEX 0 TEST 1",
-	    (l_u == 0.000625f) && (l_v == 0.124375f));
+	    (l_u == 0.000050f) && (l_v == 0.124950f));
 	tcd->get(2, l_u, l_v);
 	TEST("TILESET 128-16 FIXED INDEX 0 TEST 2",
-	    (l_u == 0.124375f) && (l_v == 0.000625f));
+	    (l_u == 0.124950f) && (l_v == 0.000050f));
 	tcd->get(3, l_u, l_v);
 	TEST("TILESET 128-16 FIXED INDEX 0 TEST 3",
-	    (l_u == 0.124375f) && (l_v == 0.124375f));
+	    (l_u == 0.124950f) && (l_v == 0.124950f));
 
 	tcd = l_tileset.getTextureCoordinateData(63);
 	tcd->get(0, l_u, l_v);
 	TEST("TILESET 128-16 FIXED INDEX 63 TEST 0",
-	    (l_u == 0.875625f) && (l_v == 0.875625f));
+	    (l_u == 0.875050f) && (l_v == 0.875050f));
 	tcd->get(1, l_u, l_v);
 	TEST("TILESET 128-16 FIXED INDEX 63 TEST 1",
-	    (l_u == 0.875625f) && (l_v == 0.999375f));
+	    (l_u == 0.875050f) && (l_v == 0.999950f));
 	tcd->get(2, l_u, l_v);
 	TEST("TILESET 128-16 FIXED INDEX 63 TEST 2",
-	    (l_u == 0.999375f) && (l_v == 0.875625f));
+	    (l_u == 0.999950f) && (l_v == 0.875050f));
 	tcd->get(3, l_u, l_v);
 	TEST("TILESET 128-16 FIXED INDEX 63 TEST 3",
-	    (l_u == 0.999375f) && (l_v == 0.999375f));
-}
-
-void
-tileset_spacing_test(void)
-{
-	Graphics::Dummy::SharedTextureData l_textureData = new Graphics::Dummy::TextureData;
-	l_textureData->load("126x126");
-	l_textureData->setSize(Math::Size2i(126, 126));
-
-	Graphics::Tileset l_tileset;
-	l_tileset.setTileSize(Math::Size2i(14, 14));
-	l_tileset.setSpacing(2);
-	l_tileset.setTextureData(l_textureData.staticCast<Graphics::ITextureData>());
-
-	Graphics::SharedTextureCoordinateData tcd;
-	float l_u, l_v;
-
-	tcd = l_tileset.getTextureCoordinateData(0);
-	tcd->get(0, l_u, l_v);
-	TEST("TILESET 128-14 SPACING 2 INDEX 0 TEST 0",
-	    (l_u == 0.000714285707f) && (l_v == 0.000714285707f));
-	tcd->get(1, l_u, l_v);
-	TEST("TILESET 128-14 SPACING 2 INDEX 0 TEST 1",
-	    (l_u == 0.000714285707f) && (l_v == 0.110396832f));
-	tcd->get(2, l_u, l_v);
-	TEST("TILESET 128-14 SPACING 2 INDEX 0 TEST 2",
-	    (l_u == 0.110396832f) && (l_v == 0.000714285707f));
-	tcd->get(3, l_u, l_v);
-	TEST("TILESET 128-14 SPACING 2 INDEX 0 TEST 3",
-	    (l_u == 0.110396832f) && (l_v == 0.110396832f));
-
-	tcd = l_tileset.getTextureCoordinateData(63);
-	tcd->get(0, l_u, l_v);
-	TEST("TILESET 128-14 SPACING 2 INDEX 63 TEST 0",
-	    (l_u == 0.889603198f) && (l_v == 0.889603198f));
-	tcd->get(1, l_u, l_v);
-	TEST("TILESET 128-14 SPACING 2 INDEX 63 TEST 1",
-	    (l_u == 0.889603198f) && (l_v == 0.999285698f));
-	tcd->get(2, l_u, l_v);
-	TEST("TILESET 128-14 SPACING 2 INDEX 63 TEST 2",
-	    (l_u == 0.999285698f) && (l_v == 0.889603198f));
-	tcd->get(3, l_u, l_v);
-	TEST("TILESET 128-14 SPACING 2 INDEX 63 TEST 3",
-	    (l_u == 0.999285698f) && (l_v == 0.999285698f));
-}
-
-void
-tileset_margin_test(void)
-{
-	Graphics::Dummy::SharedTextureData l_textureData = new Graphics::Dummy::TextureData;
-	l_textureData->load("130x130");
-	l_textureData->setSize(Math::Size2i(130, 130));
-
-	Graphics::Tileset l_tileset;
-	l_tileset.setTileSize(Math::Size2i(16, 16));
-	l_tileset.setMargin(2);
-	l_tileset.setTextureData(l_textureData.staticCast<Graphics::ITextureData>());
-
-	Graphics::SharedTextureCoordinateData tcd;
-	float l_u, l_v;
-
-	tcd = l_tileset.getTextureCoordinateData(0);
-	tcd->get(0, l_u, l_v);
-	TEST("TILESET 130-16 MARGIN 2 INDEX 0 TEST 0",
-	    (l_u == 0.0160096157f) && (l_v == 0.0160096157f));
-	tcd->get(1, l_u, l_v);
-	TEST("TILESET 130-16 MARGIN 2 INDEX 0 TEST 1",
-	    (l_u == 0.0160096157f) && (l_v == 0.137836546f));
-	tcd->get(2, l_u, l_v);
-	TEST("TILESET 130-16 MARGIN 2 INDEX 0 TEST 2",
-	    (l_u == 0.137836546f) && (l_v == 0.0160096157f));
-	tcd->get(3, l_u, l_v);
-	TEST("TILESET 130-16 MARGIN 2 INDEX 0 TEST 3",
-	    (l_u == 0.137836546f) && (l_v == 0.137836546f));
-
-	tcd = l_tileset.getTextureCoordinateData(63);
-	tcd->get(0, l_u, l_v);
-	TEST("TILESET 130-16 MARGIN 2 INDEX 63 TEST 0",
-	    (l_u == 0.877548099f) && (l_v == 0.877548099f));
-	tcd->get(1, l_u, l_v);
-	TEST("TILESET 130-16 MARGIN 2 INDEX 63 TEST 1",
-	    (l_u == 0.877548099f) && (l_v == 0.999374986f));
-	tcd->get(2, l_u, l_v);
-	TEST("TILESET 130-16 MARGIN 2 INDEX 63 TEST 2",
-	    (l_u == 0.999374986f) && (l_v == 0.877548099f));
-	tcd->get(3, l_u, l_v);
-	TEST("TILESET 130-16 MARGIN 2 INDEX 63 TEST 3",
-	    (l_u == 0.999374986f) && (l_v == 0.999374986f));
+	    (l_u == 0.999950f) && (l_v == 0.999950f));
 }
 
 int
@@ -181,8 +93,6 @@ MMain(int argc, char *argv[])
 	MMUNUSED(argv);
 
 	tileset_fixed_test();
-	tileset_spacing_test();
-	tileset_margin_test();
 
 	return(TEST_EXITCODE);
 }
