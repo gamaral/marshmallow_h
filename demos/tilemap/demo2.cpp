@@ -42,7 +42,7 @@
 #include <game/textcomponent.h>
 
 #define TIMEOUT 16
-#define MESSAGE "Marshmallow!\n123456790~!@#$%^\nSecond %d"
+#define MESSAGE "Marshmallow!\n123456790~!@#$%%^\nSecond %d"
 
 MARSHMALLOW_NAMESPACE_USE;
 
