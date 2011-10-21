@@ -128,3 +128,8 @@ Viewport::Type(void)
 	return(s_type);
 }
 
+void
+Viewport::SwapControl(bool)
+{
+}
+

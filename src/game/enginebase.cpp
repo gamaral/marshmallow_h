@@ -90,10 +90,14 @@ EngineBase::initialize(void)
 {
 	Platform::Initialize();
 
+	/* initialize viewport */
 	if (!Viewport::Initialize()) {
 		MMERROR1("Failed to initialize engine!");
 		return(false);
 	}
+
+	/* turn off vsync */
+	Viewport::SwapControl(false);
 
 	if (!m_event_manager)
 		m_event_manager = new Event::EventManager("EngineBase.EventManager");

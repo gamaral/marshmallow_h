@@ -90,6 +90,9 @@ namespace Graphics
 
 		GRAPHICS_EXPORT
 		const Math::Size2i & WindowSize(void);
+
+		GRAPHICS_EXPORT
+		void SwapControl(bool sync = true);
 	}
 
 }

@@ -66,9 +66,16 @@ namespace
 		Math::Point2  visible[2];
 		bool          fullscreen;
 		bool          loaded;
-		bool          vbo_supported;
+		bool          has_swap_control;
+		bool          has_vbo;
 	} s_data;
 
+	static const char *s_gl_extensions(0);
+
+	typedef BOOL (WINAPI * PFNWGLSWAPINTERVALEXTPROC) (int interval);
+	static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT(0);
+
+	bool CheckSwapControlSupport(void);
 	bool CheckVBOSupport(void);
 	void UpdateViewport(void);
 	void HandleKeyEvent(int keycode, bool down);
@@ -86,7 +93,8 @@ namespace
 		s_data.fullscreen = false;
 		s_data.loaded = false;
 		s_data.size.zero();
-		s_data.vbo_supported = false;
+		s_data.has_swap_control = false;
+		s_data.has_vbo = false;
 		s_data.visible[0] = s_data.visible[1] = Math::Point2::Zero();
 	}
 
@@ -217,7 +225,9 @@ namespace
 
 		/* check extensions */
 
-		s_data.vbo_supported = CheckVBOSupport();
+		s_gl_extensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
+		s_data.has_swap_control = CheckSwapControlSupport();
+		s_data.has_vbo = CheckVBOSupport();
 
 		/* set defaults */
 
@@ -300,12 +310,24 @@ namespace
 	}
 
 	bool
+	CheckSwapControlSupport(void)
+	{
+		if (!IsExtensionSupported(s_gl_extensions, "WGL_EXT_swap_control"))
+			return(false);
+
+		wglSwapIntervalEXT =
+		    reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>
+		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("wglSwapIntervalEXT")));
+
+		return(wglSwapIntervalEXT);
+	}
+
+	bool
 	CheckVBOSupport(void)
 	{
 		HasVectorBufferObjectSupport = false;
 
-		if (!IsExtensionSupported
-		    (reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)), "GL_ARB_vertex_buffer_object"))
+		if (!IsExtensionSupported(s_gl_extensions, "GL_ARB_vertex_buffer_object"))
 			return(false);
 
 		glGenBuffersARB =
@@ -630,5 +652,12 @@ Viewport::Type(void)
 {
 	static const Core::Type s_type("WGL");
 	return(s_type);
+}
+
+void
+Viewport::SwapControl(bool s)
+{
+	if (s_data.has_swap_control)
+		wglSwapIntervalEXT(s ? 1 : 0);
 }
 

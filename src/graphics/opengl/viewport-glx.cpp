@@ -38,6 +38,7 @@
 #include <X11/XKBlib.h>
 #define XMD_H
 #include <X11/extensions/xf86vmode.h>
+
 #include <GL/gl.h>
 #include <GL/glx.h>
 
@@ -73,9 +74,17 @@ namespace
 		Math::Size2f  size;
 		bool          fullscreen;
 		bool          loaded;
-		bool          vbo_supported;
+		bool          has_swap_control;
+		bool          has_vbo;
 	} s_data;
 
+	static const char *s_gl_extensions(0);
+	static const char *s_glx_extensions(0);
+
+	typedef int ( * PFNGLXSWAPINTERVALSGIPROC) (int interval);
+	static PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI(0);
+
+	bool CheckSwapControlSupport(void);
 	bool CheckVBOSupport(void);
 	void UpdateViewport(void);
 	void HandleKeyEvent(XKeyEvent &key);
@@ -92,7 +101,8 @@ namespace
 		s_data.loaded = false;
 		s_data.screen = 0;
 		s_data.size.zero();
-		s_data.vbo_supported = false;
+		s_data.has_swap_control = false;
+		s_data.has_vbo = false;
 		s_data.window = 0;
 		s_data.wm_delete = 0;
 		s_data.wsize[0] = s_data.wsize[1] = 0;
@@ -263,8 +273,10 @@ namespace
 		}
 
 		/* check extensions */
-
-		s_data.vbo_supported = CheckVBOSupport();
+		s_gl_extensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
+		s_glx_extensions = glXQueryExtensionsString(s_data.display, s_data.screen);
+		s_data.has_swap_control = CheckSwapControlSupport();
+		s_data.has_vbo = CheckVBOSupport();
 
 		/* set defaults */
 
@@ -334,12 +346,24 @@ namespace
 	}
 
 	bool
+	CheckSwapControlSupport(void)
+	{
+		if (!IsExtensionSupported(s_glx_extensions, "GLX_SGI_swap_control"))
+			return(false);
+
+		glXSwapIntervalSGI =
+		    reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>
+		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI")));
+
+		return(glXSwapIntervalSGI);
+	}
+
+	bool
 	CheckVBOSupport(void)
 	{
 		HasVectorBufferObjectSupport = false;
 
-		if (!IsExtensionSupported
-		    (reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)), "GL_ARB_vertex_buffer_object"))
+		if (!IsExtensionSupported(s_gl_extensions, "GL_ARB_vertex_buffer_object"))
 			return(false);
 
 		glGenBuffersARB =
@@ -670,5 +694,12 @@ Viewport::Type(void)
 {
 	static const Core::Type s_type("GLX");
 	return(s_type);
+}
+
+void
+Viewport::SwapControl(bool s)
+{
+	if (s_data.has_swap_control)
+		glXSwapIntervalSGI(s ? 1 : 0);
 }
 

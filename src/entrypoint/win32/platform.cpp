@@ -36,6 +36,8 @@
 
 #include <windows.h>
 
+#include "core/config.h"
+
 #if MMDEBUG
 int
 main(int argc, char *argv[])
