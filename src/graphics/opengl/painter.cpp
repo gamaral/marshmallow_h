@@ -105,33 +105,6 @@ namespace
 		glDisableClientState(GL_VERTEX_ARRAY);
 
 	}
-
-	bool
-	IsMeshVisible(const IMesh &m, const Math::Point2 &o)
-	{
-		/*
-		 * get visible coordinates
-		 */
-		Math::Point2 l_visible[2];
-		Graphics::Viewport::VisibleArea(&l_visible[0], &l_visible[1]);
-		float l_width, l_height;
-
-		if (QuadMesh::Type() == m.type()) {
-			const Math::Vector2 &l_tl = m.vertex(0 /* top-left */ );
-			const Math::Vector2 &l_br = m.vertex(3 /* bottom-right */);
-
-			l_width = l_br.x() - l_tl.x();
-			l_height = l_tl.y() - l_br.y();
-		}
-		else {
-			MMWARNING1("Unknown mesh type, ignoring width/height");
-			l_width = l_height = 0;
-			return(true);
-		}
-
-		return (o.x() >= l_visible[0].x() - l_width  && o.x() <= l_visible[1].x() + l_width
-		     && o.y() <= l_visible[0].y() + l_height && o.y() >= l_visible[1].y() - l_height);
-	}
 } // namespace
 
 /******************************************************************************/
@@ -149,9 +122,6 @@ Painter::Finalize(void)
 void
 Painter::Draw(const IMesh &m, const Math::Point2 &o)
 {
-	if (!IsMeshVisible(m, o))
-		return;
-
 	const float l_rotate_angle = m.rotation();
 
 	float l_scale[2];

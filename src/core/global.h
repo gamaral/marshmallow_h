@@ -46,7 +46,4 @@
 #define MMMIN(x,y) (x < y ? x : y)
 #define MMMAX(x,y) (x > y ? x : y)
 
-#define TIMEOUT_INIT const TIME l_start_time = Core::Platform::TimeStamp()
-#define TIMEOUT_DEC(x) (x -= (NOW() - l_start_time))
-
 #endif

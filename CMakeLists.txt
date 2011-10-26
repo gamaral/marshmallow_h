@@ -53,8 +53,8 @@ if (BUILD_UNIT_TESTS)
 endif (BUILD_UNIT_TESTS)
 
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
-	set(CMAKE_C_FLAGS "-fomit-frame-pointer ${CMAKE_C_FLAGS}")
-	set(CMAKE_CXX_FLAGS "-fno-rtti -fno-exceptions -fomit-frame-pointer ${CMAKE_CXX_FLAGS}")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+	set(CMAKE_CXX_FLAGS "-fno-rtti -fno-exceptions ${CMAKE_CXX_FLAGS}")
 endif()
 
 ###################################################################### CONTRIB #

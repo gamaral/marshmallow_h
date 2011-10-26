@@ -174,7 +174,7 @@ EventManager::queue(const SharedEvent &event)
 }
 
 bool
-EventManager::execute(TIME timeout)
+EventManager::execute()
 {
 	const TIME l_start_time = NOW();
 
@@ -191,7 +191,6 @@ EventManager::execute(TIME timeout)
 	 */
 	SharedEvent event;
 	while (!l_queue.empty()
-	    && (timeout == INFINITE || timeout > (NOW() - l_start_time))
 	    && (event = l_queue.front())->timeStamp() <= NOW()) {
 		dispatch(*event); l_queue.pop_front();
 	}

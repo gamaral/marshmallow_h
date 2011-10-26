@@ -87,8 +87,7 @@ namespace Game
 		 * @param ups Desired update rate
 		 * @param suspendable Allow engine to sleep
 		 */
-		EngineBase(float fps = 60.0, float ups = 60.0,
-		    bool suspendable = false);
+		EngineBase(float fps, float ups, bool suspendable);
 		virtual ~EngineBase(void);
 
 		/*!
@@ -149,7 +148,7 @@ namespace Game
 		VIRTUAL void finalize(void);
 
 		VIRTUAL void second(void);
-		VIRTUAL void tick(TIME timeout);
+		VIRTUAL void tick(void);
 
 		VIRTUAL void render(void);
 		VIRTUAL void update(TIME delta);

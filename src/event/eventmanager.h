@@ -93,7 +93,7 @@ namespace Event
 
 		virtual bool dispatch(const IEvent &event);
 
-		virtual bool execute(TIME timeout);
+		virtual bool execute(void);
 
 	public: /* static */
 

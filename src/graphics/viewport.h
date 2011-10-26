@@ -74,7 +74,7 @@ namespace Graphics
 		         bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
 
 		GRAPHICS_EXPORT
-		void Tick(TIME timeout);
+		void Tick(void);
 
 		GRAPHICS_EXPORT
 		void SwapBuffer(void);

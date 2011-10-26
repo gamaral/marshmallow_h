@@ -606,12 +606,11 @@ Viewport::Redisplay(int w, int h, int d, bool f)
 }
 
 void
-Viewport::Tick(TIME t)
+Viewport::Tick(void)
 {
-	TIMEOUT_INIT;
 	XEvent e;
 
-	while(TIMEOUT_DEC(t) > 0 && XPending(s_data.display)) {
+	while(XPending(s_data.display)) {
 		XNextEvent(s_data.display, &e);
 
 		switch(e.type) {
@@ -643,6 +642,7 @@ Viewport::Tick(TIME t)
 void
 Viewport::SwapBuffer(void)
 {
+	glFinish();
 	glXSwapBuffers(s_data.display, s_data.window);
 	glClearColor(.0f, .0f, .0f, .0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

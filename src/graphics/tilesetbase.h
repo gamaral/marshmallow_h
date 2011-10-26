@@ -57,8 +57,7 @@ namespace Graphics
 	/*! @brief Graphics Tileset Base Class */
 	class GRAPHICS_EXPORT TilesetBase : public ITileset
 	{
-		typedef map<int, SharedTextureCoordinateData> TextureCoordinateMap;
-		TextureCoordinateMap m_cache;
+		SharedTextureCoordinateData **m_cache;
 
 		Core::Identifier  m_name;
 		Math::Size2i      m_size;

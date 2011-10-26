@@ -166,7 +166,7 @@ EngineBase::run(void)
 	m_running = true;
 
 	/* startup */
-	tick(l_tick_target);
+	tick();
 	update(0);
 	render();
 
@@ -190,6 +190,8 @@ EngineBase::run(void)
 				MMINFO1("Skipping render frame."), l_render = 0;
 		}
 
+		tick();
+
 		if (l_update >= l_update_target) {
 			update(l_update / MILLISECONDS_PER_SECOND);
 			l_update -= l_update_target;
@@ -202,8 +204,6 @@ EngineBase::run(void)
 			m_frame_rate = 0;
 			l_second -= l_second_target;
 		}
-
-		tick(l_tick_target - (NOW() - l_tick));
 
 		if (m_suspendable)
 			Platform::Sleep(l_tick_target - (NOW() - l_tick));
@@ -243,11 +243,10 @@ EngineBase::factory(void) const
 }
 
 void
-EngineBase::tick(TIME t)
+EngineBase::tick(void)
 {
-	TIMEOUT_INIT;
-	Viewport::Tick(TIMEOUT_DEC(t));
-	if (m_event_manager) m_event_manager->execute(TIMEOUT_DEC(t));
+	Viewport::Tick();
+	if (m_event_manager) m_event_manager->execute();
 	else MMWARNING1("No event manager!");
 }
 

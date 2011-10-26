@@ -159,13 +159,11 @@ TilemapSceneLayer::render(void)
 			Graphics::SharedTileset l_ts = tileset(l_tindex, &l_tioffset);
 			Graphics::SharedTextureCoordinateData l_tcd;
 
-			if (l_ts)
-				l_tcd = l_ts->getTextureCoordinateData(l_tindex - l_tioffset);
-
-			if (l_tcd) {
+			if (l_ts) {
 				Graphics::SharedVertexData l_svdata = m_vertexes[l_tioffset];
 
-				Graphics::QuadMesh l_mesh(l_tcd, l_ts->textureData(), l_svdata);
+				Graphics::QuadMesh l_mesh(l_ts->getTextureCoordinateData(l_tindex - l_tioffset),
+				    l_ts->textureData(), l_svdata);
 				l_mesh.setColor(l_color);
 
 				float l_x = static_cast<float>(l_c) * m_rtile_size.width();

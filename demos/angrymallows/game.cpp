@@ -50,7 +50,7 @@ MARSHMALLOW_NAMESPACE_USE;
 #include "customfactory.h"
 
 Demo::Demo(const char *f)
-    : EngineBase(),
+    : EngineBase(60, 60, true),
       m_filename(STRDUP(f)),
       m_stop_timer(0)
 {

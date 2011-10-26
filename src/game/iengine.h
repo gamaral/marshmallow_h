@@ -97,7 +97,7 @@ namespace Game
 		virtual void finalize(void) = 0;
 
 		virtual void second(void) = 0;
-		virtual void tick(TIME timeout) = 0;
+		virtual void tick(void) = 0;
 	};
 
 }

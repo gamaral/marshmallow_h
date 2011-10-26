@@ -170,7 +170,7 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(),
+	: EngineBase(60, 60, true),
 	  m_stop_timer(0),
 	  m_debugListener(new Event::DebugEventListener("log.txt"))
 	{

@@ -42,13 +42,13 @@
 #include "graphics/itexturecoordinatedata.h"
 #include "graphics/itexturedata.h"
 
-#define TILE_ADJUSTMENT 0.0008f
+#define TILE_ADJUSTMENT 0.00085f
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 
 TilesetBase::TilesetBase()
-    : m_cache()
+    : m_cache(0)
     , m_name()
     , m_size()
     , m_tile_size(16, 16)
@@ -117,8 +117,8 @@ TilesetBase::getTextureCoordinateData(int i)
 	if (!m_texture_data || !m_texture_data->isLoaded())
 		return(SharedTextureCoordinateData());
 
-	TextureCoordinateMap::iterator l_cached_i = m_cache.find(i);
-	if (l_cached_i == m_cache.end()) {
+	SharedTextureCoordinateData *l_cached = m_cache[i];
+	if (l_cached == 0) {
 		/* create new entry */
 #define TILECOORDINATES 4
 		SharedTextureCoordinateData l_data =
@@ -139,11 +139,11 @@ TilesetBase::getTextureCoordinateData(int i)
 		l_data->set(2, l_right, l_top);
 		l_data->set(3, l_right, l_bottom);
 
-		m_cache[i] = l_data;
+		m_cache[i] = new SharedTextureCoordinateData(l_data);
 		return(l_data);
 	}
 
-	return(m_cache[i]);
+	return(*m_cache[i]);
 }
 
 bool
@@ -171,6 +171,12 @@ TilesetBase::reset(void)
 {
 	/* clear current tile cache */
 
+	const int l_old_item_count = m_size.area();
+	for (int i = 0; i < l_old_item_count; ++i)
+		delete m_cache[i];
+	delete[] m_cache;
+	m_cache = 0;
+
 	delete[] m_offset_col;
 	delete[] m_offset_row;
 
@@ -181,7 +187,6 @@ TilesetBase::reset(void)
 	m_spacing_col = 0;
 	m_spacing_row = 0;
 	m_size.zero();
-	m_cache.clear();
 
 	if (!m_texture_data)
 		return;
@@ -216,5 +221,10 @@ TilesetBase::reset(void)
 		m_offset_row[i] =
 		    static_cast<float>(m_margin + (i * (m_tile_size.height() + m_spacing)))
 		  / static_cast<float>(l_texture_size.height());
+
+	const int l_item_count = m_size.area();
+	m_cache = new SharedTextureCoordinateData*[l_item_count];
+	for (int i = 0; i < l_item_count; ++i)
+		m_cache[i] = 0;
 }
 

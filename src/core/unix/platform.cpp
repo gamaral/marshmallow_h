@@ -72,7 +72,6 @@ Platform::Sleep(TIME timeout)
 #define NANOSECONDS_PER_MILLISECOND 1000000.0
 	l_ts.tv_nsec = static_cast<long int>(trunc(timeout * NANOSECONDS_PER_MILLISECOND));
 	nanosleep(&l_ts, 0);
-
 }
 
 time_t

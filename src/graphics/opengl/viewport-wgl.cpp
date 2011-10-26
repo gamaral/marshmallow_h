@@ -579,10 +579,8 @@ Viewport::Redisplay(int w, int h, int d, bool f)
 }
 
 void
-Viewport::Tick(TIME t)
+Viewport::Tick(void)
 {
-	TIMEOUT_INIT;
-
 	MSG l_msg;
 	while (PeekMessage(&l_msg, 0, 0, 0, PM_NOREMOVE)) {
 		if (l_msg.message == WM_QUIT) {
@@ -601,6 +599,7 @@ Viewport::Tick(TIME t)
 void
 Viewport::SwapBuffer(void)
 {
+	glFinish();
 	SwapBuffers(s_data.dcontext);
 	glClearColor(.0f, .0f, .0f, .0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
