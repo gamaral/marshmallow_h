@@ -70,4 +70,12 @@
 #   define MMINFO1(...) (void)0
 #endif
 
+#if MMDEBUG && MMDEBUG_VERBOSITY >= 3
+#   define MMVERBOSE(x,...) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
+#   define MMVERBOSE1(x) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
+#else
+#   define MMVERBOSE(...) (void)0
+#   define MMVERBOS1(...) (void)0
+#endif
+
 #endif

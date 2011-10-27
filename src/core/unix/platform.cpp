@@ -39,6 +39,8 @@
 #include <ctime>
 #include <unistd.h>
 
+#include "core/logger.h"
+
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
@@ -66,6 +68,8 @@ void
 Platform::Sleep(TIME timeout)
 {
 	if (timeout <= 0) return;
+
+	MMINFO("Sleeping for %f miliseconds\n", timeout);
 
 	struct timespec l_ts;
 	l_ts.tv_sec = 0;

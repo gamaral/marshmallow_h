@@ -206,7 +206,7 @@ EngineBase::run(void)
 		}
 
 		if (m_suspendable)
-			Platform::Sleep(l_tick_target - (NOW() - l_tick));
+			Platform::Sleep(l_tick_target - ((NOW() - l_tick)));
 
 		l_lasttick = l_tick;
 	} while (m_running);
