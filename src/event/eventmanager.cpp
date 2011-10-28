@@ -176,8 +176,6 @@ EventManager::queue(const SharedEvent &event)
 bool
 EventManager::execute()
 {
-	const TIME l_start_time = NOW();
-
 	/* fetch and sort active queue */
 	EventList &l_queue = m_queue[m_active_queue];
 	l_queue.sort(SortSharedEvent);

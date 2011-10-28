@@ -160,7 +160,7 @@ TilemapSceneLayer::render(void)
 			Graphics::SharedTextureCoordinateData l_tcd;
 
 			if (l_ts) {
-				Graphics::SharedVertexData l_svdata = m_vertexes[l_tioffset];
+				Graphics::SharedVertexData &l_svdata = m_vertexes[l_tioffset];
 
 				Graphics::QuadMesh l_mesh(l_ts->getTextureCoordinateData(l_tindex - l_tioffset),
 				    l_ts->textureData(), l_svdata);
