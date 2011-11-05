@@ -83,7 +83,7 @@ namespace Graphics
 		Graphics::Transform & Camera(void);
 
 		GRAPHICS_EXPORT
-		void VisibleArea(Math::Point2 *tl, Math::Point2 *br);
+		float VisibleRadius(void);
 
 		GRAPHICS_EXPORT
 		const Math::Size2f & Size(void);

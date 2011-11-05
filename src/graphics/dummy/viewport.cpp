@@ -99,11 +99,13 @@ Viewport::Camera(void)
 	return(s_camera);
 }
 
-void
-Viewport::VisibleArea(Math::Point2 *tl, Math::Point2 *br)
+float
+Viewport::VisibleRadius(void)
 {
-	if (tl) *tl = Math::Point2(-DEFAULT_VIEWPORT_VWIDTH / 2.f,  DEFAULT_VIEWPORT_VHEIGHT / 2.f);
-	if (br) *br = Math::Point2( DEFAULT_VIEWPORT_VWIDTH / 2.f, -DEFAULT_VIEWPORT_VHEIGHT / 2.f);
+	if (DEFAULT_VIEWPORT_VWIDTH > DEFAULT_VIEWPORT_VHEIGHT)
+		return(DEFAULT_VIEWPORT_VWIDTH / (s_camera.scale().x() * 2.f));
+	else
+		return(DEFAULT_VIEWPORT_VHEIGHT / (s_camera.scale().y() * 2.f));
 }
 
 const Math::Size2f &

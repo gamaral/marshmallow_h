@@ -37,10 +37,12 @@
 #include <cassert>
 
 #include "math/point2.h"
+#include "math/vector2.h"
 
 #include "graphics/factory.h"
 #include "graphics/painter.h"
 #include "graphics/quadmesh.h"
+#include "graphics/transform.h"
 #include "graphics/viewport.h"
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -146,10 +148,29 @@ TilemapSceneLayer::render(void)
 
 	Graphics::Color l_color(1.f, 1.f, 1.f, m_opacity);
 
+	float l_camera_x = Graphics::Viewport::Camera().translation().x();
+	float l_camera_y = Graphics::Viewport::Camera().translation().y();
+
 	for (int l_r = 0; l_r < m_size.height(); ++l_r) {
 		const int l_roffset = l_r * m_size.width();
 
 		for (int l_c = 0; l_c < m_size.width(); ++l_c) {
+			float l_x = static_cast<float>(l_c) * m_rtile_size.width();
+			float l_y = static_cast<float>(m_size.height() - l_r) * m_rtile_size.height();
+
+			/* offset to center of viewport */
+			l_x -= m_hrsize.width();
+			l_y -= m_hrsize.height();
+
+			Math::Vector2 l_diff(l_x - l_camera_x, l_y - l_camera_y);
+			float distance2 = abs(l_diff.magnitude2());
+
+#define TILE_OFFSET_AND_FILLER 2.4
+			/* test visibility */
+			if (distance2 >
+			    powf(Graphics::Viewport::VisibleRadius() + (m_rtile_size.height() * TILE_OFFSET_AND_FILLER), 2))
+				continue;
+
 			int l_tindex = m_data[l_roffset + l_c];
 			int l_tioffset;
 
@@ -165,13 +186,6 @@ TilemapSceneLayer::render(void)
 				Graphics::QuadMesh l_mesh(l_ts->getTextureCoordinateData(l_tindex - l_tioffset),
 				    l_ts->textureData(), l_svdata);
 				l_mesh.setColor(l_color);
-
-				float l_x = static_cast<float>(l_c) * m_rtile_size.width();
-				float l_y = static_cast<float>(m_size.height() - l_r) * m_rtile_size.height();
-
-				/* offset to center of viewport */
-				l_x -= m_hrsize.width();
-				l_y -= m_hrsize.height();
 
 				/* offset to bottom of tile (we draw up) */
 				l_y -= m_rtile_size.height();

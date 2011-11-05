@@ -659,22 +659,13 @@ Viewport::Camera(void)
 	return(s_data.camera);
 }
 
-void
-Viewport::VisibleArea(Math::Point2 *tl, Math::Point2 *br)
+float
+Viewport::VisibleRadius(void)
 {
-
-	const float l_hw = s_data.size[0] / (s_data.camera.scale().x() * 1.9f);
-	const float l_hh = s_data.size[1] / (s_data.camera.scale().y() * 1.9f);
-
-	if (tl) {
-		(*tl)[0] = -l_hw + s_data.camera.translation().x();
-		(*tl)[1] =  l_hh + s_data.camera.translation().y();
-	}
-
-	if (br) {
-		(*br)[0] =  l_hw + s_data.camera.translation().x();
-		(*br)[1] = -l_hh + s_data.camera.translation().y();
-	}
+	if (s_data.size[0] > s_data.size[1])
+		return(s_data.size[0] / (s_data.camera.scale().x() * 2.f));
+	else
+		return(s_data.size[1] / (s_data.camera.scale().y() * 2.f));
 }
 
 const Math::Size2f &
