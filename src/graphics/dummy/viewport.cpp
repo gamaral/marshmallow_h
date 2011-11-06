@@ -93,10 +93,16 @@ Viewport::SwapBuffer(void)
 {
 }
 
-Graphics::Transform &
+const Graphics::Transform &
 Viewport::Camera(void)
 {
 	return(s_camera);
+}
+
+void
+Viewport::SetCamera(const Graphics::Transform &camera)
+{
+	s_camera = camera;
 }
 
 float

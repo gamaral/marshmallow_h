@@ -80,7 +80,10 @@ namespace Graphics
 		void SwapBuffer(void);
 
 		GRAPHICS_EXPORT
-		Graphics::Transform & Camera(void);
+		const Graphics::Transform & Camera(void);
+
+		GRAPHICS_EXPORT
+		void SetCamera(const Graphics::Transform &camera);
 
 		GRAPHICS_EXPORT
 		float Radius2(void);

@@ -89,8 +89,9 @@ Demo::initialize(void)
 		l_document.InsertEndChild(l_root);
 	}
 
-	Graphics::Transform &l_camera = Graphics::Viewport::Camera();
+	Graphics::Transform l_camera = Graphics::Viewport::Camera();
 	l_camera.setScale(Math::Pair(30.f, 30.f));
+	Graphics::Viewport::SetCamera(l_camera);
 
 	return(true);
 }

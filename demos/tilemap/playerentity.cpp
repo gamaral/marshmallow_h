@@ -115,8 +115,9 @@ PlayerEntity::update(TIME d)
 		Game::SharedPositionComponent l_pos_component =
 		    getComponentType(Game::PositionComponent::Type()).staticCast<Game::PositionComponent>();
 		if (l_pos_component) {
-			Graphics::Transform & l_camera = Graphics::Viewport::Camera();
+			Graphics::Transform l_camera = Graphics::Viewport::Camera();
 			l_camera.setTranslation(l_pos_component->position());
+			Graphics::Viewport::SetCamera(l_camera);
 		}
 
 		/* update animation */

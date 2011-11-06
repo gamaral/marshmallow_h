@@ -79,6 +79,7 @@ namespace
 	bool CheckSwapControlSupport(void);
 	bool CheckVBOSupport(void);
 	void UpdateViewport(void);
+	void UpdateCamera(void);
 	void HandleKeyEvent(int keycode, bool down);
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -395,6 +396,19 @@ namespace
 		glLoadIdentity();
 		glOrtho(-l_hw, l_hw, -l_hh, l_hh, -1.f, 1.f);
 		glMatrixMode(GL_MODELVIEW);
+
+		/* update camera */
+		UpdateCamera();
+	}
+
+	void
+	UpdateCamera(void)
+	{
+		/* calculate radius^2 */
+#define HALF_VIEWPORT_SIZE 1.8f
+		const float l_w = s_data.size[0] / (s_data.camera.scale().x() * HALF_VIEWPORT_SIZE);
+		const float l_h = s_data.size[1] / (s_data.camera.scale().y() * HALF_VIEWPORT_SIZE);
+		s_data.radius2 = powf(l_w, 2.f) + powf(l_h, 2.f);
 	}
 
 	void
@@ -609,18 +623,19 @@ Viewport::SwapBuffer(void)
 	glRotatef(s_data.camera.rotation(), .0f, .0f, 1.f);
 	glScalef(s_data.camera.scale().x(), s_data.camera.scale().y(), 0.f);
 	glTranslatef(s_data.camera.translation().x() * -1, s_data.camera.translation().y() * -1, 0.f);
-
-	/* calculate radius^2 */
-#define HALF_VIEWPORT_SIZE 1.8f
-	const float l_w = s_data.size[0] / (s_data.camera.scale().x() * HALF_VIEWPORT_SIZE);
-	const float l_h = s_data.size[1] / (s_data.camera.scale().y() * HALF_VIEWPORT_SIZE);
-	s_data.radius2 = powf(l_w, 2.f) + powf(l_h, 2.f);
 }
 
-Graphics::Transform &
+const Graphics::Transform &
 Viewport::Camera(void)
 {
 	return(s_data.camera);
+}
+
+void
+Viewport::SetCamera(const Graphics::Transform &camera)
+{
+	s_data.camera = camera;
+	UpdateCamera();
 }
 
 float

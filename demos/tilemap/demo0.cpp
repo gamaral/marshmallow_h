@@ -141,8 +141,10 @@ public:
 		if (++m_stop_timer == TIMEOUT)
 			stop();
 
-		Graphics::Transform &l_camera = Graphics::Viewport::Camera();
+		Graphics::Transform l_camera = Graphics::Viewport::Camera();
 		l_camera.setScale(Math::Pair(1.f + m_stop_timer / 8.f, 1.f + m_stop_timer / 8.f));
+		l_camera.setRotation((25 * m_stop_timer) % 360);
+		Graphics::Viewport::SetCamera(l_camera);
 	}
 };
 

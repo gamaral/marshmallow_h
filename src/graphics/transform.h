@@ -51,17 +51,17 @@ namespace Graphics
 	/*! @brief Graphics Transform */
 	class GRAPHICS_EXPORT Transform
 	{
-		NO_ASSIGN(Transform);
-		NO_COPY(Transform);
-
 		float m_rotation;
 		Math::Pair m_scale;
 		Math::Vector2 m_translation;
 
 	public:
 		Transform(void);
+		Transform(const Transform &other);
 		virtual ~Transform(void);
 		
+		Transform & operator =(const Transform& rhs);
+
 		float rotation(void) const
 		    { return(m_rotation); }
 		void setRotation(float value);

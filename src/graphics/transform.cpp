@@ -47,8 +47,26 @@ Transform::Transform(void)
 {
 }
 
+Transform::Transform(const Transform &other)
+    : m_rotation(other.m_rotation)
+    , m_scale(other.m_scale)
+    , m_translation(other.m_translation)
+{
+}
+
 Transform::~Transform(void)
 {
+}
+
+Transform &
+Transform::operator =(const Transform& rhs)
+{
+	if (this != &rhs) {
+		m_rotation = rhs.m_rotation;
+		m_scale = rhs.m_scale;
+		m_translation = rhs.m_translation;
+	}
+	return(*this);
 }
 
 void
