@@ -100,12 +100,13 @@ Viewport::Camera(void)
 }
 
 float
-Viewport::VisibleRadius(void)
+Viewport::Radius2(void)
 {
-	if (DEFAULT_VIEWPORT_VWIDTH > DEFAULT_VIEWPORT_VHEIGHT)
-		return(DEFAULT_VIEWPORT_VWIDTH / (s_camera.scale().x() * 2.f));
-	else
-		return(DEFAULT_VIEWPORT_VHEIGHT / (s_camera.scale().y() * 2.f));
+	/* calculate radius^2 */
+#define HALF_VIEWPORT_SIZE 1.8f
+	const float l_w = DEFAULT_VIEWPORT_VWIDTH / (s_camera.scale().x() * HALF_VIEWPORT_SIZE);
+	const float l_h = DEFAULT_VIEWPORT_VHEIGHT / (s_camera.scale().y() * HALF_VIEWPORT_SIZE);
+	return(powf(l_w, 2.f) + powf(l_h, 2.f));
 }
 
 const Math::Size2f &

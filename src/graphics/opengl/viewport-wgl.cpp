@@ -62,6 +62,7 @@ namespace
 		HWND          window;
 		Math::Size2i  wsize;
 		Transform     camera;
+		float         radius2;
 		Math::Size2f  size;
 		Math::Point2  visible[2];
 		bool          fullscreen;
@@ -608,6 +609,12 @@ Viewport::SwapBuffer(void)
 	glRotatef(s_data.camera.rotation(), .0f, .0f, 1.f);
 	glScalef(s_data.camera.scale().x(), s_data.camera.scale().y(), 0.f);
 	glTranslatef(s_data.camera.translation().x() * -1, s_data.camera.translation().y() * -1, 0.f);
+
+	/* calculate radius^2 */
+#define HALF_VIEWPORT_SIZE 1.8f
+	const float l_w = s_data.size[0] / (s_data.camera.scale().x() * HALF_VIEWPORT_SIZE);
+	const float l_h = s_data.size[1] / (s_data.camera.scale().y() * HALF_VIEWPORT_SIZE);
+	s_data.radius2 = powf(l_w, 2.f) + powf(l_h, 2.f);
 }
 
 Graphics::Transform &
@@ -617,12 +624,9 @@ Viewport::Camera(void)
 }
 
 float
-Viewport::VisibleRadius(void)
+Viewport::Radius2(void)
 {
-	if (s_data.size[0] > s_data.size[1])
-		return(s_data.size[0] / (s_data.camera.scale().x() * 2.f));
-	else
-		return(s_data.size[1] / (s_data.camera.scale().y() * 2.f));
+	return(s_data.radius2);
 }
 
 const Math::Size2f &

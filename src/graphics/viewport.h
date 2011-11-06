@@ -83,7 +83,7 @@ namespace Graphics
 		Graphics::Transform & Camera(void);
 
 		GRAPHICS_EXPORT
-		float VisibleRadius(void);
+		float Radius2(void);
 
 		GRAPHICS_EXPORT
 		const Math::Size2f & Size(void);

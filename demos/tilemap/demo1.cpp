@@ -86,7 +86,7 @@ public:
 		sceneManager()->pushScene(l_scene);
 
 		Graphics::Transform &l_camera = Graphics::Viewport::Camera();
-		l_camera.setScale(Math::Pair(3.f, 3.f));
+		l_camera.setScale(Math::Pair(2.f, 2.f));
 
 		return(true);
 	}

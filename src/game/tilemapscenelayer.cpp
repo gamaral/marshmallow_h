@@ -150,11 +150,18 @@ TilemapSceneLayer::render(void)
 
 	float l_camera_x = Graphics::Viewport::Camera().translation().x();
 	float l_camera_y = Graphics::Viewport::Camera().translation().y();
+	float l_tile_r = (powf(m_rtile_size.width(),  2) +
+	                  powf(m_rtile_size.height(), 2)) / 2.f;
 
 	for (int l_r = 0; l_r < m_size.height(); ++l_r) {
 		const int l_roffset = l_r * m_size.width();
 
 		for (int l_c = 0; l_c < m_size.width(); ++l_c) {
+			int l_tindex = m_data[l_roffset + l_c];
+			if (!l_tindex)
+				continue;
+
+			/* calculate tile position */
 			float l_x = static_cast<float>(l_c) * m_rtile_size.width();
 			float l_y = static_cast<float>(m_size.height() - l_r) * m_rtile_size.height();
 
@@ -162,21 +169,16 @@ TilemapSceneLayer::render(void)
 			l_x -= m_hrsize.width();
 			l_y -= m_hrsize.height();
 
-			Math::Vector2 l_diff(l_x - l_camera_x, l_y - l_camera_y);
-			float distance2 = abs(l_diff.magnitude2());
+			/* calculate magnitude (center tile axis) */
+			const float l_distance2 =
+				powf((l_x + m_hrtile_size.width())  - l_camera_x, 2) +
+				powf((l_y - m_hrtile_size.height()) - l_camera_y, 2);
 
-#define TILE_OFFSET_AND_FILLER 2.4
 			/* test visibility */
-			if (distance2 >
-			    powf(Graphics::Viewport::VisibleRadius() + (m_rtile_size.height() * TILE_OFFSET_AND_FILLER), 2))
+			if (l_distance2 > Graphics::Viewport::Radius2() + l_tile_r)
 				continue;
 
-			int l_tindex = m_data[l_roffset + l_c];
 			int l_tioffset;
-
-			if (!l_tindex)
-				continue;
-
 			Graphics::SharedTileset l_ts = tileset(l_tindex, &l_tioffset);
 			Graphics::SharedTextureCoordinateData l_tcd;
 
