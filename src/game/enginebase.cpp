@@ -160,9 +160,15 @@ EngineBase::run(void)
 	TIME l_second_target = MILLISECONDS_PER_SECOND;
 
 	TIME l_tick;
-	TIME l_tick_target = MMMIN(l_render_target, l_update_target) / static_cast<TIME>(3.0);
+	TIME l_tick_target = MMMIN(l_render_target, l_update_target) / static_cast<TIME>(4);
 
-	m_delta_time = 0;
+#define TIME_INTERVAL_COUNT 8
+	int l_last_interval = 0;
+	TIME l_time_interval[TIME_INTERVAL_COUNT];
+	for (int i = 0; i < TIME_INTERVAL_COUNT; ++i)
+		l_time_interval[i] = l_tick_target;
+
+	m_delta_time = l_tick_target;
 	m_running = true;
 
 	/* startup */
@@ -170,14 +176,15 @@ EngineBase::run(void)
 	update(0);
 	render();
 
-	TIME l_lasttick = NOW();
-
 	/* main game loop */
 	do
 	{
-		l_tick = NOW();
+		m_delta_time = 0;
+		for (int i = 0; i < TIME_INTERVAL_COUNT; ++i)
+			m_delta_time += l_time_interval[i];
+		m_delta_time /= TIME_INTERVAL_COUNT;
 
-		m_delta_time = (l_tick - l_lasttick);
+		l_tick    = NOW();
 		l_render += m_delta_time;
 		l_update += m_delta_time;
 		l_second += m_delta_time;
@@ -205,10 +212,12 @@ EngineBase::run(void)
 			l_second -= l_second_target;
 		}
 
-		if (m_suspendable)
-			Platform::Sleep(l_tick_target - ((NOW() - l_tick)));
+		if (m_suspendable) {
+			Platform::Sleep(l_tick_target - (NOW() - l_tick));
+		}
 
-		l_lasttick = l_tick;
+		l_last_interval = (l_last_interval + 1) % TIME_INTERVAL_COUNT;
+		l_time_interval[l_last_interval] = NOW() - l_tick;
 	} while (m_running);
 
 	finalize();
