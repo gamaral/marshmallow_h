@@ -150,7 +150,7 @@ EngineBase::run(void)
 	}
 
 	TIME l_render = 0;
-#define MILLISECONDS_PER_SECOND static_cast<TIME>(1000.0)
+#define MILLISECONDS_PER_SECOND static_cast<TIME>(1000.f)
 	TIME l_render_target = MILLISECONDS_PER_SECOND / m_fps;
 
 	TIME l_update = 0;
@@ -160,7 +160,7 @@ EngineBase::run(void)
 	TIME l_second_target = MILLISECONDS_PER_SECOND;
 
 	TIME l_tick;
-	TIME l_tick_target = MMMIN(l_render_target, l_update_target) / static_cast<TIME>(4);
+	TIME l_tick_target = MMMIN(l_render_target, l_update_target) / static_cast<TIME>(4.f);
 
 #define TIME_INTERVAL_COUNT 8
 	int l_last_interval = 0;
@@ -179,12 +179,13 @@ EngineBase::run(void)
 	/* main game loop */
 	do
 	{
+		l_tick = NOW();
+
 		m_delta_time = 0;
 		for (int i = 0; i < TIME_INTERVAL_COUNT; ++i)
 			m_delta_time += l_time_interval[i];
 		m_delta_time /= TIME_INTERVAL_COUNT;
 
-		l_tick    = NOW();
 		l_render += m_delta_time;
 		l_update += m_delta_time;
 		l_second += m_delta_time;
