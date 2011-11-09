@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="80" height="20" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="platformer" tilewidth="32" tileheight="32">
+  <image source="assets/platformer_tiles.png" width="512" height="512"/>
+ </tileset>
+ <layer name="background" width="80" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztlksOgzAMRJH6uQClF2q76IcVsOjv/teokVhYVkISB8dJxeIpGzJkZhzatqqqdqU4rsANuAMPwT254fLg6/EJvIA38AG+Hu927dHqJETD5YGTy1JIdOKTj6ZnqZnQ7uVfzivRBdZMnU3q2ZKYHawZ44+TxRJ+crvfXH9a3wWp9+bcS6rzx2iU9jshcf45jdh+NPbndCdi+jkBZ8Il0KPU/1MuKbvpgJ4wJPCY6zxx8xsI2hmUQjfl1ZNV+1ylgO/vml9cfjjHLbCbVhfjc/sMvGjlR799IwegmVYX43NHpOmT+VwXId2Z9rs8b5j6Jm3b/NH8Ggc4v9ozd1sXId1R8Dls1Ex9k7Zt/n4g6sZz
+  </data>
+ </layer>
+ <layer name="midground" width="80" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzt0jEOgCAQRFHERLwPlVrJ/Q/lNJQEUAka/kumI7uTsMYAAAAAAPB/pxJ6l8BwfO8CGA43932L4pS18P1WMXtXjupGz6T6tewxKVaZG+7Iif+YYl+YXXojuO8C1nkCSw==
+  </data>
+ </layer>
+ <objectgroup name="logic" width="80" height="20">
+  <object type="Box2DColliderEntity" x="1" y="544" width="445" height="32"/>
+  <object type="Box2DColliderEntity" x="449" y="577" width="1083" height="32"/>
+  <object type="Box2DColliderEntity" x="1731" y="577" width="543" height="32"/>
+  <object type="Box2DColliderEntity" x="2144" y="483" width="32" height="32"/>
+  <object type="Box2DColliderEntity" x="2241" y="419" width="32" height="32"/>
+  <object type="Box2DColliderEntity" x="2337" y="353" width="269" height="32"/>
+  <object name="player" type="PlayerEntity" gid="103" x="7" y="542"/>
+ </objectgroup>
+ <layer name="foreground" width="80" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztzkkOgkAURVE2oC7AbmzLGpFGpoINUxTEZXrHxJEJ9VPk3eRMavDrBYFSSimllFKq3wRTzKyHeNoSK6yth3jaAUeE1kOUUkqNos2fXDbHwvGfVm0HuLnD/sd7hBNiJEiR4Yx84E1j6IICJa644Y4HKsNdvlTjiRcatHijw8fRhi95AxIb
+  </data>
+ </layer>
+</map>

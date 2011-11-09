@@ -73,26 +73,16 @@ PlayerEntity::update(TIME d)
 
 		m_animation_component =
 		    new Game::AnimationComponent("animation", *this);
-		m_animation_component->pushFrame("stand-down", 72, 12);
-		m_animation_component->pushFrame("stand-down", 73, 4);
-		m_animation_component->pushFrame("walk-down", 74, 4);
-		m_animation_component->pushFrame("walk-down", 75, 4);
-		m_animation_component->rate("walk-down", 16);
-		m_animation_component->pushFrame("stand-left",  76, 12);
-		m_animation_component->pushFrame("stand-left",  77, 4);
-		m_animation_component->pushFrame("walk-left", 78, 4);
-		m_animation_component->pushFrame("walk-left", 79, 4);
+		m_animation_component->pushFrame("stand-left",  106, 12);
+		m_animation_component->pushFrame("stand-left",  107, 4);
+		m_animation_component->pushFrame("walk-left", 108, 4);
+		m_animation_component->pushFrame("walk-left", 109, 4);
 		m_animation_component->rate("walk-left", 16);
-		m_animation_component->pushFrame("stand-right", 72, 12);
-		m_animation_component->pushFrame("stand-right", 73, 4);
-		m_animation_component->pushFrame("walk-right", 74, 4);
-		m_animation_component->pushFrame("walk-right", 75, 4);
+		m_animation_component->pushFrame("stand-right", 102, 12);
+		m_animation_component->pushFrame("stand-right", 103, 4);
+		m_animation_component->pushFrame("walk-right", 104, 4);
+		m_animation_component->pushFrame("walk-right", 105, 4);
 		m_animation_component->rate("walk-right", 16);
-		m_animation_component->pushFrame("stand-up",  76, 12);
-		m_animation_component->pushFrame("stand-up",  77, 4);
-		m_animation_component->pushFrame("walk-up", 80, 4);
-		m_animation_component->pushFrame("walk-up", 81, 4);
-		m_animation_component->rate("walk-up", 16);
 		pushComponent(m_animation_component.staticCast<Game::IComponent>());
 
 		/* create box2d component */
@@ -100,7 +90,7 @@ PlayerEntity::update(TIME d)
 		    new Game::Box2DComponent("box2d", *this);
 		l_box2d_component->bodyType() = b2_dynamicBody;
 		l_box2d_component->size() = l_size_component->size();
-		l_box2d_component->density() = 1.0;
+		l_box2d_component->density() = 10.0;
 		pushComponent(l_box2d_component.staticCast<Game::IComponent>());
 
 		/* input component */
@@ -119,10 +109,10 @@ PlayerEntity::update(TIME d)
 			Math::Point2 l_pos = l_pos_component->position();
 
 			/* camara snap - calculate using map */
-			if (l_pos.x() > 80) l_pos[0] = 80;
-			else if (l_pos.x() < -80) l_pos[0] = -80;
-			if (l_pos.y() > 85) l_pos[1] = 85;
-			else if (l_pos.y() < -85) l_pos[1] = -85;
+			if (l_pos.y() > 10) l_pos[1] = 10;
+			else if (l_pos.y() < -10) l_pos[1] = -10;
+			if (l_pos.x() < -120) l_pos[0] = -120;
+			else if (l_pos.x() > 120) l_pos[0] = 120;
 
 			l_camera.setTranslation(l_pos);
 			Graphics::Viewport::SetCamera(l_camera);
@@ -130,18 +120,6 @@ PlayerEntity::update(TIME d)
 
 		/* update animation */
 		switch(m_input_component->direction()) {
-		case InputComponent::ICDDown:
-			if (m_direction == InputComponent::ICDDown
-			 && m_in_motion == m_input_component->inMotion())
-				break;
-
-			m_in_motion = m_input_component->inMotion();
-			m_direction = InputComponent::ICDDown;
-			if (m_in_motion)
-				m_animation_component->play("walk-down", true);
-			else
-				m_animation_component->play("stand-down", true);
-			break;
 		case InputComponent::ICDLeft:
 			if (m_direction == InputComponent::ICDLeft
 			 && m_in_motion == m_input_component->inMotion())
@@ -165,18 +143,6 @@ PlayerEntity::update(TIME d)
 				m_animation_component->play("walk-right", true);
 			else
 				m_animation_component->play("stand-right", true);
-			break;
-		case InputComponent::ICDUp:
-			if (m_direction == InputComponent::ICDUp
-			 && m_in_motion == m_input_component->inMotion())
-				break;
-
-			m_in_motion = m_input_component->inMotion();
-			m_direction = InputComponent::ICDUp;
-			if (m_in_motion)
-				m_animation_component->play("walk-up", true);
-			else
-				m_animation_component->play("stand-up", true);
 			break;
 		}
 	}
