@@ -76,7 +76,7 @@ public: /* virtual */
 	VIRTUAL const Core::Type & type(void) const
 	    { return(sType); }
 
-	VIRTUAL void update(TIME delta);
+	VIRTUAL void update(float delta);
 
 public: /* static */
 

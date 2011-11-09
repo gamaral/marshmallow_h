@@ -66,7 +66,7 @@ public:
 	{
 	}
 
-	VIRTUAL void update(TIME d)
+	VIRTUAL void update(float d)
 	{
 		MMUNUSED(d);
 

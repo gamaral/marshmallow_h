@@ -106,7 +106,7 @@ EntitySceneLayer::render(void)
 }
 
 void
-EntitySceneLayer::update(TIME d)
+EntitySceneLayer::update(float d)
 {
 	EntityList::const_iterator l_i;
 

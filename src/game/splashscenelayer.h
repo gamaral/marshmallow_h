@@ -76,9 +76,9 @@ namespace Game
 
 		Graphics::SharedQuadMesh m_mesh;
 		Event::SharedEventListener m_event_proxy;
-		TIME m_exposure;
-		TIME m_fade;
-		TIME m_timer;
+		float m_exposure;
+		float m_fade;
+		float m_timer;
 		SplashState m_state;
 		bool m_autoBegin;
 		bool m_autoKill;
@@ -91,14 +91,14 @@ namespace Game
 
 		Graphics::SharedQuadMesh mesh(void) const;
 
-		TIME exposure(void) const
+		float exposure(void) const
 		    { return(m_exposure); }
-		void setExposure(TIME t)
+		void setExposure(float t)
 		    { m_exposure = t; }
 
-		TIME fade(void) const
+		float fade(void) const
 		    { return(m_fade); }
-		void setFade(TIME t)
+		void setFade(float t)
 		    { m_fade = t; }
 
 		bool autoKill(void) const
@@ -115,7 +115,7 @@ namespace Game
 		    { return(Type()); }
 
 		VIRTUAL void render(void);
-		VIRTUAL void update(TIME delta);
+		VIRTUAL void update(float delta);
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);

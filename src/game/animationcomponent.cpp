@@ -142,7 +142,7 @@ AnimationComponent::stop(int *s)
 }
 
 void
-AnimationComponent::update(TIME d)
+AnimationComponent::update(float d)
 {
 	if (!m_tileset) {
 		m_tileset = entity().getComponentType(TilesetComponent::Type()).

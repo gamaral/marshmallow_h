@@ -39,7 +39,7 @@ using namespace Event;
 
 const Core::Type UpdateEvent::sType("Event::UpdateEvent");
 
-UpdateEvent::UpdateEvent(TIME d)
+UpdateEvent::UpdateEvent(float d)
     : EventBase(0, HighestPriority),
       m_delta(d)
 {

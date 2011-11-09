@@ -78,7 +78,7 @@ InputComponent::inMotion(void) const
 }
 
 void
-InputComponent::update(TIME)
+InputComponent::update(float)
 {
 	if (!m_position)
 		m_position = entity().getComponentType(Game::PositionComponent::Type()).

@@ -81,7 +81,7 @@ SnatcherLayer::deregisterEntity(Game::IEntity &e)
 }
 
 void
-SnatcherLayer::update(TIME t)
+SnatcherLayer::update(float t)
 {
 	/* XXX: LATE NIGHT HACK */
 	switch (m_state) {

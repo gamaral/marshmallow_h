@@ -62,7 +62,7 @@ Platform::Finalize(void)
 void
 Platform::Sleep(TIME t)
 {
-	if (t > 0) SleepEx(static_cast<DWORD>(floor(t)), true);
+	if (t > 0) SleepEx(static_cast<DWORD>(t), true);
 }
 
 time_t
@@ -84,10 +84,10 @@ Platform::TimeStamp(void)
 	l_li.HighPart = l_ft.dwHighDateTime;
 #define EPOCHFILETIME (116444736000000000i64)
 	l_micro_seconds = (l_li.QuadPart - EPOCHFILETIME) / 10;
-#define MICROSECONDS_PER_MILLISECOND 1000.0
-#define MILLISECONDS_PER_SECOND 1000.0
+#define MICROSECONDS_PER_MILLISECOND 1000
+#define MILLISECONDS_PER_SECOND 1000
 	l_mseconds = (l_micro_seconds / MICROSECONDS_PER_MILLISECOND)
-	    -(s_start_time * MILLISECONDS_PER_SECOND);
+	    - (s_start_time * MILLISECONDS_PER_SECOND);
 	return(l_mseconds);
 }
 

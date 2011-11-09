@@ -49,14 +49,14 @@ namespace Event
 		NO_ASSIGN(UpdateEvent);
 		NO_COPY(UpdateEvent);
 
-		TIME m_delta;
+		float m_delta;
 
 	public:
 
-		UpdateEvent(TIME delta);
+		UpdateEvent(float delta);
 		virtual ~UpdateEvent(void);
 
-		TIME delta(void) const
+		float delta(void) const
 		    { return(m_delta); }
 
 	public: /* virtual */

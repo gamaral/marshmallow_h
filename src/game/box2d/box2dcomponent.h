@@ -99,7 +99,7 @@ namespace Game
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
 
-		VIRTUAL void update(TIME delta);
+		VIRTUAL void update(float delta);
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);

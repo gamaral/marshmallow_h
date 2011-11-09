@@ -124,7 +124,7 @@ EntityBase::render(void)
 }
 
 void
-EntityBase::update(TIME d)
+EntityBase::update(float d)
 {
 	if (isZombie()) return;
 

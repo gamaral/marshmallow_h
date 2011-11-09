@@ -54,7 +54,7 @@ Box2DColliderEntity::~Box2DColliderEntity(void)
 }
 
 void
-Box2DColliderEntity::update(TIME d)
+Box2DColliderEntity::update(float d)
 {
 	if (!m_init) {
 		Game::SharedSizeComponent l_size_component =

@@ -71,7 +71,7 @@ Box2DComponent::~Box2DComponent(void)
 }
 
 void
-Box2DComponent::update(TIME d)
+Box2DComponent::update(float d)
 {
 	MMUNUSED(d);
 

@@ -150,17 +150,17 @@ EngineBase::run(void)
 	}
 
 	TIME l_render = 0;
-#define MILLISECONDS_PER_SECOND static_cast<TIME>(1000.f)
-	TIME l_render_target = MILLISECONDS_PER_SECOND / m_fps;
+#define MILLISECONDS_PER_SECOND 1000.f
+	TIME l_render_target = static_cast<TIME>(MILLISECONDS_PER_SECOND / m_fps);
 
 	TIME l_update = 0;
-	TIME l_update_target = MILLISECONDS_PER_SECOND / m_ups;
+	TIME l_update_target = static_cast<TIME>(MILLISECONDS_PER_SECOND / m_ups);
 
 	TIME l_second = 0;
-	TIME l_second_target = MILLISECONDS_PER_SECOND;
+	TIME l_second_target = static_cast<TIME>(MILLISECONDS_PER_SECOND);
 
 	TIME l_tick;
-	TIME l_tick_target = MMMIN(l_render_target, l_update_target) / static_cast<TIME>(4.f);
+	TIME l_tick_target = MMMIN(l_render_target, l_update_target) / 2;
 
 #define TIME_INTERVAL_COUNT 8
 	int l_last_interval = 0;
@@ -168,7 +168,6 @@ EngineBase::run(void)
 	for (int i = 0; i < TIME_INTERVAL_COUNT; ++i)
 		l_time_interval[i] = l_tick_target;
 
-	m_delta_time = l_tick_target;
 	m_running = true;
 
 	/* startup */
@@ -201,7 +200,7 @@ EngineBase::run(void)
 		tick();
 
 		if (l_update >= l_update_target) {
-			update(l_update / MILLISECONDS_PER_SECOND);
+			update(static_cast<float>(l_update) / MILLISECONDS_PER_SECOND);
 			l_update -= l_update_target;
 			if (l_update > l_update_target / 2)
 				MMINFO1("Skipping update frame."), l_update = 0;
@@ -213,9 +212,12 @@ EngineBase::run(void)
 			l_second -= l_second_target;
 		}
 
-		if (m_suspendable) {
+		if (m_suspendable)
+			/* sleep */
 			Platform::Sleep(l_tick_target - (NOW() - l_tick));
-		}
+		else
+			/* busy wait */
+			while ((l_tick_target - (NOW() - l_tick)) > 0) { tick(); }
 
 		l_last_interval = (l_last_interval + 1) % TIME_INTERVAL_COUNT;
 		l_time_interval[l_last_interval] = NOW() - l_tick;
@@ -277,7 +279,7 @@ EngineBase::render(void)
 }
 
 void
-EngineBase::update(TIME d)
+EngineBase::update(float d)
 {
 	Event::UpdateEvent event(d);
 	eventManager()->dispatch(event);

@@ -88,7 +88,7 @@ public: /* virtual */
 	VIRTUAL const Core::Type & type(void) const
 	    { return(Type); }
 
-	VIRTUAL void update(TIME d);
+	VIRTUAL void update(float d);
 
 	VIRTUAL bool handleEvent(const Event::IEvent &event);
 

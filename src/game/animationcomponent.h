@@ -80,9 +80,9 @@ namespace Game
 		WeakRenderComponent  m_render;
 		WeakTilesetComponent m_tileset;
 
-		TIME m_timestamp;
-		bool m_loop;
-		bool m_playing;
+		float m_timestamp;
+		bool  m_loop;
+		bool  m_playing;
 
 		const FrameList *m_current_framelist;
 		float m_current_framerate;
@@ -107,7 +107,7 @@ namespace Game
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
 
-		VIRTUAL void update(TIME d);
+		VIRTUAL void update(float d);
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);

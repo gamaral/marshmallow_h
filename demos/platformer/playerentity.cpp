@@ -61,7 +61,7 @@ PlayerEntity::~PlayerEntity(void)
 }
 
 void
-PlayerEntity::update(TIME d)
+PlayerEntity::update(float d)
 {
 	if (!m_init) {
 		Game::SharedSizeComponent l_size_component =

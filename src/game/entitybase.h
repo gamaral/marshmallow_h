@@ -85,7 +85,7 @@ namespace Game
 		VIRTUAL SharedComponent getComponentType(const Core::Type &type) const;
 
 		VIRTUAL void render(void);
-		VIRTUAL void update(TIME delta);
+		VIRTUAL void update(float delta);
 
 		VIRTUAL void kill(void)
 		    { m_killed = true; }

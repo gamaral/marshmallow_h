@@ -62,7 +62,7 @@ SnatchComponent::~SnatchComponent(void)
 }
 
 void
-SnatchComponent::update(TIME)
+SnatchComponent::update(float)
 {
 	if (m_registered)
 		return;

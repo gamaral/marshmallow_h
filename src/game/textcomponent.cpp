@@ -79,7 +79,7 @@ TextComponent::deserialize(TinyXML::TiXmlElement &n)
 }
 
 void
-TextComponent::update(TIME)
+TextComponent::update(float)
 {
 }
 

@@ -87,7 +87,7 @@ namespace Game
 	public: /* virtual */
 
 		VIRTUAL void render(void);
-		VIRTUAL void update(TIME delta);
+		VIRTUAL void update(float delta);
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);

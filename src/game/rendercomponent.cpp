@@ -58,7 +58,7 @@ RenderComponent::~RenderComponent(void)
 }
 
 void
-RenderComponent::update(TIME)
+RenderComponent::update(float)
 {
 	if (!m_position)
 		m_position = entity().getComponentType("Game::PositionComponent").

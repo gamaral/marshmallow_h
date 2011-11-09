@@ -62,7 +62,7 @@ class SnatcherLayer : public Game::SceneLayerBase,
 	typedef eastl::vector<Core::Identifier> UIDList;
 	UIDList m_entities;
 	SnatchState m_state;
-	TIME m_timeout;
+	float m_timeout;
 	int m_active;
 
 public:
@@ -80,7 +80,7 @@ public: /* virtual */
 	    { return(Type()); }
 
 	VIRTUAL void render(void) {};
-	VIRTUAL void update(TIME delta);
+	VIRTUAL void update(float delta);
 
 	VIRTUAL bool handleEvent(const Event::IEvent &event);
 

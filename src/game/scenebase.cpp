@@ -126,7 +126,7 @@ SceneBase::render(void)
 }
 
 void
-SceneBase::update(TIME d)
+SceneBase::update(float d)
 {
 	if (m_layers.empty()) return;
 

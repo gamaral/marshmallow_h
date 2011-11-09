@@ -69,7 +69,7 @@ namespace Game
 		    { return(m_id); }
 
 		VIRTUAL void render(void) {};
-		VIRTUAL void update(TIME) {};
+		VIRTUAL void update(float) {};
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);

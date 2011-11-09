@@ -49,8 +49,8 @@
 #define INT32    int32_t
 #define INT64    int64_t
 #define INT8     int8_t
-#define TIME     float
-#define TIME_MAX FLT_MAX
+#define TIME     long
+#define TIME_MAX LONG_MAX
 #define UID      uint32_t
 #define UINT16   uint16_t
 #define UINT32   uint32_t

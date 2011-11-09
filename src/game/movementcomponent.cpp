@@ -54,10 +54,8 @@ MovementComponent::~MovementComponent(void)
 }
 
 void
-MovementComponent::update(TIME d)
+MovementComponent::update(float d)
 {
-	MMUNUSED(d);
-
 	if (!m_position)
 		m_position = entity().getComponentType("Game::PositionComponent").
 		    staticCast<PositionComponent>();

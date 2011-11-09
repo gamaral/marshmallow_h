@@ -113,7 +113,7 @@ SceneManager::render(void)
 }
 
 void
-SceneManager::update(TIME d)
+SceneManager::update(float d)
 {
 	if (m_active) m_active->update(d);
 }

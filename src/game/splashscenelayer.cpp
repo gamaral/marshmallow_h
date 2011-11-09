@@ -112,7 +112,7 @@ SplashSceneLayer::render(void)
 }
 
 void
-SplashSceneLayer::update(TIME d)
+SplashSceneLayer::update(float d)
 {
 	float l_fiv;
 

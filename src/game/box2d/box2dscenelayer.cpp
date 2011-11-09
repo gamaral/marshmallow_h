@@ -64,7 +64,7 @@ Box2DSceneLayer::~Box2DSceneLayer(void)
 }
 
 void
-Box2DSceneLayer::update(TIME d)
+Box2DSceneLayer::update(float d)
 {
 	m_internal->world.Step
 	    (static_cast<float>(d),
