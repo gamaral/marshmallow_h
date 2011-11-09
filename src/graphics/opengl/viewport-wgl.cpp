@@ -64,6 +64,7 @@ namespace
 		Transform     camera;
 		float         radius2;
 		Math::Size2f  size;
+		Math::Size2f  scaled_size;
 		Math::Point2  visible[2];
 		bool          fullscreen;
 		bool          loaded;
@@ -404,11 +405,13 @@ namespace
 	void
 	UpdateCamera(void)
 	{
-		/* calculate radius^2 */
-#define HALF_VIEWPORT_SIZE 1.8f
-		const float l_w = s_data.size[0] / (s_data.camera.scale().x() * HALF_VIEWPORT_SIZE);
-		const float l_h = s_data.size[1] / (s_data.camera.scale().y() * HALF_VIEWPORT_SIZE);
-		s_data.radius2 = powf(l_w, 2.f) + powf(l_h, 2.f);
+		/* calculate scaled viewport size */
+		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().x();
+		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().y();
+
+		/* calculate magnitude and pass it off as radius squared */
+		s_data.radius2 = powf(s_data.scaled_size[0] / 2.f, 2.f) +
+		                 powf(s_data.scaled_size[1] / 2.f, 2.f);
 	}
 
 	void
@@ -642,6 +645,12 @@ float
 Viewport::Radius2(void)
 {
 	return(s_data.radius2);
+}
+
+const Math::Size2f &
+Viewport::ScaledSize(void)
+{
+	return(s_data.scaled_size);
 }
 
 const Math::Size2f &

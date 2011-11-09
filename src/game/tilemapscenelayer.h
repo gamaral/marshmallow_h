@@ -68,6 +68,7 @@ namespace Game
 
 		Math::Size2f m_hrtile_size;
 		Math::Size2f m_hrsize;
+		Math::Size2f m_rsize;
 		Math::Size2f m_rtile_size;
 
 		Math::Size2i m_tile_size;

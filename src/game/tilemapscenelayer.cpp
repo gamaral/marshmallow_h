@@ -55,6 +55,7 @@ TilemapSceneLayer::TilemapSceneLayer(const Core::Identifier &i, IScene &s)
     , m_data(0)
     , m_hrtile_size(0.f, 0.f)
     , m_hrsize(0.f, 0.f)
+    , m_rsize(0.f, 0.f)
     , m_rtile_size(0.f, 0.f)
     , m_tile_size(24, 24)
     , m_size(100, 100)
@@ -146,17 +147,66 @@ TilemapSceneLayer::render(void)
 {
 	if (!m_data || !m_visible) return;
 
+	/* calculate visible row and column range */
+
+	const bool  l_camera_rotated = Graphics::Viewport::Camera().rotation() != 0;
+	const float l_camera_x = Graphics::Viewport::Camera().translation().x();
+	const float l_camera_y = Graphics::Viewport::Camera().translation().y();
+
+	float col_start_cam;
+	float col_stop_cam;
+	float row_start_cam;
+	float row_stop_cam;
+
+	if (l_camera_rotated) {
+		const float l_visible_radius = sqrtf(Graphics::Viewport::Radius2());
+		col_start_cam = l_camera_x - l_visible_radius;
+		col_stop_cam  = l_camera_x + l_visible_radius;
+		row_start_cam = l_camera_y + l_visible_radius;
+		row_stop_cam  = l_camera_y - l_visible_radius;
+	}
+	else {
+		const Math::Size2f l_hviewport_size = Graphics::Viewport::ScaledSize() / 2.f;
+		col_start_cam = l_camera_x - l_hviewport_size.width();
+		col_stop_cam  = l_camera_x + l_hviewport_size.width();
+		row_start_cam = l_camera_y + l_hviewport_size.height();
+		row_stop_cam  = l_camera_y - l_hviewport_size.height();
+	}
+
+	int col_start = static_cast<int>(floorf(((col_start_cam + m_hrsize.width()) / m_rsize.width())
+	    * static_cast<float>(m_size.width())));
+	int col_stop  = static_cast<int>(ceilf(((col_stop_cam + m_hrsize.width()) / m_rsize.width())
+	    * static_cast<float>(m_size.width())));
+	int row_start = static_cast<int>(floorf(((row_start_cam - m_hrsize.height()) / m_rsize.height())
+	    * static_cast<float>(-m_size.height())));
+	int row_stop  = static_cast<int>(ceilf(((row_stop_cam - m_hrsize.height()) / m_rsize.height())
+	    * static_cast<float>(-m_size.height())));
+
+	/* check limits */
+
+	if (col_start < 0) col_start = 0;
+	else if (col_start >= m_size.width()) col_start = m_size.width();
+	if (col_stop < 0) col_stop = 0;
+	else if (col_stop >= m_size.width()) col_stop = m_size.width();
+
+	if (row_start < 0) row_start = 0;
+	else if (row_start >= m_size.height()) row_start = m_size.height();
+	if (row_stop < 0) row_stop = 0;
+	else if (row_stop >= m_size.height()) row_stop = m_size.height();
+
+	/* abort if out of view */
+
+	if (row_start >= row_stop || col_start >= col_stop)
+		return;
+
+	/* draw tiles */
+
 	Graphics::Color l_color(1.f, 1.f, 1.f, m_opacity);
 
-	float l_camera_x = Graphics::Viewport::Camera().translation().x();
-	float l_camera_y = Graphics::Viewport::Camera().translation().y();
-	float l_tile_r = (powf(m_rtile_size.width(),  2) +
-	                  powf(m_rtile_size.height(), 2)) / 2.f;
-
-	for (int l_r = 0; l_r < m_size.height(); ++l_r) {
+	for (int l_r = row_start; l_r < row_stop; ++l_r) {
 		const int l_roffset = l_r * m_size.width();
 
-		for (int l_c = 0; l_c < m_size.width(); ++l_c) {
+		for (int l_c = col_start; l_c < col_stop; ++l_c) {
 			int l_tindex = m_data[l_roffset + l_c];
 			if (!l_tindex)
 				continue;
@@ -169,14 +219,8 @@ TilemapSceneLayer::render(void)
 			l_x -= m_hrsize.width();
 			l_y -= m_hrsize.height();
 
-			/* calculate magnitude (center tile axis) */
-			const float l_distance2 =
-				powf((l_x + m_hrtile_size.width())  - l_camera_x, 2) +
-				powf((l_y - m_hrtile_size.height()) - l_camera_y, 2);
-
-			/* test visibility */
-			if (l_distance2 > Graphics::Viewport::Radius2() + l_tile_r)
-				continue;
+			/* offset to bottom of tile (we draw up) */
+			l_y -= m_rtile_size.height();
 
 			int l_tioffset;
 			Graphics::SharedTileset l_ts = tileset(l_tindex, &l_tioffset);
@@ -188,9 +232,6 @@ TilemapSceneLayer::render(void)
 				Graphics::QuadMesh l_mesh(l_ts->getTextureCoordinateData(l_tindex - l_tioffset),
 				    l_ts->textureData(), l_svdata);
 				l_mesh.setColor(l_color);
-
-				/* offset to bottom of tile (we draw up) */
-				l_y -= m_rtile_size.height();
 
 				Graphics::Painter::Draw(l_mesh, Math::Point2(l_x, l_y));
 			}
@@ -227,8 +268,9 @@ TilemapSceneLayer::recalculateRelativeTileSize()
 	m_hrtile_size = m_rtile_size / 2.0f;
 
 	/* calculate relative map size */
-	m_hrsize[0] = m_hrtile_size.width()  * static_cast<float>(m_size.width());
-	m_hrsize[1] = m_hrtile_size.height() * static_cast<float>(m_size.height());
+	m_rsize[0] = m_rtile_size.width()  * static_cast<float>(m_size.width());
+	m_rsize[1] = m_rtile_size.height() * static_cast<float>(m_size.height());
+	m_hrsize = m_rsize / 2.f;
 }
 
 void

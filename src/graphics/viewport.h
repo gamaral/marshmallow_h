@@ -89,6 +89,9 @@ namespace Graphics
 		float Radius2(void);
 
 		GRAPHICS_EXPORT
+		const Math::Size2f & ScaledSize(void);
+
+		GRAPHICS_EXPORT
 		const Math::Size2f & Size(void);
 
 		GRAPHICS_EXPORT
