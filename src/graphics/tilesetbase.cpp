@@ -42,7 +42,7 @@
 #include "graphics/itexturecoordinatedata.h"
 #include "graphics/itexturedata.h"
 
-#define TILE_ADJUSTMENT 0.00085f
+#define TILE_ADJUSTMENT 0.00004f
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -55,8 +55,6 @@ TilesetBase::TilesetBase()
     , m_texture_data()
     , m_margin(0)
     , m_spacing(0)
-    , m_adjust_col(0)
-    , m_adjust_row(0)
     , m_offset_col(0)
     , m_offset_row(0)
     , m_spacing_col(0)
@@ -129,10 +127,10 @@ TilesetBase::getTextureCoordinateData(int i)
 		const int l_row = i / m_size.width();
 		const int l_col = i % m_size.width();
 
-		const float l_left   = m_offset_col[l_col] + m_adjust_col;
-		const float l_top    = m_offset_row[l_row] + m_adjust_row;
-		const float l_right  = m_offset_col[l_col + 1] - m_spacing_col - m_adjust_col;
-		const float l_bottom = m_offset_row[l_row + 1] - m_spacing_row - m_adjust_row;
+		const float l_left   = m_offset_col[l_col] + TILE_ADJUSTMENT;
+		const float l_top    = m_offset_row[l_row] + TILE_ADJUSTMENT;
+		const float l_right  = m_offset_col[l_col + 1] - m_spacing_col - TILE_ADJUSTMENT;
+		const float l_bottom = m_offset_row[l_row + 1] - m_spacing_row - TILE_ADJUSTMENT;
 
 		l_data->set(0, l_left,  l_top);
 		l_data->set(1, l_left,  l_bottom);
@@ -180,8 +178,6 @@ TilesetBase::reset(void)
 	delete[] m_offset_col;
 	delete[] m_offset_row;
 
-	m_adjust_col  = 0;
-	m_adjust_row  = 0;
 	m_offset_col  = 0;
 	m_offset_row  = 0;
 	m_spacing_col = 0;
@@ -204,7 +200,6 @@ TilesetBase::reset(void)
 	 * for the last row/column.
 	 */
 
-	m_adjust_col = TILE_ADJUSTMENT / static_cast<float>(m_tile_size.width());
 	m_offset_col = new float[m_size.width() + 1];
 	m_spacing_col = static_cast<float>(m_spacing)
 	              / static_cast<float>(l_texture_size.width());
@@ -213,7 +208,6 @@ TilesetBase::reset(void)
 		    static_cast<float>(m_margin + (i * (m_tile_size.width() + m_spacing)))
 		  / static_cast<float>(l_texture_size.width());
 
-	m_adjust_row = TILE_ADJUSTMENT / static_cast<float>(m_tile_size.height());
 	m_offset_row = new float[m_size.height() + 1];
 	m_spacing_row = static_cast<float>(m_spacing)
 	              / static_cast<float>(l_texture_size.height());

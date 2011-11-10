@@ -67,8 +67,6 @@ namespace Graphics
 		int m_margin;
 		int m_spacing;
 
-		float  m_adjust_col;
-		float  m_adjust_row;
 		float *m_offset_col;
 		float *m_offset_row;
 		float  m_spacing_col;
