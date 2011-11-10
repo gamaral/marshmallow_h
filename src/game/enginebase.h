@@ -70,8 +70,8 @@ namespace Game
 		Game::SharedSceneManager   m_scene_manager;
 		Event::SharedEventListener m_event_proxy;
 		Game::SharedFactory        m_factory;
-		float  m_fps;
-		float  m_ups;
+		int    m_fps;
+		int    m_ups;
 		TIME   m_delta_time;
 		int    m_exit_code;
 		int    m_frame_rate;
@@ -87,7 +87,7 @@ namespace Game
 		 * @param ups Desired update rate
 		 * @param suspendable Allow engine to sleep
 		 */
-		EngineBase(float fps, float ups, bool suspendable);
+		EngineBase(int fps, int ups, bool suspendable);
 		virtual ~EngineBase(void);
 
 		/*!
@@ -114,13 +114,13 @@ namespace Game
 		/*!
 		 * @brief Target frames per second
 		 */
-		float fps(void) const
+		int fps(void) const
 		    { return(m_fps); }
 
 		/*!
 		 * @brief Target updates per second
 		 */
-		float ups(void) const
+		int ups(void) const
 		    { return(m_ups); }
 
 		/*!

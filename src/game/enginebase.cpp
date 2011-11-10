@@ -59,7 +59,7 @@ using namespace Game;
 
 EngineBase *EngineBase::s_instance = 0;
 
-EngineBase::EngineBase(float f, float u, bool s)
+EngineBase::EngineBase(int f, int u, bool s)
     : m_event_manager(),
       m_scene_manager(),
       m_event_proxy(),
@@ -150,17 +150,17 @@ EngineBase::run(void)
 	}
 
 	TIME l_render = 0;
-#define MILLISECONDS_PER_SECOND 1000.f
-	TIME l_render_target = static_cast<TIME>(MILLISECONDS_PER_SECOND / m_fps);
+#define MILLISECONDS_PER_SECOND 1000
+	TIME l_render_target = MILLISECONDS_PER_SECOND / m_fps;
 
 	TIME l_update = 0;
-	TIME l_update_target = static_cast<TIME>(MILLISECONDS_PER_SECOND / m_ups);
+	TIME l_update_target = MILLISECONDS_PER_SECOND / m_ups;
 
 	TIME l_second = 0;
-	TIME l_second_target = static_cast<TIME>(MILLISECONDS_PER_SECOND);
+	TIME l_second_target = MILLISECONDS_PER_SECOND;
 
 	TIME l_tick;
-	TIME l_tick_target = MMMIN(l_render_target, l_update_target) / 2;
+	TIME l_tick_target = MMMIN(l_render_target, l_update_target);
 
 #define TIME_INTERVAL_COUNT 8
 	int l_last_interval = 0;
@@ -186,23 +186,15 @@ EngineBase::run(void)
 		m_delta_time /= TIME_INTERVAL_COUNT;
 
 		l_render += m_delta_time;
-		l_update += m_delta_time;
 		l_second += m_delta_time;
-
-		if (l_render >= l_render_target) {
-			render();
-			m_frame_rate++;
-			l_render -= l_render_target;
-			if (l_render > l_render_target / 2)
-				MMINFO1("Skipping render frame."), l_render = 0;
-		}
+		l_update += m_delta_time;
 
 		tick();
 
 		if (l_update >= l_update_target) {
-			update(static_cast<float>(l_update) / MILLISECONDS_PER_SECOND);
+			update(static_cast<float>(l_update_target) / MILLISECONDS_PER_SECOND);
 			l_update -= l_update_target;
-			if (l_update > l_update_target / 2)
+			if (l_update > l_update_target)
 				MMINFO1("Skipping update frame."), l_update = 0;
 		}
 
@@ -210,6 +202,14 @@ EngineBase::run(void)
 			second();
 			m_frame_rate = 0;
 			l_second -= l_second_target;
+		}
+
+		if (l_render >= l_render_target) {
+			render();
+			m_frame_rate++;
+			l_render -= l_render_target;
+			if (l_render > l_render_target)
+				MMINFO1("Skipping render frame."), l_render = 0;
 		}
 
 		if (m_suspendable)
@@ -318,8 +318,8 @@ EngineBase::deserialize(TinyXML::TiXmlElement &n)
 
 	l_element = n.FirstChildElement("scenes");
 
-	n.QueryFloatAttribute("fps", &m_fps);
-	n.QueryFloatAttribute("ups", &m_ups);
+	n.QueryIntAttribute("fps", &m_fps);
+	n.QueryIntAttribute("ups", &m_ups);
 
 	const char *l_suspendable = n.Attribute("suspendable");
 	m_suspendable = (l_suspendable &&
