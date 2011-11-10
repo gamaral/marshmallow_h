@@ -59,6 +59,7 @@ namespace Game
 	class GAME_EXPORT EntitySceneLayer : public SceneLayerBase
 	{
 		EntityList m_entities;
+		bool m_visiblility_testing;
 
 		NO_COPY(EntitySceneLayer);
 
@@ -74,6 +75,10 @@ namespace Game
 		SharedEntity getEntity(const Core::Identifier &identifier) const;
 		const EntityList & getEntities(void) const
 		    { return(m_entities); }
+
+		bool visiblityTesting(void) const
+		    { return(m_visiblility_testing); }
+		void setVisibilityTesting(bool value);
 
 	public: /* virtual */
 

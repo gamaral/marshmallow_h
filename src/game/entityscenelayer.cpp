@@ -35,8 +35,13 @@
  */
 
 #include "core/logger.h"
+#include "math/vector2.h"
+#include "graphics/transform.h"
+#include "graphics/viewport.h"
 #include "game/factorybase.h"
 #include "game/ientity.h"
+#include "game/positioncomponent.h"
+#include "game/sizecomponent.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Game;
@@ -44,8 +49,9 @@ using namespace Game;
 const Core::Type EntitySceneLayer::sType("Game::EntitySceneLayer");
 
 EntitySceneLayer::EntitySceneLayer(const Core::Identifier &i, IScene &s, int f)
-    : SceneLayerBase(i, s, f),
-      m_entities()
+    : SceneLayerBase(i, s, f)
+    , m_entities()
+    , m_visiblility_testing(true)
 {
 }
 
@@ -97,11 +103,54 @@ EntitySceneLayer::getEntity(const Core::Identifier &i) const
 }
 
 void
+EntitySceneLayer::setVisibilityTesting(bool value)
+{
+	m_visiblility_testing = value;
+}
+
+void
 EntitySceneLayer::render(void)
 {
 	EntityList::const_iterator l_i;
 
-	for (l_i = m_entities.begin(); l_i != m_entities.end();l_i++)
+	if (m_visiblility_testing) {
+		const Math::Vector2 &l_camera_pos = Graphics::Viewport::Camera().translation();
+		const float l_visiblility_radius2 = Graphics::Viewport::Radius2();
+
+		for (l_i = m_entities.begin(); l_i != m_entities.end();l_i++) {
+			SharedEntity l_entity = (*l_i);
+			float l_size2 = 0;
+
+			if (l_entity->isZombie())
+				continue;
+
+			SharedPositionComponent l_positionComponent =
+			    l_entity->getComponentType("Game::PositionComponent")
+			        .staticCast<Game::PositionComponent>();
+			if (!l_positionComponent) {
+				l_entity->render();
+				continue;
+			}
+
+			SharedSizeComponent l_sizeComponent =
+			    l_entity->getComponentType("Game::SizeComponent")
+			        .staticCast<Game::SizeComponent>();
+			if (l_sizeComponent) {
+				const Math::Size2f &l_size =
+				    l_sizeComponent->size();
+				l_size2 = powf(l_size.width(), 2) +
+				          powf(l_size.height(), 2);
+			}
+
+			const Math::Point2 &l_position = l_positionComponent->position();
+			const float l_distance2 = powf(l_camera_pos.x() - l_position.x(), 2) +
+						  powf(l_camera_pos.y() - l_position.y(), 2);
+
+			if (l_distance2 < l_visiblility_radius2 + l_size2)
+				l_entity->render();
+		}
+	}
+	else for (l_i = m_entities.begin(); l_i != m_entities.end();l_i++)
 		if (!(*l_i)->isZombie()) (*l_i)->render();
 }
 
