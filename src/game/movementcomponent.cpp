@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/logger.h"
+
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
@@ -46,7 +48,7 @@ MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
     , m_position()
     , m_acceleration()
-    , m_direction()
+    , m_velocity()
 {
 }
 
@@ -54,11 +56,13 @@ MovementComponent::~MovementComponent(void)
 {
 }
 
-void
-MovementComponent::move(float d)
+Math::Point2
+MovementComponent::simulate(float d) const
 {
 	if (m_position)
-		m_position->position() = m_last_pos + (m_direction * static_cast<float>(d));
+		return(m_position->position() + (m_velocity * d));
+	else MMWARNING1("MovementComponent::simulate didn't find a position component.");
+	return(Math::Point2::Zero());
 }
 
 void
@@ -67,15 +71,10 @@ MovementComponent::update(float d)
 	if (!m_position) {
 		m_position = entity().getComponentType("Game::PositionComponent").
 		    staticCast<PositionComponent>();
-
-		if (m_position)
-			m_last_pos =  m_position->position();
 	}
 
-	move(d);
-
-	m_direction += m_acceleration;
-	m_last_pos   = m_position->position();
+	m_position->position() += m_velocity * d;
+	m_velocity += m_acceleration * d;
 }
 
 bool
@@ -84,10 +83,10 @@ MovementComponent::serialize(TinyXML::TiXmlElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	TinyXML::TiXmlElement l_direction("direction");
-	l_direction.SetDoubleAttribute("x", m_direction.x());
-	l_direction.SetDoubleAttribute("y", m_direction.y());
-	n.InsertEndChild(l_direction);
+	TinyXML::TiXmlElement l_velocity("velocity");
+	l_velocity.SetDoubleAttribute("x", m_velocity.x());
+	l_velocity.SetDoubleAttribute("y", m_velocity.y());
+	n.InsertEndChild(l_velocity);
 
 	TinyXML::TiXmlElement l_acceleration("acceleration");
 	l_acceleration.SetDoubleAttribute("x", m_acceleration.x());
@@ -103,10 +102,10 @@ MovementComponent::deserialize(TinyXML::TiXmlElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	TinyXML::TiXmlElement *l_direction = n.FirstChildElement( "direction" );
-	if (l_direction) {
-		l_direction->QueryFloatAttribute("x", &m_direction[0]);
-		l_direction->QueryFloatAttribute("y", &m_direction[1]);
+	TinyXML::TiXmlElement *l_velocity = n.FirstChildElement( "velocity" );
+	if (l_velocity) {
+		l_velocity->QueryFloatAttribute("x", &m_velocity[0]);
+		l_velocity->QueryFloatAttribute("y", &m_velocity[1]);
 	}
 
 	TinyXML::TiXmlElement *l_acceleration = n.FirstChildElement( "acceleration" );

@@ -5,6 +5,7 @@ add_executable(platformer_demo0 "demo0.cpp"
                                 "colliderentity.cpp"
                                 "customfactory.cpp"
                                 "inputcomponent.cpp"
+                                "playercollidercomponent.cpp"
                                 "playerentity.cpp"
 )
 

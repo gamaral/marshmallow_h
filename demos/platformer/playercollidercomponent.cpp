@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "playercollidercomponent.h"
 
 /*!
  * @file
@@ -34,61 +34,36 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef TILEMAP_PLAYERENTITY_H
-#define TILEMAP_PLAYERENTITY_H 1
+#include <game/movementcomponent.h>
+#include <game/positioncomponent.h>
+#include <game/sizecomponent.h>
 
-#include <game/entitybase.h>
-
-MARSHMALLOW_NAMESPACE_BEGIN
-namespace Game
+PlayerColliderComponent::PlayerColliderComponent(const Core::Identifier &i, Game::IEntity &e)
+    : ColliderComponent(i, e)
 {
-	class AnimationComponent;
-	typedef Core::Shared<AnimationComponent> SharedAnimationComponent;
 }
-MARSHMALLOW_NAMESPACE_END
 
-MARSHMALLOW_NAMESPACE_USE;
-
-class InputComponent;
-typedef Core::Shared<InputComponent> SharedInputComponent;
-
-class PlayerColliderComponent;
-typedef Core::Shared<PlayerColliderComponent> SharedPlayerColliderComponent;
-
-class PlayerEntity : public Game::EntityBase
+void
+PlayerColliderComponent::update(float d)
 {
-	NO_ASSIGN(PlayerEntity);
-	NO_COPY(PlayerEntity);
+	m_platform = false;
 
-	Game::SharedAnimationComponent m_animation_component;
-	SharedPlayerColliderComponent m_collider_component;
-	SharedInputComponent m_input_component;
+	ColliderComponent::update(d);
+}
 
-	int m_direction;
-	bool m_in_motion;
-	bool m_on_platform;
-	bool m_init;
+bool
+PlayerColliderComponent::collision(ColliderComponent& c, float p, float d)
+{
+	if (c.id().str() == "platform") {
+	    position()->position()[1] =
+	         c.position()->position().y() +
+	        (c.size()->size().height() / 2.f) + (size()->size().height() / 2.f);
+	    movement()->velocity()[1] = 0;
+	    m_platform = true;
+	}
+	if (c.id().str() == "wall") {
+	    fprintf(stderr, "wall\n");
+	}
+	return(true);
+}
 
-public:
-
-	PlayerEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);
-	virtual ~PlayerEntity(void);
-
-public: /* virtual */
-
-	VIRTUAL const Core::Type & type(void) const
-	    { return(sType); }
-
-	VIRTUAL void update(float delta);
-
-public: /* static */
-
-	static const Core::Type & Type(void)
-	    { return(sType); }
-
-private: /* static */
-
-	static const Core::Type sType;
-};
-
-#endif

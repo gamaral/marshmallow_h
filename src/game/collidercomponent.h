@@ -98,7 +98,7 @@ namespace Game
 
 		float radius2(void) const;
 
-		bool isColliding(ColliderComponent& collider, float *penetration = 0) const;
+		bool isColliding(ColliderComponent& collider, float delta, float *penetration = 0) const;
 
 	public: /* virtual */
 
@@ -110,14 +110,6 @@ namespace Game
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
-	public: /* static */
-
-		static const Core::Type & Type(void);
-
-	protected:
-	
-		virtual bool collision(ColliderComponent& collider, float penetration, float delta);
-
 		WeakCollisionSceneLayer &layer(void)
 		    { return(m_layer); }
 		WeakMovementComponent &movement(void)
@@ -126,6 +118,14 @@ namespace Game
 		    { return(m_position); }
 		WeakSizeComponent &size(void)
 		    { return(m_size); }
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
+
+	protected:
+	
+		virtual bool collision(ColliderComponent& collider, float penetration, float delta);
 
 	private: /* static */
 
@@ -137,16 +137,12 @@ namespace Game
 	/*! @brief Game Bounce Collider Component Class */
 	class GAME_EXPORT BounceColliderComponent : public ColliderComponent
 	{
-		Math::Vector2 m_factor;
 		NO_COPY(BounceColliderComponent);
 
 	public:
 
 		BounceColliderComponent(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~BounceColliderComponent(void) {};
-
-		Math::Vector2 &factor(void)
-		    { return(m_factor); }
 
 	protected:
 	

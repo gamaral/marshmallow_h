@@ -100,7 +100,6 @@ PlayerEntity::update(float d)
 		/* collider component */
 		Game::SharedBounceColliderComponent l_ccomponent =
 		    new Game::BounceColliderComponent("player", *this);
-		l_ccomponent->factor() = Math::Vector2::Zero();
 		pushComponent(l_ccomponent.staticCast<Game::IComponent>());
 
 		/* movement component */

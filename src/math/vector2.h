@@ -62,8 +62,8 @@ namespace Math
 		const float & y(void) const
 		    { return(m_value[1]); }
 
-		Vector2 normalized(void) const;
-		Vector2 & normalize(void);
+		Vector2 normalized(const float *magnitude = 0) const;
+		Vector2 & normalize(const float *magnitude = 0);
 
 		float magnitude(void) const;
 		float magnitude2(void) const;

@@ -34,61 +34,36 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef TILEMAP_PLAYERENTITY_H
-#define TILEMAP_PLAYERENTITY_H 1
+#ifndef DEMO_PLAYERCOLLIDERCOMPONENT_H
+#define DEMO_PLAYERCOLLIDERCOMPONENT_H 1
 
-#include <game/entitybase.h>
-
-MARSHMALLOW_NAMESPACE_BEGIN
-namespace Game
-{
-	class AnimationComponent;
-	typedef Core::Shared<AnimationComponent> SharedAnimationComponent;
-}
-MARSHMALLOW_NAMESPACE_END
+#include <game/collidercomponent.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 
-class InputComponent;
-typedef Core::Shared<InputComponent> SharedInputComponent;
-
-class PlayerColliderComponent;
-typedef Core::Shared<PlayerColliderComponent> SharedPlayerColliderComponent;
-
-class PlayerEntity : public Game::EntityBase
+/*! @brief Game Player Collider Component Class */
+class GAME_EXPORT PlayerColliderComponent : public Game::ColliderComponent
 {
-	NO_ASSIGN(PlayerEntity);
-	NO_COPY(PlayerEntity);
-
-	Game::SharedAnimationComponent m_animation_component;
-	SharedPlayerColliderComponent m_collider_component;
-	SharedInputComponent m_input_component;
-
-	int m_direction;
-	bool m_in_motion;
-	bool m_on_platform;
-	bool m_init;
+	NO_COPY(PlayerColliderComponent);
+	bool m_platform;
 
 public:
 
-	PlayerEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);
-	virtual ~PlayerEntity(void);
+	PlayerColliderComponent(const Core::Identifier &identifier, Game::IEntity &entity);
+	virtual ~PlayerColliderComponent(void) {};
+
+	bool onPlatform(void) const
+	    { return(m_platform); }
 
 public: /* virtual */
 
-	VIRTUAL const Core::Type & type(void) const
-	    { return(sType); }
-
 	VIRTUAL void update(float delta);
 
-public: /* static */
+protected: /* virtual */
 
-	static const Core::Type & Type(void)
-	    { return(sType); }
-
-private: /* static */
-
-	static const Core::Type sType;
+	VIRTUAL bool collision(ColliderComponent& collider, float penetration, float delta);
 };
+typedef Core::Shared<PlayerColliderComponent> SharedPlayerColliderComponent;
+typedef Core::Weak<PlayerColliderComponent> WeakPlayerColliderComponent;
 
 #endif

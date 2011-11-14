@@ -56,20 +56,20 @@ Vector2::Vector2(const Vector2 &c)
 }
 
 Vector2
-Vector2::normalized(void) const
+Vector2::normalized(const float *m) const
 {
 	Vector2 n(*this);
-	n.normalize();
+	n.normalize(m);
 	return(n);
 }
 
 Vector2 &
-Vector2::normalize(void)
+Vector2::normalize(const float *m)
 {
-	const float m = magnitude();
-	if (m != 0) {
-		m_value[0] /= m;
-		m_value[1] /= m;
+	const float l_magnitude = m ? *m : magnitude();
+	if (l_magnitude != 0) {
+		m_value[0] /= l_magnitude;
+		m_value[1] /= l_magnitude;
 	} else m_value[0] = m_value[1] = 0.f;
 
 	return(*this);

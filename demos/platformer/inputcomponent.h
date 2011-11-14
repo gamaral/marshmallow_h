@@ -34,18 +34,31 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef TILEMAP_INPUTCOMPONENT_H
-#define TILEMAP_INPUTCOMPONENT_H 1
+#ifndef DEMO_INPUTCOMPONENT_H
+#define DEMO_INPUTCOMPONENT_H 1
 
 #include <EASTL/list.h>
 
 #include <game/componentbase.h>
 #include <event/ieventlistener.h>
 
-#include <game/movementcomponent.h>
-#include <game/positioncomponent.h>
+#include <core/weak.h>
+
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game
+{
+	class MovementComponent;
+	typedef Core::Weak<MovementComponent> WeakMovementComponent;
+
+	class PositionComponent;
+	typedef Core::Weak<PositionComponent> WeakPositionComponent;
+}
+MARSHMALLOW_NAMESPACE_END
 
 MARSHMALLOW_NAMESPACE_USE;
+
+class PlayerColliderComponent;
+typedef Core::Weak<PlayerColliderComponent> WeakPlayerColliderComponent;
 
 class InputComponent : public Game::ComponentBase,
                        public Event::IEventListener
@@ -53,8 +66,9 @@ class InputComponent : public Game::ComponentBase,
 	NO_ASSIGN(InputComponent);
 	NO_COPY(InputComponent);
 
-	Game::WeakPositionComponent m_position;
+	WeakPlayerColliderComponent m_collider;
 	Game::WeakMovementComponent m_movement;
+	Game::WeakPositionComponent m_position;
 	Event::SharedEventListener m_event_proxy;
 
 	eastl::list<int> m_direction_stack;

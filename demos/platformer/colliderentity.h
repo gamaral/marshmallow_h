@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef TILEMAP_BOX2DCOLLIDERENTITY_H
-#define TILEMAP_BOX2DCOLLIDERENTITY_H 1
+#ifndef DEMO_COLLIDERENTITY_H
+#define DEMO_COLLIDERENTITY_H 1
 
 #include <game/entitybase.h>
 

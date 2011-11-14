@@ -47,12 +47,16 @@
 #include <game/collidercomponent.h>
 #include <game/enginebase.h>
 #include <game/ientity.h>
+#include <game/movementcomponent.h>
+#include <game/positioncomponent.h>
+
+#include "playercollidercomponent.h"
 
 const Core::Type InputComponent::Type("InputComponent");
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
-    , m_linear_impulse(1.f)
+    , m_linear_impulse(30.f)
     , m_jump(false)
     , m_left(false)
     , m_right(false)
@@ -76,6 +80,10 @@ InputComponent::inMotion(void) const
 void
 InputComponent::update(float)
 {
+	if (!m_collider)
+		m_collider = entity().getComponentType(Game::ColliderComponent::Type()).
+		    staticCast<PlayerColliderComponent>();
+
 	if (!m_position)
 		m_position = entity().getComponentType(Game::PositionComponent::Type()).
 		    staticCast<Game::PositionComponent>();
@@ -85,26 +93,30 @@ InputComponent::update(float)
 		    staticCast<Game::MovementComponent>();
 	}
 
-	if (m_position && m_movement) {
+	if (m_collider && m_position && m_movement) {
 		if (inMotion())
 		switch (direction()) {
 		case  ICDLeft:
-			if (m_movement->direction()[0] < -20) m_movement->direction()[0] = -20;
 			m_movement->acceleration()[0] = -m_linear_impulse;
 			break;
 		case ICDRight:
-			if (m_movement->direction()[0] > 20) m_movement->direction()[0] = 20;
 			m_movement->acceleration()[0] = m_linear_impulse;
 			break;
 		}
-		else {
-			m_movement->direction()[0] = 0;
+		/* stop unless falling */
+		else if(m_collider->onPlatform()) {
+			m_movement->velocity()[0] = 0;
 			m_movement->acceleration()[0] = 0;
 		}
+		else m_movement->acceleration()[0] = 0;
 
-		if (m_movement->direction()[1] < -20) m_movement->direction()[1] = -20;
-		if (m_jump) {
-			m_movement->direction()[1] = 20;
+		/* speed limits */
+		if (m_movement->velocity()[0] > 20)  m_movement->velocity()[0] = 20;
+		else if (m_movement->velocity()[0] < -20) m_movement->velocity()[0] = -20;
+
+		/* only jump if on platform */
+		if (m_jump && m_collider->onPlatform()) {
+			m_movement->velocity()[1] =  m_linear_impulse;
 			m_jump = false;
 		}
 	}

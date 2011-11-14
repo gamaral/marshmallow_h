@@ -40,12 +40,12 @@
 #include <graphics/viewport.h>
 
 #include <game/animationcomponent.h>
-#include <game/collidercomponent.h>
 #include <game/movementcomponent.h>
 #include <game/positioncomponent.h>
 #include <game/sizecomponent.h>
 
 #include "inputcomponent.h"
+#include "playercollidercomponent.h"
 
 const Core::Type PlayerEntity::sType("PlayerEntity");
 
@@ -77,29 +77,33 @@ PlayerEntity::update(float d)
 		m_animation_component->pushFrame("walk-left", 108, 4);
 		m_animation_component->pushFrame("walk-left", 109, 4);
 		m_animation_component->rate("walk-left", 16);
+		m_animation_component->pushFrame("jump-left", 108, 1);
+		m_animation_component->pushFrame("jump-left", 109, 1);
+		m_animation_component->rate("jump-left", 2);
 		m_animation_component->pushFrame("stand-right", 102, 12);
 		m_animation_component->pushFrame("stand-right", 103, 4);
 		m_animation_component->pushFrame("walk-right", 104, 4);
 		m_animation_component->pushFrame("walk-right", 105, 4);
 		m_animation_component->rate("walk-right", 16);
+		m_animation_component->pushFrame("jump-right", 104, 1);
+		m_animation_component->pushFrame("jump-right", 105, 1);
+		m_animation_component->rate("jump-right", 2);
 		pushComponent(m_animation_component.staticCast<Game::IComponent>());
 
 		/* input component */
 		m_input_component = new InputComponent("input", *this);
 		pushComponent(m_input_component.staticCast<Game::IComponent>());
 
-		/* collider component */
-		Game::SharedBounceColliderComponent l_collider_component =
-		    new Game::BounceColliderComponent("player", *this);
-		l_collider_component->factor()[0] = 1.f;
-		l_collider_component->factor()[1] = 0.f;
-		pushComponent(l_collider_component.staticCast<Game::IComponent>());
-
 		/* movement component */
 		Game::SharedMovementComponent l_movement_component =
 		    new Game::MovementComponent("movement", *this);
-		l_movement_component->acceleration()[1] = -0.5;
+		l_movement_component->acceleration()[1] = -70.f;
 		pushComponent(l_movement_component.staticCast<Game::IComponent>());
+
+		/* collider component */
+		m_collider_component =
+		    new PlayerColliderComponent("player", *this);
+		pushComponent(m_collider_component.staticCast<Game::IComponent>());
 
 		m_direction = -1;
 
@@ -126,27 +130,37 @@ PlayerEntity::update(float d)
 		switch(m_input_component->direction()) {
 		case InputComponent::ICDLeft:
 			if (m_direction == InputComponent::ICDLeft
-			 && m_in_motion == m_input_component->inMotion())
+			 && m_in_motion == m_input_component->inMotion()
+			 && m_on_platform == m_collider_component->onPlatform())
 				break;
 
-			m_in_motion = m_input_component->inMotion();
 			m_direction = InputComponent::ICDLeft;
-			if (m_in_motion)
-				m_animation_component->play("walk-left", true);
-			else
-				m_animation_component->play("stand-left", true);
+			m_in_motion = m_input_component->inMotion();
+			m_on_platform = m_collider_component->onPlatform();
+
+			if (m_on_platform) {
+				if (m_in_motion)
+					m_animation_component->play("walk-left", true);
+				else
+					m_animation_component->play("stand-left", true);
+			} else m_animation_component->play("jump-left", true);
 			break;
 		case InputComponent::ICDRight:
 			if (m_direction == InputComponent::ICDRight
-			 && m_in_motion == m_input_component->inMotion())
+			 && m_in_motion == m_input_component->inMotion()
+			 && m_on_platform == m_collider_component->onPlatform())
 				break;
 
-			m_in_motion = m_input_component->inMotion();
 			m_direction = InputComponent::ICDRight;
-			if (m_in_motion)
-				m_animation_component->play("walk-right", true);
-			else
-				m_animation_component->play("stand-right", true);
+			m_in_motion = m_input_component->inMotion();
+			m_on_platform = m_collider_component->onPlatform();
+
+			if (m_on_platform) {
+				if (m_in_motion)
+					m_animation_component->play("walk-right", true);
+				else
+					m_animation_component->play("stand-right", true);
+			} else m_animation_component->play("jump-right", true);
 			break;
 		}
 	}

@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef TILEMAP_CUSTOMFACTORY_H
-#define TILEMAP_CUSTOMFACTORY_H 1
+#ifndef DEMO_CUSTOMFACTORY_H
+#define DEMO_CUSTOMFACTORY_H 1
 
 #include <game/factorybase.h>
 

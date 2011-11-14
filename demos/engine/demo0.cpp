@@ -89,7 +89,7 @@ public:
 			Math::Size2f l_vpsize = Graphics::Viewport::Size();
 
 			Math::Point2  &pos = m_position->position();
-			Math::Vector2 &dir = m_movement->direction();
+			Math::Vector2 &dir = m_movement->velocity();
 			Math::Vector2 &acc = m_movement->acceleration();
 
 			if ((pos.x() <= -l_vpsize.width() / 2 && dir.x() < 0)
@@ -152,12 +152,12 @@ public:
 
 			Game::MovementComponent *l_mcomponent =
 			    new Game::MovementComponent("movement", *l_entity);
-			l_mcomponent->direction() = Math::Vector2(.1, .1);
+			l_mcomponent->velocity() = Math::Vector2(.1, .1);
 			if (rand() % 2)
-			    l_mcomponent->direction()[0] *= -1;
+			    l_mcomponent->velocity()[0] *= -1;
 			if (rand() % 2)
-			    l_mcomponent->direction()[1] *= -1;
-			l_mcomponent->acceleration() = l_mcomponent->direction();
+			    l_mcomponent->velocity()[1] *= -1;
+			l_mcomponent->acceleration() = l_mcomponent->velocity() * 50.f;
 			l_entity->pushComponent(l_mcomponent);
 
 			DemoBounceComponent *l_bcomponent = new DemoBounceComponent(*l_entity);

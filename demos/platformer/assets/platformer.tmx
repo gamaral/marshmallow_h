@@ -10,17 +10,23 @@
  </layer>
  <layer name="midground" width="80" height="20">
   <data encoding="base64" compression="zlib">
-   eJzt0jEOgCAQRFHERLwPlVrJ/Q/lNJQEUAka/kumI7uTsMYAAAAAAPB/pxJ6l8BwfO8CGA43932L4pS18P1WMXtXjupGz6T6tewxKVaZG+7Iif+YYl+YXXojuO8C1nkCSw==
+   eJzt00EKgCAUhGEzqNYdoSPYqlrV/Q/VkwwkkBKSh/B/MJsIHSYyBgAAAACA+u2SQ7tEhRrJKBm0i1Qm3m1S7lITv9tsrt1ceObSryOId8N3Wrt1kj7j3iXj7FWyZTfK89wt1a9kD9/BStqCd7y5v2OK/eFs/unyTt/+A5E=
   </data>
  </layer>
  <objectgroup name="logic" width="80" height="20">
-  <object type="ColliderEntity" x="1" y="544" width="445" height="32"/>
-  <object type="ColliderEntity" x="449" y="577" width="1083" height="32"/>
-  <object type="ColliderEntity" x="1731" y="577" width="543" height="32"/>
-  <object type="ColliderEntity" x="2144" y="483" width="32" height="32"/>
-  <object type="ColliderEntity" x="2241" y="419" width="32" height="32"/>
-  <object type="ColliderEntity" x="2337" y="353" width="269" height="32"/>
-  <object name="player" type="PlayerEntity" gid="103" x="7" y="542"/>
+  <object name="platform" type="ColliderEntity" x="1" y="544" width="445" height="32"/>
+  <object name="platform" type="ColliderEntity" x="450" y="577" width="1083" height="32"/>
+  <object name="platform" type="ColliderEntity" x="1731" y="577" width="543" height="32"/>
+  <object name="platform" type="ColliderEntity" x="2146" y="450" width="29" height="22"/>
+  <object name="platform" type="ColliderEntity" x="2018" y="513" width="29" height="22"/>
+  <object name="platform" type="ColliderEntity" x="2337" y="353" width="269" height="32"/>
+  <object name="wall" type="ColliderEntity" x="2368" y="387" width="15" height="250"/>
+  <object name="player" type="PlayerEntity" gid="103" x="7" y="544"/>
+  <object name="platform" type="ColliderEntity" x="1595" y="625" width="72" height="12"/>
+  <object name="platform" type="ColliderEntity" x="2274" y="386" width="28" height="85"/>
+  <object name="platform" type="ColliderEntity" x="2081" y="482" width="29" height="22"/>
+  <object name="platform" type="ColliderEntity" x="2210" y="417" width="28" height="55"/>
+  <object name="platform" type="ColliderEntity" x="1953" y="545" width="29" height="22"/>
  </objectgroup>
  <layer name="foreground" width="80" height="20">
   <data encoding="base64" compression="zlib">

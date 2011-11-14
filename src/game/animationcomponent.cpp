@@ -121,7 +121,7 @@ AnimationComponent::play(const Core::Identifier &a, bool l)
 	m_current_frame_entry = -1;
 	m_current_framelist = &l_frames->second;
 	m_loop = l;
-	m_timestamp = 0;
+	m_timestamp = m_current_framerate;
 	m_playing = true;
 }
 

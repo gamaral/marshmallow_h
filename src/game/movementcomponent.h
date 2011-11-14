@@ -60,8 +60,7 @@ namespace Game
 
 		WeakPositionComponent m_position;
 		Math::Vector2 m_acceleration;
-		Math::Vector2 m_direction;
-		Math::Point2  m_last_pos;
+		Math::Vector2 m_velocity;
 	public:
 
 		MovementComponent(const Core::Identifier &identifier, IEntity &entity);
@@ -70,10 +69,10 @@ namespace Game
 		Math::Vector2 & acceleration(void)
 		    { return(m_acceleration); }
 
-		Math::Vector2 & direction(void)
-		    { return(m_direction); }
+		Math::Vector2 & velocity(void)
+		    { return(m_velocity); }
 
-		void move(float d);
+		Math::Point2 simulate(float d) const;
 
 	public: /* virtual */
 

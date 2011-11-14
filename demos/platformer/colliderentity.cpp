@@ -54,7 +54,7 @@ ColliderEntity::update(float d)
 {
 	if (!m_init) {
 		Game::SharedColliderComponent l_collider_component =
-		    new Game::ColliderComponent("static", *this);
+		    new Game::ColliderComponent(id(), *this);
 		l_collider_component->active() = false;
 		pushComponent(l_collider_component.staticCast<Game::IComponent>());
 		m_init = true;
