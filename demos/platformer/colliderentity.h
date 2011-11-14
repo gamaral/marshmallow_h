@@ -41,17 +41,17 @@
 
 MARSHMALLOW_NAMESPACE_USE;
 
-class GAME_EXPORT Box2DColliderEntity : public Game::EntityBase
+class GAME_EXPORT ColliderEntity : public Game::EntityBase
 {
-	NO_ASSIGN(Box2DColliderEntity);
-	NO_COPY(Box2DColliderEntity);
+	NO_ASSIGN(ColliderEntity);
+	NO_COPY(ColliderEntity);
 
 	bool m_init;
 
 public:
 
-	Box2DColliderEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);
-	virtual ~Box2DColliderEntity(void);
+	ColliderEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);
+	virtual ~ColliderEntity(void);
 
 public: /* virtual */
 

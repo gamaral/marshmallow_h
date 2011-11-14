@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "colliderentity.h"
 
 /*!
  * @file
@@ -34,40 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef TILEMAP_BOX2DCOLLIDERENTITY_H
-#define TILEMAP_BOX2DCOLLIDERENTITY_H 1
+#include <game/collidercomponent.h>
+#include <game/sizecomponent.h>
 
-#include <game/entitybase.h>
+const Core::Type ColliderEntity::sType("ColliderEntity");
 
-MARSHMALLOW_NAMESPACE_USE;
-
-class GAME_EXPORT Box2DColliderEntity : public Game::EntityBase
+ColliderEntity::ColliderEntity(const Core::Identifier &i, Game::EntitySceneLayer &l)
+    : Game::EntityBase(i, l)
+    , m_init(false)
 {
-	NO_ASSIGN(Box2DColliderEntity);
-	NO_COPY(Box2DColliderEntity);
+}
 
-	bool m_init;
+ColliderEntity::~ColliderEntity(void)
+{
+}
 
-public:
+void
+ColliderEntity::update(float d)
+{
+	if (!m_init) {
+		Game::SharedColliderComponent l_collider_component =
+		    new Game::ColliderComponent("static", *this);
+		l_collider_component->active() = false;
+		pushComponent(l_collider_component.staticCast<Game::IComponent>());
+		m_init = true;
+	}
 
-	Box2DColliderEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);
-	virtual ~Box2DColliderEntity(void);
+	Game::EntityBase::update(d);
+}
 
-public: /* virtual */
-
-	VIRTUAL const Core::Type & type(void) const
-	    { return(sType); }
-
-	VIRTUAL void update(float delta);
-
-public: /* static */
-
-	static const Core::Type & Type(void)
-	    { return(sType); }
-
-private: /* static */
-
-	static const Core::Type sType;
-};
-
-#endif

@@ -34,15 +34,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "box2dcolliderentity.h"
+#include "colliderentity.h"
 #include "playerentity.h"
 
 Game::SharedEntity
 CustomFactory::createEntity(const Core::Type &t, const Core::Identifier &i,
     Game::EntitySceneLayer &l) const
 {
-	if (Box2DColliderEntity::Type() == t)
-		return(new Box2DColliderEntity(i, l));
+	if (ColliderEntity::Type() == t)
+		return(new ColliderEntity(i, l));
 	else if (PlayerEntity::Type() == t)
 		return(new PlayerEntity(i, l));
 	else return(FactoryBase::createEntity(t, i, l));

@@ -45,6 +45,7 @@ const Core::Type MovementComponent::sType("Game::MovementComponent");
 MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
     , m_position()
+    , m_acceleration()
     , m_direction()
 {
 }
@@ -54,15 +55,27 @@ MovementComponent::~MovementComponent(void)
 }
 
 void
+MovementComponent::move(float d)
+{
+	if (m_position)
+		m_position->position() = m_last_pos + (m_direction * static_cast<float>(d));
+}
+
+void
 MovementComponent::update(float d)
 {
-	if (!m_position)
+	if (!m_position) {
 		m_position = entity().getComponentType("Game::PositionComponent").
 		    staticCast<PositionComponent>();
 
-	if (m_position && m_direction)
-		m_position->position() += m_direction * static_cast<float>(d);
+		if (m_position)
+			m_last_pos =  m_position->position();
+	}
 
+	move(d);
+
+	m_direction += m_acceleration;
+	m_last_pos   = m_position->position();
 }
 
 bool
@@ -71,8 +84,16 @@ MovementComponent::serialize(TinyXML::TiXmlElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	n.SetDoubleAttribute("x", m_direction.x());
-	n.SetDoubleAttribute("y", m_direction.y());
+	TinyXML::TiXmlElement l_direction("direction");
+	l_direction.SetDoubleAttribute("x", m_direction.x());
+	l_direction.SetDoubleAttribute("y", m_direction.y());
+	n.InsertEndChild(l_direction);
+
+	TinyXML::TiXmlElement l_acceleration("acceleration");
+	l_acceleration.SetDoubleAttribute("x", m_acceleration.x());
+	l_acceleration.SetDoubleAttribute("y", m_acceleration.y());
+	n.InsertEndChild(l_acceleration);
+
 	return(true);
 }
 
@@ -82,8 +103,18 @@ MovementComponent::deserialize(TinyXML::TiXmlElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	n.QueryFloatAttribute("x", &m_direction[0]);
-	n.QueryFloatAttribute("y", &m_direction[1]);
+	TinyXML::TiXmlElement *l_direction = n.FirstChildElement( "direction" );
+	if (l_direction) {
+		l_direction->QueryFloatAttribute("x", &m_direction[0]);
+		l_direction->QueryFloatAttribute("y", &m_direction[1]);
+	}
+
+	TinyXML::TiXmlElement *l_acceleration = n.FirstChildElement( "acceleration" );
+	if (l_acceleration) {
+		l_acceleration->QueryFloatAttribute("x", &m_acceleration[0]);
+		l_acceleration->QueryFloatAttribute("y", &m_acceleration[1]);
+	}
+
 	return(true);
 }
 

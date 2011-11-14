@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <Box2D/Box2D.h>
-
 #include <core/logger.h>
 
 #include <math/size2.h>
@@ -53,7 +51,7 @@ const Core::Type InputComponent::Type("InputComponent");
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
-    , m_linear_impulse(1.f)
+    , m_linear_impulse(2.f)
     , m_down(false)
     , m_left(false)
     , m_right(false)
@@ -84,38 +82,40 @@ InputComponent::update(float)
 		m_position = entity().getComponentType(Game::PositionComponent::Type()).
 		    staticCast<Game::PositionComponent>();
 
-	if (!m_body) {
-		m_body = entity().getComponentType(Game::Box2DComponent::Type()).
-		    staticCast<Game::Box2DComponent>();
+	if (!m_movement) {
+		m_movement = entity().getComponentType(Game::MovementComponent::Type()).
+		    staticCast<Game::MovementComponent>();
 	}
 
-	if (m_position && m_body) {
-		b2Vec2 l_vel = m_body->body()->GetLinearVelocity();
-		const float l_mass = m_body->body()->GetMass();
-		b2Vec2 l_impulse(0, 0);
-
+	if (m_position && m_movement) {
 		if (inMotion())
 		switch (direction()) {
 		case  ICDDown:
-			if (l_vel.y > -4) l_impulse(1) = -m_linear_impulse;
-			l_impulse(0) = l_vel.x * -1;
+			if (m_movement->direction()[1] < -8) m_movement->direction()[1] = -8;
+			m_movement->acceleration()[1] = -m_linear_impulse;
+			m_movement->direction()[0] = 0;
 			break;
 		case  ICDLeft:
-			if (l_vel.x > -4) l_impulse(0) = -m_linear_impulse;
-			l_impulse(1) = l_vel.y * -1;
+			if (m_movement->direction()[0] < -8) m_movement->direction()[0] = -8;
+			m_movement->acceleration()[0] = -m_linear_impulse;
+			m_movement->direction()[1] = 0;
 			break;
 		case ICDRight:
-			if (l_vel.x <  4) l_impulse(0) = m_linear_impulse;
-			l_impulse(1) = l_vel.y * -1;
+			if (m_movement->direction()[0] > 8) m_movement->direction()[0] = 8;
+			m_movement->acceleration()[0] = m_linear_impulse;
+			m_movement->direction()[1] = 0;
 			break;
 		case    ICDUp:
-			if (l_vel.y <  4) l_impulse(1) = m_linear_impulse;
-			l_impulse(0) = l_vel.x * -1;
+			if (m_movement->direction()[1] > 8) m_movement->direction()[1] = 8;
+			m_movement->acceleration()[1] = m_linear_impulse;
+			m_movement->direction()[0] = 0;
 			break;
 		}
-		else l_impulse(0) = l_vel.x * -1, l_impulse(1) = l_vel.y * -1;
-
-		m_body->body()->ApplyLinearImpulse(l_impulse, m_body->body()->GetWorldCenter());
+		else {
+			m_movement->direction() = Math::Vector2::Zero();
+			m_movement->acceleration() = Math::Vector2::Zero();
+		}
+		
 	}
 }
 

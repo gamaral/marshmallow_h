@@ -2,7 +2,7 @@ include(EASTL)
 include(Box2D)
 
 add_executable(platformer_demo0 "demo0.cpp"
-                                "box2dcolliderentity.cpp"
+                                "colliderentity.cpp"
                                 "customfactory.cpp"
                                 "inputcomponent.cpp"
                                 "playerentity.cpp"

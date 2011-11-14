@@ -3,7 +3,7 @@ include(Box2D)
 
 add_executable(tilemap_demo0 "demo0.cpp")
 add_executable(tilemap_demo1 "demo1.cpp"
-                             "box2dcolliderentity.cpp"
+                             "colliderentity.cpp"
                              "customfactory.cpp"
                              "inputcomponent.cpp"
                              "playerentity.cpp"

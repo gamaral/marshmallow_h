@@ -42,7 +42,7 @@
 #include <game/componentbase.h>
 #include <event/ieventlistener.h>
 
-#include <game/box2d/box2dcomponent.h>
+#include <game/movementcomponent.h>
 #include <game/positioncomponent.h>
 
 MARSHMALLOW_NAMESPACE_USE;
@@ -54,8 +54,8 @@ class InputComponent : public Game::ComponentBase,
 	NO_COPY(InputComponent);
 
 	Game::WeakPositionComponent m_position;
-	Game::WeakBox2DComponent m_body;
-	Event::SharedEventListener m_event_proxy;
+	Game::WeakMovementComponent m_movement;
+	Event::SharedEventListener  m_event_proxy;
 
 	eastl::list<int> m_direction_stack;
 	float m_linear_impulse;

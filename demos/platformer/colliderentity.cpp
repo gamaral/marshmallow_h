@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "colliderentity.h"
 
 /*!
  * @file
@@ -34,68 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MATH_TUPLE3_H
-#define MATH_TUPLE3_H 1
+#include <game/collidercomponent.h>
+#include <game/sizecomponent.h>
 
-#include "core/environment.h"
-#include "core/global.h"
-#include "core/namespace.h"
+const Core::Type ColliderEntity::sType("ColliderEntity");
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Math
+ColliderEntity::ColliderEntity(const Core::Identifier &i, Game::EntitySceneLayer &l)
+    : Game::EntityBase(i, l)
+    , m_init(false)
 {
-	/*! @brief 3D Tuple */
-	class MATH_EXPORT Tuple3
-	{
-	public:
-		Tuple3(float x = 0.f, float y = 0.f, float z = 0.f);
-		Tuple3(const Tuple3 &copy);
-
-		const float & x(void) const
-		    { return(m_value[0]); }
-		const float & y(void) const
-		    { return(m_value[1]); }
-		const float & z(void) const
-		    { return(m_value[2]); }
-
-	public: /* operators */
-
-		Tuple3 & operator=(const Tuple3 &rhs);
-		bool operator==(const Tuple3 &rhs) const;
-
-		float & operator[](int i)
-		    { return(m_value[i % 3]); }
-
-		const float & operator[](int i) const
-		    { return(m_value[i % 3]); }
-
-		operator bool(void) const
-		    { return(m_value[0] || m_value[1] || m_value[2]); }
-
-		Tuple3 & operator+=(const Tuple3 &rhs);
-		Tuple3 & operator-=(const Tuple3 &rhs);
-		Tuple3 operator+(const Tuple3 &rhs) const;
-		Tuple3 operator-(const Tuple3 &rhs) const;
-
-	public: /* static */
-
-		static const Tuple3 & Zero(void)
-		    { static Tuple3 s_zero(0.f, 0.f, 0.f);
-		      return(s_zero); }
-
-		static const Tuple3 & One(void)
-		    { static Tuple3 s_one(1.f, 1.f, 1.f);
-		      return(s_one); }
-
-	protected:
-
-		float m_value[3];
-	};
-	typedef Tuple3 Triple;
-	typedef Tuple3 Triplet;
 }
 
-MARSHMALLOW_NAMESPACE_END
+ColliderEntity::~ColliderEntity(void)
+{
+}
 
-#endif
+void
+ColliderEntity::update(float d)
+{
+	if (!m_init) {
+		Game::SharedColliderComponent l_collider_component =
+		    new Game::ColliderComponent("static", *this);
+		l_collider_component->active() = false;
+		pushComponent(l_collider_component.staticCast<Game::IComponent>());
+		m_init = true;
+	}
+
+	Game::EntityBase::update(d);
+}
+

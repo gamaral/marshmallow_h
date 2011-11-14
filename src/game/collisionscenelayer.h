@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "math/point3.h"
+#pragma once
 
 /*!
  * @file
@@ -34,24 +34,69 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "math/vector3.h"
+#ifndef GAME_COLLISIONSCENELAYER_H
+#define GAME_COLLISIONSCENELAYER_H 1
 
-MARSHMALLOW_NAMESPACE_USE;
-using namespace Math;
+#include "game/scenelayerbase.h"
 
-Point3::Point3(float ax, float ay, float az)
-    : Tuple3(ax, ay, az)
+#include "EASTL/list.h"
+using namespace eastl;
+
+#include "game/collidercomponent.h"
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Math { class Vector2; }
+
+namespace Game
 {
+	class ColliderComponent;
+	typedef list<ColliderComponent *> ColliderList;
+
+	/*! @brief Game Collision Scene Layer Class */
+	class GAME_EXPORT CollisionSceneLayer : public SceneLayerBase
+	{
+		ColliderList m_colliders;
+
+		NO_COPY(CollisionSceneLayer);
+		NO_ASSIGN(CollisionSceneLayer);
+
+	public:
+
+		CollisionSceneLayer(const Core::Identifier &identifier,
+		    IScene &scene);
+		virtual ~CollisionSceneLayer(void);
+
+		void registerCollider(ColliderComponent &collider);
+		void deregisterCollider(ColliderComponent &collider);
+
+		const ColliderList & colliders(void) const
+		    { return(m_colliders); }
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
+
+		VIRTUAL void render(void) {}
+		VIRTUAL void update(float delta);
+
+		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
+		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
+
+	private: /* static */
+
+		static const Core::Type sType;
+	};
+	typedef Core::Shared<CollisionSceneLayer> SharedCollisionSceneLayer;
+	typedef Core::Weak<CollisionSceneLayer> WeakCollisionSceneLayer;
+
 }
 
-Point3::Point3(const Point3 &c)
-    : Tuple3(c)
-{
-}
+MARSHMALLOW_NAMESPACE_END
 
-Vector3
-Point3::difference(const Point3 &rhs) const
-{
-	return(Vector3(rhs - *this));
-}
-
+#endif

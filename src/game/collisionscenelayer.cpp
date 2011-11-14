@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/collisionscenelayer.h"
 
 /*!
  * @file
@@ -34,52 +34,63 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MATH_VECTOR3_H
-#define MATH_VECTOR3_H 1
+#include "core/logger.h"
 
-#include "math/tuple3.h"
+#include "math/point2.h"
+#include "math/vector2.h"
 
-#if MARSHMALLOW_WITH_BOX2D
-struct b2Vec3;
-#endif
+MARSHMALLOW_NAMESPACE_USE;
+using namespace Game;
 
-MARSHMALLOW_NAMESPACE_BEGIN
+const Core::Type CollisionSceneLayer::sType("Game::CollisionSceneLayer");
 
-namespace Math
+CollisionSceneLayer::CollisionSceneLayer(const Core::Identifier &i, IScene &s)
+    : SceneLayerBase(i, s)
 {
-
-	/*! @brief 3D Vector */
-	class MATH_EXPORT Vector3 : public Tuple3
-	{
-	public:
-		Vector3(float x = 0.f, float y = 0.f, float z = 0.f);
-		Vector3(const Vector3 &copy);
-
-		Vector3 normalized(void) const;
-		Vector3 & normalize(void);
-
-		float magnitude(void) const;
-		float magnitude2(void) const;
-
-	public: /* operators */
-
-#if MARSHMALLOW_WITH_BOX2D
-		operator b2Vec3(void) const;
-#endif
-
-	public: /* static */
-
-		static const Vector3 & Zero(void)
-		    { static Vector3 s_zero(0.f, 0.f, 0.f);
-		      return(s_zero); }
-
-		static const Vector3 & One(void)
-		    { static Vector3 s_one(1.f, 1.f, 1.f);
-		      return(s_one); }
-	};
-
 }
 
-MARSHMALLOW_NAMESPACE_END
+CollisionSceneLayer::~CollisionSceneLayer(void)
+{
+}
 
-#endif
+void
+CollisionSceneLayer::registerCollider(ColliderComponent &collider)
+{
+	m_colliders.push_back(&collider);
+}
+
+void
+CollisionSceneLayer::deregisterCollider(ColliderComponent &collider)
+{
+	m_colliders.remove(&collider);
+}
+
+void
+CollisionSceneLayer::update(float)
+{
+}
+
+bool
+CollisionSceneLayer::serialize(TinyXML::TiXmlElement &n) const
+{
+	if (!SceneLayerBase::serialize(n))
+		return(false);
+
+	return(true);
+}
+
+bool
+CollisionSceneLayer::deserialize(TinyXML::TiXmlElement &n)
+{
+	if (!SceneLayerBase::deserialize(n))
+		return(false);
+
+	return(true);
+}
+
+const Core::Type &
+CollisionSceneLayer::Type(void)
+{
+	return(sType);
+}
+

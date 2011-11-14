@@ -48,14 +48,15 @@ namespace Math
 	/*! @brief 2D Tuple */
 	class MATH_EXPORT Tuple2
 	{
+		float m_value[2];
 	public:
 
-		Tuple2(float x = 0.f, float y = 0.f);
+		Tuple2(float first = 0.f, float second = 0.f);
 		Tuple2(const Tuple2 &copy);
 
-		const float & x(void) const
+		const float & first(void) const
 		    { return(m_value[0]); }
-		const float & y(void) const
+		const float & second(void) const
 		    { return(m_value[1]); }
 
 	public: /* operators */
@@ -73,9 +74,18 @@ namespace Math
 		    { return(m_value[0] || m_value[1]); }
 
 		Tuple2 & operator*=(float rhs);
+		Tuple2 & operator-=(float rhs);
+		Tuple2 & operator+=(float rhs);
+
+		Tuple2 & operator*=(const Tuple2 &rhs);
 		Tuple2 & operator+=(const Tuple2 &rhs);
 		Tuple2 & operator-=(const Tuple2 &rhs);
+
 		Tuple2 operator*(float rhs) const;
+		Tuple2 operator+(float rhs) const;
+		Tuple2 operator-(float rhs) const;
+
+		Tuple2 operator*(const Tuple2 &rhs) const;
 		Tuple2 operator+(const Tuple2 &rhs) const;
 		Tuple2 operator-(const Tuple2 &rhs) const;
 
@@ -88,10 +98,6 @@ namespace Math
 		static const Tuple2 & One(void)
 		    { static Tuple2 s_one(1.f, 1.f);
 		      return(s_one); }
-
-	protected:
-
-		float m_value[2];
 	};
 	typedef Tuple2 Pair;
 }

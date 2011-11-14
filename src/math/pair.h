@@ -37,6 +37,6 @@
 #ifndef MATH_PAIR2_H
 #define MATH_PAIR2_H 1
 
-#include "math/pair.h"
+#include "math/tuple2.h"
 
 #endif

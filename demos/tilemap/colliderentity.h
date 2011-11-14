@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "math/vector3.h"
+#pragma once
 
 /*!
  * @file
@@ -34,63 +34,40 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#if MARSHMALLOW_WITH_BOX2D
-#   include <Box2D/Common/b2Math.h>
-#endif
+#ifndef TILEMAP_BOX2DCOLLIDERENTITY_H
+#define TILEMAP_BOX2DCOLLIDERENTITY_H 1
 
-#include <cmath>
+#include <game/entitybase.h>
 
 MARSHMALLOW_NAMESPACE_USE;
-using namespace Math;
 
-Vector3::Vector3(float ax, float ay, float az)
-    : Tuple3(ax, ay, az)
+class GAME_EXPORT ColliderEntity : public Game::EntityBase
 {
-}
+	NO_ASSIGN(ColliderEntity);
+	NO_COPY(ColliderEntity);
 
-Vector3::Vector3(const Vector3 &c)
-    : Tuple3(c)
-{
-}
+	bool m_init;
 
-Vector3
-Vector3::normalized(void) const
-{
-	Vector3 n(*this);
-	n.normalize();
-	return(n);
-}
+public:
 
-Vector3 &
-Vector3::normalize(void)
-{
-	const float m = magnitude();
-	m_value[0] /= m;
-	m_value[1] /= m;
-	m_value[2] /= m;
-	return(*this);
-}
+	ColliderEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);
+	virtual ~ColliderEntity(void);
 
-float
-Vector3::magnitude(void) const
-{
-	return(sqrtf(powf(m_value[0], 2)
-	           + powf(m_value[1], 2)
-	           + powf(m_value[2], 2)));
-}
+public: /* virtual */
 
-float
-Vector3::magnitude2(void) const
-{
-	return(powf(m_value[0], 2)
-	     + powf(m_value[1], 2)
-	     + powf(m_value[2], 2));
-}
+	VIRTUAL const Core::Type & type(void) const
+	    { return(sType); }
 
-#if MARSHMALLOW_WITH_BOX2D
-Vector3::operator b2Vec3(void) const
-{
-	return(b2Vec3(m_value[0], m_value[1], m_value[2]));
-}
+	VIRTUAL void update(float delta);
+
+public: /* static */
+
+	static const Core::Type & Type(void)
+	    { return(sType); }
+
+private: /* static */
+
+	static const Core::Type sType;
+};
+
 #endif
-

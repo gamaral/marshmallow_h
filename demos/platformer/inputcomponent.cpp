@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <Box2D/Box2D.h>
-
 #include <core/logger.h>
 
 #include <math/size2.h>
@@ -44,16 +42,17 @@
 #include <event/keyboardevent.h>
 #include <event/proxyeventlistener.h>
 
+#include <graphics/viewport.h>
+
+#include <game/collidercomponent.h>
 #include <game/enginebase.h>
 #include <game/ientity.h>
-
-#include <graphics/viewport.h>
 
 const Core::Type InputComponent::Type("InputComponent");
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
-    , m_linear_impulse(100.f)
+    , m_linear_impulse(1.f)
     , m_jump(false)
     , m_left(false)
     , m_right(false)
@@ -81,35 +80,33 @@ InputComponent::update(float)
 		m_position = entity().getComponentType(Game::PositionComponent::Type()).
 		    staticCast<Game::PositionComponent>();
 
-	if (!m_body) {
-		m_body = entity().getComponentType(Game::Box2DComponent::Type()).
-		    staticCast<Game::Box2DComponent>();
+	if (!m_movement) {
+		m_movement = entity().getComponentType(Game::MovementComponent::Type()).
+		    staticCast<Game::MovementComponent>();
 	}
 
-	if (m_position && m_body) {
-		b2Vec2 l_vel = m_body->body()->GetLinearVelocity();
-		const float l_mass = m_body->body()->GetMass();
-		b2Vec2 l_impulse(0, 0);
-
+	if (m_position && m_movement) {
 		if (inMotion())
 		switch (direction()) {
 		case  ICDLeft:
-			if (l_vel.x > -10) l_impulse(0) = -m_linear_impulse;
-			l_impulse(1) = l_vel.y * -1;
+			if (m_movement->direction()[0] < -20) m_movement->direction()[0] = -20;
+			m_movement->acceleration()[0] = -m_linear_impulse;
 			break;
 		case ICDRight:
-			if (l_vel.x <  10) l_impulse(0) = m_linear_impulse;
-			l_impulse(1) = l_vel.y * -1;
+			if (m_movement->direction()[0] > 20) m_movement->direction()[0] = 20;
+			m_movement->acceleration()[0] = m_linear_impulse;
 			break;
 		}
-		else l_impulse(0) = l_vel.x * -1, l_impulse(1) = l_vel.y * -1;
-
-		if (m_jump) {
-			l_impulse(1) = m_linear_impulse * 20;
-			m_jump = false;
+		else {
+			m_movement->direction()[0] = 0;
+			m_movement->acceleration()[0] = 0;
 		}
 
-		m_body->body()->ApplyLinearImpulse(l_impulse, m_body->body()->GetWorldCenter());
+		if (m_movement->direction()[1] < -20) m_movement->direction()[1] = -20;
+		if (m_jump) {
+			m_movement->direction()[1] = 20;
+			m_jump = false;
+		}
 	}
 }
 

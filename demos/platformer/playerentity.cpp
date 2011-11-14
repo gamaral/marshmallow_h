@@ -34,15 +34,14 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <Box2D/Box2D.h>
-
 #include <core/logger.h>
 
 #include <graphics/transform.h>
 #include <graphics/viewport.h>
 
-#include <game/box2d/box2dcomponent.h>
 #include <game/animationcomponent.h>
+#include <game/collidercomponent.h>
+#include <game/movementcomponent.h>
 #include <game/positioncomponent.h>
 #include <game/sizecomponent.h>
 
@@ -85,17 +84,22 @@ PlayerEntity::update(float d)
 		m_animation_component->rate("walk-right", 16);
 		pushComponent(m_animation_component.staticCast<Game::IComponent>());
 
-		/* create box2d component */
-		Game::SharedBox2DComponent l_box2d_component =
-		    new Game::Box2DComponent("box2d", *this);
-		l_box2d_component->bodyType() = b2_dynamicBody;
-		l_box2d_component->size() = l_size_component->size();
-		l_box2d_component->density() = 10.0;
-		pushComponent(l_box2d_component.staticCast<Game::IComponent>());
-
 		/* input component */
 		m_input_component = new InputComponent("input", *this);
 		pushComponent(m_input_component.staticCast<Game::IComponent>());
+
+		/* collider component */
+		Game::SharedBounceColliderComponent l_collider_component =
+		    new Game::BounceColliderComponent("player", *this);
+		l_collider_component->factor()[0] = 1.f;
+		l_collider_component->factor()[1] = 0.f;
+		pushComponent(l_collider_component.staticCast<Game::IComponent>());
+
+		/* movement component */
+		Game::SharedMovementComponent l_movement_component =
+		    new Game::MovementComponent("movement", *this);
+		l_movement_component->acceleration()[1] = -0.5;
+		pushComponent(l_movement_component.staticCast<Game::IComponent>());
 
 		m_direction = -1;
 

@@ -43,7 +43,7 @@ using namespace Graphics;
 Transform::Transform(void)
     : m_rotation(0.f)
     , m_scale(Math::Pair::One())
-    , m_translation(Math::Vector2::Zero())
+    , m_translation(Math::Point2::Zero())
 {
 }
 
@@ -76,7 +76,7 @@ Transform::setScale(const Math::Pair &value)
 }
 
 void
-Transform::setTranslation(const Math::Vector2 &value)
+Transform::setTranslation(const Math::Point2 &value)
 {
 	m_translation = value;
 }

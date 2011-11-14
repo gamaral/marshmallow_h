@@ -36,7 +36,7 @@
 #include <graphics/transform.h>
 #include <graphics/viewport.h>
 
-#include <game/box2d/box2dscenelayer.h>
+#include <game/collisionscenelayer.h>
 #include <game/enginebase.h>
 #include <game/scene.h>
 #include <game/scenemanager.h>
@@ -72,11 +72,10 @@ public:
 
 		Game::SharedScene l_scene(new Game::Scene("main"));
 
-		/* box2d layer */
-		Game::SharedBox2DSceneLayer l_box2d_layer
-		    (new Game::Box2DSceneLayer("box2d", *l_scene));
-		l_box2d_layer->setGravity(Math::Vector2(0., 0.));
-		l_scene->pushLayer(l_box2d_layer.staticCast<Game::ISceneLayer>());
+		/* collision layer */
+		Game::SharedCollisionSceneLayer l_collision_layer
+		    (new Game::CollisionSceneLayer("collision", *l_scene));
+		l_scene->pushLayer(l_collision_layer.staticCast<Game::ISceneLayer>());
 
 		/* load tmx tilemap */
 		Extra::TMXLoader m_tmxloader(*l_scene);

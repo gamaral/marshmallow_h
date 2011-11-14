@@ -42,7 +42,7 @@
 #include "core/fd.h"
 
 #include "math/pair.h"
-#include "math/vector2.h"
+#include "math/point2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -53,7 +53,7 @@ namespace Graphics
 	{
 		float m_rotation;
 		Math::Pair m_scale;
-		Math::Vector2 m_translation;
+		Math::Point2 m_translation;
 
 	public:
 		Transform(void);
@@ -70,9 +70,9 @@ namespace Graphics
 		    { return(m_scale); }
 		void setScale(const Math::Pair &value);
 
-		const Math::Vector2 & translation(void) const
+		const Math::Point2 & translation(void) const
 		    { return(m_translation); }
-		void setTranslation(const Math::Vector2 &value);
+		void setTranslation(const Math::Point2 &value);
 	};
 	typedef Core::Shared<Transform> SharedTransform;
 	typedef Core::Weak<Transform> WeakTransform;

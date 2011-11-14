@@ -41,6 +41,8 @@
 #include <graphics/quadmesh.h>
 #include <graphics/viewport.h>
 
+#include <game/collidercomponent.h>
+#include <game/collisionscenelayer.h>
 #include <game/enginebase.h>
 #include <game/entity.h>
 #include <game/entityscenelayer.h>
@@ -50,6 +52,7 @@
 #include <game/rendercomponent.h>
 #include <game/scenebase.h>
 #include <game/scenemanager.h>
+#include <game/sizecomponent.h>
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
@@ -87,13 +90,18 @@ public:
 
 			Math::Point2  &pos = m_position->position();
 			Math::Vector2 &dir = m_movement->direction();
+			Math::Vector2 &acc = m_movement->acceleration();
 
 			if ((pos.x() <= -l_vpsize.width() / 2 && dir.x() < 0)
-			 || (pos.x() >=  l_vpsize.width() / 2 && dir.x() > 0))
-				dir[0] *= -0.95f;
+			 || (pos.x() >=  l_vpsize.width() / 2 && dir.x() > 0)) {
+				dir[0] *= -1;
+				acc[0] *= -1;
+			}
 			if ((pos.y() <= -l_vpsize.height() / 2 && dir.y() < 0)
-			 || (pos.y() >=  l_vpsize.height() / 2 && dir.y() > 0))
-				dir[1] *= -0.95f;
+			 || (pos.y() >=  l_vpsize.height() / 2 && dir.y() > 0)) {
+				dir[1] *= -1;
+				acc[1] *= -1;
+			}
 		}
 	}
 
@@ -123,24 +131,42 @@ public:
 
 		if (!m_init) {
 			m_init = true;
+
+			Game::SharedCollisionSceneLayer l_collision_layer(new Game::CollisionSceneLayer("collision", *this));
+			pushLayer(l_collision_layer.staticCast<Game::ISceneLayer>());
+
 			Game::SharedEntitySceneLayer l_layer(new Game::EntitySceneLayer("main", *this));
+			pushLayer(l_layer.staticCast<Game::ISceneLayer>());
+
+			for (int i = 0; i < 4; i++) {
 			Game::SharedEntity l_entity(new Game::Entity("player", *l_layer));
 
 			Game::PositionComponent *l_pcomponent =
 			    new Game::PositionComponent("position", *l_entity);
+			l_pcomponent->position() = Math::Point2(
+			    (rand() % static_cast<int>(Graphics::Viewport::Size().width())) -
+			        Graphics::Viewport::Size().width() / 2.f,
+			    (rand() % static_cast<int>(Graphics::Viewport::Size().height())) -
+			        Graphics::Viewport::Size().height() / 2.f);
 			l_entity->pushComponent(l_pcomponent);
 
 			Game::MovementComponent *l_mcomponent =
 			    new Game::MovementComponent("movement", *l_entity);
-			l_mcomponent->direction() = Math::Vector2(15, 15);
+			l_mcomponent->direction() = Math::Vector2(.1, .1);
 			if (rand() % 2)
 			    l_mcomponent->direction()[0] *= -1;
 			if (rand() % 2)
 			    l_mcomponent->direction()[1] *= -1;
+			l_mcomponent->acceleration() = l_mcomponent->direction();
 			l_entity->pushComponent(l_mcomponent);
 
 			DemoBounceComponent *l_bcomponent = new DemoBounceComponent(*l_entity);
 			l_entity->pushComponent(l_bcomponent);
+
+			Game::SizeComponent *l_scomponent =
+			    new Game::SizeComponent("size", *l_entity);
+			l_scomponent->size() = Math::Size2f(10.f, 6.f);
+			l_entity->pushComponent(l_scomponent);
 
 			Math::Rect2 l_rect(Math::Size2f(10.f, 10.f));
 			Game::RenderComponent *l_rcomponent =
@@ -150,8 +176,12 @@ public:
 			l_rcomponent->mesh() = l_mesh.staticCast<Graphics::IMesh>();
 			l_entity->pushComponent(l_rcomponent);
 
-			pushLayer(l_layer.staticCast<Game::ISceneLayer>());
+			Game::BounceColliderComponent *l_ccomponent =
+			    new Game::BounceColliderComponent("collider", *l_entity);
+			l_entity->pushComponent(l_ccomponent);
+
 			l_layer->addEntity(l_entity);
+		}
 		}
 	}
 

@@ -96,7 +96,7 @@ namespace
 	{
 		s_data.camera.setRotation(.0f);
 		s_data.camera.setScale(Math::Pair::One());
-		s_data.camera.setTranslation(Math::Vector2::Zero());
+		s_data.camera.setTranslation(Math::Point2::Zero());
 
 		s_data.context = 0;
 		s_data.display = 0;
@@ -443,8 +443,8 @@ namespace
 	UpdateCamera(void)
 	{
 		/* calculate scaled viewport size */
-		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().x();
-		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().y();
+		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().first();
+		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().second();
 
 		/* calculate magnitude and pass it off as radius squared */
 		s_data.radius2 = powf(s_data.scaled_size[0] / 2.f, 2.f) +
@@ -668,7 +668,7 @@ Viewport::SwapBuffer(void)
 
 	glLoadIdentity();
 	glRotatef(s_data.camera.rotation(), .0f, .0f, 1.f);
-	glScalef(s_data.camera.scale().x(), s_data.camera.scale().y(), 0.f);
+	glScalef(s_data.camera.scale().first(), s_data.camera.scale().second(), 0.f);
 	glTranslatef(s_data.camera.translation().x() * -1, s_data.camera.translation().y() * -1, 0.f);
 }
 

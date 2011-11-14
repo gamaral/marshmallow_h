@@ -44,13 +44,15 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
 Vector2::Vector2(float ax, float ay)
-    : Tuple2(ax, ay)
 {
+	m_value[0] = ax;
+	m_value[1] = ay;
 }
 
 Vector2::Vector2(const Vector2 &c)
-    : Tuple2(c)
 {
+	m_value[0] = c.x();
+	m_value[1] = c.y();
 }
 
 Vector2
@@ -68,7 +70,7 @@ Vector2::normalize(void)
 	if (m != 0) {
 		m_value[0] /= m;
 		m_value[1] /= m;
-	} else m_value[0] = m_value[1] = 0;
+	} else m_value[0] = m_value[1] = 0.f;
 
 	return(*this);
 }
@@ -97,6 +99,107 @@ float
 Vector2::dot(const Vector2 &b) const
 {
 	return((x() * b.x()) + (y() * b.y()));
+}
+
+Vector2 &
+Vector2::operator=(const Vector2 &rhs)
+{
+	m_value[0] = rhs.m_value[0];
+	m_value[1] = rhs.m_value[1];
+	return(*this);
+}
+
+bool
+Vector2::operator==(const Vector2 &rhs) const
+{
+	return(m_value[0] == rhs.m_value[0]
+	    && m_value[1] == rhs.m_value[1]);
+}
+
+Vector2 &
+Vector2::operator*=(float rhs)
+{
+	m_value[0] *= rhs;
+	m_value[1] *= rhs;
+	return(*this);
+}
+
+Vector2 &
+Vector2::operator+=(float rhs)
+{
+	m_value[0] += rhs;
+	m_value[1] += rhs;
+	return(*this);
+}
+
+Vector2 &
+Vector2::operator-=(float rhs)
+{
+	m_value[0] -= rhs;
+	m_value[1] -= rhs;
+	return(*this);
+}
+
+Vector2 &
+Vector2::operator*=(const Vector2 &rhs)
+{
+	m_value[0] *= rhs.m_value[0];
+	m_value[1] *= rhs.m_value[1];
+	return(*this);
+}
+
+Vector2 &
+Vector2::operator+=(const Vector2 &rhs)
+{
+	m_value[0] += rhs.m_value[0];
+	m_value[1] += rhs.m_value[1];
+	return(*this);
+}
+
+Vector2 &
+Vector2::operator-=(const Vector2 &rhs)
+{
+	m_value[0] -= rhs.m_value[0];
+	m_value[1] -= rhs.m_value[1];
+	return(*this);
+}
+
+Vector2
+Vector2::operator*(float rhs) const
+{
+	return(Vector2(m_value[0] * rhs, m_value[1] * rhs));
+}
+
+Vector2
+Vector2::operator+(float rhs) const
+{
+	return(Vector2(m_value[0] + rhs, m_value[1] + rhs));
+}
+
+Vector2
+Vector2::operator-(float rhs) const
+{
+	return(Vector2(m_value[0] - rhs, m_value[1] - rhs));
+}
+
+Vector2
+Vector2::operator*(const Vector2 &rhs) const
+{
+	return(Vector2(m_value[0] * rhs[0], m_value[1] * rhs[1]));
+}
+
+Vector2
+Vector2::operator+(const Vector2 &rhs) const
+{
+	return(Vector2(m_value[0] + rhs.m_value[0],
+	               m_value[1] + rhs.m_value[1]));
+}
+
+Vector2
+Vector2::operator-(const Vector2 &rhs) const
+{
+	return(Vector2(m_value[0] - rhs.m_value[0],
+	               m_value[1] - rhs.m_value[1]));
 }
 
 #if MARSHMALLOW_WITH_BOX2D

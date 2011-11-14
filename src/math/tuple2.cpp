@@ -73,6 +73,30 @@ Tuple2::operator*=(float rhs)
 }
 
 Tuple2 &
+Tuple2::operator+=(float rhs)
+{
+	m_value[0] += rhs;
+	m_value[1] += rhs;
+	return(*this);
+}
+
+Tuple2 &
+Tuple2::operator-=(float rhs)
+{
+	m_value[0] -= rhs;
+	m_value[1] -= rhs;
+	return(*this);
+}
+
+Tuple2 &
+Tuple2::operator*=(const Tuple2 &rhs)
+{
+	m_value[0] *= rhs.m_value[0];
+	m_value[1] *= rhs.m_value[1];
+	return(*this);
+}
+
+Tuple2 &
 Tuple2::operator+=(const Tuple2 &rhs)
 {
 	m_value[0] += rhs.m_value[0];
@@ -92,6 +116,24 @@ Tuple2
 Tuple2::operator*(float rhs) const
 {
 	return(Tuple2(m_value[0] * rhs, m_value[1] * rhs));
+}
+
+Tuple2
+Tuple2::operator+(float rhs) const
+{
+	return(Tuple2(m_value[0] + rhs, m_value[1] + rhs));
+}
+
+Tuple2
+Tuple2::operator-(float rhs) const
+{
+	return(Tuple2(m_value[0] - rhs, m_value[1] - rhs));
+}
+
+Tuple2
+Tuple2::operator*(const Tuple2 &rhs) const
+{
+	return(Tuple2(m_value[0] * rhs[0], m_value[1] * rhs[1]));
 }
 
 Tuple2

@@ -14,12 +14,12 @@
   </data>
  </layer>
  <objectgroup name="logic" width="80" height="20">
-  <object type="Box2DColliderEntity" x="1" y="544" width="445" height="32"/>
-  <object type="Box2DColliderEntity" x="449" y="577" width="1083" height="32"/>
-  <object type="Box2DColliderEntity" x="1731" y="577" width="543" height="32"/>
-  <object type="Box2DColliderEntity" x="2144" y="483" width="32" height="32"/>
-  <object type="Box2DColliderEntity" x="2241" y="419" width="32" height="32"/>
-  <object type="Box2DColliderEntity" x="2337" y="353" width="269" height="32"/>
+  <object type="ColliderEntity" x="1" y="544" width="445" height="32"/>
+  <object type="ColliderEntity" x="449" y="577" width="1083" height="32"/>
+  <object type="ColliderEntity" x="1731" y="577" width="543" height="32"/>
+  <object type="ColliderEntity" x="2144" y="483" width="32" height="32"/>
+  <object type="ColliderEntity" x="2241" y="419" width="32" height="32"/>
+  <object type="ColliderEntity" x="2337" y="353" width="269" height="32"/>
   <object name="player" type="PlayerEntity" gid="103" x="7" y="542"/>
  </objectgroup>
  <layer name="foreground" width="80" height="20">

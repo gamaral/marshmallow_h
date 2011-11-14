@@ -34,53 +34,78 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_MOVEMENTCOMPONENT_H
-#define GAME_MOVEMENTCOMPONENT_H 1
+#ifndef GAME_COLLIDERCOMPONENT_H
+#define GAME_COLLIDERCOMPONENT_H 1
 
 #include "game/componentbase.h"
 
 #include "core/weak.h"
 
-#include "math/point2.h"
+#include "math/size2.h"
 #include "math/vector2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
+	class CollisionSceneLayer;
+	typedef Core::Weak<CollisionSceneLayer> WeakCollisionSceneLayer;
+
+	class MovementComponent;
+	typedef Core::Weak<MovementComponent> WeakMovementComponent;
 
 	class PositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
-	/*! @brief Game Movement Component Class */
-	class GAME_EXPORT MovementComponent : public ComponentBase
-	{
-		NO_ASSIGN(MovementComponent);
-		NO_COPY(MovementComponent);
+	class SizeComponent;
+	typedef Core::Weak<SizeComponent> WeakSizeComponent;
 
+	/*! @brief Game Collider Component Class */
+	class GAME_EXPORT ColliderComponent : public ComponentBase
+	{
+		WeakCollisionSceneLayer m_layer;
+		WeakMovementComponent m_movement;
 		WeakPositionComponent m_position;
-		Math::Vector2 m_acceleration;
-		Math::Vector2 m_direction;
-		Math::Point2  m_last_pos;
+		WeakSizeComponent m_size;
+		int  m_body;
+		bool m_active;
+		bool m_bullet;
+		bool m_init;
+
+		NO_COPY(ColliderComponent);
+
 	public:
 
-		MovementComponent(const Core::Identifier &identifier, IEntity &entity);
-		virtual ~MovementComponent(void);
+		enum BodyType {
+			SphereType,
+			BoxType,
+			CapsuleType
+		};
 
-		Math::Vector2 & acceleration(void)
-		    { return(m_acceleration); }
+	public:
 
-		Math::Vector2 & direction(void)
-		    { return(m_direction); }
+		ColliderComponent(const Core::Identifier &identifier, IEntity &entity);
+		virtual ~ColliderComponent(void);
 
-		void move(float d);
+		int &body(void)
+		    { return(m_body); }
+
+		bool &active(void)
+		    { return(m_active); }
+
+		bool &bullet(void)
+		    { return(m_bullet); }
+
+		float radius2(void) const;
+
+		bool isColliding(ColliderComponent& collider, float *penetration = 0) const;
 
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
 
-		VIRTUAL void update(float d);
+		VIRTUAL void update(float delta);
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
@@ -89,13 +114,46 @@ namespace Game
 
 		static const Core::Type & Type(void);
 
+	protected:
+	
+		virtual bool collision(ColliderComponent& collider, float penetration, float delta);
+
+		WeakCollisionSceneLayer &layer(void)
+		    { return(m_layer); }
+		WeakMovementComponent &movement(void)
+		    { return(m_movement); }
+		WeakPositionComponent &position(void)
+		    { return(m_position); }
+		WeakSizeComponent &size(void)
+		    { return(m_size); }
+
 	private: /* static */
 
 		static const Core::Type sType;
 	};
-	typedef Core::Shared<MovementComponent> SharedMovementComponent;
-	typedef Core::Weak<MovementComponent> WeakMovementComponent;
+	typedef Core::Shared<ColliderComponent> SharedColliderComponent;
+	typedef Core::Weak<ColliderComponent> WeakColliderComponent;
 
+	/*! @brief Game Bounce Collider Component Class */
+	class GAME_EXPORT BounceColliderComponent : public ColliderComponent
+	{
+		Math::Vector2 m_factor;
+		NO_COPY(BounceColliderComponent);
+
+	public:
+
+		BounceColliderComponent(const Core::Identifier &identifier, IEntity &entity);
+		virtual ~BounceColliderComponent(void) {};
+
+		Math::Vector2 &factor(void)
+		    { return(m_factor); }
+
+	protected:
+	
+		VIRTUAL bool collision(ColliderComponent& collider, float penetration, float delta);
+	};
+	typedef Core::Shared<BounceColliderComponent> SharedBounceColliderComponent;
+	typedef Core::Weak<BounceColliderComponent> WeakBounceColliderComponent;
 }
 
 MARSHMALLOW_NAMESPACE_END

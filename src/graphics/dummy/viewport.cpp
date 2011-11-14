@@ -110,7 +110,7 @@ Viewport::Radius2(void)
 {
 	/* calculate radius^2 */
 #define HALF_VIEWPORT_SIZE 2.f
-	const float l_w = DEFAULT_VIEWPORT_VWIDTH / (s_camera.scale().x() * HALF_VIEWPORT_SIZE);
+	const float l_w = DEFAULT_VIEWPORT_VWIDTH  / (s_camera.scale().x() * HALF_VIEWPORT_SIZE);
 	const float l_h = DEFAULT_VIEWPORT_VHEIGHT / (s_camera.scale().y() * HALF_VIEWPORT_SIZE);
 	return(powf(l_w, 2.f) + powf(l_h, 2.f));
 }

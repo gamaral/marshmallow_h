@@ -40,23 +40,152 @@ MARSHMALLOW_NAMESPACE_USE;
 using namespace Math;
 
 Point2::Point2(float ax, float ay)
-    : Tuple2(ax, ay)
 {
+	m_value[0] = ax;
+	m_value[1] = ay;
 }
 
 Point2::Point2(const Point2 &c)
-    : Tuple2(c)
 {
+	m_value[0] = c.x();
+	m_value[1] = c.y();
+}
+
+Point2 &
+Point2::operator=(const Point2 &rhs)
+{
+	m_value[0] = rhs.m_value[0];
+	m_value[1] = rhs.m_value[1];
+	return(*this);
+}
+
+bool
+Point2::operator==(const Point2 &rhs) const
+{
+	return(m_value[0] == rhs.m_value[0]
+	    && m_value[1] == rhs.m_value[1]);
 }
 
 Vector2
 Point2::difference(const Point2 &rhs) const
 {
-	return(Vector2(rhs - *this));
+	return(Vector2(rhs.x() - x(), rhs.y() - y()));
+}
+
+Point2 &
+Point2::operator*=(float rhs)
+{
+	m_value[0] *= rhs;
+	m_value[1] *= rhs;
+	return(*this);
+}
+
+Point2 &
+Point2::operator+=(float rhs)
+{
+	m_value[0] += rhs;
+	m_value[1] += rhs;
+	return(*this);
+}
+
+Point2 &
+Point2::operator-=(float rhs)
+{
+	m_value[0] -= rhs;
+	m_value[1] -= rhs;
+	return(*this);
+}
+
+Point2 &
+Point2::operator*=(const Point2 &rhs)
+{
+	m_value[0] *= rhs.m_value[0];
+	m_value[1] *= rhs.m_value[1];
+	return(*this);
+}
+
+Point2 &
+Point2::operator+=(const Point2 &rhs)
+{
+	m_value[0] += rhs.m_value[0];
+	m_value[1] += rhs.m_value[1];
+	return(*this);
+}
+
+Point2 &
+Point2::operator-=(const Point2 &rhs)
+{
+	m_value[0] -= rhs.m_value[0];
+	m_value[1] -= rhs.m_value[1];
+	return(*this);
+}
+
+Point2 &
+Point2::operator*=(const Vector2 &rhs)
+{
+	m_value[0] *= rhs.x();
+	m_value[1] *= rhs.y();
+	return(*this);
+}
+
+Point2 &
+Point2::operator+=(const Vector2 &rhs)
+{
+	m_value[0] += rhs.x();
+	m_value[1] += rhs.y();
+	return(*this);
+}
+
+Point2 &
+Point2::operator-=(const Vector2 &rhs)
+{
+	m_value[0] -= rhs.x();
+	m_value[1] -= rhs.y();
+	return(*this);
+}
+
+Point2
+Point2::operator*(const Point2 &rhs) const
+{
+	return(Point2(m_value[0] * rhs[0], m_value[1] * rhs[1]));
+}
+
+Point2
+Point2::operator+(const Point2 &rhs) const
+{
+	return(Point2(m_value[0] + rhs.m_value[0],
+	              m_value[1] + rhs.m_value[1]));
+}
+
+Point2
+Point2::operator-(const Point2 &rhs) const
+{
+	return(Point2(m_value[0] - rhs.m_value[0],
+	              m_value[1] - rhs.m_value[1]));
+}
+
+Point2
+Point2::operator*(const Vector2 &rhs) const
+{
+	return(Point2(m_value[0] * rhs[0], m_value[1] * rhs[1]));
+}
+
+Point2
+Point2::operator+(const Vector2 &rhs) const
+{
+	return(Point2(m_value[0] + rhs.x(),
+	              m_value[1] + rhs.y()));
+}
+
+Point2
+Point2::operator-(const Vector2 &rhs) const
+{
+	return(Point2(m_value[0] - rhs.x(),
+	              m_value[1] - rhs.y()));
 }
 
 Point2::operator Vector2(void) const
 {
-	return(Vector2(x(), y()));
+	return(Vector2(m_value[0], m_value[1]));
 }
 

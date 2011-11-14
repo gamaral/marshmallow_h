@@ -114,7 +114,7 @@ EntitySceneLayer::render(void)
 	EntityList::const_iterator l_i;
 
 	if (m_visiblility_testing) {
-		const Math::Vector2 &l_camera_pos = Graphics::Viewport::Camera().translation();
+		const Math::Point2 &l_camera_pos = Graphics::Viewport::Camera().translation();
 		const float l_visiblility_radius2 = Graphics::Viewport::Radius2();
 
 		for (l_i = m_entities.begin(); l_i != m_entities.end();l_i++) {
@@ -138,13 +138,12 @@ EntitySceneLayer::render(void)
 			if (l_sizeComponent) {
 				const Math::Size2f &l_size =
 				    l_sizeComponent->size();
-				l_size2 = powf(l_size.width(), 2) +
+				l_size2 = powf(l_size.width(),  2) +
 				          powf(l_size.height(), 2);
 			}
 
 			const Math::Point2 &l_position = l_positionComponent->position();
-			const float l_distance2 = powf(l_camera_pos.x() - l_position.x(), 2) +
-						  powf(l_camera_pos.y() - l_position.y(), 2);
+			const float l_distance2 = l_camera_pos.difference(l_position).magnitude2();
 
 			if (l_distance2 < l_visiblility_radius2 + l_size2)
 				l_entity->render();

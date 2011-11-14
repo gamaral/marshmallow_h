@@ -41,7 +41,6 @@
 
 #include "math/point2.h"
 #include "math/size2.h"
-#include "math/triplet.h"
 
 #include "graphics/config.h"
 
