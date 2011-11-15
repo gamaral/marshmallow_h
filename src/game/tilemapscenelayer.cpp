@@ -182,32 +182,17 @@ TilemapSceneLayer::render(void)
 	int row_stop  = static_cast<int>(ceilf(((row_stop_cam - m_hrsize.height()) / m_rsize.height())
 	    * static_cast<float>(-m_size.height())));
 
-	/* check limits */
-
-	if (col_start < 0) col_start = 0;
-	else if (col_start >= m_size.width()) col_start = m_size.width();
-	if (col_stop < 0) col_stop = 0;
-	else if (col_stop >= m_size.width()) col_stop = m_size.width();
-
-	if (row_start < 0) row_start = 0;
-	else if (row_start >= m_size.height()) row_start = m_size.height();
-	if (row_stop < 0) row_stop = 0;
-	else if (row_stop >= m_size.height()) row_stop = m_size.height();
-
-	/* abort if out of view */
-
-	if (row_start >= row_stop || col_start >= col_stop)
-		return;
-
 	/* draw tiles */
 
 	Graphics::Color l_color(1.f, 1.f, 1.f, m_opacity);
 
 	for (int l_r = row_start; l_r < row_stop; ++l_r) {
-		const int l_roffset = l_r * m_size.width();
+		const int l_rindex = l_r % m_size.height();
+		const int l_roffset = ((l_rindex >= 0 ? 0 : m_size.height()) + l_rindex) * m_size.width();
 
 		for (int l_c = col_start; l_c < col_stop; ++l_c) {
-			int l_tindex = m_data[l_roffset + l_c];
+			const int l_cindex = l_c % m_size.width();
+			int l_tindex = m_data[l_roffset + (l_cindex >= 0 ? 0 : m_size.width()) + l_cindex];
 			if (!l_tindex)
 				continue;
 

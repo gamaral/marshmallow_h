@@ -117,10 +117,10 @@ PlayerEntity::update(float d)
 			Math::Point2 l_pos = l_pos_component->position();
 
 			/* camara snap - calculate using map */
-			if (l_pos.y() > 10) l_pos[1] = 10;
-			else if (l_pos.y() < -10) l_pos[1] = -10;
 			if (l_pos.x() < -120) l_pos[0] = -120;
 			else if (l_pos.x() > 120) l_pos[0] = 120;
+			if (l_pos.y() > 10) l_pos[1] = 10;
+			else if (l_pos.y() < -10) l_pos[1] = -10;
 
 			l_camera.setTranslation(l_pos);
 			Graphics::Viewport::SetCamera(l_camera);
