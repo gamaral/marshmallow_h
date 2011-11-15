@@ -53,10 +53,11 @@ const Core::Type TilemapSceneLayer::sType("Game::TilemapSceneLayer");
 TilemapSceneLayer::TilemapSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s)
     , m_data(0)
-    , m_hrtile_size(0.f, 0.f)
     , m_hrsize(0.f, 0.f)
+    , m_hrtile_size(0.f, 0.f)
     , m_rsize(0.f, 0.f)
     , m_rtile_size(0.f, 0.f)
+    , m_translate(0.f, 0.f)
     , m_tile_size(24, 24)
     , m_size(100, 100)
     , m_opacity(1.0f)
@@ -108,6 +109,12 @@ TilemapSceneLayer::dettachTileset(int o)
 }
 
 void
+TilemapSceneLayer::setTranslation(const Math::Vector2 &t)
+{
+	m_translate = t;
+}
+
+void
 TilemapSceneLayer::setTileSize(const Math::Size2i &s)
 {
 	m_tile_size = s;
@@ -150,8 +157,8 @@ TilemapSceneLayer::render(void)
 	/* calculate visible row and column range */
 
 	const bool  l_camera_rotated = Graphics::Viewport::Camera().rotation() != 0;
-	const float l_camera_x = Graphics::Viewport::Camera().translation().x();
-	const float l_camera_y = Graphics::Viewport::Camera().translation().y();
+	const float l_camera_x = Graphics::Viewport::Camera().translation().x() + m_translate.x();
+	const float l_camera_y = Graphics::Viewport::Camera().translation().y() + m_translate.y();
 
 	float col_start_cam;
 	float col_stop_cam;
@@ -203,6 +210,10 @@ TilemapSceneLayer::render(void)
 			/* offset to center of viewport */
 			l_x -= m_hrsize.width();
 			l_y -= m_hrsize.height();
+
+			/* translate */
+			l_x -= m_translate.x();
+			l_y -= m_translate.y();
 
 			/* offset to bottom of tile (we draw up) */
 			l_y -= m_rtile_size.height();

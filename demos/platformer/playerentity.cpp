@@ -40,9 +40,13 @@
 #include <graphics/viewport.h>
 
 #include <game/animationcomponent.h>
+#include <game/engine.h>
+#include <game/iscene.h>
 #include <game/movementcomponent.h>
 #include <game/positioncomponent.h>
+#include <game/scenemanager.h>
 #include <game/sizecomponent.h>
+#include <game/tilemapscenelayer.h>
 
 #include "inputcomponent.h"
 #include "playercollidercomponent.h"
@@ -117,6 +121,7 @@ PlayerEntity::update(float d)
 			Math::Point2 l_pos = l_pos_component->position();
 
 			/* camara snap - calculate using map */
+
 			if (l_pos.x() < -120) l_pos[0] = -120;
 			else if (l_pos.x() > 120) l_pos[0] = 120;
 			if (l_pos.y() > 10) l_pos[1] = 10;
@@ -124,6 +129,21 @@ PlayerEntity::update(float d)
 
 			l_camera.setTranslation(l_pos);
 			Graphics::Viewport::SetCamera(l_camera);
+
+			/* translate background layers (parallax) */
+
+			Game::SharedTilemapSceneLayer l_background =
+			    Game::Engine::Instance()->sceneManager()->activeScene()->
+			        getLayer("background").staticCast<Game::TilemapSceneLayer>();
+			if (l_background)
+				l_background->setTranslation(Math::Vector2(l_pos.x() * 0.125f, 0.f));
+
+			Game::SharedTilemapSceneLayer l_midground =
+			    Game::Engine::Instance()->sceneManager()->activeScene()->
+			        getLayer("midground").staticCast<Game::TilemapSceneLayer>();
+			if (l_midground)
+				l_midground->setTranslation(Math::Vector2(l_pos.x() * 0.25f, 0.f));
+
 		}
 
 		/* update animation */

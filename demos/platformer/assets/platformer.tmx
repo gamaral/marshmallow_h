@@ -5,12 +5,17 @@
  </tileset>
  <layer name="background" width="80" height="20">
   <data encoding="base64" compression="zlib">
-   eJztlksOgzAMRJH6uQClF2q76IcVsOjv/teokVhYVkISB8dJxeIpGzJkZhzatqqqdqU4rsANuAMPwT254fLg6/EJvIA38AG+Hu927dHqJETD5YGTy1JIdOKTj6ZnqZnQ7uVfzivRBdZMnU3q2ZKYHawZ44+TxRJ+crvfXH9a3wWp9+bcS6rzx2iU9jshcf45jdh+NPbndCdi+jkBZ8Il0KPU/1MuKbvpgJ4wJPCY6zxx8xsI2hmUQjfl1ZNV+1ylgO/vml9cfjjHLbCbVhfjc/sMvGjlR799IwegmVYX43NHpOmT+VwXId2Z9rs8b5j6Jm3b/NH8Ggc4v9ozd1sXId1R8Dls1Ex9k7Zt/n4g6sZz
+   eJztlksOgCAMBbmeogfwd/9r2I0bE7TV92iNLGZH+ptCyCmlQRgbJjqhFxZhFbaXcTLZQ608WiZhBtR5xNF6eDoHax4vb+w6S/FR+6WNoz3n5Q01V1ac2nOx7ke098obqy+mXw830ffBUt9bN6VcVzVEfwcZ9ZXmUcrF8vJVau+MNh9izuh/xpe4m7Om56j/DKt3Rj3snj138tybp8uofiJ48sTSN+LPosmHOlPDs2U/EbusiYE6w+qhEZu/voUo2h3hsAPILOjQ
   </data>
  </layer>
  <layer name="midground" width="80" height="20">
   <data encoding="base64" compression="zlib">
-   eJzt00EKgCAUhGEzqNYdoSPYqlrV/Q/VkwwkkBKSh/B/MJsIHSYyBgAAAACA+u2SQ7tEhRrJKBm0i1Qm3m1S7lITv9tsrt1ceObSryOId8N3Wrt1kj7j3iXj7FWyZTfK89wt1a9kD9/BStqCd7y5v2OK/eFs/unyTt/+A5E=
+   eJztzsENgDAIBdAuoE6g7r+lHDw1aSDo8b2EQ3+BMAYAAAAAAPxvi9qjjsX7a1+Wd+ayWyoz3d1zdkZdUff7N7/HIq/2ZXlnLrulMtPdPWcPdegIQQ==
+  </data>
+ </layer>
+ <layer name="platform" width="80" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztkskKwjAURePsRgWnjRO4dYK6UlcO/QL1/3/FW0zhGXilSSNp4R04hL427eWmSgmCIAiCIAiCYNKDfTgIHaSiLOASrkIHqSg7uIeH0EEqxhXe4B0+YEzWOGCuslODQ9jV10/4gm9jFX6hva3JXPrLJuntqL69RXoWkfuu/c3g3F/M0kF7y8K1vw3cFglYkH+dX97eUrj+mha2YBt2LL57yvlcwhlejJnv8zN74/KZObj+xhZO4FRnqMOGsuvfl/QcOVzzcf+Iz/5SRpb7fWnm4HDJx72b6+8DljIdvQ==
   </data>
  </layer>
  <objectgroup name="logic" width="80" height="20">
@@ -30,7 +35,7 @@
  </objectgroup>
  <layer name="foreground" width="80" height="20">
   <data encoding="base64" compression="zlib">
-   eJztzkkOgkAURVE2oC7AbmzLGpFGpoINUxTEZXrHxJEJ9VPk3eRMavDrBYFSSimllFKq3wRTzKyHeNoSK6yth3jaAUeE1kOUUkqNos2fXDbHwvGfVm0HuLnD/sd7hBNiJEiR4Yx84E1j6IICJa644Y4HKsNdvlTjiRcatHijw8fRhi95AxIb
+   eJzt1jkOwjAYBWFfAHICoAYJqBGnYw0tOy0hLMdkOpqUYGNpRvpqv+53CGZmZmZmZvbvDVIPMLOf1EIbReohmdZBF73UQzJqEj43ZYgRxug3sO81jfBG019hhjkWWGKFNUpsImzKvS122OOAI04445JwVy5dUeGGGnc88MQr0oY3nP8Qug==
   </data>
  </layer>
 </map>

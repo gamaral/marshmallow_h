@@ -45,6 +45,9 @@ using namespace eastl;
 #include "core/identifier.h"
 #include "core/shared.h"
 #include "core/type.h"
+
+#include "math/vector2.h"
+
 #include "graphics/ivertexdata.h"
 #include "graphics/tileset.h"
 
@@ -66,10 +69,12 @@ namespace Game
 
 		UINT32 *m_data;
 
-		Math::Size2f m_hrtile_size;
 		Math::Size2f m_hrsize;
+		Math::Size2f m_hrtile_size;
 		Math::Size2f m_rsize;
 		Math::Size2f m_rtile_size;
+
+		Math::Vector2 m_translate;
 
 		Math::Size2i m_tile_size;
 		Math::Size2i m_size;
@@ -90,6 +95,10 @@ namespace Game
 		const UINT32 * data(void) const
 		    { return(m_data); }
 		void setData(UINT32 *data);
+
+		const Math::Vector2 & translate(void) const
+		    { return(m_translate); }
+		void setTranslation(const Math::Vector2 &translation);
 
 		const Math::Size2i & tileSize(void) const
 		    { return(m_tile_size); }
