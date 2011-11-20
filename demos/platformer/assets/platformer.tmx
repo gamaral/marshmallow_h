@@ -15,23 +15,29 @@
  </layer>
  <layer name="platform" width="80" height="20">
   <data encoding="base64" compression="zlib">
-   eJztkskKwjAURePsRgWnjRO4dYK6UlcO/QL1/3/FW0zhGXilSSNp4R04hL427eWmSgmCIAiCIAiCYNKDfTgIHaSiLOASrkIHqSg7uIeH0EEqxhXe4B0+YEzWOGCuslODQ9jV10/4gm9jFX6hva3JXPrLJuntqL69RXoWkfuu/c3g3F/M0kF7y8K1vw3cFglYkH+dX97eUrj+mha2YBt2LL57yvlcwhlejJnv8zN74/KZObj+xhZO4FRnqMOGsuvfl/QcOVzzcf+Iz/5SRpb7fWnm4HDJx72b6+8DljIdvQ==
+   eJztkskKwjAURePsRl04bJw+wGnhSl1Z7Reo//8r3kXFEHzSlwbSwD1wKC20HG5qDCGEEEIIIcRlAIdwFDskUZZwBdexQxJlB/fwEDskMa4wgzd4h7l1zSN21Z0GPMJ+cf+AT/hyruSLu5kN9/vNv81sfPebw0WVwBpSdjMb3/02cKsNDEio8/PZzEbar62wA7uwp+g4KRrP8OI8q3J+ZTaT+twOab+JwimcFV1N2DK6/UNpn6OEb5/0j4Tc78NY+X4o3Q4Jnz7p29J+b0JbHXk=
   </data>
  </layer>
  <objectgroup name="logic" width="80" height="20">
   <object name="platform" type="ColliderEntity" x="1" y="544" width="445" height="32"/>
   <object name="platform" type="ColliderEntity" x="450" y="577" width="1083" height="32"/>
   <object name="platform" type="ColliderEntity" x="1731" y="577" width="543" height="32"/>
-  <object name="platform" type="ColliderEntity" x="2146" y="450" width="29" height="22"/>
-  <object name="platform" type="ColliderEntity" x="2018" y="513" width="29" height="22"/>
   <object name="platform" type="ColliderEntity" x="2337" y="353" width="269" height="32"/>
-  <object name="wall" type="ColliderEntity" x="2368" y="387" width="15" height="250"/>
   <object name="player" type="PlayerEntity" gid="103" x="7" y="544"/>
   <object name="platform" type="ColliderEntity" x="1595" y="625" width="72" height="12"/>
-  <object name="platform" type="ColliderEntity" x="2274" y="386" width="28" height="85"/>
-  <object name="platform" type="ColliderEntity" x="2081" y="482" width="29" height="22"/>
-  <object name="platform" type="ColliderEntity" x="2210" y="417" width="28" height="55"/>
-  <object name="platform" type="ColliderEntity" x="1953" y="545" width="29" height="22"/>
+  <object name="platform" type="ColliderEntity" x="1761" y="607" width="474" height="35"/>
+  <object name="platform" type="ColliderEntity" x="481" y="608" width="1020" height="33"/>
+  <object name="platform" type="ColliderEntity" x="0" y="565" width="410" height="74"/>
+  <object name="platform" type="ColliderEntity" x="2373" y="374" width="188" height="267"/>
+  <object name="platform" type="ColliderEntity" x="1793" y="546" width="29" height="30"/>
+  <object name="platform" type="ColliderEntity" x="1985" y="482" width="30" height="25"/>
+  <object name="platform" type="ColliderEntity" x="1890" y="512" width="30" height="25"/>
+  <object name="platform" type="ColliderEntity" x="2082" y="449" width="30" height="25"/>
+  <object name="platform" type="ColliderEntity" x="2176" y="417" width="30" height="25"/>
+  <object name="platform" type="ColliderEntity" x="2272" y="386" width="30" height="25"/>
+  <object name="bounce" type="ColliderEntity" x="546" y="546" width="26" height="9"/>
+  <object name="bounce" type="ColliderEntity" x="1155" y="550" width="26" height="9"/>
+  <object name="bounce" type="ColliderEntity" x="2243" y="550" width="26" height="9"/>
  </objectgroup>
  <layer name="foreground" width="80" height="20">
   <data encoding="base64" compression="zlib">

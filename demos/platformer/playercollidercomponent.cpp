@@ -41,28 +41,52 @@
 PlayerColliderComponent::PlayerColliderComponent(const Core::Identifier &i, Game::IEntity &e)
     : ColliderComponent(i, e)
 {
+	/* high velocity jumps may cause penetration */
+	bullet() = true;
 }
 
 void
 PlayerColliderComponent::update(float d)
 {
 	m_platform = false;
-
 	ColliderComponent::update(d);
 }
 
 bool
-PlayerColliderComponent::collision(ColliderComponent& c, float p, float d)
+PlayerColliderComponent::collision(ColliderComponent &c, float d, const Game::CollisionData &data)
 {
+	if (!movement()) return(false);
+
+	Game::CollisionData l_data = data;
+	const Math::Vector2 norm = movement()->velocity().normalized();
+
 	if (c.id().str() == "platform") {
-	    position()->position()[1] =
-	         c.position()->position().y() +
-	        (c.size()->size().height() / 2.f) + (size()->size().height() / 2.f);
-	    movement()->velocity()[1] = 0;
-	    m_platform = true;
+#define DELTA_STEPS 32
+		const float l_delta_step = d / DELTA_STEPS;
+		for(int i = 0; i < DELTA_STEPS * 2; ++i) {
+			const float delta = d - (static_cast<float>(i) * l_delta_step);
+			if (!isColliding(c, delta, &l_data)) {
+				position()->position() = movement()->simulate(delta);
+
+				if (data.rect.top < 1 && norm.y() < 0) {
+					m_platform = true;
+					movement()->velocity()[1] = 0;
+				}
+				else if (data.rect.bottom < 1 && norm.y() > 0) {
+					movement()->velocity()[1] *= -0.4;
+				}
+				if (data.rect.left  < 1 && norm.x() > 0 ||
+				    data.rect.right < 1 && norm.x() < 0)
+					movement()->velocity()[0] *= -0.4;
+
+				break;
+			}
+		}
 	}
-	if (c.id().str() == "wall") {
-	    fprintf(stderr, "wall\n");
+	else if (c.id().str() == "bounce") {
+		if (data.rect.top < 1 && norm.y() < 0) {
+			movement()->velocity()[1] = 70.f;
+		}
 	}
 	return(true);
 }

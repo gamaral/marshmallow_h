@@ -60,6 +60,8 @@ namespace Game
 	class SizeComponent;
 	typedef Core::Weak<SizeComponent> WeakSizeComponent;
 
+	union CollisionData;
+
 	/*! @brief Game Collider Component Class */
 	class GAME_EXPORT ColliderComponent : public ComponentBase
 	{
@@ -98,7 +100,7 @@ namespace Game
 
 		float radius2(void) const;
 
-		bool isColliding(ColliderComponent& collider, float delta, float *penetration = 0) const;
+		bool isColliding(ColliderComponent& collider, float delta, CollisionData *data = 0) const;
 
 	public: /* virtual */
 
@@ -125,7 +127,7 @@ namespace Game
 
 	protected:
 	
-		virtual bool collision(ColliderComponent& collider, float penetration, float delta);
+		virtual bool collision(ColliderComponent &collider, float delta, const CollisionData &data);
 
 	private: /* static */
 
@@ -146,10 +148,24 @@ namespace Game
 
 	protected:
 	
-		VIRTUAL bool collision(ColliderComponent& collider, float penetration, float delta);
+		VIRTUAL bool collision(ColliderComponent &collider, float delta, const CollisionData &data);
 	};
 	typedef Core::Shared<BounceColliderComponent> SharedBounceColliderComponent;
 	typedef Core::Weak<BounceColliderComponent> WeakBounceColliderComponent;
+
+	union CollisionData
+	{
+		struct {
+			float penetration2;
+		} sphere;
+
+		struct {
+			float left;
+			float right;
+			float top;
+			float bottom;
+		} rect;
+	};
 }
 
 MARSHMALLOW_NAMESPACE_END

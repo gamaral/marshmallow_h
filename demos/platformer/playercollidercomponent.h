@@ -61,7 +61,7 @@ public: /* virtual */
 
 protected: /* virtual */
 
-	VIRTUAL bool collision(ColliderComponent& collider, float penetration, float delta);
+	VIRTUAL bool collision(ColliderComponent &collider, float delta, const Game::CollisionData &data);
 };
 typedef Core::Shared<PlayerColliderComponent> SharedPlayerColliderComponent;
 typedef Core::Weak<PlayerColliderComponent> WeakPlayerColliderComponent;
