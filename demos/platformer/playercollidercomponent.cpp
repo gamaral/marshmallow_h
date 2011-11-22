@@ -61,26 +61,30 @@ PlayerColliderComponent::collision(ColliderComponent &c, float d, const Game::Co
 	const Math::Vector2 norm = movement()->velocity().normalized();
 
 	if (c.id().str() == "platform") {
-#define DELTA_STEPS 32
-		const float l_delta_step = d / DELTA_STEPS;
-		for(int i = 0; i < DELTA_STEPS * 2; ++i) {
-			const float delta = d - (static_cast<float>(i) * l_delta_step);
-			if (!isColliding(c, delta, &l_data)) {
-				position()->position() = movement()->simulate(delta);
-
-				if (data.rect.top < 1 && norm.y() < 0) {
-					m_platform = true;
-					movement()->velocity()[1] = 0;
-				}
-				else if (data.rect.bottom < 1 && norm.y() > 0) {
-					movement()->velocity()[1] *= -0.4;
-				}
-				if (data.rect.left  < 1 && norm.x() > 0 ||
-				    data.rect.right < 1 && norm.x() < 0)
-					movement()->velocity()[0] *= -0.4;
-
-				break;
-			}
+		if (data.rect.left  < 1 && norm.x() > 0) {
+			position()->position()[0] =
+				c.position()->position()[0] -
+				    (c.size()->size().width() / 2.f + size()->size().width() / 2.f);
+			movement()->velocity()[0] *= -0.4;
+		}
+		else if (data.rect.right < 1 && norm.x() < 0) {
+			position()->position()[0] =
+				c.position()->position()[0] +
+				    (c.size()->size().width() / 2.f + size()->size().width() / 2.f);
+			movement()->velocity()[0] *= -0.4;
+		}
+		else if (data.rect.top < 1 && norm.y() < 0) {
+			position()->position()[1] =
+				c.position()->position()[1] +
+				    (c.size()->size().height() / 2.f + size()->size().height() / 2.f);
+			m_platform = true;
+			movement()->velocity()[1] = 0;
+		}
+		else if (data.rect.bottom < 1 && norm.y() > 0) {
+			position()->position()[1] =
+				c.position()->position()[1] -
+				    (c.size()->size().height() / 2.f + size()->size().height() / 2.f);
+			movement()->velocity()[1] *= -0.4;
 		}
 	}
 	else if (c.id().str() == "bounce") {
