@@ -40,6 +40,7 @@
 
 PlayerColliderComponent::PlayerColliderComponent(const Core::Identifier &i, Game::IEntity &e)
     : ColliderComponent(i, e)
+    , m_platform(false)
 {
 	/* high velocity jumps may cause penetration */
 	bullet() = true;

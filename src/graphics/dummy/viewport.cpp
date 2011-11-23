@@ -60,7 +60,7 @@ Viewport::Initialize(int w, int h, int d, bool f)
 
 	s_camera.setRotation(.0f);
 	s_camera.setScale(Math::Pair::One());
-	s_camera.setTranslation(Math::Vector2::Zero());
+	s_camera.setTranslation(Math::Point2::Zero());
 
 	MMINFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
 	return(true);
@@ -110,8 +110,8 @@ Viewport::Radius2(void)
 {
 	/* calculate radius^2 */
 #define HALF_VIEWPORT_SIZE 2.f
-	const float l_w = DEFAULT_VIEWPORT_VWIDTH  / (s_camera.scale().x() * HALF_VIEWPORT_SIZE);
-	const float l_h = DEFAULT_VIEWPORT_VHEIGHT / (s_camera.scale().y() * HALF_VIEWPORT_SIZE);
+	const float l_w = DEFAULT_VIEWPORT_VWIDTH  / (s_camera.scale().first() * HALF_VIEWPORT_SIZE);
+	const float l_h = DEFAULT_VIEWPORT_VHEIGHT / (s_camera.scale().second() * HALF_VIEWPORT_SIZE);
 	return(powf(l_w, 2.f) + powf(l_h, 2.f));
 }
 
@@ -119,8 +119,8 @@ const Math::Size2f &
 Viewport::ScaledSize(void)
 {
 	const static Math::Size2f s_scaled_size
-	    (DEFAULT_VIEWPORT_VWIDTH / s_camera.scale().x(),
-	     DEFAULT_VIEWPORT_VHEIGHT / s_camera.scale().y());
+	    (DEFAULT_VIEWPORT_VWIDTH / s_camera.scale().first(),
+	     DEFAULT_VIEWPORT_VHEIGHT / s_camera.scale().second());
 	return(s_scaled_size);
 }
 
