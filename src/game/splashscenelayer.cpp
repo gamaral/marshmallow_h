@@ -43,7 +43,6 @@
 #include "event/eventmanager.h"
 #include "event/ievent.h"
 #include "event/keyboardevent.h"
-#include "event/proxyeventlistener.h"
 
 #include "graphics/painter.h"
 #include "graphics/quadmesh.h"
@@ -60,7 +59,6 @@ const Core::Type SplashSceneLayer::sType("Game::SplashSceneLayer");
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock)
     , m_mesh()
-    , m_event_proxy()
     , m_exposure(1.5f)
     , m_fade(1.f)
     , m_timer(0.)
@@ -68,16 +66,15 @@ SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
     , m_autoBegin()
     , m_autoKill(true)
 {
-	m_event_proxy = new Event::ProxyEventListener(*this);
 	m_mesh = new Graphics::QuadMesh(Math::Rect2(Graphics::Viewport::Size()));;
 	m_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
 
-	Game::EngineBase::Instance()->eventManager()->connect(m_event_proxy, Event::KeyboardEvent::Type());
+	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
 }
 
 SplashSceneLayer::~SplashSceneLayer(void)
 {
-	Game::EngineBase::Instance()->eventManager()->disconnect(m_event_proxy, Event::KeyboardEvent::Type());
+	Game::Engine::Instance()->eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 }
 
 Graphics::SharedQuadMesh
@@ -108,7 +105,12 @@ SplashSceneLayer::skip(void)
 void
 SplashSceneLayer::render(void)
 {
+	Graphics::Viewport::PushMatrix();
+	Graphics::Viewport::LoadIdentity();
+
 	Graphics::Painter::Draw(*m_mesh, Math::Point2(0,0));
+
+	Graphics::Viewport::PopMatrix();
 }
 
 void

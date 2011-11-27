@@ -38,7 +38,6 @@
 #include "core/weak.h"
 
 #include "event/eventmanager.h"
-#include "event/proxyeventlistener.h"
 #include "event/quitevent.h"
 #include "event/renderevent.h"
 #include "event/updateevent.h"
@@ -60,19 +59,17 @@ using namespace Game;
 EngineBase *EngineBase::s_instance = 0;
 
 EngineBase::EngineBase(int f, int u, bool s)
-    : m_event_manager(),
-      m_scene_manager(),
-      m_event_proxy(),
-      m_factory(),
-      m_fps(f),
-      m_ups(u),
-      m_delta_time(0),
-      m_exit_code(0),
-      m_frame_rate(0),
-      m_suspendable(s),
-      m_running(false)
+    : m_event_manager()
+    , m_scene_manager()
+    , m_factory()
+    , m_fps(f)
+    , m_ups(u)
+    , m_delta_time(0)
+    , m_exit_code(0)
+    , m_frame_rate(0)
+    , m_suspendable(s)
+    , m_running(false)
 {
-	m_event_proxy = new Event::ProxyEventListener(*this);
 	if (!s_instance)
 		s_instance = this;
 	else
@@ -106,7 +103,7 @@ EngineBase::initialize(void)
 	if (!m_factory)
 		m_factory = new Factory();
 
-	eventManager()->connect(m_event_proxy, Event::QuitEvent::Type());
+	eventManager()->connect(this, Event::QuitEvent::Type());
 
 	return(true);
 }
@@ -114,6 +111,8 @@ EngineBase::initialize(void)
 void
 EngineBase::finalize(void)
 {
+	eventManager()->disconnect(this, Event::QuitEvent::Type());
+
 	m_scene_manager.clear();
 	m_event_manager.clear();
 

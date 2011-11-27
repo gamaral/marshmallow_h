@@ -47,8 +47,8 @@
 
 MARSHMALLOW_NAMESPACE_USE;
 
-class SnatcherLayer : public Game::SceneLayerBase,
-                      public Event::IEventListener
+class SnatcherLayer : public Game::SceneLayerBase
+                    , public Event::IEventListener
 {
 	NO_COPY(SnatcherLayer);
 
@@ -58,7 +58,6 @@ class SnatcherLayer : public Game::SceneLayerBase,
 		ssTimeout = 2
 	};
 
-	Event::SharedEventListener m_event_proxy;
 	typedef eastl::vector<Core::Identifier> UIDList;
 	UIDList m_entities;
 	SnatchState m_state;

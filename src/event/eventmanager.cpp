@@ -71,7 +71,7 @@ EventManager::~EventManager(void)
 }
 
 bool
-EventManager::connect(const WeakEventListener &handler, const Core::Type &t)
+EventManager::connect(IEventListener *handler, const Core::Type &t)
 {
 	MMINFO("Connecting `%p` handler to event type `%s`", static_cast<const void *>(&handler), t.str().c_str());
 
@@ -100,7 +100,7 @@ EventManager::connect(const WeakEventListener &handler, const Core::Type &t)
 }
 
 bool
-EventManager::disconnect(const WeakEventListener &handler, const Core::Type &t)
+EventManager::disconnect(IEventListener *handler, const Core::Type &t)
 {
 	MMINFO("Disconnecting `%p` handler from event type `%s`", static_cast<const void *>(&handler), t.str().c_str());
 

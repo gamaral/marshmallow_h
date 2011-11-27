@@ -68,7 +68,6 @@ namespace Game
 		static EngineBase *s_instance;
 		Event::SharedEventManager  m_event_manager;
 		Game::SharedSceneManager   m_scene_manager;
-		Event::SharedEventListener m_event_proxy;
 		Game::SharedFactory        m_factory;
 		int    m_fps;
 		int    m_ups;
@@ -104,12 +103,6 @@ namespace Game
 		 * @brief Set Factory
 		 */
 		void setFactory(const SharedFactory &factory);
-
-		/*!
-		 * @brief Engine Event Listener
-		 */
-		const Event::SharedEventListener & eventListener(void)
-		    { return(m_event_proxy); }
 
 		/*!
 		 * @brief Target frames per second

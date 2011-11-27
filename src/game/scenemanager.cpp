@@ -38,7 +38,6 @@
 #include "core/weak.h"
 
 #include "event/eventmanager.h"
-#include "event/proxyeventlistener.h"
 #include "event/renderevent.h"
 #include "event/updateevent.h"
 
@@ -50,19 +49,17 @@ using namespace Core;
 using namespace Game;
 
 SceneManager::SceneManager(void)
-    : m_stack(),
-      m_active(),
-      m_event_proxy()
+    : m_stack()
+    , m_active()
 {
-	m_event_proxy = new Event::ProxyEventListener(*this);
-	Event::EventManager::Instance()->connect(m_event_proxy, Event::RenderEvent::Type());
-	Event::EventManager::Instance()->connect(m_event_proxy, Event::UpdateEvent::Type());
+	Event::EventManager::Instance()->connect(this, Event::RenderEvent::Type());
+	Event::EventManager::Instance()->connect(this, Event::UpdateEvent::Type());
 }
 
 SceneManager::~SceneManager(void)
 {
-	Event::EventManager::Instance()->disconnect(m_event_proxy, Event::UpdateEvent::Type());
-	Event::EventManager::Instance()->disconnect(m_event_proxy, Event::RenderEvent::Type());
+	Event::EventManager::Instance()->disconnect(this, Event::UpdateEvent::Type());
+	Event::EventManager::Instance()->disconnect(this, Event::RenderEvent::Type());
 
 	m_stack.clear();
 }

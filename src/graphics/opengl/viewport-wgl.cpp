@@ -679,3 +679,21 @@ Viewport::SwapControl(bool s)
 		wglSwapIntervalEXT(s ? 1 : 0);
 }
 
+void
+Viewport::LoadIdentity(void)
+{
+	glLoadIdentity();
+}
+
+void
+Viewport::PushMatrix(void)
+{
+	glPushMatrix();
+}
+
+void
+Viewport::PopMatrix(void)
+{
+	glPopMatrix();
+}
+

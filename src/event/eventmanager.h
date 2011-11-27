@@ -65,7 +65,7 @@ namespace Event
 
 		static EventManager *s_instance;
 
-		typedef eastl::list<WeakEventListener> EventListenerList;
+		typedef eastl::list<IEventListener *> EventListenerList;
 		typedef Core::Shared<EventListenerList> SharedEventListenerList;
 		typedef eastl::hash_map<UID, SharedEventListenerList> EventListenerMap;
 		typedef eastl::list<SharedEvent> EventList;
@@ -85,8 +85,8 @@ namespace Event
 		virtual const Core::Identifier & id(void) const
 		    { return(m_id); }
 
-		virtual bool connect(const WeakEventListener &handler, const Core::Type &type);
-		virtual bool disconnect(const WeakEventListener &handler, const Core::Type &type);
+		virtual bool connect(IEventListener *handler, const Core::Type &type);
+		virtual bool disconnect(IEventListener *handler, const Core::Type &type);
 
 		virtual bool dequeue(const SharedEvent &event, bool all = false);
 		virtual bool queue(const SharedEvent &event);

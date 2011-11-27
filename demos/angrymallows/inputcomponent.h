@@ -45,8 +45,8 @@
 
 MARSHMALLOW_NAMESPACE_USE;
 
-class InputComponent : public Game::ComponentBase,
-                       public Event::IEventListener
+class InputComponent : public Game::ComponentBase
+                     , public Event::IEventListener
 {
 	enum State {
 		ICFalling,
@@ -56,7 +56,6 @@ class InputComponent : public Game::ComponentBase,
 
 	Game::WeakPositionComponent m_position;
 	Game::WeakBox2DComponent m_body;
-	Event::SharedEventListener m_event_proxy;
 
 	float m_linear_impulse;
 	float m_angular_impulse;

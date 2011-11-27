@@ -60,8 +60,8 @@ MARSHMALLOW_NAMESPACE_USE;
 class PlayerColliderComponent;
 typedef Core::Weak<PlayerColliderComponent> WeakPlayerColliderComponent;
 
-class InputComponent : public Game::ComponentBase,
-                       public Event::IEventListener
+class InputComponent : public Game::ComponentBase
+                     , public Event::IEventListener
 {
 	NO_ASSIGN(InputComponent);
 	NO_COPY(InputComponent);
@@ -69,7 +69,6 @@ class InputComponent : public Game::ComponentBase,
 	WeakPlayerColliderComponent m_collider;
 	Game::WeakMovementComponent m_movement;
 	Game::WeakPositionComponent m_position;
-	Event::SharedEventListener m_event_proxy;
 
 	eastl::list<int> m_direction_stack;
 	float m_linear_impulse;

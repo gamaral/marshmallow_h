@@ -55,7 +55,6 @@ class InputComponent : public Game::ComponentBase,
 
 	Game::WeakPositionComponent m_position;
 	Game::WeakMovementComponent m_movement;
-	Event::SharedEventListener  m_event_proxy;
 
 	eastl::list<int> m_direction_stack;
 	float m_linear_impulse;

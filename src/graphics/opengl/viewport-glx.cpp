@@ -723,3 +723,21 @@ Viewport::SwapControl(bool s)
 		glXSwapIntervalSGI(s ? 1 : 0);
 }
 
+void
+Viewport::LoadIdentity(void)
+{
+	glLoadIdentity();
+}
+
+void
+Viewport::PushMatrix(void)
+{
+	glPushMatrix();
+}
+
+void
+Viewport::PopMatrix(void)
+{
+	glPopMatrix();
+}
+

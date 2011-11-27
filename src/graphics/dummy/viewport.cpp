@@ -150,3 +150,18 @@ Viewport::SwapControl(bool)
 {
 }
 
+void
+Viewport::LoadIdentity(void)
+{
+}
+
+void
+Viewport::PushMatrix(void)
+{
+}
+
+void
+Viewport::PopMatrix(void)
+{
+}
+

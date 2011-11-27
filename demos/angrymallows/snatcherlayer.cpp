@@ -37,7 +37,7 @@
 #include <event/eventmanager.h>
 #include <event/ievent.h>
 #include <event/keyboardevent.h>
-#include <event/proxyeventlistener.h>
+
 #include <game/engine.h>
 #include <game/entityscenelayer.h>
 #include <game/iscene.h>
@@ -47,19 +47,17 @@
 const Core::Type SnatcherLayer::sType("SnatcherLayer");
 
 SnatcherLayer::SnatcherLayer(const Core::Identifier &i, Game::IScene &s)
-    : Game::SceneLayerBase(i, s),
-      m_event_proxy(),
-      m_state(ssIdle),
-      m_timeout(0),
-      m_active(0)
+    : Game::SceneLayerBase(i, s)
+    , m_state(ssIdle)
+    , m_timeout(0)
+    , m_active(0)
 {
-	m_event_proxy = new Event::ProxyEventListener(*this);
-	Game::EngineBase::Instance()->eventManager()->connect(m_event_proxy, Event::KeyboardEvent::Type());
+	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
 }
 
 SnatcherLayer::~SnatcherLayer(void)
 {
-	Game::EngineBase::Instance()->eventManager()->disconnect(m_event_proxy, Event::KeyboardEvent::Type());
+	Game::Engine::Instance()->eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 }
 
 void

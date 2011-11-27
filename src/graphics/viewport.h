@@ -98,6 +98,15 @@ namespace Graphics
 
 		GRAPHICS_EXPORT
 		void SwapControl(bool sync = true);
+
+		GRAPHICS_EXPORT
+		void LoadIdentity(void);
+
+		GRAPHICS_EXPORT
+		void PushMatrix(void);
+
+		GRAPHICS_EXPORT
+		void PopMatrix(void);
 	}
 
 }

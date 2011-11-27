@@ -50,9 +50,9 @@ MARSHMALLOW_NAMESPACE_USE;
 #include "customfactory.h"
 
 Demo::Demo(const char *f)
-    : EngineBase(60, 60, true),
-      m_filename(STRDUP(f)),
-      m_stop_timer(0)
+    : EngineBase(60, 60, true)
+    , m_filename(STRDUP(f))
+    , m_stop_timer(0)
 {
 }
 
@@ -70,7 +70,7 @@ Demo::initialize(void)
 	if (!EngineBase::initialize())
 		return(false);
 
-	Game::EngineBase::Instance()->eventManager()->connect(eventListener(), Event::KeyboardEvent::Type());
+	eventManager()->connect(this, Event::KeyboardEvent::Type());
 
 	{	/* derialization test */
 		TinyXML::TiXmlDocument l_document;
@@ -94,6 +94,13 @@ Demo::initialize(void)
 	Graphics::Viewport::SetCamera(l_camera);
 
 	return(true);
+}
+
+void
+Demo::finalize(void)
+{
+	eventManager()->disconnect(this, Event::KeyboardEvent::Type());
+	EngineBase::finalize();
 }
 
 void

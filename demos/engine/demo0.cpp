@@ -206,11 +206,16 @@ public:
 	{
 	}
 
+	virtual ~Demo(void)
+	{
+		eventManager()->disconnect(&*m_debugListener, "Event::KeyboardEvent");
+	}
+
 	VIRTUAL bool initialize(void)
 	{
 		EngineBase::initialize();
 
-		eventManager()->connect(m_debugListener, "Event::KeyboardEvent");
+		eventManager()->connect(&*m_debugListener, "Event::KeyboardEvent");
 
 		Game::SharedScene l_scene(new DemoScene);
 		sceneManager()->pushScene(l_scene);

@@ -37,32 +37,34 @@
 #include <Box2D/Box2D.h>
 
 #include <core/logger.h>
+
 #include <math/size2.h>
+
 #include <event/eventmanager.h>
 #include <event/keyboardevent.h>
-#include <event/proxyeventlistener.h>
+
 #include <graphics/viewport.h>
-#include <game/enginebase.h>
+
+#include <game/engine.h>
 #include <game/ientity.h>
 
 const Core::Type InputComponent::Type("InputComponent");
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
-    : ComponentBase(i, e),
-      m_event_proxy(),
-      m_linear_impulse(2.f),
-      m_angular_impulse(0.008f),
-      m_state(ICJumping),
-      m_jump(false),
-      m_left(false),
-      m_right(false)
+    : ComponentBase(i, e)
+    , m_linear_impulse(2.f)
+    , m_angular_impulse(0.008f)
+    , m_state(ICJumping)
+    , m_jump(false)
+    , m_left(false)
+    , m_right(false)
 {
-	m_event_proxy = new Event::ProxyEventListener(*this);
-	Game::EngineBase::Instance()->eventManager()->connect(m_event_proxy, Event::KeyboardEvent::Type());
+	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
 }
 
 InputComponent::~InputComponent(void)
 {
+	Game::Engine::Instance()->eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 }
 
 void

@@ -40,12 +40,11 @@
 
 #include <event/eventmanager.h>
 #include <event/keyboardevent.h>
-#include <event/proxyeventlistener.h>
 
 #include <graphics/viewport.h>
 
 #include <game/collidercomponent.h>
-#include <game/enginebase.h>
+#include <game/engine.h>
 #include <game/ientity.h>
 #include <game/movementcomponent.h>
 #include <game/positioncomponent.h>
@@ -63,12 +62,12 @@ InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     , m_right(false)
     , m_direction(ICDRight)
 {
-	m_event_proxy = new Event::ProxyEventListener(*this);
-	Game::EngineBase::Instance()->eventManager()->connect(m_event_proxy, Event::KeyboardEvent::Type());
+	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
 }
 
 InputComponent::~InputComponent(void)
 {
+	Game::Engine::Instance()->eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 }
 
 bool

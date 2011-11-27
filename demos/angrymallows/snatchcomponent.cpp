@@ -37,21 +37,24 @@
 #include <Box2D/Box2D.h>
 
 #include <core/logger.h>
+
 #include <math/size2.h>
+
 #include <event/eventmanager.h>
 #include <event/keyboardevent.h>
-#include <event/proxyeventlistener.h>
+
+#include <graphics/viewport.h>
+
 #include <game/enginebase.h>
 #include <game/entityscenelayer.h>
 #include <game/ientity.h>
 #include <game/iscene.h>
-#include <graphics/viewport.h>
 
 const Core::Type SnatchComponent::sType("SnatchComponent");
 
 SnatchComponent::SnatchComponent(const Core::Identifier &i, Game::IEntity &e)
-    : ComponentBase(i, e),
-      m_registered(false)
+    : ComponentBase(i, e)
+    , m_registered(false)
 {
 }
 

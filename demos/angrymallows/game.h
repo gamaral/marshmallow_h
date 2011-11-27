@@ -55,6 +55,7 @@ public:
 public: /* virtual */
 
 	VIRTUAL bool initialize(void);
+	VIRTUAL void finalize(void);
 	VIRTUAL void second(void);
 
 	VIRTUAL bool handleEvent(const Event::IEvent &event);

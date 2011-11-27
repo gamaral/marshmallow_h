@@ -46,8 +46,8 @@ using namespace Game;
 const Core::Type PauseSceneLayer::sType("Game::PauseSceneLayer");
 
 PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, IScene &s)
-    : SceneLayerBase(i, s, slfUpdateBlock),
-      m_mesh()
+    : SceneLayerBase(i, s, slfUpdateBlock)
+    , m_mesh()
 {
 }
 
@@ -64,6 +64,9 @@ PauseSceneLayer::mesh(void) const
 void
 PauseSceneLayer::render(void)
 {
+	Graphics::Viewport::PushMatrix();
+	Graphics::Viewport::LoadIdentity();
+
 	if (!m_mesh) {
 		Math::Rect2 l_rect(Graphics::Viewport::Size());
 		Graphics::QuadMesh *l_mesh = new Graphics::QuadMesh(l_rect);
@@ -72,6 +75,8 @@ PauseSceneLayer::render(void)
 	}
 
 	Graphics::Painter::Draw(*m_mesh, Math::Point2(0,0));
+
+	Graphics::Viewport::PopMatrix();
 }
 
 const Core::Type &

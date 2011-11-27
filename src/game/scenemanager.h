@@ -49,12 +49,6 @@ using namespace eastl;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Event
-{
-	struct IEventListener;
-	typedef Core::Shared<IEventListener> SharedEventListener;
-}
-
 namespace Game
 {
 	struct IScene;
@@ -70,7 +64,6 @@ namespace Game
 
 		SceneStack  m_stack;
 		SharedScene m_active;
-		Event::SharedEventListener m_event_proxy;
 
 		NO_COPY(SceneManager);
 
