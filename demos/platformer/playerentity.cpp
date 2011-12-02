@@ -82,16 +82,14 @@ PlayerEntity::update(float d)
 		m_animation_component->pushFrame("walk-left", 109, 4);
 		m_animation_component->rate("walk-left", 16);
 		m_animation_component->pushFrame("jump-left", 108, 1);
-		m_animation_component->pushFrame("jump-left", 109, 1);
-		m_animation_component->rate("jump-left", 2);
+		m_animation_component->rate("jump-left", 1);
 		m_animation_component->pushFrame("stand-right", 102, 12);
 		m_animation_component->pushFrame("stand-right", 103, 4);
 		m_animation_component->pushFrame("walk-right", 104, 4);
 		m_animation_component->pushFrame("walk-right", 105, 4);
 		m_animation_component->rate("walk-right", 16);
-		m_animation_component->pushFrame("jump-right", 104, 1);
 		m_animation_component->pushFrame("jump-right", 105, 1);
-		m_animation_component->rate("jump-right", 2);
+		m_animation_component->rate("jump-right", 1);
 		pushComponent(m_animation_component.staticCast<Game::IComponent>());
 
 		/* input component */

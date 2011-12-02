@@ -117,7 +117,6 @@ InputComponent::update(float)
 		/* only jump if on platform */
 		if (m_jump && m_collider->onPlatform()) {
 			m_movement->velocity()[1] =  m_linear_impulse;
-			m_jump = false;
 		}
 	}
 }
