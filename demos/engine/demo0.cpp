@@ -35,6 +35,7 @@
 #include <event/debugeventlistener.h>
 #include <event/eventbase.h>
 #include <event/eventmanager.h>
+#include <event/keyboardevent.h>
 
 #include <graphics/itexturedata.h>
 #include <graphics/painter.h>
@@ -152,7 +153,7 @@ public:
 
 			Game::MovementComponent *l_mcomponent =
 			    new Game::MovementComponent("movement", *l_entity);
-			l_mcomponent->velocity() = Math::Vector2(.1, .1);
+			l_mcomponent->velocity() = Math::Vector2(.1f, .1f);
 			if (rand() % 2)
 			    l_mcomponent->velocity()[0] *= -1;
 			if (rand() % 2)
@@ -208,20 +209,26 @@ public:
 
 	virtual ~Demo(void)
 	{
-		eventManager()->disconnect(&*m_debugListener, "Event::KeyboardEvent");
 	}
 
 	VIRTUAL bool initialize(void)
 	{
 		EngineBase::initialize();
 
-		eventManager()->connect(&*m_debugListener, "Event::KeyboardEvent");
+		eventManager()->connect(&*m_debugListener, Event::KeyboardEvent::Type());
 
 		Game::SharedScene l_scene(new DemoScene);
 		sceneManager()->pushScene(l_scene);
 
 		return(true);
 	}
+
+	VIRTUAL void finalize(void)
+	{
+		eventManager()->disconnect(&*m_debugListener, Event::KeyboardEvent::Type());
+		EngineBase::finalize();
+	}
+
 
 	VIRTUAL void second(void)
 	{

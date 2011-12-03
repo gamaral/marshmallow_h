@@ -36,6 +36,7 @@
 
 #include <X11/X.h>
 #include <X11/XKBlib.h>
+#include <X11/Xatom.h>
 #define XMD_H
 #include <X11/extensions/xf86vmode.h>
 
@@ -255,6 +256,15 @@ namespace
 		}
 		XkbSetDetectableAutoRepeat(s_data.display, true, 0);
 
+		/* set window title */
+		XTextProperty l_window_name;
+		static unsigned char l_window_title[] = BUILD_TITLE;
+		l_window_name.value    = l_window_title;
+		l_window_name.encoding = XA_STRING;
+		l_window_name.format   = 8;
+		l_window_name.nitems   = strlen(BUILD_TITLE);
+		XSetWMName(s_data.display, s_data.window, &l_window_name);
+
 		/* catch window manager delete event */
 		s_data.wm_delete = XInternAtom(s_data.display, "WM_DELETE_WINDOW", false);
 		XSetWMProtocols(s_data.display, s_data.window, &s_data.wm_delete, 1);
@@ -288,6 +298,11 @@ namespace
 		glDisable(GL_BLEND);
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
+
+		/* set viewport size */
+
+		s_data.size[0] = DEFAULT_VIEWPORT_VWIDTH;
+		s_data.size[1] = DEFAULT_VIEWPORT_VHEIGHT;
 
 		/* initialize context */
 
@@ -422,9 +437,6 @@ namespace
 	void
 	UpdateViewport(void)
 	{
-		s_data.size[0] = DEFAULT_VIEWPORT_VWIDTH;
-		s_data.size[1] = DEFAULT_VIEWPORT_VHEIGHT;
-
 		const float l_hw = s_data.size[0] / 2.f;
 		const float l_hh = s_data.size[1] / 2.f;
 

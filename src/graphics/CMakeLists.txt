@@ -45,6 +45,12 @@ elseif(WIN32 AND MARSHMALLOW_VIEWPORT_USE_WGL)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
 	                              opengl/viewport-wgl.cpp)
+elseif(MARSHMALLOW_VIEWPORT_USE_QT4)
+	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
+	                              ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
+	                              opengl/viewport-qt4.cpp)
+	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
+	                              ${QT_LIBRARIES})
 elseif(MARSHMALLOW_VIEWPORT_USE_DUMMY)
 	message(WARNING "You currently only have MARSHMALLOW_VIEWPORT_USE_DUMMY enabled!\n"
 	                "Please don't forget to select your TARGET VIEWPORT.")

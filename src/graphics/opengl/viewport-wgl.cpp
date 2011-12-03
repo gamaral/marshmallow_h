@@ -88,7 +88,7 @@ namespace
 	{
 		s_data.camera.setRotation(.0f);
 		s_data.camera.setScale(Math::Pair::One());
-		s_data.camera.setTranslation(Math::Vector2::Zero());
+		s_data.camera.setTranslation(Math::Point2::Zero());
 
 		s_data.dcontext = 0;
 		s_data.context = 0;
@@ -174,7 +174,7 @@ namespace
 		AdjustWindowRectEx(&l_wrect, l_wstyle[0], false, l_wstyle[1]);
 
 		/* create actual window */
-		s_data.window = CreateWindowEx(l_wstyle[1], "marshmallow_wgl", 0, l_wstyle[0],
+		s_data.window = CreateWindowEx(l_wstyle[1], "marshmallow_wgl", BUILD_TITLE, l_wstyle[0],
 		    l_wrect.left, l_wrect.top, l_wrect.right - l_wrect.left,
 		    l_wrect.bottom - l_wrect.top, 0, 0, l_wc.hInstance, 0);
 		if (!s_data.window) {
@@ -239,6 +239,11 @@ namespace
 		glDisable(GL_BLEND);
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
+
+		/* set viewport size */
+
+		s_data.size[0] = DEFAULT_VIEWPORT_VWIDTH;
+		s_data.size[1] = DEFAULT_VIEWPORT_VHEIGHT;
 
 		/* initialize context */
 
@@ -322,7 +327,7 @@ namespace
 		    reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>
 		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("wglSwapIntervalEXT")));
 
-		return(wglSwapIntervalEXT);
+		return(wglSwapIntervalEXT != 0);
 	}
 
 	bool
@@ -385,9 +390,6 @@ namespace
 	void
 	UpdateViewport(void)
 	{
-		s_data.size[0] = DEFAULT_VIEWPORT_VWIDTH;
-		s_data.size[1] = DEFAULT_VIEWPORT_VHEIGHT;
-
 		const float l_hw = s_data.size[0] / 2.f;
 		const float l_hh = s_data.size[1] / 2.f;
 
@@ -406,8 +408,8 @@ namespace
 	UpdateCamera(void)
 	{
 		/* calculate scaled viewport size */
-		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().x();
-		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().y();
+		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().first();
+		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().second();
 
 		/* calculate magnitude and pass it off as radius squared */
 		s_data.radius2 = powf(s_data.scaled_size[0] / 2.f, 2.f) +
@@ -624,7 +626,7 @@ Viewport::SwapBuffer(void)
 
 	glLoadIdentity();
 	glRotatef(s_data.camera.rotation(), .0f, .0f, 1.f);
-	glScalef(s_data.camera.scale().x(), s_data.camera.scale().y(), 0.f);
+	glScalef(s_data.camera.scale().first(), s_data.camera.scale().second(), 0.f);
 	glTranslatef(s_data.camera.translation().x() * -1, s_data.camera.translation().y() * -1, 0.f);
 }
 
