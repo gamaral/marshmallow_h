@@ -74,16 +74,11 @@ namespace
 		bool          m_has_vbo;
 	public:
 
-		ViewportWidget(float w, float h)
+		ViewportWidget(float w, float h, bool f)
 		{
-			setWindowTitle(BUILD_TITLE);
-
 			setAutoBufferSwap(false);
-
 			setFixedSize(w, h);
-
-			const QRect &desktop = QApplication::desktop()->availableGeometry();
-			move((desktop.width() / 2) - (w / 2), (desktop.height() / 2) - (h / 2));
+			setWindowTitle(BUILD_TITLE);
 
 			m_wsize[0] = w;
 			m_wsize[1] = h;
@@ -96,6 +91,12 @@ namespace
 			m_scaled_size.zero();
 			m_has_swap_control = false;
 			m_has_vbo = false;
+
+			if (!f) {
+				const QRect &desktop = QApplication::desktop()->availableGeometry();
+				move((desktop.width() / 2) - (w / 2), (desktop.height() / 2) - (h / 2));
+			}
+
 		}
 
 		virtual ~ViewportWidget(void)
@@ -357,10 +358,14 @@ namespace
 	bool
 	CreateWindow(int w, int h, int d, bool f)
 	{
-		s_window = new ViewportWidget(w, h);
+		s_window = new ViewportWidget(w, h, f);
+
+		/* show window */
 
 		if (f) s_window->showFullScreen();
 		else s_window->show();
+
+		/* check status */
 
 		if (!s_window->format().directRendering()) {
 			MMERROR1("GL context doesn't support direct rendering.");
@@ -409,9 +414,9 @@ namespace
 bool
 Viewport::Initialize(int w, int h, int d, bool f)
 {
-	int x;
-	char **y;
-	s_application = new QApplication(x, y);
+	static int argc = 0;
+	static char **argv = 0;
+	s_application = new QApplication(argc, argv);
 
 	if (!CreateWindow(w, h, d, f)) {
 		DestroyWindow();
