@@ -40,7 +40,7 @@ MARSHMALLOW_NAMESPACE_USE;
 /********************************************************* memory allocation */
 
 void *
-operator new(size_t size)
+operator new(size_t size) throw (std::bad_alloc)
 {
 	/* TODO: Replace with custom allocator */
 	void *ptr = malloc(size);
@@ -49,7 +49,7 @@ operator new(size_t size)
 }
 
 void *
-operator new[](size_t size)
+operator new[](size_t size) throw (std::bad_alloc)
 {
 	/* TODO: Replace with custom allocator */
 	void *ptr = malloc(size);
@@ -58,7 +58,7 @@ operator new[](size_t size)
 }
 
 void
-operator delete(void *ptr)
+operator delete(void *ptr) throw ()
 {
 	/* TODO: Replace with memory manager */
 	MMVERBOSE("Requested deallocation of %p.", ptr);
@@ -66,7 +66,7 @@ operator delete(void *ptr)
 }
 
 void
-operator delete[](void *ptr)
+operator delete[](void *ptr) throw ()
 {
 	/* TODO: Replace with custom allocator */
 	MMVERBOSE("Requested array deallocation of %p.", ptr);

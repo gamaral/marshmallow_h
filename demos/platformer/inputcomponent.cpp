@@ -102,6 +102,7 @@ InputComponent::update(float)
 		case ICDRight:
 			m_movement->acceleration()[0] = m_linear_impulse;
 			break;
+		default: break;
 		}
 		/* stop unless falling */
 		else if(m_collider->onPlatform()) {
@@ -131,12 +132,12 @@ InputComponent::handleEvent(const Event::IEvent &e)
 	    static_cast<const Event::KeyboardEvent &>(e);
 
 	if (l_kevent.key() == Event::KEY_LEFT) {
-		if (m_left = (l_kevent.action() == Event::KeyPressed))
+		if ((m_left = (l_kevent.action() == Event::KeyPressed)))
 			m_direction_stack.push_front(ICDLeft);
 		else m_direction_stack.remove(ICDLeft);
 	}
 	else if (l_kevent.key() == Event::KEY_RIGHT) {
-		if (m_right = (l_kevent.action() == Event::KeyPressed))
+		if ((m_right = (l_kevent.action() == Event::KeyPressed)))
 			m_direction_stack.push_front(ICDRight);
 		else m_direction_stack.remove(ICDRight);
 	}

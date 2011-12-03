@@ -180,6 +180,7 @@ PlayerEntity::update(float d)
 					m_animation_component->play("stand-right", true);
 			} else m_animation_component->play("jump-right", true);
 			break;
+		default: break;
 		}
 	}
 
