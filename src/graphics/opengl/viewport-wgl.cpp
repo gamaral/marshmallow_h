@@ -44,9 +44,10 @@
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
 
-#include "graphics/opengl/extensions/vbo.h"
 #include "graphics/painter.h"
 #include "graphics/transform.h"
+
+#include "extensions/common.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -69,16 +70,12 @@ namespace
 		bool          fullscreen;
 		bool          loaded;
 		bool          has_swap_control;
-		bool          has_vbo;
 	} s_data;
-
-	static const char *s_gl_extensions(0);
 
 	typedef BOOL (WINAPI * PFNWGLSWAPINTERVALEXTPROC) (int interval);
 	static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT(0);
 
 	bool CheckSwapControlSupport(void);
-	bool CheckVBOSupport(void);
 	void UpdateViewport(void);
 	void UpdateCamera(void);
 	void HandleKeyEvent(int keycode, bool down);
@@ -97,7 +94,6 @@ namespace
 		s_data.loaded = false;
 		s_data.size.zero();
 		s_data.has_swap_control = false;
-		s_data.has_vbo = false;
 		s_data.visible[0] = s_data.visible[1] = Math::Point2::Zero();
 	}
 
@@ -228,9 +224,7 @@ namespace
 
 		/* check extensions */
 
-		s_gl_extensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
 		s_data.has_swap_control = CheckSwapControlSupport();
-		s_data.has_vbo = CheckVBOSupport();
 
 		/* set defaults */
 
@@ -297,30 +291,9 @@ namespace
 	}
 
 	bool
-	IsExtensionSupported(const char *list, const char *extension)
-	{
-		assert(list && extension
-		    && 0 == strchr(extension, ' ')
-		    && "Invalid list and/or extension");
-
-		const char *start = list;
-		const char *where, *terminator;
-
-		while ((where = strstr( start, extension ))) {
-			terminator = where + strlen( extension );
-
-			if ((where == start || *(where - 1) == ' ')
-			    && (*terminator == ' ' || *terminator == '\0'))
-				return(true);
-		}
-
-		return(false);
-	}
-
-	bool
 	CheckSwapControlSupport(void)
 	{
-		if (!IsExtensionSupported(s_gl_extensions, "WGL_EXT_swap_control"))
+		if (!IsExtensionSupported("WGL_EXT_swap_control"))
 			return(false);
 
 		wglSwapIntervalEXT =
@@ -328,63 +301,6 @@ namespace
 		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("wglSwapIntervalEXT")));
 
 		return(wglSwapIntervalEXT != 0);
-	}
-
-	bool
-	CheckVBOSupport(void)
-	{
-		HasVectorBufferObjectSupport = false;
-
-		if (!IsExtensionSupported(s_gl_extensions, "GL_ARB_vertex_buffer_object"))
-			return(false);
-
-		glGenBuffersARB =
-		    reinterpret_cast<PFNGLGENBUFFERSARBPROC>
-		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glGenBuffersARB")));
-		glBindBufferARB =
-		    reinterpret_cast<PFNGLBINDBUFFERARBPROC>
-		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glBindBufferARB")));
-		glBufferDataARB =
-		    reinterpret_cast<PFNGLBUFFERDATAARBPROC>
-		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glBufferDataARB")));
-		glBufferSubDataARB =
-		    reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>
-		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glBufferSubDataARB")));
-		glDeleteBuffersARB =
-		    reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>
-		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glDeleteBuffersARB")));
-		glGetBufferParameterivARB =
-		    reinterpret_cast<PFNGLGETBUFFERPARAMETERIVARBPROC>
-		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glGetBufferParameterivARB")));
-		glMapBufferARB =
-		    reinterpret_cast<PFNGLMAPBUFFERARBPROC>
-		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glMapBufferARB")));
-		glUnmapBufferARB =
-		    reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>
-		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("glUnmapBufferARB")));
-
-		if (glGenBuffersARB
-		 && glBindBufferARB
-		 && glBufferDataARB
-		 && glBufferSubDataARB
-		 && glDeleteBuffersARB
-		 && glGetBufferParameterivARB
-		 && glMapBufferARB
-		 && glUnmapBufferARB) {
-			HasVectorBufferObjectSupport = true;
-			return(true);
-		}
-
-		/* clean up */
-		glBindBufferARB    = 0;
-		glBufferDataARB    = 0;
-		glBufferSubDataARB = 0;
-		glDeleteBuffersARB = 0;
-		glGenBuffersARB    = 0;
-		glGetBufferParameterivARB = 0;
-		glMapBufferARB     = 0;
-		glUnmapBufferARB   = 0;
-		return(false);
 	}
 
 	void

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "core/global.h"
+#include "common.h"
 
 /*!
  * @file
@@ -34,33 +34,55 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#define GL_GLEXT_PROTOTYPES
-
-#ifdef WIN32
-#   include <windows.h>
+#if defined(__linux__) || defined(_WIN32)
+#   include <GL/gl.h>
+#elif defined(__APPLE__)
+#   include <OpenGL/gl.h>
 #endif
 
-#include <GL/gl.h>
-#include "glext.h"
-
-#include "core/namespace.h"
+#include <cassert>
+#include <cstring>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
+
 	namespace OpenGL
 	{
-		PFNGLGENBUFFERSARBPROC glGenBuffersARB = 0;
-		PFNGLBINDBUFFERARBPROC glBindBufferARB = 0;
-		PFNGLBUFFERDATAARBPROC glBufferDataARB = 0;
-		PFNGLBUFFERSUBDATAARBPROC glBufferSubDataARB = 0;
-		PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB = 0;
-		PFNGLGETBUFFERPARAMETERIVARBPROC glGetBufferParameterivARB = 0;
-		PFNGLMAPBUFFERARBPROC glMapBufferARB = 0;
-		PFNGLUNMAPBUFFERARBPROC glUnmapBufferARB = 0;
-		bool HasVectorBufferObjectSupport = false;
+
+		bool
+		IsExtensionSupported(const char *extension, const char *list)
+		{
+			static const char *s_gl_extensions(0);
+
+			if (!list) {
+				if (!s_gl_extensions)
+					s_gl_extensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
+				list = s_gl_extensions;
+			}
+
+			assert(list && extension
+			    && 0 == strchr(extension, ' ')
+			    && "Invalid list and/or extension specified.");
+
+
+			const char *start = list;
+			const char *where, *terminator;
+
+			while ((where = strstr( start, extension ))) {
+				terminator = where + strlen( extension );
+
+				if ((where == start || *(where - 1) == ' ')
+				    && (*terminator == ' ' || *terminator == '\0'))
+					return(true);
+			}
+
+			return(false);
+		}
+
 	}
+
 }
 
 MARSHMALLOW_NAMESPACE_END

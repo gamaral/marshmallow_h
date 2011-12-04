@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "vbo.h"
 
 /*!
  * @file
@@ -34,57 +34,59 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_VBOEXT_H
-#define GRAPHICS_OPENGL_VBOEXT_H 1
+#include <QtOpenGL/QGLBuffer>
 
-#if defined(__linux__)
-#   include <GL/gl.h>
-#   include <GL/glext.h>
-#elif defined(_WIN32)
-#   include <windows.h>
-#   include <GL/gl.h>
-#   include "glext.h"
-#elif defined(__APPLE__)
-#   include <OpenGL/gl.h>
-#   include <OpenGL/glext.h>
-#endif
+#include <GL/glx.h>
 
-#include "core/environment.h"
-#include "core/namespace.h"
+#include "common.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace
+{
+}
 
 namespace Graphics
 {
 
 namespace OpenGL
 {
-
 	namespace VBO
 	{
-		GRAPHICS_EXPORT
-		void BindBuffer(GLenum target, GLuint buffer);
-		
-		GRAPHICS_EXPORT
-		void BufferData(GLenum target, GLsizeiptrARB size, const GLvoid *data, GLenum usage);
-		
-		GRAPHICS_EXPORT
-		void BufferSubData(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const GLvoid *data);
-		
-		GRAPHICS_EXPORT
-		void DeleteBuffers(GLsizei n, const GLuint *buffers);
-		
-		GRAPHICS_EXPORT
-		void GenBuffers(GLsizei n, GLuint *buffers);
+		void
+		BindBuffer(GLenum, GLuint)
+		{
+		}
 
-		GRAPHICS_EXPORT
-		bool Supported(void);
+		void
+		BufferData(GLenum, GLsizeiptrARB, const GLvoid *, GLenum)
+		{
+		}
+
+		void
+		BufferSubData(GLenum, GLintptrARB, GLsizeiptrARB, const GLvoid *)
+		{
+		}
+
+		void
+		DeleteBuffers(GLsizei, const GLuint *)
+		{
+		}
+
+		void
+		GenBuffers(GLsizei, GLuint *)
+		{
+		}
+
+		bool
+		Supported(void)
+		{
+			return(false);
+		}
 	}
-
 }
 
 }
 
 MARSHMALLOW_NAMESPACE_END
 
-#endif

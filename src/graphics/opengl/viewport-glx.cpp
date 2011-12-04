@@ -51,9 +51,10 @@
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
 
-#include "graphics/opengl/extensions/vbo.h"
 #include "graphics/painter.h"
 #include "graphics/transform.h"
+
+#include "extensions/common.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -78,17 +79,14 @@ namespace
 		bool          fullscreen;
 		bool          loaded;
 		bool          has_swap_control;
-		bool          has_vbo;
 	} s_data;
 
-	static const char *s_gl_extensions(0);
 	static const char *s_glx_extensions(0);
 
 	typedef int ( * PFNGLXSWAPINTERVALSGIPROC) (int interval);
 	static PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI(0);
 
 	bool CheckSwapControlSupport(void);
-	bool CheckVBOSupport(void);
 	void UpdateViewport(void);
 	void UpdateCamera(void);
 	void HandleKeyEvent(XKeyEvent &key);
@@ -106,7 +104,6 @@ namespace
 		s_data.screen = 0;
 		s_data.size.zero();
 		s_data.has_swap_control = false;
-		s_data.has_vbo = false;
 		s_data.window = 0;
 		s_data.wm_delete = 0;
 		s_data.wsize[0] = s_data.wsize[1] = 0;
@@ -286,10 +283,8 @@ namespace
 		}
 
 		/* check extensions */
-		s_gl_extensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
 		s_glx_extensions = glXQueryExtensionsString(s_data.display, s_data.screen);
 		s_data.has_swap_control = CheckSwapControlSupport();
-		s_data.has_vbo = CheckVBOSupport();
 
 		/* set defaults */
 
@@ -343,31 +338,11 @@ namespace
 		s_data.wm_delete = 0;
 	}
 
-	bool
-	IsExtensionSupported(const char *list, const char *extension)
-	{
-		assert(list && extension
-		    && 0 == strchr(extension, ' ')
-		    && "Invalid list and/or extension");
-
-		const char *start = list;
-		const char *where, *terminator;
-
-		while ((where = strstr( start, extension ))) {
-			terminator = where + strlen( extension );
-
-			if ((where == start || *(where - 1) == ' ')
-			    && (*terminator == ' ' || *terminator == '\0'))
-				return(true);
-		}
-
-		return(false);
-	}
 
 	bool
 	CheckSwapControlSupport(void)
 	{
-		if (!IsExtensionSupported(s_glx_extensions, "GLX_SGI_swap_control"))
+		if (!IsExtensionSupported("GLX_SGI_swap_control", s_glx_extensions))
 			return(false);
 
 		glXSwapIntervalSGI =
@@ -375,63 +350,6 @@ namespace
 		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI")));
 
 		return(glXSwapIntervalSGI);
-	}
-
-	bool
-	CheckVBOSupport(void)
-	{
-		HasVectorBufferObjectSupport = false;
-
-		if (!IsExtensionSupported(s_gl_extensions, "GL_ARB_vertex_buffer_object"))
-			return(false);
-
-		glGenBuffersARB =
-		    reinterpret_cast<PFNGLGENBUFFERSARBPROC>
-		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glGenBuffersARB")));
-		glBindBufferARB =
-		    reinterpret_cast<PFNGLBINDBUFFERARBPROC>
-		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glBindBufferARB")));
-		glBufferDataARB =
-		    reinterpret_cast<PFNGLBUFFERDATAARBPROC>
-		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glBufferDataARB")));
-		glBufferSubDataARB =
-		    reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>
-		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glBufferSubDataARB")));
-		glDeleteBuffersARB =
-		    reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>
-		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glDeleteBuffersARB")));
-		glGetBufferParameterivARB =
-		    reinterpret_cast<PFNGLGETBUFFERPARAMETERIVARBPROC>
-		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glGetBufferParameterivARB")));
-		glMapBufferARB =
-		    reinterpret_cast<PFNGLMAPBUFFERARBPROC>
-		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glMapBufferARB")));
-		glUnmapBufferARB =
-		    reinterpret_cast<PFNGLUNMAPBUFFERARBPROC>
-		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glUnmapBufferARB")));
-
-		if (glGenBuffersARB
-		 && glBindBufferARB
-		 && glBufferDataARB
-		 && glBufferSubDataARB
-		 && glDeleteBuffersARB
-		 && glGetBufferParameterivARB
-		 && glMapBufferARB
-		 && glUnmapBufferARB) {
-			HasVectorBufferObjectSupport = true;
-			return(true);
-		}
-
-		/* clean up */
-		glBindBufferARB    = 0;
-		glBufferDataARB    = 0;
-		glBufferSubDataARB = 0;
-		glDeleteBuffersARB = 0;
-		glGenBuffersARB    = 0;
-		glGetBufferParameterivARB = 0;
-		glMapBufferARB     = 0;
-		glUnmapBufferARB   = 0;
-		return(false);
 	}
 
 	void

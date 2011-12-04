@@ -39,8 +39,6 @@
 #include <QtGui/QKeyEvent>
 #include <QtOpenGL/QGLWidget>
 
-#include <GL/gl.h>
-
 #include <EASTL/list.h>
 
 #include "core/logger.h"
@@ -49,9 +47,10 @@
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
 
-#include "graphics/opengl/extensions/vbo.h"
 #include "graphics/painter.h"
 #include "graphics/transform.h"
+
+#include "extensions/common.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
@@ -61,8 +60,6 @@ using namespace Graphics::OpenGL;
 
 namespace
 {
-	static const char *s_gl_extensions(0);
-
 	class ViewportWidget : public QGLWidget
 	{
 		Math::Size2i  m_wsize;
@@ -71,7 +68,6 @@ namespace
 		Math::Size2f  m_scaled_size;
 		Math::Size2f  m_size;
 		bool          m_has_swap_control;
-		bool          m_has_vbo;
 	public:
 
 		ViewportWidget(float w, float h, bool f)
@@ -90,13 +86,11 @@ namespace
 			m_size.zero();
 			m_scaled_size.zero();
 			m_has_swap_control = false;
-			m_has_vbo = false;
 
 			if (!f) {
 				const QRect &desktop = QApplication::desktop()->availableGeometry();
 				move((desktop.width() / 2) - (w / 2), (desktop.height() / 2) - (h / 2));
 			}
-
 		}
 
 		virtual ~ViewportWidget(void)
@@ -145,9 +139,7 @@ namespace
 
 			/* check extensions */
 
-			s_gl_extensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
 			m_has_swap_control = checkSwapControlSupport();
-			m_has_vbo = checkVBOSupport();
 
 			/* set defaults */
 
@@ -200,13 +192,6 @@ namespace
 
 		bool
 		checkSwapControlSupport(void)
-		{
-			/* XXX: TODO: Implement */
-			return(false);
-		}
-
-		bool
-		checkVBOSupport(void)
 		{
 			/* XXX: TODO: Implement */
 			return(false);

@@ -65,15 +65,15 @@ TextureCoordinateData::~TextureCoordinateData(void)
 void
 TextureCoordinateData::buffer(void)
 {
-	if (!HasVectorBufferObjectSupport)
+	if (!VBO::Supported())
 		return;
 
 	if (!isBuffered())
-		glGenBuffersARB(1, &m_bufferId);
+		VBO::GenBuffers(1, &m_bufferId);
 
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferId);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW_ARB);
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+	VBO::BindBuffer(GL_ARRAY_BUFFER_ARB, m_bufferId);
+	VBO::BufferData(GL_ARRAY_BUFFER_ARB, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW_ARB);
+	VBO::BindBuffer(GL_ARRAY_BUFFER_ARB, 0);
 
 	MMVERBOSE("Buffered data. ID: %d", m_bufferId);
 }
@@ -81,12 +81,12 @@ TextureCoordinateData::buffer(void)
 void
 TextureCoordinateData::unbuffer(void)
 {
-	if (!HasVectorBufferObjectSupport || !isBuffered())
+	if (!VBO::Supported() || !isBuffered())
 		return;
 
 	MMVERBOSE("Unbuffered data. ID: %d", m_bufferId);
 
-	glDeleteBuffersARB(1, &m_bufferId);
+	VBO::DeleteBuffers(1, &m_bufferId);
 	m_bufferId = 0;
 }
 
@@ -108,9 +108,9 @@ TextureCoordinateData::set(int i, float u, float v)
 
 	/* update vbo object */
 	if (isBuffered()) {
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferId);
-		glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, l_offset * sizeof(GLfloat), AXES * sizeof(GLfloat), &m_data[l_offset]);
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+		VBO::BindBuffer(GL_ARRAY_BUFFER_ARB, m_bufferId);
+		VBO::BufferSubData(GL_ARRAY_BUFFER_ARB, l_offset * sizeof(GLfloat), AXES * sizeof(GLfloat), &m_data[l_offset]);
+		VBO::BindBuffer(GL_ARRAY_BUFFER_ARB, 0);
 	}
 
 	return(true);

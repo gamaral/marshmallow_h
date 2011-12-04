@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "vbo.h"
 
 /*!
  * @file
@@ -34,57 +34,85 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_VBOEXT_H
-#define GRAPHICS_OPENGL_VBOEXT_H 1
+#include <windows.h>
 
-#if defined(__linux__)
-#   include <GL/gl.h>
-#   include <GL/glext.h>
-#elif defined(_WIN32)
-#   include <windows.h>
-#   include <GL/gl.h>
-#   include "glext.h"
-#elif defined(__APPLE__)
-#   include <OpenGL/gl.h>
-#   include <OpenGL/glext.h>
-#endif
-
-#include "core/environment.h"
-#include "core/namespace.h"
+#include "common.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace
+{
+}
 
 namespace Graphics
 {
 
 namespace OpenGL
 {
-
 	namespace VBO
 	{
-		GRAPHICS_EXPORT
-		void BindBuffer(GLenum target, GLuint buffer);
-		
-		GRAPHICS_EXPORT
-		void BufferData(GLenum target, GLsizeiptrARB size, const GLvoid *data, GLenum usage);
-		
-		GRAPHICS_EXPORT
-		void BufferSubData(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const GLvoid *data);
-		
-		GRAPHICS_EXPORT
-		void DeleteBuffers(GLsizei n, const GLuint *buffers);
-		
-		GRAPHICS_EXPORT
-		void GenBuffers(GLsizei n, GLuint *buffers);
+		void
+		BindBuffer(GLenum t, GLuint b)
+		{
+			static PFNGLBINDBUFFERARBPROC proc(0);
+			if (!proc)
+				proc = reinterpret_cast<PFNGLBINDBUFFERARBPROC>
+				    (wglGetProcAddress(reinterpret_cast<LPCSTR>("glBindBufferARB")));
+			if (proc) proc(t, b);
+		}
 
-		GRAPHICS_EXPORT
-		bool Supported(void);
+		void
+		BufferData(GLenum t, GLsizeiptrARB s, const GLvoid *d, GLenum u)
+		{
+			static PFNGLBUFFERDATAARBPROC proc(0);
+			if (!proc)
+				proc = reinterpret_cast<PFNGLBUFFERDATAARBPROC>
+				    (wglGetProcAddress(reinterpret_cast<LPCSTR>("glBufferDataARB")));
+			if (proc) proc(t, s, d, u);
+		}
+
+		void
+		BufferSubData(GLenum t, GLintptrARB o, GLsizeiptrARB s, const GLvoid *d)
+		{
+			static PFNGLBUFFERSUBDATAARBPROC proc(0);
+			if (!proc)
+				proc = reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>
+				    (wglGetProcAddress(reinterpret_cast<LPCSTR>("glBufferSubDataARB")));
+			if (proc) proc(t, o, s, d);
+		}
+
+		void
+		DeleteBuffers(GLsizei n, const GLuint *b)
+		{
+			static PFNGLDELETEBUFFERSARBPROC proc(0);
+			if (!proc)
+				proc = reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>
+				    (wglGetProcAddress(reinterpret_cast<LPCSTR>("glDeleteBuffersARB")));
+			if (proc) proc(n, b);
+		}
+
+		void
+		GenBuffers(GLsizei n, GLuint *b)
+		{
+			static PFNGLGENBUFFERSARBPROC proc(0);
+			if (!proc)
+				proc = reinterpret_cast<PFNGLGENBUFFERSARBPROC>
+				    (wglGetProcAddress(reinterpret_cast<LPCSTR>("glGenBuffersARB")));
+			if (proc) proc(n, b);
+		}
+
+		bool
+		Supported(void)
+		{
+			static char s_supported(0);
+			if (!s_supported)
+			  s_supported = IsExtensionSupported("GL_ARB_vertex_buffer_object") ? 1 : -1;
+			return(s_supported == 1);
+		}
 	}
-
 }
 
 }
 
 MARSHMALLOW_NAMESPACE_END
 
-#endif

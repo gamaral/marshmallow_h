@@ -20,13 +20,16 @@
  * 3. This notice must not be removed or altered from any source distribution.
  */
 
-#ifdef _WIN32 /* Stupid Windows needs to include windows.h before gl.h */
-	#undef FAR
-	#include <windows.h>
+#if defined(__linux__)
+#   include <GL/gl.h>
+#elif defined(_WIN32)
+#   include <windows.h>
+#   include <GL/gl.h>
+#elif defined(__APPLE__)
+#   include <OpenGL/gl.h>
 #endif
 
 #include "GL/glpng.h"
-#include <GL/gl.h>
 #include <stdlib.h>
 #include <math.h>
 #include <png.h>
