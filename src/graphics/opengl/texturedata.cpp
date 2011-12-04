@@ -34,11 +34,12 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <GL/gl.h>
 #include <GL/glpng.h>
 
 #include "core/identifier.h"
 #include "core/logger.h"
+
+#include "headers.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;

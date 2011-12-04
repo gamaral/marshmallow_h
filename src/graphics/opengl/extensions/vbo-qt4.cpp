@@ -34,10 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <QtOpenGL/QGLBuffer>
-
-#include <GL/glx.h>
-
 #include "common.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN

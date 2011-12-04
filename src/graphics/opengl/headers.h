@@ -34,56 +34,16 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_VBOEXT_H
-#define GRAPHICS_OPENGL_VBOEXT_H 1
-
-#include "core/environment.h"
-#include "core/namespace.h"
-
-#include "../headers.h"
+#ifndef GRAPHICS_OPENGL_HEADERS_H
+#define GRAPHICS_OPENGL_HEADERS_H 1
 
 #if defined(__linux__)
-#   include <GL/glext.h>
+#   include <GL/gl.h>
 #elif defined(_WIN32)
-#   include "glext.h"
+#   include <windows.h>
+#   include <GL/gl.h>
 #elif defined(__APPLE__)
-#   include <OpenGL/glext.h>
+#   include <OpenGL/gl.h>
 #endif
-
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
-
-namespace OpenGL
-{
-
-	namespace VBO
-	{
-		GRAPHICS_EXPORT
-		void BindBuffer(GLenum target, GLuint buffer);
-		
-		GRAPHICS_EXPORT
-		void BufferData(GLenum target, GLsizeiptrARB size, const GLvoid *data, GLenum usage);
-		
-		GRAPHICS_EXPORT
-		void BufferSubData(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const GLvoid *data);
-		
-		GRAPHICS_EXPORT
-		void DeleteBuffers(GLsizei n, const GLuint *buffers);
-		
-		GRAPHICS_EXPORT
-		void GenBuffers(GLsizei n, GLuint *buffers);
-
-		GRAPHICS_EXPORT
-		bool Supported(void);
-	}
-
-}
-
-}
-
-MARSHMALLOW_NAMESPACE_END
 
 #endif

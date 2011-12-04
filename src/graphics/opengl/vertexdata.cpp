@@ -37,7 +37,8 @@
 #include <cstring>
 
 #include "core/logger.h"
-#include "graphics/opengl/extensions/vbo.h"
+
+#include "extensions/vbo.h"
 
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;

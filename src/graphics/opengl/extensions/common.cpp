@@ -34,14 +34,11 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#if defined(__linux__) || defined(_WIN32)
-#   include <GL/gl.h>
-#elif defined(__APPLE__)
-#   include <OpenGL/gl.h>
-#endif
-
 #include <cassert>
 #include <cstring>
+
+#include "../headers.h"
+
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

@@ -35,6 +35,7 @@
  */
 
 #include "core/shared.h"
+
 #include "graphics/opengl/texturecoordinatedata.h"
 #include "graphics/opengl/texturedata.h"
 #include "graphics/opengl/vertexdata.h"

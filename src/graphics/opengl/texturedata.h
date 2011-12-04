@@ -39,8 +39,6 @@
 
 #include "graphics/itexturedata.h"
 
-#include <GL/gl.h>
-
 #include "core/identifier.h"
 #include "math/size2.h"
 

@@ -39,10 +39,11 @@
 
 #include "graphics/itexturecoordinatedata.h"
 
-#include <GL/gl.h>
-
 #include "core/global.h"
 #include "core/identifier.h"
+
+#include "headers.h"
+
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
