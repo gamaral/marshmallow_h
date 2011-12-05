@@ -4,3 +4,4 @@ debug
 docs/
 log.txt
 tags
+target/

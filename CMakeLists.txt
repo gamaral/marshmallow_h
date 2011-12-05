@@ -152,4 +152,17 @@ endif()
 
 add_subdirectory(contrib)
 add_subdirectory(src)
-add_subdirectory(demos)
+
+####################################################################### TARGET #
+
+include_directories(${PROJECT_BINARY_DIR}/src
+                    ${PROJECT_SOURCE_DIR}/src
+                    ${EASTL_INCLUDE_DIR}
+                    ${TINYXML_INCLUDE_DIR})
+
+if(EXISTS ${PROJECT_SOURCE_DIR}/target/CMakeLists.txt)
+	add_subdirectory(target)
+else()
+	add_subdirectory(demos)
+endif()
+
