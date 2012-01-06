@@ -35,6 +35,7 @@
  */
 
 #include <cassert>
+#include <cmath>
 
 #include "math/point2.h"
 #include "math/vector2.h"

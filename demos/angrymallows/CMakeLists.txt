@@ -1,6 +1,5 @@
 file(GLOB ANGRYMALLOWS_DEMO_SRCS *.cpp)
 
-include(EASTL)
 include(Box2D)
 
 add_executable(angrymallows_demo ${ANGRYMALLOWS_DEMO_SRCS})

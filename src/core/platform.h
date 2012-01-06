@@ -37,9 +37,10 @@
 #ifndef CORE_PLATFORM_H
 #define CORE_PLATFORM_H 1
 
+#include <string>
+
 #include "core/environment.h"
 #include "core/namespace.h"
-#include "core/string.h"
 
 #define NOW Core::Platform::TimeStamp
 
@@ -88,7 +89,7 @@ namespace Core
 
 		/*************************************************** location */
 
-		CORE_EXPORT String TemporaryDirectory(void);
+		CORE_EXPORT std::string TemporaryDirectory(void);
 	}
 }
 

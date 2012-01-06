@@ -73,39 +73,3 @@ operator delete[](void *ptr) throw ()
 	free(ptr);
 }
 
-/********************************************************************** eastl */
-
-void *
-operator new[](size_t size, const char *pName, int flags, unsigned debugFlags,
-    const char *file, int line)
-{
-	/* TODO: Replace with custom allocator */
-	MMUNUSED(pName);
-	MMUNUSED(flags);
-	MMUNUSED(debugFlags);
-	MMUNUSED(file);
-	MMUNUSED(line);
-	return(new char[size]);
-}
-
-void *
-operator new[](size_t size, size_t alignment, size_t alignmentOffset, const
-    char *pName, int flags, unsigned debugFlags, const char *file, int line)
-{
-	/* TODO: Replace with custom allocator */
-	MMUNUSED(alignment);
-	MMUNUSED(alignmentOffset);
-	MMUNUSED(pName);
-	MMUNUSED(flags);
-	MMUNUSED(debugFlags);
-	MMUNUSED(file);
-	MMUNUSED(line);
-	return(new char[size]);
-}
-
-int
-Vsnprintf8(char8_t *pDestination, size_t n, const char8_t *pFormat, va_list arguments)
-{
-	return(vsnprintf(pDestination, n, pFormat, arguments));
-}
-

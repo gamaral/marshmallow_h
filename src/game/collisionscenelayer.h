@@ -39,8 +39,7 @@
 
 #include "game/scenelayerbase.h"
 
-#include "EASTL/list.h"
-using namespace eastl;
+#include <list>
 
 #include "game/collidercomponent.h"
 
@@ -51,7 +50,7 @@ namespace Math { class Vector2; }
 namespace Game
 {
 	class ColliderComponent;
-	typedef list<ColliderComponent *> ColliderList;
+	typedef std::list<ColliderComponent *> ColliderList;
 
 	/*! @brief Game Collision Scene Layer Class */
 	class GAME_EXPORT CollisionSceneLayer : public SceneLayerBase

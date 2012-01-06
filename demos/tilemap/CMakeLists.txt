@@ -1,4 +1,3 @@
-include(EASTL)
 include(Box2D)
 
 add_executable(tilemap_demo0 "demo0.cpp")

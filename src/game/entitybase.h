@@ -39,8 +39,7 @@
 
 #include "game/ientity.h"
 
-#include "EASTL/list.h"
-using namespace eastl;
+#include <list>
 
 #include "core/identifier.h"
 #include "core/shared.h"
@@ -55,7 +54,7 @@ namespace Game
 	/*! @brief Game Entity Base Class */
 	class GAME_EXPORT EntityBase : public IEntity
 	{
-		typedef list<SharedComponent> ComponentList;
+		typedef std::list<SharedComponent> ComponentList;
 
 		ComponentList m_components;
 		Core::Identifier m_id;

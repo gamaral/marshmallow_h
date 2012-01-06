@@ -37,8 +37,8 @@
 #ifndef EVENT_EVENTMANAGER_H
 #define EVENT_EVENTMANAGER_H 1
 
-#include "EASTL/hash_map.h"
-#include "EASTL/list.h"
+#include <list>
+#include <map>
 
 #include "core/fd.h"
 #include "core/global.h"
@@ -65,10 +65,10 @@ namespace Event
 
 		static EventManager *s_instance;
 
-		typedef eastl::list<IEventListener *> EventListenerList;
+		typedef std::list<IEventListener *> EventListenerList;
 		typedef Core::Shared<EventListenerList> SharedEventListenerList;
-		typedef eastl::hash_map<UID, SharedEventListenerList> EventListenerMap;
-		typedef eastl::list<SharedEvent> EventList;
+		typedef std::map<UID, SharedEventListenerList> EventListenerMap;
+		typedef std::list<SharedEvent> EventList;
 
 		EventListenerMap m_elmap;
 		EventList m_queue[2];

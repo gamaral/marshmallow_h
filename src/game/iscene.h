@@ -37,8 +37,7 @@
 #ifndef GAME_ISCENE_H
 #define GAME_ISCENE_H 1
 
-#include "EASTL/list.h"
-using namespace eastl;
+#include <list>
 
 #include "core/irenderable.h"
 #include "core/iserializable.h"
@@ -54,7 +53,7 @@ namespace Game
 	struct ISceneLayer;
 	typedef Core::Shared<ISceneLayer> SharedSceneLayer;
 
-	typedef list<SharedSceneLayer> SceneLayerList;
+	typedef std::list<SharedSceneLayer> SceneLayerList;
 
 	/*! @brief Game Scene Interface */
 	struct GAME_EXPORT IScene : public Core::IRenderable,

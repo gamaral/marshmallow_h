@@ -39,9 +39,6 @@
 
 #include "graphics/itileset.h"
 
-#include <EASTL/map.h>
-using namespace eastl;
-
 #include "core/identifier.h"
 #include "core/shared.h"
 

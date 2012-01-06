@@ -40,8 +40,7 @@
 #include "ieventlistener.h"
 
 #include <fstream>
-
-#include "core/string.h"
+#include <string>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -57,7 +56,7 @@ namespace Event
 
 	public:
 
-		DebugEventListener(const Core::String &f);
+		DebugEventListener(const std::string &f);
 		virtual ~DebugEventListener(void);
 
 	public: /* virtual */

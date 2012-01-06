@@ -37,8 +37,7 @@
 #ifndef GAME_SCENEMANAGER_H
 #define GAME_SCENEMANAGER_H 1
 
-#include "EASTL/list.h"
-using namespace eastl;
+#include <list>
 
 #include "core/irenderable.h"
 #include "core/iserializable.h"
@@ -60,7 +59,7 @@ namespace Game
 	                                 public Event::IEventListener
 	{
 		typedef Core::Shared<IScene> SharedScene;
-		typedef list<SharedScene> SceneStack;
+		typedef std::list<SharedScene> SceneStack;
 
 		SceneStack  m_stack;
 		SharedScene m_active;

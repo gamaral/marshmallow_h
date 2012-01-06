@@ -37,8 +37,8 @@
 #ifndef EXTRA_TMXLOADER_H
 #define EXTRA_TMXLOADER_H 1
 
-#include "EASTL/list.h"
-#include "EASTL/map.h"
+#include <list>
+#include <map>
 
 #include "core/shared.h"
 
@@ -59,7 +59,7 @@ namespace Graphics
 
 namespace Game
 {
-	typedef eastl::list<SharedSceneLayer> SharedSceneLayerList;
+	typedef std::list<SharedSceneLayer> SharedSceneLayerList;
 }
 
 namespace Extra
@@ -70,7 +70,7 @@ namespace Extra
 		NO_ASSIGN(TMXLoader);
 		NO_COPY(TMXLoader);
 
-		typedef eastl::map<int, Graphics::SharedTileset> TilesetCollection;
+		typedef std::map<int, Graphics::SharedTileset> TilesetCollection;
 
 		Game::IScene &m_scene;
 

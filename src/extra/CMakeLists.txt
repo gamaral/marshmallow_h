@@ -14,8 +14,6 @@ set(MARSHMALLOW_EXTRA_LIBS
 include_directories(${TINYXML_INCLUDE_DIR})
 set(MARSHMALLOW_EXTRA_LIBS ${MARSHMALLOW_EXTRA_LIBS} ${TINYXML_LIBRARIES})
 
-include(EASTL)
-
 add_library(marshmallow_extra
 	${MARSHMALLOW_EXTRA_SRCS}
 )

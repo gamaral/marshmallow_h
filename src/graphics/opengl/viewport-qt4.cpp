@@ -39,7 +39,8 @@
 #include <QtGui/QKeyEvent>
 #include <QtOpenGL/QGLWidget>
 
-#include <EASTL/list.h>
+#include <cmath>
+#include <list>
 
 #include "core/logger.h"
 
@@ -217,7 +218,7 @@ namespace
 		void
 		handleKeyEvent(const QKeyEvent &event, bool down)
 		{
-			typedef eastl::list<Event::KBKeys> KeyList;
+			typedef std::list<Event::KBKeys> KeyList;
 			static KeyList s_keys_pressed;
 
 			Event::KBKeys l_key = Event::KEY_NONE;

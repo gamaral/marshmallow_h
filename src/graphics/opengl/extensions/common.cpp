@@ -63,7 +63,6 @@ namespace Graphics
 			    && 0 == strchr(extension, ' ')
 			    && "Invalid list and/or extension specified.");
 
-
 			const char *start = list;
 			const char *where, *terminator;
 

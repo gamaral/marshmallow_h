@@ -39,9 +39,6 @@
 
 #include "game/scenelayerbase.h"
 
-#include "EASTL/list.h"
-using namespace eastl;
-
 #include "core/identifier.h"
 #include "core/shared.h"
 #include "core/type.h"

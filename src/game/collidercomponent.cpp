@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <cmath>
+
 #include "core/logger.h"
 
 #include "graphics/meshbase.h"

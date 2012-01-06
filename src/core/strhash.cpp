@@ -53,7 +53,7 @@ StrHash::StrHash(const char *s)
 	rehash(s, m_str.length(), ~static_cast<UID>(0));
 }
 
-StrHash::StrHash(const Core::String &s)
+StrHash::StrHash(const std::string &s)
     : Hash()
     , m_str(s)
 {

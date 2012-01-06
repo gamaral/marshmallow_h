@@ -37,7 +37,7 @@
 #ifndef TILEMAP_INPUTCOMPONENT_H
 #define TILEMAP_INPUTCOMPONENT_H 1
 
-#include <EASTL/list.h>
+#include <list>
 
 #include <game/componentbase.h>
 #include <event/ieventlistener.h>
@@ -56,7 +56,7 @@ class InputComponent : public Game::ComponentBase,
 	Game::WeakPositionComponent m_position;
 	Game::WeakMovementComponent m_movement;
 
-	eastl::list<int> m_direction_stack;
+	std::list<int> m_direction_stack;
 	float m_linear_impulse;
 	int   m_direction;
 	bool  m_down;

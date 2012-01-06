@@ -39,8 +39,7 @@
 
 #include "game/scenelayerbase.h"
 
-#include "EASTL/list.h"
-using namespace eastl;
+#include <list>
 
 #include "core/fd.h"
 #include "core/shared.h"
@@ -53,7 +52,7 @@ namespace Game
 	struct IEntity;
 	typedef Core::Shared<IEntity> SharedEntity;
 
-	typedef list<SharedEntity> EntityList;
+	typedef std::list<SharedEntity> EntityList;
 
 	/*! @brief Game Entity Scene Layer Class */
 	class GAME_EXPORT EntitySceneLayer : public SceneLayerBase

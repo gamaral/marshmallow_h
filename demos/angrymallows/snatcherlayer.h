@@ -40,7 +40,7 @@
 #include <game/scenelayerbase.h>
 #include <event/ieventlistener.h>
 
-#include <EASTL/vector.h>
+#include <vector>
 
 #include <core/shared.h>
 #include <game/ientity.h>
@@ -58,7 +58,7 @@ class SnatcherLayer : public Game::SceneLayerBase
 		ssTimeout = 2
 	};
 
-	typedef eastl::vector<Core::Identifier> UIDList;
+	typedef std::vector<Core::Identifier> UIDList;
 	UIDList m_entities;
 	SnatchState m_state;
 	float m_timeout;

@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <algorithm>
+
 #include "core/logger.h"
 #include "core/weak.h"
 
@@ -85,7 +87,7 @@ EventManager::connect(IEventListener *handler, const Core::Type &t)
 	SharedEventListenerList l_listeners(m_elmap[t.uid()]);
 
 	EventListenerList::const_iterator l_listenersi =
-	    find(l_listeners->begin(), l_listeners->end(), handler);
+	    std::find(l_listeners->begin(), l_listeners->end(), handler);
 
 	if (l_listenersi == l_listeners->end())
 		l_listeners->push_back(handler);
@@ -154,8 +156,10 @@ EventManager::dequeue(const SharedEvent &event, bool all)
 		EventList::reverse_iterator l_i = l_queue.rbegin();
 
 		while (l_i != l_queue.rend()) {
-			if (l_type == (*l_i)->type())
-			    l_i = l_queue.erase(l_i);
+			if (l_type == (*l_i)->type()) {
+			    EventList::iterator l_tmp = l_queue.erase(--l_i.base());
+			    l_i = EventList::reverse_iterator(l_tmp);
+			}
 			else ++l_i;
 		}
 	} else {

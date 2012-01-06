@@ -37,7 +37,7 @@
 #ifndef MATH_POLYGON2_H
 #define MATH_POLYGON2_H 1
 
-#include "EASTL/vector.h"
+#include <vector>
 
 #include "math/point2.h"
 #include "math/vector2.h"
@@ -49,7 +49,7 @@ namespace Math
 	/*! @brief 2D Polygon */
 	class MATH_EXPORT Polygon2
 	{
-		eastl::vector<Vector2> m_vectors;
+		std::vector<Vector2> m_vectors;
 
 	public:
 		Polygon2(void);

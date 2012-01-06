@@ -39,7 +39,7 @@
 
 #include "core/hash.h"
 
-#include "core/string.h"
+#include <string>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -48,7 +48,7 @@ namespace Core
 	/*! @brief Event StrHash Class */
 	class CORE_EXPORT StrHash : public Hash
 	{
-		Core::String m_str;
+		std::string m_str;
 
 	public:
 
@@ -62,7 +62,7 @@ namespace Core
 		/*!
 		 * @param str String used for hash
 		 */
-		StrHash(const Core::String &str);
+		StrHash(const std::string &str);
 		StrHash(const StrHash &copy);
 		virtual ~StrHash(void);
 
@@ -71,12 +71,12 @@ namespace Core
 		    { return(result()); }
 
 		/*! @brief Hashed String */
-		const Core::String & str(void) const
+		const std::string & str(void) const
 		    { return(m_str); }
 
 	public: /* operator */
 
-		operator const Core::String & (void) const
+		operator const std::string & (void) const
 		    { return(m_str); }
 
 		operator const char * (void) const

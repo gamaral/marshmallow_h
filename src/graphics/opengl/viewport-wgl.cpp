@@ -37,6 +37,9 @@
 #include <windows.h>
 #include <GL/gl.h>
 
+#include <cmath>
+#include <list>
+
 #include "core/logger.h"
 
 #include "event/eventmanager.h"
@@ -334,7 +337,7 @@ namespace
 	void
 	HandleKeyEvent(int keycode, bool down)
 	{
-		typedef eastl::list<Event::KBKeys> KeyList;
+		typedef std::list<Event::KBKeys> KeyList;
 		static KeyList s_keys_pressed;
 
 		Event::KBKeys l_key = Event::KEY_NONE;

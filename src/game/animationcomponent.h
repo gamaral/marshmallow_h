@@ -39,8 +39,8 @@
 
 #include "game/componentbase.h"
 
-#include <EASTL/map.h>
-#include <EASTL/vector.h>
+#include <map>
+#include <vector>
 
 #include "core/weak.h"
 
@@ -69,10 +69,10 @@ namespace Game
 		NO_ASSIGN(AnimationComponent);
 		NO_COPY(AnimationComponent);
 
-		typedef eastl::pair<int, int> FrameEntry;
-		typedef eastl::vector<FrameEntry> FrameList;
-		typedef eastl::map<Core::Identifier, FrameList> AnimationFrames;
-		typedef eastl::map<Core::Identifier, float> AnimationFramerates;
+		typedef std::pair<int, int> FrameEntry;
+		typedef std::vector<FrameEntry> FrameList;
+		typedef std::map<Core::Identifier, FrameList> AnimationFrames;
+		typedef std::map<Core::Identifier, float> AnimationFramerates;
 		AnimationFrames     m_animation_frames;
 		AnimationFramerates m_animation_framerate;
 		Graphics::SharedTextureCoordinateData m_stop_data;

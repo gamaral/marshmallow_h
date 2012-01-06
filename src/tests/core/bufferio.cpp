@@ -26,6 +26,8 @@
  * or implied, of Marshmallow Engine.
  */
 
+#include <cstring>
+
 #include "core/bufferio.h"
 
 #include "../common.h"

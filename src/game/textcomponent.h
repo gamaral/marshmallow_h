@@ -39,7 +39,8 @@
 
 #include "game/componentbase.h"
 
-#include "core/string.h"
+#include <string>
+
 #include "core/weak.h"
 
 #include "math/size2.h"
@@ -66,7 +67,7 @@ namespace Game
 
 		Math::Size2f m_font_size;
 		Graphics::SharedTileset m_tileset;
-		Core::String m_text;
+		std::string m_text;
 		int m_tile_offset;
 
 	public:
@@ -80,7 +81,7 @@ namespace Game
 		Graphics::SharedTileset & tileset(void)
 			{ return(m_tileset); }
 
-		Core::String & text(void)
+		std::string & text(void)
 			{ return(m_text); }
 
 		int & tileOffset(void)

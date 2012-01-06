@@ -26,9 +26,6 @@
 # or implied, of Marshmallow Engine.
 #
 
-# EASTL
-add_subdirectory(eastl)
-
 # TinyXML
 set(TINYXML_LIBRARIES marshmallow_tinyxml)
 set(TINYXML_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tinyxml/include")

@@ -117,7 +117,7 @@ Platform::TimeStampToTimeData(TIME timestamp)
 	return(l_ts);
 }
 
-String
+std::string
 Platform::TemporaryDirectory(void)
 {
 	return("/tmp/");

@@ -34,10 +34,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <cmath>
+
 #include "core/logger.h"
+
 #include "math/vector2.h"
+
 #include "graphics/transform.h"
 #include "graphics/viewport.h"
+
 #include "game/factorybase.h"
 #include "game/ientity.h"
 #include "game/positioncomponent.h"

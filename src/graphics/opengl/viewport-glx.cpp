@@ -43,7 +43,8 @@
 #include <GL/gl.h>
 #include <GL/glx.h>
 
-#include <EASTL/list.h>
+#include <cmath>
+#include <list>
 
 #include "core/logger.h"
 
@@ -384,7 +385,7 @@ namespace
 	void
 	HandleKeyEvent(XKeyEvent &key)
 	{
-		typedef eastl::list<Event::KBKeys> KeyList;
+		typedef std::list<Event::KBKeys> KeyList;
 		static KeyList s_keys_pressed;
 
 		Event::KBKeys l_key = Event::KEY_NONE;

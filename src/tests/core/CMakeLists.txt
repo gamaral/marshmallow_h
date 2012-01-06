@@ -1,8 +1,6 @@
 
 SET(MASHMALLOW_TEST_CORE_LIBS marshmallow_entrypoint marshmallow_core)
 
-include(EASTL)
-
 add_executable(marshmallow_test_core_hash hash.cpp)
 add_executable(marshmallow_test_core_shared shared.cpp)
 add_executable(marshmallow_test_core_base64 base64.cpp)

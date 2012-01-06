@@ -39,8 +39,7 @@
 
 #include "game/scenelayerbase.h"
 
-#include "EASTL/map.h"
-using namespace eastl;
+#include <map>
 
 #include "core/identifier.h"
 #include "core/shared.h"
@@ -61,10 +60,10 @@ namespace Game
 	{
 		NO_COPY(TilemapSceneLayer);
 
-		typedef map<int, Graphics::SharedTileset> TilesetCollection;
+		typedef std::map<int, Graphics::SharedTileset> TilesetCollection;
 		TilesetCollection m_tilesets;
 
-		typedef map<int, Graphics::SharedVertexData> VertexDataCache;
+		typedef std::map<int, Graphics::SharedVertexData> VertexDataCache;
 		VertexDataCache m_vertexes;
 
 		UINT32 *m_data;
