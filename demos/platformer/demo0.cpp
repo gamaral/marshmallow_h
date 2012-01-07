@@ -26,17 +26,11 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include <core/identifier.h>
 #include <core/logger.h>
 
-#include <math/vector2.h>
-
 #include <event/eventmanager.h>
-#include <event/ievent.h>
 #include <event/keyboardevent.h>
 
-#include <graphics/factory.h>
-#include <graphics/tileset.h>
 #include <graphics/transform.h>
 #include <graphics/viewport.h>
 
@@ -45,7 +39,6 @@
 #include <game/pausescenelayer.h>
 #include <game/scene.h>
 #include <game/scenemanager.h>
-#include <game/tilemapscenelayer.h>
 
 #include <extra/tmxloader.h>
 

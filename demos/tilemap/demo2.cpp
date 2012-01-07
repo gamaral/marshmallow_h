@@ -26,13 +26,10 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include <core/identifier.h>
 #include <core/logger.h>
 
 #include <graphics/factory.h>
 #include <graphics/tileset.h>
-#include <graphics/transform.h>
-#include <graphics/viewport.h>
 
 #include <game/enginebase.h>
 #include <game/entity.h>
