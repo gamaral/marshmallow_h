@@ -73,7 +73,10 @@ SnatcherLayer::deregisterEntity(Game::IEntity &e)
 	UIDList::reverse_iterator l_i;
 
 	for (l_i = m_entities.rbegin(); l_i != m_entities.rend();) {
-		if (*l_i == l_id) m_entities.erase(l_i.base());
+		if (*l_i == l_id) {
+			UIDList::iterator l_tmp = m_entities.erase(--l_i.base());
+			l_i = UIDList::reverse_iterator(l_tmp);
+		}
 		else ++l_i;
 	}
 }
