@@ -34,9 +34,40 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <cstdio>
+#include <cstring>
+#include <signal.h>
+
+#include "core/logger.h"
+
+#include "event/eventmanager.h"
+#include "event/quitevent.h"
+
+MARSHMALLOW_NAMESPACE_USE;
+
+static void
+SignalHandler(int signal, siginfo_t *siginfo, void *context)
+{
+	MMWARNING1("Unix system signal received. Dispatching event message...");
+	Event::QuitEvent l_event;
+	Event::EventManager::Instance()->dispatch(l_event);
+}
+
 int
 main(int argc, char *argv[])
 {
+	/* prep signal action*/
+
+	struct sigaction action;
+	memset(&action, 0, sizeof(action));
+	action.sa_sigaction = &SignalHandler;
+	action.sa_flags = SA_SIGINFO;
+
+	/* handle signals */
+	sigaction(SIGINT,  &action, NULL);
+	sigaction(SIGQUIT, &action, NULL);
+	sigaction(SIGTERM, &action, NULL);
+
 	return(MMain(argc, argv));
 }
 

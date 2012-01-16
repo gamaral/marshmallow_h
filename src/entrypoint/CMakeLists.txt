@@ -10,3 +10,5 @@ endif()
 
 add_library(marshmallow_entrypoint STATIC ${MARSHMALLOW_ENTRYPOINT_SRCS})
 
+target_link_libraries(marshmallow_entrypoint marshmallow_event)
+
