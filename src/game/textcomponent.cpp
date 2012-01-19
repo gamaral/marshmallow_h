@@ -112,8 +112,8 @@ TextComponent::render(void)
 	 */
 	Math::Point2 l_point(0, 0);
 	char l_char;
-	const int l_text_count = m_text.size();
-	for (int i = 0; i < l_text_count; ++i) {
+	const size_t l_text_count = m_text.size();
+	for (unsigned int i = 0; i < l_text_count; ++i) {
 		l_char = m_text[i];
 		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
 			Graphics::SharedTextureCoordinateData l_tdata =

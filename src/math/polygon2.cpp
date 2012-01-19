@@ -45,10 +45,10 @@ Polygon2::Polygon2(void)
 float
 Polygon2::area(void) const
 {
-	const int l_c = m_vectors.size();
 	float l_area = 0;
 
-	for (int l_i = 1; l_i <= l_c; ++l_i)
+	const size_t l_c = m_vectors.size();
+	for (unsigned int l_i = 1; l_i <= l_c; ++l_i)
 	    l_area += m_vectors.at(l_i-1).cross(m_vectors.at(l_i % l_c));
 
 	return(l_area / 2.f);

@@ -48,6 +48,9 @@ MARSHMALLOW_NAMESPACE_USE;
 static void
 SignalHandler(int signal, siginfo_t *siginfo, void *context)
 {
+	MMUNUSED(signal);
+	MMUNUSED(siginfo);
+	MMUNUSED(context);
 	MMWARNING1("Unix system signal received. Dispatching event message...");
 	Event::QuitEvent l_event;
 	Event::EventManager::Instance()->dispatch(l_event);

@@ -87,7 +87,7 @@ namespace Game
 		const FrameList *m_current_framelist;
 		float m_current_framerate;
 		int   m_current_frame_duration;
-		unsigned int m_current_frame_entries;
+		size_t m_current_frame_entries;
 		unsigned int m_current_frame_entry;
 
 	public:

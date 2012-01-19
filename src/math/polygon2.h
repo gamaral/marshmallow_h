@@ -56,7 +56,7 @@ namespace Math
 
 		float area(void) const;
 
-		int count(void) const
+		size_t count(void) const
 		    { return(m_vectors.size()); }
 
 		const Math::Vector2 & at(int index) const

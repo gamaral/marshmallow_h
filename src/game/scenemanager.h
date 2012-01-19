@@ -51,6 +51,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {
 	struct IScene;
+	typedef Core::Shared<IScene> SharedScene;
 
 	/*! @brief Game Scene Manager */
 	class GAME_EXPORT SceneManager : public Core::IRenderable,
@@ -58,7 +59,6 @@ namespace Game
 	                                 public Core::ISerializable,
 	                                 public Event::IEventListener
 	{
-		typedef Core::Shared<IScene> SharedScene;
 		typedef std::list<SharedScene> SceneStack;
 
 		SceneStack  m_stack;
@@ -71,7 +71,7 @@ namespace Game
 		SceneManager(void);
 		virtual ~SceneManager(void);
 
-		void pushScene(SharedScene &scene);
+		void pushScene(const SharedScene &scene);
 		void popScene(void);
 
 		SharedScene activeScene(void) const;

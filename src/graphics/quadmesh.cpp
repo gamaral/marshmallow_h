@@ -78,6 +78,25 @@ QuadMesh::QuadMesh(const Math::Rect2  &r)
 	setTextureCoordinate(3, 1, 1);
 }
 
+QuadMesh::QuadMesh(float width, float height)
+    : MeshBase(Factory::CreateTextureCoordinateData(QUAD_VERTEXES),
+               Factory::CreateTextureData(),
+               Factory::CreateVertexData(QUAD_VERTEXES))
+{
+	/* half */
+	width  /= 2.f;
+	height /= 2.f;
+
+	setVertex(0, Math::Vector2(-width,  height));
+	setTextureCoordinate(0, 0, 0);
+	setVertex(1, Math::Vector2(-width, -height));
+	setTextureCoordinate(1, 0, 1);
+	setVertex(2, Math::Vector2(width,   height));
+	setTextureCoordinate(2, 1, 0);
+	setVertex(3, Math::Vector2(-width,  height));
+	setTextureCoordinate(3, 1, 1);
+}
+
 QuadMesh::QuadMesh(void)
     : MeshBase(Factory::CreateTextureCoordinateData(QUAD_VERTEXES),
                Factory::CreateTextureData(),

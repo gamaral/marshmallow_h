@@ -65,7 +65,7 @@ SceneManager::~SceneManager(void)
 }
 
 void
-SceneManager::pushScene(SharedScene &scene)
+SceneManager::pushScene(const SharedScene &scene)
 {
 	if (!scene) return;
 
