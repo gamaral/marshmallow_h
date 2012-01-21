@@ -46,11 +46,10 @@ namespace Event
 	/*! @brief Update Event Class */
 	class EVENT_EXPORT UpdateEvent : public EventBase
 	{
-		NO_ASSIGN(UpdateEvent);
-		NO_COPY(UpdateEvent);
-
 		float m_delta;
 
+		NO_ASSIGN(UpdateEvent);
+		NO_COPY(UpdateEvent);
 	public:
 
 		UpdateEvent(float delta);

@@ -166,12 +166,11 @@ namespace Event
 	/*! @brief Keyboard Event Class */
 	class EVENT_EXPORT KeyboardEvent : public EventBase
 	{
-		NO_ASSIGN(KeyboardEvent);
-		NO_COPY(KeyboardEvent);
-
 		KBActions m_action;
 		KBKeys    m_key;
 
+		NO_ASSIGN(KeyboardEvent);
+		NO_COPY(KeyboardEvent);
 	public:
 
 		KeyboardEvent(KBKeys key, KBActions action, TIME timestamp = 0);

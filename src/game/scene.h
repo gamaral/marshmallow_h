@@ -47,8 +47,8 @@ namespace Game
 	/*! @brief Game No Frills Scene Class */
 	class GAME_EXPORT Scene : public SceneBase
 	{
+		NO_ASSIGN(Scene);
 		NO_COPY(Scene);
-
 	public:
 
 		Scene(const Core::Identifier &identifier);

@@ -46,11 +46,10 @@ namespace Event
 	/*! @brief Quit Event Class */
 	class EVENT_EXPORT QuitEvent : public EventBase
 	{
-		NO_ASSIGN(QuitEvent);
-		NO_COPY(QuitEvent);
-
 		int m_code;
 
+		NO_ASSIGN(QuitEvent);
+		NO_COPY(QuitEvent);
 	public:
 
 		QuitEvent(int code = 0, TIME timestamp = 0);

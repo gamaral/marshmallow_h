@@ -66,9 +66,6 @@ namespace Game
 	/*! @brief Game Animation Component Class */
 	class GAME_EXPORT AnimationComponent : public ComponentBase
 	{
-		NO_ASSIGN(AnimationComponent);
-		NO_COPY(AnimationComponent);
-
 		typedef std::pair<int, int> FrameEntry;
 		typedef std::vector<FrameEntry> FrameList;
 		typedef std::map<Core::Identifier, FrameList> AnimationFrames;
@@ -90,6 +87,8 @@ namespace Game
 		size_t m_current_frame_entries;
 		unsigned int m_current_frame_entry;
 
+		NO_ASSIGN(AnimationComponent);
+		NO_COPY(AnimationComponent);
 	public:
 
 		AnimationComponent(const Core::Identifier &identifier, IEntity &entity);

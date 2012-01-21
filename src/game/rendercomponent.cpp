@@ -35,8 +35,10 @@
  */
 
 #include "core/logger.h"
+
 #include "graphics/imesh.h"
 #include "graphics/painter.h"
+
 #include "game/factorybase.h"
 #include "game/ientity.h"
 #include "game/positioncomponent.h"

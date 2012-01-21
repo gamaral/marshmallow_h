@@ -50,8 +50,9 @@ namespace Game
 	class GAME_EXPORT SizeComponent : public ComponentBase
 	{
 		Math::Size2f m_size;
-		NO_COPY(SizeComponent);
 
+		NO_ASSIGN(SizeComponent);
+		NO_COPY(SizeComponent);
 	public:
 		SizeComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~SizeComponent(void);

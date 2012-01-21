@@ -56,8 +56,8 @@ namespace Game
 		Core::Identifier m_id;
 		IEntity &m_entity;
 
+		NO_ASSIGN(ComponentBase);
 		NO_COPY(ComponentBase);
-
 	public:
 
 		ComponentBase(const Core::Identifier &identifier, IEntity &entity);

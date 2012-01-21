@@ -50,8 +50,9 @@ namespace Game
 	class GAME_EXPORT PositionComponent : public ComponentBase
 	{
 		Math::Point2 m_position;
-		NO_COPY(PositionComponent);
 
+		NO_ASSIGN(PositionComponent);
+		NO_COPY(PositionComponent);
 	public:
 		PositionComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~PositionComponent(void);

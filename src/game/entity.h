@@ -47,8 +47,8 @@ namespace Game
 	/*! @brief Game No Frills Entity Class */
 	class GAME_EXPORT Entity : public EntityBase
 	{
+		NO_ASSIGN(Entity);
 		NO_COPY(Entity);
-
 	public:
 
 		Entity(const Core::Identifier &identifier, EntitySceneLayer &l);

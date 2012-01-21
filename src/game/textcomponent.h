@@ -40,10 +40,13 @@
 #include "game/componentbase.h"
 
 #include <string>
+#include <vector>
 
 #include "core/weak.h"
 
 #include "math/size2.h"
+
+#include "graphics/color.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -51,6 +54,9 @@ namespace Graphics
 {
 	struct ITileset;
 	typedef Core::Shared<ITileset> SharedTileset;
+
+	struct IMesh;
+	typedef Core::Shared<IMesh> SharedMesh;
 }
 
 namespace Game
@@ -62,30 +68,38 @@ namespace Game
 	/*! @brief Game Text Component Class */
 	class GAME_EXPORT TextComponent : public ComponentBase
 	{
-		NO_ASSIGN(TextComponent);
-		NO_COPY(TextComponent);
-
+		WeakPositionComponent m_position;
 		Math::Size2f m_font_size;
 		Graphics::SharedTileset m_tileset;
+		std::vector<Graphics::SharedMesh> m_mesh;
 		std::string m_text;
+		Graphics::Color m_color;
 		int m_tile_offset;
+		bool m_invalidated;
 
+		NO_ASSIGN(TextComponent);
+		NO_COPY(TextComponent);
 	public:
 
 		TextComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~TextComponent(void);
 
 		Math::Size2f & fontSize(void)
-			{ return(m_font_size); }
+		    { return(m_font_size); }
 
 		Graphics::SharedTileset & tileset(void)
-			{ return(m_tileset); }
+		    { return(m_tileset); }
 
-		std::string & text(void)
-			{ return(m_text); }
+		void setText(const std::string &text);
+		const std::string & text(void) const
+		    { return(m_text); }
+
+		void setColor(const Graphics::Color &color);
+		const Graphics::Color & color(void) const
+		    { return(m_color); }
 
 		int & tileOffset(void)
-			{ return(m_tile_offset); }
+		    { return(m_tile_offset); }
 
 	public: /* virtual */
 
@@ -100,7 +114,7 @@ namespace Game
 
 	protected:
 
-		void reset(void);
+		void rebuild(void);
 
 	public: /* static */
 

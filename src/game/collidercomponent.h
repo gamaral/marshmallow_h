@@ -74,8 +74,8 @@ namespace Game
 		bool m_bullet;
 		bool m_init;
 
+		NO_ASSIGN(ColliderComponent);
 		NO_COPY(ColliderComponent);
-
 	public:
 
 		enum BodyType {
@@ -139,8 +139,8 @@ namespace Game
 	/*! @brief Game Bounce Collider Component Class */
 	class GAME_EXPORT BounceColliderComponent : public ColliderComponent
 	{
+		NO_ASSIGN(BounceColliderComponent);
 		NO_COPY(BounceColliderComponent);
-
 	public:
 
 		BounceColliderComponent(const Core::Identifier &identifier, IEntity &entity);

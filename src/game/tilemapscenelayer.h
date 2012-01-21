@@ -58,8 +58,6 @@ namespace Game
 	/*! @brief Game Tilemap Scene Layer Class */
 	class GAME_EXPORT TilemapSceneLayer : public SceneLayerBase
 	{
-		NO_COPY(TilemapSceneLayer);
-
 		typedef std::map<int, Graphics::SharedTileset> TilesetCollection;
 		TilesetCollection m_tilesets;
 
@@ -81,6 +79,8 @@ namespace Game
 		float m_opacity;
 		bool  m_visible;
 
+		NO_ASSIGN(TilemapSceneLayer);
+		NO_COPY(TilemapSceneLayer);
 	public:
 
 		TilemapSceneLayer(const Core::Identifier &identifier,

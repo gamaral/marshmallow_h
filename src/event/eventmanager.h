@@ -60,9 +60,6 @@ namespace Event
 	/*! @brief Event Manager */
 	class EVENT_EXPORT EventManager
 	{
-		NO_ASSIGN(EventManager);
-		NO_COPY(EventManager);
-
 		static EventManager *s_instance;
 
 		typedef std::list<IEventListener *> EventListenerList;
@@ -75,6 +72,8 @@ namespace Event
 		Core::Identifier m_id;
 		UINT8 m_active_queue;
 
+		NO_ASSIGN(EventManager);
+		NO_COPY(EventManager);
 	public:
 
 		EventManager(const Core::Identifier &identifier);

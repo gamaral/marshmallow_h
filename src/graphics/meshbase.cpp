@@ -75,6 +75,18 @@ MeshBase::setTextureCoordinateData(SharedTextureCoordinateData tc)
 	m_tcdata = tc;
 }
 
+void
+MeshBase::setTextureData(SharedTextureData td)
+{
+	m_tdata = td;
+}
+
+void
+MeshBase::setVertexData(Graphics::SharedVertexData vd)
+{
+	m_vdata = vd;
+}
+
 Math::Vector2
 MeshBase::vertex(int i) const
 {

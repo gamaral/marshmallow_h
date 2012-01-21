@@ -34,6 +34,7 @@
 #include <game/enginebase.h>
 #include <game/entity.h>
 #include <game/entityscenelayer.h>
+#include <game/positioncomponent.h>
 #include <game/scenebase.h>
 #include <game/scenemanager.h>
 #include <game/textcomponent.h>
@@ -73,10 +74,12 @@ public:
 
 			Game::SharedEntitySceneLayer l_elayer = new Game::EntitySceneLayer("entity", *this);
 			Game::SharedEntity l_entity = new Game::Entity("text", *l_elayer);
+			Game::SharedPositionComponent l_pcomp = new Game::PositionComponent("position", *l_entity);
 			Game::SharedTextComponent l_tcomp = new Game::TextComponent("txt", *l_entity);
 			l_elayer->addEntity(l_entity);
-			l_tcomp->text() = "Hello World!";
 			l_tcomp->tileset() = l_tileset.staticCast<Graphics::ITileset>();
+			l_tcomp->setText("Hello World!");
+			l_entity->pushComponent(l_pcomp.staticCast<Game::IComponent>());
 			l_entity->pushComponent(l_tcomp.staticCast<Game::IComponent>());
 			pushLayer(l_elayer.staticCast<Game::ISceneLayer>());
 		}
@@ -128,7 +131,7 @@ public:
 
 		char l_message[60];
 		sprintf(l_message, MESSAGE, m_stop_timer);
-		l_tcomp->text() = l_message;
+		l_tcomp->setText(l_message);
 	}
 };
 

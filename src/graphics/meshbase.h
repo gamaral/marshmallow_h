@@ -58,8 +58,8 @@ namespace Graphics
 		float m_scale[2];
 		float m_rotation;
 
+		NO_ASSIGN(MeshBase);
 		NO_COPY(MeshBase);
-
 	public:
 
 		MeshBase(SharedTextureCoordinateData tc, SharedTextureData t, SharedVertexData v);
@@ -75,7 +75,12 @@ namespace Graphics
 		/*! @brief Replace texture coordinate data */
 		void setTextureCoordinateData(SharedTextureCoordinateData tc);
 
-		
+		/*! @brief Replace texture data */
+		void setTextureData(SharedTextureData td);
+
+		/*! @brief Replace vertex data */
+		void setVertexData(Graphics::SharedVertexData vd);
+
 	public: /* operators */
 
 		Math::Vector2 operator[](int index) const

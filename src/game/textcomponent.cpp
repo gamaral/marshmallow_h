@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/logger.h"
+
 #include "math/point2.h"
 
 #include "graphics/factory.h"
@@ -43,6 +45,10 @@
 #include "graphics/ivertexdata.h"
 #include "graphics/painter.h"
 #include "graphics/quadmesh.h"
+
+#include "game/ientity.h"
+#include "game/positioncomponent.h"
+
 
 #define MIN_CHAR 33
 #define MAX_CHAR 126
@@ -55,11 +61,26 @@ TextComponent::TextComponent(const Core::Identifier &i, IEntity &e)
     , m_font_size(2.f, 4.f)
     , m_tileset()
     , m_tile_offset(0)
+    , m_invalidated(false)
 {
 }
 
 TextComponent::~TextComponent(void)
 {
+}
+
+void
+TextComponent::setText(const std::string &t)
+{
+	m_text = t;
+	m_invalidated = true;
+	rebuild();
+}
+
+void
+TextComponent::setColor(const Graphics::Color &c)
+{
+	m_color = c;
 }
 
 bool
@@ -79,13 +100,72 @@ TextComponent::deserialize(TinyXML::TiXmlElement &n)
 }
 
 void
-TextComponent::update(float)
+TextComponent::update(float delta)
 {
+	ComponentBase::update(delta);
+
+	if (!m_position)
+	    m_position = entity().getComponentType("Game::PositionComponent").
+	        staticCast<PositionComponent>();
+
+	if (m_invalidated)
+	    rebuild();
 }
 
 void
 TextComponent::render(void)
 {
+	ComponentBase::render();
+
+	if (m_invalidated) return;
+
+	/* if no position component, abort! */
+	if (!m_position) {
+		MMWARNING1("No position component found!");
+		return;
+	}
+
+	/* render characters */
+
+	/* TODO: find line-breaks to determine line length for center
+	 *       alignment, also add right alignment.
+	 */
+	char l_char;
+	Math::Point2 l_point(m_position->position());
+	const size_t l_text_count = m_text.size();
+	for (unsigned int i = 0; i < l_text_count; ++i) {
+		l_char = m_text[i];
+
+		/* render valid characters */
+		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
+			Graphics::SharedQuadMesh l_mesh = m_mesh[i].staticCast<Graphics::QuadMesh>();
+			l_mesh->setColor(m_color);
+			Graphics::Painter::Draw(*l_mesh, l_point);
+			l_point[0] += m_font_size.width();
+		}
+
+		/* handle line break */
+		else if ('\n' == l_char) {
+			l_point[0] = m_position->position().x();
+			l_point[1] -= m_font_size.height();
+		}
+
+		/* skip unknown character */
+		else l_point[0] += m_font_size.width();
+	}
+}
+
+void
+TextComponent::rebuild(void)
+{
+	m_mesh.clear();
+	m_mesh.resize(m_text.size());
+
+	if (!m_tileset) {
+		MMWARNING1("No tileset assigned.");
+		return;
+	}
+
 	/* create vertex data */
 
 	/* TODO: this needs to be kept around, only replaced when font size
@@ -110,7 +190,6 @@ TextComponent::render(void)
 	/* TODO: find line-breaks to determine line length for center
 	 *       alignment, also add right alignment.
 	 */
-	Math::Point2 l_point(0, 0);
 	char l_char;
 	const size_t l_text_count = m_text.size();
 	for (unsigned int i = 0; i < l_text_count; ++i) {
@@ -119,19 +198,11 @@ TextComponent::render(void)
 			Graphics::SharedTextureCoordinateData l_tdata =
 				m_tileset->getTextureCoordinateData(m_tile_offset + (l_char - MIN_CHAR));
 
-			Graphics::SharedQuadMesh l_mesh =
-			    new Graphics::QuadMesh(l_tdata, m_tileset->textureData(), l_vdata);
-
-			Graphics::Painter::Draw(*l_mesh, l_point);
-			l_point[0] += m_font_size.width();
-		}
-		else if ('\n' == l_char) {
-			l_point[0] = 0;
-			l_point[1] -= m_font_size.height();
-		} else {
-			l_point[0] += m_font_size.width();
+			m_mesh[i] = new Graphics::QuadMesh(l_tdata, m_tileset->textureData(), l_vdata);
 		}
 	}
+
+	m_invalidated = false;
 }
 
 const Core::Type &

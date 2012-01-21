@@ -55,12 +55,12 @@ namespace Game
 	/*! @brief Game Movement Component Class */
 	class GAME_EXPORT MovementComponent : public ComponentBase
 	{
-		NO_ASSIGN(MovementComponent);
-		NO_COPY(MovementComponent);
-
 		WeakPositionComponent m_position;
 		Math::Vector2 m_acceleration;
 		Math::Vector2 m_velocity;
+
+		NO_ASSIGN(MovementComponent);
+		NO_COPY(MovementComponent);
 	public:
 
 		MovementComponent(const Core::Identifier &identifier, IEntity &entity);

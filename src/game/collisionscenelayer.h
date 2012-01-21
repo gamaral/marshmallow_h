@@ -57,9 +57,8 @@ namespace Game
 	{
 		ColliderList m_colliders;
 
-		NO_COPY(CollisionSceneLayer);
 		NO_ASSIGN(CollisionSceneLayer);
-
+		NO_COPY(CollisionSceneLayer);
 	public:
 
 		CollisionSceneLayer(const Core::Identifier &identifier,

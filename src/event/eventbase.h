@@ -59,12 +59,11 @@ namespace Event
 	/*! @brief Event Base Class */
 	class EVENT_EXPORT EventBase : public IEvent
 	{
-		NO_ASSIGN(EventBase);
-		NO_COPY(EventBase);
-
 		TIME m_timestamp;
 		UINT8 m_priority;
 
+		NO_ASSIGN(EventBase);
+		NO_COPY(EventBase);
 	public:
 
 		/*! @brief Event constructor

@@ -59,8 +59,8 @@ namespace Game
 	{
 		Graphics::SharedMesh m_mesh;
 
+		NO_ASSIGN(PauseSceneLayer);
 		NO_COPY(PauseSceneLayer);
-
 	public:
 
 		PauseSceneLayer(const Core::Identifier &identifier,

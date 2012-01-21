@@ -58,11 +58,10 @@ namespace Game
 	/*! @brief Game Tileset Component Class */
 	class GAME_EXPORT TilesetComponent : public ComponentBase
 	{
-		NO_ASSIGN(TilesetComponent);
-		NO_COPY(TilesetComponent);
-
 		Graphics::SharedTileset m_tileset;
 
+		NO_ASSIGN(TilesetComponent);
+		NO_COPY(TilesetComponent);
 	public:
 
 		TilesetComponent(const Core::Identifier &i, IEntity &entity);

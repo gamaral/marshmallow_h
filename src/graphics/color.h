@@ -86,6 +86,16 @@ namespace Graphics
 		    { return(m_rgba[index % 4]); }
 
 		Color & operator=(const Color &rhs);
+
+	public: /* static */
+
+		static const Color & Visible(void)
+		    { static const Color s_visible(1.f, 1.f, 1.f, 1.f);
+		      return(s_visible); }
+
+		static const Color & Invisible(void)
+		    { static const Color s_invisible(1.f, 1.f, 1.f, 0.f);
+		      return(s_invisible); }
 	};
 
 }

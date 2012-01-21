@@ -78,7 +78,7 @@ namespace Game
 		bool   m_running;
 
 		NO_COPY(EngineBase);
-
+		NO_ASSIGN(EngineBase);
 	public:
 
 		/*!

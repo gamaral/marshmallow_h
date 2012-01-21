@@ -49,11 +49,10 @@ namespace Event
 	/*! @brief Debug Event Listener */
 	class EVENT_EXPORT DebugEventListener : public IEventListener
 	{
-		NO_ASSIGN(DebugEventListener);
-		NO_COPY(DebugEventListener);
-
 		std::ofstream m_filestream;
 
+		NO_ASSIGN(DebugEventListener);
+		NO_COPY(DebugEventListener);
 	public:
 
 		DebugEventListener(const std::string &f);

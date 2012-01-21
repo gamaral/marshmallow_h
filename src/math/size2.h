@@ -76,7 +76,7 @@ namespace Math
 		    { m_value[0] = m_value[1] = 0; }
 
 		template <typename U>
-		Size2<U> staticCast(void) const
+		Size2<U> cast(void) const
 		    { return(Size2<U>(static_cast<U>(m_value[0]), static_cast<U>(m_value[1]))); }
 
 	public: /* operators */

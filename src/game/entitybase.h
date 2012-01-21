@@ -61,8 +61,8 @@ namespace Game
 		EntitySceneLayer &m_layer;
 		bool m_killed;
 
+		NO_ASSIGN(EntityBase);
 		NO_COPY(EntityBase);
-
 	public:
 
 		EntityBase(const Core::Identifier &identifier, EntitySceneLayer &layer);

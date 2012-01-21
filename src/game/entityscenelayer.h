@@ -60,8 +60,8 @@ namespace Game
 		EntityList m_entities;
 		bool m_visiblility_testing;
 
+		NO_ASSIGN(EntitySceneLayer);
 		NO_COPY(EntitySceneLayer);
-
 	public:
 
 		EntitySceneLayer(const Core::Identifier &identifier,

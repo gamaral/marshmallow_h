@@ -42,6 +42,7 @@
 #include "core/irenderable.h"
 #include "core/iserializable.h"
 #include "core/iupdateable.h"
+
 #include "event/ieventlistener.h"
 
 #include "core/shared.h"
@@ -64,8 +65,8 @@ namespace Game
 		SceneStack  m_stack;
 		SharedScene m_active;
 
+		NO_ASSIGN(SceneManager);
 		NO_COPY(SceneManager);
-
 	public:
 
 		SceneManager(void);

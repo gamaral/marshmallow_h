@@ -48,7 +48,6 @@ namespace Event
 	{
 		NO_ASSIGN(RenderEvent);
 		NO_COPY(RenderEvent);
-
 	public:
 
 		RenderEvent(void);

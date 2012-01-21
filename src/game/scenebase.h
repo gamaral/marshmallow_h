@@ -54,8 +54,8 @@ namespace Game
 		SceneLayerList m_layers;
 		Core::Identifier m_id;
 
+		NO_ASSIGN(SceneBase);
 		NO_COPY(SceneBase);
-
 	public:
 
 		SceneBase(const Core::Identifier &identifier);

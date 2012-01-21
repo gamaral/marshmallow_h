@@ -62,8 +62,9 @@ namespace Game
 	{
 		WeakPositionComponent m_position;
 		Graphics::SharedMesh m_mesh;
-		NO_COPY(RenderComponent);
 
+		NO_ASSIGN(RenderComponent);
+		NO_COPY(RenderComponent);
 	public:
 		RenderComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~RenderComponent(void);

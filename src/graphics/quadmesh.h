@@ -50,8 +50,8 @@ namespace Graphics
 	class GRAPHICS_EXPORT QuadMesh : public MeshBase
 #define QUAD_VERTEXES 4
 	{
+		NO_ASSIGN(QuadMesh);
 		NO_COPY(QuadMesh);
-
 	public:
 
 		QuadMesh(const Math::Vector2 &tl,

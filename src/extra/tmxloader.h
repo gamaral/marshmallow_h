@@ -67,13 +67,9 @@ namespace Extra
 	/*! @brief Extra TMX Loader Class */
 	class EXTRA_EXPORT TMXLoader
 	{
-		NO_ASSIGN(TMXLoader);
-		NO_COPY(TMXLoader);
-
-		typedef std::map<int, Graphics::SharedTileset> TilesetCollection;
-
 		Game::IScene &m_scene;
 
+		typedef std::map<int, Graphics::SharedTileset> TilesetCollection;
 		TilesetCollection m_tilesets;
 
 		Game::SharedSceneLayerList m_layers;
@@ -85,6 +81,8 @@ namespace Extra
 		Math::Size2i m_map_size;
 		Math::Size2i m_tile_size;
 
+		NO_ASSIGN(TMXLoader);
+		NO_COPY(TMXLoader);
 	public:
 
 		TMXLoader(Game::IScene &scene);

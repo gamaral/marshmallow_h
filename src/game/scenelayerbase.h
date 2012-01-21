@@ -56,8 +56,8 @@ namespace Game
 		int m_flags;
 		bool m_killed;
 
+		NO_ASSIGN(SceneLayerBase);
 		NO_COPY(SceneLayerBase);
-
 	public:
 
 		SceneLayerBase(const Core::Identifier &identifier,
