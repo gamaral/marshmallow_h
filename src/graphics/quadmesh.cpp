@@ -93,7 +93,7 @@ QuadMesh::QuadMesh(float width, float height)
 	setTextureCoordinate(1, 0, 1);
 	setVertex(2, Math::Vector2(width,   height));
 	setTextureCoordinate(2, 1, 0);
-	setVertex(3, Math::Vector2(-width,  height));
+	setVertex(3, Math::Vector2(width,  -height));
 	setTextureCoordinate(3, 1, 1);
 }
 
