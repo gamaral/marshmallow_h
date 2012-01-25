@@ -79,8 +79,10 @@ TextureData::load(const Core::Identifier &i)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
 	if (!pngLoad(i.str().c_str(), PNG_BUILDMIPMAPS, PNG_ALPHA, &pi)) {
+		glDeleteTextures(1, &m_texture_id);
+		m_texture_id = 0;
 		m_size = Math::Size2i(0, 0);
-		MMINFO1("Failed to load texture.");
+		MMWARNING("Failed to load texture (%s).", i.str().c_str());
 		return(false);
 	}
 

@@ -115,6 +115,7 @@ TilesetBase::getTextureCoordinateData(int i)
 	if (!m_texture_data || !m_texture_data->isLoaded())
 		return(SharedTextureCoordinateData());
 
+	assert(i < m_size.area() && "index was out of bounds.");
 	SharedTextureCoordinateData *l_cached = m_cache[i];
 	if (l_cached == 0) {
 		/* create new entry */
