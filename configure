@@ -9,9 +9,7 @@ if [ ${CMAKE} == "" ]; then
 fi
 
 cd build
-cmake .. \
-    -DCMAKE_BUILD_TYPE="Debug" \
-    ${@}
+cmake -C ../cmake/Cache-development.cmake ${@} ..
 [ $? -eq 0 ] && echo && echo "Completed successfully! :)"
 cd ..
 
