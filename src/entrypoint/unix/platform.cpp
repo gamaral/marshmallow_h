@@ -51,9 +51,9 @@ SignalHandler(int signal, siginfo_t *siginfo, void *context)
 	MMUNUSED(signal);
 	MMUNUSED(siginfo);
 	MMUNUSED(context);
-	MMWARNING1("Unix system signal received. Dispatching event message...");
-	Event::QuitEvent l_event;
-	Event::EventManager::Instance()->dispatch(l_event);
+	MMWARNING1("\n*** Unix system signal received. Queueing quit event message. ***\n");
+	Event::SharedEvent l_event = new Event::QuitEvent;
+	Event::EventManager::Instance()->queue(l_event);
 }
 
 int
