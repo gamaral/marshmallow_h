@@ -43,17 +43,12 @@
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
-#define TIMEOUT 16
-
 class Demo : public Game::EngineBase
 {
-	int m_stop_timer;
-
 public:
 
 	Demo(void)
-	: EngineBase(60, 60, true),
-	  m_stop_timer(0)
+	: EngineBase(60, 60, true)
 	{
 	}
 
@@ -83,14 +78,6 @@ public:
 		Graphics::Viewport::SetCamera(l_camera);
 
 		return(true);
-	}
-
-	VIRTUAL void second(void)
-	{
-		EngineBase::second();
-
-		if (++m_stop_timer == TIMEOUT)
-			stop();
 	}
 };
 

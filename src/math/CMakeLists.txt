@@ -5,7 +5,7 @@ set(MARSHMALLOW_MATH_LIBS marshmallow_core)
 
 # BOX2D
 if (MARSHMALLOW_WITH_BOX2D)
-	include(Box2D)
+	include_directories(${BOX2D_INCLUDE_DIR})
 	set(MARSHMALLOW_MATH_LIBS ${MARSHMALLOW_MATH_LIBS} ${BOX2D_LIBRARIES})
 endif()
 

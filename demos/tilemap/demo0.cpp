@@ -117,8 +117,8 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(60, 60, true),
-	  m_stop_timer(0)
+	: EngineBase(60, 60, true)
+	, m_stop_timer(0)
 	{
 	}
 

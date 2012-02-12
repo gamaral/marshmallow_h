@@ -51,7 +51,6 @@ MARSHMALLOW_NAMESPACE_USE;
 Demo::Demo(const char *f)
     : EngineBase(60, 60, true)
     , m_filename(STRDUP(f))
-    , m_stop_timer(0)
 {
 }
 
@@ -100,17 +99,6 @@ Demo::finalize(void)
 {
 	eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 	EngineBase::finalize();
-}
-
-void
-Demo::second(void)
-{
-	EngineBase::second();
-
-	if (++m_stop_timer == 120) {
-		MMWARNING1("Stopping engine (auto-shutdown)");
-		stop();
-	}
 }
 
 bool

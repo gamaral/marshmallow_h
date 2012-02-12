@@ -26,7 +26,6 @@
 # or implied, of Marshmallow Engine.
 #
 
-find_package(Lua)
 include_directories(${LUA_INCLUDE_DIRS})
 
 file(GLOB LUA_SRCS ${LUA_BASE}/src/lapi.c

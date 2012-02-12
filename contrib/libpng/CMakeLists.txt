@@ -4,7 +4,6 @@
 # For conditions of distribution and use, see the disclaimer
 # and license in png.h
 
-find_package(ZLIB)
 include_directories(${ZLIB_INCLUDE_DIR})
 
 mark_as_advanced(LIBPNG_ARG LIBPNG_DEBUG LIBPNG_M_LIBRARY LIBPNG_NO_CONSOLE_IO
@@ -129,8 +128,9 @@ endif()
 # NOW BUILD OUR TARGET
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+message(STATUS ZLIB: ${ZLIB_LIBRARIES})
 add_library(${PNG_LIB_NAME} ${libpng_sources})
-target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARY} ${LIBPNG_M_LIBRARY})
+target_link_libraries(${PNG_LIB_NAME} ${ZLIB_LIBRARIES} ${LIBPNG_M_LIBRARY})
 
 if(BUILD_SHARED_LIBS)
   if(MSVC)

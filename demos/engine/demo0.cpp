@@ -188,14 +188,12 @@ public:
 
 class Demo : public Game::EngineBase
 {
-	int m_stop_timer;
 	Event::SharedEventListener m_debugListener;
 
 public:
 
 	Demo(void)
 	: EngineBase(60, 60, true),
-	  m_stop_timer(0),
 	  m_debugListener(new Event::DebugEventListener("log.txt"))
 	{
 	}
@@ -220,15 +218,6 @@ public:
 	{
 		eventManager()->disconnect(&*m_debugListener, Event::KeyboardEvent::Type());
 		EngineBase::finalize();
-	}
-
-
-	VIRTUAL void second(void)
-	{
-		EngineBase::second();
-
-		if (++m_stop_timer == 30)
-			stop();
 	}
 };
 

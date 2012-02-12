@@ -26,7 +26,7 @@
 # or implied, of Marshmallow Engine.
 #
 
-include(Box2D)
+include_directories(${BOX2D_INCLUDE_DIR})
 
 file(GLOB BOX2D_Collision_SRCS ${BOX2D_BASE}/Box2D/Collision/*.cpp)
 file(GLOB BOX2D_Shapes_SRCS ${BOX2D_BASE}/Box2D/Collision/Shapes/*.cpp)

@@ -57,14 +57,6 @@ if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 	set(CMAKE_CXX_FLAGS "-fno-rtti -fno-exceptions ${CMAKE_CXX_FLAGS}")
 endif()
 
-###################################################################### CONTRIB #
-
-set(TINYXML_LIBRARIES "" CACHE INTERNAL "")
-set(TINYXML_INCLUDE_DIR "" CACHE INTERNAL "")
-
-set(GLPNG_LIBRARIES "" CACHE INTERNAL "")
-set(GLPNG_INCLUDE_DIR "" CACHE INTERNAL "")
-
 ############################################################### GLOBAL OPTIONS #
 
 set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Marshmallow Namespace")
@@ -88,9 +80,8 @@ option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG" ON)
 option(MARSHMALLOW_CONTRIB_LUA "Use bundled LUA" ON)
 option(MARSHMALLOW_CONTRIB_ZLIB "Use bundled ZLIB" ON)
 
-find_package(Lua)
-
 option(MARSHMALLOW_WITH_BOX2D "Use Box2D" ON)
+option(MARSHMALLOW_WITH_LUA "Use Lua" ON)
 
 ####################################################################### CONFIG #
 
@@ -147,6 +138,10 @@ elseif(MARSHMALLOW_VIEWPORT_USE_QT4)
 	find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
 	include(${QT_USE_FILE})
 endif()
+
+###################################################################### CONTRIB #
+
+include(cmake/contrib.cmake)
 
 ############################################################## SUB DIRECTORIES #
 

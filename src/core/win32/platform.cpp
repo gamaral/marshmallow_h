@@ -117,7 +117,7 @@ Platform::TimeStampToTimeData(TIME timestamp)
 std::string
 Platform::TemporaryDirectory(void)
 {
-	static String sTempDirectory;
+	static std::string sTempDirectory;
 
 	if (sTempDirectory.empty()) {
 		char l_buffer[MAX_PATH];

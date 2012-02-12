@@ -27,37 +27,30 @@
 #
 
 # TinyXML
-set(TINYXML_LIBRARIES marshmallow_tinyxml)
-set(TINYXML_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tinyxml/include")
 add_subdirectory(tinyxml)
-set(TINYXML_LIBRARIES ${TINYXML_LIBRARIES} PARENT_SCOPE)
-set(TINYXML_INCLUDE_DIR ${TINYXML_INCLUDE_DIR} PARENT_SCOPE)
 
 # Box2D
 if (MARSHMALLOW_WITH_BOX2D)
 	add_subdirectory(box2d)
 endif()
 
-# LIBPNG
-if(MARSHMALLOW_CONTRIB_LIBPNG)
-	add_subdirectory(libpng)
-endif()
-
 # Lua
-if (MARSHMALLOW_CONTRIB_LUA)
+if (MARSHMALLOW_WITH_LUA AND MARSHMALLOW_CONTRIB_LUA)
 	add_subdirectory(lua)
 endif()
 
-# ZLIB
+# Zlib
 if (MARSHMALLOW_CONTRIB_ZLIB)
 	add_subdirectory(zlib)
 endif()
 
+# LibPNG
+if(MARSHMALLOW_CONTRIB_LIBPNG)
+	add_subdirectory(libpng)
+endif()
+
 # GLPNG
 if(OPENGL_FOUND)
-	set(GLPNG_LIBRARIES marshmallow_glpng)
-	set(GLPNG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/glpng/include")
 	add_subdirectory(glpng)
-	set(GLPNG_LIBRARIES ${GLPNG_LIBRARIES} PARENT_SCOPE)
-	set(GLPNG_INCLUDE_DIR ${GLPNG_INCLUDE_DIR} PARENT_SCOPE)
 endif()
+

@@ -1,8 +1,9 @@
 file(GLOB ANGRYMALLOWS_DEMO_SRCS *.cpp)
 
-include(Box2D)
-
 add_executable(angrymallows_demo ${ANGRYMALLOWS_DEMO_SRCS})
+
+# BOX2D
+include_directories(${BOX2D_INCLUDE_DIR})
 
 if (APPLE)
 	# Xcode workaround
@@ -18,5 +19,6 @@ if(WIN32 AND NOT MARSHMALLOW_DEBUG)
 endif()
 
 target_link_libraries(angrymallows_demo marshmallow_entrypoint
-                                        marshmallow_game)
+                                        marshmallow_game
+                                        ${BOX2D_LIBRARIES})
 
