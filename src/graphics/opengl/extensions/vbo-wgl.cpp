@@ -62,7 +62,7 @@ namespace OpenGL
 		}
 
 		void
-		BufferData(GLenum t, GLsizeiptrARB s, const GLvoid *d, GLenum u)
+		BufferData(GLenum t, GLsizeiptr s, const GLvoid *d, GLenum u)
 		{
 			static PFNGLBUFFERDATAARBPROC proc(0);
 			if (!proc)
@@ -72,7 +72,7 @@ namespace OpenGL
 		}
 
 		void
-		BufferSubData(GLenum t, GLintptrARB o, GLsizeiptrARB s, const GLvoid *d)
+		BufferSubData(GLenum t, GLintptr o, GLsizeiptr s, const GLvoid *d)
 		{
 			static PFNGLBUFFERSUBDATAARBPROC proc(0);
 			if (!proc)

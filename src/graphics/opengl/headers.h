@@ -37,13 +37,17 @@
 #ifndef GRAPHICS_OPENGL_HEADERS_H
 #define GRAPHICS_OPENGL_HEADERS_H 1
 
-#if defined(__linux__)
-#   include <GL/gl.h>
-#elif defined(_WIN32)
-#   include <windows.h>
-#   include <GL/gl.h>
-#elif defined(__APPLE__)
-#   include <OpenGL/gl.h>
+#if MARSHMALLOW_VIEWPORT_GLES
+#  include <GLES/gl.h>
+#else
+#  if defined(__linux__)
+#    include <GL/gl.h>
+#  elif defined(_WIN32)
+#    include <windows.h>
+#    include <GL/gl.h>
+#  elif defined(__APPLE__)
+#    include <OpenGL/gl.h>
+#  endif
 #endif
 
 #endif

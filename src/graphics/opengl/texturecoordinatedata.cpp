@@ -72,9 +72,9 @@ TextureCoordinateData::buffer(void)
 	if (!isBuffered())
 		VBO::GenBuffers(1, &m_bufferId);
 
-	VBO::BindBuffer(GL_ARRAY_BUFFER_ARB, m_bufferId);
-	VBO::BufferData(GL_ARRAY_BUFFER_ARB, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW_ARB);
-	VBO::BindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+	VBO::BindBuffer(GL_ARRAY_BUFFER, m_bufferId);
+	VBO::BufferData(GL_ARRAY_BUFFER, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW);
+	VBO::BindBuffer(GL_ARRAY_BUFFER, 0);
 
 	MMVERBOSE("Buffered data. ID: %d", m_bufferId);
 }
@@ -109,9 +109,9 @@ TextureCoordinateData::set(int i, float u, float v)
 
 	/* update vbo object */
 	if (isBuffered()) {
-		VBO::BindBuffer(GL_ARRAY_BUFFER_ARB, m_bufferId);
-		VBO::BufferSubData(GL_ARRAY_BUFFER_ARB, l_offset * sizeof(GLfloat), AXES * sizeof(GLfloat), &m_data[l_offset]);
-		VBO::BindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+		VBO::BindBuffer(GL_ARRAY_BUFFER, m_bufferId);
+		VBO::BufferSubData(GL_ARRAY_BUFFER, l_offset * sizeof(GLfloat), AXES * sizeof(GLfloat), &m_data[l_offset]);
+		VBO::BindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 	return(true);

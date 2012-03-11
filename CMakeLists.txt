@@ -75,6 +75,7 @@ option(MARSHMALLOW_VIEWPORT_USE_DUMMY "Use Dummy Viewport (testing)" ON)
 option(MARSHMALLOW_VIEWPORT_USE_WGL "Use WGL (Wiggle) Viewport (windows)" OFF)
 option(MARSHMALLOW_VIEWPORT_USE_GLX "Use GLX Viewport (unix)" OFF)
 option(MARSHMALLOW_VIEWPORT_USE_QT4 "Use Qt4 Viewport (qt4)" OFF)
+option(MARSHMALLOW_VIEWPORT_GLES "Use OpenGL ES (GLES)" OFF)
 
 option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG" ON)
 option(MARSHMALLOW_CONTRIB_LUA "Use bundled LUA" ON)

@@ -40,7 +40,7 @@
 #define XMD_H
 #include <X11/extensions/xf86vmode.h>
 
-#include <GL/gl.h>
+#include "headers.h"
 #include <GL/glx.h>
 
 #include <cmath>

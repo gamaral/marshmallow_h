@@ -34,8 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <windows.h>
-#include <GL/gl.h>
+#include "headers.h"
 
 #include <cmath>
 #include <list>

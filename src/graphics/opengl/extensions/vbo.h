@@ -42,13 +42,18 @@
 
 #include "../headers.h"
 
-#if defined(__linux__)
-#   include <GL/glext.h>
-#elif defined(_WIN32)
-#   include "glext.h"
-#elif defined(__APPLE__)
-#   include <OpenGL/glext.h>
+#if MARSHMALLOW_VIEWPORT_GLES
+#   include <GLES/glext.h>
+#else
+#   if defined(__linux__)
+#      include <GL/glext.h>
+#   elif defined(_WIN32)
+#      include "glext.h"
+#   elif defined(__APPLE__)
+#      include <OpenGL/glext.h>
+#   endif
 #endif
+
 
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -65,10 +70,10 @@ namespace OpenGL
 		void BindBuffer(GLenum target, GLuint buffer);
 		
 		GRAPHICS_EXPORT
-		void BufferData(GLenum target, GLsizeiptrARB size, const GLvoid *data, GLenum usage);
+		void BufferData(GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage);
 		
 		GRAPHICS_EXPORT
-		void BufferSubData(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const GLvoid *data);
+		void BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
 		
 		GRAPHICS_EXPORT
 		void DeleteBuffers(GLsizei n, const GLuint *buffers);

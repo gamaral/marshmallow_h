@@ -132,12 +132,6 @@ namespace
 		VIRTUAL void
 		initializeGL()
 		{
-			makeCurrent();
-
-			/* abort if invalid */
-
-			if (!isValid()) return;
-
 			/* check extensions */
 
 			m_has_swap_control = checkSwapControlSupport();
@@ -162,19 +156,8 @@ namespace
 			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 			updateViewport();
 			Viewport::SetCamera(m_camera);
-			Viewport::SwapBuffer();
-		}
 
-		VIRTUAL void
-		resizeGL(int w, int h)
-		{
-			/* XXX: Ignore */
-		}
-
-		VIRTUAL void
-		paintGL()
-		{
-			/* XXX: Ignore */
+			swapBuffers();
 		}
 
 		VIRTUAL void

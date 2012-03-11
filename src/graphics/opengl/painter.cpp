@@ -76,23 +76,23 @@ namespace
 
 		/* vertex vbo check */
 		if (l_vdata->isBuffered())
-			VBO::BindBuffer(GL_ARRAY_BUFFER_ARB, l_vdata->bufferId());
+			VBO::BindBuffer(GL_ARRAY_BUFFER, l_vdata->bufferId());
 
 		glVertexPointer(2, GL_FLOAT, 0, l_vdata->data());
 
 		/* texture coordinate vbo check */
 		if (l_tcdata && l_tcdata->isBuffered())
-			VBO::BindBuffer(GL_ARRAY_BUFFER_ARB, l_tcdata->bufferId());
+			VBO::BindBuffer(GL_ARRAY_BUFFER, l_tcdata->bufferId());
 		/* else vbo cleanup */
 		else if (l_vdata->isBuffered())
-			VBO::BindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+			VBO::BindBuffer(GL_ARRAY_BUFFER, 0);
 
 		if (l_tcdata) {
 			glTexCoordPointer(2, GL_FLOAT, 0, l_tcdata->data());
 
 			/* vbo cleanup */
 			if (l_tcdata->isBuffered())
-				VBO::BindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+				VBO::BindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, QUAD_VERTEXES);
