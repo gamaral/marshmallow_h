@@ -228,8 +228,8 @@ namespace
 
 		/* set viewport size */
 
-		s_data.size[0] = DEFAULT_VIEWPORT_VWIDTH;
-		s_data.size[1] = DEFAULT_VIEWPORT_VHEIGHT;
+		s_data.size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
+		s_data.size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
 
 		/* initialize context */
 
@@ -475,7 +475,7 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Initialize(UINT16 w, UINT16 h, UINT8 d, bool f)
 {
 	InitializeViewport();
 
@@ -496,7 +496,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Redisplay(UINT16 w, UINT16 h, UINT8 d, bool f)
 {
 	DestroyWWindow();
 

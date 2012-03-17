@@ -88,7 +88,9 @@ public:
 
 	VIRTUAL void finalize(void)
 	{
-		eventManager()->disconnect(this, Event::KeyboardEvent::Type());
+		if (isValid())
+			eventManager()->disconnect(this, Event::KeyboardEvent::Type());
+
 		EngineBase::finalize();
 	}
 

@@ -53,7 +53,7 @@ namespace Core
 	{
 		char  *m_buffer;
 		const char *m_const_buffer;
-		size_t m_cursor;
+		long m_cursor;
 		size_t m_size;
 
 	public:
@@ -73,11 +73,11 @@ namespace Core
 		VIRTUAL size_t read(char *buffer, size_t bsize);
 		VIRTUAL size_t write(const char *buffer, size_t bsize);
 
-		VIRTUAL bool seek(long int offset, DIOSeek origin);
-		VIRTUAL long int tell(void) const
+		VIRTUAL bool seek(long offset, DIOSeek origin);
+		VIRTUAL long tell(void) const
 		    { return(m_cursor); }
 
-		VIRTUAL long int size(void) const
+		VIRTUAL UINT64 size(void) const
 		    { return(m_size); }
 	};
 	typedef Shared<BufferIO> SharedBufferIO;

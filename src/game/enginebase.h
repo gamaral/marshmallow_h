@@ -76,6 +76,7 @@ namespace Game
 		int    m_frame_rate;
 		bool   m_suspendable;
 		bool   m_running;
+		bool   m_valid;
 
 		NO_COPY(EngineBase);
 		NO_ASSIGN(EngineBase);
@@ -139,6 +140,9 @@ namespace Game
 
 		VIRTUAL bool initialize(void);
 		VIRTUAL void finalize(void);
+
+		VIRTUAL bool isValid(void) const
+		    { return(m_valid); }
 
 		VIRTUAL void second(void);
 		VIRTUAL void tick(void);

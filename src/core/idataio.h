@@ -74,10 +74,10 @@ namespace Core
 		virtual size_t read(char *buffer, size_t bsize) = 0;
 		virtual size_t write(const char *buffer, size_t bsize) = 0;
 
-		virtual bool seek(long int offset, DIOSeek origin) = 0;
-		virtual long int tell(void) const = 0;
+		virtual bool seek(long offset, DIOSeek origin) = 0;
+		virtual long tell(void) const = 0;
 
-		virtual long int size(void) const = 0;
+		virtual size_t size(void) const = 0;
 	};
 	typedef Shared<IDataIO> SharedDataIO;
 	typedef Weak<IDataIO> WeakDataIO;

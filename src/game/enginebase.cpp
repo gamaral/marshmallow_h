@@ -69,6 +69,7 @@ EngineBase::EngineBase(int f, int u, bool s)
     , m_frame_rate(0)
     , m_suspendable(s)
     , m_running(false)
+    , m_valid(false)
 {
 	if (!s_instance)
 		s_instance = this;
@@ -103,6 +104,9 @@ EngineBase::initialize(void)
 	if (!m_factory)
 		m_factory = new Factory();
 
+	/* validate */
+	m_valid = true;
+
 	eventManager()->connect(this, Event::QuitEvent::Type());
 
 	return(true);
@@ -111,13 +115,17 @@ EngineBase::initialize(void)
 void
 EngineBase::finalize(void)
 {
-	eventManager()->disconnect(this, Event::QuitEvent::Type());
+	if (isValid())
+		eventManager()->disconnect(this, Event::QuitEvent::Type());
 
 	m_scene_manager.clear();
 	m_event_manager.clear();
 
 	Viewport::Finalize();
 	Platform::Finalize();
+
+	/* invalidate */
+	m_valid = false;
 }
 
 void
@@ -167,6 +175,7 @@ EngineBase::run(void)
 	for (int i = 0; i < TIME_INTERVAL_COUNT; ++i)
 		l_time_interval[i] = l_tick_target;
 
+	m_valid = true;
 	m_running = true;
 
 	/* startup */

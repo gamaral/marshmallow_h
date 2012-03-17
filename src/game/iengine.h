@@ -96,6 +96,11 @@ namespace Game
 		virtual bool initialize(void) = 0;
 		virtual void finalize(void) = 0;
 
+		/*!
+		 * @brief Returns true if engine is valid
+		 */
+		virtual bool isValid(void) const = 0;
+
 		virtual void second(void) = 0;
 		virtual void tick(void) = 0;
 	};

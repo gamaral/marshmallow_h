@@ -95,7 +95,7 @@ BufferIO::isOpen(void) const
 size_t
 BufferIO::read(char *b, size_t bs)
 {
-	if (!m_const_buffer) return(0);
+	if (!m_const_buffer && m_cursor >= 0) return(0);
 
 	size_t l_rcount =
 	    (m_cursor + bs < m_size ? bs : m_size - m_cursor);
@@ -109,7 +109,7 @@ BufferIO::read(char *b, size_t bs)
 size_t
 BufferIO::write(const char *b, size_t bs)
 {
-	if (!m_buffer) return(0);
+	if (!m_buffer && m_cursor >= 0) return(0);
 
 	size_t l_rcount =
 	    (m_cursor + bs < m_size ? bs : m_size - m_cursor);
@@ -121,13 +121,13 @@ BufferIO::write(const char *b, size_t bs)
 }
 
 bool
-BufferIO::seek(long int o, DIOSeek on)
+BufferIO::seek(long o, DIOSeek on)
 {
-	long int l_cursor = -1;
+	long l_cursor = -1;
 
 	switch (on) {
-	case   DIOStart: if (o < static_cast<long int>(m_size)) l_cursor = o; break;
-	case     DIOEnd: if (static_cast<long int>(m_size) + o >= 0) l_cursor = m_size + o; break;
+	case   DIOStart: if (o < m_size) l_cursor = o; break;
+	case     DIOEnd: if (m_size + o >= 0) l_cursor = m_size + o; break;
 	case DIOCurrent: if (m_cursor + o < m_size) l_cursor = m_cursor + o; break;
 	default: return(false);
 	}

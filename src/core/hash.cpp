@@ -73,7 +73,7 @@ Hash::Algorithm(const char *data, size_t length, UID mask)
 	size_t l_i;
 
 	for(l_i = 0; l_i < length; ++l_i) {
-		l_hash += data[l_i];
+		l_hash += static_cast<UID>(data[l_i]);
 		l_hash += (l_hash << 0x0A);
 		l_hash ^= (l_hash >> 0x06);
 	}

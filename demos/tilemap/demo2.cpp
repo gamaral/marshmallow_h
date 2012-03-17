@@ -106,7 +106,8 @@ public:
 
 	VIRTUAL bool initialize(void)
 	{
-		EngineBase::initialize();
+		if (!EngineBase::initialize())
+			return(false);
 
 		Game::SharedScene l_scene(new DemoScene);
 		sceneManager()->pushScene(l_scene);

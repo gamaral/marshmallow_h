@@ -53,7 +53,7 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Initialize(UINT16 w, UINT16 h, UINT8 d, bool f)
 {
 	MMUNUSED(w);
 	MMUNUSED(h);
@@ -65,7 +65,12 @@ Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
 	s_camera.setTranslation(Math::Point2::Zero());
 
 	MMINFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
+
+#ifdef MARSHMALLOW_VIEWPORT_DUMMY_FAIL
+	return(false);
+#else
 	return(true);
+#endif
 }
 
 void
@@ -75,7 +80,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Redisplay(UINT16 w, UINT16 h, UINT8 d, bool f)
 {
 	MMUNUSED(w);
 	MMUNUSED(h);
@@ -112,8 +117,8 @@ Viewport::Radius2(void)
 {
 	/* calculate radius^2 */
 #define HALF_VIEWPORT_SIZE 2.f
-	const float l_w = DEFAULT_VIEWPORT_VWIDTH  / (s_camera.scale().first() * HALF_VIEWPORT_SIZE);
-	const float l_h = DEFAULT_VIEWPORT_VHEIGHT / (s_camera.scale().second() * HALF_VIEWPORT_SIZE);
+	const float l_w = MARSHMALLOW_VIEWPORT_VWIDTH  / (s_camera.scale().first() * HALF_VIEWPORT_SIZE);
+	const float l_h = MARSHMALLOW_VIEWPORT_VHEIGHT / (s_camera.scale().second() * HALF_VIEWPORT_SIZE);
 	return(powf(l_w, 2.f) + powf(l_h, 2.f));
 }
 
@@ -121,22 +126,22 @@ const Math::Size2f &
 Viewport::ScaledSize(void)
 {
 	const static Math::Size2f s_scaled_size
-	    (DEFAULT_VIEWPORT_VWIDTH / s_camera.scale().first(),
-	     DEFAULT_VIEWPORT_VHEIGHT / s_camera.scale().second());
+	    (MARSHMALLOW_VIEWPORT_VWIDTH / s_camera.scale().first(),
+	     MARSHMALLOW_VIEWPORT_VHEIGHT / s_camera.scale().second());
 	return(s_scaled_size);
 }
 
 const Math::Size2f &
 Viewport::Size(void)
 {
-	const static Math::Size2f s_size(DEFAULT_VIEWPORT_VWIDTH, DEFAULT_VIEWPORT_VHEIGHT);
+	const static Math::Size2f s_size(MARSHMALLOW_VIEWPORT_VWIDTH, MARSHMALLOW_VIEWPORT_VHEIGHT);
 	return(s_size);
 }
 
 const Math::Size2i &
 Viewport::WindowSize(void)
 {
-	const static Math::Size2i s_wsize(DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT);
+	const static Math::Size2i s_wsize(MARSHMALLOW_VIEWPORT_WIDTH, MARSHMALLOW_VIEWPORT_HEIGHT);
 	return(s_wsize);
 }
 

@@ -204,7 +204,8 @@ public:
 
 	VIRTUAL bool initialize(void)
 	{
-		EngineBase::initialize();
+		if (!EngineBase::initialize())
+			return(false);
 
 		eventManager()->connect(&*m_debugListener, Event::KeyboardEvent::Type());
 
@@ -216,7 +217,9 @@ public:
 
 	VIRTUAL void finalize(void)
 	{
-		eventManager()->disconnect(&*m_debugListener, Event::KeyboardEvent::Type());
+		if (isValid())
+			eventManager()->disconnect(&*m_debugListener, Event::KeyboardEvent::Type());
+
 		EngineBase::finalize();
 	}
 };

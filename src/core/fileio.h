@@ -72,10 +72,10 @@ namespace Core
 		VIRTUAL size_t read(char *buffer, size_t bsize);
 		VIRTUAL size_t write(const char *buffer, size_t bsize);
 
-		VIRTUAL bool seek(long int offset, DIOSeek origin);
-		VIRTUAL long int tell(void) const;
+		VIRTUAL bool seek(long offset, DIOSeek origin);
+		VIRTUAL long tell(void) const;
 
-		VIRTUAL long int size(void) const;
+		VIRTUAL size_t size(void) const;
 	};
 	typedef Shared<FileIO> SharedFileIO;
 	typedef Weak<FileIO> WeakFileIO;

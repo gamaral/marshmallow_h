@@ -69,7 +69,7 @@ namespace
 		Math::Size2f  m_size;
 	public:
 
-		ViewportWidget(float w, float h, bool f)
+		ViewportWidget(UINT16 w, UINT16 h, bool f)
 		{
 			setAutoBufferSwap(false);
 			setFixedSize(w, h);
@@ -139,8 +139,8 @@ namespace
 
 			/* set viewport size */
 
-			m_size[0] = DEFAULT_VIEWPORT_VWIDTH;
-			m_size[1] = DEFAULT_VIEWPORT_VHEIGHT;
+			m_size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
+			m_size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
 
 			/* initialize context */
 
@@ -201,52 +201,29 @@ namespace
 			Event::KBActions l_action =
 			    (down ? Event::KeyPressed : Event::KeyReleased);
 
-			switch (event.key()) {
-			case Qt::Key_0:            l_key = Event::KEY_0; break;
-			case Qt::Key_1:            l_key = Event::KEY_1; break;
-			case Qt::Key_2:            l_key = Event::KEY_2; break;
-			case Qt::Key_3:            l_key = Event::KEY_3; break;
-			case Qt::Key_4:            l_key = Event::KEY_4; break;
-			case Qt::Key_5:            l_key = Event::KEY_5; break;
-			case Qt::Key_6:            l_key = Event::KEY_6; break;
-			case Qt::Key_7:            l_key = Event::KEY_7; break;
-			case Qt::Key_8:            l_key = Event::KEY_8; break;
-			case Qt::Key_9:            l_key = Event::KEY_9; break;
-			case Qt::Key_A:            l_key = Event::KEY_A; break;
-			case Qt::Key_B:            l_key = Event::KEY_B; break;
-			case Qt::Key_C:            l_key = Event::KEY_C; break;
-			case Qt::Key_D:            l_key = Event::KEY_D; break;
-			case Qt::Key_E:            l_key = Event::KEY_E; break;
-			case Qt::Key_F:            l_key = Event::KEY_F; break;
-			case Qt::Key_G:            l_key = Event::KEY_G; break;
-			case Qt::Key_H:            l_key = Event::KEY_H; break;
-			case Qt::Key_I:            l_key = Event::KEY_I; break;
-			case Qt::Key_J:            l_key = Event::KEY_J; break;
-			case Qt::Key_K:            l_key = Event::KEY_K; break;
-			case Qt::Key_L:            l_key = Event::KEY_L; break;
-			case Qt::Key_M:            l_key = Event::KEY_M; break;
-			case Qt::Key_N:            l_key = Event::KEY_N; break;
-			case Qt::Key_O:            l_key = Event::KEY_O; break;
-			case Qt::Key_P:            l_key = Event::KEY_P; break;
-			case Qt::Key_Q:            l_key = Event::KEY_Q; break;
-			case Qt::Key_R:            l_key = Event::KEY_R; break;
-			case Qt::Key_S:            l_key = Event::KEY_S; break;
-			case Qt::Key_T:            l_key = Event::KEY_T; break;
-			case Qt::Key_U:            l_key = Event::KEY_U; break;
-			case Qt::Key_V:            l_key = Event::KEY_V; break;
-			case Qt::Key_W:            l_key = Event::KEY_W; break;
-			case Qt::Key_X:            l_key = Event::KEY_X; break;
-			case Qt::Key_Y:            l_key = Event::KEY_Y; break;
-			case Qt::Key_Z:            l_key = Event::KEY_Z; break;
-			case Qt::Key_Alt:          l_key = Event::KEY_ALT_L; break;
+			int keycode = event.key();
+
+			/* force lower case */
+			if (keycode >= 65 && keycode <= 90)
+				keycode += 32;
+
+			if ((keycode >= ' ' && keycode <= '@') ||
+			    (keycode >= '[' && keycode <= '~') )
+				l_key = static_cast<Event::KBKeys>(keycode);
+			switch (keycode) {
 			case Qt::Key_Backspace:    l_key = Event::KEY_BACKSPACE; break;
-			case Qt::Key_CapsLock:     l_key = Event::KEY_CAPS_LOCK; break;
+			case Qt::Key_Tab:          l_key = Event::KEY_TAB; break;
 			case Qt::Key_Clear:        l_key = Event::KEY_CLEAR; break;
+			case Qt::Key_Return:       l_key = Event::KEY_RETURN; break;
+			case Qt::Key_Pause:        l_key = Event::KEY_PAUSE; break;
+			case Qt::Key_Escape:       l_key = Event::KEY_ESCAPE; break;
+
+			case Qt::Key_Alt:          l_key = Event::KEY_ALT_L; break;
+			case Qt::Key_CapsLock:     l_key = Event::KEY_CAPS_LOCK; break;
 			case Qt::Key_Control:      l_key = Event::KEY_CONTROL_L; break;
 			case Qt::Key_Delete:       l_key = Event::KEY_DELETE; break;
 			case Qt::Key_Down:         l_key = Event::KEY_DOWN; break;
 			case Qt::Key_End:          l_key = Event::KEY_END; break;
-			case Qt::Key_Escape:       l_key = Event::KEY_ESCAPE; break;
 			case Qt::Key_Help:         l_key = Event::KEY_HELP; break;
 			case Qt::Key_Home:         l_key = Event::KEY_HOME; break;
 			case Qt::Key_Insert:       l_key = Event::KEY_INSERT; break;
@@ -256,17 +233,14 @@ namespace
 			case Qt::Key_NumLock:      l_key = Event::KEY_NUM_LOCK; break;
 			case Qt::Key_PageDown:     l_key = Event::KEY_PAGE_DOWN; break;
 			case Qt::Key_PageUp:       l_key = Event::KEY_PAGE_UP; break;
-			case Qt::Key_Pause:        l_key = Event::KEY_PAUSE; break;
 			case Qt::Key_Print:        l_key = Event::KEY_PRINT; break;
-			case Qt::Key_Return:       l_key = Event::KEY_RETURN; break;
 			case Qt::Key_Right:        l_key = Event::KEY_RIGHT; break;
 			case Qt::Key_ScrollLock:   l_key = Event::KEY_SCROLL_LOCK; break;
 			case Qt::Key_Shift:        l_key = Event::KEY_SHIFT_L; break;
-			case Qt::Key_Tab:          l_key = Event::KEY_TAB; break;
 			case Qt::Key_Up:           l_key = Event::KEY_UP; break;
 			case Qt::Key_Backslash:    l_key = Event::KEY_BACKSLASH; break;
-			case Qt::Key_BraceLeft:    l_key = Event::KEY_BRACKETLEFT; break;
-			case Qt::Key_BraceRight:   l_key = Event::KEY_BRACKETRIGHT; break;
+			case Qt::Key_BraceLeft:    l_key = Event::KEY_BRACKET_LEFT; break;
+			case Qt::Key_BraceRight:   l_key = Event::KEY_BRACKET_RIGHT; break;
 			case Qt::Key_Equal:        l_key = Event::KEY_EQUAL; break;
 			case Qt::Key_Less:         l_key = Event::KEY_LESS; break;
 			case Qt::Key_QuoteDbl:     l_key = Event::KEY_DBLQUOTE; break;
@@ -287,9 +261,6 @@ namespace
 			case Qt::Key_F13:          l_key = Event::KEY_F13; break;
 			case Qt::Key_F14:          l_key = Event::KEY_F14; break;
 			case Qt::Key_F15:          l_key = Event::KEY_F15; break;
-			case Qt::Key_Period:       l_key = Event::KEY_KDECIMAL; break;
-			case Qt::Key_Slash:        l_key = Event::KEY_KDIVIDE; break;
-			case Qt::Key_Asterisk:     l_key = Event::KEY_KMULTIPLY; break;
 			default: MMWARNING1("Unknown key pressed!");
 			}
 
@@ -305,8 +276,8 @@ namespace
 			
 			if (( l_key_pressed && l_action != Event::KeyPressed)
 			 || (!l_key_pressed && l_action == Event::KeyPressed)) {
-				Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
-				Event::EventManager::Instance()->queue(event);
+				Event::SharedEvent l_event(new Event::KeyboardEvent(l_key, l_action));
+				Event::EventManager::Instance()->queue(l_event);
 
 				if (l_key_pressed) s_keys_pressed.remove(l_key);
 				else s_keys_pressed.push_front(l_key);
@@ -318,7 +289,7 @@ namespace
 	static ViewportWidget *s_window(0);
 
 	bool
-	CreateWindow(int w, int h, int d, bool f)
+	CreateWindow(UINT16 w, UINT16 h, UINT8, bool f)
 	{
 		s_window = new ViewportWidget(w, h, f);
 
@@ -349,32 +320,12 @@ namespace
 		s_window = 0;
 	}
 
-	bool
-	IsExtensionSupported(const char *list, const char *extension)
-	{
-		assert(list && extension
-		    && 0 == strchr(extension, ' ')
-		    && "Invalid list and/or extension");
-
-		const char *start = list;
-		const char *where, *terminator;
-
-		while ((where = strstr( start, extension ))) {
-			terminator = where + strlen( extension );
-
-			if ((where == start || *(where - 1) == ' ')
-			    && (*terminator == ' ' || *terminator == '\0'))
-				return(true);
-		}
-
-		return(false);
-	}
 } // namespace
 
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Initialize(UINT16 w, UINT16 h, UINT8 d, bool f)
 {
 	static int argc = 0;
 	static char **argv = 0;
@@ -400,7 +351,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Redisplay(UINT16 w, UINT16 h, UINT8 d, bool f)
 {
 	DestroyWindow();
 

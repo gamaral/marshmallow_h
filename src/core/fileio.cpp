@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/logger.h"
+
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Core;
 
@@ -102,7 +104,7 @@ FileIO::write(const char *b, size_t bs)
 }
 
 bool
-FileIO::seek(long int o, DIOSeek on)
+FileIO::seek(long o, DIOSeek on)
 {
 	int l_origin;
 
@@ -116,22 +118,36 @@ FileIO::seek(long int o, DIOSeek on)
 	return(fseek(m_handle, o, l_origin) == 0);
 }
 
-long int
+long
 FileIO::tell(void) const
 {
 	return(ftell(m_handle));
 }
 
-long int
+size_t
 FileIO::size(void) const
 {
-	const long int l_cursor = ftell(m_handle);
-	long int l_result = -1;
+	const long l_cursor = ftell(m_handle);
+	if (l_cursor == -1) {
+		MMWARNING1("Failed to get current cursor position in file.");
+		return(0);
+	}
 
-	fseek(m_handle, 0, SEEK_END);
-	l_result = ftell(m_handle);
-	fseek(m_handle, l_cursor, SEEK_SET);
+	long l_result = -1;
 
-	return(l_result);
+	if (fseek(m_handle, 0, SEEK_END) != 0) {
+		MMWARNING1("Failed to move cursor to end of file.");
+		return(0);
+	}
+
+	if ((l_result = ftell(m_handle)) == -1) {
+		MMWARNING1("Failed to move cursor to end of file.");
+		return(0);
+	}
+
+	if (fseek(m_handle, l_cursor, SEEK_SET) != 0)
+		MMWARNING1("Failed to return cursor to last position in file.");
+
+	return(l_result > 0 ? static_cast<size_t>(l_result) : 0);
 }
 
