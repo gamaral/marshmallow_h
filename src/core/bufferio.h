@@ -77,7 +77,7 @@ namespace Core
 		VIRTUAL long tell(void) const
 		    { return(m_cursor); }
 
-		VIRTUAL UINT64 size(void) const
+		VIRTUAL size_t size(void) const
 		    { return(m_size); }
 	};
 	typedef Shared<BufferIO> SharedBufferIO;
