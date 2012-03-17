@@ -1,5 +1,5 @@
-# Copyright 2011 Marshmallow Engine. All rights reserved.
-# Copyright 2011 Guillermo A. Amaral B. (gamaral) <g@maral.me>
+# Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+# Copyright 2011-2012 Guillermo A. Amaral B. (gamaral) <g@maral.me>
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@
 # PNG
 add_definitions(${PNG_DEFINITIONS})
 
-include_directories(${PNG_INCLUDE_DIR}
+include_directories(${PNG_PNG_INCLUDE_DIR}
                     ${OPENGL_INCLUDE_DIR}
                     ${CMAKE_CURRENT_SOURCE_DIR}/include/)
 

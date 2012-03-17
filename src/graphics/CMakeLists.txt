@@ -25,6 +25,13 @@ if(OPENGL_FOUND)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 	                              ${GLPNG_LIBRARIES}
 	                              ${OPENGL_LIBRARIES})
+
+	# GLee requirement
+	if(APPLE)
+        	FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
+		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
+					      ${COREFOUNDATION_LIBRARY})
+	endif()
 endif()
 
 # Used directly by tests and deserializers.

@@ -81,6 +81,7 @@ else()
 	message(STATUS "Building with system LibPNG")
 	find_package(PNG REQUIRED)
 endif()
+set(PNG_INCLUDE_DIR ${PNG_PNG_INCLUDE_DIR})
 
 # GLPNG
 if(OPENGL_FOUND)

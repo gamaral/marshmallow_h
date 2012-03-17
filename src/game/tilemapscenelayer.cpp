@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -175,10 +175,10 @@ TilemapSceneLayer::render(void)
 	}
 	else {
 		const Math::Size2f l_hviewport_size = Graphics::Viewport::ScaledSize() / 2.f;
-		col_start_cam = l_camera_x - l_hviewport_size.width();
-		col_stop_cam  = l_camera_x + l_hviewport_size.width();
-		row_start_cam = l_camera_y + l_hviewport_size.height();
-		row_stop_cam  = l_camera_y - l_hviewport_size.height();
+		col_start_cam = l_camera_x - l_hviewport_size.width()  - m_hrtile_size.width();
+		col_stop_cam  = l_camera_x + l_hviewport_size.width()  + m_hrtile_size.width();
+		row_start_cam = l_camera_y + l_hviewport_size.height() + m_hrtile_size.height();
+		row_stop_cam  = l_camera_y - l_hviewport_size.height() - m_hrtile_size.height();
 	}
 
 	int col_start = static_cast<int>(floorf(((col_start_cam + m_hrsize.width()) / m_rsize.width())
