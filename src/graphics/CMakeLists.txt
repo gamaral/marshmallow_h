@@ -15,7 +15,7 @@ if(OPENGL_FOUND)
 	include_directories(${GLPNG_INCLUDE_DIR})
 
 	set(MARSHMALLOW_GRAPHICS_OPENGL_SRCS
-		opengl/extensions/common.cpp
+		opengl/extensions/GLee.c
 		opengl/factory.cpp
 		opengl/painter.cpp
 		opengl/texturecoordinatedata.cpp
@@ -36,19 +36,24 @@ set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 if(UNIX AND MARSHMALLOW_VIEWPORT_USE_GLX)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
-	                              opengl/extensions/vbo-glx.cpp
 	                              opengl/viewport-glx.cpp)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 	                              ${X11_LIBRARIES} Xxf86vm)
 elseif(WIN32 AND MARSHMALLOW_VIEWPORT_USE_WGL)
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
-	                              opengl/extensions/vbo-wgl.cpp
 	                              opengl/viewport-wgl.cpp)
-elseif(MARSHMALLOW_VIEWPORT_USE_QT4)
+elseif(MARSHMALLOW_VIEWPORT_USE_SDL)
+	include_directories(${SDL_INCLUDE_DIR})
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
-	                              opengl/extensions/vbo-qt4.cpp
+	                              opengl/viewport-sdl.cpp)
+	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
+	                              ${SDL_LIBRARY})
+elseif(MARSHMALLOW_VIEWPORT_USE_QT4)
+	include_directories(${QT_INCLUDE_DIR})
+	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
+	                              ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
 	                              opengl/viewport-qt4.cpp)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 	                              ${QT_LIBRARIES})

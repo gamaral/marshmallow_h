@@ -56,7 +56,7 @@ AnimationComponent::AnimationComponent(const Core::Identifier &i, IEntity &e)
     , m_current_framelist(0)
     , m_current_framerate(0)
     , m_current_frame_duration(0)
-    , m_current_frame_entry(-1)
+    , m_current_frame_entry(0)
 {
 }
 
@@ -118,7 +118,7 @@ AnimationComponent::play(const Core::Identifier &a, bool l)
 
 	m_current_frame_duration = 0;
 	m_current_frame_entries = l_frames->second.size();
-	m_current_frame_entry = -1;
+	m_current_frame_entry = 0;
 	m_current_framelist = &l_frames->second;
 	m_loop = l;
 	m_timestamp = m_current_framerate;
@@ -131,7 +131,7 @@ AnimationComponent::stop(int *s)
 	m_playing = false;
 	m_current_frame_duration = 0;
 	m_current_frame_entries = 0;
-	m_current_frame_entry = -1;
+	m_current_frame_entry = 0;
 	m_current_framelist = 0;
 
 	if (s) m_stop_data = m_tileset->tileset()->getTextureCoordinateData(*s);

@@ -37,6 +37,8 @@
 #include <QtGui/QApplication>
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QKeyEvent>
+
+#include "extensions/GLee.h"
 #include <QtOpenGL/QGLWidget>
 
 #include <cmath>
@@ -51,11 +53,8 @@
 #include "graphics/painter.h"
 #include "graphics/transform.h"
 
-#include "extensions/common.h"
-
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
-using namespace Graphics::OpenGL;
 
 /******************************************************************************/
 
@@ -68,7 +67,6 @@ namespace
 		float         m_radius2;
 		Math::Size2f  m_scaled_size;
 		Math::Size2f  m_size;
-		bool          m_has_swap_control;
 	public:
 
 		ViewportWidget(float w, float h, bool f)
@@ -86,7 +84,6 @@ namespace
 
 			m_size.zero();
 			m_scaled_size.zero();
-			m_has_swap_control = false;
 
 			if (!f) {
 				const QRect &desktop = QApplication::desktop()->availableGeometry();
@@ -132,10 +129,6 @@ namespace
 		VIRTUAL void
 		initializeGL()
 		{
-			/* check extensions */
-
-			m_has_swap_control = checkSwapControlSupport();
-
 			/* set defaults */
 
 			glDisable(GL_DEPTH_TEST);
@@ -381,7 +374,7 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(int w, int h, int d, bool f)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	static int argc = 0;
 	static char **argv = 0;
@@ -407,7 +400,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(int w, int h, int d, bool f)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	DestroyWindow();
 
@@ -484,7 +477,13 @@ Viewport::Type(void)
 void
 Viewport::SwapControl(bool s)
 {
-	/* XXX: TODO: Implement */
+#if GLX_SGI_swap_control
+	if (GLEE_GLX_SGI_swap_control)
+		glXSwapIntervalSGI(s ? 1 : 0);
+#elif WGL_EXT_swap_control
+	if(GLEE_WGL_EXT_swap_control)
+		wglSwapIntervalEXT(s ? 1 : 0);
+#endif
 }
 
 void

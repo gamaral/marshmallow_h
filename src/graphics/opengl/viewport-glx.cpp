@@ -55,11 +55,8 @@
 #include "graphics/painter.h"
 #include "graphics/transform.h"
 
-#include "extensions/common.h"
-
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
-using namespace Graphics::OpenGL;
 
 /******************************************************************************/
 
@@ -79,15 +76,8 @@ namespace
 		Math::Size2f  scaled_size;
 		bool          fullscreen;
 		bool          loaded;
-		bool          has_swap_control;
 	} s_data;
 
-	static const char *s_glx_extensions(0);
-
-	typedef int ( * PFNGLXSWAPINTERVALSGIPROC) (int interval);
-	static PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI(0);
-
-	bool CheckSwapControlSupport(void);
 	void UpdateViewport(void);
 	void UpdateCamera(void);
 	void HandleKeyEvent(XKeyEvent &key);
@@ -104,14 +94,13 @@ namespace
 		s_data.loaded = false;
 		s_data.screen = 0;
 		s_data.size.zero();
-		s_data.has_swap_control = false;
 		s_data.window = 0;
 		s_data.wm_delete = 0;
 		s_data.wsize[0] = s_data.wsize[1] = 0;
 	}
 
 	bool
-	CreateWindow(int w, int h, int d, bool f)
+	CreateWindow(uint16_t w, uint16_t h, uint8_t d, bool f)
 	{
 		s_data.context   = 0;
 		s_data.display   = 0;
@@ -124,32 +113,20 @@ namespace
 		s_data.wsize[0] = w;
 		s_data.wsize[1] = h;
 
+		/*** X11 ***/
+
 		/* open display */
 		if (!(s_data.display = XOpenDisplay(0))) {
 			MMERROR1("Unable to open X Display.");
 			return(false);
 		}
 
-		/* get visual info */
-		GLint gattr[] = {GLX_RGBA, GLX_DEPTH_SIZE, d, GLX_DOUBLEBUFFER, None};
-		XVisualInfo *l_vinfo;
-		if(!(l_vinfo = glXChooseVisual(s_data.display, 0, gattr))) {
-			MMERROR1("Unable to choose X Visual Info.");
-			return(false);
-		}
-		s_data.screen = l_vinfo->screen;
-
 		/* get root window */
-		Window l_rwindow = RootWindow(s_data.display, s_data.screen);
+		Window l_rwindow = DefaultRootWindow(s_data.display);
 		
 		/* window attributes */
 		XSetWindowAttributes l_swattr;
-		l_swattr.colormap =
-		    XCreateColormap(s_data.display, l_rwindow, l_vinfo->visual, AllocNone);
-		l_swattr.background_pixel =
-		    BlackPixel(s_data.display, s_data.screen);
-		l_swattr.border_pixel =
-		    BlackPixel(s_data.display, s_data.screen);
+		memset(&l_swattr, 0, sizeof(l_swattr));
 		l_swattr.event_mask =
 			ButtonPressMask |
 			ButtonReleaseMask |
@@ -211,18 +188,33 @@ namespace
 			    0, 0, w, h, 0,
 			    d,
 			    InputOutput,
-			    l_vinfo->visual,
-			    CWBackPixel|CWBorderPixel|CWColormap|
+			    CopyFromParent,
 			    CWEventMask|CWOverrideRedirect,
 			    &l_swattr);
 			XMapRaised(s_data.display, s_data.window);
+
+			/* notify window manager */
+			Atom l_wm_state   = XInternAtom(s_data.display, "_NET_WM_STATE", false);
+			Atom l_fullscreen = XInternAtom(s_data.display, "_NET_WM_STATE_FULLSCREEN", false);
+
+			XEvent l_event;
+			memset(&l_event, 0, sizeof(l_event));
+			
+			l_event.type                 = ClientMessage;
+			l_event.xclient.window       = s_data.window;
+			l_event.xclient.message_type = l_wm_state;
+			l_event.xclient.format       = 32;
+			l_event.xclient.data.l[0]    = 1;
+			l_event.xclient.data.l[1]    = static_cast<long>(l_fullscreen);
+			XSendEvent(s_data.display, l_rwindow, false, SubstructureNotifyMask, &l_event );
+
+			/* take over pointer and keyboard */
 			XWarpPointer(s_data.display, None, s_data.window, 0, 0, 0, 0, 0, 0);
 			XGrabKeyboard(s_data.display, s_data.window, true, GrabModeAsync,
 			    GrabModeAsync, CurrentTime);
 			XGrabPointer(s_data.display, s_data.window, true,
 			    ButtonPressMask, GrabModeAsync, GrabModeAsync,
 			    s_data.window, None, CurrentTime);
-
 		} else {
 			s_data.window = XCreateWindow
 			   (s_data.display,
@@ -233,8 +225,8 @@ namespace
 			    1,
 			    d,
 			    InputOutput,
-			    l_vinfo->visual,
-			    CWBackPixel|CWBorderPixel|CWColormap|CWEventMask,
+			    CopyFromParent,
+			    CWEventMask,
 			    &l_swattr);
 			XMapRaised(s_data.display, s_data.window);
 
@@ -256,7 +248,7 @@ namespace
 
 		/* set window title */
 		XTextProperty l_window_name;
-		static unsigned char l_window_title[] = BUILD_TITLE;
+		static uint8_t l_window_title[] = BUILD_TITLE;
 		l_window_name.value    = l_window_title;
 		l_window_name.encoding = XA_STRING;
 		l_window_name.format   = 8;
@@ -266,6 +258,17 @@ namespace
 		/* catch window manager delete event */
 		s_data.wm_delete = XInternAtom(s_data.display, "WM_DELETE_WINDOW", false);
 		XSetWMProtocols(s_data.display, s_data.window, &s_data.wm_delete, 1);
+
+		/*** GL ***/
+
+		/* get visual info */
+		GLint gattr[] = {GLX_RGBA, GLX_DEPTH_SIZE, d, GLX_DOUBLEBUFFER, None};
+		XVisualInfo *l_vinfo;
+		if(!(l_vinfo = glXChooseVisual(s_data.display, 0, gattr))) {
+			MMERROR1("Unable to choose X Visual Info.");
+			return(false);
+		}
+		s_data.screen = l_vinfo->screen;
 
 		/* create context */
 		if (!(s_data.context = glXCreateContext(s_data.display, l_vinfo, 0, GL_TRUE))) {
@@ -282,10 +285,6 @@ namespace
 			MMERROR1("GLX context doesn't support direct rendering.");
 			return(false);
 		}
-
-		/* check extensions */
-		s_glx_extensions = glXQueryExtensionsString(s_data.display, s_data.screen);
-		s_data.has_swap_control = CheckSwapControlSupport();
 
 		/* set defaults */
 
@@ -337,20 +336,6 @@ namespace
 		s_data.screen = 0;
 		s_data.window = 0;
 		s_data.wm_delete = 0;
-	}
-
-
-	bool
-	CheckSwapControlSupport(void)
-	{
-		if (!IsExtensionSupported("GLX_SGI_swap_control", s_glx_extensions))
-			return(false);
-
-		glXSwapIntervalSGI =
-		    reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>
-		        (glXGetProcAddress(reinterpret_cast<const GLubyte*>("glXSwapIntervalSGI")));
-
-		return(glXSwapIntervalSGI);
 	}
 
 	void
@@ -461,9 +446,10 @@ namespace
 		case XK_Tab:          l_key = Event::KEY_TAB; break;
 		case XK_Up:           l_key = Event::KEY_UP; break;
 		case XK_backslash:    l_key = Event::KEY_BACKSLASH; break;
-		case XK_bracketleft:  l_key = Event::KEY_BRACKETLEFT; break;
-		case XK_bracketright: l_key = Event::KEY_BRACKETRIGHT; break;
+		case XK_bracketleft:  l_key = Event::KEY_BRACKET_LEFT; break;
+		case XK_bracketright: l_key = Event::KEY_BRACKET_RIGHT; break;
 		case XK_equal:        l_key = Event::KEY_EQUAL; break;
+		case XK_greater:      l_key = Event::KEY_GREATER; break;
 		case XK_less:         l_key = Event::KEY_LESS; break;
 		case XK_quotedbl:     l_key = Event::KEY_DBLQUOTE; break;
 		case XK_semicolon:    l_key = Event::KEY_SEMICOLON; break;
@@ -523,7 +509,7 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(int w, int h, int d, bool f)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	InitializeViewport();
 
@@ -544,7 +530,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(int w, int h, int d, bool f)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	DestroyWindow();
 
@@ -650,7 +636,7 @@ Viewport::Type(void)
 void
 Viewport::SwapControl(bool s)
 {
-	if (s_data.has_swap_control)
+	if (GLEE_GLX_SGI_swap_control)
 		glXSwapIntervalSGI(s ? 1 : 0);
 }
 

@@ -86,7 +86,7 @@ TextureData::load(const Core::Identifier &i)
 		return(false);
 	}
 
-	m_size = Math::Size2i(pi.Width, pi.Height);
+	m_size = Math::Size2i(static_cast<int>(pi.Width), static_cast<int>(pi.Height));
 	m_id = i;
 
 	MMINFO1("Texture loaded.");

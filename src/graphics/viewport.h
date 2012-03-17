@@ -58,19 +58,19 @@ namespace Graphics
 		const Core::Type & Type(void);
 
 		GRAPHICS_EXPORT
-		bool Initialize(int width = DEFAULT_VIEWPORT_WIDTH,
-		               int height = DEFAULT_VIEWPORT_HEIGHT,
-		                int depth = DEFAULT_VIEWPORT_DEPTH,
-		          bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
+		bool Initialize( uint16_t width = DEFAULT_VIEWPORT_WIDTH,
+		                uint16_t height = DEFAULT_VIEWPORT_HEIGHT,
+		                  uint8_t depth = DEFAULT_VIEWPORT_DEPTH,
+		                bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
 
 		GRAPHICS_EXPORT
 		void Finalize(void);
 
 		GRAPHICS_EXPORT
-		bool Redisplay(int width = DEFAULT_VIEWPORT_WIDTH,
-		              int height = DEFAULT_VIEWPORT_HEIGHT,
-		               int depth = DEFAULT_VIEWPORT_DEPTH,
-		         bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
+		bool Redisplay( uint16_t width = DEFAULT_VIEWPORT_WIDTH,
+		               uint16_t height = DEFAULT_VIEWPORT_HEIGHT,
+		                 uint8_t depth = DEFAULT_VIEWPORT_DEPTH,
+		               bool fullscreen = DEFAULT_VIEWPORT_FULLSCREEN);
 
 		GRAPHICS_EXPORT
 		void Tick(void);

@@ -38,14 +38,18 @@
 #define GRAPHICS_OPENGL_HEADERS_H 1
 
 #if MARSHMALLOW_VIEWPORT_GLES
+#  include "extensions/GLee.h"
 #  include <GLES/gl.h>
 #else
 #  if defined(__linux__)
+#    include "extensions/GLee.h"
 #    include <GL/gl.h>
 #  elif defined(_WIN32)
 #    include <windows.h>
+#    include "extensions/GLee.h"
 #    include <GL/gl.h>
 #  elif defined(__APPLE__)
+#    include "extensions/GLee.h"
 #    include <OpenGL/gl.h>
 #  endif
 #endif

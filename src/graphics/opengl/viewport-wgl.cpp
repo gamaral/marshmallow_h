@@ -48,11 +48,8 @@
 #include "graphics/painter.h"
 #include "graphics/transform.h"
 
-#include "extensions/common.h"
-
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
-using namespace Graphics::OpenGL;
 
 /******************************************************************************/
 
@@ -70,7 +67,6 @@ namespace
 		Math::Point2  visible[2];
 		bool          fullscreen;
 		bool          loaded;
-		bool          has_swap_control;
 	} s_data;
 
 	typedef BOOL (WINAPI * PFNWGLSWAPINTERVALEXTPROC) (int interval);
@@ -94,7 +90,6 @@ namespace
 		s_data.fullscreen = false;
 		s_data.loaded = false;
 		s_data.size.zero();
-		s_data.has_swap_control = false;
 		s_data.visible[0] = s_data.visible[1] = Math::Point2::Zero();
 	}
 
@@ -223,10 +218,6 @@ namespace
 		SetForegroundWindow(s_data.window);
 		SetFocus(s_data.window);
 
-		/* check extensions */
-
-		s_data.has_swap_control = CheckSwapControlSupport();
-
 		/* set defaults */
 
 		glDisable(GL_DEPTH_TEST);
@@ -347,10 +338,10 @@ namespace
 		 * Win32 virtual key codes for alphanumerical chars correspond
 		 * to character values themselfs
 		 */
-		if ((keycode >= '0' && keycode <= '9') ||
-		    (keycode >= 'a' && keycode <= 'z') ) {
+		if ((keycode >= ' ' && keycode <= '@') ||
+		    (keycode >= '[' && keycode <= '~') )
 			l_key = static_cast<Event::KBKeys>(keycode);
-		} else {
+		else
 			switch (keycode) {
 #if 0
 			case XK_Alt_L:        l_key = Event::KEY_ALT_L; break;
@@ -382,12 +373,13 @@ namespace
 			case VK_RSHIFT:       l_key = Event::KEY_SHIFT_R; break;
 			case VK_TAB:          l_key = Event::KEY_TAB; break;
 			case VK_UP:           l_key = Event::KEY_UP; break;
+			case VK_LESS:         l_key = Event::KEY_LESS; break;
+			case VK_GREATER:      l_key = Event::KEY_GREATER; break;
 #if 0
 			case XK_backslash:    l_key = Event::KEY_BACKSLASH; break;
 			case XK_bracketleft:  l_key = Event::KEY_BRACKETLEFT; break;
 			case XK_bracketright: l_key = Event::KEY_BRACKETRIGHT; break;
 			case XK_equal:        l_key = Event::KEY_EQUAL; break;
-			case XK_less:         l_key = Event::KEY_LESS; break;
 			case XK_quotedbl:     l_key = Event::KEY_DBLQUOTE; break;
 			case XK_semicolon:    l_key = Event::KEY_SEMICOLON; break;
 #endif
@@ -483,7 +475,7 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(int w, int h, int d, bool f)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	InitializeViewport();
 
@@ -504,7 +496,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(int w, int h, int d, bool f)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	DestroyWWindow();
 
@@ -594,7 +586,7 @@ Viewport::Type(void)
 void
 Viewport::SwapControl(bool s)
 {
-	if (s_data.has_swap_control)
+	if(GLEE_WGL_EXT_swap_control)
 		wglSwapIntervalEXT(s ? 1 : 0);
 }
 

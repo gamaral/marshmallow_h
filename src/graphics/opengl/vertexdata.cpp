@@ -38,8 +38,6 @@
 
 #include "core/logger.h"
 
-#include "extensions/vbo.h"
-
 MARSHMALLOW_NAMESPACE_USE;
 using namespace Graphics;
 using namespace OpenGL;
@@ -66,15 +64,15 @@ VertexData::~VertexData(void)
 void
 VertexData::buffer(void)
 {
-	if (!VBO::Supported())
+	if (!GLEE_ARB_vertex_buffer_object)
 		return;
 
 	if (!isBuffered())
-		VBO::GenBuffers(1, &m_bufferId);
+		glGenBuffers(1, &m_bufferId);
 
-	VBO::BindBuffer(GL_ARRAY_BUFFER, m_bufferId);
-	VBO::BufferData(GL_ARRAY_BUFFER, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW);
-	VBO::BindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, m_bufferId);
+	glBufferData(GL_ARRAY_BUFFER, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	MMVERBOSE("Buffered data. ID: %d", m_bufferId);
 }
@@ -82,12 +80,12 @@ VertexData::buffer(void)
 void
 VertexData::unbuffer(void)
 {
-	if (!VBO::Supported() || !isBuffered())
+	if (!GLEE_ARB_vertex_buffer_object || !isBuffered())
 		return;
 
 	MMVERBOSE("Unbuffered data. ID: %d", m_bufferId);
 
-	VBO::DeleteBuffers(1, &m_bufferId);
+	glDeleteBuffers(1, &m_bufferId);
 	m_bufferId = 0;
 }
 
@@ -109,9 +107,9 @@ VertexData::set(int i, float x, float y)
 
 	/* update vbo object */
 	if (isBuffered()) {
-		VBO::BindBuffer(GL_ARRAY_BUFFER, m_bufferId);
-		VBO::BufferSubData(GL_ARRAY_BUFFER, l_offset * sizeof(GLfloat), AXES * sizeof(GLfloat), &m_data[l_offset]);
-		VBO::BindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, m_bufferId);
+		glBufferSubData(GL_ARRAY_BUFFER, l_offset * sizeof(GLfloat), AXES * sizeof(GLfloat), &m_data[l_offset]);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 	return(true);

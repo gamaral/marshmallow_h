@@ -53,7 +53,7 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(int w, int h, int d, bool f)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	MMUNUSED(w);
 	MMUNUSED(h);
@@ -75,7 +75,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(int w, int h, int d, bool f)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	MMUNUSED(w);
 	MMUNUSED(h);

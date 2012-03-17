@@ -85,7 +85,7 @@ namespace Game
 		float m_current_framerate;
 		int   m_current_frame_duration;
 		size_t m_current_frame_entries;
-		unsigned int m_current_frame_entry;
+		size_t m_current_frame_entry;
 
 		NO_ASSIGN(AnimationComponent);
 		NO_COPY(AnimationComponent);
