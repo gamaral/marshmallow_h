@@ -17,7 +17,6 @@ endif()
 
 
 # TINYXML
-include_directories(${TINYXML_INCLUDE_DIR})
 set(MARSHMALLOW_GAME_LIBS ${MARSHMALLOW_GAME_LIBS} ${TINYXML_LIBRARIES})
 
 add_library(marshmallow_game

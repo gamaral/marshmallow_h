@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@
 #include "core/shared.h"
 #include "core/weak.h"
 
-#include "../common.h"
+#include "tests/common.h"
 
 /*!
  * @file
@@ -37,7 +37,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 
 void
 shared_basic_test(void)

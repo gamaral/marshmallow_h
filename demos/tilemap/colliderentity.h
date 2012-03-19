@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -39,15 +39,13 @@
 
 #include <game/entitybase.h>
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 
-class GAME_EXPORT ColliderEntity : public Game::EntityBase
+class ColliderEntity : public Game::EntityBase
 {
-	NO_ASSIGN(ColliderEntity);
-	NO_COPY(ColliderEntity);
-
 	bool m_init;
 
+	NO_ASSIGN_COPY(ColliderEntity);
 public:
 
 	ColliderEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);

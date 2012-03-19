@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -34,14 +34,14 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_DUMMY_TEXTUREDATA_H
-#define GRAPHICS_DUMMY_TEXTUREDATA_H 1
+#ifndef MARSHMALLOW_GRAPHICS_DUMMY_TEXTUREDATA_H
+#define MARSHMALLOW_GRAPHICS_DUMMY_TEXTUREDATA_H 1
 
 #include "graphics/itexturedata.h"
 
 #include "core/identifier.h"
-#include "math/size2.h"
 
+#include "math/size2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -52,13 +52,12 @@ namespace Dummy
 {
 
 	/*! @brief Graphic Dummy Texture Data Class */
-	class GRAPHICS_EXPORT TextureData : public ITextureData
+	class TextureData : public ITextureData
 	{
 		Core::Identifier m_id;
 		Math::Size2i m_size;
 
-		NO_COPY(TextureData);
-
+		NO_ASSIGN_COPY(TextureData);
 	public:
 
 		TextureData(void);

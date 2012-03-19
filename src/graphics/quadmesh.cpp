@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -35,12 +35,13 @@
  */
 
 #include "core/type.h"
+
 #include "graphics/factory.h"
 #include "graphics/itexturecoordinatedata.h"
 #include "graphics/itexturedata.h"
 #include "graphics/ivertexdata.h"
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
 const Core::Type QuadMesh::sType("Graphics::QuadMesh");
@@ -49,9 +50,9 @@ QuadMesh::QuadMesh(const Math::Vector2 &tl,
                    const Math::Vector2 &bl,
                    const Math::Vector2 &br,
                    const Math::Vector2 &tr)
-    : MeshBase(Factory::CreateTextureCoordinateData(QUAD_VERTEXES),
+    : MeshBase(Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
                Factory::CreateTextureData(),
-               Factory::CreateVertexData(QUAD_VERTEXES))
+               Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES))
 {
 	setVertex(0, tl);
 	setTextureCoordinate(0, 0, 0);
@@ -64,9 +65,9 @@ QuadMesh::QuadMesh(const Math::Vector2 &tl,
 }
 
 QuadMesh::QuadMesh(const Math::Rect2  &r)
-    : MeshBase(Factory::CreateTextureCoordinateData(QUAD_VERTEXES),
+    : MeshBase(Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
                Factory::CreateTextureData(),
-               Factory::CreateVertexData(QUAD_VERTEXES))
+               Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES))
 {
 	setVertex(0, r.topLeft());
 	setTextureCoordinate(0, 0, 0);
@@ -79,9 +80,9 @@ QuadMesh::QuadMesh(const Math::Rect2  &r)
 }
 
 QuadMesh::QuadMesh(float width, float height)
-    : MeshBase(Factory::CreateTextureCoordinateData(QUAD_VERTEXES),
+    : MeshBase(Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
                Factory::CreateTextureData(),
-               Factory::CreateVertexData(QUAD_VERTEXES))
+               Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES))
 {
 	/* half */
 	width  /= 2.f;
@@ -98,9 +99,9 @@ QuadMesh::QuadMesh(float width, float height)
 }
 
 QuadMesh::QuadMesh(void)
-    : MeshBase(Factory::CreateTextureCoordinateData(QUAD_VERTEXES),
+    : MeshBase(Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
                Factory::CreateTextureData(),
-               Factory::CreateVertexData(QUAD_VERTEXES))
+               Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES))
 {
 	setTextureCoordinate(0, 0, 0);
 	setTextureCoordinate(1, 0, 1);

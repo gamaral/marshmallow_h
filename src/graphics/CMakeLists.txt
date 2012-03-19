@@ -7,10 +7,6 @@ set(MARSHMALLOW_GRAPHICS_LIBS
 	marshmallow_event
 	marshmallow_math)
 
-# TINYXML
-include_directories(${TINYXML_INCLUDE_DIR})
-set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS} ${TINYXML_LIBRARIES})
-
 if(OPENGL_FOUND)
 	include_directories(${GLPNG_INCLUDE_DIR})
 

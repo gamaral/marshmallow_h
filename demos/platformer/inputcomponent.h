@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -37,10 +37,10 @@
 #ifndef DEMO_INPUTCOMPONENT_H
 #define DEMO_INPUTCOMPONENT_H 1
 
-#include <list>
-
 #include <game/componentbase.h>
 #include <event/ieventlistener.h>
+
+#include <list>
 
 #include <core/weak.h>
 
@@ -55,7 +55,7 @@ namespace Game
 }
 MARSHMALLOW_NAMESPACE_END
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 
 class PlayerColliderComponent;
 typedef Core::Weak<PlayerColliderComponent> WeakPlayerColliderComponent;
@@ -63,9 +63,6 @@ typedef Core::Weak<PlayerColliderComponent> WeakPlayerColliderComponent;
 class InputComponent : public Game::ComponentBase
                      , public Event::IEventListener
 {
-	NO_ASSIGN(InputComponent);
-	NO_COPY(InputComponent);
-
 	WeakPlayerColliderComponent m_collider;
 	Game::WeakMovementComponent m_movement;
 	Game::WeakPositionComponent m_position;
@@ -77,6 +74,7 @@ class InputComponent : public Game::ComponentBase
 	bool  m_left;
 	bool  m_right;
 
+	NO_ASSIGN_COPY(InputComponent);
 public:
 
 	InputComponent(const Core::Identifier &identifier, Game::IEntity &entity);

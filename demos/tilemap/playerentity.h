@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -39,7 +39,6 @@
 
 #include <game/entitybase.h>
 
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {
@@ -48,7 +47,7 @@ namespace Game
 }
 MARSHMALLOW_NAMESPACE_END
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 
 
 class InputComponent;
@@ -56,9 +55,6 @@ typedef Core::Shared<InputComponent> SharedInputComponent;
 
 class PlayerEntity : public Game::EntityBase
 {
-	NO_ASSIGN(PlayerEntity);
-	NO_COPY(PlayerEntity);
-
 	Game::SharedAnimationComponent m_animation_component;
 	SharedInputComponent m_input_component;
 
@@ -66,6 +62,7 @@ class PlayerEntity : public Game::EntityBase
 	bool m_in_motion;
 	bool m_init;
 
+	NO_ASSIGN_COPY(PlayerEntity);
 public:
 
 	PlayerEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);

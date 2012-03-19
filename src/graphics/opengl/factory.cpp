@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -36,15 +36,15 @@
 
 #include "core/shared.h"
 
-#include "graphics/opengl/texturecoordinatedata.h"
-#include "graphics/opengl/texturedata.h"
-#include "graphics/opengl/vertexdata.h"
+#include "texturecoordinatedata.h"
+#include "texturedata.h"
+#include "vertexdata.h"
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
 SharedTextureCoordinateData
-Factory::CreateTextureCoordinateData(int c)
+Factory::CreateTextureCoordinateData(UINT16 c)
 {
 	return(new OpenGL::TextureCoordinateData(c));
 }
@@ -56,7 +56,7 @@ Factory::CreateTextureData(void)
 }
 
 SharedVertexData
-Factory::CreateVertexData(int c)
+Factory::CreateVertexData(UINT16 c)
 {
 	return(new OpenGL::VertexData(c));
 }

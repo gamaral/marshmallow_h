@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -39,13 +39,11 @@
 
 #include <game/factorybase.h>
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 
-class GAME_EXPORT CustomFactory : public Game::FactoryBase
+class CustomFactory : public Game::FactoryBase
 {
-
-	NO_COPY(CustomFactory);
-
+	NO_ASSIGN_COPY(CustomFactory);
 public:
 
 	CustomFactory(void)

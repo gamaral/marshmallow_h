@@ -11,7 +11,6 @@ set(MARSHMALLOW_EXTRA_LIBS
 )
 
 # TINYXML
-include_directories(${TINYXML_INCLUDE_DIR})
 set(MARSHMALLOW_EXTRA_LIBS ${MARSHMALLOW_EXTRA_LIBS} ${TINYXML_LIBRARIES})
 
 add_library(marshmallow_extra

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -35,6 +35,7 @@
  */
 
 #include "graphics/quadmesh.h"
+
 #include "game/entity.h"
 #include "game/entityscenelayer.h"
 #include "game/movementcomponent.h"
@@ -49,7 +50,7 @@
 #   include "game/box2d/box2dscenelayer.h"
 #endif
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
 IFactory *FactoryBase::s_instance(0);

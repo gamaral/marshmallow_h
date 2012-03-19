@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_DUMMY_VERTEXDATA_H
-#define GRAPHICS_DUMMY_VERTEXDATA_H 1
+#ifndef MARSHMALLOW_GRAPHICS_DUMMY_VERTEXDATA_H
+#define MARSHMALLOW_GRAPHICS_DUMMY_VERTEXDATA_H 1
 
 #include "graphics/ivertexdata.h"
 
@@ -51,14 +51,15 @@ namespace Dummy
 {
 
 	/*! @brief Graphics Dummy Vertex Data Class */
-	class GRAPHICS_EXPORT VertexData : public IVertexData
+	class VertexData : public IVertexData
 	{
 		Core::Identifier m_id;
 		float *m_data;
-		int m_count;
+		UINT16 m_count;
 
+		NO_ASSIGN_COPY(VertexData);
 	public:
-		VertexData(int count);
+		VertexData(UINT16 count);
 		virtual ~VertexData(void);
 
 		const float * data(void) const
@@ -72,10 +73,10 @@ namespace Dummy
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
 
-		VIRTUAL bool get(int index, float &x, float &y) const;
-		VIRTUAL bool set(int index, float x, float y);
+		VIRTUAL bool get(UINT16 index, float &x, float &y) const;
+		VIRTUAL bool set(UINT16 index, float  x, float  y);
 
-		VIRTUAL int count(void) const
+		VIRTUAL UINT16 count(void) const
 		    { return(m_count); }
 
 	public: /* static */

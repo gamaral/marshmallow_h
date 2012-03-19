@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -53,7 +53,7 @@
 #define MIN_CHAR 33
 #define MAX_CHAR 126
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
 TextComponent::TextComponent(const Core::Identifier &i, IEntity &e)
@@ -172,7 +172,7 @@ TextComponent::rebuild(void)
 	 *       changes.
 	 */
 	Graphics::SharedVertexData l_vdata =
-	    Graphics::Factory::CreateVertexData(QUAD_VERTEXES);
+	    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 	{
 		float l_hwidth  =
 		    static_cast<float>(m_font_size.width())  / 2.f;
@@ -192,11 +192,12 @@ TextComponent::rebuild(void)
 	 */
 	char l_char;
 	const size_t l_text_count = m_text.size();
-	for (unsigned int i = 0; i < l_text_count; ++i) {
+	for (UINT16 i = 0; i < l_text_count; ++i) {
 		l_char = m_text[i];
 		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
 			Graphics::SharedTextureCoordinateData l_tdata =
-				m_tileset->getTextureCoordinateData(m_tile_offset + (l_char - MIN_CHAR));
+				m_tileset->getTextureCoordinateData(m_tile_offset +
+				    static_cast<unsigned char>(l_char - MIN_CHAR));
 
 			m_mesh[i] = new Graphics::QuadMesh(l_tdata, m_tileset->textureData(), l_vdata);
 		}

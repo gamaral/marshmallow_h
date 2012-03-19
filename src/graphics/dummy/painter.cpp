@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -36,10 +36,12 @@
 
 #include "core/type.h"
 #include "core/logger.h"
-#include "graphics/imesh.h"
+
 #include "math/point2.h"
 
-MARSHMALLOW_NAMESPACE_USE;
+#include "graphics/imesh.h"
+
+MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
 void
@@ -57,6 +59,6 @@ Painter::Draw(const IMesh &m, const Math::Point2 &p)
 {
 	MMUNUSED(m);
 	MMUNUSED(p);
-	MMINFO("Drawind %s at (%f, %f)", m.type().str().c_str(), p.rx(), p.ry());
+	MMINFO("Drawind %s at (%f, %f)", m.type().str().c_str(), p.x(), p.y());
 }
 

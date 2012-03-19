@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_TEXTURECOORDINATEDATA_H
-#define GRAPHICS_OPENGL_TEXTURECOORDINATEDATA_H 1
+#ifndef MARSHMALLOW_GRAPHICS_OPENGL_TEXTURECOORDINATEDATA_H
+#define MARSHMALLOW_GRAPHICS_OPENGL_TEXTURECOORDINATEDATA_H 1
 
 #include "graphics/itexturecoordinatedata.h"
 
@@ -43,7 +43,6 @@
 #include "core/identifier.h"
 
 #include "headers.h"
-
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -54,17 +53,16 @@ namespace OpenGL
 {
 
 	/*! @brief Graphics OpenGL Texture Coordinate Data Class */
-	class GRAPHICS_EXPORT TextureCoordinateData : public ITextureCoordinateData
+	class TextureCoordinateData : public ITextureCoordinateData
 	{
 		Core::Identifier m_id;
 		GLfloat *m_data;
-		int m_count;
+		UINT16 m_count;
 		GLuint m_bufferId;
 
-		NO_COPY(TextureCoordinateData);
-		NO_ASSIGN(TextureCoordinateData);
+		NO_ASSIGN_COPY(TextureCoordinateData);
 	public:
-		TextureCoordinateData(int count);
+		TextureCoordinateData(UINT16 count);
 		virtual ~TextureCoordinateData(void);
 
 		const GLfloat * data(void) const
@@ -89,10 +87,10 @@ namespace OpenGL
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
 
-		VIRTUAL bool get(int index, float &u, float &v) const;
-		VIRTUAL bool set(int index, float u, float v);
+		VIRTUAL bool get(UINT16 index, float &u, float &v) const;
+		VIRTUAL bool set(UINT16 index, float u, float v);
 
-		VIRTUAL int count(void) const
+		VIRTUAL UINT16 count(void) const
 		    { return(m_count); }
 
 	public: /* static */

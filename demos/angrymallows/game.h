@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -38,16 +38,18 @@
 #define GAME_H 1
 
 #include <game/enginebase.h>
+
 #include <event/eventmanager.h>
 #include <game/scenemanager.h>
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 
 class Demo : public Game::EngineBase
 {
 	char *m_filename;
 	int m_stop_timer;
 
+	NO_ASSIGN_COPY(Demo);
 public:
 	Demo(const char *filename);
 	virtual ~Demo(void);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -44,7 +44,7 @@
 
 #define TILE_ADJUSTMENT 0.00004f
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
 TilesetBase::TilesetBase()
@@ -110,7 +110,7 @@ TilesetBase::setTextureData(const SharedTextureData &ts)
 }
 
 SharedTextureCoordinateData
-TilesetBase::getTextureCoordinateData(int i)
+TilesetBase::getTextureCoordinateData(UINT16 i)
 {
 	if (!m_texture_data || !m_texture_data->isLoaded())
 		return(SharedTextureCoordinateData());

@@ -49,7 +49,7 @@
 #include "graphics/painter.h"
 #include "graphics/transform.h"
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
 /******************************************************************************/
@@ -97,6 +97,8 @@ namespace
 			MMERROR1("Failed to create an SDL surface.");
 			return(false);
 		}
+
+		SDL_WM_SetCaption(MARSHMALLOW_BUILD_TITLE, MARSHMALLOW_BUILD_TITLE);
 
 		s_data.fullscreen = f;
 		s_data.wsize[0] = w;

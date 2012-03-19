@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,14 +26,17 @@
  * or implied, of Marshmallow Engine.
  */
 
+#include <iostream>
+
 #include "core/identifier.h"
+
+#include "math/size2.h"
+
 #include "graphics/dummy/texturedata.h"
 #include "graphics/itexturecoordinatedata.h"
 #include "graphics/tileset.h"
-#include "math/size2.h"
-#include "../common.h"
 
-#include <iostream>
+#include "tests/common.h"
 
 /*!
  * @file
@@ -41,7 +44,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 
 void
 tileset_fixed_test(void)

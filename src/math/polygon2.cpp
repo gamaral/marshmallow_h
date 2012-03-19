@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -34,7 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 using namespace Math;
 
 Polygon2::Polygon2(void)
@@ -47,7 +47,7 @@ Polygon2::area(void) const
 {
 	float l_area = 0;
 
-	const size_t l_c = m_vectors.size();
+	const UINT16 l_c = static_cast<UINT16>(m_vectors.size());
 	for (unsigned int l_i = 1; l_i <= l_c; ++l_i)
 	    l_area += m_vectors.at(l_i-1).cross(m_vectors.at(l_i % l_c));
 

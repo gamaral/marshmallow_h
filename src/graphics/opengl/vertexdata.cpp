@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/opengl/vertexdata.h"
+#include "vertexdata.h"
 
 /*!
  * @file
@@ -38,18 +38,18 @@
 
 #include "core/logger.h"
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 using namespace OpenGL;
 
 const Core::Type VertexData::sType("Graphics::VertexData");
 
-VertexData::VertexData(int c)
-#define AXES 2
-    : m_id(),
-      m_data(new GLfloat[c * AXES]), // TODO: replace with custom allocator
-      m_count(c),
-      m_bufferId(0)
+VertexData::VertexData(UINT16 c)
+#define AXES 2u
+    : m_id()
+    , m_data(new GLfloat[c * AXES]) // TODO: replace with custom allocator
+    , m_count(c)
+    , m_bufferId(0)
 {
 	memset(m_data, 0, m_count * AXES);
 	buffer();
@@ -90,7 +90,7 @@ VertexData::unbuffer(void)
 }
 
 bool
-VertexData::get(int i, float &x, float &y) const
+VertexData::get(UINT16 i, float &x, float &y) const
 {
 	const int l_offset = (i % m_count) * AXES;
 	x = m_data[l_offset];
@@ -99,9 +99,9 @@ VertexData::get(int i, float &x, float &y) const
 }
 
 bool
-VertexData::set(int i, float x, float y)
+VertexData::set(UINT16 i, float x, float y)
 {
-	const int l_offset = (i % m_count) * AXES;
+	const UINT16 l_offset = (i % m_count) * AXES;
 	m_data[l_offset] = x;
 	m_data[l_offset + 1] = y;
 

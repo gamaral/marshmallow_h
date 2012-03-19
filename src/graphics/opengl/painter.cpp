@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -39,14 +39,15 @@
 
 #include "math/point2.h"
 
-#include "graphics/opengl/extensions/GLee.h"
-#include "graphics/opengl/texturecoordinatedata.h"
-#include "graphics/opengl/texturedata.h"
-#include "graphics/opengl/vertexdata.h"
 #include "graphics/quadmesh.h"
 #include "graphics/viewport.h"
 
-MARSHMALLOW_NAMESPACE_USE;
+#include "extensions/GLee.h"
+#include "texturecoordinatedata.h"
+#include "texturedata.h"
+#include "vertexdata.h"
+
+MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics::OpenGL;
 using namespace Graphics;
 
@@ -95,7 +96,7 @@ namespace
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, QUAD_VERTEXES);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, MARSHMALLOW_QUAD_VERTEXES);
 
 		if (l_tcdata)
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);

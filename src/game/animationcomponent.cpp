@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -43,7 +43,7 @@
 #include "game/rendercomponent.h"
 #include "game/tilesetcomponent.h"
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
 AnimationComponent::AnimationComponent(const Core::Identifier &i, IEntity &e)
@@ -65,7 +65,7 @@ AnimationComponent::~AnimationComponent(void)
 }
 
 void
-AnimationComponent::pushFrame(const Core::Identifier &a, int t, int d)
+AnimationComponent::pushFrame(const Core::Identifier &a, UINT16 t, int d)
 {
 	FrameList &l_framelist = m_animation_frames[a];
 	l_framelist.push_back(FrameEntry(t, d));
@@ -126,7 +126,7 @@ AnimationComponent::play(const Core::Identifier &a, bool l)
 }
 
 void
-AnimationComponent::stop(int *s)
+AnimationComponent::stop(UINT16 *s)
 {
 	m_playing = false;
 	m_current_frame_duration = 0;

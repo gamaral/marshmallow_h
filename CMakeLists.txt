@@ -89,25 +89,25 @@ option(MARSHMALLOW_WITH_LUA "Use Lua" ON)
 ####################################################################### CONFIG #
 
 configure_file(
-	${PROJECT_SOURCE_DIR}/src/core/config.in.h
-	${PROJECT_BINARY_DIR}/src/core/config.h
+	${PROJECT_SOURCE_DIR}/src/core/config.h.in
+	${PROJECT_BINARY_DIR}/include/core/config.h
 )
 configure_file(
-	${PROJECT_SOURCE_DIR}/src/graphics/config.in.h
-	${PROJECT_BINARY_DIR}/src/graphics/config.h
+	${PROJECT_SOURCE_DIR}/src/graphics/config.h.in
+	${PROJECT_BINARY_DIR}/include/graphics/config.h
 )
 
 ##################################################################### PLATFORM #
 
 if(UNIX)
 	configure_file(
-	    ${PROJECT_SOURCE_DIR}/src/core/unix/environment.h
-	    ${PROJECT_BINARY_DIR}/src/core/environment.h COPYONLY
+	    ${PROJECT_SOURCE_DIR}/include/core/unix/environment.h
+	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
 	)
 elseif(WIN32)
 	configure_file(
-	    ${PROJECT_SOURCE_DIR}/src/core/win32/environment.h
-	    ${PROJECT_BINARY_DIR}/src/core/environment.h COPYONLY
+	    ${PROJECT_SOURCE_DIR}/include/core/win32/environment.h
+	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
 	)
 endif()
 
@@ -149,17 +149,18 @@ endif()
 
 include(cmake/contrib.cmake)
 
+####################################################################### TARGET #
+
+include_directories(${PROJECT_BINARY_DIR}/include
+                    ${PROJECT_SOURCE_DIR}/include
+                    ${PROJECT_BINARY_DIR}/src
+                    ${PROJECT_SOURCE_DIR}/src
+                    ${TINYXML_INCLUDE_DIR})
+
 ############################################################## SUB DIRECTORIES #
 
 add_subdirectory(contrib)
 add_subdirectory(src)
-
-####################################################################### TARGET #
-
-include_directories(${PROJECT_BINARY_DIR}/src
-                    ${PROJECT_SOURCE_DIR}/src
-                    ${EASTL_INCLUDE_DIR}
-                    ${TINYXML_INCLUDE_DIR})
 
 if(EXISTS ${PROJECT_SOURCE_DIR}/target/CMakeLists.txt)
 	add_subdirectory(target)

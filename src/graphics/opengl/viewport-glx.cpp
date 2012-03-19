@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -55,7 +55,7 @@
 #include "graphics/painter.h"
 #include "graphics/transform.h"
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
 /******************************************************************************/
@@ -248,11 +248,11 @@ namespace
 
 		/* set window title */
 		XTextProperty l_window_name;
-		static UINT8 l_window_title[] = BUILD_TITLE;
+		static UINT8 l_window_title[] = MARSHMALLOW_BUILD_TITLE;
 		l_window_name.value    = l_window_title;
 		l_window_name.encoding = XA_STRING;
 		l_window_name.format   = 8;
-		l_window_name.nitems   = strlen(BUILD_TITLE);
+		l_window_name.nitems   = strlen(MARSHMALLOW_BUILD_TITLE);
 		XSetWMName(s_data.display, s_data.window, &l_window_name);
 
 		/* catch window manager delete event */

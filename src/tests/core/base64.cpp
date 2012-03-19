@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -31,7 +31,7 @@
 #include "core/base64.h"
 #include "core/global.h"
 
-#include "../common.h"
+#include "tests/common.h"
 
 static const char  base64a[] = "MTIzNDU2";
 static const char ubase64a[] = "123456";
@@ -46,7 +46,7 @@ static const char ubase64c[] = "1234";
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 
 void
 base64_decode_test(void)

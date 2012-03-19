@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -63,7 +63,7 @@ using namespace TinyXML;
 #define TMXOBJECTGROUP_NODE   "objectgroup"
 #define TMXOBJECTGROUP_OBJECT_NODE "object"
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 using namespace Extra;
 
 TMXLoader::TMXLoader(Game::IScene &s)
@@ -198,7 +198,7 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 		if (0 == strcmp(l_data_compression, TMXDATA_COMPRESSION_ZLIB)) {
 			char *l_inflated_data;
 			if (0 < Core::Zlib::Inflate(l_decoded_data, l_decoded_data_size,
-			    m_map_size.width() * m_map_size.height() * 4, &l_inflated_data))
+			    static_cast<size_t>(m_map_size.width() * m_map_size.height() * 4), &l_inflated_data))
 				l_data_array = l_inflated_data;
 		}
 #define TMXDATA_COMPRESSION_GZIP "gzip"
@@ -295,7 +295,8 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 
 		/* tile object */
 		} else {
-			int l_ts_firstgid = -1;
+			bool l_found = false;
+			UINT16 l_ts_firstgid = 0;
 
 			/* offset position to top-left (later centered) */
 			l_object_y += l_object_height;
@@ -303,10 +304,12 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 			/* look for appropriate tileset */
 			TilesetCollection::iterator l_tileset_i;
 			for (l_tileset_i = m_tilesets.begin(); l_tileset_i != m_tilesets.end(); ++l_tileset_i)
-				if (l_tileset_i->first > l_ts_firstgid && l_tileset_i->first <= l_object_gid)
+				if (l_tileset_i->first > l_ts_firstgid && l_tileset_i->first <= l_object_gid) {
 					l_ts_firstgid = l_tileset_i->first;
+					l_found = true;
+				}
 
-			if (l_ts_firstgid == -1) {
+			if (!l_found) {
 				MMWARNING1("Object tile GID tileset was not found.");
 				return(false);
 			}
@@ -330,14 +333,14 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 
 			Game::RenderComponent *l_render = new Game::RenderComponent("render", *l_entity);
 
-			Graphics::SharedVertexData l_vdata = Graphics::Factory::CreateVertexData(QUAD_VERTEXES);
+			Graphics::SharedVertexData l_vdata = Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 			l_vdata->set(0, -l_object_hrsize.width(),  l_object_hrsize.height());
 			l_vdata->set(1, -l_object_hrsize.width(), -l_object_hrsize.height());
 			l_vdata->set(2,  l_object_hrsize.width(),  l_object_hrsize.height());
 			l_vdata->set(3,  l_object_hrsize.width(), -l_object_hrsize.height());
 
 			Graphics::SharedTextureCoordinateData l_tdata =
-			    l_tileset->getTextureCoordinateData(l_object_gid - l_ts_firstgid);
+			    l_tileset->getTextureCoordinateData(static_cast<UINT16>(l_object_gid) - l_ts_firstgid);
 
 			l_render->mesh() =
 			    new Graphics::QuadMesh(l_tdata, l_tileset->textureData(), l_vdata);
@@ -416,7 +419,7 @@ TMXLoader::processTileset(TiXmlElement &e)
 	l_tileset->setSpacing(l_tile_spacing);
 	l_tileset->setTileSize(Math::Size2i(l_tile_width, l_tile_height));
 	l_tileset->setTextureData(l_texture);
-	m_tilesets[l_first_gid] = l_tileset;
+	m_tilesets[static_cast<UINT16>(l_first_gid)] = l_tileset;
 
 	return(true);
 }

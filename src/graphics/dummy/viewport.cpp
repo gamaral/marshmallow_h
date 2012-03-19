@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -40,7 +40,7 @@
 
 #include "graphics/transform.h"
 
-MARSHMALLOW_NAMESPACE_USE;
+MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
 /******************************************************************************/
@@ -66,7 +66,7 @@ Viewport::Initialize(UINT16 w, UINT16 h, UINT8 d, bool f)
 
 	MMINFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
 
-#ifdef MARSHMALLOW_VIEWPORT_DUMMY_FAIL
+#if MARSHMALLOW_VIEWPORT_DUMMY_FAIL
 	return(false);
 #else
 	return(true);
