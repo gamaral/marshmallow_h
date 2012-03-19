@@ -39,14 +39,28 @@ using namespace Event;
 
 const Core::Type UpdateEvent::sType("Event::UpdateEvent");
 
-UpdateEvent::UpdateEvent(float d)
-    : EventBase(0, HighestPriority),
-      m_delta(d)
+struct UpdateEvent::Private
 {
+	float delta;
+};
+
+UpdateEvent::UpdateEvent(float d)
+    : EventBase(0, HighestPriority)
+    , m_p(new Private)
+{
+	m_p->delta = d;
 }
 
 UpdateEvent::~UpdateEvent(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+float
+UpdateEvent::delta(void) const
+{
+	return(m_p->delta);
 }
 
 const Core::Type &

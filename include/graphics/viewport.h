@@ -48,7 +48,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-
 	class Transform;
 
 	/*! @brief Graphics Viewport Interface */
@@ -108,7 +107,6 @@ namespace Graphics
 		MARSHMALLOW_GRAPHICS_EXPORT
 		void PopMatrix(void);
 	}
-
 }
 
 MARSHMALLOW_NAMESPACE_END

@@ -77,7 +77,6 @@ namespace Graphics
 	};
 	typedef Core::Shared<ITileset> SharedTileset;
 	typedef Core::Weak<ITileset> WeakTileset;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

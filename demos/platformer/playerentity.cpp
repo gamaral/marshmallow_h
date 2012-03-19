@@ -70,7 +70,7 @@ PlayerEntity::update(float d)
 		Game::SharedSizeComponent l_size_component =
 		    getComponentType(Game::SizeComponent::Type()).staticCast<Game::SizeComponent>();
 		if (!l_size_component) {
-			MMERROR1("Player entity requires a size component to be present");
+			MMERROR("Player entity requires a size component to be present");
 			return;
 		}
 

@@ -34,6 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/logger.h"
 #include "core/platform.h"
 #include "core/type.h"
 
@@ -43,26 +44,37 @@ MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
 using namespace Event;
 
-DebugEventListener::DebugEventListener(const std::string &f)
-    : m_filestream(f.c_str(), std::ios_base::app)
+struct DebugEventListener::Private
 {
-	m_filestream << std::hex;
+	std::ofstream filestream;
+};
+
+DebugEventListener::DebugEventListener(const std::string &f)
+    : m_p(new Private)
+{
+	m_p->filestream.open(f.c_str(), std::ios_base::app);
+	if (m_p->filestream.is_open())
+		m_p->filestream << std::hex;
+	else MMERROR("Unable to open output file.");
 }
 
 DebugEventListener::~DebugEventListener(void)
 {
-	m_filestream.close();
+	m_p->filestream.close();
+	delete m_p;
+	m_p = 0;
 }
 
 bool
 DebugEventListener::handleEvent(const IEvent &e)
 {
-	m_filestream
-	    << Platform::TimeStampToTimeData(e.timeStamp()).string
-	    << ": MS " << e.timeStamp()
-	    << ": Event " << static_cast<const void *>(&e)
-	    << ": Type (" << e.type().uid() << ")" << e.type().str().c_str()
-	    << std::endl;
+	if (m_p->filestream.is_open())
+		m_p->filestream
+		    << Platform::TimeStampToTimeData(e.timeStamp()).string
+		    << ": MS " << e.timeStamp()
+		    << ": Event " << static_cast<const void *>(&e)
+		    << ": Type (" << e.type().uid() << ")" << e.type().str().c_str()
+		    << std::endl;
 
 	return false;
 }

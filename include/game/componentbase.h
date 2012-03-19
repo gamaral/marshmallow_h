@@ -46,7 +46,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	struct IEntity;
 	typedef Core::Weak<IEntity> WeakEntity;
 
@@ -54,8 +53,8 @@ namespace Game
 	class MARSHMALLOW_GAME_EXPORT
 	ComponentBase : public IComponent
 	{
-		Core::Identifier m_id;
-		IEntity &m_entity;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(ComponentBase);
 	public:
@@ -65,8 +64,7 @@ namespace Game
 
 	public: /* virtual */
 
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
+		VIRTUAL const Core::Identifier & id(void) const;
 
 		VIRTUAL void render(void) {};
 		VIRTUAL void update(float) {};
@@ -76,10 +74,8 @@ namespace Game
 
 	protected:
 
-		IEntity & entity(void) const
-		    { return(m_entity); }
+		IEntity & entity(void) const;
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

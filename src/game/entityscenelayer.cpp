@@ -53,34 +53,43 @@ using namespace Game;
 
 const Core::Type EntitySceneLayer::sType("Game::EntitySceneLayer");
 
+struct EntitySceneLayer::Private
+{
+	EntityList entities;
+	bool visiblility_testing;
+};
+
 EntitySceneLayer::EntitySceneLayer(const Core::Identifier &i, IScene &s, int f)
     : SceneLayerBase(i, s, f)
-    , m_entities()
-    , m_visiblility_testing(true)
+    , m_p(new Private)
 {
+	m_p->visiblility_testing = true;
 }
 
 EntitySceneLayer::~EntitySceneLayer(void)
 {
-	m_entities.clear();
+	m_p->entities.clear();
+
+	delete m_p;
+	m_p = 0;
 }
 
 void
 EntitySceneLayer::addEntity(const SharedEntity &e)
 {
-	m_entities.push_back(e);
+	m_p->entities.push_back(e);
 }
 
 void
 EntitySceneLayer::removeEntity(const Core::Identifier &i)
 {
 	EntityList::const_iterator l_i;
-	EntityList::const_iterator l_c = m_entities.end();
+	EntityList::const_iterator l_c = m_p->entities.end();
 
 	/* maybe replace later with a map if required */
-	for (l_i = m_entities.begin(); l_i != l_c; ++l_i) {
+	for (l_i = m_p->entities.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->id() == i) {
-			m_entities.remove(*l_i);
+			m_p->entities.remove(*l_i);
 			return;
 		}
 	}
@@ -89,17 +98,17 @@ EntitySceneLayer::removeEntity(const Core::Identifier &i)
 void
 EntitySceneLayer::removeEntity(const SharedEntity &e)
 {
-	m_entities.remove(e);
+	m_p->entities.remove(e);
 }
 
 SharedEntity
 EntitySceneLayer::getEntity(const Core::Identifier &i) const
 {
 	EntityList::const_iterator l_i;
-	EntityList::const_iterator l_c = m_entities.end();
+	EntityList::const_iterator l_c = m_p->entities.end();
 
 	/* maybe replace later with a map if required */
-	for (l_i = m_entities.begin(); l_i != l_c; ++l_i) {
+	for (l_i = m_p->entities.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->id() == i)
 			return(*l_i);
 	}
@@ -107,10 +116,22 @@ EntitySceneLayer::getEntity(const Core::Identifier &i) const
 	return(SharedEntity());
 }
 
+const EntityList &
+EntitySceneLayer::getEntities(void) const
+{
+	return(m_p->entities);
+}
+
+bool
+EntitySceneLayer::visiblityTesting(void) const
+{
+	return(m_p->visiblility_testing);
+}
+
 void
 EntitySceneLayer::setVisibilityTesting(bool value)
 {
-	m_visiblility_testing = value;
+	m_p->visiblility_testing = value;
 }
 
 void
@@ -118,11 +139,11 @@ EntitySceneLayer::render(void)
 {
 	EntityList::const_iterator l_i;
 
-	if (m_visiblility_testing) {
+	if (m_p->visiblility_testing) {
 		const Math::Point2 &l_camera_pos = Graphics::Viewport::Camera().translation();
 		const float l_visiblility_radius2 = Graphics::Viewport::Radius2();
 
-		for (l_i = m_entities.begin(); l_i != m_entities.end();l_i++) {
+		for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();l_i++) {
 			SharedEntity l_entity = (*l_i);
 			float l_size2 = 0;
 
@@ -154,7 +175,7 @@ EntitySceneLayer::render(void)
 				l_entity->render();
 		}
 	}
-	else for (l_i = m_entities.begin(); l_i != m_entities.end();l_i++)
+	else for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();l_i++)
 		if (!(*l_i)->isZombie()) (*l_i)->render();
 }
 
@@ -163,7 +184,7 @@ EntitySceneLayer::update(float d)
 {
 	EntityList::const_iterator l_i;
 
-	for (l_i = m_entities.begin(); l_i != m_entities.end();) {
+	for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();) {
 		SharedEntity l_entity = (*l_i++);
 
 		if (l_entity->isZombie())
@@ -180,7 +201,7 @@ EntitySceneLayer::serialize(TinyXML::TiXmlElement &n) const
 		return(false);
 
 	EntityList::const_iterator l_i;
-	for (l_i = m_entities.begin(); l_i != m_entities.end();) {
+	for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();) {
 		SharedEntity l_entity = (*l_i++);
 		TinyXML::TiXmlElement l_element("entity");
 		if (l_entity->serialize(l_element))
@@ -208,12 +229,12 @@ EntitySceneLayer::deserialize(TinyXML::TiXmlElement &n)
 		    FactoryBase::Instance()->createEntity(l_type, l_id, *this);
 
 		if (!l_entity) {
-			MMWARNING("Entity '%s' of type '%s' creation failed", l_id, l_type);
+			MMWARNING("Entity '" << l_id << "' of type '" << l_type << "' creation failed");
 			continue;
 		}
 
 		if (!l_entity->deserialize(*l_child)) {
-			MMWARNING("Entity '%s' of type '%s' failed deserialization", l_id, l_type);
+			MMWARNING("Entity '" << l_id << "' of type '" << l_type << "' failed deserialization");
 			continue;
 		}
 

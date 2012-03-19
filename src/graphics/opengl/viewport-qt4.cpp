@@ -261,7 +261,7 @@ namespace
 			case Qt::Key_F13:          l_key = Event::KEY_F13; break;
 			case Qt::Key_F14:          l_key = Event::KEY_F14; break;
 			case Qt::Key_F15:          l_key = Event::KEY_F15; break;
-			default: MMWARNING1("Unknown key pressed!");
+			default: MMWARNING("Unknown key pressed!");
 			}
 
 			bool l_key_pressed = false;
@@ -301,12 +301,12 @@ namespace
 		/* check status */
 
 		if (!s_window->format().directRendering()) {
-			MMERROR1("GL context doesn't support direct rendering.");
+			MMERROR("GL context doesn't support direct rendering.");
 			return(false);
 		}
 
 		if(glGetError() != GL_NO_ERROR) {
-			MMERROR1("GL failed during initialization.");
+			MMERROR("GL failed during initialization.");
 			return(false);
 		}
 

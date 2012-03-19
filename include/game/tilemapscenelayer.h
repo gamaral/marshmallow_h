@@ -54,31 +54,12 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	/*! @brief Game Tilemap Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
 	TilemapSceneLayer : public SceneLayerBase
 	{
-		typedef std::map<UINT32, Graphics::SharedTileset> TilesetCollection;
-		TilesetCollection m_tilesets;
-
-		typedef std::map<UINT32, Graphics::SharedVertexData> VertexDataCache;
-		VertexDataCache m_vertexes;
-
-		UINT32 *m_data;
-
-		Math::Size2f m_hrsize;
-		Math::Size2f m_hrtile_size;
-		Math::Size2f m_rsize;
-		Math::Size2f m_rtile_size;
-
-		Math::Vector2 m_translate;
-
-		Math::Size2i m_tile_size;
-		Math::Size2i m_size;
-
-		float m_opacity;
-		bool  m_visible;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(TilemapSceneLayer);
 	public:
@@ -91,28 +72,22 @@ namespace Game
 		void attachTileset(UINT32 offset, Graphics::SharedTileset tileset);
 		void dettachTileset(UINT32 offset);
 
-		const UINT32 * data(void) const
-		    { return(m_data); }
+		const UINT32 * data(void) const;
 		void setData(UINT32 *data);
 
-		const Math::Vector2 & translate(void) const
-		    { return(m_translate); }
+		const Math::Vector2 & translate(void) const;
 		void setTranslation(const Math::Vector2 &translation);
 
-		const Math::Size2i & tileSize(void) const
-		    { return(m_tile_size); }
+		const Math::Size2i & tileSize(void) const;
 		void setTileSize(const Math::Size2i &size);
 
-		const Math::Size2i & size(void) const
-		    { return(m_size); }
+		const Math::Size2i & size(void) const;
 		void setSize(const Math::Size2i &size);
 
-		float opacity(void) const
-		    { return (m_opacity); }
+		float opacity(void) const;
 		void setOpacity(float alpha);
 
-		bool visible(void) const
-		    { return (m_visible); }
+		bool visible(void) const;
 		void setVisibility(bool value);
 
 	public: /* virtual */
@@ -139,7 +114,6 @@ namespace Game
 	};
 	typedef Core::Shared<TilemapSceneLayer> SharedTilemapSceneLayer;
 	typedef Core::Weak<TilemapSceneLayer> WeakTilemapSceneLayer;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

@@ -67,17 +67,9 @@ namespace Game
 	EngineBase : public IEngine
 	{
 		static EngineBase *s_instance;
-		Event::SharedEventManager  m_event_manager;
-		Game::SharedSceneManager   m_scene_manager;
-		Game::SharedFactory        m_factory;
-		int    m_fps;
-		int    m_ups;
-		TIME   m_delta_time;
-		int    m_exit_code;
-		int    m_frame_rate;
-		bool   m_suspendable;
-		bool   m_running;
-		bool   m_valid;
+
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(EngineBase);
 	public:
@@ -108,26 +100,22 @@ namespace Game
 		/*!
 		 * @brief Target frames per second
 		 */
-		int fps(void) const
-		    { return(m_fps); }
+		int fps(void) const;
 
 		/*!
 		 * @brief Target updates per second
 		 */
-		int ups(void) const
-		    { return(m_ups); }
+		int ups(void) const;
 
 		/*!
 		 * @brief Time that has elapsed since last tick
 		 */
-		TIME deltaTime(void) const
-		    { return(m_delta_time); }
+		TIME deltaTime(void) const;
 
 		/*!
 		 * @brief Actual frame rate achieved
 		 */
-		int frameRate(void)
-		    { return(m_frame_rate); }
+		int frameRate(void);
 
 	public: /* virtual */
 
@@ -141,8 +129,7 @@ namespace Game
 		VIRTUAL bool initialize(void);
 		VIRTUAL void finalize(void);
 
-		VIRTUAL bool isValid(void) const
-		    { return(m_valid); }
+		VIRTUAL bool isValid(void) const;
 
 		VIRTUAL void second(void);
 		VIRTUAL void tick(void);
@@ -159,7 +146,6 @@ namespace Game
 
 		static EngineBase * Instance(void);
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

@@ -40,31 +40,58 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
-Transform::Transform(void)
-    : m_rotation(0.f)
-    , m_scale(Math::Pair::One())
-    , m_translation(Math::Point2::Zero())
+struct Transform::Private
 {
+	float rotation;
+	Math::Pair scale;
+	Math::Point2 translation;
+};
+
+Transform::Transform(void)
+    : m_p(new Private)
+{
+	m_p->rotation = 0.f;
 }
 
 Transform::Transform(const Transform &other)
-    : m_rotation(other.m_rotation)
-    , m_scale(other.m_scale)
-    , m_translation(other.m_translation)
+    : m_p(new Private)
 {
+	m_p->rotation = 0.f;
+	m_p->scale = other.m_p->scale;
+	m_p->translation = other.m_p->translation;
 }
 
 Transform::~Transform(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+float
+Transform::rotation(void) const
+{
+	return(m_p->rotation);
+}
+
+const Math::Pair &
+Transform::scale(void) const
+{
+	return(m_p->scale);
+}
+
+const Math::Point2 &
+Transform::translation(void) const
+{
+	return(m_p->translation);
 }
 
 Transform &
 Transform::operator =(const Transform& rhs)
 {
 	if (this != &rhs) {
-		m_rotation = rhs.m_rotation;
-		m_scale = rhs.m_scale;
-		m_translation = rhs.m_translation;
+		m_p->rotation = rhs.m_p->rotation;
+		m_p->scale = rhs.m_p->scale;
+		m_p->translation = rhs.m_p->translation;
 	}
 	return(*this);
 }
@@ -72,18 +99,18 @@ Transform::operator =(const Transform& rhs)
 void
 Transform::setScale(const Math::Pair &value)
 {
-	m_scale = value;
+	m_p->scale = value;
 }
 
 void
 Transform::setTranslation(const Math::Point2 &value)
 {
-	m_translation = value;
+	m_p->translation = value;
 }
 
 void
 Transform::setRotation(float value)
 {
-	m_rotation = value;
+	m_p->rotation = value;
 }
 

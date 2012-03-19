@@ -185,8 +185,8 @@ namespace Event
 	class MARSHMALLOW_EVENT_EXPORT
 	KeyboardEvent : public EventBase
 	{
-		KBActions m_action;
-		KBKeys    m_key;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(KeyboardEvent);
 	public:
@@ -194,11 +194,9 @@ namespace Event
 		KeyboardEvent(KBKeys key, KBActions action, TIME timestamp = 0);
 		virtual ~KeyboardEvent(void);
 
-		KBActions action(void) const
-		    { return(m_action); }
+		KBActions action(void) const;
 
-		KBKeys key(void) const
-		    { return(m_key); }
+		KBKeys key(void) const;
 
 	public: /* virtual */
 

@@ -54,28 +54,13 @@ namespace Graphics
 
 namespace Game
 {
-
 	/*! @brief Game Splash Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
 	SplashSceneLayer : public SceneLayerBase
 	                 , public Event::IEventListener
 	{
-		enum SplashState
-		{
-			ssInit     = 0,
-			ssFadeIn   = 1,
-			ssExposure = 2,
-			ssFadeOut  = 3,
-			ssFinished = 4
-		};
-
-		Graphics::SharedQuadMesh m_mesh;
-		float m_exposure;
-		float m_fade;
-		float m_timer;
-		SplashState m_state;
-		bool m_autoBegin;
-		bool m_autoKill;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(SplashSceneLayer);
 	public:
@@ -86,20 +71,14 @@ namespace Game
 
 		Graphics::SharedQuadMesh mesh(void) const;
 
-		float exposure(void) const
-		    { return(m_exposure); }
-		void setExposure(float t)
-		    { m_exposure = t; }
+		float exposure(void) const;
+		void setExposure(float t);
 
-		float fade(void) const
-		    { return(m_fade); }
-		void setFade(float t)
-		    { m_fade = t; }
+		float fade(void) const;
+		void setFade(float t);
 
-		bool autoKill(void) const
-		    { return(m_autoKill); }
-		void setAutoKill(bool ak)
-		    { m_autoKill = ak; }
+		bool autoKill(void) const;
+		void setAutoKill(bool ak);
 
 		void reset(void);
 		bool skip(void);
@@ -123,7 +102,7 @@ namespace Game
 
 	protected:
 
-		void setState(SplashState state);
+		void setState(int state);
 
 	private: /* static */
 
@@ -131,7 +110,6 @@ namespace Game
 	};
 	typedef Core::Shared<SplashSceneLayer> SharedSplashSceneLayer;
 	typedef Core::Weak<SplashSceneLayer> WeakSplashSceneLayer;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

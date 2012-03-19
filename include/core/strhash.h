@@ -49,7 +49,8 @@ namespace Core
 	class MARSHMALLOW_CORE_EXPORT
 	StrHash : public Hash
 	{
-		std::string m_str;
+		struct Private;
+		Private *m_p;
 
 	public:
 
@@ -72,16 +73,13 @@ namespace Core
 		    { return(result()); }
 
 		/*! @brief Hashed String */
-		const std::string & str(void) const
-		    { return(m_str); }
+		const std::string & str(void) const;
 
 	public: /* operator */
 
-		operator const std::string & (void) const
-		    { return(m_str); }
+		operator const std::string & (void) const;
 
-		operator const char * (void) const
-		    { return(m_str.c_str()); }
+		operator const char * (void) const;
 
 		Core::StrHash & operator=(const Core::StrHash &rhs);
 	};

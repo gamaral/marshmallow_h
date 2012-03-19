@@ -1,4 +1,4 @@
-add_definitions(-DEVENT_LIBRARY)
+add_definitions(-DMARSHMALLOW_EVENT_LIBRARY)
 
 file(GLOB MARSHMALLOW_EVENT_SRCS *.cpp)
 set(MARSHMALLOW_EVENT_LIBS marshmallow_core)

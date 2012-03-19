@@ -45,20 +45,19 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	/*! @brief Game Size Component Class */
 	class MARSHMALLOW_GAME_EXPORT
 	SizeComponent : public ComponentBase
 	{
-		Math::Size2f m_size;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(SizeComponent);
 	public:
 		SizeComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~SizeComponent(void);
 
-		Math::Size2f & size(void)
-			{ return(m_size); }
+		Math::Size2f & size(void);
 
 	public: /* virtual */
 
@@ -78,7 +77,6 @@ namespace Game
 	};
 	typedef Core::Shared<SizeComponent> SharedSizeComponent;
 	typedef Core::Weak<SizeComponent> WeakSizeComponent;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

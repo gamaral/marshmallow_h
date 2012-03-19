@@ -41,67 +41,80 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
 
-BufferIO::BufferIO(void)
-    : m_buffer(0)
-    , m_const_buffer(0)
-    , m_cursor(0)
-    , m_size(0)
+struct BufferIO::Private
 {
+	char        *buffer;
+	const char *const_buffer;
+	long        cursor;
+	size_t      size;
+};
+
+BufferIO::BufferIO(void)
+    : m_p(new Private)
+{
+	m_p->buffer = 0;
+	m_p->const_buffer = 0;
+	m_p->cursor = 0;
+	m_p->size = 0;
 }
 
 BufferIO::BufferIO(char *b, size_t s)
-    : m_buffer(b)
-    , m_const_buffer(b)
-    , m_cursor(0)
-    , m_size(s)
+    : m_p(new Private)
 {
+	m_p->buffer = b;
+	m_p->const_buffer = b;
+	m_p->cursor = 0;
+	m_p->size = s;
 }
 
 BufferIO::BufferIO(const char *cb, size_t s)
-    : m_buffer(0)
-    , m_const_buffer(cb)
-    , m_cursor(0)
-    , m_size(s)
+    : m_p(new Private)
 {
+	m_p->buffer = 0;
+	m_p->const_buffer = cb;
+	m_p->cursor = 0;
+	m_p->size = s;
 }
 
 BufferIO::~BufferIO(void)
 {
 	close();
+	delete m_p;
+	m_p = 0;
 }
 
 bool
 BufferIO::open(const Identifier &, DIOMode)
 {
-	MMWARNING1("BufferIO open was called, it will be ignored.");
+	MMWARNING("BufferIO open was called, it will be ignored.");
 	return(isOpen());
 }
 
 void
 BufferIO::close(void)
 {
-	m_buffer = 0;
-	m_const_buffer = 0;
-	m_cursor = 0;
-	m_size = 0;
+	m_p->buffer = 0;
+	m_p->const_buffer = 0;
+	m_p->cursor = 0;
+	m_p->size = 0;
 }
 
 bool
 BufferIO::isOpen(void) const
 {
-	return(m_const_buffer);
+	return(m_p->const_buffer);
 }
 
 size_t
 BufferIO::read(char *b, size_t bs)
 {
-	if (!m_const_buffer && m_cursor >= 0) return(0);
+	if (!m_p->const_buffer && m_p->cursor >= 0) return(0);
 
 	size_t l_rcount =
-	    (m_cursor + bs < m_size ? bs : m_size - m_cursor);
+	    (m_p->cursor + bs < m_p->size ? bs : m_p->size - m_p->cursor);
 
-	memcpy(b, m_const_buffer + m_cursor, l_rcount);
-	m_cursor += l_rcount;
+	memcpy(b, m_p->const_buffer + m_p->cursor, l_rcount);
+	m_p->cursor += l_rcount;
 
 	return(l_rcount);
 }
@@ -109,13 +122,13 @@ BufferIO::read(char *b, size_t bs)
 size_t
 BufferIO::write(const char *b, size_t bs)
 {
-	if (!m_buffer && m_cursor >= 0) return(0);
+	if (!m_p->buffer && m_p->cursor >= 0) return(0);
 
 	size_t l_rcount =
-	    (m_cursor + bs < m_size ? bs : m_size - m_cursor);
+	    (m_p->cursor + bs < m_p->size ? bs : m_p->size - m_p->cursor);
 
-	memcpy(m_buffer + m_cursor, b, l_rcount);
-	m_cursor += l_rcount;
+	memcpy(m_p->buffer + m_p->cursor, b, l_rcount);
+	m_p->cursor += l_rcount;
 
 	return(l_rcount);
 }
@@ -126,16 +139,28 @@ BufferIO::seek(long o, DIOSeek on)
 	long l_cursor = -1;
 
 	switch (on) {
-	case   DIOStart: if (o < m_size) l_cursor = o; break;
-	case     DIOEnd: if (m_size + o >= 0) l_cursor = m_size + o; break;
-	case DIOCurrent: if (m_cursor + o < m_size) l_cursor = m_cursor + o; break;
+	case   DIOStart: if (o < m_p->size) l_cursor = o; break;
+	case     DIOEnd: if (m_p->size + o >= 0) l_cursor = m_p->size + o; break;
+	case DIOCurrent: if (m_p->cursor + o < m_p->size) l_cursor = m_p->cursor + o; break;
 	default: return(false);
 	}
 
 	if (-1 == l_cursor)
 		return(false);
 
-	m_cursor = l_cursor;
+	m_p->cursor = l_cursor;
 	return(true);
+}
+
+long
+BufferIO::tell(void) const
+{
+	return(m_p->cursor);
+}
+
+size_t
+BufferIO::size(void) const
+{
+	return(m_p->size);
 }
 

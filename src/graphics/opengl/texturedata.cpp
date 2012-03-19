@@ -63,7 +63,7 @@ bool
 TextureData::load(const Core::Identifier &i)
 {
 	if (m_texture_id) {
-		MMWARNING1("Load texture asset called on active texture.");
+		MMWARNING("Load texture asset called on active texture.");
 		return(false);
 	}
 
@@ -82,14 +82,14 @@ TextureData::load(const Core::Identifier &i)
 		glDeleteTextures(1, &m_texture_id);
 		m_texture_id = 0;
 		m_size = Math::Size2i(0, 0);
-		MMWARNING("Failed to load texture (%s).", i.str().c_str());
+		MMWARNING("Failed to load texture (" << i.str() << ").");
 		return(false);
 	}
 
 	m_size = Math::Size2i(static_cast<int>(pi.Width), static_cast<int>(pi.Height));
 	m_id = i;
 
-	MMINFO1("Texture loaded.");
+	MMINFO("Texture loaded.");
 
 	return(true);
 }

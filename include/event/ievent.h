@@ -45,7 +45,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-
 	/*! @brief Event Interface */
 	struct IEvent
 	{
@@ -68,7 +67,6 @@ namespace Event
 	};
 	typedef Core::Shared<IEvent> SharedEvent;
 	typedef Core::Weak<IEvent> WeakEvent;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

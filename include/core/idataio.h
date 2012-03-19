@@ -81,7 +81,6 @@ namespace Core
 	};
 	typedef Shared<IDataIO> SharedDataIO;
 	typedef Weak<IDataIO> WeakDataIO;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

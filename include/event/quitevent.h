@@ -47,7 +47,8 @@ namespace Event
 	class MARSHMALLOW_EVENT_EXPORT
 	QuitEvent : public EventBase
 	{
-		int m_code;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(QuitEvent);
 	public:
@@ -55,8 +56,7 @@ namespace Event
 		QuitEvent(int code = 0, TIME timestamp = 0);
 		virtual ~QuitEvent(void);
 
-		int code(void) const
-		    { return(m_code); }
+		int code(void) const;
 
 	public: /* virtual */
 

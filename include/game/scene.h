@@ -43,7 +43,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	/*! @brief Game No Frills Scene Class */
 	class MARSHMALLOW_GAME_EXPORT
 	Scene : public SceneBase
@@ -67,7 +66,6 @@ namespace Game
 
 		static const Core::Type sType;
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

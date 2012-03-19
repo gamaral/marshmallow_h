@@ -63,15 +63,8 @@ namespace Event
 	{
 		static EventManager *s_instance;
 
-		typedef std::list<IEventListener *> EventListenerList;
-		typedef Core::Shared<EventListenerList> SharedEventListenerList;
-		typedef std::map<UID, SharedEventListenerList> EventListenerMap;
-		typedef std::list<SharedEvent> EventList;
-
-		EventListenerMap m_elmap;
-		EventList m_queue[2];
-		Core::Identifier m_id;
-		UINT8 m_active_queue;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(EventManager);
 	public:
@@ -81,8 +74,7 @@ namespace Event
 
 	public: /* virtual */
 
-		virtual const Core::Identifier & id(void) const
-		    { return(m_id); }
+		virtual const Core::Identifier & id(void) const;
 
 		virtual bool connect(IEventListener *handler, const Core::Type &type);
 		virtual bool disconnect(IEventListener *handler, const Core::Type &type);
@@ -97,7 +89,6 @@ namespace Event
 	public: /* static */
 
 		static EventManager *Instance(void);
-
 	};
 	typedef Core::Shared<EventManager> SharedEventManager;
 	typedef Core::Weak<EventManager> WeakEventManager;

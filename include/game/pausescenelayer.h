@@ -53,12 +53,12 @@ namespace Graphics
 
 namespace Game
 {
-
 	/*! @brief Game Pause Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
 	PauseSceneLayer : public SceneLayerBase
 	{
-		Graphics::SharedMesh m_mesh;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(PauseSceneLayer);
 	public:
@@ -87,7 +87,6 @@ namespace Game
 	};
 	typedef Core::Shared<PauseSceneLayer> SharedPauseSceneLayer;
 	typedef Core::Weak<PauseSceneLayer> WeakPauseSceneLayer;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

@@ -48,7 +48,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	struct IEntity;
 	typedef Core::Shared<IEntity> SharedEntity;
 
@@ -58,8 +57,8 @@ namespace Game
 	class MARSHMALLOW_GAME_EXPORT
 	EntitySceneLayer : public SceneLayerBase
 	{
-		EntityList m_entities;
-		bool m_visiblility_testing;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(EntitySceneLayer);
 	public:
@@ -72,11 +71,9 @@ namespace Game
 		void removeEntity(const Core::Identifier &identifier);
 		void removeEntity(const SharedEntity &entity);
 		SharedEntity getEntity(const Core::Identifier &identifier) const;
-		const EntityList & getEntities(void) const
-		    { return(m_entities); }
+		const EntityList & getEntities(void) const;
 
-		bool visiblityTesting(void) const
-		    { return(m_visiblility_testing); }
+		bool visiblityTesting(void) const;
 		void setVisibilityTesting(bool value);
 
 	public: /* virtual */
@@ -100,7 +97,6 @@ namespace Game
 	};
 	typedef Core::Shared<EntitySceneLayer> SharedEntitySceneLayer;
 	typedef Core::Weak<EntitySceneLayer> WeakEntitySceneLayer;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

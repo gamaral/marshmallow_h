@@ -37,6 +37,7 @@
 #include <algorithm>
 
 #include "core/logger.h"
+#include "core/platform.h"
 #include "core/weak.h"
 
 #include "event/ievent.h"
@@ -53,38 +54,61 @@ namespace {
 		return(lhs->priority() > rhs->priority()
 		   || lhs->timeStamp() < rhs->timeStamp());
 	}
+
+	typedef std::list<IEventListener *> EventListenerList;
+	typedef Core::Shared<EventListenerList> SharedEventListenerList;
+	typedef std::map<UID, SharedEventListenerList> EventListenerMap;
+	typedef std::list<SharedEvent> EventList;
 } // namespace
 
 /******************************************************************************/
 
+struct EventManager::Private
+{
+	EventListenerMap elmap;
+	EventList queue[2];
+	Core::Identifier id;
+	UINT8 active_queue;
+};
+
 EventManager * EventManager::s_instance(0);
 
 EventManager::EventManager(const Core::Identifier &i)
-    : m_elmap()
-    , m_id(i)
-    , m_active_queue(0)
+    : m_p(new Private)
 {
+	m_p->id = i;
+	m_p->active_queue = 0;
+
 	if (!s_instance) s_instance = this;
 }
 
 EventManager::~EventManager(void)
 {
 	if (s_instance == this) s_instance = 0;
+
+	delete m_p;
+	m_p = 0;
+}
+
+const Core::Identifier &
+EventManager::id(void) const
+{
+	return(m_p->id);
 }
 
 bool
 EventManager::connect(IEventListener *handler, const Core::Type &t)
 {
-	MMINFO("Connecting `%p` handler to event type `%s`", static_cast<const void *>(&handler), t.str().c_str());
+	MMINFO("Connecting `" << &handler << "` handler to event type `" << t.str() << "`.");
 
 	EventListenerMap::const_iterator l_elmapi =
-	    m_elmap.find(t.uid());
+	    m_p->elmap.find(t.uid());
 
 	/* if this is a new type, assign a new EventListenerList */
-	if (l_elmapi == m_elmap.end())
-		m_elmap[t.uid()] = new EventListenerList;
+	if (l_elmapi == m_p->elmap.end())
+		m_p->elmap[t.uid()] = new EventListenerList;
 
-	SharedEventListenerList l_listeners(m_elmap[t.uid()]);
+	SharedEventListenerList l_listeners(m_p->elmap[t.uid()]);
 
 	EventListenerList::const_iterator l_listenersi =
 	    std::find(l_listeners->begin(), l_listeners->end(), handler);
@@ -92,11 +116,11 @@ EventManager::connect(IEventListener *handler, const Core::Type &t)
 	if (l_listenersi == l_listeners->end())
 		l_listeners->push_back(handler);
 	else {
-		MMWARNING1("Failed! Listener already connected to this event type.");
+		MMWARNING("Failed! Listener already connected to this event type.");
 		return(false);
 	}
 
-	MMINFO("Connected! Current listener count is: %d", l_listeners->size());
+	MMINFO("Connected! Current listener count is: " << l_listeners->size() << ".");
 
 	return(true);
 }
@@ -104,20 +128,20 @@ EventManager::connect(IEventListener *handler, const Core::Type &t)
 bool
 EventManager::disconnect(IEventListener *handler, const Core::Type &t)
 {
-	MMINFO("Disconnecting `%p` handler from event type `%s`", static_cast<const void *>(&handler), t.str().c_str());
+	MMINFO("Disconnecting `" << &handler << "` handler from event type `" << t.str() << "`");
 
 	EventListenerMap::const_iterator l_elmapi =
-	    m_elmap.find(t.uid());
+	    m_p->elmap.find(t.uid());
 
 	/* if this is a new type, assign a new EventListenerList */
-	if (l_elmapi == m_elmap.end()) {
-		MMWARNING1("Failed! Event type not in registry.");
+	if (l_elmapi == m_p->elmap.end()) {
+		MMWARNING("Failed! Event type not in registry.");
 		return(false);
 	}
 
-	SharedEventListenerList l_listeners(m_elmap[t.uid()]);
+	SharedEventListenerList l_listeners(m_p->elmap[t.uid()]);
 	l_listeners->remove(handler);
-	MMINFO("Disconnected! Current listener count is: %d", l_listeners->size());
+	MMINFO("Disconnected! Current listener count is: " << l_listeners->size() << ".");
 
 	return(true);
 }
@@ -128,8 +152,8 @@ EventManager::dispatch(const IEvent &event)
 	bool l_handled = false;
 
 	EventListenerMap::const_iterator l_elmapi =
-	    m_elmap.find(event.type().uid());
-	if (l_elmapi == m_elmap.end())
+	    m_p->elmap.find(event.type().uid());
+	if (l_elmapi == m_p->elmap.end())
 		return(false);
 
 	SharedEventListenerList l_listeners(l_elmapi->second);
@@ -149,7 +173,7 @@ EventManager::dispatch(const IEvent &event)
 bool
 EventManager::dequeue(const SharedEvent &event, bool all)
 {
-	EventList &l_queue = m_queue[m_active_queue == 0 ? 1 : 0];
+	EventList &l_queue = m_p->queue[m_p->active_queue == 0 ? 1 : 0];
 
 	if (all) {
 		const UID l_type = event->type();
@@ -172,7 +196,7 @@ EventManager::dequeue(const SharedEvent &event, bool all)
 bool
 EventManager::queue(const SharedEvent &event)
 {
-	EventList &l_queue = m_queue[m_active_queue == 0 ? 1 : 0];
+	EventList &l_queue = m_p->queue[m_p->active_queue == 0 ? 1 : 0];
 	l_queue.push_back(event);
 	return(true);
 }
@@ -181,7 +205,7 @@ bool
 EventManager::execute()
 {
 	/* fetch and sort active queue */
-	EventList &l_queue = m_queue[m_active_queue];
+	EventList &l_queue = m_p->queue[m_p->active_queue];
 	l_queue.sort(SortSharedEvent);
 
 	/* dispatch events in active queue
@@ -199,7 +223,7 @@ EventManager::execute()
 
 	if (l_queue.empty()) {
 		/* switch active queues */
-		m_active_queue = (m_active_queue == 0 ? 1 : 0);
+		m_p->active_queue = (m_p->active_queue == 0 ? 1 : 0);
 		return(true);
 	}
 	return(false);

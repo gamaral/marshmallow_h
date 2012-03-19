@@ -77,7 +77,6 @@ namespace Game
 	};
 	typedef Core::Shared<IEntity> SharedEntity;
 	typedef Core::Weak<IEntity> WeakEntity;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

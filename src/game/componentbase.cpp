@@ -37,14 +37,31 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
+struct ComponentBase::Private
+{
+	Private(const Core::Identifier &i, IEntity &e)
+	    : id(i)
+	    , entity(e) {}
+
+	Core::Identifier id;
+	IEntity &entity;
+};
+
 ComponentBase::ComponentBase(const Core::Identifier &i, IEntity &e)
-    : m_id(i),
-      m_entity(e)
+    : m_p(new Private(i, e))
 {
 }
 
 ComponentBase::~ComponentBase(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+const Core::Identifier &
+ComponentBase::id(void) const
+{
+	return(m_p->id);
 }
 
 bool
@@ -60,5 +77,11 @@ ComponentBase::deserialize(TinyXML::TiXmlElement &n)
 {
 	MMUNUSED(n);
 	return(true);
+}
+
+IEntity &
+ComponentBase::entity(void) const
+{
+	return(m_p->entity);
 }
 

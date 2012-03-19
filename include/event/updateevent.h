@@ -47,7 +47,8 @@ namespace Event
 	class MARSHMALLOW_EVENT_EXPORT
 	UpdateEvent : public EventBase
 	{
-		float m_delta;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(UpdateEvent);
 	public:
@@ -55,8 +56,7 @@ namespace Event
 		UpdateEvent(float delta);
 		virtual ~UpdateEvent(void);
 
-		float delta(void) const
-		    { return(m_delta); }
+		float delta(void) const;
 
 	public: /* virtual */
 

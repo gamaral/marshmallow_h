@@ -68,19 +68,8 @@ namespace Extra
 	class MARSHMALLOW_EXTRA_EXPORT
 	TMXLoader
 	{
-		Game::IScene &m_scene;
-
-		typedef std::map<UINT16, Graphics::SharedTileset> TilesetCollection;
-		TilesetCollection m_tilesets;
-
-		Game::SharedSceneLayerList m_layers;
-
-		bool m_is_loaded;
-
-		Math::Size2f m_conv_ratio;
-		Math::Size2f m_hrmap_size;
-		Math::Size2i m_map_size;
-		Math::Size2i m_tile_size;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(TMXLoader);
 	public:
@@ -89,11 +78,9 @@ namespace Extra
 		virtual ~TMXLoader(void);
 
 		bool load(const char *file);
-		bool isLoaded(void) const
-		    { return(m_is_loaded); }
+		bool isLoaded(void) const;
 
-		const Game::SharedSceneLayerList & layers(void) const
-		    { return(m_layers); }
+		const Game::SharedSceneLayerList & layers(void) const;
 
 	private:
 

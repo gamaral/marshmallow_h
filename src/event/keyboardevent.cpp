@@ -41,15 +41,36 @@ using namespace Event;
 
 const Core::Type KeyboardEvent::sType("Event::KeyboardEvent");
 
+struct KeyboardEvent::Private
+{
+	KBActions action;
+	KBKeys key;
+};
+
 KeyboardEvent::KeyboardEvent(KBKeys k, KBActions a, TIME t)
     : EventBase(t, HighPriority)
-    , m_action(a)
-    , m_key(k)
+    , m_p(new Private)
 {
+	m_p->action = a;
+	m_p->key = k;
 }
 
 KeyboardEvent::~KeyboardEvent(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+KBActions
+KeyboardEvent::action(void) const
+{
+	return(m_p->action);
+}
+
+KBKeys
+KeyboardEvent::key(void) const
+{
+	return(m_p->key);
 }
 
 const Core::Type &

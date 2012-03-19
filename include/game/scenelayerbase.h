@@ -47,15 +47,12 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	/*! @brief Game Scene Layer Base Class */
 	class MARSHMALLOW_GAME_EXPORT
 	SceneLayerBase : public ISceneLayer
 	{
-		Core::Identifier m_id;
-		IScene &m_scene;
-		int m_flags;
-		bool m_killed;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(SceneLayerBase);
 	public:
@@ -66,26 +63,20 @@ namespace Game
 
 	public: /* virtual */
 
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
+		VIRTUAL const Core::Identifier & id(void) const;
 
-		VIRTUAL IScene &scene(void)
-		    { return(m_scene); }
+		VIRTUAL IScene &scene(void);
 
-		VIRTUAL int flags(void) const
-		    { return(m_flags); }
+		VIRTUAL int flags(void) const;
 
-		VIRTUAL void kill(void)
-		    { m_killed = true; }
-		VIRTUAL bool isZombie(void) const
-		    { return(m_killed); }
+		VIRTUAL void kill(void);
+		VIRTUAL bool isZombie(void) const;
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 	};
 	typedef Core::Shared<SceneLayerBase> SharedSceneLayerBase;
 	typedef Core::Weak<SceneLayerBase> WeakSceneLayerBase;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

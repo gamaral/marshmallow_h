@@ -59,7 +59,6 @@ namespace Core
 	};
 	typedef Shared<ISerializable> SharedSerializable;
 	typedef Weak<ISerializable> WeakSerializable;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

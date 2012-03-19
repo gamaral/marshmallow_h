@@ -54,8 +54,8 @@ namespace Core
 	class MARSHMALLOW_CORE_EXPORT
 	FileIO : public IDataIO
 	{
-		Identifier m_filename;
-		FILE      *m_handle;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(FileIO);
 	public:
@@ -81,7 +81,6 @@ namespace Core
 	};
 	typedef Shared<FileIO> SharedFileIO;
 	typedef Weak<FileIO> WeakFileIO;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

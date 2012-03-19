@@ -52,10 +52,8 @@ namespace Core
 	class MARSHMALLOW_CORE_EXPORT
 	BufferIO : public IDataIO
 	{
-		char  *m_buffer;
-		const char *m_const_buffer;
-		long m_cursor;
-		size_t m_size;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(BufferIO);
 	public:
@@ -76,15 +74,12 @@ namespace Core
 		VIRTUAL size_t write(const char *buffer, size_t bsize);
 
 		VIRTUAL bool seek(long offset, DIOSeek origin);
-		VIRTUAL long tell(void) const
-		    { return(m_cursor); }
+		VIRTUAL long tell(void) const;
 
-		VIRTUAL size_t size(void) const
-		    { return(m_size); }
+		VIRTUAL size_t size(void) const;
 	};
 	typedef Shared<BufferIO> SharedBufferIO;
 	typedef Weak<BufferIO> WeakBufferIO;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

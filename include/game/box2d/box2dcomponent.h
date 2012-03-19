@@ -63,15 +63,8 @@ namespace Game
 	class MARSHMALLOW_GAME_EXPORT
 	Box2DComponent : public ComponentBase
 	{
-		WeakBox2DSceneLayer m_b2layer;
-		WeakPositionComponent m_position;
-		WeakRenderComponent m_render;
-		Math::Size2f m_size;
-		b2Body* m_body;
-		int   m_body_type;
-		float m_density;
-		float m_friction;
-		bool  m_init;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(Box2DComponent);
 	public:
@@ -79,20 +72,11 @@ namespace Game
 		Box2DComponent(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~Box2DComponent(void);
 
-		b2Body * body(void)
-		    { return(m_body); }
-
-		int & bodyType(void)
-		    { return(m_body_type); }
-
-		float & density(void)
-		    { return(m_density); }
-
-		float & friction(void)
-		    { return(m_friction); }
-
-		Math::Size2f &size(void)
-		    { return(m_size); }
+		b2Body * body(void);
+		int & bodyType(void);
+		float & density(void);
+		float & friction(void);
+		Math::Size2f & size(void);
 
 	public: /* virtual */
 
@@ -114,7 +98,6 @@ namespace Game
 	};
 	typedef Core::Shared<Box2DComponent> SharedBox2DComponent;
 	typedef Core::Weak<Box2DComponent> WeakBox2DComponent;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

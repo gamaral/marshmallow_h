@@ -55,20 +55,8 @@ namespace Graphics
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	TilesetBase : public ITileset
 	{
-		SharedTextureCoordinateData **m_cache;
-
-		Core::Identifier  m_name;
-		Math::Size2i      m_size;
-		Math::Size2i      m_tile_size;
-		SharedTextureData m_texture_data;
-
-		int m_margin;
-		int m_spacing;
-
-		float *m_offset_col;
-		float *m_offset_row;
-		float  m_spacing_col;
-		float  m_spacing_row;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(TilesetBase);
 	public:
@@ -83,18 +71,12 @@ namespace Graphics
 
 	public: /* virtual */
 
-		VIRTUAL const Core::Identifier & name(void) const
-		    { return(m_name); }
-		VIRTUAL const Math::Size2i & size(void) const
-		    { return(m_size); }
-		VIRTUAL const SharedTextureData & textureData(void) const
-		    { return(m_texture_data); }
-		VIRTUAL const Math::Size2i & tileSize(void) const
-		    { return(m_tile_size); }
-		VIRTUAL int spacing(void) const
-		    { return(m_spacing); }
-		VIRTUAL int margin(void) const
-		    { return(m_margin); }
+		VIRTUAL const Core::Identifier & name(void) const;
+		VIRTUAL const Math::Size2i & size(void) const;
+		VIRTUAL const SharedTextureData & textureData(void) const;
+		VIRTUAL const Math::Size2i & tileSize(void) const;
+		VIRTUAL int spacing(void) const;
+		VIRTUAL int margin(void) const;
 		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(UINT16 index);
 		
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
@@ -106,7 +88,6 @@ namespace Graphics
 	};
 	typedef Core::Shared<TilesetBase> SharedTilesetBase;
 	typedef Core::Weak<TilesetBase> WeakTilesetBase;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

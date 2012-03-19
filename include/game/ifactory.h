@@ -88,7 +88,6 @@ namespace Game
 	};
 	typedef Core::Shared<IFactory> SharedFactory;
 	typedef Core::Weak<IFactory> WeakFactory;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

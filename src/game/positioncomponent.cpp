@@ -39,14 +39,27 @@ using namespace Game;
 
 const Core::Type PositionComponent::sType("Game::PositionComponent");
 
+struct PositionComponent::Private
+{
+	Math::Point2 position;
+};
+
 PositionComponent::PositionComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e),
-      m_position()
+    : ComponentBase(i, e)
+    , m_p(new Private)
 {
 }
 
 PositionComponent::~PositionComponent(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+Math::Point2 &
+PositionComponent::position(void)
+{
+	return(m_p->position);
 }
 
 bool
@@ -55,8 +68,8 @@ PositionComponent::serialize(TinyXML::TiXmlElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	n.SetDoubleAttribute("x", m_position.x());
-	n.SetDoubleAttribute("y", m_position.y());
+	n.SetDoubleAttribute("x", m_p->position.x());
+	n.SetDoubleAttribute("y", m_p->position.y());
 	return(true);
 }
 
@@ -66,8 +79,8 @@ PositionComponent::deserialize(TinyXML::TiXmlElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	n.QueryFloatAttribute("x", &m_position[0]);
-	n.QueryFloatAttribute("y", &m_position[1]);
+	n.QueryFloatAttribute("x", &m_p->position[0]);
+	n.QueryFloatAttribute("y", &m_p->position[1]);
 	return(true);
 }
 

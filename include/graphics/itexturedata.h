@@ -52,7 +52,6 @@ namespace Math
 
 namespace Graphics
 {
-
 	/*! @brief Graphics Texture Data Interface */
 	struct ITextureData : public Core::IAsset
 	{
@@ -66,7 +65,6 @@ namespace Graphics
 	};
 	typedef Core::Shared<ITextureData> SharedTextureData;
 	typedef Core::Weak<ITextureData> WeakTextureData;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

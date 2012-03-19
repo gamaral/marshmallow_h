@@ -45,7 +45,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	/*! @brief Game Factory Base Class */
 	class MARSHMALLOW_GAME_EXPORT
 	FactoryBase : public IFactory
@@ -81,7 +80,6 @@ namespace Game
 	};
 	typedef Core::Shared<IFactory> SharedFactory;
 	typedef Core::Weak<IFactory> WeakFactory;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

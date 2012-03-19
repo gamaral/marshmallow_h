@@ -48,7 +48,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	class PositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
@@ -56,9 +55,8 @@ namespace Game
 	class MARSHMALLOW_GAME_EXPORT
 	MovementComponent : public ComponentBase
 	{
-		WeakPositionComponent m_position;
-		Math::Vector2 m_acceleration;
-		Math::Vector2 m_velocity;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(MovementComponent);
 	public:
@@ -66,11 +64,8 @@ namespace Game
 		MovementComponent(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~MovementComponent(void);
 
-		Math::Vector2 & acceleration(void)
-		    { return(m_acceleration); }
-
-		Math::Vector2 & velocity(void)
-		    { return(m_velocity); }
+		Math::Vector2 & acceleration(void);
+		Math::Vector2 & velocity(void);
 
 		Math::Point2 simulate(float d) const;
 
@@ -94,7 +89,6 @@ namespace Game
 	};
 	typedef Core::Shared<MovementComponent> SharedMovementComponent;
 	typedef Core::Weak<MovementComponent> WeakMovementComponent;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

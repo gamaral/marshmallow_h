@@ -35,6 +35,7 @@
  */
 
 #include "core/logger.h"
+#include "core/platform.h"
 #include "core/weak.h"
 
 #include "event/eventmanager.h"
@@ -58,29 +59,44 @@ using namespace Game;
 
 EngineBase *EngineBase::s_instance = 0;
 
-EngineBase::EngineBase(int f, int u, bool s)
-    : m_event_manager()
-    , m_scene_manager()
-    , m_factory()
-    , m_fps(f)
-    , m_ups(u)
-    , m_delta_time(0)
-    , m_exit_code(0)
-    , m_frame_rate(0)
-    , m_suspendable(s)
-    , m_running(false)
-    , m_valid(false)
+struct EngineBase::Private
 {
-	if (!s_instance)
-		s_instance = this;
+	Event::SharedEventManager  event_manager;
+	Game::SharedSceneManager   scene_manager;
+	Game::SharedFactory        factory;
+	int    fps;
+	int    ups;
+	TIME   delta_time;
+	int    exit_code;
+	int    frame_rate;
+	bool   suspendable;
+	bool   running;
+	bool   valid;
+};
+
+EngineBase::EngineBase(int f, int u, bool s)
+    : m_p(new Private)
+{
+	m_p->fps = f;
+	m_p->ups = u;
+	m_p->delta_time = 0;
+	m_p->exit_code = 0;
+	m_p->frame_rate = 0;
+	m_p->suspendable = s;
+	m_p->running = false;
+	m_p->valid = false;
+
+	if (!s_instance) s_instance = this;
 	else
-		MMWARNING1("Started a second engine!");
+		MMWARNING("Started a second engine!");
 }
 
 EngineBase::~EngineBase(void)
 {
-	if (this == s_instance)
-		s_instance = 0;
+	if (this == s_instance) s_instance = 0;
+
+	delete m_p;
+	m_p = 0;
 }
 
 bool
@@ -90,22 +106,22 @@ EngineBase::initialize(void)
 
 	/* initialize viewport */
 	if (!Viewport::Initialize()) {
-		MMERROR1("Failed to initialize engine!");
+		MMERROR("Failed to initialize engine!");
 		return(false);
 	}
 
 	/* turn off vsync */
 	Viewport::SwapControl(false);
 
-	if (!m_event_manager)
-		m_event_manager = new Event::EventManager("EngineBase.EventManager");
-	if (!m_scene_manager)
-		m_scene_manager = new SceneManager();
-	if (!m_factory)
-		m_factory = new Factory();
+	if (!m_p->event_manager)
+		m_p->event_manager = new Event::EventManager("EngineBase.EventManager");
+	if (!m_p->scene_manager)
+		m_p->scene_manager = new SceneManager();
+	if (!m_p->factory)
+		m_p->factory = new Factory();
 
 	/* validate */
-	m_valid = true;
+	m_p->valid = true;
 
 	eventManager()->connect(this, Event::QuitEvent::Type());
 
@@ -118,50 +134,80 @@ EngineBase::finalize(void)
 	if (isValid())
 		eventManager()->disconnect(this, Event::QuitEvent::Type());
 
-	m_scene_manager.clear();
-	m_event_manager.clear();
+	m_p->scene_manager.clear();
+	m_p->event_manager.clear();
 
 	Viewport::Finalize();
 	Platform::Finalize();
 
 	/* invalidate */
-	m_valid = false;
+	m_p->valid = false;
+}
+
+bool
+EngineBase::isValid(void) const
+{
+	return(m_p->valid);
 }
 
 void
 EngineBase::setEventManager(const SharedEventManager &m)
 {
-	m_event_manager = m;
+	m_p->event_manager = m;
 }
 
 void
 EngineBase::setSceneManager(const SharedSceneManager &m)
 {
 	
-	m_scene_manager = m;
+	m_p->scene_manager = m;
 }
 
 void
 EngineBase::setFactory(const SharedFactory &f)
 {
-	m_factory = f;
+	m_p->factory = f;
+}
+
+int
+EngineBase::fps(void) const
+{
+	return(m_p->fps);
+}
+
+int
+EngineBase::ups(void) const
+{
+	return(m_p->ups);
+}
+
+TIME
+EngineBase::deltaTime(void) const
+{
+	return(m_p->delta_time);
+}
+
+int
+EngineBase::frameRate(void)
+{
+	return(m_p->frame_rate);
 }
 
 int
 EngineBase::run(void)
 {
 	if (!initialize()) {
-		MMERROR1("Engine initialization failed");
+		MMERROR("Engine initialization failed");
 		finalize();
 		return(-1);
 	}
 
 	TIME l_render = 0;
 #define MILLISECONDS_PER_SECOND 1000
-	TIME l_render_target = MILLISECONDS_PER_SECOND / m_fps;
+	TIME l_render_target = MILLISECONDS_PER_SECOND / m_p->fps;
 
 	TIME l_update = 0;
-	TIME l_update_target = MILLISECONDS_PER_SECOND / m_ups;
+	TIME l_update_target = MILLISECONDS_PER_SECOND / m_p->ups;
 
 	TIME l_second = 0;
 	TIME l_second_target = MILLISECONDS_PER_SECOND;
@@ -175,8 +221,8 @@ EngineBase::run(void)
 	for (int i = 0; i < TIME_INTERVAL_COUNT; ++i)
 		l_time_interval[i] = l_tick_target;
 
-	m_valid = true;
-	m_running = true;
+	m_p->valid = true;
+	m_p->running = true;
 
 	/* startup */
 	tick();
@@ -188,14 +234,14 @@ EngineBase::run(void)
 	{
 		l_tick = NOW();
 
-		m_delta_time = 0;
+		m_p->delta_time = 0;
 		for (int i = 0; i < TIME_INTERVAL_COUNT; ++i)
-			m_delta_time += l_time_interval[i];
-		m_delta_time /= TIME_INTERVAL_COUNT;
+			m_p->delta_time += l_time_interval[i];
+		m_p->delta_time /= TIME_INTERVAL_COUNT;
 
-		l_render += m_delta_time;
-		l_second += m_delta_time;
-		l_update += m_delta_time;
+		l_render += m_p->delta_time;
+		l_second += m_p->delta_time;
+		l_update += m_p->delta_time;
 
 		tick();
 
@@ -203,24 +249,24 @@ EngineBase::run(void)
 			update(static_cast<float>(l_update_target) / MILLISECONDS_PER_SECOND);
 			l_update -= l_update_target;
 			if (l_update > l_update_target)
-				MMINFO1("Skipping update frame."), l_update = 0;
+				MMINFO("Skipping update frame."), l_update = 0;
 		}
 
 		if (l_second >= l_second_target) {
 			second();
-			m_frame_rate = 0;
+			m_p->frame_rate = 0;
 			l_second -= l_second_target;
 		}
 
 		if (l_render >= l_render_target) {
 			render();
-			m_frame_rate++;
+			m_p->frame_rate++;
 			l_render -= l_render_target;
 			if (l_render > l_render_target)
-				MMINFO1("Skipping render frame."), l_render = 0;
+				MMINFO("Skipping render frame."), l_render = 0;
 		}
 
-		if (m_suspendable)
+		if (m_p->suspendable)
 			/* sleep */
 			Platform::Sleep(l_tick_target - (NOW() - l_tick));
 		else
@@ -229,52 +275,52 @@ EngineBase::run(void)
 
 		l_last_interval = (l_last_interval + 1) % TIME_INTERVAL_COUNT;
 		l_time_interval[l_last_interval] = NOW() - l_tick;
-	} while (m_running);
+	} while (m_p->running);
 
 	finalize();
 
-	return(m_exit_code);
+	return(m_p->exit_code);
 }
 
 void
 EngineBase::stop(int ec)
 {
-	MMINFO1("EngineBase stopped");
-	m_exit_code = ec;
-	m_running = false;
+	MMINFO("EngineBase stopped.");
+	m_p->exit_code = ec;
+	m_p->running = false;
 }
 
 SharedEventManager
 EngineBase::eventManager(void) const
 {
-	return(m_event_manager);
+	return(m_p->event_manager);
 }
 
 SharedSceneManager
 EngineBase::sceneManager(void) const
 {
-	return(m_scene_manager);
+	return(m_p->scene_manager);
 }
 
 SharedFactory
 EngineBase::factory(void) const
 {
-	return(m_factory);
+	return(m_p->factory);
 }
 
 void
 EngineBase::tick(void)
 {
 	Viewport::Tick();
-	if (m_event_manager) m_event_manager->execute();
-	else MMWARNING1("No event manager!");
+	if (m_p->event_manager) m_p->event_manager->execute();
+	else MMWARNING("No event manager!");
 }
 
 void
 EngineBase::second(void)
 {
-	MMWARNING("FPS %d!", m_frame_rate);
-	m_frame_rate = 0;
+	MMWARNING("FPS=" << m_p->frame_rate);
+	m_p->frame_rate = 0;
 }
 
 void
@@ -296,15 +342,15 @@ EngineBase::update(float d)
 bool
 EngineBase::serialize(TinyXML::TiXmlElement &n) const
 {
-	n.SetDoubleAttribute("fps", m_fps);
-	n.SetDoubleAttribute("ups", m_ups);
-	n.SetAttribute("suspendable", m_suspendable ? "t" : "f");
+	n.SetDoubleAttribute("fps", m_p->fps);
+	n.SetDoubleAttribute("ups", m_p->ups);
+	n.SetAttribute("suspendable", m_p->suspendable ? "t" : "f");
 
-	if (m_scene_manager) {
+	if (m_p->scene_manager) {
 		TinyXML::TiXmlElement l_element("scenes");
 
-		if (!m_scene_manager->serialize(l_element)) {
-			MMWARNING1("Scene Manager serialization failed");
+		if (!m_p->scene_manager->serialize(l_element)) {
+			MMWARNING("Scene Manager serialization failed");
 			return(false);
 		}
 
@@ -326,16 +372,16 @@ EngineBase::deserialize(TinyXML::TiXmlElement &n)
 
 	l_element = n.FirstChildElement("scenes");
 
-	n.QueryIntAttribute("fps", &m_fps);
-	n.QueryIntAttribute("ups", &m_ups);
+	n.QueryIntAttribute("fps", &m_p->fps);
+	n.QueryIntAttribute("ups", &m_p->ups);
 
 	const char *l_suspendable = n.Attribute("suspendable");
-	m_suspendable = (l_suspendable &&
+	m_p->suspendable = (l_suspendable &&
 	                (l_suspendable[0] == 't' || l_suspendable[0] == 'T'));
 
-	if (l_element && m_scene_manager)
-		m_scene_manager->deserialize(*l_element);
-	else if (l_element && !m_scene_manager)
+	if (l_element && m_p->scene_manager)
+		m_p->scene_manager->deserialize(*l_element);
+	else if (l_element && !m_p->scene_manager)
 		return(false);
 	
 	return(true);

@@ -37,31 +37,70 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
 
-Hash::Hash(void)
-    : m_result(0)
+struct Hash::Private
 {
+	UID result;
+};
+
+Hash::Hash(void)
+    : m_p(new Private)
+{
+	m_p->result = 0;
 }
 
 Hash::Hash(const char *d, size_t length, UID mask)
-    : m_result(Algorithm(d, length, mask))
+    : m_p(new Private)
 {
+	m_p->result = Algorithm(d, length, mask);
 }
 
 Hash::Hash(const Hash &copy)
-    : m_result(copy.m_result)
+    : m_p(new Private)
 {
+	m_p->result = copy.m_p->result;
 }
 
 Hash::~Hash(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+UID
+Hash::result(void) const
+{
+	return(m_p->result);
+}
+
+Hash::operator UID() const
+{
+	return(m_p->result);
 }
 
 Hash &
-Hash::operator=(const Marshmallow::Core::Hash &rhs)
+Hash::operator=(const Core::Hash &rhs)
 {
 	if (this != &rhs)
-		m_result = rhs.m_result;
+		m_p->result = rhs.m_p->result;
 	return(*this);
+}
+
+bool
+Hash::operator==(const Hash &rhs) const
+{
+	return(m_p->result == rhs.m_p->result);
+}
+
+bool
+Hash::operator!=(const Hash &rhs) const
+{
+	return(m_p->result != rhs.m_p->result);
+}
+
+bool
+Hash::operator<(const Hash &rhs) const
+{
+	return(m_p->result < rhs.m_p->result);
 }
 
 UID
@@ -88,6 +127,6 @@ Hash::Algorithm(const char *data, size_t length, UID mask)
 void
 Hash::rehash(const char *d, size_t length, UID mask)
 {
-	m_result = Algorithm(d, length, mask);
+	m_p->result = Algorithm(d, length, mask);
 }
 

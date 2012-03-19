@@ -46,7 +46,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-
 	/*! @brief Graphics Vertex Data Interface */
 	struct IVertexData : public Core::IAsset
 	{
@@ -59,7 +58,6 @@ namespace Graphics
 	};
 	typedef Core::Shared<IVertexData> SharedVertexData;
 	typedef Core::Weak<IVertexData> WeakVertexData;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

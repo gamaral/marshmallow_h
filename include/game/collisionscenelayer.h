@@ -56,7 +56,8 @@ namespace Game
 	class MARSHMALLOW_GAME_EXPORT
 	CollisionSceneLayer : public SceneLayerBase
 	{
-		ColliderList m_colliders;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(CollisionSceneLayer);
 	public:
@@ -68,8 +69,7 @@ namespace Game
 		void registerCollider(ColliderComponent &collider);
 		void deregisterCollider(ColliderComponent &collider);
 
-		const ColliderList & colliders(void) const
-		    { return(m_colliders); }
+		const ColliderList & colliders(void) const;
 
 	public: /* virtual */
 
@@ -92,7 +92,6 @@ namespace Game
 	};
 	typedef Core::Shared<CollisionSceneLayer> SharedCollisionSceneLayer;
 	typedef Core::Weak<CollisionSceneLayer> WeakCollisionSceneLayer;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

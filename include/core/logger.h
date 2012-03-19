@@ -37,45 +37,34 @@
 #ifndef MARSHMALLOW_CORE_LOGGER_H
 #define MARSHMALLOW_CORE_LOGGER_H 1
 
-#include <cstdio>
-#include <cstdlib>
+#include <iostream>
 
 #include <core/config.h>
-#include <core/environment.h>
-#include <core/platform.h>
 
 /*
  * TODO: Replace with Core::Logger
  */
 
-#define MMFATAL(x,...) fprintf(stderr, "%s [%s:%d]: FATAL: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__),exit(-1)
-#define MMFATAL1(x) fprintf(stderr, "%s [%s:%d]: FATAL: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__),exit(-1)
+#define MMFATAL(x) std::cerr << "[FATAL] " << __FILE__ << ":" << __LINE__ << " " << x << std::endl, exit(-1)
 
-#define MMERROR(x,...) fprintf(stderr, "%s [%s:%d]: ERROR: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
-#define MMERROR1(x) fprintf(stderr, "%s [%s:%d]: ERROR: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
+#define MMERROR(x) std::cerr << "[ERROR] " << __FILE__ << ":" << __LINE__ << " " << x << std::endl
 
 #if MARSHMALLOW_DEBUG && MARSHMALLOW_DEBUG_VERBOSITY >= 1
-#   define MMWARNING(x,...) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
-#   define MMWARNING1(x) fprintf(stderr, "%s [%s:%d]: WARN: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
+#   define MMWARNING(x) std::cerr << "[WARN] " << __FILE__ << ":" << __LINE__ << " " << x << std::endl
 #else
 #   define MMWARNING(x,...) (void)0
-#   define MMWARNING1(x) (void)0
 #endif
 
 #if MARSHMALLOW_DEBUG && MARSHMALLOW_DEBUG_VERBOSITY >= 2
-#   define MMINFO(x,...) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
-#   define MMINFO1(x) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
+#   define MMINFO(x) std::cerr << "[INFO] " << __FILE__ << ":" << __LINE__ << " " << x << std::endl
 #else
 #   define MMINFO(...) (void)0
-#   define MMINFO1(...) (void)0
 #endif
 
 #if MARSHMALLOW_DEBUG && MARSHMALLOW_DEBUG_VERBOSITY >= 3
-#   define MMVERBOSE(x,...) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__, __VA_ARGS__)
-#   define MMVERBOSE1(x) fprintf(stderr, "%s [%s:%d]: INFO: "x"\n", Core::Platform::TimeStampToTimeData(NOW()).string, __FILE__, __LINE__)
+#   define MMVERBOSE(x) std::cerr << "[INFO] " << __FILE__ << ":" << __LINE__ << " " << x << std::endl
 #else
 #   define MMVERBOSE(...) (void)0
-#   define MMVERBOS1(...) (void)0
 #endif
 
 #endif

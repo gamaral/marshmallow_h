@@ -42,7 +42,7 @@
 #include <core/environment.h>
 #include <core/namespace.h>
 
-#define NOW Core::Platform::TimeStamp
+#define NOW MARSHMALLOW_NAMESPACE::Core::Platform::TimeStamp
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

@@ -55,46 +55,77 @@ using namespace Game;
 
 const Core::Type ColliderComponent::sType("Game::ColliderComponent");
 
+struct ColliderComponent::Private
+{
+	WeakCollisionSceneLayer layer;
+	WeakMovementComponent   movement;
+	WeakPositionComponent   position;
+	WeakSizeComponent       size;
+	int  body;
+	bool active;
+	bool bullet;
+	bool init;
+};
+
 ColliderComponent::ColliderComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_layer()
-    , m_position()
-    , m_body(BoxType)
-    , m_active(true)
-    , m_bullet(false)
-    , m_init(false)
+    , m_p(new Private)
 {
+	m_p->body = BoxType;
+	m_p->active = true;
+	m_p->bullet = false;
+	m_p->init = false;
 }
 
 ColliderComponent::~ColliderComponent(void)
 {
-	if (m_layer) {
+	if (m_p->layer) {
 		/* deregister as collider */
-		m_layer->deregisterCollider(*this);
+		m_p->layer->deregisterCollider(*this);
 	}
+	delete m_p;
+	m_p = 0;
+}
+
+int &
+ColliderComponent::body(void)
+{
+	return(m_p->body);
+}
+
+bool &
+ColliderComponent::active(void)
+{
+	return(m_p->active);
+}
+
+bool &
+ColliderComponent::bullet(void)
+{
+	return(m_p->bullet);
 }
 
 float
 ColliderComponent::radius2(void) const
 {
 	float l_radius2 = 0;
-	if (m_size) {
-		const Math::Size2f &l_size = m_size->size();
+	if (m_p->size) {
+		const Math::Size2f &l_size = m_p->size->size();
 		l_radius2 = powf(l_size.width()  / 2.f, 2) +
 		            powf(l_size.height() / 2.f, 2);
 	}
-	else MMWARNING1("Collider component found no size component!");
+	else MMWARNING("Collider component found no size component!");
 	return(l_radius2);
 }
 
 bool
 ColliderComponent::isColliding(ColliderComponent &c, float d, CollisionData *data) const
 {
-	if (m_movement && c.position()) {
-		const Math::Point2 l_pos_a = m_movement->simulate(d);
+	if (m_p->movement && c.position()) {
+		const Math::Point2 l_pos_a = m_p->movement->simulate(d);
 		const Math::Point2 &l_pos_b = c.position()->position();
 
-		switch(m_body) {
+		switch(m_p->body) {
 		case SphereType: {
 			float l_distance2 = l_pos_b.difference(l_pos_a).magnitude2();
 			l_distance2 -= c.radius2() + radius2();
@@ -107,7 +138,7 @@ ColliderComponent::isColliding(ColliderComponent &c, float d, CollisionData *dat
 			} break;
 
 		case BoxType: {
-			const Math::Size2f l_size_a = m_size->size() / 2.f;
+			const Math::Size2f l_size_a = m_p->size->size() / 2.f;
 			const Math::Size2f l_size_b = c.size()->size() / 2.f;
 
 			const float l =
@@ -141,46 +172,46 @@ ColliderComponent::isColliding(ColliderComponent &c, float d, CollisionData *dat
 void
 ColliderComponent::update(float d)
 {
-	if (!m_movement) {
-		m_movement = entity().getComponentType("Game::MovementComponent").
+	if (!m_p->movement) {
+		m_p->movement = entity().getComponentType("Game::MovementComponent").
 		    staticCast<MovementComponent>();
 	}
 
-	if (!m_position) {
-		m_position = entity().getComponentType("Game::PositionComponent").
+	if (!m_p->position) {
+		m_p->position = entity().getComponentType("Game::PositionComponent").
 		    staticCast<PositionComponent>();
 	}
 
-	if (!m_size) {
-		m_size = entity().getComponentType("Game::SizeComponent").
+	if (!m_p->size) {
+		m_p->size = entity().getComponentType("Game::SizeComponent").
 		    staticCast<SizeComponent>();
 	}
 
-	if (!m_init && !m_layer && m_position && m_size) {
-		m_layer = entity().layer().scene()
+	if (!m_p->init && !m_p->layer && m_p->position && m_p->size) {
+		m_p->layer = entity().layer().scene()
 		    .getLayerType("Game::CollisionSceneLayer").staticCast<CollisionSceneLayer>();
-		if (!m_layer) {
-			MMWARNING1("Collider component used with no collision scene layer!");
+		if (!m_p->layer) {
+			MMWARNING("Collider component used with no collision scene layer!");
 			return;
 		}
 
 		/* register as collider */
-		m_layer->registerCollider(*this);
+		m_p->layer->registerCollider(*this);
 
-		m_init = true;
+		m_p->init = true;
 	}
 
-	if (m_active && m_init && m_movement && m_size && m_position) {
+	if (m_p->active && m_p->init && m_p->movement && m_p->size && m_p->position) {
 		ColliderList::const_iterator l_i;
-		ColliderList::const_iterator l_c = m_layer->colliders().end();
+		ColliderList::const_iterator l_c = m_p->layer->colliders().end();
 
-		for (l_i = m_layer->colliders().begin(); l_i != m_layer->colliders().end(); ++l_i) {
+		for (l_i = m_p->layer->colliders().begin(); l_i != m_p->layer->colliders().end(); ++l_i) {
 			if (*l_i == this) continue;
 
 			ColliderComponent *l_collider = *l_i;
 			CollisionData data;
 
-			if (m_bullet) {
+			if (m_p->bullet) {
 				const float l_delta_step = d / DELTA_STEPS;
 				float l_bullet_delta = 0;
 
@@ -216,6 +247,30 @@ ColliderComponent::deserialize(TinyXML::TiXmlElement &n)
 	    return(false);
 
 	return(true);
+}
+
+WeakCollisionSceneLayer &
+ColliderComponent::layer(void)
+{
+	return(m_p->layer);
+}
+
+WeakMovementComponent &
+ColliderComponent::movement(void)
+{
+	return(m_p->movement);
+}
+
+WeakPositionComponent &
+ColliderComponent::position(void)
+{
+	return(m_p->position);
+}
+
+WeakSizeComponent &
+ColliderComponent::size(void)
+{
+	return(m_p->size);
 }
 
 bool

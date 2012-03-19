@@ -41,14 +41,28 @@ using namespace Event;
 
 const Core::Type QuitEvent::sType("Event::QuitEvent");
 
-QuitEvent::QuitEvent(int c, TIME t)
-    : EventBase(t, HighPriority),
-      m_code(c)
+struct QuitEvent::Private
 {
+	int code;
+};
+
+QuitEvent::QuitEvent(int c, TIME t)
+    : EventBase(t, HighPriority)
+    , m_p(new Private)
+{
+	m_p->code = c;
 }
 
 QuitEvent::~QuitEvent(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+int
+QuitEvent::code(void) const
+{
+	return(m_p->code);
 }
 
 const Core::Type &

@@ -48,30 +48,43 @@ using namespace Game;
 
 const Core::Type RenderComponent::sType("Game::RenderComponent");
 
+struct RenderComponent::Private
+{
+	WeakPositionComponent position;
+	Graphics::SharedMesh  mesh;
+};
+
 RenderComponent::RenderComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e),
-      m_position(),
-      m_mesh()
+    : ComponentBase(i, e)
+    , m_p(new Private)
 {
 }
 
 RenderComponent::~RenderComponent(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+Graphics::SharedMesh &
+RenderComponent::mesh(void)
+{
+	return(m_p->mesh);
 }
 
 void
 RenderComponent::update(float)
 {
-	if (!m_position)
-		m_position = entity().getComponentType("Game::PositionComponent").
+	if (!m_p->position)
+		m_p->position = entity().getComponentType("Game::PositionComponent").
 		    staticCast<PositionComponent>();
 }
 
 void
 RenderComponent::render(void)
 {
-	if (m_position && m_mesh)
-		Graphics::Painter::Draw(*m_mesh, m_position->position());
+	if (m_p->position && m_p->mesh)
+		Graphics::Painter::Draw(*m_p->mesh, m_p->position->position());
 }
 
 bool
@@ -81,9 +94,8 @@ RenderComponent::serialize(TinyXML::TiXmlElement &n) const
 	    return(false);
 
 	TinyXML::TiXmlElement l_mesh("mesh");
-	if (m_mesh && !m_mesh->serialize(l_mesh)) {
-		MMWARNING("Render component '%s' serialization failed to serialize mesh!",
-		    id().str().c_str());
+	if (m_p->mesh && !m_p->mesh->serialize(l_mesh)) {
+		MMWARNING("Render component '" << id().str() << "' serialization failed to serialize mesh!");
 		return(false);
 	}
 	n.InsertEndChild(l_mesh);
@@ -99,8 +111,7 @@ RenderComponent::deserialize(TinyXML::TiXmlElement &n)
 
 	TinyXML::TiXmlElement *l_child = n.FirstChildElement("mesh");
 	if (!l_child) {
-		MMWARNING("Render component '%s' deserialized without a mesh!",
-		    id().str().c_str());
+		MMWARNING("Render component '" << id().str() << "' deserialized without a mesh!");
 		return(false);
 	}
 
@@ -108,18 +119,16 @@ RenderComponent::deserialize(TinyXML::TiXmlElement &n)
 	Graphics::SharedMesh l_mesh =
 	    Game::FactoryBase::Instance()->createMesh(l_mesh_type);
 	if (!l_mesh) {
-		MMWARNING("Render component '%s' has an unknown mesh type",
-		    id().str().c_str());
+		MMWARNING("Render component '" << id().str() << "' has an unknown mesh type");
 		return(false);
 	}
 
 	if (!l_mesh->deserialize(*l_child)) {
-		MMWARNING("Render component '%s' deserialization of mesh failed",
-		    id().str().c_str());
+		MMWARNING("Render component '" << id().str() << "' deserialization of mesh failed");
 		return(false);
 	}
 
-	m_mesh = l_mesh;
+	m_p->mesh = l_mesh;
 
 	return(true);
 }

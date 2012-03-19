@@ -66,18 +66,59 @@ using namespace TinyXML;
 MARSHMALLOW_NAMESPACE_USE
 using namespace Extra;
 
+/******************************************************************************/
+
+namespace {
+	typedef std::map<UINT16, Graphics::SharedTileset> TilesetCollection;
+} // namespace
+
+/******************************************************************************/
+
+struct TMXLoader::Private
+{
+	Private(Game::IScene &s)
+	    : scene(s)
+	    , is_loaded(false)
+	    , conv_ratio(0, 0)
+	    , hrmap_size(0, 0)
+	    , map_size(0, 0)
+	    , tile_size(0, 0) {}
+
+	Game::IScene &scene;
+
+	TilesetCollection tilesets;
+
+	Game::SharedSceneLayerList layers;
+
+	bool is_loaded;
+
+	Math::Size2f conv_ratio;
+	Math::Size2f hrmap_size;
+	Math::Size2i map_size;
+	Math::Size2i tile_size;
+};
+
 TMXLoader::TMXLoader(Game::IScene &s)
-    : m_scene(s)
-    , m_is_loaded(false)
-    , m_conv_ratio(0, 0)
-    , m_hrmap_size(0, 0)
-    , m_map_size(0, 0)
-    , m_tile_size(0, 0)
+    : m_p(new Private(s))
 {
 }
 
 TMXLoader::~TMXLoader(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+bool
+TMXLoader::isLoaded(void) const
+{
+	return(m_p->is_loaded);
+}
+
+const Game::SharedSceneLayerList &
+TMXLoader::layers(void) const
+{
+	return(m_p->layers);
 }
 
 bool
@@ -86,7 +127,7 @@ TMXLoader::load(const char *f)
 	TiXmlDocument l_tmx;
 	TiXmlElement *l_root;
 
-	m_is_loaded = false;
+	m_p->is_loaded = false;
 
 	if (!l_tmx.LoadFile(f))
 	    return(false);
@@ -118,20 +159,20 @@ TMXLoader::load(const char *f)
 
 	/* attach layers to scene */
 	Game::SharedSceneLayerList::iterator l_layer_i;
-	for (l_layer_i = m_layers.begin(); l_layer_i != m_layers.end(); ++l_layer_i)
-		m_scene.pushLayer(*l_layer_i);
+	for (l_layer_i = m_p->layers.begin(); l_layer_i != m_p->layers.end(); ++l_layer_i)
+		m_p->scene.pushLayer(*l_layer_i);
 
-	return(m_is_loaded = true);
+	return(m_p->is_loaded = true);
 }
 
 bool
 TMXLoader::processMap(TiXmlElement &m)
 {
-	if ((TIXML_SUCCESS != m.QueryIntAttribute("width", &m_map_size[0]))
-	 || (TIXML_SUCCESS != m.QueryIntAttribute("height", &m_map_size[1]))
-	 || (TIXML_SUCCESS != m.QueryIntAttribute("tilewidth", &m_tile_size[0]))
-	 || (TIXML_SUCCESS != m.QueryIntAttribute("tileheight", &m_tile_size[1]))) {
-		MMWARNING1("Map element is missing one or more required attributes.");
+	if ((TIXML_SUCCESS != m.QueryIntAttribute("width", &m_p->map_size[0]))
+	 || (TIXML_SUCCESS != m.QueryIntAttribute("height", &m_p->map_size[1]))
+	 || (TIXML_SUCCESS != m.QueryIntAttribute("tilewidth", &m_p->tile_size[0]))
+	 || (TIXML_SUCCESS != m.QueryIntAttribute("tileheight", &m_p->tile_size[1]))) {
+		MMWARNING("Map element is missing one or more required attributes.");
 		return(false);
 	}
 
@@ -139,18 +180,18 @@ TMXLoader::processMap(TiXmlElement &m)
 	const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
 
 	/* calculate pixels per viewport coordinate ratio */
-	m_conv_ratio[0] =
+	m_p->conv_ratio[0] =
 	    static_cast<float>(l_vsize.width())
 	        / static_cast<float>(l_wsize.width());
-	m_conv_ratio[1] =
+	m_p->conv_ratio[1] =
 	    static_cast<float>(l_vsize.height())
 	        / static_cast<float>(l_wsize.height());
 
 	/* calculate half-relative map size (used to offset coordinates) */
-	m_hrmap_size[0] = m_conv_ratio.width()
-	    * static_cast<float>(m_map_size.width() * m_tile_size.width());
-	m_hrmap_size[1] = m_conv_ratio.height()
-	    * static_cast<float>(m_map_size.height() * m_tile_size.height());
+	m_p->hrmap_size[0] = m_p->conv_ratio.width()
+	    * static_cast<float>(m_p->map_size.width() * m_p->tile_size.width());
+	m_p->hrmap_size[1] = m_p->conv_ratio.height()
+	    * static_cast<float>(m_p->map_size.height() * m_p->tile_size.height());
 
 	return(true);
 }
@@ -163,7 +204,7 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 	int l_visible = 1;
 
 	if ((!(l_name = e.Attribute("name")))) {
-		MMWARNING1("Layer element is missing one or more required attributes.");
+		MMWARNING("Layer element is missing one or more required attributes.");
 		return(false);
 	}
 
@@ -173,7 +214,7 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 	TiXmlElement *l_data = e.FirstChildElement(TMXLAYER_DATA_NODE);
 
 	if (!l_data) {
-		MMWARNING1("Layer element is missing data element.");
+		MMWARNING("Layer element is missing data element.");
 		return(false);
 	}
 
@@ -182,7 +223,7 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 
 	if (!(l_data_encoding = l_data->Attribute("encoding")) ||
 	    !(l_data_compression = l_data->Attribute("compression"))) {
-		MMWARNING1("Layer data element is missing one or more required attributes.");
+		MMWARNING("Layer data element is missing one or more required attributes.");
 		return(false);
 	}
 	const char *l_data_raw = l_data->GetText();
@@ -198,7 +239,7 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 		if (0 == strcmp(l_data_compression, TMXDATA_COMPRESSION_ZLIB)) {
 			char *l_inflated_data;
 			if (0 < Core::Zlib::Inflate(l_decoded_data, l_decoded_data_size,
-			    static_cast<size_t>(m_map_size.width() * m_map_size.height() * 4), &l_inflated_data))
+			    static_cast<size_t>(m_p->map_size.width() * m_p->map_size.height() * 4), &l_inflated_data))
 				l_data_array = l_inflated_data;
 		}
 #define TMXDATA_COMPRESSION_GZIP "gzip"
@@ -219,19 +260,19 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 	if (!l_data_array)
 		return(false);
 
-	Game::TilemapSceneLayer *l_layer = new Game::TilemapSceneLayer(l_name, m_scene);
+	Game::TilemapSceneLayer *l_layer = new Game::TilemapSceneLayer(l_name, m_p->scene);
 	l_layer->setData(reinterpret_cast<UINT32 *>(l_data_array));
 	l_layer->setOpacity(l_opacity);
-	l_layer->setSize(m_map_size);
-	l_layer->setTileSize(m_tile_size);
+	l_layer->setSize(m_p->map_size);
+	l_layer->setTileSize(m_p->tile_size);
 	l_layer->setVisibility(1 == l_visible);
 
 	/* attach tilesets */
 	TilesetCollection::iterator l_tileset_i;
-	for (l_tileset_i = m_tilesets.begin(); l_tileset_i != m_tilesets.end(); ++l_tileset_i)
+	for (l_tileset_i = m_p->tilesets.begin(); l_tileset_i != m_p->tilesets.end(); ++l_tileset_i)
 		l_layer->attachTileset(l_tileset_i->first, l_tileset_i->second);
 
-	m_layers.push_back(l_layer);
+	m_p->layers.push_back(l_layer);
 
 	return(true);
 }
@@ -242,11 +283,11 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 	const char *l_name;
 
 	if ((!(l_name = e.Attribute("name")))) {
-		MMWARNING1("Object group element is missing one or more required attributes.");
+		MMWARNING("Object group element is missing one or more required attributes.");
 		return(false);
 	}
 
-	Game::EntitySceneLayer *l_layer = new Game::EntitySceneLayer(l_name, m_scene);
+	Game::EntitySceneLayer *l_layer = new Game::EntitySceneLayer(l_name, m_p->scene);
 
 	TiXmlElement *l_object = e.FirstChildElement(TMXOBJECTGROUP_OBJECT_NODE);
 	while (l_object) {
@@ -255,8 +296,8 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 		int l_object_gid;
 		int l_object_x;
 		int l_object_y;
-		int l_object_width = m_tile_size.width();
-		int l_object_height = m_tile_size.height();
+		int l_object_width = m_p->tile_size.width();
+		int l_object_height = m_p->tile_size.height();
 
 		l_object_name = l_object->Attribute("name");
 		l_object_type = l_object->Attribute("type");
@@ -264,19 +305,19 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 		Game::SharedEntity l_entity = Game::Factory::Instance()->
 		    createEntity(l_object_type, l_object_name ? l_object_name : "", *l_layer);
 		if (!l_entity) {
-			MMWARNING("Object '%s' of type '%s' was left unhandled.", l_object_name, l_object_type);
+			MMWARNING("Object '" << l_object_name << "' of type '" << l_object_type << "' was left unhandled.");
 			return(false);
 		}
 
 		if ((TIXML_SUCCESS != l_object->QueryIntAttribute("x", &l_object_x))
 		 || (TIXML_SUCCESS != l_object->QueryIntAttribute("y", &l_object_y))) {
-			MMWARNING1("Object element is missing one or more required attributes.");
+			MMWARNING("Object element is missing one or more required attributes.");
 			return(false);
 		}
 
 		/* map offset position (0 in the middle) */
-		l_object_x -= (m_map_size.width()  * m_tile_size.width())  / 2;
-		l_object_y -= (m_map_size.height() * m_tile_size.height()) / 2;
+		l_object_x -= (m_p->map_size.width()  * m_p->tile_size.width())  / 2;
+		l_object_y -= (m_p->map_size.height() * m_p->tile_size.height()) / 2;
 		l_object_y *= -1; /* invert top/bottom */
 
 		/* object size (later initialized) */
@@ -289,8 +330,8 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 			l_object->QueryIntAttribute("height", &l_object_height);
 
 			/* calculate object size */
-			l_object_rsize[0] = m_conv_ratio.width()  * static_cast<float>(l_object_width);
-			l_object_rsize[1] = m_conv_ratio.height() * static_cast<float>(l_object_height);
+			l_object_rsize[0] = m_p->conv_ratio.width()  * static_cast<float>(l_object_width);
+			l_object_rsize[1] = m_p->conv_ratio.height() * static_cast<float>(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
 		/* tile object */
@@ -303,24 +344,24 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 
 			/* look for appropriate tileset */
 			TilesetCollection::iterator l_tileset_i;
-			for (l_tileset_i = m_tilesets.begin(); l_tileset_i != m_tilesets.end(); ++l_tileset_i)
+			for (l_tileset_i = m_p->tilesets.begin(); l_tileset_i != m_p->tilesets.end(); ++l_tileset_i)
 				if (l_tileset_i->first > l_ts_firstgid && l_tileset_i->first <= l_object_gid) {
 					l_ts_firstgid = l_tileset_i->first;
 					l_found = true;
 				}
 
 			if (!l_found) {
-				MMWARNING1("Object tile GID tileset was not found.");
+				MMWARNING("Object tile GID tileset was not found.");
 				return(false);
 			}
 
-			Graphics::SharedTileset l_tileset = m_tilesets[l_ts_firstgid];
+			Graphics::SharedTileset l_tileset = m_p->tilesets[l_ts_firstgid];
 
 			/* calculate object size from tileset */
 			l_object_width  = l_tileset->tileSize().width();
 			l_object_height = l_tileset->tileSize().height();
-			l_object_rsize[0] = m_conv_ratio.width()  * static_cast<float>(l_object_width);
-			l_object_rsize[1] = m_conv_ratio.height() * static_cast<float>(l_object_height);
+			l_object_rsize[0] = m_p->conv_ratio.width()  * static_cast<float>(l_object_width);
+			l_object_rsize[1] = m_p->conv_ratio.height() * static_cast<float>(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
 			/* attach tileset used */
@@ -350,8 +391,8 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 
 		/* create position component */
 		Game::PositionComponent *l_pos_component = new Game::PositionComponent("position", *l_entity);
-		l_pos_component->position()[0] = m_conv_ratio.width()  * static_cast<float>(l_object_x);
-		l_pos_component->position()[1] = m_conv_ratio.height() * static_cast<float>(l_object_y);
+		l_pos_component->position()[0] = m_p->conv_ratio.width()  * static_cast<float>(l_object_x);
+		l_pos_component->position()[1] = m_p->conv_ratio.height() * static_cast<float>(l_object_y);
 
 		/* change position to center of object (offset) */
 		l_pos_component->position()[0] += l_object_hrsize.width();
@@ -370,7 +411,7 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 		l_object = l_object->NextSiblingElement(TMXOBJECTGROUP_OBJECT_NODE);
 	}
 
-	m_layers.push_back(l_layer);
+	m_p->layers.push_back(l_layer);
 
 	return(true);
 }
@@ -389,7 +430,7 @@ TMXLoader::processTileset(TiXmlElement &e)
 	 || (!(l_name = e.Attribute("name")))
 	 || (TIXML_SUCCESS != e.QueryIntAttribute("tilewidth", &l_tile_width))
 	 || (TIXML_SUCCESS != e.QueryIntAttribute("tileheight", &l_tile_height))) {
-		MMWARNING1("Tileset element is missing one or more required attributes.");
+		MMWARNING("Tileset element is missing one or more required attributes.");
 		return(false);
 	}
 
@@ -399,7 +440,7 @@ TMXLoader::processTileset(TiXmlElement &e)
 
 	TiXmlElement *l_image = e.FirstChildElement(TMXTILESET_IMAGE_NODE);
 	if (!l_image) {
-		MMWARNING1("Tileset element is missing an image element.");
+		MMWARNING("Tileset element is missing an image element.");
 		return(false);
 	}
 	const char *l_source = l_image->Attribute("source");
@@ -407,7 +448,7 @@ TMXLoader::processTileset(TiXmlElement &e)
 
 	Graphics::SharedTextureData l_texture = Graphics::Factory::CreateTextureData();
 	if (!l_texture->load(l_source)) {
-		MMERROR1("Failed to load tileset texture.");
+		MMERROR("Failed to load tileset texture.");
 		return(false);
 	}
 	// TODO(gamaral) use transparent color.
@@ -419,7 +460,7 @@ TMXLoader::processTileset(TiXmlElement &e)
 	l_tileset->setSpacing(l_tile_spacing);
 	l_tileset->setTileSize(Math::Size2i(l_tile_width, l_tile_height));
 	l_tileset->setTextureData(l_texture);
-	m_tilesets[static_cast<UINT16>(l_first_gid)] = l_tileset;
+	m_p->tilesets[static_cast<UINT16>(l_first_gid)] = l_tileset;
 
 	return(true);
 }

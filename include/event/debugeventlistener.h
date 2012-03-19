@@ -50,7 +50,8 @@ namespace Event
 	class MARSHMALLOW_EVENT_EXPORT
 	DebugEventListener : public IEventListener
 	{
-		std::ofstream m_filestream;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(DebugEventListener);
 	public:

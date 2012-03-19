@@ -40,42 +40,66 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
 
+struct StrHash::Private
+{
+	std::string str;
+};
+
 StrHash::StrHash(void)
     : Hash()
-    , m_str()
+    , m_p(new Private)
 {
 }
 
 StrHash::StrHash(const char *s)
     : Hash()
-    , m_str(s)
+    , m_p(new Private)
 {
-	rehash(s, m_str.length(), ~static_cast<UID>(0));
+	m_p->str = s;
+	rehash(s, m_p->str.length(), ~static_cast<UID>(0));
 }
 
 StrHash::StrHash(const std::string &s)
     : Hash()
-    , m_str(s)
+    , m_p(new Private)
 {
-	rehash(m_str.c_str(), m_str.length(), ~static_cast<UID>(0));
+	m_p->str = s;
+	rehash(m_p->str.c_str(), m_p->str.length(), ~static_cast<UID>(0));
 }
 
 StrHash::StrHash(const StrHash &c)
     : Hash(c)
-    , m_str(c.m_str)
+    , m_p(new Private)
 {
+	m_p->str = c.m_p->str;
 }
 
 StrHash::~StrHash(void)
 {
 }
 
+const std::string &
+StrHash::str(void) const
+{
+	return(m_p->str);
+}
+
+StrHash::operator const std::string & (void) const
+{
+	return(m_p->str);
+}
+
+StrHash::operator const char * (void) const
+{
+	return(m_p->str.c_str());
+}
+
 StrHash &
-StrHash::operator=(const Marshmallow::Core::StrHash &rhs)
+StrHash::operator=(const Core::StrHash &rhs)
 {
 	if (this != &rhs) {
 		Hash::operator=(rhs);
-		m_str = rhs.m_str;
+		m_p->str = rhs.m_p->str;
 	}
 	return(*this);
 }

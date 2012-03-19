@@ -66,14 +66,8 @@ namespace Game
 	class MARSHMALLOW_GAME_EXPORT
 	ColliderComponent : public ComponentBase
 	{
-		WeakCollisionSceneLayer m_layer;
-		WeakMovementComponent m_movement;
-		WeakPositionComponent m_position;
-		WeakSizeComponent m_size;
-		int  m_body;
-		bool m_active;
-		bool m_bullet;
-		bool m_init;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(ColliderComponent);
 	public:
@@ -89,14 +83,9 @@ namespace Game
 		ColliderComponent(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~ColliderComponent(void);
 
-		int &body(void)
-		    { return(m_body); }
-
-		bool &active(void)
-		    { return(m_active); }
-
-		bool &bullet(void)
-		    { return(m_bullet); }
+		int  &body(void);
+		bool &active(void);
+		bool &bullet(void);
 
 		float radius2(void) const;
 
@@ -112,14 +101,10 @@ namespace Game
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 
-		WeakCollisionSceneLayer &layer(void)
-		    { return(m_layer); }
-		WeakMovementComponent &movement(void)
-		    { return(m_movement); }
-		WeakPositionComponent &position(void)
-		    { return(m_position); }
-		WeakSizeComponent &size(void)
-		    { return(m_size); }
+		WeakCollisionSceneLayer & layer(void);
+		WeakMovementComponent & movement(void);
+		WeakPositionComponent & position(void);
+		WeakSizeComponent & size(void);
 
 	public: /* static */
 

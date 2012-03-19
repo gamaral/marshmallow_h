@@ -105,7 +105,6 @@ namespace Game
 		virtual void second(void) = 0;
 		virtual void tick(void) = 0;
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

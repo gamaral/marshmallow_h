@@ -51,7 +51,6 @@ namespace Graphics
 
 namespace Game
 {
-
 	class PositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
@@ -59,7 +58,8 @@ namespace Game
 	class MARSHMALLOW_GAME_EXPORT
 	TilesetComponent : public ComponentBase
 	{
-		Graphics::SharedTileset m_tileset;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(TilesetComponent);
 	public:
@@ -67,8 +67,7 @@ namespace Game
 		TilesetComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~TilesetComponent(void);
 
-		Graphics::SharedTileset & tileset(void)
-			{ return(m_tileset); }
+		Graphics::SharedTileset & tileset(void);
 
 	public: /* virtual */
 
@@ -84,7 +83,6 @@ namespace Game
 	};
 	typedef Core::Shared<TilesetComponent> SharedTilesetComponent;
 	typedef Core::Weak<TilesetComponent> WeakTilesetComponent;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

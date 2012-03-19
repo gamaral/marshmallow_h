@@ -26,8 +26,6 @@
  * or implied, of Marshmallow Platform.
  */
 
-#include "entrypoint/platform.h"
-
 /*!
  * @file
  *
@@ -37,6 +35,8 @@
 #include <windows.h>
 
 #include "core/config.h"
+
+extern int MMain(int argc, char *argv[]);
 
 #if MARSHMALLOW_DEBUG
 int

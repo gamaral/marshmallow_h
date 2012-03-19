@@ -74,7 +74,7 @@ VertexData::buffer(void)
 	glBufferData(GL_ARRAY_BUFFER, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	MMVERBOSE("Buffered data. ID: %d", m_bufferId);
+	MMVERBOSE("Buffered data. ID: " << m_bufferId << ".");
 }
 
 void
@@ -83,7 +83,7 @@ VertexData::unbuffer(void)
 	if (!GLEE_ARB_vertex_buffer_object || !isBuffered())
 		return;
 
-	MMVERBOSE("Unbuffered data. ID: %d", m_bufferId);
+	MMVERBOSE("Unbuffered data. ID: " << m_bufferId << ".");
 
 	glDeleteBuffers(1, &m_bufferId);
 	m_bufferId = 0;

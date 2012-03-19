@@ -48,13 +48,12 @@ namespace Math { class Vector2; }
 
 namespace Game
 {
-
 	/*! @brief Game Box2D Powered Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
 	Box2DSceneLayer : public SceneLayerBase
 	{
-		struct Internal;
-		Internal *m_internal;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(Box2DSceneLayer);
 	public:
@@ -66,7 +65,7 @@ namespace Game
 		Math::Vector2 gravity(void) const;
 		void setGravity(const Math::Vector2 &gravity);
 
-		b2World &world(void);
+		b2World & world(void);
 
 	public: /* virtual */
 
@@ -89,7 +88,6 @@ namespace Game
 	};
 	typedef Core::Shared<Box2DSceneLayer> SharedBox2DSceneLayer;
 	typedef Core::Weak<Box2DSceneLayer> WeakBox2DSceneLayer;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

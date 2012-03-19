@@ -44,25 +44,39 @@ using namespace Game;
 
 const Core::Type CollisionSceneLayer::sType("Game::CollisionSceneLayer");
 
+struct CollisionSceneLayer::Private
+{
+	ColliderList colliders;
+};
+
 CollisionSceneLayer::CollisionSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s)
+    , m_p(new Private)
 {
 }
 
 CollisionSceneLayer::~CollisionSceneLayer(void)
 {
+	delete m_p;
+	m_p = 0;
 }
 
 void
 CollisionSceneLayer::registerCollider(ColliderComponent &collider)
 {
-	m_colliders.push_back(&collider);
+	m_p->colliders.push_back(&collider);
 }
 
 void
 CollisionSceneLayer::deregisterCollider(ColliderComponent &collider)
 {
-	m_colliders.remove(&collider);
+	m_p->colliders.remove(&collider);
+}
+
+const ColliderList &
+CollisionSceneLayer::colliders(void) const
+{
+	return(m_p->colliders);
 }
 
 void

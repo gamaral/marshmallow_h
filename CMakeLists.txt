@@ -149,18 +149,18 @@ endif()
 
 include(cmake/contrib.cmake)
 
-####################################################################### TARGET #
+##################################################################### INCLUDES #
 
 include_directories(${PROJECT_BINARY_DIR}/include
                     ${PROJECT_SOURCE_DIR}/include
-                    ${PROJECT_BINARY_DIR}/src
-                    ${PROJECT_SOURCE_DIR}/src
                     ${TINYXML_INCLUDE_DIR})
 
 ############################################################## SUB DIRECTORIES #
 
 add_subdirectory(contrib)
 add_subdirectory(src)
+
+####################################################################### TARGET #
 
 if(EXISTS ${PROJECT_SOURCE_DIR}/target/CMakeLists.txt)
 	add_subdirectory(target)

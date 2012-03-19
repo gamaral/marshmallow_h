@@ -43,7 +43,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	/*! @brief Game No Frills Entity Class */
 	class MARSHMALLOW_GAME_EXPORT Entity : public EntityBase
 	{
@@ -66,7 +65,6 @@ namespace Game
 
 		static const Core::Type sType;
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

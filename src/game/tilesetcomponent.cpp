@@ -39,14 +39,27 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
+struct TilesetComponent::Private
+{
+	Graphics::SharedTileset tileset;
+};
+
 TilesetComponent::TilesetComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_tileset()
+    , m_p(new Private)
 {
 }
 
 TilesetComponent::~TilesetComponent(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+Graphics::SharedTileset &
+TilesetComponent::tileset(void)
+{
+	return(m_p->tileset);
 }
 
 bool

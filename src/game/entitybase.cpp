@@ -42,40 +42,73 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
+/******************************************************************************/
+
+namespace {
+	typedef std::list<SharedComponent> ComponentList;
+} // namespace
+
+/******************************************************************************/
+
+struct EntityBase::Private
+{
+	Private(const Core::Identifier &i, EntitySceneLayer &l)
+	    : id(i)
+	    , layer(l)
+	    , killed(false) {}
+
+	ComponentList components;
+	Core::Identifier id;
+	EntitySceneLayer &layer;
+	bool killed;
+};
+
 EntityBase::EntityBase(const Core::Identifier &i, EntitySceneLayer &l)
-    : m_components(),
-      m_id(i),
-      m_layer(l),
-      m_killed(false)
+    : m_p(new Private(i, l))
 {
 }
 
 EntityBase::~EntityBase(void)
 {
-	m_components.clear();
+	m_p->components.clear();
+
+	delete m_p;
+	m_p = 0;
+}
+
+const Core::Identifier &
+EntityBase::id(void) const
+{
+	return(m_p->id);
+}
+
+EntitySceneLayer &
+EntityBase::layer(void)
+{
+	return(m_p->layer);
 }
 
 void
 EntityBase::pushComponent(const SharedComponent &c)
 {
-	m_components.push_front(c);
+	m_p->components.push_front(c);
 }
 
 void
 EntityBase::popComponent(void)
 {
-	m_components.pop_front();
+	m_p->components.pop_front();
 }
 
 void
 EntityBase::removeComponent(const Core::Identifier &i)
 {
 	ComponentList::const_iterator l_i;
-	ComponentList::const_iterator l_c = m_components.end();
+	ComponentList::const_iterator l_c = m_p->components.end();
 
-	for (l_i = m_components.begin(); l_i != l_c; ++l_i)
+	for (l_i = m_p->components.begin(); l_i != l_c; ++l_i)
 		if ((*l_i)->id() == i) {
-			m_components.remove(*l_i);
+			m_p->components.remove(*l_i);
 			return;
 		}
 }
@@ -83,16 +116,16 @@ EntityBase::removeComponent(const Core::Identifier &i)
 void
 EntityBase::removeComponent(const SharedComponent &c)
 {
-	m_components.remove(c);
+	m_p->components.remove(c);
 }
 
 SharedComponent
 EntityBase::getComponent(const Core::Identifier &i) const
 {
 	ComponentList::const_iterator l_i;
-	ComponentList::const_iterator l_c = m_components.end();
+	ComponentList::const_iterator l_c = m_p->components.end();
 
-	for (l_i = m_components.begin(); l_i != l_c; ++l_i) {
+	for (l_i = m_p->components.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->id() == i)
 			return(*l_i);
 	}
@@ -103,9 +136,9 @@ SharedComponent
 EntityBase::getComponentType(const Core::Type &t) const
 {
 	ComponentList::const_iterator l_i;
-	ComponentList::const_iterator l_c = m_components.end();
+	ComponentList::const_iterator l_c = m_p->components.end();
 
-	for (l_i = m_components.begin(); l_i != l_c; ++l_i) {
+	for (l_i = m_p->components.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->type() == t)
 			return(*l_i);
 	}
@@ -118,9 +151,9 @@ EntityBase::render(void)
 	if (isZombie()) return;
 
 	ComponentList::const_reverse_iterator l_i;
-	ComponentList::const_reverse_iterator l_c = m_components.rend();
+	ComponentList::const_reverse_iterator l_c = m_p->components.rend();
 
-	for (l_i = m_components.rbegin(); l_i != l_c; ++l_i)
+	for (l_i = m_p->components.rbegin(); l_i != l_c; ++l_i)
 		(*l_i)->render();
 }
 
@@ -130,10 +163,22 @@ EntityBase::update(float d)
 	if (isZombie()) return;
 
 	ComponentList::const_reverse_iterator l_i;
-	ComponentList::const_reverse_iterator l_c = m_components.rend();
+	ComponentList::const_reverse_iterator l_c = m_p->components.rend();
 
-	for (l_i = m_components.rbegin(); l_i != l_c; ++l_i)
+	for (l_i = m_p->components.rbegin(); l_i != l_c; ++l_i)
 		(*l_i)->update(d);
+}
+
+void
+EntityBase::kill(void)
+{
+	m_p->killed = true;
+}
+
+bool
+EntityBase::isZombie(void) const
+{
+	return(m_p->killed);
 }
 
 bool
@@ -143,9 +188,9 @@ EntityBase::serialize(TinyXML::TiXmlElement &n) const
 	n.SetAttribute("type", type().str().c_str());
 
 	ComponentList::const_reverse_iterator l_i;
-	ComponentList::const_reverse_iterator l_c = m_components.rend();
+	ComponentList::const_reverse_iterator l_c = m_p->components.rend();
 
-	for (l_i = m_components.rbegin(); l_i != l_c; l_i++) {
+	for (l_i = m_p->components.rbegin(); l_i != l_c; l_i++) {
 		TinyXML::TiXmlElement l_element("component");
 		if ((*l_i)->serialize(l_element))
 			n.InsertEndChild(l_element);
@@ -169,12 +214,12 @@ EntityBase::deserialize(TinyXML::TiXmlElement &n)
 		    FactoryBase::Instance()->createComponent(l_type, l_id, *this);
 
 		if (!l_component) {
-			MMWARNING("Component '%s' of type '%s' creation failed", l_id, l_type);
+			MMWARNING("Component '" << l_id << "' of type '" << l_type << "' creation failed");
 			continue;
 		}
 
 		if (!l_component->deserialize(*l_child)) {
-			MMWARNING("Component '%s' of type '%s' failed deserialization", l_id, l_type);
+			MMWARNING("Component '" << l_id << "' of type '" << l_type << "' failed deserialization");
 			continue;
 		}
 

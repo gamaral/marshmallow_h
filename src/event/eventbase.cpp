@@ -39,13 +39,33 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Event;
 
-EventBase::EventBase(TIME t, UINT8 p)
-    : m_timestamp(t == 0 ? NOW() : t),
-      m_priority(p)
+struct EventBase::Private
 {
+	TIME timestamp;
+	UINT8 priority;
+};
+
+EventBase::EventBase(TIME t, UINT8 p)
+    : m_p(new Private)
+{
+	m_p->timestamp = (t == 0) ? NOW() : t;
+	m_p->priority = p;
 }
 
 EventBase::~EventBase(void)
 {
+	delete m_p;
+	m_p = 0;
 }
 
+UINT8
+EventBase::priority(void) const
+{
+	return(m_p->priority);
+}
+
+TIME
+EventBase::timeStamp(void) const
+{
+	return(m_p->timestamp);
+}

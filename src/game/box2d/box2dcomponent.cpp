@@ -52,22 +52,64 @@ using namespace Game;
 
 const Core::Type Box2DComponent::sType("Game::Box2DComponent");
 
-Box2DComponent::Box2DComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e),
-      m_b2layer(),
-      m_position(),
-      m_render(),
-      m_size(),
-      m_body(0),
-      m_body_type(b2_staticBody),
-      m_density(1.f),
-      m_friction(0.3f),
-      m_init(false)
+struct Box2DComponent::Private
 {
+	WeakBox2DSceneLayer   b2layer;
+	WeakPositionComponent position;
+	WeakRenderComponent   render;
+	Math::Size2f size;
+	b2Body*      body;
+	int   body_type;
+	float density;
+	float friction;
+	bool  init;
+};
+
+Box2DComponent::Box2DComponent(const Core::Identifier &i, IEntity &e)
+    : ComponentBase(i, e)
+    , m_p(new Private)
+{
+	  m_p->body = 0;
+	  m_p->body_type = b2_staticBody;
+	  m_p->density = 1.f;
+	  m_p->friction = 0.3f;
+	  m_p->init = false;
 }
 
 Box2DComponent::~Box2DComponent(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+b2Body *
+Box2DComponent::body(void)
+{
+	return(m_p->body);
+}
+
+int &
+Box2DComponent::bodyType(void)
+{
+	return(m_p->body_type);
+}
+
+float &
+Box2DComponent::density(void)
+{
+	return(m_p->density);
+}
+
+float &
+Box2DComponent::friction(void)
+{
+	return(m_p->friction);
+}
+
+Math::Size2f &
+Box2DComponent::size(void)
+{
+	return(m_p->size);
 }
 
 void
@@ -75,67 +117,67 @@ Box2DComponent::update(float d)
 {
 	MMUNUSED(d);
 
-	if (!m_position) {
-		m_position = entity().getComponentType("Game::PositionComponent").
+	if (!m_p->position) {
+		m_p->position = entity().getComponentType("Game::PositionComponent").
 		    staticCast<PositionComponent>();
 	}
 
-	if (!m_render) {
-		m_render = entity().getComponentType("Game::RenderComponent").
+	if (!m_p->render) {
+		m_p->render = entity().getComponentType("Game::RenderComponent").
 		    staticCast<RenderComponent>();
 	}
 
-	if (!m_init && !m_b2layer && m_position) {
+	if (!m_p->init && !m_p->b2layer && m_p->position) {
 		WeakSceneLayer l_layer = entity().layer().scene().getLayerType("Game::Box2DSceneLayer");
-		m_b2layer = l_layer.cast<Box2DSceneLayer>();
+		m_p->b2layer = l_layer.cast<Box2DSceneLayer>();
 
-		if (!m_b2layer) {
-			MMWARNING1("Box2DComponent used with non Box2D Scene!");
+		if (!m_p->b2layer) {
+			MMWARNING("Box2DComponent used with non Box2D Scene!");
 			return;
 		}
 
-		b2World &l_world = m_b2layer->world();
+		b2World &l_world = m_p->b2layer->world();
 
 		/* create box2d body */
 		b2BodyDef bodyDef;
-		bodyDef.type = static_cast<b2BodyType>(m_body_type);
+		bodyDef.type = static_cast<b2BodyType>(m_p->body_type);
 #define DEGREE_TO_RADIAN 0.0174532925f
-		if (m_render) bodyDef.angle = m_render->mesh()->rotation() * DEGREE_TO_RADIAN;
+		if (m_p->render) bodyDef.angle = m_p->render->mesh()->rotation() * DEGREE_TO_RADIAN;
 		bodyDef.position.Set
-		    (m_position->position().x(),
-		     m_position->position().y());
-		m_body = l_world.CreateBody(&bodyDef);
+		    (m_p->position->position().x(),
+		     m_p->position->position().y());
+		m_p->body = l_world.CreateBody(&bodyDef);
 
 		/* create shape */
 		b2PolygonShape l_dynamicBox;
-		l_dynamicBox.SetAsBox(m_size.width()  / 2.f,
-		                      m_size.height() / 2.f);
+		l_dynamicBox.SetAsBox(m_p->size.width()  / 2.f,
+		                      m_p->size.height() / 2.f);
 
 		/* create fixture */
 		b2FixtureDef l_fixtureDef;
 		l_fixtureDef.shape = &l_dynamicBox;
-		l_fixtureDef.density = m_density;
-		l_fixtureDef.friction = m_friction;
-		m_body->CreateFixture(&l_fixtureDef);
+		l_fixtureDef.density = m_p->density;
+		l_fixtureDef.friction = m_p->friction;
+		m_p->body->CreateFixture(&l_fixtureDef);
 
-		m_init = true;
+		m_p->init = true;
 	}
 
 	/* abort if not initialized */
-	if (!m_init)
+	if (!m_p->init)
 		return;
 
-	b2Vec2 l_position = m_body->GetPosition();
-	float32 l_angle = m_body->GetAngle();
+	b2Vec2 l_position = m_p->body->GetPosition();
+	float32 l_angle = m_p->body->GetAngle();
 
 	/* entity position */
-	m_position->position()[0] = l_position.x;
-	m_position->position()[1] = l_position.y;
+	m_p->position->position()[0] = l_position.x;
+	m_p->position->position()[1] = l_position.y;
 
 	/* render mesh rotation */
-	if (m_render) {
+	if (m_p->render) {
 #define RADIAN_TO_DEGREE 57.2957795f
-		Graphics::WeakMeshBase l_gbase(m_render->mesh().staticCast<Graphics::MeshBase>());
+		Graphics::WeakMeshBase l_gbase(m_p->render->mesh().staticCast<Graphics::MeshBase>());
 		if (l_gbase) l_gbase->setRotation(fmodf(l_angle * RADIAN_TO_DEGREE, 360.f));
 	}
 }
@@ -146,7 +188,7 @@ Box2DComponent::serialize(TinyXML::TiXmlElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	switch (m_body_type) {
+	switch (m_p->body_type) {
 	case b2_staticBody:
 	    n.SetAttribute("body", "static");
 	    break;
@@ -158,11 +200,11 @@ Box2DComponent::serialize(TinyXML::TiXmlElement &n) const
 	    break;
 	}
 
-	n.SetDoubleAttribute("width", m_size.width());
-	n.SetDoubleAttribute("height", m_size.height());
+	n.SetDoubleAttribute("width", m_p->size.width());
+	n.SetDoubleAttribute("height", m_p->size.height());
 
-	n.SetDoubleAttribute("density", m_density);
-	n.SetDoubleAttribute("friction", m_friction);
+	n.SetDoubleAttribute("density", m_p->density);
+	n.SetDoubleAttribute("friction", m_p->friction);
 
 	return(true);
 }
@@ -175,17 +217,17 @@ Box2DComponent::deserialize(TinyXML::TiXmlElement &n)
 
 	const char *l_body = n.Attribute("body");
 
-	m_body_type = b2_staticBody;
+	m_p->body_type = b2_staticBody;
 	if (l_body && l_body[0] == 'k')
-	    m_body_type = b2_kinematicBody;
+	    m_p->body_type = b2_kinematicBody;
 	if (l_body && l_body[0] == 'd')
-	    m_body_type = b2_dynamicBody;
+	    m_p->body_type = b2_dynamicBody;
 
-	n.QueryFloatAttribute("width", &m_size[0]);
-	n.QueryFloatAttribute("height", &m_size[1]);
+	n.QueryFloatAttribute("width", &m_p->size[0]);
+	n.QueryFloatAttribute("height", &m_p->size[1]);
 
-	n.QueryFloatAttribute("density", &m_density);
-	n.QueryFloatAttribute("friction", &m_friction);
+	n.QueryFloatAttribute("density", &m_p->density);
+	n.QueryFloatAttribute("friction", &m_p->friction);
 
 	return(true);
 }

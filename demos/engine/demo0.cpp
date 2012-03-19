@@ -76,9 +76,8 @@ public:
 			    cast<Game::MovementComponent>();
 
 		if (m_position && m_movement) {
-			MMINFO("DELTA: %f", d);
-			MMINFO("Current position %f, %f",
-			    m_position->position().x(), m_position->position().y());
+			MMINFO("DELTA=" << d);
+			MMINFO("Current position (" << m_position->position().x() << ", " << m_position->position().y() << ").");
 
 			Math::Size2f l_vpsize = Graphics::Viewport::Size();
 
@@ -232,7 +231,7 @@ MMain(int argc, char *argv[])
 	MMUNUSED(argc);
 	MMUNUSED(argv);
 	if (-1 == CHDIR(DEMO_CWD))
-		MMFATAL("Failed to change working directory: ""%s"". ABORT!", DEMO_CWD);
+		MMFATAL("Failed to change working directory \"" << DEMO_CWD << "\". ABORT!");
 	return(Demo().run());
 }
 

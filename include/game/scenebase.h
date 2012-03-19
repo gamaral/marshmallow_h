@@ -47,13 +47,12 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	/*! @brief Game Scene Base Class */
 	class MARSHMALLOW_GAME_EXPORT
 	SceneBase : public IScene
 	{
-		SceneLayerList m_layers;
-		Core::Identifier m_id;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(SceneBase);
 	public:
@@ -63,16 +62,14 @@ namespace Game
 
 	public: /* virtual */
 
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
+		VIRTUAL const Core::Identifier & id(void) const;
 
 		VIRTUAL void pushLayer(SharedSceneLayer layer);
 		VIRTUAL void popLayer(void);
 		VIRTUAL void removeLayer(const Core::Identifier &identifier);
 		VIRTUAL SharedSceneLayer getLayer(const Core::Identifier &identifier) const;
 		VIRTUAL SharedSceneLayer getLayerType(const Core::Type &type) const;
-		VIRTUAL const SceneLayerList & getLayers(void) const
-		    { return(m_layers); }
+		VIRTUAL const SceneLayerList & getLayers(void) const;
 
 		VIRTUAL void activate(void) {}
 		VIRTUAL void deactivate(void) {}
@@ -85,7 +82,6 @@ namespace Game
 	};
 	typedef Core::Shared<SceneBase> SharedSceneBase;
 	typedef Core::Weak<SceneBase> WeakSceneBase;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

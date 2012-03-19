@@ -44,12 +44,12 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core
 {
-
 	/*! @brief Hash Class */
 	class MARSHMALLOW_CORE_EXPORT
 	Hash
 	{
-		UID   m_result;
+		struct Private;
+		Private *m_p;
 
 	public:
 
@@ -72,24 +72,17 @@ namespace Core
 		virtual ~Hash(void);
 
 		/*! @brief Datum */
-		UID result(void) const
-		    { return(m_result); }
+		UID result(void) const;
 
 	public: /* operator */
 
-		operator UID() const
-		    { return(m_result); }
+		operator UID() const;
 
 		Core::Hash & operator=(const Core::Hash &rhs);
 
-		bool operator==(const Hash &rhs) const
-		    { return(m_result == rhs.m_result); }
-
-		bool operator!=(const Hash &rhs) const
-		    { return(m_result != rhs.m_result); }
-
-		bool operator<(const Hash &rhs) const
-		    { return(m_result < rhs.m_result); }
+		bool operator==(const Hash &rhs) const;
+		bool operator!=(const Hash &rhs) const;
+		bool operator<(const Hash &rhs) const;
 
 	public: /* static */
 
@@ -100,7 +93,6 @@ namespace Core
 
 		void rehash(const char *d, size_t length, UID mask);
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

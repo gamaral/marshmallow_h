@@ -56,31 +56,76 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
+struct TextComponent::Private
+{
+	WeakPositionComponent position;
+	Math::Size2f font_size;
+	Graphics::SharedTileset tileset;
+	std::vector<Graphics::SharedMesh> mesh;
+	std::string text;
+	Graphics::Color color;
+	UINT16 tile_offset;
+	bool invalidated;
+};
+
 TextComponent::TextComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_font_size(2.f, 4.f)
-    , m_tileset()
-    , m_tile_offset(0)
-    , m_invalidated(false)
+    , m_p(new Private)
 {
+	m_p->font_size[0] = 2.f;
+	m_p->font_size[1] = 4.f;
+	m_p->tile_offset = 0;
+	m_p->invalidated = false;
 }
 
 TextComponent::~TextComponent(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+Math::Size2f &
+TextComponent::fontSize(void)
+{
+	return(m_p->font_size);
+}
+
+Graphics::SharedTileset &
+TextComponent::tileset(void)
+{
+	return(m_p->tileset);
+}
+
+const std::string &
+TextComponent::text(void) const
+{
+	return(m_p->text);
+}
+
+const Graphics::Color &
+TextComponent::color(void) const
+{
+	return(m_p->color);
+}
+
+UINT16 &
+TextComponent::tileOffset(void)
+{
+	return(m_p->tile_offset);
 }
 
 void
 TextComponent::setText(const std::string &t)
 {
-	m_text = t;
-	m_invalidated = true;
+	m_p->text = t;
+	m_p->invalidated = true;
 	rebuild();
 }
 
 void
 TextComponent::setColor(const Graphics::Color &c)
 {
-	m_color = c;
+	m_p->color = c;
 }
 
 bool
@@ -104,11 +149,11 @@ TextComponent::update(float delta)
 {
 	ComponentBase::update(delta);
 
-	if (!m_position)
-	    m_position = entity().getComponentType("Game::PositionComponent").
+	if (!m_p->position)
+	    m_p->position = entity().getComponentType("Game::PositionComponent").
 	        staticCast<PositionComponent>();
 
-	if (m_invalidated)
+	if (m_p->invalidated)
 	    rebuild();
 }
 
@@ -117,11 +162,11 @@ TextComponent::render(void)
 {
 	ComponentBase::render();
 
-	if (m_invalidated) return;
+	if (m_p->invalidated) return;
 
 	/* if no position component, abort! */
-	if (!m_position) {
-		MMWARNING1("No position component found!");
+	if (!m_p->position) {
+		MMWARNING("No position component found!");
 		return;
 	}
 
@@ -131,38 +176,38 @@ TextComponent::render(void)
 	 *       alignment, also add right alignment.
 	 */
 	char l_char;
-	Math::Point2 l_point(m_position->position());
-	const size_t l_text_count = m_text.size();
+	Math::Point2 l_point(m_p->position->position());
+	const size_t l_text_count = m_p->text.size();
 	for (unsigned int i = 0; i < l_text_count; ++i) {
-		l_char = m_text[i];
+		l_char = m_p->text[i];
 
 		/* render valid characters */
 		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
-			Graphics::SharedQuadMesh l_mesh = m_mesh[i].staticCast<Graphics::QuadMesh>();
-			l_mesh->setColor(m_color);
+			Graphics::SharedQuadMesh l_mesh = m_p->mesh[i].staticCast<Graphics::QuadMesh>();
+			l_mesh->setColor(m_p->color);
 			Graphics::Painter::Draw(*l_mesh, l_point);
-			l_point[0] += m_font_size.width();
+			l_point[0] += m_p->font_size.width();
 		}
 
 		/* handle line break */
 		else if ('\n' == l_char) {
-			l_point[0] = m_position->position().x();
-			l_point[1] -= m_font_size.height();
+			l_point[0] = m_p->position->position().x();
+			l_point[1] -= m_p->font_size.height();
 		}
 
 		/* skip unknown character */
-		else l_point[0] += m_font_size.width();
+		else l_point[0] += m_p->font_size.width();
 	}
 }
 
 void
 TextComponent::rebuild(void)
 {
-	m_mesh.clear();
-	m_mesh.resize(m_text.size());
+	m_p->mesh.clear();
+	m_p->mesh.resize(m_p->text.size());
 
-	if (!m_tileset) {
-		MMWARNING1("No tileset assigned.");
+	if (!m_p->tileset) {
+		MMWARNING("No tileset assigned.");
 		return;
 	}
 
@@ -175,9 +220,9 @@ TextComponent::rebuild(void)
 	    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 	{
 		float l_hwidth  =
-		    static_cast<float>(m_font_size.width())  / 2.f;
+		    static_cast<float>(m_p->font_size.width())  / 2.f;
 		float l_hheight =
-		    static_cast<float>(m_font_size.height()) / 2.f;
+		    static_cast<float>(m_p->font_size.height()) / 2.f;
 
 		l_vdata->set(0, -l_hwidth,  l_hheight);
 		l_vdata->set(1, -l_hwidth, -l_hheight);
@@ -191,19 +236,19 @@ TextComponent::rebuild(void)
 	 *       alignment, also add right alignment.
 	 */
 	char l_char;
-	const size_t l_text_count = m_text.size();
+	const size_t l_text_count = m_p->text.size();
 	for (UINT16 i = 0; i < l_text_count; ++i) {
-		l_char = m_text[i];
+		l_char = m_p->text[i];
 		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
 			Graphics::SharedTextureCoordinateData l_tdata =
-				m_tileset->getTextureCoordinateData(m_tile_offset +
+				m_p->tileset->getTextureCoordinateData(m_p->tile_offset +
 				    static_cast<unsigned char>(l_char - MIN_CHAR));
 
-			m_mesh[i] = new Graphics::QuadMesh(l_tdata, m_tileset->textureData(), l_vdata);
+			m_p->mesh[i] = new Graphics::QuadMesh(l_tdata, m_p->tileset->textureData(), l_vdata);
 		}
 	}
 
-	m_invalidated = false;
+	m_p->invalidated = false;
 }
 
 const Core::Type &

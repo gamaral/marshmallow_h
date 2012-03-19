@@ -43,9 +43,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-
 	typedef TilesetBase Tileset;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

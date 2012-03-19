@@ -48,19 +48,14 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	class EntitySceneLayer;
 
 	/*! @brief Game Entity Base Class */
 	class MARSHMALLOW_GAME_EXPORT
 	EntityBase : public IEntity
 	{
-		typedef std::list<SharedComponent> ComponentList;
-
-		ComponentList m_components;
-		Core::Identifier m_id;
-		EntitySceneLayer &m_layer;
-		bool m_killed;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(EntityBase);
 	public:
@@ -70,11 +65,8 @@ namespace Game
 
 	public: /* virtual */
 
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
-
-		VIRTUAL EntitySceneLayer &layer(void)
-		    { return(m_layer); }
+		VIRTUAL const Core::Identifier & id(void) const;
+		VIRTUAL EntitySceneLayer & layer(void);
 
 		VIRTUAL void pushComponent(const SharedComponent &component);
 		VIRTUAL void popComponent(void);
@@ -86,15 +78,12 @@ namespace Game
 		VIRTUAL void render(void);
 		VIRTUAL void update(float delta);
 
-		VIRTUAL void kill(void)
-		    { m_killed = true; }
-		VIRTUAL bool isZombie(void) const
-		    { return(m_killed); }
+		VIRTUAL void kill(void);
+		VIRTUAL bool isZombie(void) const;
 
 		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
 		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

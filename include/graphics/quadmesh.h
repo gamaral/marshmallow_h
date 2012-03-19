@@ -45,7 +45,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-
 	/*! @brief Graphics Quad Mesh Class */
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	QuadMesh : public MeshBase
@@ -82,7 +81,6 @@ namespace Graphics
 	};
 	typedef Core::Shared<QuadMesh> SharedQuadMesh;
 	typedef Core::Weak<QuadMesh> WeakQuadMesh;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

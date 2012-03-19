@@ -54,7 +54,6 @@ namespace Graphics
 
 namespace Game
 {
-
 	class RenderComponent;
 	typedef Core::Weak<RenderComponent> WeakRenderComponent;
 
@@ -67,26 +66,8 @@ namespace Game
 	class MARSHMALLOW_GAME_EXPORT
 	AnimationComponent : public ComponentBase
 	{
-		typedef std::pair<UINT16, int> FrameEntry;
-		typedef std::vector<FrameEntry> FrameList;
-		typedef std::map<Core::Identifier, FrameList> AnimationFrames;
-		typedef std::map<Core::Identifier, float> AnimationFramerates;
-		AnimationFrames     m_animation_frames;
-		AnimationFramerates m_animation_framerate;
-		Graphics::SharedTextureCoordinateData m_stop_data;
-
-		WeakRenderComponent  m_render;
-		WeakTilesetComponent m_tileset;
-
-		float m_timestamp;
-		bool  m_loop;
-		bool  m_playing;
-
-		const FrameList *m_current_framelist;
-		float m_current_framerate;
-		int   m_current_frame_duration;
-		size_t m_current_frame_entries;
-		size_t m_current_frame_entry;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(AnimationComponent);
 	public:

@@ -43,7 +43,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-
 	/*! @brief Proxy Event Listener Class */
 	class MARSHMALLOW_EVENT_EXPORT
 	ProxyEventListener : public IEventListener
@@ -63,7 +62,6 @@ namespace Event
 		VIRTUAL bool handleEvent(const IEvent &event)
 		    { return(m_owner.handleEvent(event)); }
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

@@ -26,16 +26,16 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "core/logger.h"
+#include <cstdlib>
+
 #include "core/global.h"
+#include "core/logger.h"
 
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
-
-MARSHMALLOW_NAMESPACE_USE
 
 /********************************************************* memory allocation */
 
@@ -44,7 +44,7 @@ operator new(size_t size) throw (std::bad_alloc)
 {
 	/* TODO: Replace with custom allocator */
 	void *ptr = malloc(size);
-	MMVERBOSE("Requested allocation of %lu bytes - returning %p.", size, ptr);
+	MMVERBOSE("Requested allocation of " << size << " bytes - returning " << ptr << ".");
 	return(ptr);
 }
 
@@ -53,7 +53,7 @@ operator new[](size_t size) throw (std::bad_alloc)
 {
 	/* TODO: Replace with custom allocator */
 	void *ptr = malloc(size);
-	MMVERBOSE("Requested array allocation of %lu bytes - returning %p.", size, ptr);
+	MMVERBOSE("Requested array allocation of "<< size << " bytes - returning " << ptr << ".");
 	return(ptr);
 }
 
@@ -61,7 +61,7 @@ void
 operator delete(void *ptr) throw ()
 {
 	/* TODO: Replace with memory manager */
-	MMVERBOSE("Requested deallocation of %p.", ptr);
+	MMVERBOSE("Requested deallocation of " << ptr << ".");
 	free(ptr);
 }
 
@@ -69,7 +69,7 @@ void
 operator delete[](void *ptr) throw ()
 {
 	/* TODO: Replace with custom allocator */
-	MMVERBOSE("Requested array deallocation of %p.", ptr);
+	MMVERBOSE("Requested array deallocation of " << ptr << ".");
 	free(ptr);
 }
 

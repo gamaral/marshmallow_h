@@ -56,7 +56,6 @@ namespace Core
 	};
 	typedef Shared<IUpdateable> SharedUpdateable;
 	typedef Weak<IUpdateable> WeakUpdateable;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

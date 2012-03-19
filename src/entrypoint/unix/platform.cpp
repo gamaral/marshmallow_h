@@ -26,8 +26,6 @@
  * or implied, of Marshmallow Platform.
  */
 
-#include "entrypoint/platform.h"
-
 /*!
  * @file
  *
@@ -43,6 +41,8 @@
 #include "event/eventmanager.h"
 #include "event/quitevent.h"
 
+extern int MMain(int argc, char *argv[]);
+
 MARSHMALLOW_NAMESPACE_USE
 
 static void
@@ -51,7 +51,7 @@ SignalHandler(int signal, siginfo_t *siginfo, void *context)
 	MMUNUSED(signal);
 	MMUNUSED(siginfo);
 	MMUNUSED(context);
-	MMWARNING1("\n*** Unix system signal received. Queueing quit event message. ***\n");
+	MMWARNING("\n*** Unix system signal received. Queueing quit event message. ***\n");
 	Event::SharedEvent l_event = new Event::QuitEvent;
 	Event::EventManager::Instance()->queue(l_event);
 }

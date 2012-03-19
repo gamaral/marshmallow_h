@@ -39,25 +39,30 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
 
-Identifier m_filename;
-FILE      *m_handle;
+struct FileIO::Private
+{
+	Identifier filename;
+	FILE      *handle;
+};
 
 FileIO::FileIO(void)
-    : m_filename()
-    , m_handle(0)
+    : m_p(new Private)
 {
+	m_p->handle = 0;
 }
 
 FileIO::FileIO(const Identifier &fn, DIOMode m)
-    : m_filename()
-    , m_handle(0)
+    : m_p(new Private)
 {
+	m_p->handle = 0;
 	open(fn, m);
 }
 
 FileIO::~FileIO(void)
 {
 	close();
+	delete m_p;
+	m_p = 0;
 }
 
 bool
@@ -73,34 +78,34 @@ FileIO::open(const Identifier &fn, DIOMode m)
 	if (m && DIOBinary)
 		l_mode[l_mode_c++] = 'b';
 	
-	m_handle = fopen(fn, l_mode);
-	return(m_handle != 0);
+	m_p->handle = fopen(fn, l_mode);
+	return(m_p->handle != 0);
 }
 
 void
 FileIO::close(void)
 {
-	fclose(m_handle);
-	m_handle = 0;
-	m_filename = Identifier();
+	fclose(m_p->handle);
+	m_p->handle = 0;
+	m_p->filename = Identifier();
 }
 
 bool
 FileIO::isOpen(void) const
 {
-	return(m_handle != 0);
+	return(m_p->handle != 0);
 }
 
 size_t
 FileIO::read(char *b, size_t bs)
 {
-	return(fread(b, bs, 1, m_handle));
+	return(fread(b, bs, 1, m_p->handle));
 }
 
 size_t
 FileIO::write(const char *b, size_t bs)
 {
-	return(fwrite(b, bs, 1, m_handle));
+	return(fwrite(b, bs, 1, m_p->handle));
 }
 
 bool
@@ -115,38 +120,38 @@ FileIO::seek(long o, DIOSeek on)
 	default: return(false);
 	}
 
-	return(fseek(m_handle, o, l_origin) == 0);
+	return(fseek(m_p->handle, o, l_origin) == 0);
 }
 
 long
 FileIO::tell(void) const
 {
-	return(ftell(m_handle));
+	return(ftell(m_p->handle));
 }
 
 size_t
 FileIO::size(void) const
 {
-	const long l_cursor = ftell(m_handle);
+	const long l_cursor = ftell(m_p->handle);
 	if (l_cursor == -1) {
-		MMWARNING1("Failed to get current cursor position in file.");
+		MMWARNING("Failed to get current cursor position in file.");
 		return(0);
 	}
 
 	long l_result = -1;
 
-	if (fseek(m_handle, 0, SEEK_END) != 0) {
-		MMWARNING1("Failed to move cursor to end of file.");
+	if (fseek(m_p->handle, 0, SEEK_END) != 0) {
+		MMWARNING("Failed to move cursor to end of file.");
 		return(0);
 	}
 
-	if ((l_result = ftell(m_handle)) == -1) {
-		MMWARNING1("Failed to move cursor to end of file.");
+	if ((l_result = ftell(m_p->handle)) == -1) {
+		MMWARNING("Failed to move cursor to end of file.");
 		return(0);
 	}
 
-	if (fseek(m_handle, l_cursor, SEEK_SET) != 0)
-		MMWARNING1("Failed to return cursor to last position in file.");
+	if (fseek(m_p->handle, l_cursor, SEEK_SET) != 0)
+		MMWARNING("Failed to return cursor to last position in file.");
 
 	return(l_result > 0 ? static_cast<size_t>(l_result) : 0);
 }

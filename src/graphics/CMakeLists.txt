@@ -1,4 +1,4 @@
-add_definitions(-DGRAPHICS_LIBRARY)
+add_definitions(-DMARSHMALLOW_GRAPHICS_LIBRARY)
 
 file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp)
 

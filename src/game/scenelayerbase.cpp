@@ -37,16 +37,59 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
+struct SceneLayerBase::Private
+{
+	Private(const Core::Identifier &i, IScene &s, int f)
+	    : id(i)
+	    , scene(s)
+	    , flags(f)
+	    , killed(false) {}
+
+	Core::Identifier id;
+	IScene &scene;
+	int flags;
+	bool killed;
+};
+
 SceneLayerBase::SceneLayerBase(const Core::Identifier &i, IScene &s, int f)
-    : m_id(i),
-      m_scene(s),
-      m_flags(f),
-      m_killed(false)
+    : m_p(new Private(i, s, f))
 {
 }
 
 SceneLayerBase::~SceneLayerBase(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+const Core::Identifier &
+SceneLayerBase::id(void) const
+{
+	return(m_p->id);
+}
+
+IScene &
+SceneLayerBase::scene(void)
+{
+	return(m_p->scene);
+}
+
+int
+SceneLayerBase::flags(void) const
+{
+	return(m_p->flags);
+}
+
+void
+SceneLayerBase::kill(void)
+{
+	m_p->killed = true;
+}
+
+bool
+SceneLayerBase::isZombie(void) const
+{
+	return(m_p->killed);
 }
 
 bool

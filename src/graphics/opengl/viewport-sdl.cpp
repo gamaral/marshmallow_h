@@ -94,7 +94,7 @@ namespace
 		                                         | (f? SDL_FULLSCREEN : 0));
 
 		if (!s_data.display) {
-			MMERROR1("Failed to create an SDL surface.");
+			MMERROR("Failed to create an SDL surface.");
 			return(false);
 		}
 
@@ -127,7 +127,7 @@ namespace
 		Viewport::SwapBuffer();
 
 		if(glGetError() != GL_NO_ERROR) {
-			MMERROR1("GL failed during initialization.");
+			MMERROR("GL failed during initialization.");
 			return(false);
 		}
 
@@ -209,7 +209,7 @@ bool
 Viewport::Initialize(UINT16 w, UINT16 h, UINT8 d, bool f)
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-		MMERROR1("SDL viewport initialization failed.");
+		MMERROR("SDL viewport initialization failed.");
 		return(false);
 	}
 
@@ -261,7 +261,7 @@ Viewport::Tick(void)
 			HandleKeyEvent(e.key);
 			break;
 
-		default: MMINFO1("Unknown viewport event received."); break;
+		default: MMINFO("Unknown viewport event received."); break;
 		}
 	}
 }

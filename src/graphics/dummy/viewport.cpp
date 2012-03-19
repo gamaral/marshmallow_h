@@ -64,7 +64,7 @@ Viewport::Initialize(UINT16 w, UINT16 h, UINT8 d, bool f)
 	s_camera.setScale(Math::Pair::One());
 	s_camera.setTranslation(Math::Point2::Zero());
 
-	MMINFO("Dummy viewport initialized a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
+	MMINFO("Dummy viewport initialized a " << d << " bit (" << w << "x" << h << ") display (" << (f ? "FULLSCREEN" : "WINDOWED") << ").");
 
 #if MARSHMALLOW_VIEWPORT_DUMMY_FAIL
 	return(false);
@@ -76,7 +76,7 @@ Viewport::Initialize(UINT16 w, UINT16 h, UINT8 d, bool f)
 void
 Viewport::Finalize(void)
 {
-	MMINFO1("Dummy viewport finalized");
+	MMINFO("Dummy viewport finalized.");
 }
 
 bool
@@ -86,7 +86,7 @@ Viewport::Redisplay(UINT16 w, UINT16 h, UINT8 d, bool f)
 	MMUNUSED(h);
 	MMUNUSED(d);
 	MMUNUSED(f);
-	MMINFO("Dummy viewport redisplayed using a %d bit %dx%d display (%s)", d, w, h, f ? "FULLSCREEN" : "WINDOWED");
+	MMINFO("Dummy viewport redisplayed using a " << d << " bit (" << w << "x" << h << ") display (" << (f ? "FULLSCREEN" : "WINDOWED") << ").");
 	return(true);
 }
 

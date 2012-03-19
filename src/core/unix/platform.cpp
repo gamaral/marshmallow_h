@@ -36,6 +36,8 @@
 
 #include <sys/time.h>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <ctime>
 #include <unistd.h>
 
@@ -69,7 +71,7 @@ Platform::Sleep(TIME timeout)
 {
 	if (timeout <= 0) return;
 
-	MMINFO("Sleeping for %f milliseconds\n", timeout);
+	MMINFO("Sleeping for " << timeout << " milliseconds.");
 
 	struct timespec l_ts;
 	l_ts.tv_sec = 0;

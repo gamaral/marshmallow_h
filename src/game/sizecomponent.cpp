@@ -39,14 +39,27 @@ using namespace Game;
 
 const Core::Type SizeComponent::sType("Game::SizeComponent");
 
+struct SizeComponent::Private
+{
+	Math::Size2f size;
+};
+
 SizeComponent::SizeComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e),
-      m_size()
+    : ComponentBase(i, e)
+    , m_p(new Private)
 {
 }
 
 SizeComponent::~SizeComponent(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+Math::Size2f &
+SizeComponent::size(void)
+{
+	return(m_p->size);
 }
 
 bool
@@ -55,8 +68,8 @@ SizeComponent::serialize(TinyXML::TiXmlElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	n.SetDoubleAttribute("width", m_size.width());
-	n.SetDoubleAttribute("height", m_size.height());
+	n.SetDoubleAttribute("width", m_p->size.width());
+	n.SetDoubleAttribute("height", m_p->size.height());
 	return(true);
 }
 
@@ -66,8 +79,8 @@ SizeComponent::deserialize(TinyXML::TiXmlElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	n.QueryFloatAttribute("width",  &m_size[0]);
-	n.QueryFloatAttribute("height", &m_size[1]);
+	n.QueryFloatAttribute("width",  &m_p->size[0]);
+	n.QueryFloatAttribute("height", &m_p->size[1]);
 	return(true);
 }
 

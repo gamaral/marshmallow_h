@@ -1,4 +1,4 @@
-add_definitions(-DEXTRA_LIBRARY)
+add_definitions(-DMARSHMALLOW_EXTRA_LIBRARY)
 
 file(GLOB MARSHMALLOW_EXTRA_SRCS *.cpp)
 

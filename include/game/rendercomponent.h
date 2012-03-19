@@ -53,7 +53,6 @@ namespace Graphics
 
 namespace Game
 {
-
 	class PositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
@@ -61,17 +60,15 @@ namespace Game
 	class MARSHMALLOW_GAME_EXPORT
 	RenderComponent : public ComponentBase
 	{
-		WeakPositionComponent m_position;
-		Graphics::SharedMesh m_mesh;
+		struct Private;
+		Private *m_p;
 
-		NO_ASSIGN(RenderComponent);
-		NO_COPY(RenderComponent);
+		NO_ASSIGN_COPY(RenderComponent);
 	public:
 		RenderComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~RenderComponent(void);
 
-		Graphics::SharedMesh & mesh(void)
-			{ return(m_mesh); }
+		Graphics::SharedMesh & mesh(void);
 
 	public: /* virtual */
 
@@ -94,7 +91,6 @@ namespace Game
 	};
 	typedef Core::Shared<RenderComponent> SharedRenderComponent;
 	typedef Core::Weak<RenderComponent> WeakRenderComponent;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

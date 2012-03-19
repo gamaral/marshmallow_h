@@ -1,4 +1,4 @@
-add_definitions(-DMATH_LIBRARY)
+add_definitions(-DMARSHMALLOW_MATH_LIBRARY)
 
 file(GLOB MARSHMALLOW_MATH_SRCS *.cpp)
 set(MARSHMALLOW_MATH_LIBS marshmallow_core)

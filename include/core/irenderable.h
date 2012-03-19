@@ -56,7 +56,6 @@ namespace Core
 	};
 	typedef Shared<IRenderable> SharedRenderable;
 	typedef Weak<IRenderable> WeakRenderable;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

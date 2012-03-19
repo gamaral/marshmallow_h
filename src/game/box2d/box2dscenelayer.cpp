@@ -43,55 +43,55 @@ using namespace Game;
 
 const Core::Type Box2DSceneLayer::sType("Game::Box2DSceneLayer");
 
-struct Box2DSceneLayer::Internal
+struct Box2DSceneLayer::Private
 {
-	b2World world;
+	Private()
+	    : world(b2Vec2(0.f, -10.f)) {}
 
-	Internal()
-	: world(b2Vec2(0.f, -10.f)) {}
+	b2World world;
 };
 
 Box2DSceneLayer::Box2DSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s)
-    , m_internal(new Internal)
+    , m_p(new Private)
 {
 }
 
 Box2DSceneLayer::~Box2DSceneLayer(void)
 {
-	delete m_internal;
-	m_internal = 0;
+	delete m_p;
+	m_p = 0;
 }
 
 void
 Box2DSceneLayer::update(float d)
 {
-	m_internal->world.Step
+	m_p->world.Step
 	    (static_cast<float>(d),
 #define VELOCITY_ITERATIONS 10
 	     VELOCITY_ITERATIONS,
 #define POSITION_ITERATIONS 8
 	     POSITION_ITERATIONS);
-	m_internal->world.ClearForces();
+	m_p->world.ClearForces();
 }
 
 Math::Vector2
 Box2DSceneLayer::gravity(void) const
 {
-	b2Vec2 l_gravity = m_internal->world.GetGravity();
+	b2Vec2 l_gravity = m_p->world.GetGravity();
 	return(Math::Vector2(l_gravity.x, l_gravity.y));
 }
 
 void
 Box2DSceneLayer::setGravity(const Math::Vector2 &g)
 {
-	m_internal->world.SetGravity(g);
+	m_p->world.SetGravity(g);
 }
 
 b2World &
 Box2DSceneLayer::world(void)
 {
-	return(m_internal->world);
+	return(m_p->world);
 }
 
 bool
@@ -101,7 +101,7 @@ Box2DSceneLayer::serialize(TinyXML::TiXmlElement &n) const
 		return(false);
 
 	TinyXML::TiXmlElement l_child("gravity");
-	b2Vec2 l_gravity = m_internal->world.GetGravity();
+	b2Vec2 l_gravity = m_p->world.GetGravity();
 	l_child.SetDoubleAttribute("x", l_gravity.x);
 	l_child.SetDoubleAttribute("y", l_gravity.y);
 	n.InsertEndChild(l_child);
@@ -120,7 +120,7 @@ Box2DSceneLayer::deserialize(TinyXML::TiXmlElement &n)
 		float l_x, l_y;
 		l_child->QueryFloatAttribute("x", &l_x);
 		l_child->QueryFloatAttribute("y", &l_y);
-		m_internal->world.SetGravity(b2Vec2(l_x, l_y));
+		m_p->world.SetGravity(b2Vec2(l_x, l_y));
 	}
 	
 	return(true);

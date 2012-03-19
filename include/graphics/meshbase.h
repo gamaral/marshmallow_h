@@ -47,17 +47,12 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-
 	/*! @brief Graphics Mesh Base Class */
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	MeshBase : public IMesh
 	{
-		SharedTextureCoordinateData m_tcdata;
-		SharedTextureData m_tdata;
-		SharedVertexData m_vdata;
-		Color m_color;
-		float m_scale[2];
-		float m_rotation;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(MeshBase);
 	public:
@@ -69,8 +64,7 @@ namespace Graphics
 
 		void setRotation(float angle);
 
-		void setScale(float x, float y)
-		    { m_scale[0] = x; m_scale[1] = y; }
+		void setScale(float x, float y);
 
 		/*! @brief Replace texture coordinate data */
 		void setTextureCoordinateData(SharedTextureCoordinateData tc);
@@ -91,23 +85,13 @@ namespace Graphics
 		virtual void setVertex(UINT16 index, const Math::Vector2 &vertex);
 		virtual void setTextureCoordinate(UINT16 index, float u, float v);
 
-		VIRTUAL const Graphics::SharedTextureCoordinateData & textureCoordinateData(void) const
-		    { return(m_tcdata); }
+		VIRTUAL const Graphics::SharedTextureCoordinateData & textureCoordinateData(void) const;
+		VIRTUAL const Graphics::SharedTextureData & textureData(void) const;
+		VIRTUAL const Graphics::SharedVertexData & vertexData(void) const;
 
-		VIRTUAL const Graphics::SharedTextureData & textureData(void) const
-		    { return(m_tdata); }
-
-		VIRTUAL const Graphics::SharedVertexData & vertexData(void) const
-		    { return(m_vdata); }
-
-		VIRTUAL const Graphics::Color & color(void) const
-		    { return(m_color); }
-
-		VIRTUAL float rotation(void) const
-		    { return(m_rotation); }
-
-		VIRTUAL void scale(float &x, float &y) const
-		    { x = m_scale[0]; y = m_scale[1]; }
+		VIRTUAL const Graphics::Color & color(void) const;
+		VIRTUAL float rotation(void) const;
+		VIRTUAL void scale(float &x, float &y) const;
 
 		VIRTUAL Math::Vector2 vertex(UINT16 index) const;
 		VIRTUAL void textureCoordinate(UINT16 index, float &u, float &v) const;
@@ -117,7 +101,6 @@ namespace Graphics
 	};
 	typedef Core::Shared<MeshBase> SharedMeshBase;
 	typedef Core::Weak<MeshBase> WeakMeshBase;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

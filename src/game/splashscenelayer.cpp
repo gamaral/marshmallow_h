@@ -56,18 +56,43 @@ using namespace Game;
 
 const Core::Type SplashSceneLayer::sType("Game::SplashSceneLayer");
 
+/******************************************************************************/
+
+namespace {
+	enum SplashState
+	{
+		ssInit     = 0,
+		ssFadeIn   = 1,
+		ssExposure = 2,
+		ssFadeOut  = 3,
+		ssFinished = 4
+	};
+} // namespace
+
+/******************************************************************************/
+
+struct SplashSceneLayer::Private
+{
+	Graphics::SharedQuadMesh mesh;
+	float exposure;
+	float fade;
+	float timer;
+	SplashState state;
+	bool autoBegin;
+	bool autoKill;
+};
+
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock)
-    , m_mesh()
-    , m_exposure(1.5f)
-    , m_fade(1.f)
-    , m_timer(0.)
-    , m_state(ssInit)
-    , m_autoBegin()
-    , m_autoKill(true)
+    , m_p(new Private)
 {
-	m_mesh = new Graphics::QuadMesh(Math::Rect2(Graphics::Viewport::Size()));;
-	m_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
+	m_p->exposure = 1.5f;
+	m_p->fade = 1.f;
+	m_p->timer = 0.;
+	m_p->state = ssInit;
+	m_p->autoKill = true;
+	m_p->mesh = new Graphics::QuadMesh(Math::Rect2(Graphics::Viewport::Size()));;
+	m_p->mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
 
 	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
 }
@@ -75,18 +100,57 @@ SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
 SplashSceneLayer::~SplashSceneLayer(void)
 {
 	Game::Engine::Instance()->eventManager()->disconnect(this, Event::KeyboardEvent::Type());
+
+	delete m_p;
+	m_p = 0;
 }
 
 Graphics::SharedQuadMesh
 SplashSceneLayer::mesh(void) const
 {
-	return(m_mesh);
+	return(m_p->mesh);
+}
+
+float
+SplashSceneLayer::exposure(void) const
+{
+	return(m_p->exposure);
+}
+
+void
+SplashSceneLayer::setExposure(float t)
+{
+	m_p->exposure = t;
+}
+
+float
+SplashSceneLayer::fade(void) const
+{
+	return(m_p->fade);
+}
+
+void
+SplashSceneLayer::setFade(float t)
+{
+	m_p->fade = t;
+}
+
+bool
+SplashSceneLayer::autoKill(void) const
+{
+	return(m_p->autoKill);
+}
+
+void
+SplashSceneLayer::setAutoKill(bool ak)
+{
+	m_p->autoKill = ak;
 }
 
 void
 SplashSceneLayer::reset(void)
 {
-	if (m_state != ssFinished)
+	if (m_p->state != ssFinished)
 		return;
 
 	setState(ssFadeIn);
@@ -95,7 +159,7 @@ SplashSceneLayer::reset(void)
 bool
 SplashSceneLayer::skip(void)
 {
-	if (m_state != ssExposure)
+	if (m_p->state != ssExposure)
 		return(false);
 
 	setState(ssFadeOut);
@@ -108,7 +172,7 @@ SplashSceneLayer::render(void)
 	Graphics::Viewport::PushMatrix();
 	Graphics::Viewport::LoadIdentity();
 
-	Graphics::Painter::Draw(*m_mesh, Math::Point2(0,0));
+	Graphics::Painter::Draw(*m_p->mesh, Math::Point2(0,0));
 
 	Graphics::Viewport::PopMatrix();
 }
@@ -118,30 +182,30 @@ SplashSceneLayer::update(float d)
 {
 	float l_fiv;
 
-	if (m_state == ssFinished)
+	if (m_p->state == ssFinished)
 		return;
 
 	/* update timer */
-	m_timer += d;
+	m_p->timer += d;
 
-	switch (m_state) {
+	switch (m_p->state) {
 	case ssInit:
 		setState(ssFadeIn);
 		break;
 	case ssFadeIn:
-		if (m_timer < m_fade) {
-			l_fiv = m_timer / m_fade;
-			m_mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
+		if (m_p->timer < m_p->fade) {
+			l_fiv = m_p->timer / m_p->fade;
+			m_p->mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
 		} else setState(ssExposure);
 		break;
 	case ssFadeOut:
-		if (m_timer < m_fade) {
-			l_fiv = 1.f - (m_timer / m_fade);
-			m_mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
+		if (m_p->timer < m_p->fade) {
+			l_fiv = 1.f - (m_p->timer / m_p->fade);
+			m_p->mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
 		} else setState(ssFinished);
 		break;
 	case ssExposure:
-		if (m_timer >= m_exposure)
+		if (m_p->timer >= m_p->exposure)
 			setState(ssFadeOut);
 		break;
 	case ssFinished: break;
@@ -149,30 +213,30 @@ SplashSceneLayer::update(float d)
 }
 
 void
-SplashSceneLayer::setState(SplashState s)
+SplashSceneLayer::setState(int s)
 {
-	if (m_state == s)
+	if (m_p->state == s)
 		return;
 
-	switch (s) {
+	switch (static_cast<SplashState>(s)) {
 	case ssFadeIn:
-		if (m_state == ssInit || m_state == ssFinished) break;
+		if (m_p->state == ssInit || m_p->state == ssFinished) break;
 	case ssInit:
-		m_timer = 0.;
-		m_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
+		m_p->timer = 0.;
+		m_p->mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
 		break;
 	case ssFinished:
-		if (m_autoKill)
+		if (m_p->autoKill)
 			kill();
 		break;
 	case ssFadeOut:
 	case ssExposure:
-		m_timer = 0.;
-		m_mesh->setColor(Graphics::Color(1.f, 1.f, 1.f, 1.f));
+		m_p->timer = 0.;
+		m_p->mesh->setColor(Graphics::Color(1.f, 1.f, 1.f, 1.f));
 		break;
 	}
 
-	m_state = s;
+	m_p->state = static_cast<SplashState>(s);
 }
 
 bool
@@ -181,15 +245,14 @@ SplashSceneLayer::serialize(TinyXML::TiXmlElement &n) const
 	if (!SceneLayerBase::serialize(n))
 		return(false);
 
-	n.SetDoubleAttribute("fade", m_fade);
-	n.SetDoubleAttribute("exposure", m_exposure);
+	n.SetDoubleAttribute("fade", m_p->fade);
+	n.SetDoubleAttribute("exposure", m_p->exposure);
 
-	n.SetAttribute("autokill", m_autoKill ? "true" : "false");
+	n.SetAttribute("autokill", m_p->autoKill ? "true" : "false");
 
 	TinyXML::TiXmlElement l_mesh("mesh");
-	if (m_mesh && !m_mesh->serialize(l_mesh)) {
-		MMWARNING("Splash scene layer '%s' serialization failed to serialize mesh!",
-		    id().str().c_str());
+	if (m_p->mesh && !m_p->mesh->serialize(l_mesh)) {
+		MMWARNING("Splash scene layer '" << id().str() << "' serialization failed to serialize mesh!");
 		return(false);
 	}
 	n.InsertEndChild(l_mesh);
@@ -203,19 +266,18 @@ SplashSceneLayer::deserialize(TinyXML::TiXmlElement &n)
 	if (!SceneLayerBase::deserialize(n))
 		return(false);
 
-	n.QueryFloatAttribute("fade", &m_fade);
-	n.QueryFloatAttribute("exposure", &m_exposure);
+	n.QueryFloatAttribute("fade", &m_p->fade);
+	n.QueryFloatAttribute("exposure", &m_p->exposure);
 
 	const char *l_autokill = n.Attribute("autokill");
-	m_autoKill = (l_autokill && l_autokill[0] == 't');
+	m_p->autoKill = (l_autokill && l_autokill[0] == 't');
 
 	TinyXML::TiXmlElement *l_child = n.FirstChildElement("mesh");
 	if (!l_child) {
-		MMWARNING("Splash scene layer '%s' deserialized without a mesh!",
-		    id().str().c_str());
+		MMWARNING("Splash scene layer '" << id().str() << "' deserialized without a mesh!");
 		return(false);
 	}
-	m_mesh->deserialize(*l_child);
+	m_p->mesh->deserialize(*l_child);
 
 	return(true);
 }

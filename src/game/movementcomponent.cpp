@@ -44,37 +44,56 @@ using namespace Game;
 
 const Core::Type MovementComponent::sType("Game::MovementComponent");
 
+struct MovementComponent::Private
+{
+	WeakPositionComponent position;
+	Math::Vector2 acceleration;
+	Math::Vector2 velocity;
+};
+
 MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_position()
-    , m_acceleration()
-    , m_velocity()
+    , m_p(new Private)
 {
 }
 
 MovementComponent::~MovementComponent(void)
 {
+	delete m_p;
+	m_p = 0;
+}
+
+Math::Vector2 &
+MovementComponent::acceleration(void)
+{
+	return(m_p->acceleration);
+}
+
+Math::Vector2 &
+MovementComponent::velocity(void)
+{
+	return(m_p->velocity);
 }
 
 Math::Point2
 MovementComponent::simulate(float d) const
 {
-	if (m_position)
-		return(m_position->position() + (m_velocity * d));
-	else MMWARNING1("MovementComponent::simulate didn't find a position component.");
+	if (m_p->position)
+		return(m_p->position->position() + (m_p->velocity * d));
+	else MMWARNING("MovementComponent::simulate didn't find a position component.");
 	return(Math::Point2::Zero());
 }
 
 void
 MovementComponent::update(float d)
 {
-	if (!m_position) {
-		m_position = entity().getComponentType("Game::PositionComponent").
+	if (!m_p->position) {
+		m_p->position = entity().getComponentType("Game::PositionComponent").
 		    staticCast<PositionComponent>();
 	}
 
-	m_position->position() += m_velocity * d;
-	m_velocity += m_acceleration * d;
+	m_p->position->position() += m_p->velocity * d;
+	m_p->velocity += m_p->acceleration * d;
 }
 
 bool
@@ -84,13 +103,13 @@ MovementComponent::serialize(TinyXML::TiXmlElement &n) const
 	    return(false);
 
 	TinyXML::TiXmlElement l_velocity("velocity");
-	l_velocity.SetDoubleAttribute("x", m_velocity.x());
-	l_velocity.SetDoubleAttribute("y", m_velocity.y());
+	l_velocity.SetDoubleAttribute("x", m_p->velocity.x());
+	l_velocity.SetDoubleAttribute("y", m_p->velocity.y());
 	n.InsertEndChild(l_velocity);
 
 	TinyXML::TiXmlElement l_acceleration("acceleration");
-	l_acceleration.SetDoubleAttribute("x", m_acceleration.x());
-	l_acceleration.SetDoubleAttribute("y", m_acceleration.y());
+	l_acceleration.SetDoubleAttribute("x", m_p->acceleration.x());
+	l_acceleration.SetDoubleAttribute("y", m_p->acceleration.y());
 	n.InsertEndChild(l_acceleration);
 
 	return(true);
@@ -104,14 +123,14 @@ MovementComponent::deserialize(TinyXML::TiXmlElement &n)
 
 	TinyXML::TiXmlElement *l_velocity = n.FirstChildElement( "velocity" );
 	if (l_velocity) {
-		l_velocity->QueryFloatAttribute("x", &m_velocity[0]);
-		l_velocity->QueryFloatAttribute("y", &m_velocity[1]);
+		l_velocity->QueryFloatAttribute("x", &m_p->velocity[0]);
+		l_velocity->QueryFloatAttribute("y", &m_p->velocity[1]);
 	}
 
 	TinyXML::TiXmlElement *l_acceleration = n.FirstChildElement( "acceleration" );
 	if (l_acceleration) {
-		l_acceleration->QueryFloatAttribute("x", &m_acceleration[0]);
-		l_acceleration->QueryFloatAttribute("y", &m_acceleration[1]);
+		l_acceleration->QueryFloatAttribute("x", &m_p->acceleration[0]);
+		l_acceleration->QueryFloatAttribute("y", &m_p->acceleration[1]);
 	}
 
 	return(true);

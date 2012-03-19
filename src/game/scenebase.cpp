@@ -42,40 +42,55 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-SceneBase::SceneBase(const Core::Identifier &i)
-    : m_layers(),
-      m_id(i)
+struct SceneBase::Private
 {
+	SceneLayerList layers;
+	Core::Identifier id;
+};
+
+SceneBase::SceneBase(const Core::Identifier &i)
+    : m_p(new Private)
+{
+	m_p->id = i;
 }
 
 SceneBase::~SceneBase(void)
 {
-	m_layers.clear();
+	m_p->layers.clear();
+
+	delete m_p;
+	m_p = 0;
+}
+
+const Core::Identifier &
+SceneBase::id(void) const
+{
+	return(m_p->id);
 }
 
 void
 SceneBase::pushLayer(SharedSceneLayer l)
 {
-	m_layers.push_front(l);
+	m_p->layers.push_front(l);
 }
 
 void
 SceneBase::popLayer(void)
 {
-	m_layers.pop_front();
+	m_p->layers.pop_front();
 }
 
 void
 SceneBase::removeLayer(const Core::Identifier &i)
 {
 	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_c = m_layers.end();
+	SceneLayerList::const_iterator l_c = m_p->layers.end();
 
 	/* maybe replace later with a map if required */
-	for (l_i = m_layers.begin(); l_i != l_c; ++l_i)
+	for (l_i = m_p->layers.begin(); l_i != l_c; ++l_i)
 		if ((*l_i)->id() == i) {
 			SharedSceneLayer l_slayer = *l_i;
-			m_layers.remove(l_slayer);
+			m_p->layers.remove(l_slayer);
 			return;
 		}
 }
@@ -84,10 +99,10 @@ SharedSceneLayer
 SceneBase::getLayer(const Core::Identifier &i) const
 {
 	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_c = m_layers.end();
+	SceneLayerList::const_iterator l_c = m_p->layers.end();
 
 	/* maybe replace later with a map if required */
-	for (l_i = m_layers.begin(); l_i != l_c; ++l_i) {
+	for (l_i = m_p->layers.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->id() == i)
 			return(*l_i);
 	}
@@ -99,10 +114,10 @@ SharedSceneLayer
 SceneBase::getLayerType(const Core::Type &t) const
 {
 	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_c = m_layers.end();
+	SceneLayerList::const_iterator l_c = m_p->layers.end();
 
 	/* maybe replace later with a map if required */
-	for (l_i = m_layers.begin(); l_i != l_c; ++l_i) {
+	for (l_i = m_p->layers.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->type() == t)
 			return(*l_i);
 	}
@@ -110,30 +125,42 @@ SceneBase::getLayerType(const Core::Type &t) const
 	return(SharedSceneLayer());
 }
 
+const SceneLayerList &
+SceneBase::getLayers(void) const
+{
+	return(m_p->layers);
+}
+
 void
 SceneBase::render(void)
 {
-	if (m_layers.empty()) return;
+	if (m_p->layers.empty()) return;
 
 	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_b = m_layers.begin();
-	SceneLayerList::const_iterator l_c = --m_layers.end();
+	SceneLayerList::const_iterator l_b = m_p->layers.begin();
+	SceneLayerList::const_iterator l_c = --m_p->layers.end();
 
 	for (l_i = l_b; l_i != l_c; ++l_i)
 		if ((*l_i)->flags() & slfRenderBlock)
 			break;
 
-	do { (*l_i)->render(); } while(l_i-- != l_b);
+	bool l_finished = false;
+	do {
+		(*l_i)->render();
+
+		if (l_i == l_b) l_finished = true;
+		else l_i--;
+	} while(!l_finished);
 }
 
 void
 SceneBase::update(float d)
 {
-	if (m_layers.empty()) return;
+	if (m_p->layers.empty()) return;
 
 	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_b = m_layers.begin();
-	SceneLayerList::const_iterator l_c = --m_layers.end();
+	SceneLayerList::const_iterator l_b = m_p->layers.begin();
+	SceneLayerList::const_iterator l_c = --m_p->layers.end();
 
 	for (l_i = l_b; l_i != l_c; ++l_i)
 		if ((*l_i)->flags() & slfUpdateBlock)
@@ -142,12 +169,13 @@ SceneBase::update(float d)
 	/* TODO: polish later if possible */
 	bool l_finished = false;
 	do {
-		if (l_i == l_b) l_finished = true;
+		SharedSceneLayer l_slayer = (*l_i);
 
-		SharedSceneLayer l_slayer = (*l_i--);
+		if (l_i == l_b) l_finished = true;
+		else l_i--;
 
 		if (l_slayer->isZombie())
-			m_layers.remove(l_slayer);
+			m_p->layers.remove(l_slayer);
 		else
 			l_slayer->update(d);
 	} while(!l_finished);
@@ -160,8 +188,8 @@ SceneBase::serialize(TinyXML::TiXmlElement &n) const
 	n.SetAttribute("type", type().str().c_str());
 
 	SceneLayerList::const_reverse_iterator l_i;
-	SceneLayerList::const_reverse_iterator l_c = m_layers.rend();
-	for (l_i = m_layers.rbegin(); l_i != l_c; ++l_i) {
+	SceneLayerList::const_reverse_iterator l_c = m_p->layers.rend();
+	for (l_i = m_p->layers.rbegin(); l_i != l_c; ++l_i) {
 		TinyXML::TiXmlElement l_element("layer");
 		if ((*l_i)->serialize(l_element))
 			n.InsertEndChild(l_element);
@@ -185,12 +213,12 @@ SceneBase::deserialize(TinyXML::TiXmlElement &n)
 		    FactoryBase::Instance()->createSceneLayer(l_type, l_id, *this);
 
 		if (!l_layer) {
-			MMWARNING("SceneLayer '%s' of type '%s' creation failed", l_id, l_type);
+			MMWARNING("SceneLayer '" << l_id << "' of type '" << l_type << "' creation failed");
 			continue;
 		}
 
 		if (!l_layer->deserialize(*l_child)) {
-			MMWARNING("SceneLayer '%s' of type '%s' failed deserialization", l_id, l_type);
+			MMWARNING("SceneLayer '" << l_id << "' of type '" << l_type << "' failed deserialization");
 			continue;
 		}
 

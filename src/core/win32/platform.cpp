@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <time.h>
 #include <windows.h>
+#include <ctime>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
@@ -82,8 +82,8 @@ Platform::TimeStamp(void)
 	GetSystemTimeAsFileTime(&l_ft);
 	l_li.LowPart  = l_ft.dwLowDateTime;
 	l_li.HighPart = l_ft.dwHighDateTime;
-#define EPOCHFILETIME (116444736000000000i64)
-	l_micro_seconds = (l_li.QuadPart - EPOCHFILETIME) / 10;
+#define EPOCHFILETIME (1164447360000000i64)
+	l_micro_seconds = (l_li.QuadPart / 10) - EPOCHFILETIME;
 #define MICROSECONDS_PER_MILLISECOND 1000
 #define MILLISECONDS_PER_SECOND 1000
 	l_mseconds = (l_micro_seconds / MICROSECONDS_PER_MILLISECOND)

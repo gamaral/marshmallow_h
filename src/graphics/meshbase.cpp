@@ -44,123 +44,177 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
-MeshBase::MeshBase(SharedTextureCoordinateData tc, SharedTextureData t, SharedVertexData v)
-    : m_tcdata(tc),
-      m_tdata(t),
-      m_vdata(v),
-      m_color(),
-      m_rotation(0)
+struct MeshBase::Private
 {
-	m_scale[0] = m_scale[1] = 1.f;
+	SharedTextureCoordinateData tcdata;
+	SharedTextureData tdata;
+	SharedVertexData vdata;
+	Color color;
+	float scale[2];
+	float rotation;
+};
+
+MeshBase::MeshBase(SharedTextureCoordinateData tc, SharedTextureData t, SharedVertexData v)
+    : m_p(new Private)
+{
+	m_p->tcdata = tc;
+	m_p->tdata = t;
+	m_p->vdata = v;
+	m_p->rotation = 0;
+	m_p->scale[0] = m_p->scale[1] = 1.f;
 }
 
 MeshBase::~MeshBase(void)
 {
+	delete m_p;
+	m_p = 0;
 }
 
 void
 MeshBase::setColor(const Graphics::Color &c)
 {
-	m_color = c;
+	m_p->color = c;
 }
 
 void
 MeshBase::setRotation(float a)
 {
-	m_rotation = a;
+	m_p->rotation = a;
+}
+
+void
+MeshBase::setScale(float x, float y)
+{
+	m_p->scale[0] = x;
+	m_p->scale[1] = y;
 }
 
 void
 MeshBase::setTextureCoordinateData(SharedTextureCoordinateData tc)
 {
-	m_tcdata = tc;
+	m_p->tcdata = tc;
 }
 
 void
 MeshBase::setTextureData(SharedTextureData td)
 {
-	m_tdata = td;
+	m_p->tdata = td;
 }
 
 void
 MeshBase::setVertexData(Graphics::SharedVertexData vd)
 {
-	m_vdata = vd;
+	m_p->vdata = vd;
+}
+
+const Graphics::SharedTextureCoordinateData &
+MeshBase::textureCoordinateData(void) const
+{
+	return(m_p->tcdata);
+}
+
+const Graphics::SharedTextureData &
+MeshBase::textureData(void) const
+{
+	return(m_p->tdata);
+}
+
+const Graphics::SharedVertexData &
+MeshBase::vertexData(void) const
+{
+	return(m_p->vdata);
+}
+
+const Graphics::Color &
+MeshBase::color(void) const
+{
+	return(m_p->color);
+}
+
+float
+MeshBase::rotation(void) const
+{
+	return(m_p->rotation);
+}
+
+void
+MeshBase::scale(float &x, float &y) const
+{
+	x = m_p->scale[0];
+	y = m_p->scale[1];
 }
 
 Math::Vector2
 MeshBase::vertex(UINT16 i) const
 {
 	Math::Vector2 l_vector;
-	if (!m_vdata->get(i, l_vector[0], l_vector[1]))
-		MMWARNING("Failed to retrieve values for vertex %u", i);
+	if (!m_p->vdata->get(i, l_vector[0], l_vector[1]))
+		MMWARNING("Failed to retrieve values for vertex " << i);
 	return(l_vector);
 }
 
 void
 MeshBase::setVertex(UINT16 i, const Math::Vector2 &v)
 {
-	if (!m_vdata->set(i, v.x(), v.y()))
-		MMWARNING("Failed to assign values (%f, %f) to vertex %u",
-		    v.x(), v.y(), i);
+	if (!m_p->vdata->set(i, v.x(), v.y()))
+		MMWARNING("Failed to assign values (" << v.x() << ", " << v.y() << ") to vertex " << i);
 }
 
 void
 MeshBase::textureCoordinate(UINT16 i, float &u, float &v) const
 {
-	if (!m_tcdata->get(i, u, v))
-		MMWARNING("Failed to retrieve values for vertex %u", i);
+	if (!m_p->tcdata->get(i, u, v))
+		MMWARNING("Failed to retrieve values for vertex " << i);
 }
 
 void
 MeshBase::setTextureCoordinate(UINT16 i, float u, float v)
 {
-	if (!m_tcdata->set(i, u, v))
-		MMWARNING("Failed to assign values (%f, %f) to texture coordinate %u",
-		    u, v, i);
+	if (!m_p->tcdata->set(i, u, v))
+		MMWARNING("Failed to assign values (" << u << ", " << v << ") to texture coordinate " << i);
 }
 
 bool
 MeshBase::serialize(TinyXML::TiXmlElement &n) const
 {
 	n.SetAttribute("type", type().str().c_str());
-	n.SetDoubleAttribute("rotation", m_rotation);
+	n.SetDoubleAttribute("rotation", m_p->rotation);
 
 	/* color */
 	TinyXML::TiXmlElement l_color("color");
-	l_color.SetDoubleAttribute("r", m_color[0]);
-	l_color.SetDoubleAttribute("g", m_color[1]);
-	l_color.SetDoubleAttribute("b", m_color[2]);
-	l_color.SetDoubleAttribute("a", m_color[3]);
+	l_color.SetDoubleAttribute("r", m_p->color[0]);
+	l_color.SetDoubleAttribute("g", m_p->color[1]);
+	l_color.SetDoubleAttribute("b", m_p->color[2]);
+	l_color.SetDoubleAttribute("a", m_p->color[3]);
 	n.InsertEndChild(l_color);
 
 	/* texture */
-	if (m_tdata->isLoaded()) {
+	if (m_p->tdata->isLoaded()) {
 		TinyXML::TiXmlElement l_texture("texture");
-		l_texture.SetAttribute("id", m_tdata->id().str().c_str());
+		l_texture.SetAttribute("id", m_p->tdata->id().str().c_str());
 		n.InsertEndChild(l_texture);
 	}
 
 	/* texture coordinates */
-	for (UINT16 i = 0; i < m_tcdata->count(); ++i) {
+	for (UINT16 i = 0; i < m_p->tcdata->count(); ++i) {
 		float l_u, l_v;
-		if (m_tcdata->get(i, l_u, l_v)) {
+		if (m_p->tcdata->get(i, l_u, l_v)) {
 			TinyXML::TiXmlElement l_vector("tcoord");
 			l_vector.SetDoubleAttribute("u", l_u);
 			l_vector.SetDoubleAttribute("v", l_v);
 			n.InsertEndChild(l_vector);
-		} else MMWARNING("Failed to serialize text coord %u", i);
+		} else MMWARNING("Failed to serialize text coord " << i);
 	}
 
 	/* vertexes */
-	for (UINT16 i = 0; i < m_vdata->count(); ++i) {
+	for (UINT16 i = 0; i < m_p->vdata->count(); ++i) {
 		float l_x, l_y;
-		if (m_vdata->get(i, l_x, l_y)) {
+		if (m_p->vdata->get(i, l_x, l_y)) {
 			TinyXML::TiXmlElement l_vector("vector");
 			l_vector.SetDoubleAttribute("x", l_x);
 			l_vector.SetDoubleAttribute("y", l_y);
 			n.InsertEndChild(l_vector);
-		} else MMWARNING("Failed to serialize vertex %u", i);
+		} else MMWARNING("Failed to serialize vertex " << i);
 	}
 
 	return(true);
@@ -172,22 +226,22 @@ MeshBase::deserialize(TinyXML::TiXmlElement &n)
 	TinyXML::TiXmlElement *l_child;
 	UINT16 l_i;
 
-	n.QueryFloatAttribute("rotation", &m_rotation);
+	n.QueryFloatAttribute("rotation", &m_p->rotation);
 
 	/* color */
 	l_child = n.FirstChildElement("color");
 	if (l_child) {
-		l_child->QueryFloatAttribute("r", &m_color[0]);
-		l_child->QueryFloatAttribute("g", &m_color[1]);
-		l_child->QueryFloatAttribute("b", &m_color[2]);
-		l_child->QueryFloatAttribute("a", &m_color[3]);
+		l_child->QueryFloatAttribute("r", &m_p->color[0]);
+		l_child->QueryFloatAttribute("g", &m_p->color[1]);
+		l_child->QueryFloatAttribute("b", &m_p->color[2]);
+		l_child->QueryFloatAttribute("a", &m_p->color[3]);
 	}
 
 	/* texture */
 	l_child = n.FirstChildElement("texture");
 	if (l_child) {
 		const char *l_file = l_child->Attribute("id");
-		if (l_file) m_tdata->load(l_file);
+		if (l_file) m_p->tdata->load(l_file);
 	}
 
 	/* texture coordinates */
@@ -197,8 +251,8 @@ MeshBase::deserialize(TinyXML::TiXmlElement &n)
 		float l_u, l_v;
 		l_child->QueryFloatAttribute("u", &l_u);
 		l_child->QueryFloatAttribute("v", &l_v);
-		if (!m_tcdata->set(l_i++, l_u, l_v)) {
-			MMWARNING1("Failed to assign texture coordinate data.");
+		if (!m_p->tcdata->set(l_i++, l_u, l_v)) {
+			MMWARNING("Failed to assign texture coordinate data.");
 			break;
 		}
 	}
@@ -210,8 +264,8 @@ MeshBase::deserialize(TinyXML::TiXmlElement &n)
 		float l_x, l_y;
 		l_child->QueryFloatAttribute("x", &l_x);
 		l_child->QueryFloatAttribute("y", &l_y);
-		if (!m_vdata->set(l_i++, l_x, l_y)) {
-			MMWARNING1("Failed to assign vertex data.");
+		if (!m_p->vdata->set(l_i++, l_x, l_y)) {
+			MMWARNING("Failed to assign vertex data.");
 			break;
 		}
 	}

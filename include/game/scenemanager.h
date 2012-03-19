@@ -61,10 +61,8 @@ namespace Game
 	             , public Core::ISerializable
 	             , public Event::IEventListener
 	{
-		typedef std::list<SharedScene> SceneStack;
-
-		SceneStack  m_stack;
-		SharedScene m_active;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(SceneManager);
 	public:
@@ -88,7 +86,6 @@ namespace Game
 		VIRTUAL bool handleEvent(const Event::IEvent &event);
 	};
 	typedef Core::Shared<SceneManager> SharedSceneManager;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

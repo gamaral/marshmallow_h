@@ -46,7 +46,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-
 	/*! @brief Graphics Texture Coordinate Data Interface */
 	struct ITextureCoordinateData : public Core::IAsset
 	{
@@ -59,7 +58,6 @@ namespace Graphics
 	};
 	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
 	typedef Core::Weak<ITextureCoordinateData> WeakTextureCoordinateData;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

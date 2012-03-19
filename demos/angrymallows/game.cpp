@@ -73,7 +73,7 @@ Demo::initialize(void)
 	{	/* derialization test */
 		TinyXML::TiXmlDocument l_document;
 		if (!l_document.LoadFile(m_filename)) {
-			MMERROR("Failed to load '%s'", m_filename);
+			MMERROR("Failed to load \'" << m_filename << "\'");
 			return(false);
 		}
 		TinyXML::TiXmlElement *l_root = l_document.FirstChildElement("marshmallow");

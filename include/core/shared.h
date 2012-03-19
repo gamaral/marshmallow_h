@@ -52,7 +52,7 @@ namespace Core
 	/*! @brief Shared Data Struct */
 	struct MARSHMALLOW_CORE_EXPORT
 	SharedData {
-	    void * ptr;
+	    void *ptr;
 	    INT16 refs;
 	    INT16 wrefs;
 	};

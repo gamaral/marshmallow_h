@@ -46,20 +46,27 @@ using namespace Game;
 
 const Core::Type PauseSceneLayer::sType("Game::PauseSceneLayer");
 
+struct PauseSceneLayer::Private
+{
+	Graphics::SharedMesh mesh;
+};
+
 PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock)
-    , m_mesh()
+    , m_p(new Private)
 {
 }
 
 PauseSceneLayer::~PauseSceneLayer(void)
 {
+	delete m_p;
+	m_p = 0;
 }
 
 Graphics::SharedMesh
 PauseSceneLayer::mesh(void) const
 {
-	return(m_mesh);
+	return(m_p->mesh);
 }
 
 void
@@ -68,14 +75,14 @@ PauseSceneLayer::render(void)
 	Graphics::Viewport::PushMatrix();
 	Graphics::Viewport::LoadIdentity();
 
-	if (!m_mesh) {
+	if (!m_p->mesh) {
 		Math::Rect2 l_rect(Graphics::Viewport::Size());
 		Graphics::QuadMesh *l_mesh = new Graphics::QuadMesh(l_rect);
 		l_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.6f));
-		m_mesh = l_mesh;
+		m_p->mesh = l_mesh;
 	}
 
-	Graphics::Painter::Draw(*m_mesh, Math::Point2(0,0));
+	Graphics::Painter::Draw(*m_p->mesh, Math::Point2(0,0));
 
 	Graphics::Viewport::PopMatrix();
 }

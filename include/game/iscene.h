@@ -49,7 +49,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	struct ISceneLayer;
 	typedef Core::Shared<ISceneLayer> SharedSceneLayer;
 
@@ -77,7 +76,6 @@ namespace Game
 	};
 	typedef Core::Shared<IScene> SharedScene;
 	typedef Core::Weak<IScene> WeakScene;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

@@ -48,9 +48,22 @@ MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
 using namespace Game;
 
+/******************************************************************************/
+
+namespace {
+	typedef std::list<SharedScene> SceneStack;
+} // namespace
+
+/******************************************************************************/
+
+struct SceneManager::Private
+{
+	SceneStack  stack;
+	SharedScene active;
+};
+
 SceneManager::SceneManager(void)
-    : m_stack()
-    , m_active()
+    : m_p(new Private)
 {
 	Event::EventManager::Instance()->connect(this, Event::RenderEvent::Type());
 	Event::EventManager::Instance()->connect(this, Event::UpdateEvent::Type());
@@ -61,7 +74,10 @@ SceneManager::~SceneManager(void)
 	Event::EventManager::Instance()->disconnect(this, Event::UpdateEvent::Type());
 	Event::EventManager::Instance()->disconnect(this, Event::RenderEvent::Type());
 
-	m_stack.clear();
+	m_p->stack.clear();
+
+	delete m_p;
+	m_p = 0;
 }
 
 void
@@ -69,66 +85,66 @@ SceneManager::pushScene(const SharedScene &scene)
 {
 	if (!scene) return;
 
-	if (m_active) {
-		m_active->deactivate();
-		m_stack.push_front(m_active);
+	if (m_p->active) {
+		m_p->active->deactivate();
+		m_p->stack.push_front(m_p->active);
 	}
 
-	m_active = scene;
-	m_active->activate();
+	m_p->active = scene;
+	m_p->active->activate();
 }
 
 void
 SceneManager::popScene(void)
 {
-	if (m_active)
-		m_active->deactivate();
+	if (m_p->active)
+		m_p->active->deactivate();
 
-	if (!m_stack.empty()) {
-		m_active = m_stack.front();
-		m_stack.pop_front();
-	} else MMWARNING1("Scene stack is empty!");
+	if (!m_p->stack.empty()) {
+		m_p->active = m_p->stack.front();
+		m_p->stack.pop_front();
+	} else MMWARNING("Scene stack is empty!");
 }
 
 SharedScene
 SceneManager::activeScene(void) const
 {
-	return(m_active);
+	return(m_p->active);
 }
 
 void
 SceneManager::render(void)
 {
 	SceneStack::const_iterator l_i;
-	SceneStack::const_iterator l_c = m_stack.end();
+	SceneStack::const_iterator l_c = m_p->stack.end();
 
-	for (l_i = m_stack.begin(); l_i != l_c; ++l_i)
+	for (l_i = m_p->stack.begin(); l_i != l_c; ++l_i)
 		(*l_i)->render();
 
-	if (m_active)
-		m_active->render();
+	if (m_p->active)
+		m_p->active->render();
 }
 
 void
 SceneManager::update(float d)
 {
-	if (m_active) m_active->update(d);
+	if (m_p->active) m_p->active->update(d);
 }
 
 bool
 SceneManager::serialize(TinyXML::TiXmlElement &n) const
 {
 	SceneStack::const_reverse_iterator l_i;
-	SceneStack::const_reverse_iterator l_c = m_stack.rend();
-	for (l_i = m_stack.rbegin(); l_i != l_c; ++l_i) {
+	SceneStack::const_reverse_iterator l_c = m_p->stack.rend();
+	for (l_i = m_p->stack.rbegin(); l_i != l_c; ++l_i) {
 		TinyXML::TiXmlElement l_element("scene");
 		if ((*l_i)->serialize(l_element))
 			n.InsertEndChild(l_element);
 	}
 
-	if (m_active) {
+	if (m_p->active) {
 		TinyXML::TiXmlElement l_element("scene");
-		if (m_active->serialize(l_element))
+		if (m_p->active->serialize(l_element))
 			n.InsertEndChild(l_element);
 	}
 	
@@ -150,12 +166,12 @@ SceneManager::deserialize(TinyXML::TiXmlElement &n)
 		    FactoryBase::Instance()->createScene(l_type, l_id);
 
 		if (!l_scene) {
-			MMWARNING("Scene '%s' of type '%s' creation failed", l_id, l_type);
+			MMWARNING("Scene '" << l_id << "' of type '" << l_type << "' creation failed");
 			continue;
 		}
 
 		if (!l_scene->deserialize(*l_child)) {
-			MMWARNING("Scene '%s' of type '%s' failed deserialization", l_id, l_type);
+			MMWARNING("Scene '" << l_id << "' of type '" << l_type << "' failed deserialization");
 			continue;
 		}
 

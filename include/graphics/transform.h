@@ -52,10 +52,8 @@ namespace Graphics
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	Transform
 	{
-		float m_rotation;
-		Math::Pair m_scale;
-		Math::Point2 m_translation;
-
+		struct Private;
+		Private *m_p;
 	public:
 		Transform(void);
 		Transform(const Transform &other);
@@ -63,16 +61,13 @@ namespace Graphics
 		
 		Transform & operator =(const Transform& rhs);
 
-		float rotation(void) const
-		    { return(m_rotation); }
+		float rotation(void) const;
 		void setRotation(float value);
 
-		const Math::Pair & scale(void) const
-		    { return(m_scale); }
+		const Math::Pair & scale(void) const;
 		void setScale(const Math::Pair &value);
 
-		const Math::Point2 & translation(void) const
-		    { return(m_translation); }
+		const Math::Point2 & translation(void) const;
 		void setTranslation(const Math::Point2 &value);
 	};
 	typedef Core::Shared<Transform> SharedTransform;

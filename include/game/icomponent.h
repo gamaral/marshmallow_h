@@ -47,7 +47,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game
 {
-
 	/*! @brief Game Component Interface */
 	struct IComponent : public Core::IRenderable,
 	                    public Core::IUpdateable,
@@ -60,7 +59,6 @@ namespace Game
 	};
 	typedef Core::Shared<IComponent> SharedComponent;
 	typedef Core::Weak<IComponent> WeakComponent;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

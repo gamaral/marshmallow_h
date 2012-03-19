@@ -1,4 +1,4 @@
-add_definitions(-DCORE_LIBRARY)
+add_definitions(-DMARSHMALLOW_CORE_LIBRARY)
 
 file(GLOB MARSHMALLOW_CORE_SRCS *.cpp)
 set(MARSHMALLOW_CORE_LIBS "")

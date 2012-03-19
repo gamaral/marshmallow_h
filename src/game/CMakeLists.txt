@@ -1,4 +1,4 @@
-add_definitions(-DGAME_LIBRARY)
+add_definitions(-DMARSHMALLOW_GAME_LIBRARY)
 
 file(GLOB MARSHMALLOW_GAME_SRCS *.cpp)
 

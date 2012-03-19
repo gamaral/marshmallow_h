@@ -60,8 +60,8 @@ namespace Event
 	class MARSHMALLOW_EVENT_EXPORT
 	EventBase : public IEvent
 	{
-		TIME m_timestamp;
-		UINT8 m_priority;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(EventBase);
 	public:
@@ -79,11 +79,9 @@ namespace Event
 
 	public: /* virtual */
 
-		VIRTUAL UINT8 priority(void) const
-		    { return(m_priority); }
+		VIRTUAL UINT8 priority(void) const;
 
-		VIRTUAL TIME timeStamp(void) const
-		    { return(m_timestamp); }
+		VIRTUAL TIME timeStamp(void) const;
 	};
 }
 

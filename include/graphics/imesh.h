@@ -83,7 +83,6 @@ namespace Graphics
 	};
 	typedef Core::Shared<IMesh> SharedMesh;
 	typedef Core::Weak<IMesh> WeakMesh;
-
 }
 
 MARSHMALLOW_NAMESPACE_END

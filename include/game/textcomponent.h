@@ -61,7 +61,6 @@ namespace Graphics
 
 namespace Game
 {
-
 	class PositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
@@ -69,14 +68,8 @@ namespace Game
 	class MARSHMALLOW_GAME_EXPORT
 	TextComponent : public ComponentBase
 	{
-		WeakPositionComponent m_position;
-		Math::Size2f m_font_size;
-		Graphics::SharedTileset m_tileset;
-		std::vector<Graphics::SharedMesh> m_mesh;
-		std::string m_text;
-		Graphics::Color m_color;
-		UINT16 m_tile_offset;
-		bool m_invalidated;
+		struct Private;
+		Private *m_p;
 
 		NO_ASSIGN_COPY(TextComponent);
 	public:
@@ -84,22 +77,17 @@ namespace Game
 		TextComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~TextComponent(void);
 
-		Math::Size2f & fontSize(void)
-		    { return(m_font_size); }
+		Math::Size2f & fontSize(void);
 
-		Graphics::SharedTileset & tileset(void)
-		    { return(m_tileset); }
+		Graphics::SharedTileset & tileset(void);
 
 		void setText(const std::string &text);
-		const std::string & text(void) const
-		    { return(m_text); }
+		const std::string & text(void) const;
 
 		void setColor(const Graphics::Color &color);
-		const Graphics::Color & color(void) const
-		    { return(m_color); }
+		const Graphics::Color & color(void) const;
 
-		UINT16 & tileOffset(void)
-		    { return(m_tile_offset); }
+		UINT16 & tileOffset(void);
 
 	public: /* virtual */
 

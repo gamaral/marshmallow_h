@@ -47,7 +47,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
-
 	/*! @brief Graphics Color */
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	Color
@@ -98,7 +97,6 @@ namespace Graphics
 		    { static const Color s_invisible(1.f, 1.f, 1.f, 0.f);
 		      return(s_invisible); }
 	};
-
 }
 
 MARSHMALLOW_NAMESPACE_END

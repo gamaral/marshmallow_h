@@ -69,10 +69,6 @@ namespace
 		bool          loaded;
 	} s_data;
 
-	typedef BOOL (WINAPI * PFNWGLSWAPINTERVALEXTPROC) (int interval);
-	static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT(0);
-
-	bool CheckSwapControlSupport(void);
 	void UpdateViewport(void);
 	void UpdateCamera(void);
 	void HandleKeyEvent(int keycode, bool down);
@@ -166,17 +162,17 @@ namespace
 		AdjustWindowRectEx(&l_wrect, l_wstyle[0], false, l_wstyle[1]);
 
 		/* create actual window */
-		s_data.window = CreateWindowEx(l_wstyle[1], "marshmallow_wgl", BUILD_TITLE, l_wstyle[0],
+		s_data.window = CreateWindowEx(l_wstyle[1], "marshmallow_wgl", MARSHMALLOW_BUILD_TITLE, l_wstyle[0],
 		    l_wrect.left, l_wrect.top, l_wrect.right - l_wrect.left,
 		    l_wrect.bottom - l_wrect.top, 0, 0, l_wc.hInstance, 0);
 		if (!s_data.window) {
-			MMERROR1("Failed to create window");
+			MMERROR("Failed to create window");
 			return(false);
 		}
 
 		/* create device context */
 		if (!(s_data.dcontext = GetDC(s_data.window))) {
-			MMERROR1("Failed to create device context");
+			MMERROR("Failed to create device context");
 			return(false);
 		}
 
@@ -193,24 +189,24 @@ namespace
 	
 		unsigned int l_pfindex;
 		if (!(l_pfindex = ChoosePixelFormat(s_data.dcontext, &l_pfd))) {
-			MMERROR1("Failed to select a pixel format");
+			MMERROR("Failed to select a pixel format");
 			return(false);
 		}
 
 		if(!SetPixelFormat(s_data.dcontext, l_pfindex, &l_pfd)) {
-			MMERROR1("Failed to bind pixel format to window context");
+			MMERROR("Failed to bind pixel format to window context");
 			return(false);
 		}
 
 		/* create wiggle context */
 		if (!(s_data.context = wglCreateContext(s_data.dcontext))) {
-			MMERROR1("Failed to create OpenGL context");
+			MMERROR("Failed to create OpenGL context");
 			return(false);
 		}
 
 		/* make wgl context current */
 		if(!wglMakeCurrent(s_data.dcontext, s_data.context)) {
-			MMERROR1("Failed to set current OpenGL context");
+			MMERROR("Failed to set current OpenGL context");
 			return(false);
 		}
 
@@ -240,7 +236,7 @@ namespace
 		Viewport::SwapBuffer();
 
 		if(glGetError() != GL_NO_ERROR) {
-			MMERROR1("WGL failed during initialization.");
+			MMERROR("WGL failed during initialization.");
 			return(false);
 		}
 
@@ -257,42 +253,29 @@ namespace
 
 		if (s_data.context) {
 			if (!wglMakeCurrent(0, 0))
-				MMWARNING1("Failed to unset current OpenGL context");
+				MMWARNING("Failed to unset current OpenGL context");
 
 			if (!wglDeleteContext(s_data.context))
-				MMWARNING1("Failed to delete OpenGL context");
+				MMWARNING("Failed to delete OpenGL context");
 
 			s_data.context = 0;
 		}
 
 		if (s_data.dcontext && !ReleaseDC(s_data.window, s_data.dcontext))
-			MMWARNING1("Failed to release device context");
+			MMWARNING("Failed to release device context");
 		s_data.dcontext = 0;
 
 		if (s_data.window && !DestroyWindow(s_data.window))
-			MMWARNING1("Failed to destroy window");
+			MMWARNING("Failed to destroy window");
 		s_data.window = 0;
 
 		if (!UnregisterClass("marshmallow_wgl", GetModuleHandle(0)))
-			MMWARNING1("Failed to unregister window class");
+			MMWARNING("Failed to unregister window class");
 
 		s_data.context   = 0;
 		s_data.dcontext  = 0;
 		s_data.loaded    = false;
 		s_data.window    = 0;
-	}
-
-	bool
-	CheckSwapControlSupport(void)
-	{
-		if (!IsExtensionSupported("WGL_EXT_swap_control"))
-			return(false);
-
-		wglSwapIntervalEXT =
-		    reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>
-		        (wglGetProcAddress(reinterpret_cast<LPCSTR>("wglSwapIntervalEXT")));
-
-		return(wglSwapIntervalEXT != 0);
 	}
 
 	void
@@ -338,52 +321,27 @@ namespace
 		 * Win32 virtual key codes for alphanumerical chars correspond
 		 * to character values themselfs
 		 */
-		if ((keycode >= ' ' && keycode <= '@') ||
-		    (keycode >= '[' && keycode <= '~') )
+		if ((keycode >= '0' && keycode <= '9') ||
+		    (keycode >= 'a' && keycode <= 'z') ) {
+			std::cerr << static_cast<int>(keycode) << std::endl;
 			l_key = static_cast<Event::KBKeys>(keycode);
-		else
+		} else
 			switch (keycode) {
-#if 0
-			case XK_Alt_L:        l_key = Event::KEY_ALT_L; break;
-			case XK_Alt_R:        l_key = Event::KEY_ALT_R; break;
-#endif
 			case VK_BACK:         l_key = Event::KEY_BACKSPACE; break;
 			case VK_CAPITAL:      l_key = Event::KEY_CAPS_LOCK; break;
 			case VK_CLEAR:        l_key = Event::KEY_CLEAR; break;
-			case VK_LCONTROL:     l_key = Event::KEY_CONTROL_R; break;
-			case VK_RCONTROL:     l_key = Event::KEY_CONTROL_L; break;
+			case VK_DECIMAL:      l_key = Event::KEY_KDECIMAL; break;
 			case VK_DELETE:       l_key = Event::KEY_DELETE; break;
+			case VK_DIVIDE:       l_key = Event::KEY_KDIVIDE; break;
 			case VK_DOWN:         l_key = Event::KEY_DOWN; break;
 			case VK_END:          l_key = Event::KEY_END; break;
 			case VK_ESCAPE:       l_key = Event::KEY_ESCAPE; break;
-			case VK_HELP:         l_key = Event::KEY_HELP; break;
-			case VK_HOME:         l_key = Event::KEY_HOME; break;
-			case VK_INSERT:       l_key = Event::KEY_INSERT; break;
-			case VK_LEFT:         l_key = Event::KEY_LEFT; break;
-			case VK_MENU:         l_key = Event::KEY_MENU; break;
-			case VK_NUMLOCK:      l_key = Event::KEY_NUM_LOCK; break;
-			case VK_NEXT:         l_key = Event::KEY_PAGE_DOWN; break;
-			case VK_PRIOR:        l_key = Event::KEY_PAGE_UP; break;
-			case VK_PAUSE:        l_key = Event::KEY_PAUSE; break;
-			case VK_PRINT:        l_key = Event::KEY_PRINT; break;
-			case VK_RETURN:       l_key = Event::KEY_RETURN; break;
-			case VK_RIGHT:        l_key = Event::KEY_RIGHT; break;
-			case VK_SCROLL:       l_key = Event::KEY_SCROLL_LOCK; break;
-			case VK_LSHIFT:       l_key = Event::KEY_SHIFT_L; break;
-			case VK_RSHIFT:       l_key = Event::KEY_SHIFT_R; break;
-			case VK_TAB:          l_key = Event::KEY_TAB; break;
-			case VK_UP:           l_key = Event::KEY_UP; break;
-			case VK_LESS:         l_key = Event::KEY_LESS; break;
-			case VK_GREATER:      l_key = Event::KEY_GREATER; break;
-#if 0
-			case XK_backslash:    l_key = Event::KEY_BACKSLASH; break;
-			case XK_bracketleft:  l_key = Event::KEY_BRACKETLEFT; break;
-			case XK_bracketright: l_key = Event::KEY_BRACKETRIGHT; break;
-			case XK_equal:        l_key = Event::KEY_EQUAL; break;
-			case XK_quotedbl:     l_key = Event::KEY_DBLQUOTE; break;
-			case XK_semicolon:    l_key = Event::KEY_SEMICOLON; break;
-#endif
-			case VK_SPACE:        l_key = Event::KEY_SPACE; break;
+			case VK_F10:          l_key = Event::KEY_F10; break;
+			case VK_F11:          l_key = Event::KEY_F11; break;
+			case VK_F12:          l_key = Event::KEY_F12; break;
+			case VK_F13:          l_key = Event::KEY_F13; break;
+			case VK_F14:          l_key = Event::KEY_F14; break;
+			case VK_F15:          l_key = Event::KEY_F15; break;
 			case VK_F1:           l_key = Event::KEY_F1; break;
 			case VK_F2:           l_key = Event::KEY_F2; break;
 			case VK_F3:           l_key = Event::KEY_F3; break;
@@ -393,12 +351,16 @@ namespace
 			case VK_F7:           l_key = Event::KEY_F7; break;
 			case VK_F8:           l_key = Event::KEY_F8; break;
 			case VK_F9:           l_key = Event::KEY_F9; break;
-			case VK_F10:          l_key = Event::KEY_F10; break;
-			case VK_F11:          l_key = Event::KEY_F11; break;
-			case VK_F12:          l_key = Event::KEY_F12; break;
-			case VK_F13:          l_key = Event::KEY_F13; break;
-			case VK_F14:          l_key = Event::KEY_F14; break;
-			case VK_F15:          l_key = Event::KEY_F15; break;
+			case VK_HELP:         l_key = Event::KEY_HELP; break;
+			case VK_HOME:         l_key = Event::KEY_HOME; break;
+			case VK_INSERT:       l_key = Event::KEY_INSERT; break;
+			case VK_LCONTROL:     l_key = Event::KEY_CONTROL_R; break;
+			case VK_LEFT:         l_key = Event::KEY_LEFT; break;
+			case VK_LSHIFT:       l_key = Event::KEY_SHIFT_L; break;
+			case VK_MENU:         l_key = Event::KEY_MENU; break;
+			case VK_MULTIPLY:     l_key = Event::KEY_KMULTIPLY; break;
+			case VK_NEXT:         l_key = Event::KEY_PAGE_DOWN; break;
+			case VK_NUMLOCK:      l_key = Event::KEY_NUM_LOCK; break;
 			case VK_NUMPAD0:      l_key = Event::KEY_K0; break;
 			case VK_NUMPAD1:      l_key = Event::KEY_K1; break;
 			case VK_NUMPAD2:      l_key = Event::KEY_K2; break;
@@ -409,12 +371,19 @@ namespace
 			case VK_NUMPAD7:      l_key = Event::KEY_K7; break;
 			case VK_NUMPAD8:      l_key = Event::KEY_K8; break;
 			case VK_NUMPAD9:      l_key = Event::KEY_K9; break;
-			case VK_DECIMAL:      l_key = Event::KEY_KDECIMAL; break;
-			case VK_DIVIDE:       l_key = Event::KEY_KDIVIDE; break;
-			case VK_MULTIPLY:     l_key = Event::KEY_KMULTIPLY; break;
-			default: MMWARNING1("Unknown key pressed!");
+			case VK_PAUSE:        l_key = Event::KEY_PAUSE; break;
+			case VK_PRINT:        l_key = Event::KEY_PRINT; break;
+			case VK_PRIOR:        l_key = Event::KEY_PAGE_UP; break;
+			case VK_RCONTROL:     l_key = Event::KEY_CONTROL_L; break;
+			case VK_RETURN:       l_key = Event::KEY_RETURN; break;
+			case VK_RIGHT:        l_key = Event::KEY_RIGHT; break;
+			case VK_RSHIFT:       l_key = Event::KEY_SHIFT_R; break;
+			case VK_SCROLL:       l_key = Event::KEY_SCROLL_LOCK; break;
+			case VK_SPACE:        l_key = Event::KEY_SPACE; break;
+			case VK_TAB:          l_key = Event::KEY_TAB; break;
+			case VK_UP:           l_key = Event::KEY_UP; break;
+			default: MMWARNING("Unknown key pressed!");
 			}
-		}
 
 		bool l_key_pressed = false;
 		KeyList::const_iterator l_pressed_key_i;

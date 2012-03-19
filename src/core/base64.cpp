@@ -72,7 +72,7 @@ Base64::Decode(const char *in, size_t in_size, char **out)
 {
 	/* check in buffer */
 	if (in_size % 4) {
-		MMWARNING1("Base64 decode in buffer incomplete.");
+		MMWARNING("Base64 decode in buffer incomplete.");
 		return(0);
 	}
 
