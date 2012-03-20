@@ -42,7 +42,9 @@
 #include "graphics/itexturecoordinatedata.h"
 #include "graphics/itexturedata.h"
 
-#define TILE_ADJUSTMENT 0.00004f
+#include <tinyxml2.h>
+
+#define TILE_ADJUSTMENT 0.00008f
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;

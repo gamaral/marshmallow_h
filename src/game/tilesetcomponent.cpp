@@ -36,6 +36,8 @@
 
 #include "graphics/itileset.h"
 
+#include <tinyxml2.h>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 

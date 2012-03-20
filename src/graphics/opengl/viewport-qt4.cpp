@@ -34,6 +34,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/logger.h"
+
+#include "event/eventmanager.h"
+#include "event/keyboardevent.h"
+#include "event/quitevent.h"
+
+#include "graphics/painter.h"
+#include "graphics/transform.h"
+
 #include <QtGui/QApplication>
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QKeyEvent>
@@ -43,15 +52,6 @@
 
 #include <cmath>
 #include <list>
-
-#include "core/logger.h"
-
-#include "event/eventmanager.h"
-#include "event/keyboardevent.h"
-#include "event/quitevent.h"
-
-#include "graphics/painter.h"
-#include "graphics/transform.h"
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
@@ -149,8 +149,19 @@ namespace
 			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 			updateViewport();
 			Viewport::SetCamera(m_camera);
-
 			swapBuffers();
+
+			if(glGetError() != GL_NO_ERROR) {
+				MMERROR("GLX failed during initialization.");
+				return(false);
+			}
+		}
+
+		VIRTUAL void
+		closeEvent(QCloseEvent * event)
+		{
+			Event::QuitEvent l_event(-1);
+			Event::EventManager::Instance()->dispatch(l_event);
 		}
 
 		VIRTUAL void
@@ -166,13 +177,6 @@ namespace
 		}
 
 	protected:
-
-		bool
-		checkSwapControlSupport(void)
-		{
-			/* XXX: TODO: Implement */
-			return(false);
-		}
 
 		void
 		updateViewport(void)

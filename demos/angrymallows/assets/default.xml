@@ -1,4 +1,4 @@
-<marshmallow fps="60" ups="60" suspendable="false">
+<marshmallow fps="60" ups="60" si="0">
     <scenes>
         <scene id="mainScene" type="Game::Scene">
             <layer id="box2d" type="Game::Box2DSceneLayer">

@@ -39,9 +39,9 @@
 #include "game/factorybase.h"
 #include "game/icomponent.h"
 
-#include <list>
-
 #include <tinyxml2.h>
+
+#include <list>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;

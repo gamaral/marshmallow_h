@@ -125,7 +125,7 @@ TMXLoader::layers(void) const
 bool
 TMXLoader::load(const char *f)
 {
-	XMLDocument l_tmx;
+	TinyXML::XMLDocument l_tmx;
 	XMLElement *l_root;
 
 	m_p->is_loaded = false;

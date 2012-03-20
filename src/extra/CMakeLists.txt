@@ -10,9 +10,6 @@ set(MARSHMALLOW_EXTRA_LIBS
 	marshmallow_math
 )
 
-# TINYXML
-set(MARSHMALLOW_EXTRA_LIBS ${MARSHMALLOW_EXTRA_LIBS} ${TINYXML_LIBRARIES})
-
 add_library(marshmallow_extra
 	${MARSHMALLOW_EXTRA_SRCS}
 )

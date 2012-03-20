@@ -46,6 +46,8 @@
 #include "game/positioncomponent.h"
 #include "game/sizecomponent.h"
 
+#include <tinyxml2.h>
+
 #include <cmath>
 
 MARSHMALLOW_NAMESPACE_USE

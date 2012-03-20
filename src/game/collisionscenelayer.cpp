@@ -39,6 +39,8 @@
 #include "math/point2.h"
 #include "math/vector2.h"
 
+#include <tinyxml2.h>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 

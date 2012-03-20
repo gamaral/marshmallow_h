@@ -43,6 +43,8 @@
 #include "game/rendercomponent.h"
 #include "game/tilesetcomponent.h"
 
+#include <tinyxml2.h>
+
 #include <map>
 #include <vector>
 

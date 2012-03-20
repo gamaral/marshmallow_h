@@ -34,12 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "headers.h"
-#include <SDL/SDL.h>
-
-#include <cmath>
-#include <list>
-
 #include "core/logger.h"
 
 #include "event/eventmanager.h"
@@ -48,6 +42,12 @@
 
 #include "graphics/painter.h"
 #include "graphics/transform.h"
+
+#include "headers.h"
+#include <SDL/SDL.h>
+
+#include <cmath>
+#include <list>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;

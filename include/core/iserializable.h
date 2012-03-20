@@ -41,7 +41,8 @@
 #include <core/namespace.h>
 
 namespace tinyxml2 { class XMLElement; }
-using namespace tinyxml2;
+namespace TinyXML = tinyxml2;
+using namespace TinyXML;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

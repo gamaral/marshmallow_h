@@ -71,12 +71,12 @@ struct EngineBase::Private
 	TIME   delta_time;
 	int    exit_code;
 	int    frame_rate;
-	bool   suspendable;
+	int    suspend_interval;
 	bool   running;
 	bool   valid;
 };
 
-EngineBase::EngineBase(int f, int u, bool s)
+EngineBase::EngineBase(int f, int u, int s)
     : m_p(new Private)
 {
 	m_p->fps = f;
@@ -84,7 +84,7 @@ EngineBase::EngineBase(int f, int u, bool s)
 	m_p->delta_time = 0;
 	m_p->exit_code = 0;
 	m_p->frame_rate = 0;
-	m_p->suspendable = s;
+	m_p->suspend_interval = s;
 	m_p->running = false;
 	m_p->valid = false;
 
@@ -217,34 +217,31 @@ EngineBase::run(void)
 	TIME l_tick;
 	TIME l_tick_target = MMMIN(l_render_target, l_update_target);
 
-#define TIME_INTERVAL_COUNT 8
-	int l_last_interval = 0;
-	TIME l_time_interval[TIME_INTERVAL_COUNT];
-	for (int i = 0; i < TIME_INTERVAL_COUNT; ++i)
-		l_time_interval[i] = l_tick_target;
-
 	m_p->valid = true;
 	m_p->running = true;
 
 	/* startup */
+	l_tick = NOW();
 	tick();
 	update(0);
-	render();
-	l_tick = NOW();
 
 	/* main game loop */
 	do
 	{
-		m_p->delta_time = 0;
-		for (int i = 0; i < TIME_INTERVAL_COUNT; ++i)
-			m_p->delta_time += l_time_interval[i];
-		m_p->delta_time /= TIME_INTERVAL_COUNT;
+		m_p->delta_time = NOW() - l_tick;
+		l_tick = NOW();
 
 		l_render += m_p->delta_time;
 		l_second += m_p->delta_time;
 		l_update += m_p->delta_time;
 
-		tick();
+		if (l_render >= l_render_target) {
+			render();
+			m_p->frame_rate++;
+			l_render -= l_render_target;
+			if (l_render >= l_render_target)
+				MMINFO("Skipping render frame. TARGET=" << l_render_target), l_render = 0;
+		}
 
 		if (l_update >= l_update_target) {
 			update(static_cast<float>(l_update_target) / MILLISECONDS_PER_SECOND);
@@ -259,24 +256,28 @@ EngineBase::run(void)
 			l_second -= l_second_target;
 		}
 
-		if (l_render >= l_render_target) {
-			render();
-			m_p->frame_rate++;
-			l_render -= l_render_target;
-			if (l_render >= l_render_target)
-				MMINFO("Skipping render frame. TARGET=" << l_render_target), l_render = 0;
+		tick();
+
+		/*
+		 * Suspended Wait
+		 *
+		 * Might cause some choppiness but it's worth it for 20% CPU
+		 * usage (very battery friendly).
+		 */
+		if (m_p->suspend_interval > 0) {
+			const TIME l_nap = (l_tick_target - (NOW() - l_tick)) / m_p->suspend_interval;
+			while (l_tick_target > (NOW() - l_tick)) {
+				tick();
+				Platform::Sleep(l_nap);
+			}
 		}
 
-		if (m_p->suspendable)
-			/* sleep */
-			Platform::Sleep((l_tick_target - (NOW() - l_tick)) / 2);
-		else
-			/* busy wait */
-			while (l_tick_target > (NOW() - l_tick)) { tick(); }
-
-		l_last_interval = (l_last_interval + 1) % TIME_INTERVAL_COUNT;
-		l_time_interval[l_last_interval] = NOW() - l_tick;
-		l_tick = NOW();
+		/*
+		 * Busy Wait
+		 *
+		 * High CPU usage (80%-90%) not kind to battery life.
+		 */
+		else while (l_tick_target > (NOW() - l_tick)) { tick(); }
 	} while (m_p->running);
 
 	finalize();
@@ -346,7 +347,7 @@ EngineBase::serialize(XMLElement &n) const
 {
 	n.SetAttribute("fps", m_p->fps);
 	n.SetAttribute("ups", m_p->ups);
-	n.SetAttribute("suspendable", m_p->suspendable ? "t" : "f");
+	n.SetAttribute("si",  m_p->suspend_interval);
 
 	if (m_p->scene_manager) {
 		XMLElement *l_element = n.GetDocument()->NewElement("scenes");
@@ -376,10 +377,7 @@ EngineBase::deserialize(XMLElement &n)
 
 	n.QueryIntAttribute("fps", &m_p->fps);
 	n.QueryIntAttribute("ups", &m_p->ups);
-
-	const char *l_suspendable = n.Attribute("suspendable");
-	m_p->suspendable = (l_suspendable &&
-	                (l_suspendable[0] == 't' || l_suspendable[0] == 'T'));
+	n.QueryIntAttribute("si", &m_p->suspend_interval);
 
 	if (l_element && m_p->scene_manager)
 		m_p->scene_manager->deserialize(*l_element);

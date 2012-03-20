@@ -49,6 +49,8 @@
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
+#include <tinyxml2.h>
+
 #include <string>
 #include <vector>
 

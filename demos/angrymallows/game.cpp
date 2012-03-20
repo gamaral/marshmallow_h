@@ -54,7 +54,7 @@ MARSHMALLOW_NAMESPACE_USE
 #include <cstring>
 
 Demo::Demo(const char *f)
-    : EngineBase(60, 60, false)
+    : EngineBase(60, 60, MARSHMALLOW_BUSYWAIT)
     , m_filename(STRDUP(f))
 {
 }
@@ -76,7 +76,7 @@ Demo::initialize(void)
 	eventManager()->connect(this, Event::KeyboardEvent::Type());
 
 	{	/* derialization test */
-		XMLDocument l_document;
+		TinyXML::XMLDocument l_document;
 		if (l_document.LoadFile(m_filename) != XML_NO_ERROR) {
 			MMERROR("Failed to load \'" << m_filename << "\'");
 			return(false);
@@ -86,7 +86,7 @@ Demo::initialize(void)
 	}
 
 	{	/* pre-run serialization test */
-		XMLDocument l_document;
+		TinyXML::XMLDocument l_document;
 		XMLElement  *l_root = l_document.NewElement("marshmallow");
 		serialize(*l_root);
 		l_document.InsertEndChild(l_root);

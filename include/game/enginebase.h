@@ -43,6 +43,8 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
+#define MARSHMALLOW_BUSYWAIT 0
+
 namespace Event
 {
 	class EventManager;
@@ -77,9 +79,9 @@ namespace Game
 		/*!
 		 * @param fps Desired frame rate
 		 * @param ups Desired update rate
-		 * @param suspendable Allow engine to sleep
+		 * @param suspend_interval Allow engine to suspend during wait
 		 */
-		EngineBase(int fps, int ups, bool suspendable);
+		EngineBase(int fps, int ups, int suspend_interval);
 		virtual ~EngineBase(void);
 
 		/*!

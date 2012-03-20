@@ -51,7 +51,7 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(60, 60, false)
+	: EngineBase(60, 60, MARSHMALLOW_BUSYWAIT)
 	{
 	}
 
