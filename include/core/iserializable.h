@@ -37,10 +37,11 @@
 #ifndef MARSHMALLOW_CORE_ISERIALIZABLE_H
 #define MARSHMALLOW_CORE_ISERIALIZABLE_H 1
 
-#include <tinyxml.h>
-
 #include <core/environment.h>
 #include <core/namespace.h>
+
+namespace tinyxml2 { class XMLElement; }
+using namespace tinyxml2;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -54,8 +55,8 @@ namespace Core
 	{
 		virtual ~ISerializable(void) {};
 
-		virtual bool serialize(TinyXML::TiXmlElement &node) const = 0;
-		virtual bool deserialize(TinyXML::TiXmlElement &node) = 0;
+		virtual bool serialize(XMLElement &node) const = 0;
+		virtual bool deserialize(XMLElement &node) = 0;
 	};
 	typedef Shared<ISerializable> SharedSerializable;
 	typedef Weak<ISerializable> WeakSerializable;

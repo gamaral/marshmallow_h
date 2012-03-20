@@ -37,12 +37,12 @@
 #ifndef MARSHMALLOW_GAME_COLLIDERCOMPONENT_H
 #define MARSHMALLOW_GAME_COLLIDERCOMPONENT_H 1
 
-#include "game/componentbase.h"
+#include <game/componentbase.h>
 
-#include "core/weak.h"
+#include <core/weak.h>
 
-#include "math/size2.h"
-#include "math/vector2.h"
+#include <math/size2.h>
+#include <math/vector2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -98,8 +98,8 @@ namespace Game
 
 		VIRTUAL void update(float delta);
 
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		VIRTUAL bool serialize(XMLElement &node) const;
+		VIRTUAL bool deserialize(XMLElement &node);
 
 		WeakCollisionSceneLayer & layer(void);
 		WeakMovementComponent & movement(void);

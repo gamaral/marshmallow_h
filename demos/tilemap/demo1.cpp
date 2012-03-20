@@ -40,6 +40,8 @@
 
 #include "customfactory.h"
 
+#include <cstdlib>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
 
@@ -49,7 +51,7 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(60, 60, true)
+	: EngineBase(60, 60, false)
 	{
 	}
 

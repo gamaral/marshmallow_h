@@ -34,9 +34,11 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "math/vector2.h"
+
 #include <Box2D/Box2D.h>
 
-#include "math/vector2.h"
+#include <tinyxml2.h>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
@@ -95,27 +97,27 @@ Box2DSceneLayer::world(void)
 }
 
 bool
-Box2DSceneLayer::serialize(TinyXML::TiXmlElement &n) const
+Box2DSceneLayer::serialize(XMLElement &n) const
 {
 	if (!SceneLayerBase::serialize(n))
 		return(false);
 
-	TinyXML::TiXmlElement l_child("gravity");
+	XMLElement *l_child = n.GetDocument()->NewElement("gravity");
 	b2Vec2 l_gravity = m_p->world.GetGravity();
-	l_child.SetDoubleAttribute("x", l_gravity.x);
-	l_child.SetDoubleAttribute("y", l_gravity.y);
+	l_child->SetAttribute("x", l_gravity.x);
+	l_child->SetAttribute("y", l_gravity.y);
 	n.InsertEndChild(l_child);
 
 	return(true);
 }
 
 bool
-Box2DSceneLayer::deserialize(TinyXML::TiXmlElement &n)
+Box2DSceneLayer::deserialize(XMLElement &n)
 {
 	if (!SceneLayerBase::deserialize(n))
 		return(false);
 
-	TinyXML::TiXmlElement *l_child = n.FirstChildElement("gravity");
+	XMLElement *l_child = n.FirstChildElement("gravity");
 	if (l_child) {
 		float l_x, l_y;
 		l_child->QueryFloatAttribute("x", &l_x);

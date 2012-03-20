@@ -51,6 +51,8 @@
 #include "game/engine.h"
 #include "game/iscene.h"
 
+#include <tinyxml2.h>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
@@ -240,18 +242,18 @@ SplashSceneLayer::setState(int s)
 }
 
 bool
-SplashSceneLayer::serialize(TinyXML::TiXmlElement &n) const
+SplashSceneLayer::serialize(XMLElement &n) const
 {
 	if (!SceneLayerBase::serialize(n))
 		return(false);
 
-	n.SetDoubleAttribute("fade", m_p->fade);
-	n.SetDoubleAttribute("exposure", m_p->exposure);
+	n.SetAttribute("fade", m_p->fade);
+	n.SetAttribute("exposure", m_p->exposure);
 
 	n.SetAttribute("autokill", m_p->autoKill ? "true" : "false");
 
-	TinyXML::TiXmlElement l_mesh("mesh");
-	if (m_p->mesh && !m_p->mesh->serialize(l_mesh)) {
+	XMLElement *l_mesh = n.GetDocument()->NewElement("mesh");
+	if (m_p->mesh && !m_p->mesh->serialize(*l_mesh)) {
 		MMWARNING("Splash scene layer '" << id().str() << "' serialization failed to serialize mesh!");
 		return(false);
 	}
@@ -261,7 +263,7 @@ SplashSceneLayer::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-SplashSceneLayer::deserialize(TinyXML::TiXmlElement &n)
+SplashSceneLayer::deserialize(XMLElement &n)
 {
 	if (!SceneLayerBase::deserialize(n))
 		return(false);
@@ -272,7 +274,7 @@ SplashSceneLayer::deserialize(TinyXML::TiXmlElement &n)
 	const char *l_autokill = n.Attribute("autokill");
 	m_p->autoKill = (l_autokill && l_autokill[0] == 't');
 
-	TinyXML::TiXmlElement *l_child = n.FirstChildElement("mesh");
+	XMLElement *l_child = n.FirstChildElement("mesh");
 	if (!l_child) {
 		MMWARNING("Splash scene layer '" << id().str() << "' deserialized without a mesh!");
 		return(false);

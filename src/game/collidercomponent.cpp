@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cmath>
-
 #include "core/logger.h"
 
 #include "graphics/meshbase.h"
@@ -47,6 +45,8 @@
 #include "game/movementcomponent.h"
 #include "game/positioncomponent.h"
 #include "game/sizecomponent.h"
+
+#include <cmath>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
@@ -232,7 +232,7 @@ ColliderComponent::update(float d)
 }
 
 bool
-ColliderComponent::serialize(TinyXML::TiXmlElement &n) const
+ColliderComponent::serialize(XMLElement &n) const
 {
 	if (!ComponentBase::serialize(n))
 	    return(false);
@@ -241,7 +241,7 @@ ColliderComponent::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-ColliderComponent::deserialize(TinyXML::TiXmlElement &n)
+ColliderComponent::deserialize(XMLElement &n)
 {
 	if (!ComponentBase::deserialize(n))
 	    return(false);

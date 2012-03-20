@@ -37,17 +37,13 @@
 #ifndef MARSHMALLOW_EXTRA_TMXLOADER_H
 #define MARSHMALLOW_EXTRA_TMXLOADER_H 1
 
-#include <list>
-#include <map>
-
 #include <core/shared.h>
 
 #include <math/size2.h>
 
 #include <game/iscenelayer.h>
 
-/* TinyXML */
-namespace TinyXML { class TiXmlElement; }
+#include <list>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -84,10 +80,10 @@ namespace Extra
 
 	private:
 
-		bool processLayer(TinyXML::TiXmlElement &element);
-		bool processMap(TinyXML::TiXmlElement &element);
-		bool processObjectGroup(TinyXML::TiXmlElement &element);
-		bool processTileset(TinyXML::TiXmlElement &element);
+		bool processLayer(XMLElement &element);
+		bool processMap(XMLElement &element);
+		bool processObjectGroup(XMLElement &element);
+		bool processTileset(XMLElement &element);
 	};
 	typedef Core::Shared<TMXLoader> SharedTMXLoader;
 	typedef Core::Weak<TMXLoader> WeakTMXLoader;

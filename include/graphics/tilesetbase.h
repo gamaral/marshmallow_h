@@ -79,8 +79,8 @@ namespace Graphics
 		VIRTUAL int margin(void) const;
 		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(UINT16 index);
 		
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		VIRTUAL bool serialize(XMLElement &node) const;
+		VIRTUAL bool deserialize(XMLElement &node);
 
 	protected:
 

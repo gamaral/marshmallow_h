@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <Box2D/Box2D.h>
-
 #include <core/logger.h>
 
 #include <math/size2.h>
@@ -47,6 +45,10 @@
 
 #include <game/engine.h>
 #include <game/ientity.h>
+
+#include <Box2D/Box2D.h>
+
+#include <tinyxml2.h>
 
 const Core::Type InputComponent::Type("InputComponent");
 
@@ -128,18 +130,18 @@ InputComponent::handleEvent(const Event::IEvent &e)
 }
 
 bool
-InputComponent::serialize(TinyXML::TiXmlElement &n) const
+InputComponent::serialize(XMLElement &n) const
 {
 	if (!ComponentBase::serialize(n))
 		return(false);
 
-	n.SetDoubleAttribute("linear", m_linear_impulse);
-	n.SetDoubleAttribute("angular", m_angular_impulse);
+	n.SetAttribute("linear", m_linear_impulse);
+	n.SetAttribute("angular", m_angular_impulse);
 	return(true);
 }
 
 bool
-InputComponent::deserialize(TinyXML::TiXmlElement &n)
+InputComponent::deserialize(XMLElement &n)
 {
 	if (!ComponentBase::deserialize(n))
 		return(false);

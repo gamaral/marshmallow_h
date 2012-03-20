@@ -202,22 +202,18 @@ TilesetBase::getTextureCoordinateData(UINT16 i)
 }
 
 bool
-TilesetBase::serialize(TinyXML::TiXmlElement &n) const
+TilesetBase::serialize(XMLElement &n) const
 {
 	MMUNUSED(n);
-
 	/* TODO: Implement */
-
 	return(false);
 }
 
 bool
-TilesetBase::deserialize(TinyXML::TiXmlElement &n)
+TilesetBase::deserialize(XMLElement &n)
 {
 	MMUNUSED(n);
-
 	/* TODO: Implement */
-
 	return(false);
 }
 

@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml2.h>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
@@ -93,7 +95,7 @@ SceneLayerBase::isZombie(void) const
 }
 
 bool
-SceneLayerBase::serialize(TinyXML::TiXmlElement &n) const
+SceneLayerBase::serialize(XMLElement &n) const
 {
 	n.SetAttribute("id", id().str().c_str());
 	n.SetAttribute("type", type().str().c_str());
@@ -101,7 +103,7 @@ SceneLayerBase::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-SceneLayerBase::deserialize(TinyXML::TiXmlElement &n)
+SceneLayerBase::deserialize(XMLElement &n)
 {
 	MMUNUSED(n);
 	return(true);

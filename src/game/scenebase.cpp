@@ -39,6 +39,8 @@
 #include "game/iscenelayer.h"
 #include "game/factorybase.h"
 
+#include <tinyxml2.h>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
@@ -182,7 +184,7 @@ SceneBase::update(float d)
 }
 
 bool
-SceneBase::serialize(TinyXML::TiXmlElement &n) const
+SceneBase::serialize(XMLElement &n) const
 {
 	n.SetAttribute("id", id().str().c_str());
 	n.SetAttribute("type", type().str().c_str());
@@ -190,8 +192,8 @@ SceneBase::serialize(TinyXML::TiXmlElement &n) const
 	SceneLayerList::const_reverse_iterator l_i;
 	SceneLayerList::const_reverse_iterator l_c = m_p->layers.rend();
 	for (l_i = m_p->layers.rbegin(); l_i != l_c; ++l_i) {
-		TinyXML::TiXmlElement l_element("layer");
-		if ((*l_i)->serialize(l_element))
+		XMLElement *l_element = n.GetDocument()->NewElement("layer");
+		if ((*l_i)->serialize(*l_element))
 			n.InsertEndChild(l_element);
 	}
 	
@@ -199,9 +201,9 @@ SceneBase::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-SceneBase::deserialize(TinyXML::TiXmlElement &n)
+SceneBase::deserialize(XMLElement &n)
 {
-	TinyXML::TiXmlElement *l_child;
+	XMLElement *l_child;
 	for (l_child = n.FirstChildElement("layer") ;
 	     l_child;
 	     l_child = l_child->NextSiblingElement("layer")) {

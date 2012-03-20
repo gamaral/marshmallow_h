@@ -48,8 +48,13 @@ MARSHMALLOW_NAMESPACE_USE
 
 #include "customfactory.h"
 
+#include <tinyxml2.h>
+
+#include <cstdlib>
+#include <cstring>
+
 Demo::Demo(const char *f)
-    : EngineBase(60, 60, true)
+    : EngineBase(60, 60, false)
     , m_filename(STRDUP(f))
 {
 }
@@ -71,19 +76,19 @@ Demo::initialize(void)
 	eventManager()->connect(this, Event::KeyboardEvent::Type());
 
 	{	/* derialization test */
-		TinyXML::TiXmlDocument l_document;
-		if (!l_document.LoadFile(m_filename)) {
+		XMLDocument l_document;
+		if (l_document.LoadFile(m_filename) != XML_NO_ERROR) {
 			MMERROR("Failed to load \'" << m_filename << "\'");
 			return(false);
 		}
-		TinyXML::TiXmlElement *l_root = l_document.FirstChildElement("marshmallow");
+		XMLElement *l_root = l_document.FirstChildElement("marshmallow");
 		if (l_root) deserialize(*l_root);
 	}
 
 	{	/* pre-run serialization test */
-		TinyXML::TiXmlDocument l_document;
-		TinyXML::TiXmlElement  l_root("marshmallow");
-		serialize(l_root);
+		XMLDocument l_document;
+		XMLElement  *l_root = l_document.NewElement("marshmallow");
+		serialize(*l_root);
 		l_document.InsertEndChild(l_root);
 	}
 

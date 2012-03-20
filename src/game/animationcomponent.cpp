@@ -43,6 +43,9 @@
 #include "game/rendercomponent.h"
 #include "game/tilesetcomponent.h"
 
+#include <map>
+#include <vector>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
@@ -222,7 +225,7 @@ AnimationComponent::update(float d)
 }
 
 bool
-AnimationComponent::serialize(TinyXML::TiXmlElement &n) const
+AnimationComponent::serialize(XMLElement &n) const
 {
 	MMUNUSED(n);
 	/* TODO: IMPLEMENT */
@@ -230,7 +233,7 @@ AnimationComponent::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-AnimationComponent::deserialize(TinyXML::TiXmlElement &n)
+AnimationComponent::deserialize(XMLElement &n)
 {
 	MMUNUSED(n);
 	/* TODO: IMPLEMENT */

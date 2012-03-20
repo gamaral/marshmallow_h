@@ -36,6 +36,8 @@
 
 #include "game.h"
 
+#include <cstdlib>
+
 int
 MMain(int argc, char *argv[])
 {

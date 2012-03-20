@@ -39,8 +39,6 @@
 
 #include <game/ientity.h>
 
-#include <list>
-
 #include <core/identifier.h>
 #include <core/shared.h>
 
@@ -81,8 +79,8 @@ namespace Game
 		VIRTUAL void kill(void);
 		VIRTUAL bool isZombie(void) const;
 
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		VIRTUAL bool serialize(XMLElement &node) const;
+		VIRTUAL bool deserialize(XMLElement &node);
 	};
 }
 

@@ -49,6 +49,8 @@
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
+#include <string>
+#include <vector>
 
 #define MIN_CHAR 33
 #define MAX_CHAR 126
@@ -129,7 +131,7 @@ TextComponent::setColor(const Graphics::Color &c)
 }
 
 bool
-TextComponent::serialize(TinyXML::TiXmlElement &n) const
+TextComponent::serialize(XMLElement &n) const
 {
 	MMUNUSED(n);
 	/* TODO: IMPLEMENT */
@@ -137,7 +139,7 @@ TextComponent::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-TextComponent::deserialize(TinyXML::TiXmlElement &n)
+TextComponent::deserialize(XMLElement &n)
 {
 	MMUNUSED(n);
 	/* TODO: IMPLEMENT */

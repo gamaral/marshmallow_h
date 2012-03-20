@@ -28,7 +28,7 @@
 
 # TinyXML
 set(TINYXML_LIBRARIES marshmallow_tinyxml)
-set(TINYXML_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/contrib/tinyxml/include")
+set(TINYXML_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/contrib/tinyxml2/code")
 
 # Box2D
 if (MARSHMALLOW_WITH_BOX2D)

@@ -63,7 +63,7 @@ TilesetComponent::tileset(void)
 }
 
 bool
-TilesetComponent::serialize(TinyXML::TiXmlElement &n) const
+TilesetComponent::serialize(XMLElement &n) const
 {
 	MMUNUSED(n);
 	/* TODO: IMPLEMENT */
@@ -71,7 +71,7 @@ TilesetComponent::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-TilesetComponent::deserialize(TinyXML::TiXmlElement &n)
+TilesetComponent::deserialize(XMLElement &n)
 {
 	MMUNUSED(n);
 	/* TODO: IMPLEMENT */

@@ -34,6 +34,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/logger.h"
+
+#include "event/eventmanager.h"
+#include "event/keyboardevent.h"
+#include "event/quitevent.h"
+
+#include "graphics/painter.h"
+#include "graphics/transform.h"
+
 #include <X11/X.h>
 #include <X11/XKBlib.h>
 #include <X11/Xatom.h>
@@ -44,16 +53,8 @@
 #include <GL/glx.h>
 
 #include <cmath>
+#include <cstring>
 #include <list>
-
-#include "core/logger.h"
-
-#include "event/eventmanager.h"
-#include "event/keyboardevent.h"
-#include "event/quitevent.h"
-
-#include "graphics/painter.h"
-#include "graphics/transform.h"
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;

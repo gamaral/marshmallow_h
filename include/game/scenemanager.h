@@ -37,8 +37,6 @@
 #ifndef MARSHMALLOW_GAME_SCENEMANAGER_H
 #define MARSHMALLOW_GAME_SCENEMANAGER_H 1
 
-#include <list>
-
 #include <core/irenderable.h>
 #include <core/iserializable.h>
 #include <core/iupdateable.h>
@@ -80,8 +78,8 @@ namespace Game
 		VIRTUAL void render(void);
 		VIRTUAL void update(float delta);
 
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		VIRTUAL bool serialize(XMLElement &node) const;
+		VIRTUAL bool deserialize(XMLElement &node);
 
 		VIRTUAL bool handleEvent(const Event::IEvent &event);
 	};

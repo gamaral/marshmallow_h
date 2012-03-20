@@ -39,6 +39,9 @@
 #include <game/scenemanager.h>
 #include <game/textcomponent.h>
 
+#include <cstdio>
+#include <cstdlib>
+
 #define TIMEOUT 16
 #define MESSAGE "Marshmallow!\n123456790~!@#$%%^\nSecond %d"
 
@@ -101,7 +104,7 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(60, 60, true)
+	: EngineBase(60, 60, false)
 	,  m_stop_timer(0)
 	{
 	}

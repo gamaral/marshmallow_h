@@ -43,6 +43,8 @@
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
+#include <tinyxml2.h>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
@@ -88,13 +90,13 @@ RenderComponent::render(void)
 }
 
 bool
-RenderComponent::serialize(TinyXML::TiXmlElement &n) const
+RenderComponent::serialize(XMLElement &n) const
 {
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	TinyXML::TiXmlElement l_mesh("mesh");
-	if (m_p->mesh && !m_p->mesh->serialize(l_mesh)) {
+	XMLElement *l_mesh = n.GetDocument()->NewElement("mesh");
+	if (m_p->mesh && !m_p->mesh->serialize(*l_mesh)) {
 		MMWARNING("Render component '" << id().str() << "' serialization failed to serialize mesh!");
 		return(false);
 	}
@@ -104,12 +106,12 @@ RenderComponent::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-RenderComponent::deserialize(TinyXML::TiXmlElement &n)
+RenderComponent::deserialize(XMLElement &n)
 {
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	TinyXML::TiXmlElement *l_child = n.FirstChildElement("mesh");
+	XMLElement *l_child = n.FirstChildElement("mesh");
 	if (!l_child) {
 		MMWARNING("Render component '" << id().str() << "' deserialized without a mesh!");
 		return(false);

@@ -37,6 +37,8 @@
 #include <game/scenemanager.h>
 #include <game/tilemapscenelayer.h>
 
+#include <cstdlib>
+
 #define TIMEOUT 16
 
 MARSHMALLOW_NAMESPACE_USE
@@ -119,7 +121,7 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(60, 60, true)
+	: EngineBase(60, 60, false)
 	, m_stop_timer(0)
 	{
 	}

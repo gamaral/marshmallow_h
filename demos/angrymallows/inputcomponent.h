@@ -90,8 +90,8 @@ public: /* virtual */
 
 	VIRTUAL bool handleEvent(const Event::IEvent &event);
 
-	VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-	VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+	VIRTUAL bool serialize(XMLElement &node) const;
+	VIRTUAL bool deserialize(XMLElement &node);
 
 public: /* static */
 

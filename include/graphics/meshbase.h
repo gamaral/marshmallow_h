@@ -40,8 +40,8 @@
 #include <graphics/imesh.h>
 
 #include <core/shared.h>
-#include <math/vector2.h>
 #include <graphics/color.h>
+#include <math/vector2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -96,8 +96,8 @@ namespace Graphics
 		VIRTUAL Math::Vector2 vertex(UINT16 index) const;
 		VIRTUAL void textureCoordinate(UINT16 index, float &u, float &v) const;
 
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		VIRTUAL bool serialize(XMLElement &node) const;
+		VIRTUAL bool deserialize(XMLElement &node);
 	};
 	typedef Core::Shared<MeshBase> SharedMeshBase;
 	typedef Core::Weak<MeshBase> WeakMeshBase;

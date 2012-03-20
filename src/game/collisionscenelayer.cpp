@@ -85,7 +85,7 @@ CollisionSceneLayer::update(float)
 }
 
 bool
-CollisionSceneLayer::serialize(TinyXML::TiXmlElement &n) const
+CollisionSceneLayer::serialize(XMLElement &n) const
 {
 	if (!SceneLayerBase::serialize(n))
 		return(false);
@@ -94,7 +94,7 @@ CollisionSceneLayer::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-CollisionSceneLayer::deserialize(TinyXML::TiXmlElement &n)
+CollisionSceneLayer::deserialize(XMLElement &n)
 {
 	if (!SceneLayerBase::deserialize(n))
 		return(false);

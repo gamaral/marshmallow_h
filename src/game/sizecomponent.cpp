@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml2.h>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
@@ -63,18 +65,18 @@ SizeComponent::size(void)
 }
 
 bool
-SizeComponent::serialize(TinyXML::TiXmlElement &n) const
+SizeComponent::serialize(XMLElement &n) const
 {
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	n.SetDoubleAttribute("width", m_p->size.width());
-	n.SetDoubleAttribute("height", m_p->size.height());
+	n.SetAttribute("width", m_p->size.width());
+	n.SetAttribute("height", m_p->size.height());
 	return(true);
 }
 
 bool
-SizeComponent::deserialize(TinyXML::TiXmlElement &n)
+SizeComponent::deserialize(XMLElement &n)
 {
 	if (!ComponentBase::deserialize(n))
 	    return(false);

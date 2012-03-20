@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <Box2D/Box2D.h>
-
 #include "core/logger.h"
 
 #include "graphics/meshbase.h"
@@ -46,6 +44,10 @@
 #include "game/iscene.h"
 #include "game/positioncomponent.h"
 #include "game/rendercomponent.h"
+
+#include <Box2D/Box2D.h>
+
+#include <tinyxml2.h>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
@@ -183,7 +185,7 @@ Box2DComponent::update(float d)
 }
 
 bool
-Box2DComponent::serialize(TinyXML::TiXmlElement &n) const
+Box2DComponent::serialize(XMLElement &n) const
 {
 	if (!ComponentBase::serialize(n))
 	    return(false);
@@ -200,17 +202,17 @@ Box2DComponent::serialize(TinyXML::TiXmlElement &n) const
 	    break;
 	}
 
-	n.SetDoubleAttribute("width", m_p->size.width());
-	n.SetDoubleAttribute("height", m_p->size.height());
+	n.SetAttribute("width", m_p->size.width());
+	n.SetAttribute("height", m_p->size.height());
 
-	n.SetDoubleAttribute("density", m_p->density);
-	n.SetDoubleAttribute("friction", m_p->friction);
+	n.SetAttribute("density", m_p->density);
+	n.SetAttribute("friction", m_p->friction);
 
 	return(true);
 }
 
 bool
-Box2DComponent::deserialize(TinyXML::TiXmlElement &n)
+Box2DComponent::deserialize(XMLElement &n)
 {
 	if (!ComponentBase::deserialize(n))
 	    return(false);

@@ -39,6 +39,8 @@
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
+#include <tinyxml2.h>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
@@ -97,37 +99,37 @@ MovementComponent::update(float d)
 }
 
 bool
-MovementComponent::serialize(TinyXML::TiXmlElement &n) const
+MovementComponent::serialize(XMLElement &n) const
 {
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	TinyXML::TiXmlElement l_velocity("velocity");
-	l_velocity.SetDoubleAttribute("x", m_p->velocity.x());
-	l_velocity.SetDoubleAttribute("y", m_p->velocity.y());
+	XMLElement *l_velocity = n.GetDocument()->NewElement("velocity");
+	l_velocity->SetAttribute("x", m_p->velocity.x());
+	l_velocity->SetAttribute("y", m_p->velocity.y());
 	n.InsertEndChild(l_velocity);
 
-	TinyXML::TiXmlElement l_acceleration("acceleration");
-	l_acceleration.SetDoubleAttribute("x", m_p->acceleration.x());
-	l_acceleration.SetDoubleAttribute("y", m_p->acceleration.y());
+	XMLElement *l_acceleration = n.GetDocument()->NewElement("acceleration");
+	l_acceleration->SetAttribute("x", m_p->acceleration.x());
+	l_acceleration->SetAttribute("y", m_p->acceleration.y());
 	n.InsertEndChild(l_acceleration);
 
 	return(true);
 }
 
 bool
-MovementComponent::deserialize(TinyXML::TiXmlElement &n)
+MovementComponent::deserialize(XMLElement &n)
 {
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	TinyXML::TiXmlElement *l_velocity = n.FirstChildElement( "velocity" );
+	XMLElement *l_velocity = n.FirstChildElement( "velocity" );
 	if (l_velocity) {
 		l_velocity->QueryFloatAttribute("x", &m_p->velocity[0]);
 		l_velocity->QueryFloatAttribute("y", &m_p->velocity[1]);
 	}
 
-	TinyXML::TiXmlElement *l_acceleration = n.FirstChildElement( "acceleration" );
+	XMLElement *l_acceleration = n.FirstChildElement( "acceleration" );
 	if (l_acceleration) {
 		l_acceleration->QueryFloatAttribute("x", &m_p->acceleration[0]);
 		l_acceleration->QueryFloatAttribute("y", &m_p->acceleration[1]);

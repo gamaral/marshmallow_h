@@ -27,7 +27,7 @@
 #
 
 # TinyXML
-add_subdirectory(tinyxml)
+add_subdirectory(tinyxml2)
 
 # Box2D
 if (MARSHMALLOW_WITH_BOX2D)

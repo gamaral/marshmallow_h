@@ -39,6 +39,10 @@
 #include "game/factorybase.h"
 #include "game/icomponent.h"
 
+#include <list>
+
+#include <tinyxml2.h>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
@@ -182,7 +186,7 @@ EntityBase::isZombie(void) const
 }
 
 bool
-EntityBase::serialize(TinyXML::TiXmlElement &n) const
+EntityBase::serialize(XMLElement &n) const
 {
 	n.SetAttribute("id", id().str().c_str());
 	n.SetAttribute("type", type().str().c_str());
@@ -191,8 +195,8 @@ EntityBase::serialize(TinyXML::TiXmlElement &n) const
 	ComponentList::const_reverse_iterator l_c = m_p->components.rend();
 
 	for (l_i = m_p->components.rbegin(); l_i != l_c; l_i++) {
-		TinyXML::TiXmlElement l_element("component");
-		if ((*l_i)->serialize(l_element))
+		XMLElement *l_element = n.GetDocument()->NewElement("component");
+		if ((*l_i)->serialize(*l_element))
 			n.InsertEndChild(l_element);
 	}
 	
@@ -200,9 +204,9 @@ EntityBase::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-EntityBase::deserialize(TinyXML::TiXmlElement &n)
+EntityBase::deserialize(XMLElement &n)
 {
-	TinyXML::TiXmlElement *l_child;
+	XMLElement *l_child;
 	for (l_child = n.FirstChildElement("component") ;
 	     l_child;
 	     l_child = l_child->NextSiblingElement("component")) {

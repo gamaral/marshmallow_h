@@ -78,8 +78,8 @@ namespace Game
 		VIRTUAL void render(void);
 		VIRTUAL void update(float d);
 
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		VIRTUAL bool serialize(XMLElement &node) const;
+		VIRTUAL bool deserialize(XMLElement &node);
 
 	public: /* static */
 

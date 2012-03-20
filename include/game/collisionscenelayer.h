@@ -39,9 +39,9 @@
 
 #include "game/scenelayerbase.h"
 
-#include <list>
-
 #include "game/collidercomponent.h"
+
+#include <list>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -79,8 +79,8 @@ namespace Game
 		VIRTUAL void render(void) {}
 		VIRTUAL void update(float delta);
 
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		VIRTUAL bool serialize(XMLElement &node) const;
+		VIRTUAL bool deserialize(XMLElement &node);
 
 	public: /* static */
 

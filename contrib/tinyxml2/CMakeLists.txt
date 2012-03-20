@@ -1,5 +1,5 @@
-# Copyright 2011 Marshmallow Engine. All rights reserved.
-# Copyright 2011 Guillermo A. Amaral B. (gamaral) <g@maral.me>
+# Copyright 2012 Marshmallow Engine. All rights reserved.
+# Copyright 2012 Guillermo A. Amaral B. (gamaral) <g@maral.me>
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -26,9 +26,9 @@
 # or implied, of Marshmallow Engine.
 #
 
-file(GLOB MARSHMALLOW_TINYXML_SRCS src/*)
+set(MARSHMALLOW_TINYXML_SRCS code/tinyxml2.cpp)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code)
 
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 	if (BUILD_SHARED_LIBS)

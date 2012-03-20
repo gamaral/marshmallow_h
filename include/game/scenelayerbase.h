@@ -72,8 +72,8 @@ namespace Game
 		VIRTUAL void kill(void);
 		VIRTUAL bool isZombie(void) const;
 
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		VIRTUAL bool serialize(XMLElement &node) const;
+		VIRTUAL bool deserialize(XMLElement &node);
 	};
 	typedef Core::Shared<SceneLayerBase> SharedSceneLayerBase;
 	typedef Core::Weak<SceneLayerBase> WeakSceneLayerBase;

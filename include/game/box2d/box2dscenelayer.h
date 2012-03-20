@@ -37,9 +37,8 @@
 #ifndef MARSHMALLOW_GAME_BOX2DSCENELAYER_H
 #define MARSHMALLOW_GAME_BOX2DSCENELAYER_H 1
 
-#include "game/scenelayerbase.h"
+#include <game/scenelayerbase.h>
 
-/* Box2D */
 class b2World;
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -75,8 +74,8 @@ namespace Game
 		VIRTUAL void render(void) {}
 		VIRTUAL void update(float delta);
 
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		VIRTUAL bool serialize(XMLElement &node) const;
+		VIRTUAL bool deserialize(XMLElement &node);
 
 	public: /* static */
 

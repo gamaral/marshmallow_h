@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cmath>
-
 #include "core/logger.h"
 
 #include "math/vector2.h"
@@ -47,6 +45,10 @@
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 #include "game/sizecomponent.h"
+
+#include <tinyxml2.h>
+
+#include <cmath>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
@@ -195,7 +197,7 @@ EntitySceneLayer::update(float d)
 }
 
 bool
-EntitySceneLayer::serialize(TinyXML::TiXmlElement &n) const
+EntitySceneLayer::serialize(XMLElement &n) const
 {
 	if (!SceneLayerBase::serialize(n))
 		return(false);
@@ -203,8 +205,8 @@ EntitySceneLayer::serialize(TinyXML::TiXmlElement &n) const
 	EntityList::const_iterator l_i;
 	for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();) {
 		SharedEntity l_entity = (*l_i++);
-		TinyXML::TiXmlElement l_element("entity");
-		if (l_entity->serialize(l_element))
+		XMLElement *l_element = n.GetDocument()->NewElement("entity");
+		if (l_entity->serialize(*l_element))
 			n.InsertEndChild(l_element);
 	}
 	
@@ -212,12 +214,12 @@ EntitySceneLayer::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-EntitySceneLayer::deserialize(TinyXML::TiXmlElement &n)
+EntitySceneLayer::deserialize(XMLElement &n)
 {
 	if (!SceneLayerBase::deserialize(n))
 		return(false);
 
-	TinyXML::TiXmlElement *l_child;
+	XMLElement *l_child;
 	for (l_child = n.FirstChildElement("entity") ;
 	     l_child;
 	     l_child = l_child->NextSiblingElement("entity")) {

@@ -37,13 +37,12 @@
 #ifndef MARSHMALLOW_GAME_BOX2DCOMPONENT_H
 #define MARSHMALLOW_GAME_BOX2DCOMPONENT_H 1
 
-#include "game/componentbase.h"
+#include <game/componentbase.h>
 
-#include "core/weak.h"
+#include <core/weak.h>
 
-#include "math/size2.h"
+#include <math/size2.h>
 
-/* Box2D */
 class b2Body;
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -85,8 +84,8 @@ namespace Game
 
 		VIRTUAL void update(float delta);
 
-		VIRTUAL bool serialize(TinyXML::TiXmlElement &node) const;
-		VIRTUAL bool deserialize(TinyXML::TiXmlElement &node);
+		VIRTUAL bool serialize(XMLElement &node) const;
+		VIRTUAL bool deserialize(XMLElement &node);
 
 	public: /* static */
 

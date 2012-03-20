@@ -34,9 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml.h>
-using namespace TinyXML;
-
 #include "core/base64.h"
 #include "core/logger.h"
 #include "core/zlib.h"
@@ -55,6 +52,10 @@ using namespace TinyXML;
 #include "game/sizecomponent.h"
 #include "game/tilesetcomponent.h"
 #include "game/tilemapscenelayer.h"
+
+#include <tinyxml2.h>
+
+#include <map>
 
 #define TMXLAYER_DATA_NODE    "data"
 #define TMXLAYER_NODE         "layer"
@@ -124,12 +125,12 @@ TMXLoader::layers(void) const
 bool
 TMXLoader::load(const char *f)
 {
-	TiXmlDocument l_tmx;
-	TiXmlElement *l_root;
+	XMLDocument l_tmx;
+	XMLElement *l_root;
 
 	m_p->is_loaded = false;
 
-	if (!l_tmx.LoadFile(f))
+	if (l_tmx.LoadFile(f) != XML_NO_ERROR)
 	    return(false);
 
 	/* parse general map data */
@@ -138,7 +139,7 @@ TMXLoader::load(const char *f)
 	    return(false);
 
 	/* parse tilesets */
-	TiXmlElement *l_tileset = l_root->FirstChildElement(TMXTILESET_NODE);
+	XMLElement *l_tileset = l_root->FirstChildElement(TMXTILESET_NODE);
 	while (l_tileset) {
 		if (!processTileset(*l_tileset))
 			return(false);
@@ -146,7 +147,7 @@ TMXLoader::load(const char *f)
 	}
 
 	/* parse layers and object groups */
-	TiXmlElement *l_element = l_root->FirstChildElement();
+	XMLElement *l_element = l_root->FirstChildElement();
 	while (l_element) {
 		if (0 == strcmp(l_element->Value(), TMXLAYER_NODE)
 		    && !processLayer(*l_element))
@@ -166,12 +167,12 @@ TMXLoader::load(const char *f)
 }
 
 bool
-TMXLoader::processMap(TiXmlElement &m)
+TMXLoader::processMap(XMLElement &m)
 {
-	if ((TIXML_SUCCESS != m.QueryIntAttribute("width", &m_p->map_size[0]))
-	 || (TIXML_SUCCESS != m.QueryIntAttribute("height", &m_p->map_size[1]))
-	 || (TIXML_SUCCESS != m.QueryIntAttribute("tilewidth", &m_p->tile_size[0]))
-	 || (TIXML_SUCCESS != m.QueryIntAttribute("tileheight", &m_p->tile_size[1]))) {
+	if ((XML_SUCCESS != m.QueryIntAttribute("width", &m_p->map_size[0]))
+	 || (XML_SUCCESS != m.QueryIntAttribute("height", &m_p->map_size[1]))
+	 || (XML_SUCCESS != m.QueryIntAttribute("tilewidth", &m_p->tile_size[0]))
+	 || (XML_SUCCESS != m.QueryIntAttribute("tileheight", &m_p->tile_size[1]))) {
 		MMWARNING("Map element is missing one or more required attributes.");
 		return(false);
 	}
@@ -197,7 +198,7 @@ TMXLoader::processMap(TiXmlElement &m)
 }
 
 bool
-TMXLoader::processLayer(TinyXML::TiXmlElement &e)
+TMXLoader::processLayer(XMLElement &e)
 {
 	const char *l_name;
 	float l_opacity = 1.f;
@@ -211,7 +212,7 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 	MMIGNORE e.QueryFloatAttribute("opacity", &l_opacity);
 	MMIGNORE e.QueryIntAttribute("visible", &l_visible);
 
-	TiXmlElement *l_data = e.FirstChildElement(TMXLAYER_DATA_NODE);
+	XMLElement *l_data = e.FirstChildElement(TMXLAYER_DATA_NODE);
 
 	if (!l_data) {
 		MMWARNING("Layer element is missing data element.");
@@ -226,14 +227,25 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 		MMWARNING("Layer data element is missing one or more required attributes.");
 		return(false);
 	}
-	const char *l_data_raw = l_data->GetText();
+	const char *l_data_raw = XMLUtil::SkipWhiteSpace(l_data->GetText());
+	size_t l_data_raw_len = strlen(l_data_raw);
+
+	/* right-side data trim */
+	while (l_data_raw_len > 0 && isspace(l_data_raw[l_data_raw_len - 1]))
+		--l_data_raw_len;
+
+	if (!l_data_raw_len) {
+		MMWARNING("Zero size layer data encountered.");
+		return(false);
+	}
+
 	char *l_data_array = 0;
 
 #define TMXDATA_ENCODING_BASE64 "base64"
 	if (0 == strcmp(l_data_encoding, TMXDATA_ENCODING_BASE64)) {
 		char *l_decoded_data;
 		size_t l_decoded_data_size =
-		    Core::Base64::Decode(l_data_raw, strlen(l_data_raw), &l_decoded_data);
+		    Core::Base64::Decode(l_data_raw, l_data_raw_len, &l_decoded_data);
 
 #define TMXDATA_COMPRESSION_ZLIB "zlib"
 		if (0 == strcmp(l_data_compression, TMXDATA_COMPRESSION_ZLIB)) {
@@ -278,7 +290,7 @@ TMXLoader::processLayer(TinyXML::TiXmlElement &e)
 }
 
 bool
-TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
+TMXLoader::processObjectGroup(XMLElement &e)
 {
 	const char *l_name;
 
@@ -289,7 +301,7 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 
 	Game::EntitySceneLayer *l_layer = new Game::EntitySceneLayer(l_name, m_p->scene);
 
-	TiXmlElement *l_object = e.FirstChildElement(TMXOBJECTGROUP_OBJECT_NODE);
+	XMLElement *l_object = e.FirstChildElement(TMXOBJECTGROUP_OBJECT_NODE);
 	while (l_object) {
 		const char *l_object_name;
 		const char *l_object_type;
@@ -309,8 +321,8 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 			return(false);
 		}
 
-		if ((TIXML_SUCCESS != l_object->QueryIntAttribute("x", &l_object_x))
-		 || (TIXML_SUCCESS != l_object->QueryIntAttribute("y", &l_object_y))) {
+		if ((XML_SUCCESS != l_object->QueryIntAttribute("x", &l_object_x))
+		 || (XML_SUCCESS != l_object->QueryIntAttribute("y", &l_object_y))) {
 			MMWARNING("Object element is missing one or more required attributes.");
 			return(false);
 		}
@@ -325,7 +337,7 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 		Math::Size2f l_object_hrsize;
 
 		/* standard object */
-		if (TIXML_SUCCESS != l_object->QueryIntAttribute("gid", &l_object_gid)) {
+		if (XML_SUCCESS != l_object->QueryIntAttribute("gid", &l_object_gid)) {
 			l_object->QueryIntAttribute("width",  &l_object_width);
 			l_object->QueryIntAttribute("height", &l_object_height);
 
@@ -417,7 +429,7 @@ TMXLoader::processObjectGroup(TinyXML::TiXmlElement &e)
 }
 
 bool
-TMXLoader::processTileset(TiXmlElement &e)
+TMXLoader::processTileset(XMLElement &e)
 {
 	int l_first_gid;
 	const char *l_name;
@@ -426,10 +438,10 @@ TMXLoader::processTileset(TiXmlElement &e)
 	int l_tile_margin = 0;
 	int l_tile_spacing = 0;
 
-	if ((TIXML_SUCCESS != e.QueryIntAttribute("firstgid", &l_first_gid))
+	if ((XML_SUCCESS != e.QueryIntAttribute("firstgid", &l_first_gid))
 	 || (!(l_name = e.Attribute("name")))
-	 || (TIXML_SUCCESS != e.QueryIntAttribute("tilewidth", &l_tile_width))
-	 || (TIXML_SUCCESS != e.QueryIntAttribute("tileheight", &l_tile_height))) {
+	 || (XML_SUCCESS != e.QueryIntAttribute("tilewidth", &l_tile_width))
+	 || (XML_SUCCESS != e.QueryIntAttribute("tileheight", &l_tile_height))) {
 		MMWARNING("Tileset element is missing one or more required attributes.");
 		return(false);
 	}
@@ -438,7 +450,7 @@ TMXLoader::processTileset(TiXmlElement &e)
 	MMIGNORE e.QueryIntAttribute("margin", &l_tile_margin);
 	MMIGNORE e.QueryIntAttribute("spacing", &l_tile_spacing);
 
-	TiXmlElement *l_image = e.FirstChildElement(TMXTILESET_IMAGE_NODE);
+	XMLElement *l_image = e.FirstChildElement(TMXTILESET_IMAGE_NODE);
 	if (!l_image) {
 		MMWARNING("Tileset element is missing an image element.");
 		return(false);

@@ -41,6 +41,8 @@
 #include "graphics/itexturedata.h"
 #include "graphics/ivertexdata.h"
 
+#include <tinyxml2.h>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
@@ -175,23 +177,23 @@ MeshBase::setTextureCoordinate(UINT16 i, float u, float v)
 }
 
 bool
-MeshBase::serialize(TinyXML::TiXmlElement &n) const
+MeshBase::serialize(XMLElement &n) const
 {
 	n.SetAttribute("type", type().str().c_str());
-	n.SetDoubleAttribute("rotation", m_p->rotation);
+	n.SetAttribute("rotation", m_p->rotation);
 
 	/* color */
-	TinyXML::TiXmlElement l_color("color");
-	l_color.SetDoubleAttribute("r", m_p->color[0]);
-	l_color.SetDoubleAttribute("g", m_p->color[1]);
-	l_color.SetDoubleAttribute("b", m_p->color[2]);
-	l_color.SetDoubleAttribute("a", m_p->color[3]);
+	XMLElement *l_color = n.GetDocument()->NewElement("color");
+	l_color->SetAttribute("r", m_p->color[0]);
+	l_color->SetAttribute("g", m_p->color[1]);
+	l_color->SetAttribute("b", m_p->color[2]);
+	l_color->SetAttribute("a", m_p->color[3]);
 	n.InsertEndChild(l_color);
 
 	/* texture */
 	if (m_p->tdata->isLoaded()) {
-		TinyXML::TiXmlElement l_texture("texture");
-		l_texture.SetAttribute("id", m_p->tdata->id().str().c_str());
+		XMLElement *l_texture = n.GetDocument()->NewElement("texture");
+		l_texture->SetAttribute("id", m_p->tdata->id().str().c_str());
 		n.InsertEndChild(l_texture);
 	}
 
@@ -199,9 +201,9 @@ MeshBase::serialize(TinyXML::TiXmlElement &n) const
 	for (UINT16 i = 0; i < m_p->tcdata->count(); ++i) {
 		float l_u, l_v;
 		if (m_p->tcdata->get(i, l_u, l_v)) {
-			TinyXML::TiXmlElement l_vector("tcoord");
-			l_vector.SetDoubleAttribute("u", l_u);
-			l_vector.SetDoubleAttribute("v", l_v);
+			XMLElement *l_vector = n.GetDocument()->NewElement("tcoord");
+			l_vector->SetAttribute("u", l_u);
+			l_vector->SetAttribute("v", l_v);
 			n.InsertEndChild(l_vector);
 		} else MMWARNING("Failed to serialize text coord " << i);
 	}
@@ -210,9 +212,9 @@ MeshBase::serialize(TinyXML::TiXmlElement &n) const
 	for (UINT16 i = 0; i < m_p->vdata->count(); ++i) {
 		float l_x, l_y;
 		if (m_p->vdata->get(i, l_x, l_y)) {
-			TinyXML::TiXmlElement l_vector("vector");
-			l_vector.SetDoubleAttribute("x", l_x);
-			l_vector.SetDoubleAttribute("y", l_y);
+			XMLElement *l_vector = n.GetDocument()->NewElement("vector");
+			l_vector->SetAttribute("x", l_x);
+			l_vector->SetAttribute("y", l_y);
 			n.InsertEndChild(l_vector);
 		} else MMWARNING("Failed to serialize vertex " << i);
 	}
@@ -221,9 +223,9 @@ MeshBase::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-MeshBase::deserialize(TinyXML::TiXmlElement &n)
+MeshBase::deserialize(XMLElement &n)
 {
-	TinyXML::TiXmlElement *l_child;
+	XMLElement *l_child;
 	UINT16 l_i;
 
 	n.QueryFloatAttribute("rotation", &m_p->rotation);

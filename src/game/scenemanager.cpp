@@ -44,6 +44,10 @@
 #include "game/factorybase.h"
 #include "game/iscene.h"
 
+#include <tinyxml2.h>
+
+#include <list>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
 using namespace Game;
@@ -132,19 +136,19 @@ SceneManager::update(float d)
 }
 
 bool
-SceneManager::serialize(TinyXML::TiXmlElement &n) const
+SceneManager::serialize(XMLElement &n) const
 {
 	SceneStack::const_reverse_iterator l_i;
 	SceneStack::const_reverse_iterator l_c = m_p->stack.rend();
 	for (l_i = m_p->stack.rbegin(); l_i != l_c; ++l_i) {
-		TinyXML::TiXmlElement l_element("scene");
-		if ((*l_i)->serialize(l_element))
+		XMLElement *l_element = n.GetDocument()->NewElement("scene");
+		if ((*l_i)->serialize(*l_element))
 			n.InsertEndChild(l_element);
 	}
 
 	if (m_p->active) {
-		TinyXML::TiXmlElement l_element("scene");
-		if (m_p->active->serialize(l_element))
+		XMLElement *l_element = n.GetDocument()->NewElement("scene");
+		if (m_p->active->serialize(*l_element))
 			n.InsertEndChild(l_element);
 	}
 	
@@ -152,9 +156,9 @@ SceneManager::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-SceneManager::deserialize(TinyXML::TiXmlElement &n)
+SceneManager::deserialize(XMLElement &n)
 {
-	TinyXML::TiXmlElement *l_child;
+	XMLElement *l_child;
 	for (l_child = n.FirstChildElement("scene") ;
 	     l_child;
 	     l_child = l_child->NextSiblingElement("scene")) {

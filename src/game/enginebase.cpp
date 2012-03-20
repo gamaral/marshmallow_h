@@ -48,6 +48,8 @@
 #include "game/factory.h"
 #include "game/scenemanager.h"
 
+#include <tinyxml2.h>
+
 extern int iAllocations;
 extern int iDeallocations;
 
@@ -228,12 +230,11 @@ EngineBase::run(void)
 	tick();
 	update(0);
 	render();
+	l_tick = NOW();
 
 	/* main game loop */
 	do
 	{
-		l_tick = NOW();
-
 		m_p->delta_time = 0;
 		for (int i = 0; i < TIME_INTERVAL_COUNT; ++i)
 			m_p->delta_time += l_time_interval[i];
@@ -248,8 +249,8 @@ EngineBase::run(void)
 		if (l_update >= l_update_target) {
 			update(static_cast<float>(l_update_target) / MILLISECONDS_PER_SECOND);
 			l_update -= l_update_target;
-			if (l_update > l_update_target)
-				MMINFO("Skipping update frame."), l_update = 0;
+			if (l_update >= l_update_target)
+				MMINFO("Skipping update frame. TARGET=" << l_update_target), l_update = 0;
 		}
 
 		if (l_second >= l_second_target) {
@@ -262,19 +263,20 @@ EngineBase::run(void)
 			render();
 			m_p->frame_rate++;
 			l_render -= l_render_target;
-			if (l_render > l_render_target)
-				MMINFO("Skipping render frame."), l_render = 0;
+			if (l_render >= l_render_target)
+				MMINFO("Skipping render frame. TARGET=" << l_render_target), l_render = 0;
 		}
 
 		if (m_p->suspendable)
 			/* sleep */
-			Platform::Sleep(l_tick_target - (NOW() - l_tick));
+			Platform::Sleep((l_tick_target - (NOW() - l_tick)) / 2);
 		else
 			/* busy wait */
-			while ((l_tick_target - (NOW() - l_tick)) > 0) { tick(); }
+			while (l_tick_target > (NOW() - l_tick)) { tick(); }
 
 		l_last_interval = (l_last_interval + 1) % TIME_INTERVAL_COUNT;
 		l_time_interval[l_last_interval] = NOW() - l_tick;
+		l_tick = NOW();
 	} while (m_p->running);
 
 	finalize();
@@ -340,16 +342,16 @@ EngineBase::update(float d)
 }
 
 bool
-EngineBase::serialize(TinyXML::TiXmlElement &n) const
+EngineBase::serialize(XMLElement &n) const
 {
-	n.SetDoubleAttribute("fps", m_p->fps);
-	n.SetDoubleAttribute("ups", m_p->ups);
+	n.SetAttribute("fps", m_p->fps);
+	n.SetAttribute("ups", m_p->ups);
 	n.SetAttribute("suspendable", m_p->suspendable ? "t" : "f");
 
 	if (m_p->scene_manager) {
-		TinyXML::TiXmlElement l_element("scenes");
+		XMLElement *l_element = n.GetDocument()->NewElement("scenes");
 
-		if (!m_p->scene_manager->serialize(l_element)) {
+		if (!m_p->scene_manager->serialize(*l_element)) {
 			MMWARNING("Scene Manager serialization failed");
 			return(false);
 		}
@@ -361,14 +363,14 @@ EngineBase::serialize(TinyXML::TiXmlElement &n) const
 }
 
 bool
-EngineBase::deserialize(TinyXML::TiXmlElement &n)
+EngineBase::deserialize(XMLElement &n)
 {
 	/*
 	 * Engine deserialization should ideally
 	 * take place BEFORE it has been started.
 	 */
 
-	TinyXML::TiXmlElement *l_element;
+	XMLElement *l_element;
 
 	l_element = n.FirstChildElement("scenes");
 
