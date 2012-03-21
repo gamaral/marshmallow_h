@@ -208,7 +208,10 @@ namespace
 bool
 Viewport::Initialize(UINT16 w, UINT16 h, UINT8 d, bool f)
 {
-	if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+	/* force video center */
+	setenv("SDL_VIDEO_CENTERED", "1", true);
+
+	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
 		MMERROR("SDL viewport initialization failed.");
 		return(false);
 	}

@@ -62,6 +62,7 @@ class PlayerEntity : public Game::EntityBase
 	SharedInputComponent m_input_component;
 
 	int m_direction;
+	float m_moving_sky;
 	bool m_in_motion;
 	bool m_on_platform;
 	bool m_init;

@@ -140,7 +140,7 @@ BufferIO::seek(long o, DIOSeek on)
 
 	switch (on) {
 	case   DIOStart: if (o < m_p->size) l_cursor = o; break;
-	case     DIOEnd: if (m_p->size + o >= 0) l_cursor = m_p->size + o; break;
+	case     DIOEnd: if (static_cast<long>(m_p->size + o) >= 0) l_cursor = m_p->size + o; break;
 	case DIOCurrent: if (m_p->cursor + o < m_p->size) l_cursor = m_p->cursor + o; break;
 	default: return(false);
 	}

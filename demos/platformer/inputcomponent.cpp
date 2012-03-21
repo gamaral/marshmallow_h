@@ -112,8 +112,8 @@ InputComponent::update(float)
 		else m_movement->acceleration()[0] = 0;
 
 		/* speed limits */
-		if (m_movement->velocity()[0] > 20)  m_movement->velocity()[0] = 20;
-		else if (m_movement->velocity()[0] < -20) m_movement->velocity()[0] = -20;
+		if (m_movement->velocity()[0] > 10) m_movement->velocity()[0] = 10;
+		else if (m_movement->velocity()[0] < -10) m_movement->velocity()[0] = -10;
 
 		/* only jump if on platform */
 		if (m_jump && m_collider->onPlatform()) {

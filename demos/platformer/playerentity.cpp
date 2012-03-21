@@ -57,6 +57,7 @@ PlayerEntity::PlayerEntity(const Core::Identifier &i, Game::EntitySceneLayer &l)
     : Game::EntityBase(i, l)
     , m_init(false)
 {
+	m_moving_sky = 0;
 }
 
 PlayerEntity::~PlayerEntity(void)
@@ -133,14 +134,17 @@ PlayerEntity::update(float d)
 			Game::SharedTilemapSceneLayer l_background =
 			    Game::Engine::Instance()->sceneManager()->activeScene()->
 			        getLayer("background").staticCast<Game::TilemapSceneLayer>();
+			if ((m_moving_sky += d) > l_background->size().area())
+				m_moving_sky = d;
+
 			if (l_background)
-				l_background->setTranslation(Math::Vector2(l_pos.x() * 0.125f, 0.f));
+				l_background->setTranslation(Math::Vector2(m_moving_sky, m_moving_sky));
 
 			Game::SharedTilemapSceneLayer l_midground =
 			    Game::Engine::Instance()->sceneManager()->activeScene()->
 			        getLayer("midground").staticCast<Game::TilemapSceneLayer>();
 			if (l_midground)
-				l_midground->setTranslation(Math::Vector2(l_pos.x() * 0.25f, 0.f));
+				l_midground->setTranslation(Math::Vector2(l_pos.x() * 0.15f, 0.f));
 
 		}
 
