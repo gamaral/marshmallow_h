@@ -79,6 +79,11 @@ struct EngineBase::Private
 EngineBase::EngineBase(int f, int u, int s)
     : m_p(new Private)
 {
+	MMINFO("Marshmallow Engine Version " << MARSHMALLOW_VERSION_MAJOR << "."
+	                                     << MARSHMALLOW_VERSION_MINOR << "."
+	                                     << MARSHMALLOW_VERSION_BUILD << "."
+	                                     << MARSHMALLOW_VERSION_REVISION);
+
 	m_p->fps = f;
 	m_p->ups = u;
 	m_p->delta_time = 0;
@@ -322,7 +327,7 @@ EngineBase::tick(void)
 void
 EngineBase::second(void)
 {
-	MMWARNING("FPS=" << m_p->frame_rate);
+	MMINFO("FPS=" << m_p->frame_rate);
 	m_p->frame_rate = 0;
 }
 
