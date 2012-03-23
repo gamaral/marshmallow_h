@@ -124,16 +124,27 @@ namespace
 
 		/* get root window */
 		Window l_rwindow = DefaultRootWindow(s_data.display);
-		
+
+		XVisualInfo l_vinfo;
+		if (!XMatchVisualInfo(s_data.display, XDefaultScreen(s_data.display), d, TrueColor, &l_vinfo)) {
+			MMERROR("Failed to find an appropriate visual.");
+			return(false);
+		}
+		s_data.screen = l_vinfo.screen;
+
+		XSync(s_data.display, true);
+
 		/* window attributes */
 		XSetWindowAttributes l_swattr;
 		memset(&l_swattr, 0, sizeof(l_swattr));
+		l_swattr.border_pixel = 0;
+		l_swattr.colormap = XCreateColormap(s_data.display, l_rwindow, l_vinfo.visual, AllocNone);
 		l_swattr.event_mask =
-			ButtonPressMask |
-			ButtonReleaseMask |
-			KeyPressMask |
-			KeyReleaseMask |
-			PointerMotionMask |
+			ButtonPressMask    |
+			ButtonReleaseMask  |
+			KeyPressMask       |
+			KeyReleaseMask     |
+			PointerMotionMask  |
 			StructureNotifyMask;
 
 		/* create window */
@@ -176,8 +187,7 @@ namespace
 			XFree(l_modes);
 
 			/* allow display to settle after vidmode switch */
-			XSync(s_data.display, False);
-			sleep(2);
+			XSync(s_data.display, true);
 
 			/* create a fullscreen window */
 			l_swattr.override_redirect = true;
@@ -185,10 +195,10 @@ namespace
 			   (s_data.display,
 			    l_rwindow,
 			    0, 0, w, h, 0,
-			    d,
+			    l_vinfo.depth,
 			    InputOutput,
-			    CopyFromParent,
-			    CWEventMask|CWOverrideRedirect,
+			    l_vinfo.visual,
+			    CWColormap|CWBorderPixel|CWEventMask|CWOverrideRedirect,
 			    &l_swattr);
 			XMapRaised(s_data.display, s_data.window);
 
@@ -214,7 +224,8 @@ namespace
 			XGrabPointer(s_data.display, s_data.window, true,
 			    ButtonPressMask, GrabModeAsync, GrabModeAsync,
 			    s_data.window, None, CurrentTime);
-		} else {
+		}
+		else {
 			s_data.window = XCreateWindow
 			   (s_data.display,
 			    l_rwindow,
@@ -222,10 +233,10 @@ namespace
 			    (DisplayHeight(s_data.display, s_data.screen) - h) / 2,
 			    w, h,
 			    1,
-			    d,
+			    l_vinfo.depth,
 			    InputOutput,
-			    CopyFromParent,
-			    CWEventMask,
+			    l_vinfo.visual,
+			    CWColormap|CWBorderPixel|CWEventMask,
 			    &l_swattr);
 			XMapRaised(s_data.display, s_data.window);
 
@@ -245,6 +256,8 @@ namespace
 		}
 		XkbSetDetectableAutoRepeat(s_data.display, true, 0);
 
+		XSync(s_data.display, true);
+
 		/* set window title */
 		XTextProperty l_window_name;
 		static UINT8 l_window_title[] = MARSHMALLOW_BUILD_TITLE;
@@ -260,17 +273,9 @@ namespace
 
 		/*** GL ***/
 
-		/* get visual info */
-		GLint gattr[] = {GLX_RGBA, GLX_DEPTH_SIZE, d, GLX_DOUBLEBUFFER, None};
-		XVisualInfo *l_vinfo;
-		if(!(l_vinfo = glXChooseVisual(s_data.display, 0, gattr))) {
-			MMERROR("Unable to choose X Visual Info.");
-			return(false);
-		}
-		s_data.screen = l_vinfo->screen;
-
 		/* create context */
-		if (!(s_data.context = glXCreateContext(s_data.display, l_vinfo, 0, GL_TRUE))) {
+
+		if (!(s_data.context = glXCreateContext(s_data.display, &l_vinfo, 0, GL_TRUE))) {
 			MMERROR("Failed to create context!");
 			return(false);
 		}
@@ -287,16 +292,22 @@ namespace
 
 		/* set defaults */
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_POINT_SMOOTH);
+		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+
+		glEnable(GL_TEXTURE_2D);
+
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_LIGHTING);
-		glDisable(GL_BLEND);
 		glEnable(GL_CULL_FACE);
-		glEnable(GL_TEXTURE_2D);
 
 		/* set viewport size */
 
-		s_data.size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
-		s_data.size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
+		s_data.size[0] = s_data.wsize.width()  * MARSHMALLOW_VIEWPORT_VSCALE;
+		s_data.size[1] = s_data.wsize.height() * MARSHMALLOW_VIEWPORT_VSCALE;
 
 		/* initialize context */
 

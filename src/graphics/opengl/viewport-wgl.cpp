@@ -216,16 +216,22 @@ namespace
 
 		/* set defaults */
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_POINT_SMOOTH);
+		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+
+		glEnable(GL_TEXTURE_2D);
+
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_LIGHTING);
-		glDisable(GL_BLEND);
 		glEnable(GL_CULL_FACE);
-		glEnable(GL_TEXTURE_2D);
 
 		/* set viewport size */
 
-		s_data.size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
-		s_data.size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
+		s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH  * MARSHMALLOW_VIEWPORT_VSCALE;
+		s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT * MARSHMALLOW_VIEWPORT_VSCALE;
 
 		/* initialize context */
 

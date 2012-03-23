@@ -102,6 +102,8 @@ TextureData::unload(void)
 
 	m_size = Math::Size2i();
 	m_texture_id = 0;
+
+	MMINFO("Texture unloaded.");
 }
 
 const Core::Type &

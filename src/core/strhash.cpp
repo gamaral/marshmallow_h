@@ -95,7 +95,7 @@ StrHash::operator const char * (void) const
 }
 
 StrHash &
-StrHash::operator=(const Core::StrHash &rhs)
+StrHash::operator=(const StrHash &rhs)
 {
 	if (this != &rhs) {
 		Hash::operator=(rhs);

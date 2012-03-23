@@ -106,16 +106,22 @@ namespace
 
 		/* set defaults */
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_POINT_SMOOTH);
+		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+
+		glEnable(GL_TEXTURE_2D);
+
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_LIGHTING);
-		glDisable(GL_BLEND);
 		glEnable(GL_CULL_FACE);
-		glEnable(GL_TEXTURE_2D);
 
 		/* set viewport size */
 
-		s_data.size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
-		s_data.size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
+		s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH  * MARSHMALLOW_VIEWPORT_VSCALE;
+		s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT * MARSHMALLOW_VIEWPORT_VSCALE;
 
 		/* initialize context */
 
@@ -330,13 +336,7 @@ Viewport::Type(void)
 void
 Viewport::SwapControl(bool s)
 {
-#if GLX_SGI_swap_control
-	if (GLEE_GLX_SGI_swap_control)
-		glXSwapIntervalSGI(s ? 1 : 0);
-#elif WGL_EXT_swap_control
-	if(GLEE_WGL_EXT_swap_control)
-		wglSwapIntervalEXT(s ? 1 : 0);
-#endif
+	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, s ? 1 : 0);
 }
 
 void

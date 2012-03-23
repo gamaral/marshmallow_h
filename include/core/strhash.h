@@ -81,7 +81,7 @@ namespace Core
 
 		operator const char * (void) const;
 
-		Core::StrHash & operator=(const Core::StrHash &rhs);
+		StrHash & operator=(const StrHash &rhs);
 	};
 }
 

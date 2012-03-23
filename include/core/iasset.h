@@ -56,8 +56,8 @@ namespace Core
 	{
 		virtual ~IAsset(void) {};
 
-		virtual const Core::Identifier & id(void) const = 0;
-		virtual const Core::Type & type(void) const = 0;
+		virtual const Identifier & id(void) const = 0;
+		virtual const Type & type(void) const = 0;
 	};
 	typedef Shared<IAsset> SharedAsset;
 	typedef Weak<IAsset> WeakAsset;

@@ -78,7 +78,7 @@ namespace Core
 
 		operator UID() const;
 
-		Core::Hash & operator=(const Core::Hash &rhs);
+		Hash & operator=(const Hash &rhs);
 
 		bool operator==(const Hash &rhs) const;
 		bool operator!=(const Hash &rhs) const;

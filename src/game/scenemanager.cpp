@@ -107,7 +107,10 @@ SceneManager::popScene(void)
 	if (!m_p->stack.empty()) {
 		m_p->active = m_p->stack.front();
 		m_p->stack.pop_front();
-	} else MMWARNING("Scene stack is empty!");
+	} else {
+		m_p->active.clear();
+		MMWARNING("Scene stack is empty!");
+	}
 }
 
 SharedScene
