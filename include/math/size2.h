@@ -107,6 +107,10 @@ namespace Math
 		static const Size2<T> &Zero(void)
 		    { static Size2<T> s_zero(0, 0);
 		      return(s_zero); }
+
+		static const Size2<T> &Identity(void)
+		    { static Size2<T> s_identity(1, 1);
+		      return(s_identity); }
 	};
 	typedef Size2<float> Size2f;
 	typedef Size2<int>   Size2i;

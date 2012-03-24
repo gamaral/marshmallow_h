@@ -75,10 +75,12 @@ struct TilemapSceneLayer::Private
 
 	Math::Vector2 translate;
 
-	Math::Size2i tile_size;
 	Math::Size2i size;
+	Math::Size2i tile_size;
+	Math::Size2f scale;
 
 	float opacity;
+
 	bool  visible;
 };
 
@@ -89,6 +91,7 @@ TilemapSceneLayer::TilemapSceneLayer(const Core::Identifier &i, IScene &s)
 	m_p->data = 0;
 	m_p->opacity = 1.0f;
 	m_p->visible = true;
+	m_p->scale = Math::Size2f::Identity();
 
 	recalculateRelativeTileSize();
 }
@@ -164,6 +167,20 @@ TilemapSceneLayer::setTranslation(const Math::Vector2 &t)
 }
 
 const Math::Size2i &
+TilemapSceneLayer::size(void) const
+{
+	return(m_p->size);
+}
+
+void
+TilemapSceneLayer::setSize(const Math::Size2i &s)
+{
+	m_p->size = s;
+	recalculateRelativeTileSize();
+	recalculateAllVertexData();
+}
+
+const Math::Size2i &
 TilemapSceneLayer::tileSize(void) const
 {
 	return(m_p->tile_size);
@@ -177,18 +194,17 @@ TilemapSceneLayer::setTileSize(const Math::Size2i &s)
 	recalculateAllVertexData();
 }
 
-const Math::Size2i &
-TilemapSceneLayer::size(void) const
+const Math::Size2f &
+TilemapSceneLayer::scale(void) const
 {
-	return(m_p->size);
+	return(m_p->scale);
 }
 
 void
-TilemapSceneLayer::setSize(const Math::Size2i &s)
+TilemapSceneLayer::setScale(const Math::Size2f &s)
 {
-	m_p->size = s;
+	m_p->scale = s;
 	recalculateRelativeTileSize();
-	recalculateAllVertexData();
 }
 
 float
@@ -210,9 +226,9 @@ TilemapSceneLayer::visible(void) const
 }
 
 void
-TilemapSceneLayer::setVisibility(bool value)
+TilemapSceneLayer::setVisibility(bool v)
 {
-	m_p->visible = value;
+	m_p->visible = v;
 }
 
 void
@@ -314,19 +330,11 @@ TilemapSceneLayer::recalculateAllVertexData()
 void
 TilemapSceneLayer::recalculateRelativeTileSize()
 {
-	const Math::Size2f &l_vsize = Graphics::Viewport::Size();
-	const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
-
-	/*
-	 * map tile size from pixels to virtual coordinates.
-	 * vTS (vcoord) = (TS (pixels) * vSize (vcoord)) / wSize (pixels)
-	 */
+	/* convert tile size to relative tile size */
 	m_p->rtile_size[0] =
-	    (static_cast<float>(m_p->tile_size.width()) * l_vsize.width())
-	        / static_cast<float>(l_wsize.width());
+	    (static_cast<float>(m_p->tile_size.width())  * m_p->scale.width());
 	m_p->rtile_size[1] =
-	    (static_cast<float>(m_p->tile_size.height()) * l_vsize.height())
-	        / static_cast<float>(l_wsize.height());
+	    (static_cast<float>(m_p->tile_size.height()) * m_p->scale.height());
 	m_p->hrtile_size = m_p->rtile_size / 2.0f;
 
 	/* calculate relative map size */

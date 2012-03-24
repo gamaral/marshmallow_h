@@ -145,8 +145,8 @@ namespace
 
 			/* set viewport size */
 
-			m_size[0] = MARSHMALLOW_VIEWPORT_WIDTH  * MARSHMALLOW_VIEWPORT_VSCALE;
-			m_size[1] = MARSHMALLOW_VIEWPORT_HEIGHT * MARSHMALLOW_VIEWPORT_VSCALE;
+			m_size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
+			m_size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
 
 			/* initialize context */
 

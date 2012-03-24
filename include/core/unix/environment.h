@@ -62,6 +62,7 @@
 
 #define CHDIR    chdir
 #define INFINITE TIME_MAX
+#define SSCANF   sscanf
 #define STRDUP   strdup
 
 /******************************************************************** unused */

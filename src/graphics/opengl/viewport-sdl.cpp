@@ -120,8 +120,8 @@ namespace
 
 		/* set viewport size */
 
-		s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH  * MARSHMALLOW_VIEWPORT_VSCALE;
-		s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT * MARSHMALLOW_VIEWPORT_VSCALE;
+		s_data.size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
+		s_data.size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
 
 		/* initialize context */
 

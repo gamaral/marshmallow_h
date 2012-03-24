@@ -78,11 +78,14 @@ namespace Game
 		const Math::Vector2 & translate(void) const;
 		void setTranslation(const Math::Vector2 &translation);
 
+		const Math::Size2i & size(void) const;
+		void setSize(const Math::Size2i &size);
+
 		const Math::Size2i & tileSize(void) const;
 		void setTileSize(const Math::Size2i &size);
 
-		const Math::Size2i & size(void) const;
-		void setSize(const Math::Size2i &size);
+		const Math::Size2f & scale(void) const;
+		void setScale(const Math::Size2f &scale);
 
 		float opacity(void) const;
 		void setOpacity(float alpha);

@@ -117,7 +117,7 @@ Viewport::Radius2(void)
 {
 	/* calculate radius^2 */
 #define HALF_VIEWPORT_SIZE 2.f
-	const float l_w = MARSHMALLOW_VIEWPORT_VWIDTH  / (s_camera.scale().first() * HALF_VIEWPORT_SIZE);
+	const float l_w = MARSHMALLOW_VIEWPORT_VWIDTH  / (s_camera.scale().first()  * HALF_VIEWPORT_SIZE);
 	const float l_h = MARSHMALLOW_VIEWPORT_VHEIGHT / (s_camera.scale().second() * HALF_VIEWPORT_SIZE);
 	return(powf(l_w, 2.f) + powf(l_h, 2.f));
 }
@@ -126,7 +126,7 @@ const Math::Size2f &
 Viewport::ScaledSize(void)
 {
 	const static Math::Size2f s_scaled_size
-	    (MARSHMALLOW_VIEWPORT_VWIDTH / s_camera.scale().first(),
+	    (MARSHMALLOW_VIEWPORT_VWIDTH  / s_camera.scale().first(),
 	     MARSHMALLOW_VIEWPORT_VHEIGHT / s_camera.scale().second());
 	return(s_scaled_size);
 }

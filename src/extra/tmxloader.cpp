@@ -64,6 +64,9 @@
 #define TMXOBJECTGROUP_NODE   "objectgroup"
 #define TMXOBJECTGROUP_OBJECT_NODE "object"
 
+#define TMXPROPERTIES_NODE    "properties"
+#define TMXPROPERTIES_PROPERTY_NODE "property"
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Extra;
 
@@ -80,7 +83,7 @@ struct TMXLoader::Private
 	Private(Game::IScene &s)
 	    : scene(s)
 	    , is_loaded(false)
-	    , conv_ratio(0, 0)
+	    , scale(1.f, 1.f)
 	    , hrmap_size(0, 0)
 	    , map_size(0, 0)
 	    , tile_size(0, 0) {}
@@ -93,7 +96,7 @@ struct TMXLoader::Private
 
 	bool is_loaded;
 
-	Math::Size2f conv_ratio;
+	Math::Size2f scale;
 	Math::Size2f hrmap_size;
 	Math::Size2i map_size;
 	Math::Size2i tile_size;
@@ -177,22 +180,53 @@ TMXLoader::processMap(XMLElement &m)
 		return(false);
 	}
 
-	const Math::Size2f &l_vsize = Graphics::Viewport::Size();
-	const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
-
-	/* calculate pixels per viewport coordinate ratio */
-	m_p->conv_ratio[0] =
-	    static_cast<float>(l_vsize.width())
-	        / static_cast<float>(l_wsize.width());
-	m_p->conv_ratio[1] =
-	    static_cast<float>(l_vsize.height())
-	        / static_cast<float>(l_wsize.height());
-
 	/* calculate half-relative map size (used to offset coordinates) */
-	m_p->hrmap_size[0] = m_p->conv_ratio.width()
+	m_p->hrmap_size[0] = m_p->scale.width()
 	    * static_cast<float>(m_p->map_size.width() * m_p->tile_size.width());
-	m_p->hrmap_size[1] = m_p->conv_ratio.height()
+	m_p->hrmap_size[1] = m_p->scale.height()
 	    * static_cast<float>(m_p->map_size.height() * m_p->tile_size.height());
+
+	/* process properties */
+	XMLElement *l_properties = m.FirstChildElement(TMXPROPERTIES_NODE);
+	XMLElement *l_property = l_properties ? l_properties->FirstChildElement(TMXPROPERTIES_PROPERTY_NODE) : 0;
+	if (l_property)
+	do {
+		const char *l_pname = l_property->Attribute("name");
+		if (!l_pname)
+			continue;
+
+		if (strcasecmp(l_pname, "scale") == 0) {
+			const char *l_value = l_property->Attribute("value");
+			if (!l_value) {
+				MMWARNING("Skipping incomplete scale property.");
+				continue;
+			}
+
+			if (strcasecmp(l_value, "auto") == 0) {
+				const Math::Size2f &l_vsize = Graphics::Viewport::Size();
+				const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
+
+				/*
+				 * calculate pixels per viewport coordinate ratio
+				 * scale ratio = vSize (vcoord)) / wSize (pixels)
+				 */
+				m_p->scale[0] = l_vsize.width()  / static_cast<float>(l_wsize.width());
+				m_p->scale[1] = l_vsize.height() / static_cast<float>(l_wsize.height());
+
+				continue;
+			}
+			else if (SSCANF(l_value, "%fx%f", &m_p->scale[0], &m_p->scale[1]) == 2)
+				continue;
+			else if (SSCANF(l_value, "%f", &m_p->scale[0]) == 1) {
+				m_p->scale[1] = m_p->scale[0];
+				continue;
+			}
+
+			MMERROR("Invalid scale value encountered.");
+			continue;
+		}
+
+	} while ((l_property = l_property->NextSiblingElement(TMXPROPERTIES_PROPERTY_NODE)));
 
 	return(true);
 }
@@ -277,7 +311,54 @@ TMXLoader::processLayer(XMLElement &e)
 	l_layer->setOpacity(l_opacity);
 	l_layer->setSize(m_p->map_size);
 	l_layer->setTileSize(m_p->tile_size);
+	l_layer->setScale(m_p->scale);
 	l_layer->setVisibility(1 == l_visible);
+
+	/* process properties */
+	XMLElement *l_properties = e.FirstChildElement(TMXPROPERTIES_NODE);
+	XMLElement *l_property = l_properties ? l_properties->FirstChildElement(TMXPROPERTIES_PROPERTY_NODE) : 0;
+	if (l_property)
+	do {
+		const char *l_pname = l_property->Attribute("name");
+		if (!l_pname)
+			continue;
+
+		if (strcmp(l_pname, "scale") == 0) {
+			const char *l_value = l_property->Attribute("value");
+			if (!l_value) {
+				MMWARNING("Skipping incomplete scale property.");
+				continue;
+			}
+
+			Math::Size2f l_scale = l_layer->scale();
+			if (strcasecmp(l_value, "auto") == 0) {
+				const Math::Size2f &l_vsize = Graphics::Viewport::Size();
+				const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
+
+				/*
+				 * calculate pixels per viewport coordinate ratio
+				 * scale ratio = vSize (vcoord)) / wSize (pixels)
+				 */
+				l_scale[0] = l_vsize.width()  / static_cast<float>(l_wsize.width());
+				l_scale[1] = l_vsize.height() / static_cast<float>(l_wsize.height());
+				l_layer->setScale(l_scale);
+
+				continue;
+			}
+			else if (SSCANF(l_value, "%fx%f", &l_scale[0], &l_scale[1]) == 2) {
+				l_layer->setScale(l_scale);
+				continue;
+			} else if (SSCANF(l_value, "%f", &l_scale[0]) == 1) {
+				l_scale[1] = l_scale[0];
+				l_layer->setScale(l_scale);
+				continue;
+			}
+
+			MMERROR("Invalid scale value encountered.");
+			continue;
+		}
+
+	} while ((l_property = l_property->NextSiblingElement(TMXPROPERTIES_PROPERTY_NODE)));
 
 	/* attach tilesets */
 	TilesetCollection::iterator l_tileset_i;
@@ -342,8 +423,8 @@ TMXLoader::processObjectGroup(XMLElement &e)
 			l_object->QueryIntAttribute("height", &l_object_height);
 
 			/* calculate object size */
-			l_object_rsize[0] = m_p->conv_ratio.width()  * static_cast<float>(l_object_width);
-			l_object_rsize[1] = m_p->conv_ratio.height() * static_cast<float>(l_object_height);
+			l_object_rsize[0] = m_p->scale.width()  * static_cast<float>(l_object_width);
+			l_object_rsize[1] = m_p->scale.height() * static_cast<float>(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
 		/* tile object */
@@ -372,8 +453,8 @@ TMXLoader::processObjectGroup(XMLElement &e)
 			/* calculate object size from tileset */
 			l_object_width  = l_tileset->tileSize().width();
 			l_object_height = l_tileset->tileSize().height();
-			l_object_rsize[0] = m_p->conv_ratio.width()  * static_cast<float>(l_object_width);
-			l_object_rsize[1] = m_p->conv_ratio.height() * static_cast<float>(l_object_height);
+			l_object_rsize[0] = m_p->scale.width()  * static_cast<float>(l_object_width);
+			l_object_rsize[1] = m_p->scale.height() * static_cast<float>(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
 			/* attach tileset used */
@@ -403,8 +484,8 @@ TMXLoader::processObjectGroup(XMLElement &e)
 
 		/* create position component */
 		Game::PositionComponent *l_pos_component = new Game::PositionComponent("position", *l_entity);
-		l_pos_component->position()[0] = m_p->conv_ratio.width()  * static_cast<float>(l_object_x);
-		l_pos_component->position()[1] = m_p->conv_ratio.height() * static_cast<float>(l_object_y);
+		l_pos_component->position()[0] = m_p->scale.width()  * static_cast<float>(l_object_x);
+		l_pos_component->position()[1] = m_p->scale.height() * static_cast<float>(l_object_y);
 
 		/* change position to center of object (offset) */
 		l_pos_component->position()[0] += l_object_hrsize.width();
