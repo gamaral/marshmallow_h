@@ -44,26 +44,18 @@
 
 /********************************************************************** types */
 
-#define CHAR     char
-#define INT16    int16_t
-#define INT32    int32_t
-#define INT64    int64_t
-#define INT8     int8_t
-#define TIME     long
-#define TIME_MAX LONG_MAX
+#define TIME     int
+#define TIME_MAX INT_MAX
 #define UID      uint32_t
-#define UINT16   uint16_t
-#define UINT32   uint32_t
-#define UINT64   uint64_t
-#define UINT8    uint8_t
-#define WCHAR    wchar_t
 
 /******************************************************************** defines */
 
-#define CHDIR    chdir
-#define INFINITE TIME_MAX
-#define SSCANF   sscanf
-#define STRDUP   strdup
+#define CHDIR      chdir
+#define INFINITE   TIME_MAX
+#define MMFUNCTION __PRETTY_FUNCTION__
+#define NOOP       (void)0
+#define STRCASECMP strcasecmp
+#define STRDUP     strdup
 
 /******************************************************************** unused */
 

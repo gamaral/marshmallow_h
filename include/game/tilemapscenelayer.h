@@ -68,12 +68,12 @@ namespace Game
 		    IScene &scene);
 		virtual ~TilemapSceneLayer(void);
 
-		Graphics::SharedTileset tileset(UINT32 index, UINT32 *offset = 0);
-		void attachTileset(UINT32 offset, Graphics::SharedTileset tileset);
-		void dettachTileset(UINT32 offset);
+		Graphics::SharedTileset tileset(uint32_t index, uint32_t *offset = 0);
+		void attachTileset(uint32_t offset, Graphics::SharedTileset tileset);
+		void dettachTileset(uint32_t offset);
 
-		const UINT32 * data(void) const;
-		void setData(UINT32 *data);
+		const uint32_t * data(void) const;
+		void setData(uint32_t *data);
 
 		const Math::Vector2 & translate(void) const;
 		void setTranslation(const Math::Vector2 &translation);
@@ -93,6 +93,9 @@ namespace Game
 		bool visible(void) const;
 		void setVisibility(bool value);
 
+		const Math::Size2f & virtualSize(void) const;
+		const Math::Size2f & virtualHalfSize(void) const;
+
 	public: /* virtual */
 
 		VIRTUAL const Core::Type & type(void) const
@@ -109,7 +112,7 @@ namespace Game
 
 		void recalculateAllVertexData();
 		void recalculateRelativeTileSize();
-		void recalculateVertexData(UINT32 offset);
+		void recalculateVertexData(uint32_t offset);
 
 	private: /* static */
 

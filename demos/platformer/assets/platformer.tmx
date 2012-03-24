@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="80" height="20" tilewidth="32" tileheight="32">
  <properties>
-  <property name="scale" value="auto"/>
+  <property name="scale" value="1"/>
  </properties>
  <tileset firstgid="1" name="platformer" tilewidth="32" tileheight="32">
   <image source="assets/platformer_tiles.png" width="512" height="512"/>
  </tileset>
  <layer name="background" width="80" height="20">
-  <properties>
-   <property name="scale" value="0.25"/>
-  </properties>
   <data encoding="base64" compression="zlib">
-   eJztlksOgCAMBbmeogfwd/9r2I0bE7TV92iNLGZH+ptCyCmlQRgbJjqhFxZhFbaXcTLZQ608WiZhBtR5xNF6eDoHax4vb+w6S/FR+6WNoz3n5Q01V1ac2nOx7ke098obqy+mXw830ffBUt9bN6VcVzVEfwcZ9ZXmUcrF8vJVau+MNh9izuh/xpe4m7Om56j/DKt3Rj3snj138tybp8uofiJ48sTSN+LPosmHOlPDs2U/EbusiYE6w+qhEZu/voUo2h3hsAPILOjQ
+   eJztwwEJAAAMBKEr+P3rrMdQcNVUVVVVVVUfPdw84VA=
   </data>
  </layer>
- <layer name="midground" width="80" height="20">
+ <layer name="clouds" width="80" height="20" opacity="0.75">
+  <properties>
+   <property name="scale" value="2"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   eJztzsENgDAIBdAuoE6g7r+lHDw1aSDo8b2EQ3+BMAYAAAAAAPxvi9qjjsX7a1+Wd+ayWyoz3d1zdkZdUff7N7/HIq/2ZXlnLrulMtPdPWcPdegIQQ==
+   eJztV0kSwzAI43tt+oEu+f83wiUXz5CIWNjQVjPcXLFIuM4iIg/5DTw1XhpvjY/G2sF107gTuHaeRWJ1GJUHxa5FC2+dXk2vzoHpHQ+i5+GFxc/yF8qDnpulmxesOlGe7HPJdl9VQ6S+M7TJ7gdPfb3aWLmOasi+7xH1WfOwckXpUhWjPYPmY8yZ/c6ohLM5Iz1XfWe0vUXUE93zTE+2vVXEKE9+492BwNM3482C5GOdYf7OgsefDC8jHKwzV/P/URveHYm4O3s5M/3vnu1IxE71cmb8vtoAMlBm9A==
   </data>
  </layer>
  <layer name="platform" width="80" height="20">
@@ -30,7 +30,6 @@
   <object name="platform" type="ColliderEntity" x="1731" y="577" width="543" height="32"/>
   <object name="platform" type="ColliderEntity" x="2337" y="353" width="269" height="32"/>
   <object name="player" type="PlayerEntity" gid="103" x="7" y="544"/>
-  <object name="platform" type="ColliderEntity" x="1595" y="625" width="72" height="12"/>
   <object name="platform" type="ColliderEntity" x="1761" y="607" width="474" height="35"/>
   <object name="platform" type="ColliderEntity" x="481" y="608" width="1020" height="33"/>
   <object name="platform" type="ColliderEntity" x="0" y="565" width="410" height="74"/>
@@ -41,13 +40,13 @@
   <object name="platform" type="ColliderEntity" x="2082" y="449" width="30" height="25"/>
   <object name="platform" type="ColliderEntity" x="2176" y="417" width="30" height="25"/>
   <object name="platform" type="ColliderEntity" x="2272" y="386" width="30" height="25"/>
-  <object name="bounce" type="ColliderEntity" x="546" y="546" width="26" height="9"/>
-  <object name="bounce" type="ColliderEntity" x="1155" y="550" width="26" height="9"/>
+  <object name="bounce" type="ColliderEntity" x="550" y="545" width="19" height="16"/>
+  <object name="bounce" type="ColliderEntity" x="1157" y="545" width="20" height="17"/>
   <object name="bounce" type="ColliderEntity" x="2243" y="550" width="26" height="9"/>
  </objectgroup>
  <layer name="foreground" width="80" height="20">
   <data encoding="base64" compression="zlib">
-   eJzt1jkOwjAYBWFfAHICoAYJqBGnYw0tOy0hLMdkOpqUYGNpRvpqv+53CGZmZmZmZvbvDVIPMLOf1EIbReohmdZBF73UQzJqEj43ZYgRxug3sO81jfBG019hhjkWWGKFNUpsImzKvS122OOAI04445JwVy5dUeGGGnc88MQr0oY3nP8Qug==
+   eJzt1jEOQEAURdHZAFaAmgS1WJ0g0eq0Osv0CgmFqMyMSe5JbhS/8DqMAQAAAAD8Xel7AAArIhWrxPeQQKUqU7nvIQFpzfVNqVStGlU8hO90Dt7x9K/Qn89BjWq63Wbri8K3vNxWZyvCtb3cdkcbDkdfB9U=
   </data>
  </layer>
 </map>

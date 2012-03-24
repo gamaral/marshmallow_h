@@ -153,7 +153,7 @@ public:
 			    l_mcomponent->velocity()[0] *= -1;
 			if (rand() % 2)
 			    l_mcomponent->velocity()[1] *= -1;
-			l_mcomponent->acceleration() = l_mcomponent->velocity() * 50.f;
+			l_mcomponent->acceleration() = l_mcomponent->velocity() * 200.f;
 			l_entity->pushComponent(l_mcomponent);
 
 			DemoBounceComponent *l_bcomponent = new DemoBounceComponent(*l_entity);
@@ -161,10 +161,10 @@ public:
 
 			Game::SizeComponent *l_scomponent =
 			    new Game::SizeComponent("size", *l_entity);
-			l_scomponent->size() = Math::Size2f(10.f, 6.f);
+			l_scomponent->size() = Math::Size2f(52.f, 50.f);
 			l_entity->pushComponent(l_scomponent);
 
-			Math::Rect2 l_rect(Math::Size2f(10.f, 10.f));
+			Math::Rect2 l_rect(Math::Size2f(64.f, 64.f));
 			Game::RenderComponent *l_rcomponent =
 			    new Game::RenderComponent("render", *l_entity);
 			Graphics::SharedMeshBase l_mesh(new Graphics::QuadMesh(l_rect));

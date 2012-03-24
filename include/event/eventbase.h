@@ -74,12 +74,12 @@ namespace Event
 		 *  @param priority  Use a higher value to get higher priority.
 		 */
 
-		EventBase(TIME timestamp = 0, UINT8 priority = 0);
+		EventBase(TIME timestamp = 0, uint8_t priority = 0);
 		virtual ~EventBase(void);
 
 	public: /* virtual */
 
-		VIRTUAL UINT8 priority(void) const;
+		VIRTUAL uint8_t priority(void) const;
 
 		VIRTUAL TIME timeStamp(void) const;
 	};

@@ -62,18 +62,18 @@ public:
 		SceneBase::activate();
 
 		if (!m_init) {
-			m_init = true;
-
 			Graphics::SharedTextureData l_texture = Graphics::Factory::CreateTextureData();
-			l_texture->load("assets/sewer_tileset.png");
-			assert(l_texture->isLoaded() && "Failed to load tilemap asset!");
+			if (!l_texture->load("assets/sewer_tileset.png"))
+				MMFATAL("Failed to load tilemap asset!");
+
+			m_init = true;
 
 			Graphics::SharedTilesetBase l_tileset = new Graphics::Tileset;
 			l_tileset->setTileSize(Math::Size2i(32, 32));
 			l_tileset->setTextureData(l_texture);
 
 			Game::SharedTilemapSceneLayer l_tslayer;
-			UINT32 *l_data;
+			uint32_t *l_data;
 
 			/* layer 1 */
 			l_tslayer = new Game::TilemapSceneLayer("bottom", *this);
@@ -82,9 +82,9 @@ public:
 			l_tslayer->attachTileset(1, l_tileset.staticCast<Graphics::ITileset>());
 
 			/* generate random tilemap */
-			l_data = new UINT32[l_tslayer->size().area()];
+			l_data = new uint32_t[l_tslayer->size().area()];
 			for (int i = 0; i < l_tslayer->size().area(); ++i)
-				l_data[i] = static_cast<UINT32>(1 /*offset*/ + rand() % 72) /* 8x9 sample tileset */;
+				l_data[i] = static_cast<uint32_t>(1 /*offset*/ + rand() % 72) /* 8x9 sample tileset */;
 			l_tslayer->setData(l_data);
 
 			pushLayer(l_tslayer.staticCast<Game::ISceneLayer>());
@@ -97,9 +97,9 @@ public:
 			l_tslayer->attachTileset(1, l_tileset.staticCast<Graphics::ITileset>());
 
 			/* generate random tilemap */
-			l_data = new UINT32[l_tslayer->size().area()];
+			l_data = new uint32_t[l_tslayer->size().area()];
 			for (int i = 0; i < l_tslayer->size().area(); ++i)
-				l_data[i] = static_cast<UINT32>(rand() % 2) /* 0 = nothing, 1 = some tile */;
+				l_data[i] = static_cast<uint32_t>(rand() % 2) /* 0 = nothing, 1 = some tile */;
 			l_tslayer->setData(l_data);
 
 			pushLayer(l_tslayer.staticCast<Game::ISceneLayer>());
@@ -134,6 +134,8 @@ public:
 		Game::SharedScene l_scene(new DemoScene);
 		sceneManager()->pushScene(l_scene);
 
+		second();
+
 		return(true);
 	}
 
@@ -145,7 +147,7 @@ public:
 			stop();
 
 		Graphics::Transform l_camera = Graphics::Viewport::Camera();
-		l_camera.setScale(Math::Pair(1.f + m_stop_timer / 8.f, 1.f + m_stop_timer / 8.f));
+		l_camera.setScale(Math::Pair(0.125 + m_stop_timer / 8.f, 0.125 + m_stop_timer / 8.f));
 		l_camera.setRotation((25 * m_stop_timer) % 360);
 		Graphics::Viewport::SetCamera(l_camera);
 	}

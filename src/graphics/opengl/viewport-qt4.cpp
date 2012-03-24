@@ -69,7 +69,7 @@ namespace
 		Math::Size2f  m_size;
 	public:
 
-		ViewportWidget(UINT16 w, UINT16 h, bool f)
+		ViewportWidget(uint16_t w, uint16_t h, bool f)
 		{
 			setAutoBufferSwap(false);
 			setFixedSize(w, h);
@@ -299,7 +299,7 @@ namespace
 	static ViewportWidget *s_window(0);
 
 	bool
-	CreateWindow(UINT16 w, UINT16 h, UINT8, bool f)
+	CreateWindow(uint16_t w, uint16_t h, uint8_t, bool f)
 	{
 		s_window = new ViewportWidget(w, h, f);
 
@@ -335,7 +335,7 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(UINT16 w, UINT16 h, UINT8 d, bool f)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	static int argc = 0;
 	static char **argv = 0;
@@ -361,7 +361,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(UINT16 w, UINT16 h, UINT8 d, bool f)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	DestroyWindow();
 

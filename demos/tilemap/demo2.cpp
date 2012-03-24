@@ -30,6 +30,8 @@
 
 #include <graphics/factory.h>
 #include <graphics/tileset.h>
+#include <graphics/transform.h>
+#include <graphics/viewport.h>
 
 #include <game/enginebase.h>
 #include <game/entity.h>
@@ -69,8 +71,8 @@ public:
 			m_init = true;
 
 			Graphics::SharedTextureData l_texture = Graphics::Factory::CreateTextureData();
-			l_texture->load("assets/terminus.png");
-			assert(l_texture->isLoaded() && "Failed to load tilemap asset!");
+			if (!l_texture->load("assets/terminus.png"))
+				MMFATAL("Failed to load tilemap asset!");
 
 			Graphics::SharedTilesetBase l_tileset = new Graphics::Tileset;
 			l_tileset->setTileSize(Math::Size2i(16, 32));
@@ -117,6 +119,9 @@ public:
 		Game::SharedScene l_scene(new DemoScene);
 		sceneManager()->pushScene(l_scene);
 
+		Graphics::Transform l_camera = Graphics::Viewport::Camera();
+		l_camera.setScale(Math::Pair(8.f, 8.f));
+		Graphics::Viewport::SetCamera(l_camera);
 		return(true);
 	}
 

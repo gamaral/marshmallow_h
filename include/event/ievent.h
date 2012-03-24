@@ -58,7 +58,7 @@ namespace Event
 		/*!
 		 * @brief Event Priority
 		 */
-		virtual UINT8 priority(void) const = 0;
+		virtual uint8_t priority(void) const = 0;
 
 		/*!
 		 * @brief Event TimeStamp

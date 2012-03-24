@@ -41,6 +41,7 @@
 
 #include <core/weak.h>
 
+#include <math/pair.h>
 #include <math/point2.h>
 #include <math/vector2.h>
 
@@ -65,6 +66,8 @@ namespace Game
 		virtual ~MovementComponent(void);
 
 		Math::Vector2 & acceleration(void);
+		Math::Pair & limitX(void);
+		Math::Pair & limitY(void);
 		Math::Vector2 & velocity(void);
 
 		Math::Point2 simulate(float d) const;

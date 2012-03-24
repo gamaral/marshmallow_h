@@ -46,7 +46,7 @@
 #include <X11/X.h>
 #include <X11/XKBlib.h>
 #include <X11/Xatom.h>
-#define XMD_H
+#include <X11/Xmd.h>
 #include <X11/extensions/xf86vmode.h>
 
 #include "headers.h"
@@ -101,7 +101,7 @@ namespace
 	}
 
 	bool
-	CreateWindow(UINT16 w, UINT16 h, UINT8 d, bool f)
+	CreateWindow(uint16_t w, uint16_t h, uint8_t d, bool f)
 	{
 		s_data.context   = 0;
 		s_data.display   = 0;
@@ -260,7 +260,7 @@ namespace
 
 		/* set window title */
 		XTextProperty l_window_name;
-		static UINT8 l_window_title[] = MARSHMALLOW_BUILD_TITLE;
+		static uint8_t l_window_title[] = MARSHMALLOW_BUILD_TITLE;
 		l_window_name.value    = l_window_title;
 		l_window_name.encoding = XA_STRING;
 		l_window_name.format   = 8;
@@ -519,7 +519,7 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(UINT16 w, UINT16 h, UINT8 d, bool f)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	InitializeViewport();
 
@@ -540,7 +540,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(UINT16 w, UINT16 h, UINT8 d, bool f)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	DestroyWindow();
 

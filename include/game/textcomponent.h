@@ -84,7 +84,7 @@ namespace Game
 		void setColor(const Graphics::Color &color);
 		const Graphics::Color & color(void) const;
 
-		UINT16 & tileOffset(void);
+		uint16_t & tileOffset(void);
 
 	public: /* virtual */
 

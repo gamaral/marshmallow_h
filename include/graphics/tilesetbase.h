@@ -77,7 +77,7 @@ namespace Graphics
 		VIRTUAL const Math::Size2i & tileSize(void) const;
 		VIRTUAL int spacing(void) const;
 		VIRTUAL int margin(void) const;
-		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(UINT16 index);
+		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(uint16_t index);
 		
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);

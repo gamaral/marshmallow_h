@@ -44,7 +44,7 @@ MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
 SharedTextureCoordinateData
-Factory::CreateTextureCoordinateData(UINT16 c)
+Factory::CreateTextureCoordinateData(uint16_t c)
 {
 	return(new Dummy::TextureCoordinateData(c));
 }
@@ -56,7 +56,7 @@ Factory::CreateTextureData(void)
 }
 
 SharedVertexData
-Factory::CreateVertexData(UINT16 c)
+Factory::CreateVertexData(uint16_t c)
 {
 	return(new Dummy::VertexData(c));
 }

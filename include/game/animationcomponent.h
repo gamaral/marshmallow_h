@@ -72,12 +72,12 @@ namespace Game
 		AnimationComponent(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~AnimationComponent(void);
 
-		void pushFrame(const Core::Identifier &animation, UINT16 tile, int duration = 1);
+		void pushFrame(const Core::Identifier &animation, uint16_t tile, int duration = 1);
 		void popFrame(const Core::Identifier &animation);
 		void rate(const Core::Identifier &animation, float fps);
 
 		void play(const Core::Identifier &animation, bool loop = false);
-		void stop(UINT16 *tile = 0);
+		void stop(uint16_t *tile = 0);
 
 	public: /* virtual */
 

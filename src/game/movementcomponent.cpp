@@ -41,6 +41,8 @@
 
 #include <tinyxml2.h>
 
+#include <cmath>
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
@@ -48,8 +50,13 @@ const Core::Type MovementComponent::sType("Game::MovementComponent");
 
 struct MovementComponent::Private
 {
+	Private(void)
+	    : limit_x(-1.f, -1.f)
+	    , limit_y(-1.f, -1.f) {}
 	WeakPositionComponent position;
 	Math::Vector2 acceleration;
+	Math::Pair limit_x;
+	Math::Pair limit_y;
 	Math::Vector2 velocity;
 };
 
@@ -69,6 +76,18 @@ Math::Vector2 &
 MovementComponent::acceleration(void)
 {
 	return(m_p->acceleration);
+}
+
+Math::Pair &
+MovementComponent::limitX(void)
+{
+	return(m_p->limit_x);
+}
+
+Math::Pair &
+MovementComponent::limitY(void)
+{
+	return(m_p->limit_y);
 }
 
 Math::Vector2 &
@@ -94,8 +113,29 @@ MovementComponent::update(float d)
 		    staticCast<PositionComponent>();
 	}
 
-	m_p->position->position() += m_p->velocity * d;
-	m_p->velocity += m_p->acceleration * d;
+	const Math::Pair &l_limit_x = m_p->limit_x;
+	const Math::Pair &l_limit_y = m_p->limit_y;
+	Math::Vector2 &l_velocity = m_p->velocity;
+
+	/* update velocity */
+
+	l_velocity += m_p->acceleration * d;
+
+	/* check limit */
+
+	if (l_limit_x.first()  > -1 && l_velocity.x() < -l_limit_x.first())
+		l_velocity[0] = -l_limit_x.first();
+	if (l_limit_x.second() > -1 && l_velocity.x() >  l_limit_x.second())
+		l_velocity[0] =  l_limit_x.second();
+
+	if (l_limit_y.first()  > -1 && l_velocity.y() < -l_limit_y.first())
+		l_velocity[1] = -l_limit_y.first();
+	if (l_limit_y.second() > -1 && l_velocity.y() >  l_limit_y.second())
+		l_velocity[1] =  l_limit_y.second();
+
+	/* update position */
+
+	m_p->position->position() += l_velocity * d;
 }
 
 bool
@@ -104,15 +144,22 @@ MovementComponent::serialize(XMLElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	XMLElement *l_velocity = n.GetDocument()->NewElement("velocity");
-	l_velocity->SetAttribute("x", m_p->velocity.x());
-	l_velocity->SetAttribute("y", m_p->velocity.y());
-	n.InsertEndChild(l_velocity);
-
 	XMLElement *l_acceleration = n.GetDocument()->NewElement("acceleration");
 	l_acceleration->SetAttribute("x", m_p->acceleration.x());
 	l_acceleration->SetAttribute("y", m_p->acceleration.y());
 	n.InsertEndChild(l_acceleration);
+
+	XMLElement *l_limit = n.GetDocument()->NewElement("limit");
+	l_limit->SetAttribute("x1", m_p->limit_x.first());
+	l_limit->SetAttribute("x2", m_p->limit_x.second());
+	l_limit->SetAttribute("y1", m_p->limit_y.first());
+	l_limit->SetAttribute("y2", m_p->limit_y.second());
+	n.InsertEndChild(l_limit);
+
+	XMLElement *l_velocity = n.GetDocument()->NewElement("velocity");
+	l_velocity->SetAttribute("x", m_p->velocity.x());
+	l_velocity->SetAttribute("y", m_p->velocity.y());
+	n.InsertEndChild(l_velocity);
 
 	return(true);
 }
@@ -123,16 +170,24 @@ MovementComponent::deserialize(XMLElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	XMLElement *l_velocity = n.FirstChildElement( "velocity" );
-	if (l_velocity) {
-		l_velocity->QueryFloatAttribute("x", &m_p->velocity[0]);
-		l_velocity->QueryFloatAttribute("y", &m_p->velocity[1]);
-	}
-
 	XMLElement *l_acceleration = n.FirstChildElement( "acceleration" );
 	if (l_acceleration) {
 		l_acceleration->QueryFloatAttribute("x", &m_p->acceleration[0]);
 		l_acceleration->QueryFloatAttribute("y", &m_p->acceleration[1]);
+	}
+
+	XMLElement *l_limit = n.FirstChildElement( "limit" );
+	if (l_limit) {
+		l_limit->QueryFloatAttribute("x1", &m_p->limit_x[0]);
+		l_limit->QueryFloatAttribute("x2", &m_p->limit_x[1]);
+		l_limit->QueryFloatAttribute("y1", &m_p->limit_y[0]);
+		l_limit->QueryFloatAttribute("y2", &m_p->limit_y[1]);
+	}
+
+	XMLElement *l_velocity = n.FirstChildElement( "velocity" );
+	if (l_velocity) {
+		l_velocity->QueryFloatAttribute("x", &m_p->velocity[0]);
+		l_velocity->QueryFloatAttribute("y", &m_p->velocity[1]);
 	}
 
 	return(true);

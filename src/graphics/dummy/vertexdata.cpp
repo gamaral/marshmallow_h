@@ -42,8 +42,8 @@ using namespace Dummy;
 
 const Core::Type VertexData::sType("Graphics::VertexData");
 
-VertexData::VertexData(UINT16 c)
-#define AXES 2u
+VertexData::VertexData(uint16_t c)
+#define AXES 2
     : m_data(new float[c * AXES]) // TODO: replace with custom allocator
     , m_count(c)
 {
@@ -56,18 +56,18 @@ VertexData::~VertexData(void)
 }
 
 bool
-VertexData::get(UINT16 i, float &x, float &y) const
+VertexData::get(uint16_t i, float &x, float &y) const
 {
-	const UINT16 l_offset = (i % m_count) * AXES;
+	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
 	x = m_data[l_offset];
 	y = m_data[l_offset + 1];
 	return(true);
 }
 
 bool
-VertexData::set(UINT16 i, float x, float y)
+VertexData::set(uint16_t i, float x, float y)
 {
-	const UINT16 l_offset = (i % m_count) * AXES;
+	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
 	m_data[l_offset] = x;
 	m_data[l_offset + 1] = y;
 	return(true);

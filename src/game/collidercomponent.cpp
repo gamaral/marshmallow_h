@@ -53,7 +53,7 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-#define DELTA_STEPS 8
+#define DELTA_STEPS 32
 
 const Core::Type ColliderComponent::sType("Game::ColliderComponent");
 
@@ -66,6 +66,7 @@ struct ColliderComponent::Private
 	int  body;
 	bool active;
 	bool bullet;
+	int  bullet_resolution;
 	bool init;
 };
 
@@ -76,6 +77,7 @@ ColliderComponent::ColliderComponent(const Core::Identifier &i, IEntity &e)
 	m_p->body = BoxType;
 	m_p->active = true;
 	m_p->bullet = false;
+	m_p->bullet_resolution = DELTA_STEPS;
 	m_p->init = false;
 }
 
@@ -214,10 +216,11 @@ ColliderComponent::update(float d)
 			CollisionData data;
 
 			if (m_p->bullet) {
-				const float l_delta_step = d / DELTA_STEPS;
+				int l_steps = m_p->bullet_resolution;
+				const float l_delta_step = d / l_steps;
 				float l_bullet_delta = 0;
 
-				for(int i = 1; i < DELTA_STEPS; ++i) {
+				for(int i = 1; i < l_steps; ++i) {
 					if (isColliding(*l_collider, l_bullet_delta += l_delta_step, &data)) {
 						collision(*l_collider, l_bullet_delta, data);
 						continue;
@@ -306,6 +309,7 @@ BounceColliderComponent::collision(ColliderComponent &c, float d, const Collisio
 	const Math::Vector2 l_normal = l_vel.normalized(&l_mag);
 	movement()->velocity() =
 	    (l_normal * (2.f * l_normal.dot(l_vel * -1.f)) + l_vel).normalize() * l_mag;
+
 	return(true);
 }
 

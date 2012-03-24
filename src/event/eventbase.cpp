@@ -42,10 +42,10 @@ using namespace Event;
 struct EventBase::Private
 {
 	TIME timestamp;
-	UINT8 priority;
+	uint8_t priority;
 };
 
-EventBase::EventBase(TIME t, UINT8 p)
+EventBase::EventBase(TIME t, uint8_t p)
     : m_p(new Private)
 {
 	m_p->timestamp = (t == 0) ? NOW() : t;
@@ -58,7 +58,7 @@ EventBase::~EventBase(void)
 	m_p = 0;
 }
 
-UINT8
+uint8_t
 EventBase::priority(void) const
 {
 	return(m_p->priority);

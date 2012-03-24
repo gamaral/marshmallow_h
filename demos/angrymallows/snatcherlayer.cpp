@@ -99,7 +99,7 @@ SnatcherLayer::update(float t)
 		Game::WeakEntity l_entity;
 
 		/* we must have an entity layer */
-		assert(l_entityLayer);
+		assert(l_entityLayer && "Entity scene layer was not found!");
 
 		/* remove previous input component */
 		if (m_active < l_ecount) {

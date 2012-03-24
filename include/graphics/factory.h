@@ -57,13 +57,13 @@ namespace Graphics
 	namespace Factory
 	{
 		MARSHMALLOW_GRAPHICS_EXPORT
-		SharedTextureCoordinateData CreateTextureCoordinateData(UINT16 count);
+		SharedTextureCoordinateData CreateTextureCoordinateData(uint16_t count);
 
 		MARSHMALLOW_GRAPHICS_EXPORT
 		SharedTextureData CreateTextureData(void);
 
 		MARSHMALLOW_GRAPHICS_EXPORT
-		SharedVertexData CreateVertexData(UINT16 count);
+		SharedVertexData CreateVertexData(uint16_t count);
 	}
 }
 

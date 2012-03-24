@@ -77,13 +77,13 @@ namespace Graphics
 
 	public: /* operators */
 
-		Math::Vector2 operator[](UINT16 index) const
+		Math::Vector2 operator[](uint16_t index) const
 		    { return(vertex(index)); }
 
 	public: /* virtual */
 
-		virtual void setVertex(UINT16 index, const Math::Vector2 &vertex);
-		virtual void setTextureCoordinate(UINT16 index, float u, float v);
+		virtual void setVertex(uint16_t index, const Math::Vector2 &vertex);
+		virtual void setTextureCoordinate(uint16_t index, float u, float v);
 
 		VIRTUAL const Graphics::SharedTextureCoordinateData & textureCoordinateData(void) const;
 		VIRTUAL const Graphics::SharedTextureData & textureData(void) const;
@@ -93,8 +93,8 @@ namespace Graphics
 		VIRTUAL float rotation(void) const;
 		VIRTUAL void scale(float &x, float &y) const;
 
-		VIRTUAL Math::Vector2 vertex(UINT16 index) const;
-		VIRTUAL void textureCoordinate(UINT16 index, float &u, float &v) const;
+		VIRTUAL Math::Vector2 vertex(uint16_t index) const;
+		VIRTUAL void textureCoordinate(uint16_t index, float &u, float &v) const;
 
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);

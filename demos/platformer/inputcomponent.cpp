@@ -53,14 +53,14 @@
 
 const Core::Type InputComponent::Type("InputComponent");
 
-#define JUMP_MAX  30.f
-#define BOOST_MAX 0.5f
+#define JUMP_MAX  200.f
+#define BOOST_MAX 0.1f
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
     , m_collider()
-    , m_linear_impulse(20.f)
-    , m_max_speed(20.f)
+    , m_linear_impulse(300.f)
+    , m_max_speed(200.f)
     , m_jump(false)
     , m_left(false)
     , m_right(false)
@@ -95,6 +95,11 @@ InputComponent::update(float d)
 	if (!m_movement) {
 		m_movement = entity().getComponentType(Game::MovementComponent::Type()).
 		    staticCast<Game::MovementComponent>();
+
+		if (m_movement) {
+			m_movement->acceleration()[1] = -1000.f;
+			m_movement->limitY()[0] = 900.f;
+		}
 	}
 
 	if (m_collider && m_position && m_movement) {
@@ -106,18 +111,18 @@ InputComponent::update(float d)
 
 				/* sharp u turn */
 				if (m_collider->onPlatform() && m_movement->velocity().x() > 0)
-					m_movement->acceleration()[0] *= 3;
+					m_movement->acceleration()[0] *= 3.f;
 				else if (m_movement->velocity().x() < -m_max_speed)
-					m_movement->acceleration()[0] *= -0.5;
+					m_movement->acceleration()[0] *= -0.5f;
 				break;
 			case ICDRight:
 				m_movement->acceleration()[0] = m_linear_impulse;
 
 				/* sharp u turn */
 				if (m_collider->onPlatform() && m_movement->velocity().x() < 0)
-					m_movement->acceleration()[0] *= 3;
+					m_movement->acceleration()[0] *= 3.f;
 				else if (m_movement->velocity().x() > m_max_speed)
-					m_movement->acceleration()[0] *= -0.5;
+					m_movement->acceleration()[0] *= -0.5f;
 				break;
 			default: break;
 			}
@@ -129,13 +134,13 @@ InputComponent::update(float d)
 				if (m_movement->velocity().x() > -1) {
 					m_movement->velocity()[0] = 0;
 					m_movement->acceleration()[0] = 0;
-				} else m_movement->acceleration()[0] = m_linear_impulse * 4;
+				} else m_movement->acceleration()[0] = m_linear_impulse * 4.f;
 				break;
 			case ICDRight:
 				if (m_movement->velocity().x() < 1) {
 					m_movement->velocity()[0] = 0;
 					m_movement->acceleration()[0] = 0;
-				} else m_movement->acceleration()[0] = -m_linear_impulse * 4;
+				} else m_movement->acceleration()[0] = -m_linear_impulse * 4.f;
 				break;
 			default: break;
 			}
@@ -146,6 +151,10 @@ InputComponent::update(float d)
 		if (m_jump && m_boost_fuel > 0) {
 			m_boost_fuel -= d;
 			m_movement->velocity()[1] += JUMP_MAX * (d / BOOST_MAX);
+		}
+		else if (m_jump && m_collider->onPlatform()) {
+			m_movement->velocity()[1] = JUMP_MAX;
+			m_boost_fuel = BOOST_MAX;
 		}
 	}
 }
@@ -171,14 +180,9 @@ InputComponent::handleEvent(const Event::IEvent &e)
 	}
 	else if (l_kevent.key() == Event::KEY_SPACE) {
 		m_jump = (l_kevent.action() == Event::KeyPressed && m_collider->onPlatform() ? true : false);
-
-		if (m_jump) {
-			m_movement->velocity()[1] = JUMP_MAX;
-			m_boost_fuel = BOOST_MAX;
-		}
 	}
 	else if (l_kevent.key() == Event::KEY_SHIFT_L) {
-		m_max_speed += l_kevent.action() == Event::KeyPressed ? 10 : -10;
+		m_max_speed += l_kevent.action() == Event::KeyPressed ? 200 : -200;
 	}
 
 	if (m_direction_stack.size() > 0)

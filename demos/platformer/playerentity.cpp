@@ -79,34 +79,33 @@ PlayerEntity::update(float d)
 		    new Game::AnimationComponent("animation", *this);
 		m_animation_component->pushFrame("stand-left",  106, 12);
 		m_animation_component->pushFrame("stand-left",  107, 4);
-		m_animation_component->pushFrame("walk-left", 108, 4);
-		m_animation_component->pushFrame("walk-left", 109, 4);
+		m_animation_component->pushFrame("walk-left", 108, 1);
+		m_animation_component->pushFrame("walk-left", 109, 1);
 		m_animation_component->rate("walk-left", 16);
 		m_animation_component->pushFrame("jump-left", 108, 1);
 		m_animation_component->rate("jump-left", 1);
 		m_animation_component->pushFrame("stand-right", 102, 12);
 		m_animation_component->pushFrame("stand-right", 103, 4);
-		m_animation_component->pushFrame("walk-right", 104, 4);
-		m_animation_component->pushFrame("walk-right", 105, 4);
+		m_animation_component->pushFrame("walk-right", 104, 1);
+		m_animation_component->pushFrame("walk-right", 105, 1);
 		m_animation_component->rate("walk-right", 16);
 		m_animation_component->pushFrame("jump-right", 105, 1);
 		m_animation_component->rate("jump-right", 1);
 		pushComponent(m_animation_component.staticCast<Game::IComponent>());
 
-		/* input component */
-		m_input_component = new InputComponent("input", *this);
-		pushComponent(m_input_component.staticCast<Game::IComponent>());
-
 		/* movement component */
 		Game::SharedMovementComponent l_movement_component =
 		    new Game::MovementComponent("movement", *this);
-		l_movement_component->acceleration()[1] = -120.f;
 		pushComponent(l_movement_component.staticCast<Game::IComponent>());
 
 		/* collider component */
 		m_collider_component =
 		    new PlayerColliderComponent("player", *this);
 		pushComponent(m_collider_component.staticCast<Game::IComponent>());
+
+		/* input component */
+		m_input_component = new InputComponent("input", *this);
+		pushComponent(m_input_component.staticCast<Game::IComponent>());
 
 		m_direction = -1;
 
@@ -121,31 +120,31 @@ PlayerEntity::update(float d)
 
 			/* camara snap - calculate using map */
 
-			if (l_pos.x() < -120) l_pos[0] = -120;
-			else if (l_pos.x() > 120) l_pos[0] = 120;
-			if (l_pos.y() > 10) l_pos[1] = 10;
-			else if (l_pos.y() < -10) l_pos[1] = -10;
+			float l_limit;
+			Game::SharedTilemapSceneLayer l_platform_layer =
+			    Game::Engine::Instance()->sceneManager()->activeScene()->getLayer("platform").staticCast<Game::TilemapSceneLayer>();
+			const Math::Size2f &l_hrsize = l_platform_layer->virtualHalfSize();
+
+			l_limit = l_hrsize.width() - (Graphics::Viewport::Size().width() / 2.f);
+			if (l_pos.x() < -l_limit) l_pos[0] = -l_limit;
+			else if (l_pos.x() > l_limit) l_pos[0] = l_limit;
+			l_limit = l_hrsize.height() - (Graphics::Viewport::Size().height() / 2.f);
+			if (l_pos.y() < -l_limit) l_pos[1] = -l_limit;
+			else if (l_pos.y() > l_limit) l_pos[1] = l_limit;
 
 			l_camera.setTranslation(l_pos);
 			Graphics::Viewport::SetCamera(l_camera);
 
 			/* translate background layers (parallax) */
 
-			Game::SharedTilemapSceneLayer l_background =
+			Game::SharedTilemapSceneLayer l_clouds =
 			    Game::Engine::Instance()->sceneManager()->activeScene()->
-			        getLayer("background").staticCast<Game::TilemapSceneLayer>();
-			if ((m_moving_sky += d) > l_background->size().area())
-				m_moving_sky = d;
+			        getLayer("clouds").staticCast<Game::TilemapSceneLayer>();
+			if ((m_moving_sky += 8 * d) > l_clouds->virtualSize().area())
+				m_moving_sky = 8 * d;
 
-			if (l_background)
-				l_background->setTranslation(Math::Vector2(m_moving_sky, m_moving_sky));
-
-			Game::SharedTilemapSceneLayer l_midground =
-			    Game::Engine::Instance()->sceneManager()->activeScene()->
-			        getLayer("midground").staticCast<Game::TilemapSceneLayer>();
-			if (l_midground)
-				l_midground->setTranslation(Math::Vector2(l_pos.x() * 0.15f, 0.f));
-
+			if (l_clouds)
+				l_clouds->setTranslation(Math::Vector2(m_moving_sky + (l_pos.x() * 0.15f), m_moving_sky));
 		}
 
 		/* update animation */

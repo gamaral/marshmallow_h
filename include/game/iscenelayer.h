@@ -65,7 +65,7 @@ namespace Game
 		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;
 
-		virtual IScene &scene(void) = 0;
+		virtual IScene & scene(void) = 0;
 
 		virtual int flags(void) const = 0;
 

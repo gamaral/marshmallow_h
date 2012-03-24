@@ -57,19 +57,19 @@ namespace Graphics
 		const Core::Type & Type(void);
 
 		MARSHMALLOW_GRAPHICS_EXPORT
-		bool Initialize( UINT16    width = MARSHMALLOW_VIEWPORT_WIDTH,
-		                 UINT16   height = MARSHMALLOW_VIEWPORT_HEIGHT,
-		                 UINT8     depth = MARSHMALLOW_VIEWPORT_DEPTH,
+		bool Initialize( uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
+		                 uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
+		                 uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
 		                 bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN);
 
 		MARSHMALLOW_GRAPHICS_EXPORT
 		void Finalize(void);
 
 		MARSHMALLOW_GRAPHICS_EXPORT
-		bool Redisplay( UINT16   width = MARSHMALLOW_VIEWPORT_WIDTH,
-		                UINT16  height = MARSHMALLOW_VIEWPORT_HEIGHT,
-		                UINT8    depth = MARSHMALLOW_VIEWPORT_DEPTH,
-		               bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN);
+		bool Redisplay( uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
+		                uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
+		                uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
+		                bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN);
 
 		MARSHMALLOW_GRAPHICS_EXPORT
 		void Tick(void);

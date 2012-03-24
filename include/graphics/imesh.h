@@ -75,8 +75,8 @@ namespace Graphics
 		virtual float rotation(void) const = 0;
 		virtual void scale(float &x, float &y) const = 0;
 
-		virtual Math::Vector2 vertex(UINT16 index) const = 0;
-		virtual void textureCoordinate(UINT16 index, float &u, float &v) const = 0;
+		virtual Math::Vector2 vertex(uint16_t index) const = 0;
+		virtual void textureCoordinate(uint16_t index, float &u, float &v) const = 0;
 		virtual int count(void) const = 0;
 
 		virtual const Core::Type & type(void) const = 0;

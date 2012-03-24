@@ -83,9 +83,10 @@ namespace Game
 		ColliderComponent(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~ColliderComponent(void);
 
-		int  &body(void);
-		bool &active(void);
-		bool &bullet(void);
+		int  & body(void);
+		bool & active(void);
+		bool & bullet(void);
+		int & bulletResolution(void);
 
 		float radius2(void) const;
 

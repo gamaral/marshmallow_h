@@ -112,9 +112,9 @@ namespace Math
 		    { static Vector2 s_zero(0.f, 0.f);
 		      return(s_zero); }
 
-		static const Vector2 & One(void)
-		    { static Vector2 s_one(1.f, 1.f);
-		      return(s_one); }
+		static const Vector2 & Identity(void)
+		    { static Vector2 s_identity(1.f, 1.f);
+		      return(s_identity); }
 	};
 }
 

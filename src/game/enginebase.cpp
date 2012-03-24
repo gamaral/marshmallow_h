@@ -236,6 +236,14 @@ EngineBase::run(void)
 		m_p->delta_time = NOW() - l_tick;
 		l_tick = NOW();
 
+#ifdef MARSHMALLOW_DEBUG
+		/* detect breakpoint */
+		if (m_p->delta_time > MILLISECONDS_PER_SECOND) {
+			MMWARNING("Abnormally long time between ticks, debugger breakpoint?");
+			m_p->delta_time = l_tick_target;
+		}
+#endif
+
 		l_render += m_p->delta_time;
 		l_second += m_p->delta_time;
 		l_update += m_p->delta_time;

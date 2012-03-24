@@ -44,8 +44,8 @@ using namespace OpenGL;
 
 const Core::Type TextureCoordinateData::sType("Graphics::TextureCoordinateData");
 
-TextureCoordinateData::TextureCoordinateData(UINT16 c)
-#define AXES 2u
+TextureCoordinateData::TextureCoordinateData(uint16_t c)
+#define AXES 2
     : m_id()
     , m_data(new GLfloat[c * AXES]) // TODO: replace with custom allocator
     , m_count(c)
@@ -90,18 +90,18 @@ TextureCoordinateData::unbuffer(void)
 }
 
 bool
-TextureCoordinateData::get(UINT16 i, float &u, float &v) const
+TextureCoordinateData::get(uint16_t i, float &u, float &v) const
 {
-	const int l_offset = (i % m_count) * AXES;
+	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
 	u = m_data[l_offset];
 	v = m_data[l_offset + 1];
 	return(true);
 }
 
 bool
-TextureCoordinateData::set(UINT16 i, float u, float v)
+TextureCoordinateData::set(uint16_t i, float u, float v)
 {
-	const UINT16 l_offset = (i % m_count) * AXES;
+	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
 	m_data[l_offset] = u;
 	m_data[l_offset + 1] = v;
 

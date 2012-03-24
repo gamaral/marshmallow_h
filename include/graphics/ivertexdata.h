@@ -51,10 +51,10 @@ namespace Graphics
 	{
 		virtual ~IVertexData(void) {};
 
-		virtual bool get(UINT16 index, float &x, float &y) const = 0;
-		virtual bool set(UINT16 index, float  x, float  y) = 0;
+		virtual bool get(uint16_t index, float &x, float &y) const = 0;
+		virtual bool set(uint16_t index, float  x, float  y) = 0;
 
-		virtual UINT16 count(void) const = 0;
+		virtual uint16_t count(void) const = 0;
 	};
 	typedef Core::Shared<IVertexData> SharedVertexData;
 	typedef Core::Weak<IVertexData> WeakVertexData;

@@ -68,7 +68,7 @@ struct TextComponent::Private
 	std::vector<Graphics::SharedMesh> mesh;
 	std::string text;
 	Graphics::Color color;
-	UINT16 tile_offset;
+	uint16_t tile_offset;
 	bool invalidated;
 };
 
@@ -112,7 +112,7 @@ TextComponent::color(void) const
 	return(m_p->color);
 }
 
-UINT16 &
+uint16_t &
 TextComponent::tileOffset(void)
 {
 	return(m_p->tile_offset);
@@ -241,12 +241,12 @@ TextComponent::rebuild(void)
 	 */
 	char l_char;
 	const size_t l_text_count = m_p->text.size();
-	for (UINT16 i = 0; i < l_text_count; ++i) {
+	for (uint16_t i = 0; i < l_text_count; ++i) {
 		l_char = m_p->text[i];
 		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
 			Graphics::SharedTextureCoordinateData l_tdata =
-				m_p->tileset->getTextureCoordinateData(m_p->tile_offset +
-				    static_cast<unsigned char>(l_char - MIN_CHAR));
+				m_p->tileset->getTextureCoordinateData(static_cast<uint16_t>
+				    (m_p->tile_offset + (l_char - MIN_CHAR)));
 
 			m_p->mesh[i] = new Graphics::QuadMesh(l_tdata, m_p->tileset->textureData(), l_vdata);
 		}

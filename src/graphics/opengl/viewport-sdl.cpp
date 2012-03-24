@@ -212,7 +212,7 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(UINT16 w, UINT16 h, UINT8 d, bool f)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	/* force video center */
 	setenv("SDL_VIDEO_CENTERED", "1", true);
@@ -242,7 +242,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(UINT16 w, UINT16 h, UINT8 d, bool f)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
 {
 	DestroyWindow();
 

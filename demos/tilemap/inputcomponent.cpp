@@ -50,7 +50,7 @@ const Core::Type InputComponent::Type("InputComponent");
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
-    , m_linear_impulse(20.f)
+    , m_linear_impulse(40.f)
     , m_down(false)
     , m_left(false)
     , m_right(false)
@@ -84,28 +84,31 @@ InputComponent::update(float)
 	if (!m_movement) {
 		m_movement = entity().getComponentType(Game::MovementComponent::Type()).
 		    staticCast<Game::MovementComponent>();
+
+		if (m_movement) {
+			m_movement->limitX()[0] = 20;
+			m_movement->limitX()[1] = 20;
+			m_movement->limitY()[0] = 20;
+			m_movement->limitY()[1] = 20;
+		}
 	}
 
 	if (m_position && m_movement) {
 		if (inMotion())
 		switch (direction()) {
 		case  ICDDown:
-			if (m_movement->velocity()[1] < -8) m_movement->velocity()[1] = -8;
 			m_movement->acceleration()[1] = -m_linear_impulse;
 			m_movement->velocity()[0] = 0;
 			break;
 		case  ICDLeft:
-			if (m_movement->velocity()[0] < -8) m_movement->velocity()[0] = -8;
 			m_movement->acceleration()[0] = -m_linear_impulse;
 			m_movement->velocity()[1] = 0;
 			break;
 		case ICDRight:
-			if (m_movement->velocity()[0] > 8) m_movement->velocity()[0] = 8;
 			m_movement->acceleration()[0] = m_linear_impulse;
 			m_movement->velocity()[1] = 0;
 			break;
 		case    ICDUp:
-			if (m_movement->velocity()[1] > 8) m_movement->velocity()[1] = 8;
 			m_movement->acceleration()[1] = m_linear_impulse;
 			m_movement->velocity()[0] = 0;
 			break;

@@ -40,31 +40,30 @@
 #include <iostream>
 
 #include <core/config.h>
+#include <core/environment.h>
 
-/*
- * TODO: Replace with Core::Logger
- */
+#define MMLOG(type, x) std::cerr << __FILE__ << ":" << __LINE__ << " ["type"]" << std::endl \
+                                 << "\t" << MMFUNCTION << ": " << x << std::endl
 
-#define MMFATAL(x) std::cerr << "[FATAL] " << __FILE__ << ":" << __LINE__ << " " << x << std::endl, exit(-1)
-
-#define MMERROR(x) std::cerr << "[ERROR] " << __FILE__ << ":" << __LINE__ << " " << x << std::endl
+#define MMFATAL(x) MMLOG("FATAL", x), exit(-1)
+#define MMERROR(x) MMLOG("ERROR", x)
 
 #if MARSHMALLOW_DEBUG && MARSHMALLOW_DEBUG_VERBOSITY >= 1
-#   define MMWARNING(x) std::cerr << "[WARN] " << __FILE__ << ":" << __LINE__ << " " << x << std::endl
+#   define MMWARNING(x) MMLOG("WARN", x)
 #else
-#   define MMWARNING(x,...) (void)0
+#   define MMWARNING(x) NOOP
 #endif
 
 #if MARSHMALLOW_DEBUG && MARSHMALLOW_DEBUG_VERBOSITY >= 2
-#   define MMINFO(x) std::cerr << "[INFO] " << __FILE__ << ":" << __LINE__ << " " << x << std::endl
+#   define MMINFO(x) MMLOG("INFO", x)
 #else
-#   define MMINFO(...) (void)0
+#   define MMINFO(x) NOOP
 #endif
 
 #if MARSHMALLOW_DEBUG && MARSHMALLOW_DEBUG_VERBOSITY >= 3
-#   define MMVERBOSE(x) std::cerr << "[INFO] " << __FILE__ << ":" << __LINE__ << " " << x << std::endl
+#   define MMVERBOSE(x) MMLOG("VERB", x)
 #else
-#   define MMVERBOSE(...) (void)0
+#   define MMVERBOSE(x) NOOP
 #endif
 
 #endif

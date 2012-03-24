@@ -168,7 +168,7 @@ TilesetBase::setTextureData(const SharedTextureData &ts)
 }
 
 SharedTextureCoordinateData
-TilesetBase::getTextureCoordinateData(UINT16 i)
+TilesetBase::getTextureCoordinateData(uint16_t i)
 {
 	if (!m_p->texture_data || !m_p->texture_data->isLoaded())
 		return(SharedTextureCoordinateData());

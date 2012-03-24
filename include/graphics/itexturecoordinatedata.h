@@ -51,10 +51,10 @@ namespace Graphics
 	{
 		virtual ~ITextureCoordinateData(void) {};
 
-		virtual bool get(UINT16 index, float &u, float &v) const = 0;
-		virtual bool set(UINT16 index, float  u, float  v) = 0;
+		virtual bool get(uint16_t index, float &u, float &v) const = 0;
+		virtual bool set(uint16_t index, float  u, float  v) = 0;
 
-		virtual UINT16 count(void) const = 0;
+		virtual uint16_t count(void) const = 0;
 	};
 	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
 	typedef Core::Weak<ITextureCoordinateData> WeakTextureCoordinateData;

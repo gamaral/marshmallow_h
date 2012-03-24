@@ -76,7 +76,7 @@ buffer_readonly_test(void)
 void
 buffer_write_test(void)
 {
-	char l_scratch[15];
+	char l_scratch[16];
 	size_t l_bytes_written;
 	Core::BufferIO l_buffer(l_scratch, sizeof(l_scratch));
 
@@ -95,9 +95,10 @@ buffer_write_test(void)
 	TEST("BUFFER WRITE WRITE 2 OK", 1 == l_bytes_written);
 	TEST("BUFFER WRITE WRITE 2 COMPARE", 0 == strcmp(l_scratch, "this "));
 
-	l_bytes_written = l_buffer.seek(-10, Core::DIOEnd);
-	TEST("BUFFER WRITE SEEK END -10 OK", l_bytes_written);
+	l_bytes_written = l_buffer.seek(-11, Core::DIOEnd);
+	TEST("BUFFER WRITE SEEK END -11 OK", l_bytes_written);
 
+	asm("int3");
 	l_bytes_written = l_buffer.write("is a test!", 10);
 	TEST("BUFFER WRITE WRITE 10 OK", 10 == l_bytes_written);
 	TEST("BUFFER WRITE WRITE 10 COMPARE", 0 == strcmp(l_scratch, s_content));

@@ -71,13 +71,13 @@ public:
 
 		/* load tmx tilemap */
 		Extra::TMXLoader m_tmxloader(*l_scene);
-		m_tmxloader.load("assets/sewers.tmx");
-		assert(m_tmxloader.isLoaded() && "TMX tilemap failed to load.");
+		if (!m_tmxloader.load("assets/sewers.tmx"))
+			MMFATAL("Failed to load tilemap asset!");
 
 		sceneManager()->pushScene(l_scene);
 
 		Graphics::Transform l_camera = Graphics::Viewport::Camera();
-		l_camera.setScale(Math::Pair(2.f, 2.f));
+		l_camera.setScale(Math::Pair(8.f, 8.f));
 		Graphics::Viewport::SetCamera(l_camera);
 
 		return(true);

@@ -57,12 +57,12 @@ namespace OpenGL
 	{
 		Core::Identifier m_id;
 		GLfloat *m_data;
-		UINT16 m_count;
+		uint16_t m_count;
 		GLuint m_bufferId;
 
 		NO_ASSIGN_COPY(VertexData);
 	public:
-		VertexData(UINT16 count);
+		VertexData(uint16_t count);
 		virtual ~VertexData(void);
 
 		const GLfloat * data(void) const
@@ -87,10 +87,10 @@ namespace OpenGL
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
 
-		VIRTUAL bool get(UINT16 index, float &x, float &y) const;
-		VIRTUAL bool set(UINT16 index, float x, float y);
+		VIRTUAL bool get(uint16_t index, float &x, float &y) const;
+		VIRTUAL bool set(uint16_t index, float x, float y);
 
-		VIRTUAL UINT16 count(void) const
+		VIRTUAL uint16_t count(void) const
 		    { return(m_count); }
 
 	public: /* static */

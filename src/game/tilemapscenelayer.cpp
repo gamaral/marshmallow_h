@@ -54,8 +54,8 @@ const Core::Type TilemapSceneLayer::sType("Game::TilemapSceneLayer");
 /******************************************************************************/
 
 namespace {
-	typedef std::map<UINT32, Graphics::SharedTileset> TilesetCollection;
-	typedef std::map<UINT32, Graphics::SharedVertexData> VertexDataCache;
+	typedef std::map<uint32_t, Graphics::SharedTileset> TilesetCollection;
+	typedef std::map<uint32_t, Graphics::SharedVertexData> VertexDataCache;
 } // namespace
 
 /******************************************************************************/
@@ -66,7 +66,7 @@ struct TilemapSceneLayer::Private
 
 	VertexDataCache vertexes;
 
-	UINT32 *data;
+	uint32_t *data;
 
 	Math::Size2f hrsize;
 	Math::Size2f hrtile_size;
@@ -106,12 +106,12 @@ TilemapSceneLayer::~TilemapSceneLayer(void)
 }
 
 Graphics::SharedTileset
-TilemapSceneLayer::tileset(UINT32 i, UINT32 *o)
+TilemapSceneLayer::tileset(uint32_t i, uint32_t *o)
 {
 	TilesetCollection::iterator l_i;
 	TilesetCollection::const_iterator l_end = m_p->tilesets.end();
 
-	UINT32 l_offset = 0;
+	uint32_t l_offset = 0;
 	Graphics::SharedTileset l_ts;
 
 	for (l_i = m_p->tilesets.begin(); l_i != l_end; ++l_i)
@@ -127,7 +127,7 @@ TilemapSceneLayer::tileset(UINT32 i, UINT32 *o)
 }
 
 void
-TilemapSceneLayer::attachTileset(UINT32 o, Graphics::SharedTileset ts)
+TilemapSceneLayer::attachTileset(uint32_t o, Graphics::SharedTileset ts)
 {
 	m_p->tilesets[o] = ts;
 	m_p->vertexes[o] = Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
@@ -135,20 +135,20 @@ TilemapSceneLayer::attachTileset(UINT32 o, Graphics::SharedTileset ts)
 }
 
 void
-TilemapSceneLayer::dettachTileset(UINT32 o)
+TilemapSceneLayer::dettachTileset(uint32_t o)
 {
 	m_p->tilesets.erase(o);
 	m_p->vertexes.erase(o);
 }
 
-const UINT32 *
+const uint32_t *
 TilemapSceneLayer::data(void) const
 {
 	return(m_p->data);
 }
 
 void
-TilemapSceneLayer::setData(UINT32 *d)
+TilemapSceneLayer::setData(uint32_t *d)
 {
 	delete [] m_p->data;
 	m_p->data = d;
@@ -231,6 +231,18 @@ TilemapSceneLayer::setVisibility(bool v)
 	m_p->visible = v;
 }
 
+const Math::Size2f &
+TilemapSceneLayer::virtualSize(void) const
+{
+	return(m_p->rsize);
+}
+
+const Math::Size2f &
+TilemapSceneLayer::virtualHalfSize(void) const
+{
+	return(m_p->hrsize);
+}
+
 void
 TilemapSceneLayer::render(void)
 {
@@ -281,7 +293,7 @@ TilemapSceneLayer::render(void)
 
 		for (int l_c = col_start; l_c < col_stop; ++l_c) {
 			const int l_cindex = l_c % m_p->size.width();
-			UINT32 l_tindex = m_p->data[l_roffset + (l_cindex >= 0 ? 0 : m_p->size.width()) + l_cindex];
+			uint32_t l_tindex = m_p->data[l_roffset + (l_cindex >= 0 ? 0 : m_p->size.width()) + l_cindex];
 			if (!l_tindex)
 				continue;
 
@@ -300,14 +312,14 @@ TilemapSceneLayer::render(void)
 			/* offset to bottom of tile (we draw up) */
 			l_y -= m_p->rtile_size.height();
 
-			UINT32 l_tioffset;
+			uint32_t l_tioffset;
 			Graphics::SharedTileset l_ts = tileset(l_tindex, &l_tioffset);
 			Graphics::SharedTextureCoordinateData l_tcd;
 
 			if (l_ts) {
 				Graphics::SharedVertexData &l_svdata = m_p->vertexes[l_tioffset];
 
-				Graphics::QuadMesh l_mesh(l_ts->getTextureCoordinateData(static_cast<UINT16>(l_tindex - l_tioffset)),
+				Graphics::QuadMesh l_mesh(l_ts->getTextureCoordinateData(static_cast<uint16_t>(l_tindex - l_tioffset)),
 				    l_ts->textureData(), l_svdata);
 				l_mesh.setColor(l_color);
 
@@ -344,7 +356,7 @@ TilemapSceneLayer::recalculateRelativeTileSize()
 }
 
 void
-TilemapSceneLayer::recalculateVertexData(UINT32 o)
+TilemapSceneLayer::recalculateVertexData(uint32_t o)
 {
 	assert(m_p->vertexes[o] && "Invalid vertex data!");
 	assert(m_p->tilesets[o] && "Invalid tileset!");

@@ -42,7 +42,7 @@ PlayerColliderComponent::PlayerColliderComponent(const Core::Identifier &i, Game
     : ColliderComponent(i, e)
     , m_platform(false)
 {
-	/* high velocity jumps may cause penetration */
+	/* high velocity jumps may cause indentation */
 	bullet() = true;
 }
 
@@ -66,13 +66,13 @@ PlayerColliderComponent::collision(ColliderComponent &c, float d, const Game::Co
 			position()->position()[0] =
 				c.position()->position()[0] -
 				    (c.size()->size().width() / 2.f + size()->size().width() / 2.f);
-			movement()->velocity()[0] *= -0.4;
+			movement()->velocity()[0] *= -0.4f;
 		}
 		else if (data.rect.right < 1 && norm.x() < 0) {
 			position()->position()[0] =
 				c.position()->position()[0] +
 				    (c.size()->size().width() / 2.f + size()->size().width() / 2.f);
-			movement()->velocity()[0] *= -0.4;
+			movement()->velocity()[0] *= -0.4f;
 		}
 		else if (data.rect.top < 1 && norm.y() < 0) {
 			position()->position()[1] =
@@ -85,12 +85,12 @@ PlayerColliderComponent::collision(ColliderComponent &c, float d, const Game::Co
 			position()->position()[1] =
 				c.position()->position()[1] -
 				    (c.size()->size().height() / 2.f + size()->size().height() / 2.f);
-			movement()->velocity()[1] *= -0.4;
+			movement()->velocity()[1] *= -0.4f;
 		}
 	}
 	else if (c.id().str() == "bounce") {
 		if (data.rect.top < 1 && norm.y() < 0) {
-			movement()->velocity()[1] = 70.f;
+			movement()->velocity()[1] = 900.f;
 		}
 	}
 	return(true);

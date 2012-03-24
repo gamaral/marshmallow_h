@@ -54,7 +54,7 @@ using namespace Game;
 /******************************************************************************/
 
 namespace {
-	typedef std::pair<UINT16, int> FrameEntry;
+	typedef std::pair<uint16_t, int> FrameEntry;
 	typedef std::vector<FrameEntry> FrameList;
 	typedef std::map<Core::Identifier, FrameList> AnimationFrames;
 	typedef std::map<Core::Identifier, float> AnimationFramerates;
@@ -102,7 +102,7 @@ AnimationComponent::~AnimationComponent(void)
 }
 
 void
-AnimationComponent::pushFrame(const Core::Identifier &a, UINT16 t, int d)
+AnimationComponent::pushFrame(const Core::Identifier &a, uint16_t t, int d)
 {
 	FrameList &l_framelist = m_p->animation_frames[a];
 	l_framelist.push_back(FrameEntry(t, d));
@@ -163,7 +163,7 @@ AnimationComponent::play(const Core::Identifier &a, bool l)
 }
 
 void
-AnimationComponent::stop(UINT16 *s)
+AnimationComponent::stop(uint16_t *s)
 {
 	m_p->playing = false;
 	m_p->current_frame_duration = 0;

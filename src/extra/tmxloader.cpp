@@ -73,7 +73,7 @@ using namespace Extra;
 /******************************************************************************/
 
 namespace {
-	typedef std::map<UINT16, Graphics::SharedTileset> TilesetCollection;
+	typedef std::map<uint16_t, Graphics::SharedTileset> TilesetCollection;
 } // namespace
 
 /******************************************************************************/
@@ -180,6 +180,21 @@ TMXLoader::processMap(XMLElement &m)
 		return(false);
 	}
 
+	/* calculate default scale */
+	const Math::Size2f &l_vsize = Graphics::Viewport::Size();
+	if (m_p->map_size.width() < m_p->map_size.height()) {
+		m_p->scale[0] = l_vsize.width()  / static_cast<float>(m_p->map_size.width()  * m_p->tile_size.width());
+		m_p->scale[1] = m_p->scale.width() * static_cast<float>(m_p->tile_size.height() / m_p->tile_size.width());
+		MMINFO("Calculated scale based off map size width.");
+	}
+	if (m_p->map_size.width() > m_p->map_size.height()) {
+		m_p->scale[1] = l_vsize.height() / static_cast<float>(m_p->map_size.height() * m_p->tile_size.height());
+		m_p->scale[0] = m_p->scale.height() * static_cast<float>(m_p->tile_size.width() / m_p->tile_size.height());
+		MMINFO("Calculated scale based off map size height.");
+	}
+	else m_p->scale[0] = m_p->scale[1] = l_vsize.height() / static_cast<float>(m_p->map_size.height() * m_p->tile_size.height());
+	MMINFO("Calculated map scale size (" << m_p->scale.width() << "x" << m_p->scale.height() << ")");
+
 	/* calculate half-relative map size (used to offset coordinates) */
 	m_p->hrmap_size[0] = m_p->scale.width()
 	    * static_cast<float>(m_p->map_size.width() * m_p->tile_size.width());
@@ -195,15 +210,15 @@ TMXLoader::processMap(XMLElement &m)
 		if (!l_pname)
 			continue;
 
-		if (strcasecmp(l_pname, "scale") == 0) {
+		/* scale property */
+		if (STRCASECMP(l_pname, "scale") == 0) {
 			const char *l_value = l_property->Attribute("value");
 			if (!l_value) {
 				MMWARNING("Skipping incomplete scale property.");
 				continue;
 			}
 
-			if (strcasecmp(l_value, "auto") == 0) {
-				const Math::Size2f &l_vsize = Graphics::Viewport::Size();
+			if (STRCASECMP(l_value, "screen") == 0) {
 				const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
 
 				/*
@@ -215,9 +230,9 @@ TMXLoader::processMap(XMLElement &m)
 
 				continue;
 			}
-			else if (SSCANF(l_value, "%fx%f", &m_p->scale[0], &m_p->scale[1]) == 2)
+			else if (sscanf(l_value, "%fx%f", &m_p->scale[0], &m_p->scale[1]) == 2)
 				continue;
-			else if (SSCANF(l_value, "%f", &m_p->scale[0]) == 1) {
+			else if (sscanf(l_value, "%f", &m_p->scale[0]) == 1) {
 				m_p->scale[1] = m_p->scale[0];
 				continue;
 			}
@@ -291,7 +306,8 @@ TMXLoader::processLayer(XMLElement &e)
 #define TMXDATA_COMPRESSION_GZIP "gzip"
 		else if (0 == strcmp(l_data_compression, TMXDATA_COMPRESSION_GZIP)) {
 			// TODO(gamaral)
-			assert(1 && "GZIP data decompression is currently unimplemented");
+			assert(0 && "GZIP data decompression is currently unimplemented");
+			return(false);
 		}
 
 		delete[] l_decoded_data;
@@ -300,14 +316,15 @@ TMXLoader::processLayer(XMLElement &e)
 #define TMXDATA_ENCODING_CSV "csv"
 	else if (0 == strcmp(l_data_encoding, TMXDATA_ENCODING_CSV)) {
 		// TODO(gamaral)
-		assert(1 && "CSV data encoding is currently unimplemented");
+		assert(0 && "CSV data encoding is currently unimplemented");
+		return(false);
 	}
 
 	if (!l_data_array)
 		return(false);
 
 	Game::TilemapSceneLayer *l_layer = new Game::TilemapSceneLayer(l_name, m_p->scene);
-	l_layer->setData(reinterpret_cast<UINT32 *>(l_data_array));
+	l_layer->setData(reinterpret_cast<uint32_t *>(l_data_array));
 	l_layer->setOpacity(l_opacity);
 	l_layer->setSize(m_p->map_size);
 	l_layer->setTileSize(m_p->tile_size);
@@ -323,6 +340,7 @@ TMXLoader::processLayer(XMLElement &e)
 		if (!l_pname)
 			continue;
 
+		/* scale property */
 		if (strcmp(l_pname, "scale") == 0) {
 			const char *l_value = l_property->Attribute("value");
 			if (!l_value) {
@@ -331,7 +349,7 @@ TMXLoader::processLayer(XMLElement &e)
 			}
 
 			Math::Size2f l_scale = l_layer->scale();
-			if (strcasecmp(l_value, "auto") == 0) {
+			if (STRCASECMP(l_value, "screen") == 0) {
 				const Math::Size2f &l_vsize = Graphics::Viewport::Size();
 				const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
 
@@ -345,10 +363,10 @@ TMXLoader::processLayer(XMLElement &e)
 
 				continue;
 			}
-			else if (SSCANF(l_value, "%fx%f", &l_scale[0], &l_scale[1]) == 2) {
+			else if (sscanf(l_value, "%fx%f", &l_scale[0], &l_scale[1]) == 2) {
 				l_layer->setScale(l_scale);
 				continue;
-			} else if (SSCANF(l_value, "%f", &l_scale[0]) == 1) {
+			} else if (sscanf(l_value, "%f", &l_scale[0]) == 1) {
 				l_scale[1] = l_scale[0];
 				l_layer->setScale(l_scale);
 				continue;
@@ -430,7 +448,7 @@ TMXLoader::processObjectGroup(XMLElement &e)
 		/* tile object */
 		} else {
 			bool l_found = false;
-			UINT16 l_ts_firstgid = 0;
+			uint16_t l_ts_firstgid = 0;
 
 			/* offset position to top-left (later centered) */
 			l_object_y += l_object_height;
@@ -474,7 +492,7 @@ TMXLoader::processObjectGroup(XMLElement &e)
 			l_vdata->set(3,  l_object_hrsize.width(), -l_object_hrsize.height());
 
 			Graphics::SharedTextureCoordinateData l_tdata =
-			    l_tileset->getTextureCoordinateData(static_cast<UINT16>(l_object_gid) - l_ts_firstgid);
+			    l_tileset->getTextureCoordinateData(static_cast<uint16_t>(l_object_gid - l_ts_firstgid));
 
 			l_render->mesh() =
 			    new Graphics::QuadMesh(l_tdata, l_tileset->textureData(), l_vdata);
@@ -553,7 +571,7 @@ TMXLoader::processTileset(XMLElement &e)
 	l_tileset->setSpacing(l_tile_spacing);
 	l_tileset->setTileSize(Math::Size2i(l_tile_width, l_tile_height));
 	l_tileset->setTextureData(l_texture);
-	m_p->tilesets[static_cast<UINT16>(l_first_gid)] = l_tileset;
+	m_p->tilesets[static_cast<uint16_t>(l_first_gid)] = l_tileset;
 
 	return(true);
 }

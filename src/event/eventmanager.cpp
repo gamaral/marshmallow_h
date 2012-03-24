@@ -68,7 +68,7 @@ struct EventManager::Private
 	EventListenerMap elmap;
 	EventList queue[2];
 	Core::Identifier id;
-	UINT8 active_queue;
+	uint8_t active_queue;
 };
 
 EventManager * EventManager::s_instance(0);

@@ -73,7 +73,7 @@ namespace Graphics
 		/*! @brief Get tile texture coordinate data
 		 *  @param index Tile index, top-to-bottom wrapping from left-to-right.
 		 */
-		virtual SharedTextureCoordinateData getTextureCoordinateData(UINT16 index) = 0;
+		virtual SharedTextureCoordinateData getTextureCoordinateData(uint16_t index) = 0;
 	};
 	typedef Core::Shared<ITileset> SharedTileset;
 	typedef Core::Weak<ITileset> WeakTileset;

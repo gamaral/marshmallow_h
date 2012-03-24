@@ -147,7 +147,7 @@ MeshBase::scale(float &x, float &y) const
 }
 
 Math::Vector2
-MeshBase::vertex(UINT16 i) const
+MeshBase::vertex(uint16_t i) const
 {
 	Math::Vector2 l_vector;
 	if (!m_p->vdata->get(i, l_vector[0], l_vector[1]))
@@ -156,21 +156,21 @@ MeshBase::vertex(UINT16 i) const
 }
 
 void
-MeshBase::setVertex(UINT16 i, const Math::Vector2 &v)
+MeshBase::setVertex(uint16_t i, const Math::Vector2 &v)
 {
 	if (!m_p->vdata->set(i, v.x(), v.y()))
 		MMWARNING("Failed to assign values (" << v.x() << ", " << v.y() << ") to vertex " << i);
 }
 
 void
-MeshBase::textureCoordinate(UINT16 i, float &u, float &v) const
+MeshBase::textureCoordinate(uint16_t i, float &u, float &v) const
 {
 	if (!m_p->tcdata->get(i, u, v))
 		MMWARNING("Failed to retrieve values for vertex " << i);
 }
 
 void
-MeshBase::setTextureCoordinate(UINT16 i, float u, float v)
+MeshBase::setTextureCoordinate(uint16_t i, float u, float v)
 {
 	if (!m_p->tcdata->set(i, u, v))
 		MMWARNING("Failed to assign values (" << u << ", " << v << ") to texture coordinate " << i);
@@ -198,7 +198,7 @@ MeshBase::serialize(XMLElement &n) const
 	}
 
 	/* texture coordinates */
-	for (UINT16 i = 0; i < m_p->tcdata->count(); ++i) {
+	for (uint16_t i = 0; i < m_p->tcdata->count(); ++i) {
 		float l_u, l_v;
 		if (m_p->tcdata->get(i, l_u, l_v)) {
 			XMLElement *l_vector = n.GetDocument()->NewElement("tcoord");
@@ -209,7 +209,7 @@ MeshBase::serialize(XMLElement &n) const
 	}
 
 	/* vertexes */
-	for (UINT16 i = 0; i < m_p->vdata->count(); ++i) {
+	for (uint16_t i = 0; i < m_p->vdata->count(); ++i) {
 		float l_x, l_y;
 		if (m_p->vdata->get(i, l_x, l_y)) {
 			XMLElement *l_vector = n.GetDocument()->NewElement("vector");
@@ -226,7 +226,7 @@ bool
 MeshBase::deserialize(XMLElement &n)
 {
 	XMLElement *l_child;
-	UINT16 l_i;
+	uint16_t l_i;
 
 	n.QueryFloatAttribute("rotation", &m_p->rotation);
 

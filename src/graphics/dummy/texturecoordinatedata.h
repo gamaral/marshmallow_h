@@ -55,11 +55,11 @@ namespace Dummy
 	{
 		Core::Identifier m_id;
 		float *m_data;
-		UINT16 m_count;
+		uint16_t m_count;
 
 		NO_ASSIGN_COPY(TextureCoordinateData);
 	public:
-		TextureCoordinateData(UINT16 count);
+		TextureCoordinateData(uint16_t count);
 		virtual ~TextureCoordinateData(void);
 
 		const float * data(void) const
@@ -73,10 +73,10 @@ namespace Dummy
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
 
-		VIRTUAL bool get(UINT16 index, float &u, float &v) const;
-		VIRTUAL bool set(UINT16 index, float  u, float  v);
+		VIRTUAL bool get(uint16_t index, float &u, float &v) const;
+		VIRTUAL bool set(uint16_t index, float  u, float  v);
 
-		VIRTUAL UINT16 count(void) const
+		VIRTUAL uint16_t count(void) const
 		    { return(m_count); }
 
 	public: /* static */
