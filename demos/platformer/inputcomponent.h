@@ -69,8 +69,10 @@ class InputComponent : public Game::ComponentBase
 
 	std::list<int> m_direction_stack;
 	float m_linear_impulse;
+	float m_max_speed;
+	float m_jump;
+	float m_boost_fuel;
 	int   m_direction;
-	bool  m_jump;
 	bool  m_left;
 	bool  m_right;
 

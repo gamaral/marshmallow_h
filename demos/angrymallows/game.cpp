@@ -53,6 +53,8 @@ MARSHMALLOW_NAMESPACE_USE
 #include <cstdlib>
 #include <cstring>
 
+#define STATE_FILENAME "savedstate.xml"
+
 Demo::Demo(const char *f)
     : EngineBase(60, 60, MARSHMALLOW_BUSYWAIT)
     , m_filename(STRDUP(f))
@@ -75,28 +77,17 @@ Demo::initialize(void)
 
 	eventManager()->connect(this, Event::KeyboardEvent::Type());
 
-	{	/* derialization test */
-		TinyXML::XMLDocument l_document;
-		if (l_document.LoadFile(m_filename) != XML_NO_ERROR) {
-			MMERROR("Failed to load \'" << m_filename << "\'");
-			return(false);
-		}
-		XMLElement *l_root = l_document.FirstChildElement("marshmallow");
-		if (l_root) deserialize(*l_root);
-	}
 
+#if 0 /* for serialization testing */
 	{	/* pre-run serialization test */
-		TinyXML::XMLDocument l_document;
-		XMLElement  *l_root = l_document.NewElement("marshmallow");
-		serialize(*l_root);
-		l_document.InsertEndChild(l_root);
 	}
+#endif
 
 	Graphics::Transform l_camera = Graphics::Viewport::Camera();
 	l_camera.setScale(Math::Pair(30.f, 30.f));
 	Graphics::Viewport::SetCamera(l_camera);
 
-	return(true);
+	return(reset());
 }
 
 void
@@ -131,8 +122,53 @@ Demo::handleEvent(const Event::IEvent &e)
 			l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
 	} else if (l_kevent.key() == Event::KEY_ESCAPE) {
 		stop();
+	} else if (l_kevent.key() == Event::KEY_F1) {
+		reset();
+	} else if (l_kevent.key() == Event::KEY_F2) {
+		loadState();
+	} else if (l_kevent.key() == Event::KEY_F3) {
+		saveState();
 	} else return(false);
 
+	return(true);
+}
+
+bool
+Demo::reset()
+{
+	sceneManager()->popScene();
+	TinyXML::XMLDocument l_document;
+	if (l_document.LoadFile(m_filename) != XML_NO_ERROR) {
+		MMERROR("Failed to load \'" << m_filename << "\'");
+		return(false);
+	}
+	XMLElement *l_root = l_document.FirstChildElement("marshmallow");
+	if (l_root) deserialize(*l_root);
+	return(true);
+}
+
+bool
+Demo::loadState()
+{
+	sceneManager()->popScene();
+	TinyXML::XMLDocument l_document;
+	if (l_document.LoadFile(STATE_FILENAME) != XML_NO_ERROR) {
+		MMERROR("Failed to load \'" << STATE_FILENAME << "\'");
+		return(false);
+	}
+	XMLElement *l_root = l_document.FirstChildElement("marshmallow");
+	if (l_root) deserialize(*l_root);
+	return(true);
+}
+
+bool
+Demo::saveState()
+{
+	TinyXML::XMLDocument l_document;
+	XMLElement  *l_root = l_document.NewElement("marshmallow");
+	serialize(*l_root);
+	l_document.InsertEndChild(l_root);
+	l_document.SaveFile(STATE_FILENAME);
 	return(true);
 }
 

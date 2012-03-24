@@ -53,10 +53,14 @@
 
 const Core::Type InputComponent::Type("InputComponent");
 
+#define JUMP_MAX  30.f
+#define BOOST_MAX 0.5f
+
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
     , m_collider()
-    , m_linear_impulse(30.f)
+    , m_linear_impulse(20.f)
+    , m_max_speed(20.f)
     , m_jump(false)
     , m_left(false)
     , m_right(false)
@@ -78,7 +82,7 @@ InputComponent::inMotion(void) const
 }
 
 void
-InputComponent::update(float)
+InputComponent::update(float d)
 {
 	if (!m_collider)
 		m_collider = entity().getComponentType(Game::ColliderComponent::Type()).
@@ -94,30 +98,54 @@ InputComponent::update(float)
 	}
 
 	if (m_collider && m_position && m_movement) {
-		if (inMotion())
-		switch (direction()) {
-		case  ICDLeft:
-			m_movement->acceleration()[0] = -m_linear_impulse;
-			break;
-		case ICDRight:
-			m_movement->acceleration()[0] = m_linear_impulse;
-			break;
-		default: break;
+		/* speed limits */
+		if (inMotion()) {
+			switch (direction()) {
+			case  ICDLeft:
+				m_movement->acceleration()[0] = -m_linear_impulse;
+
+				/* sharp u turn */
+				if (m_collider->onPlatform() && m_movement->velocity().x() > 0)
+					m_movement->acceleration()[0] *= 3;
+				else if (m_movement->velocity().x() < -m_max_speed)
+					m_movement->acceleration()[0] *= -0.5;
+				break;
+			case ICDRight:
+				m_movement->acceleration()[0] = m_linear_impulse;
+
+				/* sharp u turn */
+				if (m_collider->onPlatform() && m_movement->velocity().x() < 0)
+					m_movement->acceleration()[0] *= 3;
+				else if (m_movement->velocity().x() > m_max_speed)
+					m_movement->acceleration()[0] *= -0.5;
+				break;
+			default: break;
+			}
 		}
 		/* stop unless falling */
 		else if(m_collider->onPlatform()) {
-			m_movement->velocity()[0] = 0;
-			m_movement->acceleration()[0] = 0;
+			switch (direction()) {
+			case  ICDLeft:
+				if (m_movement->velocity().x() > -1) {
+					m_movement->velocity()[0] = 0;
+					m_movement->acceleration()[0] = 0;
+				} else m_movement->acceleration()[0] = m_linear_impulse * 4;
+				break;
+			case ICDRight:
+				if (m_movement->velocity().x() < 1) {
+					m_movement->velocity()[0] = 0;
+					m_movement->acceleration()[0] = 0;
+				} else m_movement->acceleration()[0] = -m_linear_impulse * 4;
+				break;
+			default: break;
+			}
 		}
 		else m_movement->acceleration()[0] = 0;
 
-		/* speed limits */
-		if (m_movement->velocity()[0] > 10) m_movement->velocity()[0] = 10;
-		else if (m_movement->velocity()[0] < -10) m_movement->velocity()[0] = -10;
-
 		/* only jump if on platform */
-		if (m_jump && m_collider->onPlatform()) {
-			m_movement->velocity()[1] =  m_linear_impulse;
+		if (m_jump && m_boost_fuel > 0) {
+			m_boost_fuel -= d;
+			m_movement->velocity()[1] += JUMP_MAX * (d / BOOST_MAX);
 		}
 	}
 }
@@ -142,7 +170,15 @@ InputComponent::handleEvent(const Event::IEvent &e)
 		else m_direction_stack.remove(ICDRight);
 	}
 	else if (l_kevent.key() == Event::KEY_SPACE) {
-		m_jump = (l_kevent.action() == Event::KeyPressed);
+		m_jump = (l_kevent.action() == Event::KeyPressed && m_collider->onPlatform() ? true : false);
+
+		if (m_jump) {
+			m_movement->velocity()[1] = JUMP_MAX;
+			m_boost_fuel = BOOST_MAX;
+		}
+	}
+	else if (l_kevent.key() == Event::KEY_SHIFT_L) {
+		m_max_speed += l_kevent.action() == Event::KeyPressed ? 10 : -10;
 	}
 
 	if (m_direction_stack.size() > 0)

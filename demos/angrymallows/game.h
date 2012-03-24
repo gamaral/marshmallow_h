@@ -60,6 +60,12 @@ public: /* virtual */
 	VIRTUAL void finalize(void);
 
 	VIRTUAL bool handleEvent(const Event::IEvent &event);
+
+private:
+	bool reset();
+	bool loadState();
+	bool saveState();
+
 };
 
 #endif

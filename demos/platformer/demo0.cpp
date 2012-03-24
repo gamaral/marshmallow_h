@@ -68,23 +68,11 @@ public:
 
 		eventManager()->connect(this, Event::KeyboardEvent::Type());
 
-		Game::SharedScene l_scene(new Game::Scene("main"));
-
-		/* collision layer */
-		Game::SharedCollisionSceneLayer l_collision_layer
-		    (new Game::CollisionSceneLayer("collision", *l_scene));
-		l_scene->pushLayer(l_collision_layer.staticCast<Game::ISceneLayer>());
-
-		/* load tmx tilemap */
-		Extra::TMXLoader m_tmxloader(*l_scene);
-		m_tmxloader.load("assets/platformer.tmx");
-		assert(m_tmxloader.isLoaded() && "TMX tilemap failed to load.");
-
-		sceneManager()->pushScene(l_scene);
-
 		Graphics::Transform l_camera = Graphics::Viewport::Camera();
 		l_camera.setScale(Math::Pair(1.f, 1.f));
 		Graphics::Viewport::SetCamera(l_camera);
+
+		loadLevel();
 
 		return(true);
 	}
@@ -119,9 +107,30 @@ public:
 				l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
 		} else if (l_kevent.key() == Event::KEY_ESCAPE) {
 			stop();
+		} else if (l_kevent.key() == Event::KEY_F1) {
+			loadLevel();
 		} else return(false);
 
 		return(true);
+	}
+
+	void loadLevel()
+	{
+		sceneManager()->popScene();
+
+		Game::SharedScene l_scene(new Game::Scene("main"));
+
+		/* collision layer */
+		Game::SharedCollisionSceneLayer l_collision_layer
+		    (new Game::CollisionSceneLayer("collision", *l_scene));
+		l_scene->pushLayer(l_collision_layer.staticCast<Game::ISceneLayer>());
+
+		/* load tmx tilemap */
+		Extra::TMXLoader m_tmxloader(*l_scene);
+		m_tmxloader.load("assets/platformer.tmx");
+		assert(m_tmxloader.isLoaded() && "TMX tilemap failed to load.");
+
+		sceneManager()->pushScene(l_scene);
 	}
 };
 

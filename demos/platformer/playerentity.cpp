@@ -100,7 +100,7 @@ PlayerEntity::update(float d)
 		/* movement component */
 		Game::SharedMovementComponent l_movement_component =
 		    new Game::MovementComponent("movement", *this);
-		l_movement_component->acceleration()[1] = -70.f;
+		l_movement_component->acceleration()[1] = -120.f;
 		pushComponent(l_movement_component.staticCast<Game::IComponent>());
 
 		/* collider component */
