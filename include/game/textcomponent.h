@@ -74,17 +74,19 @@ namespace Game
 		TextComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~TextComponent(void);
 
-		Math::Size2f & fontSize(void);
-
 		Graphics::SharedTileset & tileset(void);
 
-		void setText(const std::string &text);
 		const std::string & text(void) const;
+		void setText(const std::string &text);
 
-		void setColor(const Graphics::Color &color);
 		const Graphics::Color & color(void) const;
+		void setColor(const Graphics::Color &color);
 
-		uint16_t & tileOffset(void);
+		float scale(void) const;
+		void setScale(float scale);
+
+		uint16_t tileOffset(void) const;
+		void setTileOffset(uint16_t);
 
 	public: /* virtual */
 

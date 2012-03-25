@@ -65,22 +65,23 @@ using namespace Game;
 struct TextComponent::Private
 {
 	Private(void)
-	: font_size(2.f, 4.f)
+	: scale(1.f)
 	, tile_offset(0)
 	, invalidated(false) {}
 
 	void rebuild(void);
+	void render(void);
 
 	std::vector<Graphics::SharedMesh> mesh;
 
 	WeakPositionComponent position;
 	Graphics::SharedTileset tileset;
 
-	Math::Size2f font_size;
 	Graphics::Color color;
 
 	std::string text;
 
+	float scale;
 	uint16_t tile_offset;
 	bool invalidated;
 };
@@ -105,9 +106,9 @@ TextComponent::Private::rebuild(void)
 	    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 	{
 		float l_hwidth  =
-		    static_cast<float>(font_size.width())  / 2.f;
+		    (tileset->tileSize().width() / 2.f) * scale;
 		float l_hheight =
-		    static_cast<float>(font_size.height()) / 2.f;
+		    (tileset->tileSize().height() / 2.f) * scale;
 
 		l_vdata->set(0, -l_hwidth,  l_hheight);
 		l_vdata->set(1, -l_hwidth, -l_hheight);
@@ -136,6 +137,47 @@ TextComponent::Private::rebuild(void)
 	invalidated = false;
 }
 
+void
+TextComponent::Private::render(void)
+{
+	if (invalidated) return;
+
+	/* if no position component, abort! */
+	if (!position) {
+		MMWARNING("No position component found!");
+		return;
+	}
+
+	/* render characters */
+
+	/* TODO: find line-breaks to determine line length for center
+	 *       alignment, also add right alignment.
+	 */
+	char l_char;
+	Math::Point2 l_point(position->position());
+	const size_t l_text_count = text.size();
+	for (unsigned int i = 0; i < l_text_count; ++i) {
+		l_char = text[i];
+
+		/* render valid characters */
+		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
+			Graphics::SharedQuadMesh l_mesh = mesh[i].staticCast<Graphics::QuadMesh>();
+			l_mesh->setColor(color);
+			Graphics::Painter::Draw(*l_mesh, l_point);
+			l_point[0] += tileset->tileSize().width() * scale;
+		}
+
+		/* handle line break */
+		else if ('\n' == l_char) {
+			l_point[0]  = position->position().x();
+			l_point[1] -= tileset->tileSize().height() * scale;
+		}
+
+		/* skip unknown character */
+		else l_point[0] += tileset->tileSize().width() * scale;
+	}
+}
+
 /******************************************************************************/
 
 TextComponent::TextComponent(const Core::Identifier &i, IEntity &e)
@@ -148,12 +190,6 @@ TextComponent::~TextComponent(void)
 {
 	delete m_p;
 	m_p = 0;
-}
-
-Math::Size2f &
-TextComponent::fontSize(void)
-{
-	return(m_p->font_size);
 }
 
 Graphics::SharedTileset &
@@ -174,12 +210,6 @@ TextComponent::color(void) const
 	return(m_p->color);
 }
 
-uint16_t &
-TextComponent::tileOffset(void)
-{
-	return(m_p->tile_offset);
-}
-
 void
 TextComponent::setText(const std::string &t)
 {
@@ -192,6 +222,34 @@ void
 TextComponent::setColor(const Graphics::Color &c)
 {
 	m_p->color = c;
+}
+
+float
+TextComponent::scale(void) const
+{
+	return(m_p->scale);
+}
+
+void
+TextComponent::setScale(float s)
+{
+	m_p->scale = s;
+	m_p->invalidated = true;
+	m_p->rebuild();
+}
+
+uint16_t
+TextComponent::tileOffset(void) const
+{
+	return(m_p->tile_offset);
+}
+
+void
+TextComponent::setTileOffset(uint16_t o)
+{
+	m_p->tile_offset = o;
+	m_p->invalidated = true;
+	m_p->rebuild();
 }
 
 bool
@@ -227,43 +285,7 @@ void
 TextComponent::render(void)
 {
 	ComponentBase::render();
-
-	if (m_p->invalidated) return;
-
-	/* if no position component, abort! */
-	if (!m_p->position) {
-		MMWARNING("No position component found!");
-		return;
-	}
-
-	/* render characters */
-
-	/* TODO: find line-breaks to determine line length for center
-	 *       alignment, also add right alignment.
-	 */
-	char l_char;
-	Math::Point2 l_point(m_p->position->position());
-	const size_t l_text_count = m_p->text.size();
-	for (unsigned int i = 0; i < l_text_count; ++i) {
-		l_char = m_p->text[i];
-
-		/* render valid characters */
-		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
-			Graphics::SharedQuadMesh l_mesh = m_p->mesh[i].staticCast<Graphics::QuadMesh>();
-			l_mesh->setColor(m_p->color);
-			Graphics::Painter::Draw(*l_mesh, l_point);
-			l_point[0] += m_p->font_size.width();
-		}
-
-		/* handle line break */
-		else if ('\n' == l_char) {
-			l_point[0] = m_p->position->position().x();
-			l_point[1] -= m_p->font_size.height();
-		}
-
-		/* skip unknown character */
-		else l_point[0] += m_p->font_size.width();
-	}
+	m_p->render();
 }
 
 const Core::Type &
