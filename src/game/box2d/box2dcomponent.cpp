@@ -52,8 +52,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-const Core::Type Box2DComponent::sType("Game::Box2DComponent");
-
 struct Box2DComponent::Private
 {
 	WeakBox2DSceneLayer   b2layer;
@@ -237,6 +235,7 @@ Box2DComponent::deserialize(XMLElement &n)
 const Core::Type &
 Box2DComponent::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Game::Box2DComponent");
+	return(s_type);
 }
 

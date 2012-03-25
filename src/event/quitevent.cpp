@@ -39,8 +39,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Event;
 
-const Core::Type QuitEvent::sType("Event::QuitEvent");
-
 struct QuitEvent::Private
 {
 	int code;
@@ -68,6 +66,7 @@ QuitEvent::code(void) const
 const Core::Type &
 QuitEvent::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Event::QuitEvent");
+	return(s_type);
 }
 

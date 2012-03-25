@@ -45,7 +45,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core
 {
-	/*! @brief Event StrHash Class */
+	/*! @brief Core StrHash Class */
 	class MARSHMALLOW_CORE_EXPORT
 	StrHash : public Hash
 	{

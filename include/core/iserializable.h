@@ -51,7 +51,7 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 
-	/*! @brief Serializable Interface */
+	/*! @brief Core Serializable Interface */
 	struct ISerializable
 	{
 		virtual ~ISerializable(void) {};

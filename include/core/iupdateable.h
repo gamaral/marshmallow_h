@@ -47,7 +47,7 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 
-	/*! @brief Updateable Interface */
+	/*! @brief Core Updateable Interface */
 	struct IUpdateable
 	{
 		virtual ~IUpdateable(void) {};

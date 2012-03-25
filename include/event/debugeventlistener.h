@@ -46,7 +46,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-	/*! @brief Debug Event Listener */
+	/*! @brief Event Debug Listener */
 	class MARSHMALLOW_EVENT_EXPORT
 	DebugEventListener : public IEventListener
 	{

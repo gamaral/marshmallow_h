@@ -48,7 +48,7 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 
-	/*! @brief Buffer IO Interface */
+	/*! @brief Core Buffer IO Interface */
 	class MARSHMALLOW_CORE_EXPORT
 	BufferIO : public IDataIO
 	{

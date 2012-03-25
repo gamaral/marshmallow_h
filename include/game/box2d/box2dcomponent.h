@@ -90,10 +90,6 @@ namespace Game
 	public: /* static */
 
 		static const Core::Type & Type(void);
-
-	private: /* static */
-
-		static const Core::Type sType;
 	};
 	typedef Core::Shared<Box2DComponent> SharedBox2DComponent;
 	typedef Core::Weak<Box2DComponent> WeakBox2DComponent;

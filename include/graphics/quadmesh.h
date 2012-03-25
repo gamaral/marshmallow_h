@@ -74,10 +74,6 @@ namespace Graphics
 	public: /* static */
 
 		static const Core::Type & Type(void);
-
-	private: /* static */
-
-		static const Core::Type sType;
 	};
 	typedef Core::Shared<QuadMesh> SharedQuadMesh;
 	typedef Core::Weak<QuadMesh> WeakQuadMesh;

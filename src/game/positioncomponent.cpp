@@ -39,8 +39,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-const Core::Type PositionComponent::sType("Game::PositionComponent");
-
 struct PositionComponent::Private
 {
 	Math::Point2 position;
@@ -89,6 +87,7 @@ PositionComponent::deserialize(XMLElement &n)
 const Core::Type &
 PositionComponent::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Game::PositionComponent");
+	return(s_type);
 }
 

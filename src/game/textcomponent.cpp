@@ -60,26 +60,88 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
+/******************************************************************************/
+
 struct TextComponent::Private
 {
-	WeakPositionComponent position;
-	Math::Size2f font_size;
-	Graphics::SharedTileset tileset;
+	Private(void)
+	: font_size(2.f, 4.f)
+	, tile_offset(0)
+	, invalidated(false) {}
+
+	void rebuild(void);
+
 	std::vector<Graphics::SharedMesh> mesh;
-	std::string text;
+
+	WeakPositionComponent position;
+	Graphics::SharedTileset tileset;
+
+	Math::Size2f font_size;
 	Graphics::Color color;
+
+	std::string text;
+
 	uint16_t tile_offset;
 	bool invalidated;
 };
+
+void
+TextComponent::Private::rebuild(void)
+{
+	mesh.clear();
+	mesh.resize(text.size());
+
+	if (!tileset) {
+		MMWARNING("No tileset assigned.");
+		return;
+	}
+
+	/* create vertex data */
+
+	/* TODO: this needs to be kept around, only replaced when font size
+	 *       changes.
+	 */
+	Graphics::SharedVertexData l_vdata =
+	    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
+	{
+		float l_hwidth  =
+		    static_cast<float>(font_size.width())  / 2.f;
+		float l_hheight =
+		    static_cast<float>(font_size.height()) / 2.f;
+
+		l_vdata->set(0, -l_hwidth,  l_hheight);
+		l_vdata->set(1, -l_hwidth, -l_hheight);
+		l_vdata->set(2,  l_hwidth,  l_hheight);
+		l_vdata->set(3,  l_hwidth, -l_hheight);
+	}
+
+	/* render characters */
+
+	/* TODO: find line-breaks to determine line length for center
+	 *       alignment, also add right alignment.
+	 */
+	char l_char;
+	const size_t l_text_count = text.size();
+	for (uint16_t i = 0; i < l_text_count; ++i) {
+		l_char = text[i];
+		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
+			Graphics::SharedTextureCoordinateData l_tdata =
+				tileset->getTextureCoordinateData(static_cast<uint16_t>
+				    (tile_offset + (l_char - MIN_CHAR)));
+
+			mesh[i] = new Graphics::QuadMesh(l_tdata, tileset->textureData(), l_vdata);
+		}
+	}
+
+	invalidated = false;
+}
+
+/******************************************************************************/
 
 TextComponent::TextComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
     , m_p(new Private)
 {
-	m_p->font_size[0] = 2.f;
-	m_p->font_size[1] = 4.f;
-	m_p->tile_offset = 0;
-	m_p->invalidated = false;
 }
 
 TextComponent::~TextComponent(void)
@@ -123,7 +185,7 @@ TextComponent::setText(const std::string &t)
 {
 	m_p->text = t;
 	m_p->invalidated = true;
-	rebuild();
+	m_p->rebuild();
 }
 
 void
@@ -158,7 +220,7 @@ TextComponent::update(float delta)
 	        staticCast<PositionComponent>();
 
 	if (m_p->invalidated)
-	    rebuild();
+	    m_p->rebuild();
 }
 
 void
@@ -202,57 +264,6 @@ TextComponent::render(void)
 		/* skip unknown character */
 		else l_point[0] += m_p->font_size.width();
 	}
-}
-
-void
-TextComponent::rebuild(void)
-{
-	m_p->mesh.clear();
-	m_p->mesh.resize(m_p->text.size());
-
-	if (!m_p->tileset) {
-		MMWARNING("No tileset assigned.");
-		return;
-	}
-
-	/* create vertex data */
-
-	/* TODO: this needs to be kept around, only replaced when font size
-	 *       changes.
-	 */
-	Graphics::SharedVertexData l_vdata =
-	    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
-	{
-		float l_hwidth  =
-		    static_cast<float>(m_p->font_size.width())  / 2.f;
-		float l_hheight =
-		    static_cast<float>(m_p->font_size.height()) / 2.f;
-
-		l_vdata->set(0, -l_hwidth,  l_hheight);
-		l_vdata->set(1, -l_hwidth, -l_hheight);
-		l_vdata->set(2,  l_hwidth,  l_hheight);
-		l_vdata->set(3,  l_hwidth, -l_hheight);
-	}
-
-	/* render characters */
-
-	/* TODO: find line-breaks to determine line length for center
-	 *       alignment, also add right alignment.
-	 */
-	char l_char;
-	const size_t l_text_count = m_p->text.size();
-	for (uint16_t i = 0; i < l_text_count; ++i) {
-		l_char = m_p->text[i];
-		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
-			Graphics::SharedTextureCoordinateData l_tdata =
-				m_p->tileset->getTextureCoordinateData(static_cast<uint16_t>
-				    (m_p->tile_offset + (l_char - MIN_CHAR)));
-
-			m_p->mesh[i] = new Graphics::QuadMesh(l_tdata, m_p->tileset->textureData(), l_vdata);
-		}
-	}
-
-	m_p->invalidated = false;
 }
 
 const Core::Type &

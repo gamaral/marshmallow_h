@@ -37,8 +37,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-const Core::Type Entity::sType("Game::Entity");
-
 Entity::Entity(const Core::Identifier &i, EntitySceneLayer &s)
     : EntityBase(i, s)
 {
@@ -51,6 +49,7 @@ Entity::~Entity(void)
 const Core::Type &
 Entity::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Game::Entity");
+	return(s_type);
 }
 

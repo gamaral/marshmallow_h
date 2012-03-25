@@ -55,8 +55,6 @@ using namespace Game;
 
 #define DELTA_STEPS 32
 
-const Core::Type ColliderComponent::sType("Game::ColliderComponent");
-
 struct ColliderComponent::Private
 {
 	WeakCollisionSceneLayer layer;
@@ -287,7 +285,8 @@ ColliderComponent::collision(ColliderComponent &, float, const CollisionData &)
 const Core::Type &
 ColliderComponent::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Game::ColliderComponent");
+	return(s_type);
 }
 
 /************************************************** BounceColliderComponent */
@@ -311,5 +310,12 @@ BounceColliderComponent::collision(ColliderComponent &c, float d, const Collisio
 	    (l_normal * (2.f * l_normal.dot(l_vel * -1.f)) + l_vel).normalize() * l_mag;
 
 	return(true);
+}
+
+const Core::Type &
+BounceColliderComponent::Type(void)
+{
+	static const Core::Type s_type("Game::BounceColliderComponent");
+	return(s_type);
 }
 

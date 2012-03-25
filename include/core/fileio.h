@@ -50,7 +50,7 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 
-	/*! @brief File IO Interface */
+	/*! @brief Core File IO Interface */
 	class MARSHMALLOW_CORE_EXPORT
 	FileIO : public IDataIO
 	{

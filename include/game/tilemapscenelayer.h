@@ -93,6 +93,10 @@ namespace Game
 		bool visible(void) const;
 		void setVisibility(bool value);
 
+		bool hasProperty(const std::string &name, std::string *value = 0) const;
+		const std::string & property(const std::string &name) const;
+		void setProperty(const std::string &name, const std::string &value);
+
 		const Math::Size2f & virtualSize(void) const;
 		const Math::Size2f & virtualHalfSize(void) const;
 
@@ -107,16 +111,6 @@ namespace Game
 	public: /* static */
 
 		static const Core::Type & Type(void);
-
-	protected:
-
-		void recalculateAllVertexData();
-		void recalculateRelativeTileSize();
-		void recalculateVertexData(uint32_t offset);
-
-	private: /* static */
-
-		static const Core::Type sType;
 	};
 	typedef Core::Shared<TilemapSceneLayer> SharedTilemapSceneLayer;
 	typedef Core::Weak<TilemapSceneLayer> WeakTilemapSceneLayer;

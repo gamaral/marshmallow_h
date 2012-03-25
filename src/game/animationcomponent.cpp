@@ -64,6 +64,23 @@ namespace {
 
 struct AnimationComponent::Private
 {
+	Private(AnimationComponent &i)
+	    : interface(i)
+	    , current_framelist(0)
+	    , current_frame_entry(0)
+	    , current_framerate(0.f)
+	    , playback_ratio(1.f)
+	    , timestamp(0)
+	    , current_frame_duration(0)
+	    , loop(false)
+	    , playing(false) {}
+
+	void play(const Core::Identifier &animation, bool loop);
+	void stop(uint16_t *tile);
+	void animate(float d);
+
+	AnimationComponent &interface;
+
 	AnimationFrames     animation_frames;
 	AnimationFramerates animation_framerate;
 	Graphics::SharedTextureCoordinateData stop_data;
@@ -71,28 +88,125 @@ struct AnimationComponent::Private
 	WeakRenderComponent  render;
 	WeakTilesetComponent tileset;
 
-	float timestamp;
-	bool  loop;
-	bool  playing;
-
 	const FrameList *current_framelist;
-	float  current_framerate;
-	int    current_frame_duration;
+
 	size_t current_frame_entries;
 	size_t current_frame_entry;
+	float  current_framerate;
+	float  playback_ratio;
+	float  timestamp;
+	int    current_frame_duration;
+	bool   loop;
+	bool   playing;
 };
+
+void
+AnimationComponent::Private::stop(uint16_t *s)
+{
+	playing = false;
+	current_frame_duration = 0;
+	current_frame_entries = 0;
+	current_frame_entry = 0;
+	current_framelist = 0;
+
+	if (s) stop_data = tileset->tileset()->getTextureCoordinateData(*s);
+
+	Graphics::SharedMeshBase l_mesh =
+	    render->mesh().staticCast<Graphics::MeshBase>();
+	l_mesh->setTextureCoordinateData(stop_data);
+}
+
+void
+AnimationComponent::Private::play(const Core::Identifier &a, bool l)
+{
+	AnimationFrames::const_iterator l_frames =
+	    animation_frames.find(a);
+	if (l_frames == animation_frames.end()) {
+		MMWARNING("Invalid animation requested.");
+		return;
+	}
+
+	/* get frame count */
+	int l_frame_count = 0;
+	FrameList::const_iterator l_entry;
+	for (l_entry  = l_frames->second.begin();
+	     l_entry != l_frames->second.end();
+	   ++l_entry)
+		l_frame_count += l_entry->second;
+
+	/* get framerate */
+	AnimationFramerates::const_iterator l_framerate =
+	    animation_framerate.find(a);
+	if (l_framerate == animation_framerate.end())
+		current_framerate =
+		    1.f / static_cast<float>(l_frame_count);
+	else
+		current_framerate =
+		    1.f / l_framerate->second;
+
+	current_frame_duration = 0;
+	current_frame_entries = l_frames->second.size();
+	current_frame_entry = 0;
+	current_framelist = &l_frames->second;
+	loop = l;
+	timestamp = current_framerate;
+	playing = true;
+}
+
+void
+AnimationComponent::Private::animate(float d)
+{
+	if (!tileset) {
+		tileset = interface.entity().getComponentType(TilesetComponent::Type()).
+		    staticCast<TilesetComponent>();
+		if (!tileset) return;
+	}
+
+	if (!render) {
+		render = interface.entity().getComponentType(RenderComponent::Type()).
+		    staticCast<RenderComponent>();
+		if (render)
+			stop_data = render->mesh()->textureCoordinateData();
+		else return;
+	}
+
+	if (playing) {
+		timestamp += d;
+
+		if (timestamp > current_framerate) {
+			timestamp -= current_framerate * playback_ratio;
+
+			if (--current_frame_duration > 0)
+				return;
+
+			/* reached the end */
+			if (++current_frame_entry >= current_frame_entries) {
+				current_frame_entry = 0;
+
+				if (!loop) {
+					stop(0);
+					return;
+				}
+			}
+
+			Graphics::SharedMeshBase l_mesh =
+			    render->mesh().staticCast<Graphics::MeshBase>();
+
+			/* replace texture coordinate data */
+			const FrameEntry &l_entry = (*current_framelist)[current_frame_entry];
+			l_mesh->setTextureCoordinateData
+			    (tileset->tileset()->getTextureCoordinateData(l_entry.first));
+			current_frame_duration = l_entry.second;
+		}
+	}
+}
+
+/******************************************************************************/
 
 AnimationComponent::AnimationComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_p(new Private)
+    , m_p(new Private(*this))
 {
-	m_p->timestamp = 0;
-	m_p->loop = false;
-	m_p->playing = false;
-	m_p->current_framelist = 0;
-	m_p->current_framerate = 0;
-	m_p->current_frame_duration = 0;
-	m_p->current_frame_entry = 0;
 }
 
 AnimationComponent::~AnimationComponent(void)
@@ -119,111 +233,52 @@ AnimationComponent::popFrame(const Core::Identifier &a)
 		--m_p->current_frame_entries;
 }
 
+float
+AnimationComponent::frameRate(const Core::Identifier &a) const
+{
+	AnimationFramerates::const_iterator l_i =
+	    m_p->animation_framerate.find(a);
+	if (l_i != m_p->animation_framerate.end())
+		return(l_i->second);
+
+	/* animation not found */
+	return(0.f);
+}
+
 void
-AnimationComponent::rate(const Core::Identifier &a, float fps)
+AnimationComponent::setFrameRate(const Core::Identifier &a, float fps)
 {
 	m_p->animation_framerate[a] = fps;
+}
+
+float
+AnimationComponent::playbackRatio(void) const
+{
+	return(m_p->playback_ratio);
+}
+
+void
+AnimationComponent::setPlaybackRatio(float r)
+{
+	m_p->playback_ratio = r;
 }
 
 void
 AnimationComponent::play(const Core::Identifier &a, bool l)
 {
-	AnimationFrames::const_iterator l_frames =
-	    m_p->animation_frames.find(a);
-	if (l_frames == m_p->animation_frames.end()) {
-		MMWARNING("Invalid animation requested.");
-		return;
-	}
-
-	/* get frame count */
-	int l_frame_count = 0;
-	FrameList::const_iterator l_entry;
-	for (l_entry  = l_frames->second.begin();
-	     l_entry != l_frames->second.end();
-	   ++l_entry)
-		l_frame_count += l_entry->second;
-
-	/* get framerate */
-	AnimationFramerates::const_iterator l_framerate =
-	    m_p->animation_framerate.find(a);
-	if (l_framerate == m_p->animation_framerate.end())
-		m_p->current_framerate =
-		    1.f / static_cast<float>(l_frame_count);
-	else
-		m_p->current_framerate =
-		    1.f / l_framerate->second;
-
-	m_p->current_frame_duration = 0;
-	m_p->current_frame_entries = l_frames->second.size();
-	m_p->current_frame_entry = 0;
-	m_p->current_framelist = &l_frames->second;
-	m_p->loop = l;
-	m_p->timestamp = m_p->current_framerate;
-	m_p->playing = true;
+	m_p->play(a, l);
 }
 
 void
 AnimationComponent::stop(uint16_t *s)
 {
-	m_p->playing = false;
-	m_p->current_frame_duration = 0;
-	m_p->current_frame_entries = 0;
-	m_p->current_frame_entry = 0;
-	m_p->current_framelist = 0;
-
-	if (s) m_p->stop_data = m_p->tileset->tileset()->getTextureCoordinateData(*s);
-
-	Graphics::SharedMeshBase l_mesh =
-	    m_p->render->mesh().staticCast<Graphics::MeshBase>();
-	l_mesh->setTextureCoordinateData(m_p->stop_data);
+	m_p->stop(s);
 }
 
 void
 AnimationComponent::update(float d)
 {
-	if (!m_p->tileset) {
-		m_p->tileset = entity().getComponentType(TilesetComponent::Type()).
-		    staticCast<TilesetComponent>();
-		if (!m_p->tileset) return;
-	}
-
-	if (!m_p->render) {
-		m_p->render = entity().getComponentType(RenderComponent::Type()).
-		    staticCast<RenderComponent>();
-		if (m_p->render)
-			m_p->stop_data = m_p->render->mesh()->textureCoordinateData();
-		else return;
-	}
-
-	if (m_p->playing) {
-		m_p->timestamp += d;
-
-		if (m_p->timestamp > m_p->current_framerate) {
-			m_p->timestamp -= m_p->current_framerate;
-
-			if (--m_p->current_frame_duration > 0)
-				return;
-
-			/* reached the end */
-			if (++m_p->current_frame_entry >= m_p->current_frame_entries) {
-				m_p->current_frame_entry = 0;
-
-				if (!m_p->loop) {
-					stop();
-					return;
-				}
-			}
-
-			Graphics::SharedMeshBase l_mesh =
-			    m_p->render->mesh().staticCast<Graphics::MeshBase>();
-
-			/* replace texture coordinate data */
-			const FrameEntry &l_entry = (*m_p->current_framelist)[m_p->current_frame_entry];
-			l_mesh->setTextureCoordinateData
-			    (m_p->tileset->tileset()->getTextureCoordinateData(l_entry.first));
-			m_p->current_frame_duration = l_entry.second;
-		}
-	}
+	m_p->animate(d);
 }
 
 bool

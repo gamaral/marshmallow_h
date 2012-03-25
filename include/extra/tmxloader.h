@@ -73,17 +73,10 @@ namespace Extra
 		TMXLoader(Game::IScene &scene);
 		virtual ~TMXLoader(void);
 
-		bool load(const char *file);
 		bool isLoaded(void) const;
+		bool load(const char *file);
 
 		const Game::SharedSceneLayerList & layers(void) const;
-
-	private:
-
-		bool processLayer(XMLElement &element);
-		bool processMap(XMLElement &element);
-		bool processObjectGroup(XMLElement &element);
-		bool processTileset(XMLElement &element);
 	};
 	typedef Core::Shared<TMXLoader> SharedTMXLoader;
 	typedef Core::Weak<TMXLoader> WeakTMXLoader;

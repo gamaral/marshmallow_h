@@ -44,9 +44,10 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core
 {
+	/*! @brief Core Base64 Interface */
 	namespace Base64
 	{
-		/*! @brief Base64 decoder
+		/*! @brief Core Base64 decoder
 		 *  @param in In buffer
 		 *  @param in_size In buffer size
 		 *  @param out Out buffer pointer

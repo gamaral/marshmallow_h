@@ -43,8 +43,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-const Core::Type Box2DSceneLayer::sType("Game::Box2DSceneLayer");
-
 struct Box2DSceneLayer::Private
 {
 	Private()
@@ -131,6 +129,7 @@ Box2DSceneLayer::deserialize(XMLElement &n)
 const Core::Type &
 Box2DSceneLayer::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Game::Box2DSceneLayer");
+	return(s_type);
 }
 

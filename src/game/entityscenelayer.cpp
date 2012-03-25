@@ -53,8 +53,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-const Core::Type EntitySceneLayer::sType("Game::EntitySceneLayer");
-
 struct EntitySceneLayer::Private
 {
 	EntityList entities;
@@ -249,6 +247,7 @@ EntitySceneLayer::deserialize(XMLElement &n)
 const Core::Type &
 EntitySceneLayer::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Game::EntitySceneLayer");
+	return(s_type);
 }
 

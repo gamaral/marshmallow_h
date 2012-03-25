@@ -99,14 +99,6 @@ namespace Game
 	public: /* static */
 
 		static const Core::Type & Type(void);
-
-	protected:
-
-		void setState(int state);
-
-	private: /* static */
-
-		static const Core::Type sType;
 	};
 	typedef Core::Shared<SplashSceneLayer> SharedSplashSceneLayer;
 	typedef Core::Weak<SplashSceneLayer> WeakSplashSceneLayer;

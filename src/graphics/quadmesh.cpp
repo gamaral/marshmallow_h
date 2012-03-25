@@ -44,8 +44,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
-const Core::Type QuadMesh::sType("Graphics::QuadMesh");
-
 QuadMesh::QuadMesh(const Math::Vector2 &tl,
                    const Math::Vector2 &bl,
                    const Math::Vector2 &br,
@@ -121,6 +119,7 @@ QuadMesh::~QuadMesh(void)
 const Core::Type &
 QuadMesh::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Graphics::QuadMesh");
+	return(s_type);
 }
 

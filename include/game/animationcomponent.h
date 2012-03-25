@@ -74,7 +74,12 @@ namespace Game
 
 		void pushFrame(const Core::Identifier &animation, uint16_t tile, int duration = 1);
 		void popFrame(const Core::Identifier &animation);
-		void rate(const Core::Identifier &animation, float fps);
+
+		float frameRate(const Core::Identifier &animation) const;
+		void setFrameRate(const Core::Identifier &animation, float fps);
+
+		float playbackRatio(void) const;
+		void setPlaybackRatio(float ratio);
 
 		void play(const Core::Identifier &animation, bool loop = false);
 		void stop(uint16_t *tile = 0);

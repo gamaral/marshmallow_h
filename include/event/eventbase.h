@@ -45,6 +45,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
+	/*! @brief Event Priority */
 	enum EventPriority
 	{
 		LowestPriority  = 0,

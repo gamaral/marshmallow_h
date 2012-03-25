@@ -39,7 +39,7 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-const Core::Type SizeComponent::sType("Game::SizeComponent");
+/******************************************************************************/
 
 struct SizeComponent::Private
 {
@@ -89,6 +89,7 @@ SizeComponent::deserialize(XMLElement &n)
 const Core::Type &
 SizeComponent::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Game::SizeComponent");
+	return(s_type);
 }
 

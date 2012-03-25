@@ -61,7 +61,7 @@ namespace Core
 		DIOEnd
 	};
 
-	/*! @brief Data IO Interface */
+	/*! @brief Core Data IO Interface */
 	struct IDataIO
 	{
 		virtual ~IDataIO(void) {};

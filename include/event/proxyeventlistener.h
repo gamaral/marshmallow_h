@@ -43,7 +43,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-	/*! @brief Proxy Event Listener Class */
+	/*! @brief Event Proxy Listener Class */
 	class MARSHMALLOW_EVENT_EXPORT
 	ProxyEventListener : public IEventListener
 	{

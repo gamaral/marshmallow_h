@@ -44,6 +44,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core
 {
+	/*! @brief Core Zlib Interface */
 	namespace Zlib
 	{
 		/*! @brief Zlib inflate

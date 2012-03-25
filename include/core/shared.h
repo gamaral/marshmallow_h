@@ -49,15 +49,16 @@ namespace Core
 {
 	template <class T> class Weak;
 
-	/*! @brief Shared Data Struct */
+	//! @cond
 	struct MARSHMALLOW_CORE_EXPORT
 	SharedData {
 	    void *ptr;
 	    int16_t refs;
 	    int16_t wrefs;
 	};
+	//! @endcond
 
-	/*! @brief Shared Class */
+	/*! @brief Shared Pointer Class */
 	template <class T>
 	class Shared
 	{

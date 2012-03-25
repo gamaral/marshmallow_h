@@ -43,7 +43,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
-	/*! @brief Update Event Class */
+	/*! @brief Event Update Class */
 	class MARSHMALLOW_EVENT_EXPORT
 	UpdateEvent : public EventBase
 	{
@@ -66,10 +66,6 @@ namespace Event
 	public: /* static */
 
 		static const Core::Type & Type(void);
-
-	private: /* static */
-
-		static const Core::Type sType;
 	};
 }
 

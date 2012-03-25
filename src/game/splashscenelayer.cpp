@@ -56,8 +56,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-const Core::Type SplashSceneLayer::sType("Game::SplashSceneLayer");
-
 /******************************************************************************/
 
 namespace {
@@ -75,6 +73,22 @@ namespace {
 
 struct SplashSceneLayer::Private
 {
+	Private(SplashSceneLayer &i)
+	    : interface(i)
+	    , mesh(new Graphics::QuadMesh(Math::Rect2(Graphics::Viewport::Size())))
+	    , exposure(1.5f)
+	    , fade(1.f)
+	    , timer(0.f)
+	    , state(ssInit)
+	    , autoKill(true)
+	{
+		mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
+	}
+
+	void setState(int state);
+
+	SplashSceneLayer &interface;
+
 	Graphics::SharedQuadMesh mesh;
 	float exposure;
 	float fade;
@@ -84,18 +98,39 @@ struct SplashSceneLayer::Private
 	bool autoKill;
 };
 
+void
+SplashSceneLayer::Private::setState(int s)
+{
+	if (state == s)
+		return;
+
+	switch (static_cast<SplashState>(s)) {
+	case ssFadeIn:
+		if (state == ssInit || state == ssFinished) break;
+	case ssInit:
+		timer = 0.;
+		mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
+		break;
+	case ssFinished:
+		if (autoKill)
+			interface.kill();
+		break;
+	case ssFadeOut:
+	case ssExposure:
+		timer = 0.;
+		mesh->setColor(Graphics::Color(1.f, 1.f, 1.f, 1.f));
+		break;
+	}
+
+	state = static_cast<SplashState>(s);
+}
+
+/******************************************************************************/
+
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock)
-    , m_p(new Private)
+    , m_p(new Private(*this))
 {
-	m_p->exposure = 1.5f;
-	m_p->fade = 1.f;
-	m_p->timer = 0.;
-	m_p->state = ssInit;
-	m_p->autoKill = true;
-	m_p->mesh = new Graphics::QuadMesh(Math::Rect2(Graphics::Viewport::Size()));;
-	m_p->mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
-
 	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
 }
 
@@ -155,7 +190,7 @@ SplashSceneLayer::reset(void)
 	if (m_p->state != ssFinished)
 		return;
 
-	setState(ssFadeIn);
+	m_p->setState(ssFadeIn);
 }
 
 bool
@@ -164,7 +199,7 @@ SplashSceneLayer::skip(void)
 	if (m_p->state != ssExposure)
 		return(false);
 
-	setState(ssFadeOut);
+	m_p->setState(ssFadeOut);
 	return(true);
 }
 
@@ -192,53 +227,26 @@ SplashSceneLayer::update(float d)
 
 	switch (m_p->state) {
 	case ssInit:
-		setState(ssFadeIn);
+		m_p->setState(ssFadeIn);
 		break;
 	case ssFadeIn:
 		if (m_p->timer < m_p->fade) {
 			l_fiv = m_p->timer / m_p->fade;
 			m_p->mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
-		} else setState(ssExposure);
+		} else m_p->setState(ssExposure);
 		break;
 	case ssFadeOut:
 		if (m_p->timer < m_p->fade) {
 			l_fiv = 1.f - (m_p->timer / m_p->fade);
 			m_p->mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
-		} else setState(ssFinished);
+		} else m_p->setState(ssFinished);
 		break;
 	case ssExposure:
 		if (m_p->timer >= m_p->exposure)
-			setState(ssFadeOut);
+			m_p->setState(ssFadeOut);
 		break;
 	case ssFinished: break;
 	}
-}
-
-void
-SplashSceneLayer::setState(int s)
-{
-	if (m_p->state == s)
-		return;
-
-	switch (static_cast<SplashState>(s)) {
-	case ssFadeIn:
-		if (m_p->state == ssInit || m_p->state == ssFinished) break;
-	case ssInit:
-		m_p->timer = 0.;
-		m_p->mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
-		break;
-	case ssFinished:
-		if (m_p->autoKill)
-			kill();
-		break;
-	case ssFadeOut:
-	case ssExposure:
-		m_p->timer = 0.;
-		m_p->mesh->setColor(Graphics::Color(1.f, 1.f, 1.f, 1.f));
-		break;
-	}
-
-	m_p->state = static_cast<SplashState>(s);
 }
 
 bool
@@ -284,17 +292,18 @@ SplashSceneLayer::deserialize(XMLElement &n)
 	return(true);
 }
 
-const Core::Type &
-SplashSceneLayer::Type(void)
-{
-	return(sType);
-}
-
 bool
 SplashSceneLayer::handleEvent(const Event::IEvent &e)
 {
 	if (e.type() == Event::KeyboardEvent::Type())
 		return(skip());
 	return(false);
+}
+
+const Core::Type &
+SplashSceneLayer::Type(void)
+{
+	static const Core::Type s_type("Game::SplashSceneLayer");
+	return(s_type);
 }
 

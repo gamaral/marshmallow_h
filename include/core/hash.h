@@ -44,7 +44,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core
 {
-	/*! @brief Hash Class */
+	/*! @brief Core Hash Class */
 	class MARSHMALLOW_CORE_EXPORT
 	Hash
 	{

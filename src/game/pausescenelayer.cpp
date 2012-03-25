@@ -44,8 +44,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-const Core::Type PauseSceneLayer::sType("Game::PauseSceneLayer");
-
 struct PauseSceneLayer::Private
 {
 	Graphics::SharedMesh mesh;
@@ -90,6 +88,7 @@ PauseSceneLayer::render(void)
 const Core::Type &
 PauseSceneLayer::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Game::PauseSceneLayer");
+	return(s_type);
 }
 

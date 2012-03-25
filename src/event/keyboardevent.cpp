@@ -39,8 +39,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Event;
 
-const Core::Type KeyboardEvent::sType("Event::KeyboardEvent");
-
 struct KeyboardEvent::Private
 {
 	KBActions action;
@@ -76,6 +74,7 @@ KeyboardEvent::key(void) const
 const Core::Type &
 KeyboardEvent::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Event::KeyboardEvent");
+	return(s_type);
 }
 

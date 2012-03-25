@@ -44,8 +44,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-const Core::Type CollisionSceneLayer::sType("Game::CollisionSceneLayer");
-
 struct CollisionSceneLayer::Private
 {
 	ColliderList colliders;
@@ -107,6 +105,7 @@ CollisionSceneLayer::deserialize(XMLElement &n)
 const Core::Type &
 CollisionSceneLayer::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Game::CollisionSceneLayer");
+	return(s_type);
 }
 

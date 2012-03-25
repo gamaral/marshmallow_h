@@ -43,12 +43,14 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event
 {
+	/*! @brief Keyboard Key Actions */
 	enum KBActions
 	{
 		KeyReleased     = 0,
 		KeyPressed      = 1
 	};
 
+	/*! @brief Keyboard Keys */
 	enum KBKeys
 	{
 		KEY_NONE          = 0,
@@ -181,7 +183,7 @@ namespace Event
 		KEY_LAST
 	};
 
-	/*! @brief Keyboard Event Class */
+	/*! @brief Event Keyboard Class */
 	class MARSHMALLOW_EVENT_EXPORT
 	KeyboardEvent : public EventBase
 	{
@@ -206,10 +208,6 @@ namespace Event
 	public: /* static */
 
 		static const Core::Type & Type(void);
-
-	private: /* static */
-
-		static const Core::Type sType;
 	};
 }
 

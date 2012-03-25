@@ -90,10 +90,6 @@ namespace Game
 	public: /* static */
 
 		static const Core::Type & Type(void);
-
-	private: /* static */
-
-		static const Core::Type sType;
 	};
 	typedef Core::Shared<EntitySceneLayer> SharedEntitySceneLayer;
 	typedef Core::Weak<EntitySceneLayer> WeakEntitySceneLayer;

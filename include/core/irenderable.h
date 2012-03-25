@@ -47,7 +47,7 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 
-	/*! @brief Renderable Interface */
+	/*! @brief Core Renderable Interface */
 	struct IRenderable
 	{
 		virtual ~IRenderable(void) {};

@@ -147,14 +147,16 @@ InputComponent::update(float d)
 		}
 		else m_movement->acceleration()[0] = 0;
 
-		/* only jump if on platform */
-		if (m_jump && m_boost_fuel > 0) {
-			m_boost_fuel -= d;
-			m_movement->velocity()[1] += JUMP_MAX * (d / BOOST_MAX);
-		}
-		else if (m_jump && m_collider->onPlatform()) {
-			m_movement->velocity()[1] = JUMP_MAX;
-			m_boost_fuel = BOOST_MAX;
+		/* jumping */
+		if (m_jump) {
+			if (m_boost_fuel > 0) {
+				m_boost_fuel -= d;
+				m_movement->velocity()[1] += JUMP_MAX * (d / BOOST_MAX);
+			}
+			else if (m_collider->onPlatform() && m_movement->velocity()[1] < 1) {
+				m_movement->velocity()[1] = JUMP_MAX;
+				m_boost_fuel = BOOST_MAX;
+			}
 		}
 	}
 }
@@ -179,7 +181,7 @@ InputComponent::handleEvent(const Event::IEvent &e)
 		else m_direction_stack.remove(ICDRight);
 	}
 	else if (l_kevent.key() == Event::KEY_SPACE) {
-		m_jump = (l_kevent.action() == Event::KeyPressed && m_collider->onPlatform() ? true : false);
+		m_jump = (l_kevent.action() == Event::KeyPressed ? true : false);
 	}
 	else if (l_kevent.key() == Event::KEY_SHIFT_L) {
 		m_max_speed += l_kevent.action() == Event::KeyPressed ? 200 : -200;

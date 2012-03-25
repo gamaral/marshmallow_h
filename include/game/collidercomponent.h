@@ -114,10 +114,6 @@ namespace Game
 	protected:
 	
 		virtual bool collision(ColliderComponent &collider, float delta, const CollisionData &data);
-
-	private: /* static */
-
-		static const Core::Type sType;
 	};
 	typedef Core::Shared<ColliderComponent> SharedColliderComponent;
 	typedef Core::Weak<ColliderComponent> WeakColliderComponent;
@@ -132,13 +128,23 @@ namespace Game
 		BounceColliderComponent(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~BounceColliderComponent(void) {};
 
+	public: /* virtual */
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
+
 	protected:
 	
 		VIRTUAL bool collision(ColliderComponent &collider, float delta, const CollisionData &data);
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
 	};
 	typedef Core::Shared<BounceColliderComponent> SharedBounceColliderComponent;
 	typedef Core::Weak<BounceColliderComponent> WeakBounceColliderComponent;
 
+	/*! @brief Game Collision Data */
 	union CollisionData
 	{
 		struct {

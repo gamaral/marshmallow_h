@@ -50,7 +50,7 @@ struct TimeData;
 
 namespace Core
 {
-	/*! @brief Platform specific class */
+	/*! @brief Core Platform Interface */
 	namespace Platform
 	{
 		/*!

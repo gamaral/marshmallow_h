@@ -88,6 +88,12 @@ struct TMXLoader::Private
 	    , map_size(0, 0)
 	    , tile_size(0, 0) {}
 
+	bool load(const char *file);
+	bool processLayer(XMLElement &element);
+	bool processMap(XMLElement &element);
+	bool processObjectGroup(XMLElement &element);
+	bool processTileset(XMLElement &element);
+
 	Game::IScene &scene;
 
 	TilesetCollection tilesets;
@@ -100,38 +106,16 @@ struct TMXLoader::Private
 	Math::Size2f hrmap_size;
 	Math::Size2i map_size;
 	Math::Size2i tile_size;
+
 };
 
-TMXLoader::TMXLoader(Game::IScene &s)
-    : m_p(new Private(s))
-{
-}
-
-TMXLoader::~TMXLoader(void)
-{
-	delete m_p;
-	m_p = 0;
-}
-
 bool
-TMXLoader::isLoaded(void) const
-{
-	return(m_p->is_loaded);
-}
-
-const Game::SharedSceneLayerList &
-TMXLoader::layers(void) const
-{
-	return(m_p->layers);
-}
-
-bool
-TMXLoader::load(const char *f)
+TMXLoader::Private::load(const char *f)
 {
 	TinyXML::XMLDocument l_tmx;
 	XMLElement *l_root;
 
-	m_p->is_loaded = false;
+	is_loaded = false;
 
 	if (l_tmx.LoadFile(f) != XML_NO_ERROR)
 	    return(false);
@@ -163,43 +147,43 @@ TMXLoader::load(const char *f)
 
 	/* attach layers to scene */
 	Game::SharedSceneLayerList::iterator l_layer_i;
-	for (l_layer_i = m_p->layers.begin(); l_layer_i != m_p->layers.end(); ++l_layer_i)
-		m_p->scene.pushLayer(*l_layer_i);
+	for (l_layer_i = layers.begin(); l_layer_i != layers.end(); ++l_layer_i)
+		scene.pushLayer(*l_layer_i);
 
-	return(m_p->is_loaded = true);
+	return(is_loaded = true);
 }
 
 bool
-TMXLoader::processMap(XMLElement &m)
+TMXLoader::Private::processMap(XMLElement &m)
 {
-	if ((XML_SUCCESS != m.QueryIntAttribute("width", &m_p->map_size[0]))
-	 || (XML_SUCCESS != m.QueryIntAttribute("height", &m_p->map_size[1]))
-	 || (XML_SUCCESS != m.QueryIntAttribute("tilewidth", &m_p->tile_size[0]))
-	 || (XML_SUCCESS != m.QueryIntAttribute("tileheight", &m_p->tile_size[1]))) {
+	if ((XML_SUCCESS != m.QueryIntAttribute("width", &map_size[0]))
+	 || (XML_SUCCESS != m.QueryIntAttribute("height", &map_size[1]))
+	 || (XML_SUCCESS != m.QueryIntAttribute("tilewidth", &tile_size[0]))
+	 || (XML_SUCCESS != m.QueryIntAttribute("tileheight", &tile_size[1]))) {
 		MMWARNING("Map element is missing one or more required attributes.");
 		return(false);
 	}
 
 	/* calculate default scale */
 	const Math::Size2f &l_vsize = Graphics::Viewport::Size();
-	if (m_p->map_size.width() < m_p->map_size.height()) {
-		m_p->scale[0] = l_vsize.width()  / static_cast<float>(m_p->map_size.width()  * m_p->tile_size.width());
-		m_p->scale[1] = m_p->scale.width() * static_cast<float>(m_p->tile_size.height() / m_p->tile_size.width());
+	if (map_size.width() < map_size.height()) {
+		scale[0] = l_vsize.width()  / static_cast<float>(map_size.width()  * tile_size.width());
+		scale[1] = scale.width() * static_cast<float>(tile_size.height() / tile_size.width());
 		MMINFO("Calculated scale based off map size width.");
 	}
-	if (m_p->map_size.width() > m_p->map_size.height()) {
-		m_p->scale[1] = l_vsize.height() / static_cast<float>(m_p->map_size.height() * m_p->tile_size.height());
-		m_p->scale[0] = m_p->scale.height() * static_cast<float>(m_p->tile_size.width() / m_p->tile_size.height());
+	if (map_size.width() > map_size.height()) {
+		scale[1] = l_vsize.height() / static_cast<float>(map_size.height() * tile_size.height());
+		scale[0] = scale.height() * static_cast<float>(tile_size.width() / tile_size.height());
 		MMINFO("Calculated scale based off map size height.");
 	}
-	else m_p->scale[0] = m_p->scale[1] = l_vsize.height() / static_cast<float>(m_p->map_size.height() * m_p->tile_size.height());
-	MMINFO("Calculated map scale size (" << m_p->scale.width() << "x" << m_p->scale.height() << ")");
+	else scale[0] = scale[1] = l_vsize.height() / static_cast<float>(map_size.height() * tile_size.height());
+	MMINFO("Calculated map scale size (" << scale.width() << "x" << scale.height() << ")");
 
 	/* calculate half-relative map size (used to offset coordinates) */
-	m_p->hrmap_size[0] = m_p->scale.width()
-	    * static_cast<float>(m_p->map_size.width() * m_p->tile_size.width());
-	m_p->hrmap_size[1] = m_p->scale.height()
-	    * static_cast<float>(m_p->map_size.height() * m_p->tile_size.height());
+	hrmap_size[0] = scale.width()
+	    * static_cast<float>(map_size.width() * tile_size.width());
+	hrmap_size[1] = scale.height()
+	    * static_cast<float>(map_size.height() * tile_size.height());
 
 	/* process properties */
 	XMLElement *l_properties = m.FirstChildElement(TMXPROPERTIES_NODE);
@@ -225,15 +209,15 @@ TMXLoader::processMap(XMLElement &m)
 				 * calculate pixels per viewport coordinate ratio
 				 * scale ratio = vSize (vcoord)) / wSize (pixels)
 				 */
-				m_p->scale[0] = l_vsize.width()  / static_cast<float>(l_wsize.width());
-				m_p->scale[1] = l_vsize.height() / static_cast<float>(l_wsize.height());
+				scale[0] = l_vsize.width()  / static_cast<float>(l_wsize.width());
+				scale[1] = l_vsize.height() / static_cast<float>(l_wsize.height());
 
 				continue;
 			}
-			else if (sscanf(l_value, "%fx%f", &m_p->scale[0], &m_p->scale[1]) == 2)
+			else if (sscanf(l_value, "%fx%f", &scale[0], &scale[1]) == 2)
 				continue;
-			else if (sscanf(l_value, "%f", &m_p->scale[0]) == 1) {
-				m_p->scale[1] = m_p->scale[0];
+			else if (sscanf(l_value, "%f", &scale[0]) == 1) {
+				scale[1] = scale[0];
 				continue;
 			}
 
@@ -247,7 +231,7 @@ TMXLoader::processMap(XMLElement &m)
 }
 
 bool
-TMXLoader::processLayer(XMLElement &e)
+TMXLoader::Private::processLayer(XMLElement &e)
 {
 	const char *l_name;
 	float l_opacity = 1.f;
@@ -300,7 +284,7 @@ TMXLoader::processLayer(XMLElement &e)
 		if (0 == strcmp(l_data_compression, TMXDATA_COMPRESSION_ZLIB)) {
 			char *l_inflated_data;
 			if (0 < Core::Zlib::Inflate(l_decoded_data, l_decoded_data_size,
-			    static_cast<size_t>(m_p->map_size.width() * m_p->map_size.height() * 4), &l_inflated_data))
+			    static_cast<size_t>(map_size.width() * map_size.height() * 4), &l_inflated_data))
 				l_data_array = l_inflated_data;
 		}
 #define TMXDATA_COMPRESSION_GZIP "gzip"
@@ -323,12 +307,12 @@ TMXLoader::processLayer(XMLElement &e)
 	if (!l_data_array)
 		return(false);
 
-	Game::TilemapSceneLayer *l_layer = new Game::TilemapSceneLayer(l_name, m_p->scene);
+	Game::TilemapSceneLayer *l_layer = new Game::TilemapSceneLayer(l_name, scene);
 	l_layer->setData(reinterpret_cast<uint32_t *>(l_data_array));
 	l_layer->setOpacity(l_opacity);
-	l_layer->setSize(m_p->map_size);
-	l_layer->setTileSize(m_p->tile_size);
-	l_layer->setScale(m_p->scale);
+	l_layer->setSize(map_size);
+	l_layer->setTileSize(tile_size);
+	l_layer->setScale(scale);
 	l_layer->setVisibility(1 == l_visible);
 
 	/* process properties */
@@ -337,12 +321,12 @@ TMXLoader::processLayer(XMLElement &e)
 	if (l_property)
 	do {
 		const char *l_pname = l_property->Attribute("name");
+		const char *l_value = l_property->Attribute("value");
 		if (!l_pname)
 			continue;
 
 		/* scale property */
 		if (strcmp(l_pname, "scale") == 0) {
-			const char *l_value = l_property->Attribute("value");
 			if (!l_value) {
 				MMWARNING("Skipping incomplete scale property.");
 				continue;
@@ -375,21 +359,22 @@ TMXLoader::processLayer(XMLElement &e)
 			MMERROR("Invalid scale value encountered.");
 			continue;
 		}
+		else l_layer->setProperty(l_name, l_value ? l_value : std::string());
 
 	} while ((l_property = l_property->NextSiblingElement(TMXPROPERTIES_PROPERTY_NODE)));
 
 	/* attach tilesets */
 	TilesetCollection::iterator l_tileset_i;
-	for (l_tileset_i = m_p->tilesets.begin(); l_tileset_i != m_p->tilesets.end(); ++l_tileset_i)
+	for (l_tileset_i = tilesets.begin(); l_tileset_i != tilesets.end(); ++l_tileset_i)
 		l_layer->attachTileset(l_tileset_i->first, l_tileset_i->second);
 
-	m_p->layers.push_back(l_layer);
+	layers.push_back(l_layer);
 
 	return(true);
 }
 
 bool
-TMXLoader::processObjectGroup(XMLElement &e)
+TMXLoader::Private::processObjectGroup(XMLElement &e)
 {
 	const char *l_name;
 
@@ -398,7 +383,7 @@ TMXLoader::processObjectGroup(XMLElement &e)
 		return(false);
 	}
 
-	Game::EntitySceneLayer *l_layer = new Game::EntitySceneLayer(l_name, m_p->scene);
+	Game::EntitySceneLayer *l_layer = new Game::EntitySceneLayer(l_name, scene);
 
 	XMLElement *l_object = e.FirstChildElement(TMXOBJECTGROUP_OBJECT_NODE);
 	while (l_object) {
@@ -407,8 +392,8 @@ TMXLoader::processObjectGroup(XMLElement &e)
 		int l_object_gid;
 		int l_object_x;
 		int l_object_y;
-		int l_object_width = m_p->tile_size.width();
-		int l_object_height = m_p->tile_size.height();
+		int l_object_width = tile_size.width();
+		int l_object_height = tile_size.height();
 
 		l_object_name = l_object->Attribute("name");
 		l_object_type = l_object->Attribute("type");
@@ -427,8 +412,8 @@ TMXLoader::processObjectGroup(XMLElement &e)
 		}
 
 		/* map offset position (0 in the middle) */
-		l_object_x -= (m_p->map_size.width()  * m_p->tile_size.width())  / 2;
-		l_object_y -= (m_p->map_size.height() * m_p->tile_size.height()) / 2;
+		l_object_x -= (map_size.width()  * tile_size.width())  / 2;
+		l_object_y -= (map_size.height() * tile_size.height()) / 2;
 		l_object_y *= -1; /* invert top/bottom */
 
 		/* object size (later initialized) */
@@ -441,8 +426,8 @@ TMXLoader::processObjectGroup(XMLElement &e)
 			l_object->QueryIntAttribute("height", &l_object_height);
 
 			/* calculate object size */
-			l_object_rsize[0] = m_p->scale.width()  * static_cast<float>(l_object_width);
-			l_object_rsize[1] = m_p->scale.height() * static_cast<float>(l_object_height);
+			l_object_rsize[0] = scale.width()  * static_cast<float>(l_object_width);
+			l_object_rsize[1] = scale.height() * static_cast<float>(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
 		/* tile object */
@@ -455,7 +440,7 @@ TMXLoader::processObjectGroup(XMLElement &e)
 
 			/* look for appropriate tileset */
 			TilesetCollection::iterator l_tileset_i;
-			for (l_tileset_i = m_p->tilesets.begin(); l_tileset_i != m_p->tilesets.end(); ++l_tileset_i)
+			for (l_tileset_i = tilesets.begin(); l_tileset_i != tilesets.end(); ++l_tileset_i)
 				if (l_tileset_i->first > l_ts_firstgid && l_tileset_i->first <= l_object_gid) {
 					l_ts_firstgid = l_tileset_i->first;
 					l_found = true;
@@ -466,13 +451,13 @@ TMXLoader::processObjectGroup(XMLElement &e)
 				return(false);
 			}
 
-			Graphics::SharedTileset l_tileset = m_p->tilesets[l_ts_firstgid];
+			Graphics::SharedTileset l_tileset = tilesets[l_ts_firstgid];
 
 			/* calculate object size from tileset */
 			l_object_width  = l_tileset->tileSize().width();
 			l_object_height = l_tileset->tileSize().height();
-			l_object_rsize[0] = m_p->scale.width()  * static_cast<float>(l_object_width);
-			l_object_rsize[1] = m_p->scale.height() * static_cast<float>(l_object_height);
+			l_object_rsize[0] = scale.width()  * static_cast<float>(l_object_width);
+			l_object_rsize[1] = scale.height() * static_cast<float>(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
 			/* attach tileset used */
@@ -502,8 +487,8 @@ TMXLoader::processObjectGroup(XMLElement &e)
 
 		/* create position component */
 		Game::PositionComponent *l_pos_component = new Game::PositionComponent("position", *l_entity);
-		l_pos_component->position()[0] = m_p->scale.width()  * static_cast<float>(l_object_x);
-		l_pos_component->position()[1] = m_p->scale.height() * static_cast<float>(l_object_y);
+		l_pos_component->position()[0] = scale.width()  * static_cast<float>(l_object_x);
+		l_pos_component->position()[1] = scale.height() * static_cast<float>(l_object_y);
 
 		/* change position to center of object (offset) */
 		l_pos_component->position()[0] += l_object_hrsize.width();
@@ -522,13 +507,13 @@ TMXLoader::processObjectGroup(XMLElement &e)
 		l_object = l_object->NextSiblingElement(TMXOBJECTGROUP_OBJECT_NODE);
 	}
 
-	m_p->layers.push_back(l_layer);
+	layers.push_back(l_layer);
 
 	return(true);
 }
 
 bool
-TMXLoader::processTileset(XMLElement &e)
+TMXLoader::Private::processTileset(XMLElement &e)
 {
 	int l_first_gid;
 	const char *l_name;
@@ -571,8 +556,39 @@ TMXLoader::processTileset(XMLElement &e)
 	l_tileset->setSpacing(l_tile_spacing);
 	l_tileset->setTileSize(Math::Size2i(l_tile_width, l_tile_height));
 	l_tileset->setTextureData(l_texture);
-	m_p->tilesets[static_cast<uint16_t>(l_first_gid)] = l_tileset;
+	tilesets[static_cast<uint16_t>(l_first_gid)] = l_tileset;
 
 	return(true);
+}
+
+/******************************************************************************/
+
+TMXLoader::TMXLoader(Game::IScene &s)
+    : m_p(new Private(s))
+{
+}
+
+TMXLoader::~TMXLoader(void)
+{
+	delete m_p;
+	m_p = 0;
+}
+
+bool
+TMXLoader::isLoaded(void) const
+{
+	return(m_p->is_loaded);
+}
+
+const Game::SharedSceneLayerList &
+TMXLoader::layers(void) const
+{
+	return(m_p->layers);
+}
+
+bool
+TMXLoader::load(const char *f)
+{
+	return(m_p->load(f));
 }
 

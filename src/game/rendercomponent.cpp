@@ -48,8 +48,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-const Core::Type RenderComponent::sType("Game::RenderComponent");
-
 struct RenderComponent::Private
 {
 	WeakPositionComponent position;
@@ -138,6 +136,7 @@ RenderComponent::deserialize(XMLElement &n)
 const Core::Type &
 RenderComponent::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Game::RenderComponent");
+	return(s_type);
 }
 

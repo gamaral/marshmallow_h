@@ -37,8 +37,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Event;
 
-const Core::Type UpdateEvent::sType("Event::UpdateEvent");
-
 struct UpdateEvent::Private
 {
 	float delta;
@@ -66,6 +64,7 @@ UpdateEvent::delta(void) const
 const Core::Type &
 UpdateEvent::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Event::UpdateEvent");
+	return(s_type);
 }
 

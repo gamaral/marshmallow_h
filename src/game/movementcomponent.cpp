@@ -46,13 +46,12 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
 
-const Core::Type MovementComponent::sType("Game::MovementComponent");
-
 struct MovementComponent::Private
 {
 	Private(void)
 	    : limit_x(-1.f, -1.f)
 	    , limit_y(-1.f, -1.f) {}
+
 	WeakPositionComponent position;
 	Math::Vector2 acceleration;
 	Math::Pair limit_x;
@@ -196,6 +195,7 @@ MovementComponent::deserialize(XMLElement &n)
 const Core::Type &
 MovementComponent::Type(void)
 {
-	return(sType);
+	static const Core::Type s_type("Game::MovementComponent");
+	return(s_type);
 }
 

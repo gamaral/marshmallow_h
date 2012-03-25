@@ -97,10 +97,6 @@ namespace Game
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);
 
-	protected:
-
-		void rebuild(void);
-
 	public: /* static */
 
 		static const Core::Type & Type(void);
