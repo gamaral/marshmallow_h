@@ -155,19 +155,19 @@
             <layer id="splash2" type="Game::SplashSceneLayer" fade="1.0" exposure="1.5" autokill="true">
                 <mesh type="Graphics::QuadMesh" rotation="0">
                     <texture id="assets/splash2.png" />
-                    <vector x="-4" y="1.5" />
-                    <vector x="-4" y="-1.5" />
-                    <vector x="4" y="1.5" />
-                    <vector x="4" y="-1.5" />
+                    <vector x="-64.000000" y="16.000000"/>
+                    <vector x="-64.000000" y="-16.000000"/>
+                    <vector x="64.000000" y="16.000000"/>
+                    <vector x="64.000000" y="-16.000000"/>
                 </mesh>
             </layer>
             <layer id="splash1" type="Game::SplashSceneLayer" fade="1.0" exposure="1.5" autokill="true">
                 <mesh type="Graphics::QuadMesh" rotation="20">
                     <texture id="assets/splash1.png" />
-                    <vector x="-24" y="24" />
-                    <vector x="-24" y="-24" />
-                    <vector x="24" y="24" />
-                    <vector x="24" y="-24" />
+                    <vector x="-256.000000" y="256.000000"/>
+                    <vector x="-256.000000" y="-256.000000"/>
+                    <vector x="256.000000" y="256.000000"/>
+                    <vector x="256.000000" y="-256.000000"/>
                 </mesh>
             </layer>
         </scene>

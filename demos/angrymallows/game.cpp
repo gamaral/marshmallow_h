@@ -77,14 +77,9 @@ Demo::initialize(void)
 
 	eventManager()->connect(this, Event::KeyboardEvent::Type());
 
-
-#if 0 /* for serialization testing */
-	{	/* pre-run serialization test */
-	}
-#endif
-
 	Graphics::Transform l_camera = Graphics::Viewport::Camera();
-	l_camera.setScale(Math::Pair(30.f, 30.f));
+	l_camera.setScale(Math::Pair(280.f, 280.f));
+	l_camera.setTranslation(Math::Point2(0.f, -0.2f));
 	Graphics::Viewport::SetCamera(l_camera);
 
 	return(reset());
