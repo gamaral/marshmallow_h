@@ -13,7 +13,7 @@ set(MARSHMALLOW_CORE_LIBS ${MARSHMALLOW_CORE_LIBS} ${ZLIB_LIBRARIES})
 # platform specific implementations
 if(UNIX)
 	set(MARSHMALLOW_CORE_SRCS ${MARSHMALLOW_CORE_SRCS} unix/platform.cpp)
-else(WIN32)
+elseif(WIN32)
 	set(MARSHMALLOW_CORE_SRCS ${MARSHMALLOW_CORE_SRCS} win32/platform.cpp)
 	set(MARSHMALLOW_CORE_LIBS ${MARSHMALLOW_CORE_LIBS} Winmm)
 endif()
