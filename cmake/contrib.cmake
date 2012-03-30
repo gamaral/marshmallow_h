@@ -44,15 +44,17 @@ if (MARSHMALLOW_WITH_BOX2D)
 endif()
 
 # Lua
-if (MARSHMALLOW_WITH_LUA AND MARSHMALLOW_CONTRIB_LUA)
-	set(LUA_BASE "${PROJECT_SOURCE_DIR}/contrib/lua/code")
-	set(LUA_INCLUDE_DIR ${LUA_BASE}/src
-	                    ${LUA_BASE}/extra)
-	set(LUA_LIBRARY marshmallow_lua)
-	message(STATUS "Builing with bundled Lua")
-else()
-	message(STATUS "Building with system Lua")
-	find_package(Lua51 REQUIRED)
+if (MARSHMALLOW_WITH_LUA)
+	if (MARSHMALLOW_CONTRIB_LUA)
+		set(LUA_BASE "${PROJECT_SOURCE_DIR}/contrib/lua/code")
+		set(LUA_INCLUDE_DIR ${LUA_BASE}/src
+				    ${LUA_BASE}/extra)
+		set(LUA_LIBRARY marshmallow_lua)
+		message(STATUS "Builing with bundled Lua")
+	else()
+		message(STATUS "Building with system Lua")
+		find_package(Lua51 REQUIRED)
+	endif()
 endif()
 
 # Zlib

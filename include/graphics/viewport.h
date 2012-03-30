@@ -60,7 +60,8 @@ namespace Graphics
 		bool Initialize( uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
 		                 uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
 		                 uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
-		                 bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN);
+		                 bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
+		                 bool      vsync = MARSHMALLOW_VIEWPORT_VSYNC);
 
 		MARSHMALLOW_GRAPHICS_EXPORT
 		void Finalize(void);
@@ -69,7 +70,8 @@ namespace Graphics
 		bool Redisplay( uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
 		                uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
 		                uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
-		                bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN);
+		                bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
+		                bool      vsync = MARSHMALLOW_VIEWPORT_VSYNC);
 
 		MARSHMALLOW_GRAPHICS_EXPORT
 		void Tick(void);
@@ -94,9 +96,6 @@ namespace Graphics
 
 		MARSHMALLOW_GRAPHICS_EXPORT
 		const Math::Size2i & WindowSize(void);
-
-		MARSHMALLOW_GRAPHICS_EXPORT
-		void SwapControl(bool sync = true);
 
 		MARSHMALLOW_GRAPHICS_EXPORT
 		void LoadIdentity(void);

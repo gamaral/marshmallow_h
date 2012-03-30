@@ -151,9 +151,11 @@ namespace
 			/* initialize context */
 
 			glViewport(0, 0, m_wsize.width(), m_wsize.height());
+
 			glClearColor(.0f, .0f, .0f, .0f);
-			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT);
 			updateViewport();
+
 			Viewport::SetCamera(m_camera);
 			swapBuffers();
 
@@ -299,7 +301,7 @@ namespace
 	static ViewportWidget *s_window(0);
 
 	bool
-	CreateWindow(uint16_t w, uint16_t h, uint8_t, bool f)
+	CreateWindow(uint16_t w, uint16_t h, uint8_t, bool f, bool v)
 	{
 		s_window = new ViewportWidget(w, h, f);
 
@@ -314,6 +316,16 @@ namespace
 			MMERROR("GL context doesn't support direct rendering.");
 			return(false);
 		}
+
+		/* vsync */
+
+#if GLX_SGI_swap_control
+		if (GLEE_GLX_SGI_swap_control)
+			glXSwapIntervalSGI(v ? 1 : 0);
+#elif WGL_EXT_swap_control
+		if(GLEE_WGL_EXT_swap_control)
+			wglSwapIntervalEXT(v ? 1 : 0);
+#endif
 
 		if(glGetError() != GL_NO_ERROR) {
 			MMERROR("GL failed during initialization.");
@@ -335,13 +347,13 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 {
 	static int argc = 0;
 	static char **argv = 0;
 	s_application = new QApplication(argc, argv);
 
-	if (!CreateWindow(w, h, d, f)) {
+	if (!CreateWindow(w, h, d, f, v)) {
 		DestroyWindow();
 		return(false);
 	}
@@ -361,11 +373,11 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 {
 	DestroyWindow();
 
-	if(!CreateWindow(w, h, d, f)) {
+	if(!CreateWindow(w, h, d, f, v)) {
 		DestroyWindow();
 		return(false);
 	}
@@ -381,12 +393,12 @@ Viewport::Tick(void)
 void
 Viewport::SwapBuffer(void)
 {
-	glFinish();
 	s_window->swapBuffers();
-	glClearColor(.0f, .0f, .0f, .0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glClearColor(.0f, .0f, .0f, .0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
+
 	glRotatef(s_window->camera().rotation(), .0f, .0f, 1.f);
 	glScalef(s_window->camera().scale().first(), s_window->camera().scale().second(), 0.f);
 	glTranslatef(s_window->camera().translation().x() * -1, s_window->camera().translation().y() * -1, 0.f);
@@ -433,18 +445,6 @@ Viewport::Type(void)
 {
 	static const Core::Type s_type("QT");
 	return(s_type);
-}
-
-void
-Viewport::SwapControl(bool s)
-{
-#if GLX_SGI_swap_control
-	if (GLEE_GLX_SGI_swap_control)
-		glXSwapIntervalSGI(s ? 1 : 0);
-#elif WGL_EXT_swap_control
-	if(GLEE_WGL_EXT_swap_control)
-		wglSwapIntervalEXT(s ? 1 : 0);
-#endif
 }
 
 void

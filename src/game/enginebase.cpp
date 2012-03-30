@@ -117,9 +117,6 @@ EngineBase::initialize(void)
 		return(false);
 	}
 
-	/* turn off vsync */
-	Viewport::SwapControl(false);
-
 	if (!m_p->event_manager)
 		m_p->event_manager = new Event::EventManager("EngineBase.EventManager");
 	if (!m_p->scene_manager)
@@ -209,8 +206,8 @@ EngineBase::run(void)
 		return(-1);
 	}
 
-	TIME l_render = 0;
 #define MILLISECONDS_PER_SECOND 1000
+	TIME l_render = 0;
 	TIME l_render_target = MILLISECONDS_PER_SECOND / m_p->fps;
 
 	TIME l_update = 0;
@@ -226,9 +223,8 @@ EngineBase::run(void)
 	m_p->running = true;
 
 	/* startup */
-	l_tick = NOW();
-	tick();
-	update(0);
+	l_tick = NOW() - l_tick_target;
+	update(l_update_target);
 
 	/* main game loop */
 	do
@@ -245,16 +241,10 @@ EngineBase::run(void)
 #endif
 
 		l_render += m_p->delta_time;
-		l_second += m_p->delta_time;
 		l_update += m_p->delta_time;
+		l_second += m_p->delta_time;
 
-		if (l_render >= l_render_target) {
-			render();
-			m_p->frame_rate++;
-			l_render -= l_render_target;
-			if (l_render >= l_render_target)
-				MMINFO("Skipping render frame. TARGET=" << l_render_target), l_render = 0;
-		}
+		tick();
 
 		if (l_update >= l_update_target) {
 			update(static_cast<float>(l_update_target) / MILLISECONDS_PER_SECOND);
@@ -269,8 +259,15 @@ EngineBase::run(void)
 			l_second -= l_second_target;
 		}
 
-		tick();
+		if (l_render >= l_render_target) {
+			render();
+			m_p->frame_rate++;
+			l_render -= l_render_target;
+			if (l_render >= l_render_target)
+				MMINFO("Skipping render frame. TARGET=" << l_render_target), l_render = 0;
+		}
 
+#if !MARSHMALLOW_VIEWPORT_VSYNC
 		/*
 		 * Suspended Wait
 		 *
@@ -291,6 +288,7 @@ EngineBase::run(void)
 		 * High CPU usage (80%-90%) not kind to battery life.
 		 */
 		else while (l_tick_target > (NOW() - l_tick)) { tick(); }
+#endif
 	} while (m_p->running);
 
 	finalize();

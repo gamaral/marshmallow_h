@@ -90,7 +90,7 @@ namespace
 	}
 
 	bool
-	CreateWWindow(int w, int h, int d, bool f)
+	CreateWWindow(int w, int h, int d, bool f, bool v)
 	{
 		s_data.context     = 0;
 		s_data.dcontext    = 0;
@@ -214,6 +214,11 @@ namespace
 		SetForegroundWindow(s_data.window);
 		SetFocus(s_data.window);
 
+		/* vsync */
+
+		if(GLEE_WGL_EXT_swap_control)
+			wglSwapIntervalEXT(s ? 1 : 0);
+
 		/* set defaults */
 
 		glEnable(GL_BLEND);
@@ -236,9 +241,11 @@ namespace
 		/* initialize context */
 
 		glViewport(0, 0, w, h);
+
 		glClearColor(.0f, .0f, .0f, .0f);
-		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 		UpdateViewport();
+
 		Viewport::SetCamera(s_data.camera);
 		Viewport::SwapBuffer();
 
@@ -451,11 +458,11 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 {
 	InitializeViewport();
 
-	if (!CreateWWindow(w, h, d, f)) {
+	if (!CreateWWindow(w, h, d, f, v)) {
 		DestroyWWindow();
 		return(false);
 	}
@@ -472,11 +479,11 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 {
 	DestroyWWindow();
 
-	if(!CreateWWindow(w, h, d, f)) {
+	if(!CreateWWindow(w, h, d, f, v)) {
 		DestroyWWindow();
 		return(false);
 	}
@@ -504,12 +511,12 @@ Viewport::Tick(void)
 void
 Viewport::SwapBuffer(void)
 {
-	glFinish();
 	SwapBuffers(s_data.dcontext);
-	glClearColor(.0f, .0f, .0f, .0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glClearColor(.0f, .0f, .0f, .0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
+
 	glRotatef(s_data.camera.rotation(), .0f, .0f, 1.f);
 	glScalef(s_data.camera.scale().first(), s_data.camera.scale().second(), 0.f);
 	glTranslatef(s_data.camera.translation().x() * -1, s_data.camera.translation().y() * -1, 0.f);
@@ -557,13 +564,6 @@ Viewport::Type(void)
 {
 	static const Core::Type s_type("WGL");
 	return(s_type);
-}
-
-void
-Viewport::SwapControl(bool s)
-{
-	if(GLEE_WGL_EXT_swap_control)
-		wglSwapIntervalEXT(s ? 1 : 0);
 }
 
 void

@@ -85,9 +85,12 @@ namespace
 	}
 
 	bool
-	CreateWindow(int w, int h, int d, bool f)
+	CreateWindow(int w, int h, int d, bool f, bool v)
 	{
 		s_data.loaded  = false;
+
+		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, (v ? 1 : 0));
+
 		s_data.display = SDL_SetVideoMode(w, h, d, SDL_HWSURFACE
 		                                         | SDL_GL_DOUBLEBUFFER
 		                                         | SDL_OPENGL
@@ -126,9 +129,11 @@ namespace
 		/* initialize context */
 
 		glViewport(0, 0, w, h);
+
 		glClearColor(.0f, .0f, .0f, .0f);
-		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 		UpdateViewport();
+
 		Viewport::SetCamera(s_data.camera);
 		Viewport::SwapBuffer();
 
@@ -212,10 +217,10 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 {
 	/* force video center */
-	setenv("SDL_VIDEO_CENTERED", "1", true);
+	SDL_putenv(const_cast<char *>("SDL_VIDEO_CENTERED=1"));
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
 		MMERROR("SDL viewport initialization failed.");
@@ -224,7 +229,7 @@ Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
 
 	InitializeViewport();
 
-	if (!CreateWindow(w, h, d, f)) {
+	if (!CreateWindow(w, h, d, f, v)) {
 		DestroyWindow();
 		return(false);
 	}
@@ -238,15 +243,21 @@ Viewport::Finalize(void)
 {
 	Painter::Finalize();
 	DestroyWindow();
-	SDL_Quit();
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 {
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+		MMERROR("SDL viewport initialization failed.");
+		return(false);
+	}
+
 	DestroyWindow();
 
-	if(!CreateWindow(w, h, d, f)) {
+	if(!CreateWindow(w, h, d, f, v)) {
 		DestroyWindow();
 		return(false);
 	}
@@ -278,12 +289,12 @@ Viewport::Tick(void)
 void
 Viewport::SwapBuffer(void)
 {
-	glFinish();
 	SDL_GL_SwapBuffers();
-	glClearColor(.0f, .0f, .0f, .0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glClearColor(.0f, .0f, .0f, .0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
+
 	glRotatef(s_data.camera.rotation(), .0f, .0f, 1.f);
 	glScalef(s_data.camera.scale().first(), s_data.camera.scale().second(), 0.f);
 	glTranslatef(s_data.camera.translation().x() * -1, s_data.camera.translation().y() * -1, 0.f);
@@ -331,12 +342,6 @@ Viewport::Type(void)
 {
 	static const Core::Type s_type("SDL");
 	return(s_type);
-}
-
-void
-Viewport::SwapControl(bool s)
-{
-	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, s ? 1 : 0);
 }
 
 void

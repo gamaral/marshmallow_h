@@ -70,6 +70,7 @@ set(MARSHMALLOW_VIEWPORT_VHEIGHT "480.0f" CACHE STRING "Viewport virtual height"
 set(MARSHMALLOW_VIEWPORT_VWIDTH "640.0f" CACHE STRING "Viewport virtual width")
 set(MARSHMALLOW_VIEWPORT_DEPTH "24" CACHE STRING "Viewport default depth")
 option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode" OFF)
+option(MARSHMALLOW_VIEWPORT_VSYNC "Viewport default vsync mode" ON)
 
 option(MARSHMALLOW_VIEWPORT_USE_DUMMY "Use Dummy Viewport (testing)" ON)
 option(MARSHMALLOW_VIEWPORT_USE_WGL "Use WGL (Wiggle) Viewport (windows)" OFF)

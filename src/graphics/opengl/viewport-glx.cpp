@@ -101,7 +101,7 @@ namespace
 	}
 
 	bool
-	CreateWindow(uint16_t w, uint16_t h, uint8_t d, bool f)
+	CreateWindow(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 	{
 		s_data.context   = 0;
 		s_data.display   = 0;
@@ -290,6 +290,11 @@ namespace
 			return(false);
 		}
 
+		/* vsync */
+
+		if (GLEE_GLX_SGI_swap_control)
+			glXSwapIntervalSGI(v ? 1 : 0);
+
 		/* set defaults */
 
 		glEnable(GL_BLEND);
@@ -312,9 +317,11 @@ namespace
 		/* initialize context */
 
 		glViewport(0, 0, w, h);
+
 		glClearColor(.0f, .0f, .0f, .0f);
-		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 		UpdateViewport();
+
 		Viewport::SetCamera(s_data.camera);
 		Viewport::SwapBuffer();
 
@@ -519,11 +526,11 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 {
 	InitializeViewport();
 
-	if (!CreateWindow(w, h, d, f)) {
+	if (!CreateWindow(w, h, d, f, v)) {
 		DestroyWindow();
 		return(false);
 	}
@@ -540,11 +547,11 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 {
 	DestroyWindow();
 
-	if(!CreateWindow(w, h, d, f)) {
+	if(!CreateWindow(w, h, d, f, v)) {
 		DestroyWindow();
 		return(false);
 	}
@@ -588,12 +595,12 @@ Viewport::Tick(void)
 void
 Viewport::SwapBuffer(void)
 {
-	glFinish();
 	glXSwapBuffers(s_data.display, s_data.window);
-	glClearColor(.0f, .0f, .0f, .0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glClearColor(.0f, .0f, .0f, .0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
+
 	glRotatef(s_data.camera.rotation(), .0f, .0f, 1.f);
 	glScalef(s_data.camera.scale().first(), s_data.camera.scale().second(), 0.f);
 	glTranslatef(s_data.camera.translation().x() * -1, s_data.camera.translation().y() * -1, 0.f);
@@ -641,13 +648,6 @@ Viewport::Type(void)
 {
 	static const Core::Type s_type("GLX");
 	return(s_type);
-}
-
-void
-Viewport::SwapControl(bool s)
-{
-	if (GLEE_GLX_SGI_swap_control)
-		glXSwapIntervalSGI(s ? 1 : 0);
 }
 
 void

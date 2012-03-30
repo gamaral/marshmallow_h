@@ -16039,7 +16039,7 @@ GLboolean __GLeeCheckExtension(const char * name, ExtensionList *extensionNames)
 {
 	int n=extensionNames->numNames;
 	int a;
-    for (a=0;a<n;a++)
+	for (a=0;a<n;a++)
 	{
 		if (strcmp(extensionNames->names[a],name)==0)
 			return GL_TRUE;
