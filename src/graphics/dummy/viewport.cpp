@@ -53,12 +53,13 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 {
 	MMUNUSED(w);
 	MMUNUSED(h);
 	MMUNUSED(d);
 	MMUNUSED(f);
+	MMUNUSED(v);
 
 	s_camera.setRotation(.0f);
 	s_camera.setScale(Math::Pair::One());
@@ -80,12 +81,13 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 {
 	MMUNUSED(w);
 	MMUNUSED(h);
 	MMUNUSED(d);
 	MMUNUSED(f);
+	MMUNUSED(v);
 	MMINFO("Dummy viewport redisplayed using a " << d << " bit (" << w << "x" << h << ") display (" << (f ? "FULLSCREEN" : "WINDOWED") << ").");
 	return(true);
 }
@@ -150,11 +152,6 @@ Viewport::Type(void)
 {
 	static const Core::Type s_type("DUMMY");
 	return(s_type);
-}
-
-void
-Viewport::SwapControl(bool)
-{
 }
 
 void
