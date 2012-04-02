@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "texturedata.h"
+#include "vertexdata.h"
 
 /*!
  * @file
@@ -34,81 +34,77 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "GL/glpng.h"
-
-#include "core/identifier.h"
 #include "core/logger.h"
 
-#include "headers.h"
+#include "graphics/viewport.h"
+
+#include <SDL_video.h>
+
+#include <cstring>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
-using namespace OpenGL;
+using namespace SDL;
 
-const Core::Type TextureData::sType("Graphics::TextureData");
-
-TextureData::TextureData(void)
-    : m_id(),
-      m_size(),
-      m_texture_id(0)
+VertexData::VertexData(uint16_t c)
+#define AXES 2
+    : m_id()
+    , m_data(new float[c * AXES]) // TODO: replace with custom allocator
+    , m_count(c)
 {
+	memset(m_data, 0, m_count * AXES);
 }
 
-TextureData::~TextureData(void)
+VertexData::~VertexData(void)
 {
-	unload();
+	delete[] m_data;
 }
 
 bool
-TextureData::load(const Core::Identifier &i)
+VertexData::asRect(const Math::Point2 &t, SDL_Rect &r) const
 {
-	if (m_texture_id) {
-		MMERROR("Load texture asset called on active texture.");
+	if (m_count != 4 /* has four sides */) {
+		MMWARNING("Can't convert to rect, object has more than 4 sides.");
 		return(false);
 	}
 
-	pngInfo pi;
+	const Math::Size2f &l_vsize = Viewport::Size();
+	const Math::Size2i &l_wsize = Viewport::WindowSize();
+	const Math::Size2f l_hvsize = l_vsize / 2.f;
 
-	glGenTextures(1, &m_texture_id);
-	glBindTexture(GL_TEXTURE_2D, m_texture_id);
+	const float l_ratio_x =  static_cast<float>(l_wsize.width())  / l_vsize.width();
+	const float l_ratio_y = -static_cast<float>(l_wsize.height()) / l_vsize.height();
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	if (!pngLoad(i.str().c_str(), PNG_BUILDMIPMAPS, PNG_ALPHA, &pi)) {
-		glDeleteTextures(1, &m_texture_id);
-		m_texture_id = 0;
-		m_size = Math::Size2i(0, 0);
-		MMERROR("Failed to load texture (" << i.str() << ").");
-		return(false);
-	}
-
-	m_size = Math::Size2i(static_cast<int>(pi.Width), static_cast<int>(pi.Height));
-	m_id = i;
-
-	MMINFO("Texture loaded.");
+	r.x = Sint16(( t.x() + m_data[0] + l_hvsize.width())  * l_ratio_x);
+	r.y = Sint16(( t.y() + m_data[1] - l_hvsize.height()) * l_ratio_y);
+	r.w = Uint16(m_data[6] - m_data[0] * l_ratio_x);
+	r.h = Uint16(m_data[1] - m_data[7] * l_ratio_y);
 
 	return(true);
 }
 
-void
-TextureData::unload(void)
+bool
+VertexData::get(uint16_t i, float &x, float &y) const
 {
-	if (m_texture_id)
-		glDeleteTextures(1, &m_texture_id);
+	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
+	x = m_data[l_offset];
+	y = m_data[l_offset + 1];
+	return(true);
+}
 
-	m_size = Math::Size2i();
-	m_texture_id = 0;
-
-	MMINFO("Texture unloaded.");
+bool
+VertexData::set(uint16_t i, float x, float y)
+{
+	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
+	m_data[l_offset] = x;
+	m_data[l_offset + 1] = y;
+	return(true);
 }
 
 const Core::Type &
-TextureData::Type(void)
+VertexData::Type(void)
 {
+	static const Core::Type sType("Graphics::VertexData");
 	return(sType);
 }
 

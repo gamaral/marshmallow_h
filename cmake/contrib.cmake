@@ -69,24 +69,24 @@ else()
 	find_package(ZLIB REQUIRED)
 endif()
 
-# LibPNG
-if(MARSHMALLOW_CONTRIB_LIBPNG)
-	set(PNG_PNG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/libpng
-	                        ${PROJECT_BINARY_DIR}/contrib/libpng)
-	if(BUILD_SHARED_LIBS)
-		set(PNG_DEFINITIONS -DPNG_STATIC)
+if(MARSHMALLOW_VIEWPORT_OPENGL)
+	# LibPNG
+	if(MARSHMALLOW_CONTRIB_LIBPNG)
+		set(PNG_PNG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/libpng
+		                        ${PROJECT_BINARY_DIR}/contrib/libpng)
+		if(BUILD_SHARED_LIBS)
+			set(PNG_DEFINITIONS -DPNG_STATIC)
+		endif()
+		set(PNG_LIBRARY marshmallow_libpng)
+		set(PNG_LIBRARIES ${PNG_LIBRARY})
+		message(STATUS "Building with bundled LibPNG")
+	else()
+		message(STATUS "Building with system LibPNG")
+		find_package(PNG REQUIRED)
 	endif()
-	set(PNG_LIBRARY marshmallow_libpng)
-	set(PNG_LIBRARIES ${PNG_LIBRARY})
-	message(STATUS "Building with bundled LibPNG")
-else()
-	message(STATUS "Building with system LibPNG")
-	find_package(PNG REQUIRED)
-endif()
-set(PNG_INCLUDE_DIR ${PNG_PNG_INCLUDE_DIR})
+	set(PNG_INCLUDE_DIR ${PNG_PNG_INCLUDE_DIR})
 
-# GLPNG
-if(OPENGL_FOUND)
+	# GLPNG
 	set(GLPNG_LIBRARIES marshmallow_glpng)
 	set(GLPNG_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/contrib/glpng/include")
 endif()

@@ -44,7 +44,11 @@
 
 #include <tinyxml2.h>
 
-#define TILE_ADJUSTMENT 0.00008f
+#if MARSHMALLOW_VIEWPORT_OPENGL
+#  define TILE_ADJUSTMENT 0.00008f
+#else
+#  define TILE_ADJUSTMENT 0.f
+#endif
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;

@@ -224,7 +224,7 @@ EngineBase::run(void)
 
 	/* startup */
 	l_tick = NOW() - l_tick_target;
-	update(l_update_target);
+	update(static_cast<float>(l_update_target) / MILLISECONDS_PER_SECOND);
 
 	/* main game loop */
 	do

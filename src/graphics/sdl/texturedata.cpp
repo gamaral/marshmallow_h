@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "texturedata.h"
 
 /*!
  * @file
@@ -34,21 +34,80 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_HEADERS_H
-#define GRAPHICS_OPENGL_HEADERS_H 1
+#include "core/identifier.h"
+#include "core/logger.h"
 
-#if defined(_WIN32)
-#  include <windows.h>
-#endif
-
-#include "extensions/GLee.h"
-
-#if MARSHMALLOW_OPENGL_GLES
-#  include <GLES/gl.h>
-#elif defined(__APPLE__)
-#  include <OpenGL/gl.h>
+#ifdef WITH_SDL_IMAGE
+#  include <SDL_image.h>
 #else
-#  include <GL/gl.h>
+#  include <SDL_video.h>
 #endif
 
+MARSHMALLOW_NAMESPACE_USE
+using namespace Graphics;
+using namespace SDL;
+
+TextureData::TextureData(void)
+    : m_id(),
+      m_size(),
+      m_surface(0)
+{
+}
+
+TextureData::~TextureData(void)
+{
+	unload();
+}
+
+bool
+TextureData::load(const Core::Identifier &i)
+{
+	if (m_surface) {
+		MMERROR("Load texture asset called on active texture.");
+		return(false);
+	}
+
+	SDL_Surface *l_surface = 0;
+#ifdef WITH_SDL_IMAGE
+	if((l_surface = IMG_Load(i)) == 0)
+#else
+	if((l_surface = SDL_LoadBMP(i)) == 0)
 #endif
+	{
+		MMERROR("Failed to load texture (" << i.str() << ").");
+		return(false);
+	}
+	
+#ifdef WITH_SDL_IMAGE
+	m_surface = SDL_DisplayFormatAlpha(l_surface);
+#else
+	m_surface = SDL_DisplayFormat(l_surface);
+#endif
+	SDL_FreeSurface(l_surface);
+	
+	m_size = Math::Size2i(m_surface->w, m_surface->h);
+
+	MMINFO("Texture loaded.");
+
+	return(true);
+}
+
+void
+TextureData::unload(void)
+{
+	if (m_surface)
+		SDL_FreeSurface(m_surface);
+
+	m_size = Math::Size2i::Zero();
+	m_surface = 0;
+
+	MMINFO("Texture unloaded.");
+}
+
+const Core::Type &
+TextureData::Type(void)
+{
+	static const Core::Type sType("Graphics::TextureData");
+	return(sType);
+}
+

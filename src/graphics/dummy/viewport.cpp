@@ -67,7 +67,7 @@ Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 
 	MMINFO("Dummy viewport initialized a " << d << " bit (" << w << "x" << h << ") display (" << (f ? "FULLSCREEN" : "WINDOWED") << ").");
 
-#if MARSHMALLOW_VIEWPORT_DUMMY_FAIL
+#if MARSHMALLOW_DUMMY_FAIL
 	return(false);
 #else
 	return(true);

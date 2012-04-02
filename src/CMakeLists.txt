@@ -1,5 +1,5 @@
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
-	set(DEBUG_FLAGS "-W -Wall -Wcast-qual -Wconversion -Wextra -Wno-long-long -Wno-variadic-macros -Wshadow -Wwrite-strings -pedantic -Wno-c++11-compat")
+	set(DEBUG_FLAGS "-W -Wall -Wcast-qual -Wconversion -Wextra -Wno-long-long -Wno-variadic-macros -Wshadow -Wwrite-strings -pedantic")
 endif()
 
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${DEBUG_FLAGS}")

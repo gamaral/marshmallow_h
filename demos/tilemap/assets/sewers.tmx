@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="scale" value="screen"/>
+ </properties>
  <tileset firstgid="1" name="sewer_tileset" tilewidth="32" tileheight="32">
   <image source="assets/sewer_tileset.png" trans="ff00ff" width="256" height="512"/>
  </tileset>

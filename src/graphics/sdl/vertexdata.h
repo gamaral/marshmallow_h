@@ -34,21 +34,68 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_HEADERS_H
-#define GRAPHICS_OPENGL_HEADERS_H 1
+#ifndef MARSHMALLOW_GRAPHICS_SDL_VERTEXDATA_H
+#define MARSHMALLOW_GRAPHICS_SDL_VERTEXDATA_H 1
 
-#if defined(_WIN32)
-#  include <windows.h>
-#endif
+#include "graphics/ivertexdata.h"
 
-#include "extensions/GLee.h"
+#include "core/global.h"
+#include "core/identifier.h"
 
-#if MARSHMALLOW_OPENGL_GLES
-#  include <GLES/gl.h>
-#elif defined(__APPLE__)
-#  include <OpenGL/gl.h>
-#else
-#  include <GL/gl.h>
-#endif
+struct SDL_Rect;
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Math
+{
+	class Point2;
+}
+
+namespace Graphics
+{
+
+namespace SDL
+{
+
+	/*! @brief Graphics SDL Vertex Data Class */
+	class VertexData : public IVertexData
+	{
+		Core::Identifier m_id;
+		float   *m_data;
+		uint16_t m_count;
+
+		NO_ASSIGN_COPY(VertexData);
+	public:
+		VertexData(uint16_t count);
+		virtual ~VertexData(void);
+
+		bool asRect(const Math::Point2 &translation, SDL_Rect &rect) const;
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
+
+		VIRTUAL bool get(uint16_t index, float &x, float &y) const;
+		VIRTUAL bool set(uint16_t index, float x, float y);
+
+		VIRTUAL uint16_t count(void) const
+		    { return(m_count); }
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
+	};
+	typedef Core::Shared<VertexData> SharedVertexData;
+	typedef Core::Weak<VertexData> WeakVertexData;
+
+}
+
+}
+
+MARSHMALLOW_NAMESPACE_END
 
 #endif

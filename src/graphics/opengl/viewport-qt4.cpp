@@ -161,7 +161,7 @@ namespace
 
 			if(glGetError() != GL_NO_ERROR) {
 				MMERROR("GLX failed during initialization.");
-				return(false);
+				return;
 			}
 		}
 

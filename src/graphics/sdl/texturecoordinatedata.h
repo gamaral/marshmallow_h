@@ -34,21 +34,63 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_HEADERS_H
-#define GRAPHICS_OPENGL_HEADERS_H 1
+#ifndef MARSHMALLOW_GRAPHICS_SDL_TEXTURECOORDINATEDATA_H
+#define MARSHMALLOW_GRAPHICS_SDL_TEXTURECOORDINATEDATA_H 1
 
-#if defined(_WIN32)
-#  include <windows.h>
-#endif
+#include "graphics/itexturecoordinatedata.h"
 
-#include "extensions/GLee.h"
+#include "core/global.h"
+#include "core/identifier.h"
 
-#if MARSHMALLOW_OPENGL_GLES
-#  include <GLES/gl.h>
-#elif defined(__APPLE__)
-#  include <OpenGL/gl.h>
-#else
-#  include <GL/gl.h>
-#endif
+struct SDL_Rect;
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Graphics
+{
+
+namespace SDL
+{
+
+	/*! @brief Graphics SDL Texture Coordinate Data Class */
+	class TextureCoordinateData : public ITextureCoordinateData
+	{
+		Core::Identifier m_id;
+		float *m_data;
+		uint16_t m_count;
+
+		NO_ASSIGN_COPY(TextureCoordinateData);
+	public:
+		TextureCoordinateData(uint16_t count);
+		virtual ~TextureCoordinateData(void);
+
+		bool asRect(int width, int height, SDL_Rect &rect) const;
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
+
+		VIRTUAL bool get(uint16_t index, float &u, float &v) const;
+		VIRTUAL bool set(uint16_t index, float u, float v);
+
+		VIRTUAL uint16_t count(void) const
+		    { return(m_count); }
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
+	};
+	typedef Core::Shared<TextureCoordinateData> SharedTextureCoordinateData;
+	typedef Core::Weak<TextureCoordinateData> WeakTextureCoordinateData;
+
+}
+
+}
+
+MARSHMALLOW_NAMESPACE_END
 
 #endif

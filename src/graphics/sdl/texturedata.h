@@ -34,21 +34,69 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_HEADERS_H
-#define GRAPHICS_OPENGL_HEADERS_H 1
+#ifndef MARSHMALLOW_GRAPHICS_SDL_TEXTUREDATA_H
+#define MARSHMALLOW_GRAPHICS_SDL_TEXTUREDATA_H 1
 
-#if defined(_WIN32)
-#  include <windows.h>
-#endif
+#include "graphics/itexturedata.h"
 
-#include "extensions/GLee.h"
+#include "core/identifier.h"
 
-#if MARSHMALLOW_OPENGL_GLES
-#  include <GLES/gl.h>
-#elif defined(__APPLE__)
-#  include <OpenGL/gl.h>
-#else
-#  include <GL/gl.h>
-#endif
+#include "math/size2.h"
+
+struct SDL_Surface;
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Graphics
+{
+
+namespace SDL
+{
+
+	/*! @brief Graphic SDL Texture Data Class */
+	class TextureData : public ITextureData
+	{
+		Core::Identifier m_id;
+		Math::Size2i m_size;
+		SDL_Surface *m_surface;
+
+		NO_ASSIGN_COPY(TextureData);
+	public:
+
+		TextureData(void);
+		virtual ~TextureData(void);
+
+		SDL_Surface *surface(void) const
+		    { return(m_surface); }
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
+
+		VIRTUAL bool load(const Core::Identifier &id);
+		VIRTUAL void unload(void);
+
+		VIRTUAL bool isLoaded(void) const
+		    { return(m_surface != 0); }
+
+		VIRTUAL const Math::Size2i & size(void) const
+		    { return(m_size); }
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
+	};
+	typedef Core::Shared<TextureData> SharedTextureData;
+	typedef Core::Weak<TextureData> WeakTextureData;
+
+}
+
+}
+
+MARSHMALLOW_NAMESPACE_END
 
 #endif

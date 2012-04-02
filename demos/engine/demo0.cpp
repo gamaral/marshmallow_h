@@ -134,16 +134,21 @@ public:
 			Game::SharedEntitySceneLayer l_layer(new Game::EntitySceneLayer("main", *this));
 			pushLayer(l_layer.staticCast<Game::ISceneLayer>());
 
+			srand(time(0));
+
 			for (int i = 0; i < 4; i++) {
 			Game::SharedEntity l_entity(new Game::Entity("player", *l_layer));
+
+			const float l_rand = static_cast<float>(rand()) /
+			    static_cast<float>(RAND_MAX);
 
 			Game::PositionComponent *l_pcomponent =
 			    new Game::PositionComponent("position", *l_entity);
 			l_pcomponent->position() = Math::Point2(
-			    (rand() % static_cast<int>(Graphics::Viewport::Size().width())) -
-			        Graphics::Viewport::Size().width() / 2.f,
-			    (rand() % static_cast<int>(Graphics::Viewport::Size().height())) -
-			        Graphics::Viewport::Size().height() / 2.f);
+			    (l_rand * Graphics::Viewport::Size().width()) -
+			        (Graphics::Viewport::Size().width() / 2.f),
+			    (l_rand * Graphics::Viewport::Size().height()) -
+			        (Graphics::Viewport::Size().height() / 2.f));
 			l_entity->pushComponent(l_pcomponent);
 
 			Game::MovementComponent *l_mcomponent =

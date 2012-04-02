@@ -44,13 +44,13 @@ if (MARSHMALLOW_CONTRIB_ZLIB)
 	add_subdirectory(zlib)
 endif()
 
-# LibPNG
-if(MARSHMALLOW_CONTRIB_LIBPNG)
-	add_subdirectory(libpng)
-endif()
+if(MARSHMALLOW_VIEWPORT_OPENGL)
+	# LibPNG
+	if(MARSHMALLOW_CONTRIB_LIBPNG)
+		add_subdirectory(libpng)
+	endif()
 
-# GLPNG
-if(OPENGL_FOUND)
+	# GLPNG
 	add_subdirectory(glpng)
 endif()
 

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "texturecoordinatedata.h"
 
 /*!
  * @file
@@ -34,21 +34,73 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_HEADERS_H
-#define GRAPHICS_OPENGL_HEADERS_H 1
+#include "core/logger.h"
 
-#if defined(_WIN32)
-#  include <windows.h>
-#endif
+#include <SDL_video.h>
 
-#include "extensions/GLee.h"
+#include <cstring>
 
-#if MARSHMALLOW_OPENGL_GLES
-#  include <GLES/gl.h>
-#elif defined(__APPLE__)
-#  include <OpenGL/gl.h>
-#else
-#  include <GL/gl.h>
-#endif
+MARSHMALLOW_NAMESPACE_USE
+using namespace Graphics;
+using namespace SDL;
 
-#endif
+TextureCoordinateData::TextureCoordinateData(uint16_t c)
+#define AXES 2
+    : m_id()
+    , m_data(new float[c * AXES]) // TODO: replace with custom allocator
+    , m_count(c)
+{
+	memset(m_data, 0, m_count * AXES);
+}
+
+TextureCoordinateData::~TextureCoordinateData(void)
+{
+	delete[] m_data;
+}
+
+bool
+TextureCoordinateData::asRect(int w, int h, SDL_Rect &r) const
+{
+	if (m_count != 4 /* has four sides */) {
+		MMWARNING("Can't convert to rect, object has more than 4 sides.");
+		return(false);
+	}
+
+	r.x = Sint16(static_cast<float>(w)  * m_data[0]);
+	r.y = Sint16(static_cast<float>(h)  * m_data[1]);
+	r.w = Uint16((static_cast<float>(w) * m_data[6]) - r.x);
+	r.h = Uint16((static_cast<float>(h) * m_data[7]) - r.y);
+
+	if (r.x < 0 || r.y < 0 || r.w > w || r.h > h) {
+		MMERROR("Invalid texture coordinate data encountered.");
+		return(false);
+	}
+
+	return(true);
+}
+
+bool
+TextureCoordinateData::get(uint16_t i, float &u, float &v) const
+{
+	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
+	u = m_data[l_offset];
+	v = m_data[l_offset + 1];
+	return(true);
+}
+
+bool
+TextureCoordinateData::set(uint16_t i, float u, float v)
+{
+	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
+	m_data[l_offset] = u;
+	m_data[l_offset + 1] = v;
+	return(true);
+}
+
+const Core::Type &
+TextureCoordinateData::Type(void)
+{
+	static const Core::Type sType("Graphics::TextureCoordinateData");
+	return(sType);
+}
+

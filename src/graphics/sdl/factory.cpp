@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "graphics/factory.h"
 
 /*!
  * @file
@@ -34,21 +34,30 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GRAPHICS_OPENGL_HEADERS_H
-#define GRAPHICS_OPENGL_HEADERS_H 1
+#include "core/shared.h"
 
-#if defined(_WIN32)
-#  include <windows.h>
-#endif
+#include "texturecoordinatedata.h"
+#include "texturedata.h"
+#include "vertexdata.h"
 
-#include "extensions/GLee.h"
+MARSHMALLOW_NAMESPACE_USE
+using namespace Graphics;
 
-#if MARSHMALLOW_OPENGL_GLES
-#  include <GLES/gl.h>
-#elif defined(__APPLE__)
-#  include <OpenGL/gl.h>
-#else
-#  include <GL/gl.h>
-#endif
+SharedTextureCoordinateData
+Factory::CreateTextureCoordinateData(uint16_t c)
+{
+	return(new SDL::TextureCoordinateData(c));
+}
 
-#endif
+SharedTextureData
+Factory::CreateTextureData(void)
+{
+	return(new SDL::TextureData());
+}
+
+SharedVertexData
+Factory::CreateVertexData(uint16_t c)
+{
+	return(new SDL::VertexData(c));
+}
+
