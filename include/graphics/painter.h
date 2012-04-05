@@ -72,9 +72,6 @@ namespace Graphics
 
 		MARSHMALLOW_GRAPHICS_EXPORT
 		void Draw(const IMesh &mesh, const Math::Point2 &origin);
-
-		MARSHMALLOW_GRAPHICS_EXPORT
-		void Blend(BlendTypes blend);
 	}
 }
 

@@ -77,14 +77,14 @@ TextureData::load(const Core::Identifier &i)
 		MMERROR("Failed to load texture (" << i.str() << ").");
 		return(false);
 	}
-	
+
 #ifdef WITH_SDL_IMAGE
 	m_surface = SDL_DisplayFormatAlpha(l_surface);
 #else
 	m_surface = SDL_DisplayFormat(l_surface);
 #endif
 	SDL_FreeSurface(l_surface);
-	
+
 	m_size = Math::Size2i(m_surface->w, m_surface->h);
 
 	MMINFO("Texture loaded.");

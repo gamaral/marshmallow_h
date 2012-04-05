@@ -50,6 +50,8 @@
 
 #include <tinyxml2.h>
 
+#include <cstdlib>
+
 extern int iAllocations;
 extern int iDeallocations;
 
@@ -71,6 +73,9 @@ struct EngineBase::Private
 	TIME   delta_time;
 	int    exit_code;
 	int    frame_rate;
+#if MARSHMALLOW_DEBUG
+	int    tick_rate;
+#endif
 	int    suspend_interval;
 	bool   running;
 	bool   valid;
@@ -89,6 +94,9 @@ EngineBase::EngineBase(int f, int u, int s)
 	m_p->delta_time = 0;
 	m_p->exit_code = 0;
 	m_p->frame_rate = 0;
+#if MARSHMALLOW_DEBUG
+	m_p->tick_rate = 0;
+#endif
 	m_p->suspend_interval = s;
 	m_p->running = false;
 	m_p->valid = false;
@@ -111,8 +119,37 @@ EngineBase::initialize(void)
 {
 	Platform::Initialize();
 
+	/* viewport defaults */
+
+	uint16_t l_width = MARSHMALLOW_VIEWPORT_WIDTH;
+	uint16_t l_height = MARSHMALLOW_VIEWPORT_HEIGHT;
+	uint8_t l_depth = MARSHMALLOW_VIEWPORT_DEPTH;
+	bool l_fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
+	bool l_vsync = MARSHMALLOW_VIEWPORT_VSYNC;
+
+	/* viewport environment overrides */
+
+	const char *l_env;
+	if ((l_env = getenv("MM_WIDTH")))
+		sscanf(l_env, "%hd", &l_width);
+
+	if ((l_env = getenv("MM_HEIGHT")))
+		sscanf(l_env, "%hd", &l_height);
+
+	if ((l_env = getenv("MM_MODE")))
+		sscanf(l_env, "%hdx%hd", &l_width, &l_height);
+
+	if ((l_env = getenv("MM_DEPTH")))
+		sscanf(l_env, "%hhd", &l_depth);
+
+	if ((l_env = getenv("MM_FULLSCREEN")))
+		l_fullscreen = (l_env[0] == '1');
+
+	if ((l_env = getenv("MM_VSYNC")))
+		l_vsync = (l_env[0] == '1');
+
 	/* initialize viewport */
-	if (!Viewport::Initialize()) {
+	if (!Viewport::Initialize(l_width, l_height, l_depth, l_fullscreen, l_vsync)) {
 		MMERROR("Failed to initialize engine!");
 		return(false);
 	}
@@ -219,12 +256,16 @@ EngineBase::run(void)
 	TIME l_tick;
 	TIME l_tick_target = MMMIN(l_render_target, l_update_target);
 
+	bool l_wait;
+
+	/* startup */
+
 	m_p->valid = true;
 	m_p->running = true;
 
-	/* startup */
-	l_tick = NOW() - l_tick_target;
+	tick();
 	update(static_cast<float>(l_update_target) / MILLISECONDS_PER_SECOND);
+	l_tick = NOW() - l_tick_target;
 
 	/* main game loop */
 	do
@@ -232,17 +273,21 @@ EngineBase::run(void)
 		m_p->delta_time = NOW() - l_tick;
 		l_tick = NOW();
 
-#ifdef MARSHMALLOW_DEBUG
+#if MARSHMALLOW_DEBUG
 		/* detect breakpoint */
 		if (m_p->delta_time > MILLISECONDS_PER_SECOND) {
 			MMWARNING("Abnormally long time between ticks, debugger breakpoint?");
 			m_p->delta_time = l_tick_target;
 		}
+
+		m_p->tick_rate++;
 #endif
 
 		l_render += m_p->delta_time;
 		l_update += m_p->delta_time;
 		l_second += m_p->delta_time;
+
+		l_wait = true;
 
 		tick();
 
@@ -250,13 +295,19 @@ EngineBase::run(void)
 			update(static_cast<float>(l_update_target) / MILLISECONDS_PER_SECOND);
 			l_update -= l_update_target;
 			if (l_update >= l_update_target)
-				MMINFO("Skipping update frame. TARGET=" << l_update_target), l_update = 0;
+				MMINFO("Skipping update frame. O=" << l_update - l_update_target), l_update %= l_update_target, l_wait = false;
 		}
 
 		if (l_second >= l_second_target) {
 			second();
+
 			m_p->frame_rate = 0;
+#if MARSHMALLOW_DEBUG
+			m_p->tick_rate = 0;
+#endif
 			l_second -= l_second_target;
+			if (l_second >= l_second_target)
+				MMINFO("Skipping second frame. O=" << l_second - l_second_target), l_second %= l_second_target, l_wait = false;
 		}
 
 		if (l_render >= l_render_target) {
@@ -264,31 +315,17 @@ EngineBase::run(void)
 			m_p->frame_rate++;
 			l_render -= l_render_target;
 			if (l_render >= l_render_target)
-				MMINFO("Skipping render frame. TARGET=" << l_render_target), l_render = 0;
+				MMINFO("Skipping render frame. O=" << l_render - l_render_target), l_render %= l_render_target, l_wait = false;
 		}
 
-#if !MARSHMALLOW_VIEWPORT_VSYNC
 		/*
 		 * Suspended Wait
 		 *
-		 * Might cause some choppiness but it's worth it for 20% CPU
-		 * usage (very battery friendly).
+		 * Higher suspend interval values might cause minor choppiness
+		 * but it might be worth it for 20% CPU usage (very battery
+		 * friendly).
 		 */
-		if (m_p->suspend_interval > 0) {
-			const TIME l_nap = (l_tick_target - (NOW() - l_tick)) / m_p->suspend_interval;
-			while (l_tick_target > (NOW() - l_tick)) {
-				tick();
-				Platform::Sleep(l_nap);
-			}
-		}
-
-		/*
-		 * Busy Wait
-		 *
-		 * High CPU usage (80%-90%) not kind to battery life.
-		 */
-		else while (l_tick_target > (NOW() - l_tick)) { tick(); }
-#endif
+		if (l_wait) Platform::Sleep(m_p->suspend_interval);
 	} while (m_p->running);
 
 	finalize();
@@ -333,8 +370,10 @@ EngineBase::tick(void)
 void
 EngineBase::second(void)
 {
+#if MARSHMALLOW_DEBUG
 	MMINFO("FPS=" << m_p->frame_rate);
-	m_p->frame_rate = 0;
+	MMINFO("TPS=" << m_p->tick_rate);
+#endif
 }
 
 void
@@ -414,3 +453,4 @@ EngineBase::Instance(void)
 {
 	return(s_instance);
 }
+

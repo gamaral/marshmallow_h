@@ -76,24 +76,11 @@ namespace
 			g.textureData()
 			    .staticCast<SDL::TextureData>();
 
-		if (!l_tdata) {
-			MMVERBOSE("Ignoring mesh without texture data.");
-			return;
-		}
-
 		SDL::SharedTextureCoordinateData l_tcdata =
 			g.textureCoordinateData()
 			    .staticCast<SDL::TextureCoordinateData>();
 
-		SDL_Surface *l_img = l_tdata->surface();
-		SDL_Rect l_srect;
 		SDL_Rect l_drect;
-
-		/* build source rect */
-		if (l_tcdata && !l_tcdata->asRect(l_img->w, l_img->h, l_srect)) {
-			MMVERBOSE("Ignoring mesh with invalid texture coordinate data.");
-			return;
-		}
 
 		/* build destination rect */
 		if (l_vdata && !l_vdata->asRect(o, l_drect)) {
@@ -101,10 +88,32 @@ namespace
 			return;
 		}
 
-		while (SDL_BlitSurface(l_img, l_tcdata ? &l_srect : 0, s, &l_drect) == -2) {
-			while (SDL_LockSurface(l_img) < 0)
-				Core::Platform::Sleep(10);
-			SDL_UnlockSurface(l_img);
+		/* blit texture */
+		if (l_tdata && l_tdata->isLoaded()) {
+			SDL_Surface *l_img = l_tdata->surface();
+			SDL_Rect l_srect;
+
+			/* build source rect */
+			if (l_tcdata && !l_tcdata->asRect(l_img->w, l_img->h, l_srect)) {
+				MMVERBOSE("Ignoring mesh with invalid texture coordinate data.");
+				return;
+			}
+
+			while (SDL_BlitSurface(l_img, l_tcdata ? &l_srect : 0, s, &l_drect) == -2) {
+				while (SDL_LockSurface(l_img) < 0)
+					Core::Platform::Sleep(10);
+				SDL_UnlockSurface(l_img);
+			}
+		}
+		/* draw rect */
+		else {
+			const Color &l_color = g.color();
+			SDL_FillRect(s, &l_drect,
+			    SDL_MapRGBA(s->format,
+			                static_cast<Uint8>(static_cast<int>(l_color.red() * 255) % 256),
+			                static_cast<Uint8>(static_cast<int>(l_color.green() * 255) % 256),
+			                static_cast<Uint8>(static_cast<int>(l_color.blue() * 255) % 256),
+			                static_cast<Uint8>(static_cast<int>(l_color.alpha() * 255) % 256)));
 		}
 	}
 } // namespace
@@ -139,29 +148,5 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 	if (QuadMesh::Type() == m.type())
 		DrawQuadMesh(l_surface, static_cast<const QuadMesh &>(m), o - Viewport::Camera().translation());
 	else MMWARNING("Unknown mesh type");
-}
-
-void
-Painter::Blend(BlendTypes)
-{
-#if 0
-	switch (b) {
-	case AdditiveBlending:
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-	break;
-	case AlphaBlending:
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	break;
-	case MultiplyBlending:
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_ZERO, GL_SRC_COLOR);
-	break;
-	case NoBlending:
-		glDisable(GL_BLEND);
-	break;
-	}
-#endif
 }
 

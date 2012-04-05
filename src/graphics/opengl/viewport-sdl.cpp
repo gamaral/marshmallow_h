@@ -44,7 +44,7 @@
 #include "graphics/transform.h"
 
 #include "headers.h"
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 #include <cmath>
 #include <list>
@@ -89,7 +89,12 @@ namespace
 	{
 		s_data.loaded  = false;
 
+#if SDL_VERSION_ATLEAST(1,3,0)
+		if (!SDL_GL_SetSwapInterval(v ? 1 : 0))
+			MMERROR("FAILED! VSYNC: " << SDL_GetError());
+#else
 		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, (v ? 1 : 0));
+#endif
 
 		s_data.display = SDL_SetVideoMode(w, h, d, SDL_HWSURFACE
 		                                         | SDL_GL_DOUBLEBUFFER

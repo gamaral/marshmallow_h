@@ -130,7 +130,8 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 	glTranslatef(o.x(), o.y(), 0.f);
 
 	/* set blending */
-	Blend(AlphaBlending);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	/* set color */
 	const Graphics::Color &l_color = m.color();
@@ -160,30 +161,8 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 		DrawQuadMesh(static_cast<const QuadMesh &>(m));
 	else MMWARNING("Unknown mesh type");
 
-	Blend(NoBlending);
+	glDisable(GL_BLEND);
 
 	glPopMatrix();
-}
-
-void
-Painter::Blend(BlendTypes b)
-{
-	switch (b) {
-	case AdditiveBlending:
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-	break;
-	case AlphaBlending:
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	break;
-	case MultiplyBlending:
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_ZERO, GL_SRC_COLOR);
-	break;
-	case NoBlending:
-		glDisable(GL_BLEND);
-	break;
-	}
 }
 
