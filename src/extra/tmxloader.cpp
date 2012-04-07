@@ -35,6 +35,7 @@
  */
 
 #include "core/base64.h"
+#include "core/gzip.h"
 #include "core/logger.h"
 #include "core/zlib.h"
 
@@ -289,9 +290,10 @@ TMXLoader::Private::processLayer(XMLElement &e)
 		}
 #define TMXDATA_COMPRESSION_GZIP "gzip"
 		else if (0 == strcmp(l_data_compression, TMXDATA_COMPRESSION_GZIP)) {
-			// TODO(gamaral)
-			assert(0 && "GZIP data decompression is currently unimplemented");
-			return(false);
+			char *l_inflated_data;
+			if (0 < Core::Gzip::Inflate(l_decoded_data, l_decoded_data_size,
+			    static_cast<size_t>(map_size.width() * map_size.height() * 4), &l_inflated_data))
+				l_data_array = l_inflated_data;
 		}
 
 		delete[] l_decoded_data;

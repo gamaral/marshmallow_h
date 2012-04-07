@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_CORE_ZLIB_H
-#define MARSHMALLOW_CORE_ZLIB_H 1
+#ifndef MARSHMALLOW_CORE_GZIP_H
+#define MARSHMALLOW_CORE_GZIP_H 1
 
 #include <core/environment.h>
 #include <core/namespace.h>
@@ -44,8 +44,8 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core
 {
-	/*! @brief Core Zlib Interface */
-	namespace Zlib
+	/*! @brief Core Gzip Interface */
+	namespace Gzip
 	{
 		enum CompressionLevel
 		{
@@ -56,13 +56,13 @@ namespace Core
 			
 		};
 
-		/*! @brief Zlib inflate
+		/*! @brief Gzip inflate
 		 *  @param in In buffer
 		 *  @param in_size In buffer size
 		 *  @param out_size Out buffer max size estimate
 		 *  @param out Out buffer pointer
 		 *
-		 *  Inflate a zlib compressed buffer, out buffer allocation is
+		 *  Inflate a gzip compressed buffer, out buffer allocation is
 		 *  handled by the function.
 		 *
 		 *  Deallocation will be automatic by the double buffered
@@ -73,13 +73,13 @@ namespace Core
 		MARSHMALLOW_CORE_EXPORT
 		size_t Inflate(const char *in, size_t in_size, size_t out_size, char **out);
 
-		/*! @brief Zlib deflate
+		/*! @brief Gzip deflate
 		 *  @param in In buffer
 		 *  @param in_size In buffer size
 		 *  @param out Out buffer pointer
 		 *  @param level Compression level
 		 *
-		 *  Deflate a buffer using zlib compression, out buffer
+		 *  Deflate a buffer using gzip compression, out buffer
 		 *  allocation is handled by the function.
 		 *
 		 *  Deallocation will be automatic by the double buffered

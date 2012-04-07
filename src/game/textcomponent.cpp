@@ -106,9 +106,9 @@ TextComponent::Private::rebuild(void)
 	    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 	{
 		float l_hwidth  =
-		    (tileset->tileSize().width() / 2.f) * scale;
+		    (static_cast<float>(tileset->tileSize().width())  / 2.f) * scale;
 		float l_hheight =
-		    (tileset->tileSize().height() / 2.f) * scale;
+		    (static_cast<float>(tileset->tileSize().height()) / 2.f) * scale;
 
 		l_vdata->set(0, -l_hwidth,  l_hheight);
 		l_vdata->set(1, -l_hwidth, -l_hheight);
@@ -164,17 +164,17 @@ TextComponent::Private::render(void)
 			Graphics::SharedQuadMesh l_mesh = mesh[i].staticCast<Graphics::QuadMesh>();
 			l_mesh->setColor(color);
 			Graphics::Painter::Draw(*l_mesh, l_point);
-			l_point[0] += tileset->tileSize().width() * scale;
+			l_point[0] += static_cast<float>(tileset->tileSize().width()) * scale;
 		}
 
 		/* handle line break */
 		else if ('\n' == l_char) {
 			l_point[0]  = position->position().x();
-			l_point[1] -= tileset->tileSize().height() * scale;
+			l_point[1] -= static_cast<float>(tileset->tileSize().height()) * scale;
 		}
 
 		/* skip unknown character */
-		else l_point[0] += tileset->tileSize().width() * scale;
+		else l_point[0] += static_cast<float>(tileset->tileSize().width()) * scale;
 	}
 }
 

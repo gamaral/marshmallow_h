@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "core/zlib.h"
+#include "core/gzip.h"
 
 /*!
  * @file
@@ -37,11 +37,12 @@
 #include "core/logger.h"
 
 #include <zlib.h>
+#include <zutil.h>
 
 MARSHMALLOW_NAMESPACE_USE
 
 size_t
-Core::Zlib::Inflate(const char *in, size_t in_size, size_t out_size, char **out)
+Core::Gzip::Inflate(const char *in, size_t in_size, size_t out_size, char **out)
 {
 	z_stream l_stream;
 	*out = new char[out_size];
@@ -55,7 +56,7 @@ Core::Zlib::Inflate(const char *in, size_t in_size, size_t out_size, char **out)
 	l_stream.zalloc = static_cast<alloc_func>(0);
 	l_stream.zfree  = static_cast<free_func>(0);
 
-	if (inflateInit(&l_stream) != Z_OK) {
+	if (inflateInit2(&l_stream, 16) != Z_OK) {
 		MMWARNING("Failed to initialize inflate.");
 		return(0);
 	}
@@ -73,7 +74,7 @@ Core::Zlib::Inflate(const char *in, size_t in_size, size_t out_size, char **out)
 }
 
 size_t
-Core::Zlib::Deflate(const char *in, size_t in_size, char **out, int l)
+Core::Gzip::Deflate(const char *in, size_t in_size, char **out, int l)
 {
 	z_stream l_stream;
 	uLongf l_out_size = compressBound(in_size);
@@ -90,7 +91,7 @@ Core::Zlib::Deflate(const char *in, size_t in_size, char **out, int l)
 	l_stream.zfree  = static_cast<free_func>(0);
 	l_stream.opaque = static_cast<voidpf>(0);
 
-	if (deflateInit(&l_stream, l) != Z_OK) {
+	if (deflateInit2(&l_stream, l, Z_DEFLATED, 16, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY) != Z_OK) {
 		MMWARNING("Failed to initialize deflate.");
 		return(0);
 	}

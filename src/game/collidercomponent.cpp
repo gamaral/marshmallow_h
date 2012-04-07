@@ -215,7 +215,7 @@ ColliderComponent::update(float d)
 
 			if (m_p->bullet) {
 				int l_steps = m_p->bullet_resolution;
-				const float l_delta_step = d / l_steps;
+				const float l_delta_step = d / static_cast<float>(l_steps);
 				float l_bullet_delta = 0;
 
 				for(int i = 1; i < l_steps; ++i) {
