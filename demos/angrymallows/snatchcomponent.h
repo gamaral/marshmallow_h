@@ -65,12 +65,7 @@ public: /* virtual */
 
 public: /* static */
 
-	static const Core::Type & Type(void)
-	    { return(sType); }
-
-private: /* static */
-
-	static const Core::Type sType;
+	static const Core::Type & Type(void);
 };
 
 #endif

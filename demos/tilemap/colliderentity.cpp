@@ -37,10 +37,8 @@
 #include <game/collidercomponent.h>
 #include <game/sizecomponent.h>
 
-const Core::Type ColliderEntity::sType("ColliderEntity");
-
 ColliderEntity::ColliderEntity(const Core::Identifier &i, Game::EntitySceneLayer &l)
-    : Game::EntityBase(i, l)
+    : Game::Entity(i, l)
     , m_init(false)
 {
 }
@@ -61,5 +59,12 @@ ColliderEntity::update(float d)
 	}
 
 	Game::EntityBase::update(d);
+}
+
+const Core::Type &
+ColliderEntity::Type(void)
+{
+	static const Core::Type s_type("ColliderEntity");
+	return(s_type);
 }
 

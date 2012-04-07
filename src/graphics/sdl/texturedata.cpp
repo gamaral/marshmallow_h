@@ -107,7 +107,7 @@ TextureData::unload(void)
 const Core::Type &
 TextureData::Type(void)
 {
-	static const Core::Type sType("Graphics::TextureData");
+	static const Core::Type sType("Graphics::SDL::TextureData");
 	return(sType);
 }
 

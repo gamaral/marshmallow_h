@@ -37,11 +37,11 @@
 #ifndef DEMO_COLLIDERENTITY_H
 #define DEMO_COLLIDERENTITY_H 1
 
-#include <game/entitybase.h>
+#include <game/entity.h>
 
 MARSHMALLOW_NAMESPACE_USE
 
-class ColliderEntity : public Game::EntityBase
+class ColliderEntity : public Game::Entity
 {
 	bool m_init;
 
@@ -53,19 +53,11 @@ public:
 
 public: /* virtual */
 
-	VIRTUAL const Core::Type & type(void) const
-	    { return(sType); }
-
 	VIRTUAL void update(float delta);
 
 public: /* static */
 
-	static const Core::Type & Type(void)
-	    { return(sType); }
-
-private: /* static */
-
-	static const Core::Type sType;
+	static const Core::Type & Type(void);
 };
 
 #endif

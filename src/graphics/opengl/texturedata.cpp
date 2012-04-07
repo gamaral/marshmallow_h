@@ -34,7 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "GL/glpng.h"
+#include "glpng/glpng.h"
 
 #include "core/identifier.h"
 #include "core/logger.h"
@@ -44,8 +44,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 using namespace OpenGL;
-
-const Core::Type TextureData::sType("Graphics::TextureData");
 
 TextureData::TextureData(void)
     : m_id(),
@@ -109,6 +107,7 @@ TextureData::unload(void)
 const Core::Type &
 TextureData::Type(void)
 {
+	static const Core::Type sType("Graphics::OpenGL::TextureData");
 	return(sType);
 }
 

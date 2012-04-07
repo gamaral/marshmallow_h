@@ -23,42 +23,47 @@ Source
 Building
 ========
 
-Linux
------
+    I include many predefined cmake configurations, please take a look at the
+    "cmake" folder in the project root, filenames are pretty self-explanatory.
+
+Linux/BSD
+---------
 
 Run the following from project root:
 
-    ./configure && make -C build
+    cd build
+    cmake -C ../cmake/Cache-release_glx.cmake ..
+    make
 
-    X11-GLX is turned OFF by default, you will need to turn it ON using
-    ccmake/cmake-gui or by passing the following argument to the configuration
-    script: -DMARSHMALLOW_VIEWPORT_USE_X11_GLX:BOOL=ON (remember to reconfigure
-    more than one to allow cmake to look for dependencies)
+    Marshmallow's go-to compiler is Clang, the example above uses gcc since it's
+    almost guaranteed to be on the system (unlike Clang).
 
 Mac OSX
 -------
 
 Run the following from project root:
 
-    ./configure -G Xcode
+    cd build
+    cmake -G Xcode -C ../cmake/Cache-release_qt4.cmake ..
+    make
 
-    Launch Xcode and open the project file in the build directory.
+    Launch Xcode and open the project file in the build directory, CGL is
+    currently unsupported (due to my lazyness, so SDL and QT4 can be used for
+    now).
 
 Windows
 -------
 
     Run CMakeGui with `source` set to project root and `output` to the build
-    directory. Make sure to run the configure step at least twice after changing the backend
-    or you might get issues with libpng not being found.
+    directory. Make sure to run the configure step at least twice after changing
+    the backend or you might get issues with libpng not being found.
 
-    X11-WGL (wiggle) is turned OFF by default, you will need to turn it ON using
-    ccmake/cmake-gui.
+    The OpenGL backend and WGL viewport are turned off by default, you will
+    need to turn it ON using ccmake/cmake-gui.
 
     Configure and Generate a VS 2008/2010 solution, or generate makefiles to build
     from the command line using nmake or jom (https://qt.gitorious.org/qt-labs/jom)
 
-    MinGW also works.
-
-    Tested platforms are Win7 x86/x64
+    Tested on Win7 x86/x64 (VS2010)
 
 vim:syn=notes:

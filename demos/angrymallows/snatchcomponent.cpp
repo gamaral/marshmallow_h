@@ -50,8 +50,6 @@
 #include <game/ientity.h>
 #include <game/iscene.h>
 
-const Core::Type SnatchComponent::sType("SnatchComponent");
-
 SnatchComponent::SnatchComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
     , m_registered(false)
@@ -79,5 +77,12 @@ SnatchComponent::update(float)
 		m_layer->registerEntity(entity());
 		m_registered = true;
 	}
+}
+
+const Core::Type &
+SnatchComponent::Type(void)
+{
+	static const Core::Type s_type("SnatchComponent");
+	return(s_type);
 }
 

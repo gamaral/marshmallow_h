@@ -40,45 +40,52 @@ MARSHMALLOW_NAMESPACE_USE
 using namespace Math;
 
 Rect2::Rect2(float w, float h)
-    : m_size(w, h)
 {
+	m_side[Left]   = -w / 2.f;
+	m_side[Top]    = -h / 2.f;
+	m_side[Right]  =  w / 2.f;
+	m_side[Bottom] =  h / 2.f;
+}
+
+Rect2::Rect2(float x, float y, float w, float h)
+{
+	m_side[Left]   = x - (w / 2.f);
+	m_side[Top]    = y - (h / 2.f);
+	m_side[Right]  = m_side[Left] + w;
+	m_side[Bottom] = m_side[Top]  + h;
 }
 
 Rect2::Rect2(const Size2f &s)
-    : m_size(s)
 {
+	m_side[Left]   = -s.width()  / 2.f;
+	m_side[Top]    = -s.height() / 2.f;
+	m_side[Right]  = m_side[Left] + s.width();
+	m_side[Bottom] = m_side[Top]  + s.height();
+}
+
+Rect2::Rect2(const Vector2 &o, const Size2f &s)
+{
+	m_side[Left]   = o.x() - (s.width()  / 2.f);
+	m_side[Top]    = o.y() - (s.height() / 2.f);
+	m_side[Right]  = m_side[Left] + s.width();
+	m_side[Bottom] = m_side[Top]  + s.height();
 }
 
 Rect2::Rect2(const Rect2 &c)
-    : m_size(c.m_size)
 {
+	m_side[Left]   = c.m_side[Left];
+	m_side[Top]    = c.m_side[Top];
+	m_side[Right]  = c.m_side[Right];
+	m_side[Bottom] = c.m_side[Bottom];
 }
 
-Vector2
-Rect2::topLeft(void) const
+Rect2 &
+Rect2::operator=(const Rect2 &rhs)
 {
-	return(Vector2(-m_size.width()  / 2.f,
-	                m_size.height() / 2.f));
-}
-
-Vector2
-Rect2::topRight(void) const
-{
-	return(Vector2(m_size.width()  / 2.f,
-	               m_size.height() / 2.f));
-}
-
-Vector2
-Rect2::bottomLeft(void) const
-{
-	return(Vector2(-m_size.width()  / 2.f,
-	               -m_size.height() / 2.f));
-}
-
-Vector2
-Rect2::bottomRight(void) const
-{
-	return(Vector2(m_size.width()  / 2.f,
-	               -m_size.height() / 2.f));
+	m_side[Left] = rhs.m_side[Left];
+	m_side[Top] = rhs.m_side[Top];
+	m_side[Right] = rhs.m_side[Right];
+	m_side[Bottom] = rhs.m_side[Bottom];
+	return(*this);
 }
 

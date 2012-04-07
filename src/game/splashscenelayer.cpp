@@ -74,7 +74,7 @@ namespace {
 struct SplashSceneLayer::Private
 {
 	Private(SplashSceneLayer &i)
-	    : interface(i)
+	    : _interface(i)
 	    , mesh(new Graphics::QuadMesh(Math::Rect2(Graphics::Viewport::Size())))
 	    , exposure(1.5f)
 	    , fade(1.f)
@@ -87,7 +87,7 @@ struct SplashSceneLayer::Private
 
 	void setState(int state);
 
-	SplashSceneLayer &interface;
+	SplashSceneLayer &_interface;
 
 	Graphics::SharedQuadMesh mesh;
 	float exposure;
@@ -113,7 +113,7 @@ SplashSceneLayer::Private::setState(int s)
 		break;
 	case ssFinished:
 		if (autoKill)
-			interface.kill();
+			_interface.kill();
 		break;
 	case ssFadeOut:
 	case ssExposure:

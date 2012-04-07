@@ -100,7 +100,7 @@ TextureCoordinateData::set(uint16_t i, float u, float v)
 const Core::Type &
 TextureCoordinateData::Type(void)
 {
-	static const Core::Type sType("Graphics::TextureCoordinateData");
+	static const Core::Type sType("Graphics::SDL::TextureCoordinateData");
 	return(sType);
 }
 

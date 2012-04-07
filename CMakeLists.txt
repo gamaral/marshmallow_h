@@ -111,11 +111,24 @@ if(UNIX)
 	    ${PROJECT_SOURCE_DIR}/include/core/unix/environment.h
 	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
 	)
+
+	find_library(M_LIBRARY
+	    NAMES m
+	    PATHS /usr/lib /usr/local/lib
+	)
+	if(NOT M_LIBRARY)
+		message(FATAL_ERROR "No math library found.")
+	endif()
 elseif(WIN32)
 	configure_file(
 	    ${PROJECT_SOURCE_DIR}/include/core/win32/environment.h
 	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
 	)
+	set(M_LIBRARY "")
+
+	if(MSVC)
+	    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+	endif()
 endif()
 
 ##################################################################### VIEWPORT #

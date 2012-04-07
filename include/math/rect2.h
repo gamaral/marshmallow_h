@@ -39,41 +39,61 @@
 
 #include <core/global.h>
 #include <math/size2.h>
+#include <math/vector2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
-	class Vector2;
-
 	/*! @brief 2D Rect */
 	class MARSHMALLOW_MATH_EXPORT
 	Rect2
 	{
-		Size2f m_size;
+		float m_side[4];
+
+	public:
+	
+		enum Side
+		{
+			  Left = 0,
+			   Top = 1,
+			 Right = 2,
+			Bottom = 3,
+			 Sides = 4
+		};
 
 	public:
 
 		Rect2(float width, float height);
+		Rect2(float x, float y, float width, float height);
 		explicit Rect2(const Size2f &size);
+		explicit Rect2(const Vector2 &offset, const Size2f &size);
 		Rect2(const Rect2 &copy);
 
-		const Size2f & size(void) const
-		    { return(m_size); }
+		Size2f size(void) const;
 
-		Vector2 topLeft(void) const;
-		Vector2 topRight(void) const;
-		Vector2 bottomLeft(void) const;
-		Vector2 bottomRight(void) const;
+		Vector2 topLeft(void) const
+		    { return(Vector2(m_side[Left], m_side[Top])); }
+		Vector2 topRight(void) const
+		    { return(Vector2(m_side[Right], m_side[Top])); }
+		Vector2 bottomLeft(void) const
+		    { return(Vector2(m_side[Left], m_side[Bottom])); }
+		Vector2 bottomRight(void) const
+		    { return(Vector2(m_side[Right], m_side[Bottom])); }
 
 		float area(void) const
-		    { return(m_size.area()); }
+		    { return((m_side[Right]  - m_side[Left]) *
+		             (m_side[Bottom] - m_side[Top])); }
 
 	public: /* operators */
 
-		Rect2 & operator=(const Rect2 &rhs)
-		    { m_size = rhs.m_size;
-		      return(*this); }
+		Rect2 & operator=(const Rect2 &rhs);
+
+		float & operator[](int i)
+		    { return(m_side[i % Sides]); }
+
+		const float & operator[](int i) const
+		    { return(m_side[i % Sides]); }
 	};
 }
 

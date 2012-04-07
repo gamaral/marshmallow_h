@@ -44,8 +44,6 @@
 
 #include "inputcomponent.h"
 
-const Core::Type SnatcherLayer::sType("SnatcherLayer");
-
 SnatcherLayer::SnatcherLayer(const Core::Identifier &i, Game::IScene &s)
     : Game::SceneLayerBase(i, s)
     , m_state(ssIdle)
@@ -158,5 +156,12 @@ SnatcherLayer::setState(SnatchState s)
 	break;
 	}
 	m_state = s;
+}
+
+const Core::Type &
+SnatcherLayer::Type(void)
+{
+	static const Core::Type s_type("SnatcherLayer");
+	return(s_type);
 }
 

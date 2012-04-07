@@ -41,8 +41,6 @@ MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 using namespace Dummy;
 
-const Core::Type TextureData::sType("Graphics::TextureData");
-
 TextureData::TextureData(void)
     : m_id(),
       m_size(Math::Size2i(1024, 1024))
@@ -75,6 +73,7 @@ TextureData::unload(void)
 const Core::Type &
 TextureData::Type(void)
 {
+	static const Core::Type sType("Graphics::Dummy::TextureData");
 	return(sType);
 }
 

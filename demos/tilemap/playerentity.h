@@ -37,7 +37,7 @@
 #ifndef TILEMAP_PLAYERENTITY_H
 #define TILEMAP_PLAYERENTITY_H 1
 
-#include <game/entitybase.h>
+#include <game/entity.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
@@ -53,7 +53,7 @@ MARSHMALLOW_NAMESPACE_USE
 class InputComponent;
 typedef Core::Shared<InputComponent> SharedInputComponent;
 
-class PlayerEntity : public Game::EntityBase
+class PlayerEntity : public Game::Entity
 {
 	Game::SharedAnimationComponent m_animation_component;
 	SharedInputComponent m_input_component;
@@ -70,19 +70,11 @@ public:
 
 public: /* virtual */
 
-	VIRTUAL const Core::Type & type(void) const
-	    { return(sType); }
-
 	VIRTUAL void update(float delta);
 
 public: /* static */
 
-	static const Core::Type & Type(void)
-	    { return(sType); }
-
-private: /* static */
-
-	static const Core::Type sType;
+	static const Core::Type & Type(void);
 };
 
 #endif

@@ -84,16 +84,11 @@ public: /* virtual */
 
 public: /* static */
 
-	static const Core::Type & Type(void)
-	    { return(sType); }
+	static const Core::Type & Type(void);
 
 protected:
 
 	void setState(SnatchState state);
-
-private: /* static */
-
-	static const Core::Type sType;
 };
 typedef Core::Shared<SnatcherLayer> SharedSnatcherLayer;
 typedef Core::Weak<SnatcherLayer> WeakSnatcherLayer;

@@ -49,8 +49,5 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 	if(MARSHMALLOW_CONTRIB_LIBPNG)
 		add_subdirectory(libpng)
 	endif()
-
-	# GLPNG
-	add_subdirectory(glpng)
 endif()
 

@@ -46,10 +46,8 @@
 
 #include "inputcomponent.h"
 
-const Core::Type PlayerEntity::sType("PlayerEntity");
-
 PlayerEntity::PlayerEntity(const Core::Identifier &i, Game::EntitySceneLayer &l)
-    : Game::EntityBase(i, l)
+    : Game::Entity(i, l)
     , m_init(false)
 {
 }
@@ -175,5 +173,12 @@ PlayerEntity::update(float d)
 	}
 
 	Game::EntityBase::update(d);
+}
+
+const Core::Type &
+PlayerEntity::Type(void)
+{
+	static const Core::Type s_type("PlayerEntity");
+	return(s_type);
 }
 

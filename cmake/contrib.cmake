@@ -48,7 +48,7 @@ if (MARSHMALLOW_WITH_LUA)
 	if (MARSHMALLOW_CONTRIB_LUA)
 		set(LUA_BASE "${PROJECT_SOURCE_DIR}/contrib/lua/code")
 		set(LUA_INCLUDE_DIR ${LUA_BASE}/src
-				    ${LUA_BASE}/extra)
+		                    ${LUA_BASE}/extra)
 		set(LUA_LIBRARY marshmallow_lua)
 		message(STATUS "Builing with bundled Lua")
 	else()
@@ -59,8 +59,8 @@ endif()
 
 # Zlib
 if (MARSHMALLOW_CONTRIB_ZLIB)
-	set(ZLIB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/zlib
-	                     ${PROJECT_BINARY_DIR}/contrib/zlib)
+	set(ZLIB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/zlib/code
+	                     ${PROJECT_BINARY_DIR}/contrib/zlib/code)
 	set(ZLIB_LIBRARY marshmallow_zlib)
 	set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
 	message(STATUS "Building with bundled Zlib")
@@ -72,8 +72,8 @@ endif()
 if(MARSHMALLOW_VIEWPORT_OPENGL)
 	# LibPNG
 	if(MARSHMALLOW_CONTRIB_LIBPNG)
-		set(PNG_PNG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/libpng
-		                        ${PROJECT_BINARY_DIR}/contrib/libpng)
+		set(PNG_PNG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/libpng/code
+		                        ${PROJECT_BINARY_DIR}/contrib/libpng/code)
 		if(BUILD_SHARED_LIBS)
 			set(PNG_DEFINITIONS -DPNG_STATIC)
 		endif()
@@ -85,9 +85,5 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 		find_package(PNG REQUIRED)
 	endif()
 	set(PNG_INCLUDE_DIR ${PNG_PNG_INCLUDE_DIR})
-
-	# GLPNG
-	set(GLPNG_LIBRARIES marshmallow_glpng)
-	set(GLPNG_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/contrib/glpng/include")
 endif()
 

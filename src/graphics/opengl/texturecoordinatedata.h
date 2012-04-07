@@ -96,10 +96,6 @@ namespace OpenGL
 	public: /* static */
 
 		static const Core::Type & Type(void);
-
-	private: /* static */
-
-		static const Core::Type sType;
 	};
 	typedef Core::Shared<TextureCoordinateData> SharedTextureCoordinateData;
 	typedef Core::Weak<TextureCoordinateData> WeakTextureCoordinateData;

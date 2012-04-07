@@ -77,8 +77,8 @@ VertexData::asRect(const Math::Point2 &t, SDL_Rect &r) const
 
 	r.x = Sint16(( t.x() + m_data[0] + l_hvsize.width())  * l_ratio_x);
 	r.y = Sint16(( t.y() + m_data[1] - l_hvsize.height()) * l_ratio_y);
-	r.w = Uint16(m_data[6] - m_data[0] * l_ratio_x);
-	r.h = Uint16(m_data[1] - m_data[7] * l_ratio_y);
+	r.w = Uint16((m_data[6] - m_data[0]) * l_ratio_x);
+	r.h = Uint16((m_data[1] - m_data[7]) * l_ratio_y);
 
 	return(true);
 }
@@ -104,7 +104,7 @@ VertexData::set(uint16_t i, float x, float y)
 const Core::Type &
 VertexData::Type(void)
 {
-	static const Core::Type sType("Graphics::VertexData");
+	static const Core::Type sType("Graphics::SDL::VertexData");
 	return(sType);
 }
 

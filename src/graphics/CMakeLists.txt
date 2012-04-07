@@ -8,19 +8,20 @@ set(MARSHMALLOW_GRAPHICS_LIBS marshmallow_core
 
 if(MARSHMALLOW_VIEWPORT_OPENGL)
 
-	include_directories(${GLPNG_INCLUDE_DIR})
+	include_directories(${ZLIB_INCLUDE_DIR})
 
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                              opengl/extensions/GLee.c
 	                              opengl/factory.cpp
+	                              opengl/glpng/glpng.c
 	                              opengl/painter.cpp
 	                              opengl/texturecoordinatedata.cpp
 	                              opengl/texturedata.cpp
 	                              opengl/vertexdata.cpp)
 
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
-	                              ${GLPNG_LIBRARIES}
-	                              ${OPENGL_LIBRARIES})
+	                              ${PNG_LIBRARIES}
+	                              ${OPENGL_gl_LIBRARY})
 
 	# GLee requirement
 	if(APPLE)
@@ -49,6 +50,8 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 		                              opengl/viewport-qt4.cpp)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${QT_LIBRARIES})
+	else()
+		message(WARNING "No OpenGL viewport selected!")
 	endif()
 
 	if(MARSHMALLOW_OPENGL_GLES)

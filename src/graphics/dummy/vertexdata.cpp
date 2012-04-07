@@ -40,8 +40,6 @@ MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 using namespace Dummy;
 
-const Core::Type VertexData::sType("Graphics::VertexData");
-
 VertexData::VertexData(uint16_t c)
 #define AXES 2
     : m_data(new float[c * AXES]) // TODO: replace with custom allocator
@@ -76,6 +74,7 @@ VertexData::set(uint16_t i, float x, float y)
 const Core::Type &
 VertexData::Type(void)
 {
+	static const Core::Type sType("Graphics::Dummy::VertexData");
 	return(sType);
 }
 

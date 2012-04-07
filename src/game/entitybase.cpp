@@ -218,12 +218,12 @@ EntityBase::deserialize(XMLElement &n)
 		    FactoryBase::Instance()->createComponent(l_type, l_id, *this);
 
 		if (!l_component) {
-			MMWARNING("Component '" << l_id << "' of type '" << l_type << "' creation failed");
+			MMWARNING("Failed to create component '" << l_id << "' (" << l_type << ")");
 			continue;
 		}
 
 		if (!l_component->deserialize(*l_child)) {
-			MMWARNING("Component '" << l_id << "' of type '" << l_type << "' failed deserialization");
+			MMWARNING("Failed to deserialize component '" << l_id << "' (" << l_type << ")");
 			continue;
 		}
 

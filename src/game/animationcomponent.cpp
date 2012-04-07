@@ -65,7 +65,7 @@ namespace {
 struct AnimationComponent::Private
 {
 	Private(AnimationComponent &i)
-	    : interface(i)
+	    : _interface(i)
 	    , current_framelist(0)
 	    , current_frame_entry(0)
 	    , current_framerate(0.f)
@@ -79,7 +79,7 @@ struct AnimationComponent::Private
 	void stop(uint16_t *tile);
 	void animate(float d);
 
-	AnimationComponent &interface;
+	AnimationComponent &_interface;
 
 	AnimationFrames     animation_frames;
 	AnimationFramerates animation_framerate;
@@ -157,13 +157,13 @@ void
 AnimationComponent::Private::animate(float d)
 {
 	if (!tileset) {
-		tileset = interface.entity().getComponentType(TilesetComponent::Type()).
+		tileset = _interface.entity().getComponentType(TilesetComponent::Type()).
 		    staticCast<TilesetComponent>();
 		if (!tileset) return;
 	}
 
 	if (!render) {
-		render = interface.entity().getComponentType(RenderComponent::Type()).
+		render = _interface.entity().getComponentType(RenderComponent::Type()).
 		    staticCast<RenderComponent>();
 		if (render)
 			stop_data = render->mesh()->textureCoordinateData();

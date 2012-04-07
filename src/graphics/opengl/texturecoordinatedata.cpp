@@ -42,8 +42,6 @@ MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 using namespace OpenGL;
 
-const Core::Type TextureCoordinateData::sType("Graphics::TextureCoordinateData");
-
 TextureCoordinateData::TextureCoordinateData(uint16_t c)
 #define AXES 2
     : m_id()
@@ -118,6 +116,7 @@ TextureCoordinateData::set(uint16_t i, float u, float v)
 const Core::Type &
 TextureCoordinateData::Type(void)
 {
+	static const Core::Type sType("Graphics::OpenGL::TextureCoordinateData");
 	return(sType);
 }
 

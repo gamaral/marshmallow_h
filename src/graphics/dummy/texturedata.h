@@ -85,10 +85,6 @@ namespace Dummy
 	public: /* static */
 
 		static const Core::Type & Type(void);
-
-	private: /* static */
-
-		static const Core::Type sType;
 	};
 	typedef Core::Shared<TextureData> SharedTextureData;
 	typedef Core::Weak<TextureData> WeakTextureData;

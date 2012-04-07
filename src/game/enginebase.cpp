@@ -131,16 +131,16 @@ EngineBase::initialize(void)
 
 	const char *l_env;
 	if ((l_env = getenv("MM_WIDTH")))
-		sscanf(l_env, "%hd", &l_width);
+		sscanf(l_env, "%hu", &l_width);
 
 	if ((l_env = getenv("MM_HEIGHT")))
-		sscanf(l_env, "%hd", &l_height);
+		sscanf(l_env, "%hu", &l_height);
 
 	if ((l_env = getenv("MM_MODE")))
-		sscanf(l_env, "%hdx%hd", &l_width, &l_height);
+		sscanf(l_env, "%hux%hu", &l_width, &l_height);
 
 	if ((l_env = getenv("MM_DEPTH")))
-		sscanf(l_env, "%hhd", &l_depth);
+		sscanf(l_env, "%hhu", &l_depth);
 
 	if ((l_env = getenv("MM_FULLSCREEN")))
 		l_fullscreen = (l_env[0] == '1');

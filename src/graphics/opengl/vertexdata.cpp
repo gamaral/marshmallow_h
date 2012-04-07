@@ -42,8 +42,6 @@ MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 using namespace OpenGL;
 
-const Core::Type VertexData::sType("Graphics::VertexData");
-
 VertexData::VertexData(uint16_t c)
 #define AXES 2
     : m_id()
@@ -118,6 +116,7 @@ VertexData::set(uint16_t i, float x, float y)
 const Core::Type &
 VertexData::Type(void)
 {
+	static const Core::Type sType("Graphics::OpenGL::VertexData");
 	return(sType);
 }
 
