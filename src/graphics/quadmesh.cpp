@@ -77,22 +77,41 @@ QuadMesh::QuadMesh(const Math::Rect2  &r)
 	setTextureCoordinate(3, 1, 1);
 }
 
+QuadMesh::QuadMesh(const Math::Size2f &s)
+    : MeshBase(Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
+               Factory::CreateTextureData(),
+               Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES))
+{
+	/* half size */
+	const float l_hwidth  = s.width()  / 2.f;
+	const float l_hheight = s.height() / 2.f;
+
+	setVertex(0, Math::Vector2(-l_hwidth,  l_hheight));
+	setTextureCoordinate(0, 0, 0);
+	setVertex(1, Math::Vector2(-l_hwidth, -l_hheight));
+	setTextureCoordinate(1, 0, 1);
+	setVertex(2, Math::Vector2( l_hwidth,  l_hheight));
+	setTextureCoordinate(2, 1, 0);
+	setVertex(3, Math::Vector2( l_hwidth, -l_hheight));
+	setTextureCoordinate(3, 1, 1);
+}
+
 QuadMesh::QuadMesh(float width, float height)
     : MeshBase(Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
                Factory::CreateTextureData(),
                Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES))
 {
-	/* half */
-	width  /= 2.f;
-	height /= 2.f;
+	/* half size */
+	const float l_hwidth  = width  / 2.f;
+	const float l_hheight = height / 2.f;
 
-	setVertex(0, Math::Vector2(-width,  height));
+	setVertex(0, Math::Vector2(-l_hwidth,  l_hheight));
 	setTextureCoordinate(0, 0, 0);
-	setVertex(1, Math::Vector2(-width, -height));
+	setVertex(1, Math::Vector2(-l_hwidth, -l_hheight));
 	setTextureCoordinate(1, 0, 1);
-	setVertex(2, Math::Vector2(width,   height));
+	setVertex(2, Math::Vector2( l_hwidth,  l_hheight));
 	setTextureCoordinate(2, 1, 0);
-	setVertex(3, Math::Vector2(width,  -height));
+	setVertex(3, Math::Vector2( l_hwidth, -l_hheight));
 	setTextureCoordinate(3, 1, 1);
 }
 

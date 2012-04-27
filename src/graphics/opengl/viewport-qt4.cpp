@@ -36,6 +36,8 @@
 
 #include "core/logger.h"
 
+#include "math/pair.h"
+
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
@@ -47,7 +49,6 @@
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QKeyEvent>
 
-#include "extensions/GLee.h"
 #include <QtOpenGL/QGLWidget>
 
 #include <cmath>
@@ -129,40 +130,22 @@ namespace
 		VIRTUAL void
 		initializeGL()
 		{
-			/* set defaults */
+			/* initialize context */
 
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glViewport(0, 0, m_wsize.width(), m_wsize.height());
 
-			glEnable(GL_POINT_SMOOTH);
-			glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-
-			glEnable(GL_TEXTURE_2D);
-
-			glDisable(GL_DEPTH_TEST);
-			glDisable(GL_LIGHTING);
-			glEnable(GL_CULL_FACE);
+			if(glGetError() != GL_NO_ERROR) {
+				MMERROR("GLX failed during initialization.");
+				return;
+			}
 
 			/* set viewport size */
 
 			m_size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
 			m_size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
 
-			/* initialize context */
-
-			glViewport(0, 0, m_wsize.width(), m_wsize.height());
-
-			glClearColor(.0f, .0f, .0f, .0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-			updateViewport();
-
 			Viewport::SetCamera(m_camera);
-			swapBuffers();
 
-			if(glGetError() != GL_NO_ERROR) {
-				MMERROR("GLX failed during initialization.");
-				return;
-			}
 		}
 
 		VIRTUAL void
@@ -185,23 +168,6 @@ namespace
 		}
 
 	protected:
-
-		void
-		updateViewport(void)
-		{
-			const float l_hw = m_size[0] / 2.f;
-			const float l_hh = m_size[1] / 2.f;
-
-			/* update projection */
-
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glOrtho(-l_hw, l_hw, -l_hh, l_hh, -1.f, 1.f);
-			glMatrixMode(GL_MODELVIEW);
-
-			/* update camera */
-			updateCamera(m_camera);
-		}
 
 		void
 		handleKeyEvent(const QKeyEvent &event, bool down)
@@ -317,6 +283,7 @@ namespace
 			return(false);
 		}
 
+#if 0
 		/* vsync */
 
 #if GLX_SGI_swap_control
@@ -325,6 +292,7 @@ namespace
 #elif WGL_EXT_swap_control
 		if(GLEE_WGL_EXT_swap_control)
 			wglSwapIntervalEXT(v ? 1 : 0);
+#endif
 #endif
 
 		if(glGetError() != GL_NO_ERROR) {
@@ -394,14 +362,7 @@ void
 Viewport::SwapBuffer(void)
 {
 	s_window->swapBuffers();
-
-	glClearColor(.0f, .0f, .0f, .0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
-
-	glRotatef(s_window->camera().rotation(), .0f, .0f, 1.f);
-	glScalef(s_window->camera().scale().first(), s_window->camera().scale().second(), 0.f);
-	glTranslatef(s_window->camera().translation().x() * -1, s_window->camera().translation().y() * -1, 0.f);
+	Painter::Reset();
 }
 
 const Graphics::Transform &
@@ -445,23 +406,5 @@ Viewport::Type(void)
 {
 	static const Core::Type s_type("QT");
 	return(s_type);
-}
-
-void
-Viewport::LoadIdentity(void)
-{
-	glLoadIdentity();
-}
-
-void
-Viewport::PushMatrix(void)
-{
-	glPushMatrix();
-}
-
-void
-Viewport::PopMatrix(void)
-{
-	glPopMatrix();
 }
 

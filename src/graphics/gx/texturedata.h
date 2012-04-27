@@ -34,37 +34,38 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_GRAPHICS_SDL_TEXTURECOORDINATEDATA_H
-#define MARSHMALLOW_GRAPHICS_SDL_TEXTURECOORDINATEDATA_H 1
+#ifndef MARSHMALLOW_GRAPHICS_GX_TEXTUREDATA_H
+#define MARSHMALLOW_GRAPHICS_GX_TEXTUREDATA_H 1
 
-#include "graphics/itexturecoordinatedata.h"
+#include "graphics/itexturedata.h"
 
-#include "core/global.h"
 #include "core/identifier.h"
 
-struct SDL_Rect;
+#include "math/size2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
 
-namespace SDL
+namespace GX
 {
 
-	/*! @brief Graphics SDL Texture Coordinate Data Class */
-	class TextureCoordinateData : public ITextureCoordinateData
+	/*! @brief Graphic GX Texture Data Class */
+	class TextureData : public ITextureData
 	{
 		Core::Identifier m_id;
-		float *m_data;
-		uint16_t m_count;
+		Math::Size2i m_size;
+		unsigned int m_texture_id;
 
-		NO_ASSIGN_COPY(TextureCoordinateData);
+		NO_ASSIGN_COPY(TextureData);
 	public:
-		TextureCoordinateData(uint16_t count);
-		virtual ~TextureCoordinateData(void);
 
-		bool asRect(int width, int height, SDL_Rect &rect) const;
+		TextureData(void);
+		virtual ~TextureData(void);
+
+		unsigned int textureId(void) const
+		    { return(m_texture_id); }
 
 	public: /* virtual */
 
@@ -74,18 +75,21 @@ namespace SDL
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
 
-		VIRTUAL bool get(uint16_t index, float &u, float &v) const;
-		VIRTUAL bool set(uint16_t index, float u, float v);
+		VIRTUAL bool load(const Core::Identifier &id);
+		VIRTUAL void unload(void);
 
-		VIRTUAL uint16_t count(void) const
-		    { return(m_count); }
+		VIRTUAL bool isLoaded(void) const
+		    { return(m_texture_id != 0); }
+
+		VIRTUAL const Math::Size2i & size(void) const
+		    { return(m_size); }
 
 	public: /* static */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<TextureCoordinateData> SharedTextureCoordinateData;
-	typedef Core::Weak<TextureCoordinateData> WeakTextureCoordinateData;
+	typedef Core::Shared<TextureData> SharedTextureData;
+	typedef Core::Weak<TextureData> WeakTextureData;
 
 }
 

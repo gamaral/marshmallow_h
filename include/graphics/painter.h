@@ -47,6 +47,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
+	class Matrix4;
 	class Point2;
 }
 
@@ -57,18 +58,32 @@ namespace Graphics
 	/*! @brief Graphics Painter Interface */
 	namespace Painter
 	{
-		enum BlendTypes {
-			NoBlending = 0,
-			AdditiveBlending,
-			AlphaBlending,
-			MultiplyBlending
-		};
-
 		MARSHMALLOW_GRAPHICS_EXPORT
 		void Initialize(void);
 
 		MARSHMALLOW_GRAPHICS_EXPORT
 		void Finalize(void);
+
+		MARSHMALLOW_GRAPHICS_EXPORT
+		void Render(void);
+
+		MARSHMALLOW_GRAPHICS_EXPORT
+		void Reset(void);
+
+		MARSHMALLOW_GRAPHICS_EXPORT
+		Math::Matrix4 & Matrix(void);
+
+		MARSHMALLOW_GRAPHICS_EXPORT
+		void LoadIdentity(void);
+
+		MARSHMALLOW_GRAPHICS_EXPORT
+		void ProjectionMatrix(void);
+
+		MARSHMALLOW_GRAPHICS_EXPORT
+		void PushMatrix(void);
+
+		MARSHMALLOW_GRAPHICS_EXPORT
+		void PopMatrix(void);
 
 		MARSHMALLOW_GRAPHICS_EXPORT
 		void Draw(const IMesh &mesh, const Math::Point2 &origin);

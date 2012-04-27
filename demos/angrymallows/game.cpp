@@ -38,6 +38,8 @@ MARSHMALLOW_NAMESPACE_USE
 
 #include <core/logger.h>
 
+#include <math/pair.h>
+
 #include <event/keyboardevent.h>
 
 #include <graphics/transform.h>

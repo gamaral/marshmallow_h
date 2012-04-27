@@ -61,7 +61,7 @@ class DemoBounceComponent : public Game::ComponentBase
 	NO_ASSIGN_COPY(DemoBounceComponent);
 public:
 	DemoBounceComponent(Game::IEntity &e)
-	: Game::ComponentBase("bouncer", e)
+	    : Game::ComponentBase("bouncer", e)
 	{
 	}
 
@@ -78,8 +78,7 @@ public:
 			    cast<Game::MovementComponent>();
 
 		if (m_position && m_movement) {
-			MMINFO("DELTA=" << d);
-			MMINFO("Current position (" << m_position->position().x() << ", " << m_position->position().y() << ").");
+			MMVERBOSE("Current position (" << m_position->position().x() << ", " << m_position->position().y() << ").");
 
 			Math::Size2f l_vpsize = Graphics::Viewport::Size();
 
@@ -166,13 +165,12 @@ public:
 
 			Game::SizeComponent *l_scomponent =
 			    new Game::SizeComponent("size", *l_entity);
-			l_scomponent->size() = Math::Size2f(52.f, 50.f);
+			l_scomponent->size() = Math::Size2f(50.f, 50.f);
 			l_entity->pushComponent(l_scomponent);
 
-			Math::Rect2 l_rect(Math::Size2f(64.f, 64.f));
 			Game::RenderComponent *l_rcomponent =
 			    new Game::RenderComponent("render", *l_entity);
-			Graphics::SharedMeshBase l_mesh(new Graphics::QuadMesh(l_rect));
+			Graphics::SharedMeshBase l_mesh(new Graphics::QuadMesh(64.f, 64.f));
 			l_mesh->textureData()->load("assets/mallow.png");
 			l_rcomponent->mesh() = l_mesh.staticCast<Graphics::IMesh>();
 			l_entity->pushComponent(l_rcomponent);
@@ -201,7 +199,7 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(60, 60, MARSHMALLOW_BUSYWAIT),
+	: EngineBase(30, 60, MARSHMALLOW_BUSYWAIT),
 	  m_debugListener(new Event::DebugEventListener("log.txt"))
 	{
 	}
@@ -237,8 +235,6 @@ MMain(int argc, char *argv[])
 {
 	MMUNUSED(argc);
 	MMUNUSED(argv);
-	if (-1 == CHDIR(DEMO_CWD))
-		MMFATAL("Failed to change working directory \"" << DEMO_CWD << "\". ABORT!");
 	return(Demo().run());
 }
 

@@ -46,7 +46,6 @@
 
 #include "graphics/painter.h"
 #include "graphics/quadmesh.h"
-#include "graphics/viewport.h"
 
 #include "game/engine.h"
 #include "game/iscene.h"
@@ -75,7 +74,7 @@ struct SplashSceneLayer::Private
 {
 	Private(SplashSceneLayer &i)
 	    : _interface(i)
-	    , mesh(new Graphics::QuadMesh(Math::Rect2(Graphics::Viewport::Size())))
+	    , mesh(new Graphics::QuadMesh(2.f, 2.f))
 	    , exposure(1.5f)
 	    , fade(1.f)
 	    , timer(0.f)
@@ -206,12 +205,12 @@ SplashSceneLayer::skip(void)
 void
 SplashSceneLayer::render(void)
 {
-	Graphics::Viewport::PushMatrix();
-	Graphics::Viewport::LoadIdentity();
+	Graphics::Painter::PushMatrix();
+	Graphics::Painter::LoadIdentity();
 
 	Graphics::Painter::Draw(*m_p->mesh, Math::Point2(0,0));
 
-	Graphics::Viewport::PopMatrix();
+	Graphics::Painter::PopMatrix();
 }
 
 void

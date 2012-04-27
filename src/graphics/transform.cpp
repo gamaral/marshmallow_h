@@ -36,6 +36,9 @@
 
 #include "math/pair.h"
 #include "math/point2.h"
+#include "math/matrix4.h"
+
+#include <cmath>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
@@ -45,12 +48,42 @@ struct Transform::Private
 	float rotation;
 	Math::Pair scale;
 	Math::Point2 translation;
+
+	Math::Matrix4 matrix;
+
+	void updateMatrix(void);
 };
+
+void
+Transform::Private::updateMatrix(void)
+{
+	Math::Matrix4 l_translate;
+	l_translate[12] = translation.x();
+	l_translate[13] = translation.y();
+
+	Math::Matrix4 l_rotate;
+	if (rotation != 0) {
+#define DEGREE_TO_RADIAN 0.0174532925f
+		float l_rotation_rad = rotation * DEGREE_TO_RADIAN;
+		l_rotate[0] = cosf(l_rotation_rad);
+		l_rotate[1] = sinf(l_rotation_rad);
+		l_rotate[4] = -l_rotate[1];
+		l_rotate[5] =  l_rotate[0];
+	}
+
+	Math::Matrix4 l_scale;
+	l_scale[0] = scale.first();
+	l_scale[5] = scale.second();
+
+	matrix = l_translate * l_rotate * l_scale;
+}
 
 Transform::Transform(void)
     : m_p(new Private)
 {
 	m_p->rotation = 0.f;
+	m_p->scale = Math::Pair::One();
+	m_p->updateMatrix();
 }
 
 Transform::Transform(const Transform &other)
@@ -59,6 +92,7 @@ Transform::Transform(const Transform &other)
 	m_p->rotation = 0.f;
 	m_p->scale = other.m_p->scale;
 	m_p->translation = other.m_p->translation;
+	m_p->matrix = other.m_p->matrix;
 }
 
 Transform::~Transform(void)
@@ -73,16 +107,43 @@ Transform::rotation(void) const
 	return(m_p->rotation);
 }
 
+void
+Transform::setRotation(float value)
+{
+	m_p->rotation = value;
+	m_p->updateMatrix();
+}
+
 const Math::Pair &
 Transform::scale(void) const
 {
 	return(m_p->scale);
 }
 
+void
+Transform::setScale(const Math::Pair &value)
+{
+	m_p->scale = value;
+	m_p->updateMatrix();
+}
+
 const Math::Point2 &
 Transform::translation(void) const
 {
 	return(m_p->translation);
+}
+
+void
+Transform::setTranslation(const Math::Point2 &value)
+{
+	m_p->translation = value;
+	m_p->updateMatrix();
+}
+
+const Math::Matrix4 &
+Transform::matrix(void) const
+{
+	return(m_p->matrix);
 }
 
 Transform &
@@ -92,25 +153,8 @@ Transform::operator =(const Transform& rhs)
 		m_p->rotation = rhs.m_p->rotation;
 		m_p->scale = rhs.m_p->scale;
 		m_p->translation = rhs.m_p->translation;
+		m_p->matrix = rhs.m_p->matrix;
 	}
 	return(*this);
-}
-
-void
-Transform::setScale(const Math::Pair &value)
-{
-	m_p->scale = value;
-}
-
-void
-Transform::setTranslation(const Math::Point2 &value)
-{
-	m_p->translation = value;
-}
-
-void
-Transform::setRotation(float value)
-{
-	m_p->rotation = value;
 }
 

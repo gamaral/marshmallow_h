@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "texturecoordinatedata.h"
+#pragma once
 
 /*!
  * @file
@@ -34,73 +34,55 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/logger.h"
+#ifndef MARSHMALLOW_MATH_MATRIX4_H
+#define MARSHMALLOW_MATH_MATRIX4_H 1
 
-#include <SDL_video.h>
+#include <core/environment.h>
+#include <core/namespace.h>
 
-#include <cstring>
+MARSHMALLOW_NAMESPACE_BEGIN
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics;
-using namespace SDL;
-
-TextureCoordinateData::TextureCoordinateData(uint16_t c)
-#define AXES 2
-    : m_id()
-    , m_data(new float[c * AXES]) // TODO: replace with custom allocator
-    , m_count(c)
+namespace Math
 {
-	memset(m_data, 0, m_count * AXES);
+	/*! @brief Math Matrix 4x4 */
+	class MARSHMALLOW_MATH_EXPORT
+	Matrix4
+	{
+		float m_value[16];
+	public:
+		explicit Matrix4(const float *values = 0);
+		Matrix4(const Matrix4 &copy);
+
+		float cell(int row, int col) const
+		    { return(m_value[(row * 4) + col]); }
+
+		const float *data(void) const
+		    { return(&m_value[0]); }
+
+		void identity(void);
+
+	public: /* operators */
+
+		Matrix4 & operator=(const Matrix4 &rhs);
+		bool operator==(const Matrix4 &rhs) const;
+
+		Matrix4 operator*(const Matrix4 &rhs) const;
+		Matrix4 & operator*=(const Matrix4 &rhs);
+
+		float & operator[](int i)
+		    { return(m_value[i]); }
+
+		float operator[](int i) const
+		    { return(m_value[i]); }
+
+	public: /* static */
+
+		static const Matrix4 & Identity(void)
+		    { static Matrix4 s_identity;
+		      return(s_identity); }
+	};
 }
 
-TextureCoordinateData::~TextureCoordinateData(void)
-{
-	delete[] m_data;
-}
+MARSHMALLOW_NAMESPACE_END
 
-bool
-TextureCoordinateData::asRect(int w, int h, SDL_Rect &r) const
-{
-	if (m_count != 4 /* has four sides */) {
-		MMWARNING("Can't convert to rect, object has more than 4 sides.");
-		return(false);
-	}
-
-	r.x = Sint16(static_cast<float>(w)  * m_data[0]);
-	r.y = Sint16(static_cast<float>(h)  * m_data[1]);
-	r.w = Uint16((static_cast<float>(w) * m_data[6]) - r.x);
-	r.h = Uint16((static_cast<float>(h) * m_data[7]) - r.y);
-
-	if (r.x < 0 || r.y < 0 || r.w > w || r.h > h) {
-		MMERROR("Invalid texture coordinate data encountered.");
-		return(false);
-	}
-
-	return(true);
-}
-
-bool
-TextureCoordinateData::get(uint16_t i, float &u, float &v) const
-{
-	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
-	u = m_data[l_offset];
-	v = m_data[l_offset + 1];
-	return(true);
-}
-
-bool
-TextureCoordinateData::set(uint16_t i, float u, float v)
-{
-	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
-	m_data[l_offset] = u;
-	m_data[l_offset + 1] = v;
-	return(true);
-}
-
-const Core::Type &
-TextureCoordinateData::Type(void)
-{
-	static const Core::Type sType("Graphics::SDL::TextureCoordinateData");
-	return(sType);
-}
-
+#endif

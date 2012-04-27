@@ -36,6 +36,8 @@
 
 #include "core/logger.h"
 
+#include "math/pair.h"
+
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
@@ -68,7 +70,6 @@ namespace
 		bool          loaded;
 	} s_data;
 
-	void UpdateViewport(void);
 	void UpdateCamera(void);
 
 	void InitializeViewport(void)
@@ -95,7 +96,6 @@ namespace
 #else
 		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, (v ? 1 : 0));
 #endif
-
 		s_data.display = SDL_SetVideoMode(w, h, d, SDL_HWSURFACE
 		                                         | SDL_GL_DOUBLEBUFFER
 		                                         | SDL_OPENGL
@@ -112,40 +112,21 @@ namespace
 		s_data.wsize[0] = w;
 		s_data.wsize[1] = h;
 
-		/* set defaults */
+		/* initialize context */
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glViewport(0, 0, w, h);
 
-		glEnable(GL_POINT_SMOOTH);
-		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-
-		glEnable(GL_TEXTURE_2D);
-
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_LIGHTING);
-		glEnable(GL_CULL_FACE);
+		if(glGetError() != GL_NO_ERROR) {
+			MMERROR("GL failed during initialization.");
+			return(false);
+		}
 
 		/* set viewport size */
 
 		s_data.size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
 		s_data.size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
 
-		/* initialize context */
-
-		glViewport(0, 0, w, h);
-
-		glClearColor(.0f, .0f, .0f, .0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		UpdateViewport();
-
 		Viewport::SetCamera(s_data.camera);
-		Viewport::SwapBuffer();
-
-		if(glGetError() != GL_NO_ERROR) {
-			MMERROR("GL failed during initialization.");
-			return(false);
-		}
 
 		return(s_data.loaded = true);
 	}
@@ -155,23 +136,6 @@ namespace
 	{
 		s_data.display = 0;
 		s_data.loaded  = false;
-	}
-
-	void
-	UpdateViewport(void)
-	{
-		const float l_hw = s_data.size[0] / 2.f;
-		const float l_hh = s_data.size[1] / 2.f;
-
-		/* update projection */
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-l_hw, l_hw, -l_hh, l_hh, -1.f, 1.f);
-		glMatrixMode(GL_MODELVIEW);
-
-		/* update camera */
-		UpdateCamera();
 	}
 
 	void
@@ -295,14 +259,7 @@ void
 Viewport::SwapBuffer(void)
 {
 	SDL_GL_SwapBuffers();
-
-	glClearColor(.0f, .0f, .0f, .0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
-
-	glRotatef(s_data.camera.rotation(), .0f, .0f, 1.f);
-	glScalef(s_data.camera.scale().first(), s_data.camera.scale().second(), 0.f);
-	glTranslatef(s_data.camera.translation().x() * -1, s_data.camera.translation().y() * -1, 0.f);
+	Painter::Reset();
 }
 
 const Graphics::Transform &
@@ -347,23 +304,5 @@ Viewport::Type(void)
 {
 	static const Core::Type s_type("SDL");
 	return(s_type);
-}
-
-void
-Viewport::LoadIdentity(void)
-{
-	glLoadIdentity();
-}
-
-void
-Viewport::PushMatrix(void)
-{
-	glPushMatrix();
-}
-
-void
-Viewport::PopMatrix(void)
-{
-	glPopMatrix();
 }
 

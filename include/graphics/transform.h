@@ -41,10 +41,17 @@
 
 #include <core/fd.h>
 
-#include <math/pair.h>
-#include <math/point2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Math
+{
+	class Tuple2;
+	typedef Tuple2 Pair;
+
+	class Point2;
+
+	class Matrix4;
+}
 
 namespace Graphics
 {
@@ -69,6 +76,8 @@ namespace Graphics
 
 		const Math::Point2 & translation(void) const;
 		void setTranslation(const Math::Point2 &value);
+
+		const Math::Matrix4 & matrix(void) const;
 	};
 	typedef Core::Shared<Transform> SharedTransform;
 	typedef Core::Weak<Transform> WeakTransform;

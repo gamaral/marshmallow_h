@@ -58,7 +58,7 @@
 
 /******************************************************************** exports */
 
-#ifdef MARSHMALLOW_DLL
+#ifdef MARSHMALLOW_SHARED
 #   define MARSHMALLOW_DLL_EXPORT __declspec(dllexport)
 #   define MARSHMALLOW_DLL_IMPORT __declspec(dllimport)
 #else

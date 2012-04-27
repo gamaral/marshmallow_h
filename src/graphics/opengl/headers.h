@@ -41,14 +41,13 @@
 #  include <windows.h>
 #endif
 
-#include "extensions/GLee.h"
-
-#if MARSHMALLOW_OPENGL_GLES
-#  include <GLES/gl.h>
+#ifdef MARSHMALLOW_OPENGL_GLES2
+#  include <GLES2/gl2.h>
 #elif defined(__APPLE__)
 #  include <OpenGL/gl.h>
 #else
-#  include <GL/gl.h>
+#  define GL_GLEXT_PROTOTYPES
+#  include <GL/glx.h>
 #endif
 
 #endif

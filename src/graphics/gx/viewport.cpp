@@ -45,22 +45,10 @@
 #include "graphics/painter.h"
 #include "graphics/transform.h"
 
-#include <X11/X.h>
-#include <X11/XKBlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xmd.h>
-#include <X11/Xutil.h>
-#ifndef MARSHMALLOW_OPENGL_GLES2
-#  include <X11/extensions/xf86vmode.h>
-#endif
+#include <wiiuse/wpad.h>
+#include <gccore.h>
 
-#include "headers.h"
-#ifdef MARSHMALLOW_OPENGL_GLES2
-#  include <EGL/egl.h>
-#else
-#  include <GL/glx.h>
-#endif
-
+#include <cstdio> //tmp
 #include <cmath>
 #include <cstring>
 #include <list>
@@ -73,29 +61,21 @@ using namespace Graphics;
 namespace
 {
 	struct ViewportData {
-		Window        window;
-		Display      *display;
+		void         *xfb;
+		GXRModeObj   *rmode;
 		Math::Size2i  wsize;
 		int           screen;
-#ifdef MARSHMALLOW_OPENGL_GLES2
-		EGLContext    egl_context;
-		EGLDisplay    egl_display;
-		EGLSurface    egl_surface;
-#else
-		GLXContext    context;
-		XF86VidModeModeInfo dvminfo;
-#endif
-		Atom          wm_delete;
 		Transform     camera;
 		float         radius2;
 		Math::Size2f  size;
 		Math::Size2f  scaled_size;
-		bool          fullscreen;
 		bool          loaded;
 	} s_data;
 
 	void UpdateCamera(void);
+#if 0
 	void HandleKeyEvent(XKeyEvent &key);
+#endif
 
 	void InitializeViewport(void)
 	{
@@ -103,331 +83,32 @@ namespace
 		s_data.camera.setScale(Math::Pair::One());
 		s_data.camera.setTranslation(Math::Point2::Zero());
 
-#ifdef MARSHMALLOW_OPENGL_GLES2
-		s_data.egl_context = EGL_NO_CONTEXT;
-		s_data.egl_display = EGL_NO_DISPLAY;
-		s_data.egl_surface = EGL_NO_SURFACE;
-#else
-		s_data.context = 0;
-#endif
-
-		s_data.display = 0;
-		s_data.fullscreen = false;
 		s_data.loaded = false;
-		s_data.screen = 0;
+		s_data.xfb = 0;
+		s_data.rmode = 0;
 		s_data.size.zero();
-		s_data.window = 0;
-		s_data.wm_delete = 0;
 		s_data.wsize[0] = s_data.wsize[1] = 0;
-	}
 
-	bool
-	CreateWindow(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
-	{
-#ifdef MARSHMALLOW_OPENGL_GLES2
-		s_data.egl_context = EGL_NO_CONTEXT;
-		s_data.egl_display = EGL_NO_DISPLAY;
-		s_data.egl_surface = EGL_NO_SURFACE;
-#else
-		s_data.context = 0;
-#endif
+		VIDEO_Init();
+		WPAD_Init();
 
-		s_data.display   = 0;
-		s_data.loaded    = false;
-		s_data.screen    = 0;
-		s_data.window    = 0;
-		s_data.wm_delete = 0;
+		s_data.rmode = VIDEO_GetPreferredMode(0);
+		s_data.xfb = MEM_K0_TO_K1(SYS_AllocateFramebuffer(s_data.rmode));
 
-		s_data.fullscreen = f;
-		s_data.wsize[0] = w;
-		s_data.wsize[1] = h;
+		console_init(s_data.xfb, 20, 20, s_data.rmode->fbWidth, s_data.rmode->xfbHeight, s_data.rmode->fbWidth * VI_DISPLAY_PIX_SZ);
 
-		/*** X11 ***/
+		VIDEO_Configure(s_data.rmode);
+		VIDEO_SetNextFramebuffer(s_data.xfb);
+		VIDEO_SetBlack(FALSE);
+		VIDEO_Flush();
 
-		/* open display */
-		if (!(s_data.display = XOpenDisplay(0))) {
-			MMERROR("Unable to open X Display.");
-			return(false);
-		}
+		VIDEO_WaitVSync();
+		if(s_data.rmode->viTVMode & VI_NON_INTERLACE) VIDEO_WaitVSync();
 
-		/* get root window */
-		Window l_rwindow = DefaultRootWindow(s_data.display);
+		printf("\x1b[10;0H");
+		printf("Hello from @marshmallow_h!\nTesting new GX backend!");
 
-		XVisualInfo l_vinfo;
-		if (!XMatchVisualInfo(s_data.display, XDefaultScreen(s_data.display), d, TrueColor, &l_vinfo)) {
-			MMERROR("Failed to find an appropriate visual.");
-			return(false);
-		}
-		s_data.screen = l_vinfo.screen;
-
-		XSync(s_data.display, true);
-
-		/* window attributes */
-		XSetWindowAttributes l_swattr;
-		memset(&l_swattr, 0, sizeof(l_swattr));
-		l_swattr.border_pixel = 0;
-		l_swattr.colormap = XCreateColormap(s_data.display, l_rwindow, l_vinfo.visual, AllocNone);
-		l_swattr.event_mask =
-			ButtonPressMask    |
-			ButtonReleaseMask  |
-			KeyPressMask       |
-			KeyReleaseMask     |
-			PointerMotionMask  |
-			StructureNotifyMask;
-
-		/* create window */
-		if (s_data.fullscreen) {
-#ifndef MARSHMALLOW_OPENGL_GLES2
-			/* get display modes */
-			XF86VidModeModeLine l_cmline;
-			int l_cdotclock;
-			XF86VidModeModeInfo **l_modes;
-			int l_mode_count;
-			int l_mode_selected = -1;
-
-			XF86VidModeGetModeLine(s_data.display, s_data.screen, &l_cdotclock, &l_cmline);
-			XF86VidModeGetAllModeLines(s_data.display, s_data.screen, &l_mode_count, &l_modes);
-			s_data.dvminfo.dotclock = 0;
-			for (int i = 0; i < l_mode_count; ++i) {
-				MMINFO("Display mode (" << l_modes[i]->hdisplay << "x" << l_modes[i]->vdisplay << ") [" << i << "]");
-
-				if (!s_data.dvminfo.dotclock &&
-				    l_modes[i]->hdisplay == l_cmline.hdisplay &&
-				    l_modes[i]->vdisplay == l_cmline.vdisplay &&
-				    static_cast<int>(l_modes[i]->dotclock) == l_cdotclock) {
-					MMINFO("Found current display mode.");
-					s_data.dvminfo = *l_modes[i];
-				}
-				if (l_mode_selected == -1 &&
-				    l_modes[i]->hdisplay == w &&
-				    l_modes[i]->vdisplay == h) {
-					MMINFO("Found appropriate display mode.");
-					l_mode_selected = i;
-				}
-			}
-
-			if (l_mode_selected == -1) {
-				MMERROR("Unable to find a suitable display mode.");
-				return(false);
-			}
-
-			XF86VidModeSwitchToMode(s_data.display, s_data.screen, l_modes[l_mode_selected]);
-			XF86VidModeSetViewPort(s_data.display, s_data.screen, 0, 0);
-			XFree(l_modes);
-
-			/* allow display to settle after vidmode switch */
-			XSync(s_data.display, true);
-#endif
-
-			/* create a fullscreen window */
-			l_swattr.override_redirect = true;
-			s_data.window = XCreateWindow
-			   (s_data.display,
-			    l_rwindow,
-			    0, 0, w, h, 0,
-			    l_vinfo.depth,
-			    InputOutput,
-			    l_vinfo.visual,
-			    CWColormap|CWBorderPixel|CWEventMask|CWOverrideRedirect,
-			    &l_swattr);
-			XMapRaised(s_data.display, s_data.window);
-
-			/* notify window manager */
-			Atom l_wm_state   = XInternAtom(s_data.display, "_NET_WM_STATE", false);
-			Atom l_fullscreen = XInternAtom(s_data.display, "_NET_WM_STATE_FULLSCREEN", false);
-
-			XEvent l_event;
-			memset(&l_event, 0, sizeof(l_event));
-			
-			l_event.type                 = ClientMessage;
-			l_event.xclient.window       = s_data.window;
-			l_event.xclient.message_type = l_wm_state;
-			l_event.xclient.format       = 32;
-			l_event.xclient.data.l[0]    = 1;
-			l_event.xclient.data.l[1]    = static_cast<long>(l_fullscreen);
-			XSendEvent(s_data.display, l_rwindow, false, SubstructureNotifyMask, &l_event );
-		}
-		else {
-			s_data.window = XCreateWindow
-			   (s_data.display,
-			    l_rwindow,
-			    (DisplayWidth(s_data.display, s_data.screen) - w) / 2,
-			    (DisplayHeight(s_data.display, s_data.screen) - h) / 2,
-			    w, h,
-			    1,
-			    l_vinfo.depth,
-			    InputOutput,
-			    l_vinfo.visual,
-			    CWColormap|CWBorderPixel|CWEventMask,
-			    &l_swattr);
-			XMapRaised(s_data.display, s_data.window);
-
-			/* set size hints */
-			XSizeHints *l_size_hints;
-			if(!(l_size_hints = XAllocSizeHints())) {
-				MMERROR("Unable to allocate window size hints.");
-				return(false);
-			}
-			l_size_hints->flags = PMinSize|PMaxSize;
-			l_size_hints->min_width = w;
-			l_size_hints->min_height = h;
-			l_size_hints->max_width = w;
-			l_size_hints->max_height = h;
-			XSetWMNormalHints(s_data.display, s_data.window, l_size_hints);
-			XFree(l_size_hints);
-		}
-		XkbSetDetectableAutoRepeat(s_data.display, true, 0);
-
-#ifdef MARSHMALLOW_VIEWPORT_GRAB_INPUT
-		/* take over pointer and keyboard */
-		XWarpPointer(s_data.display, None, s_data.window, 0, 0, 0, 0, 0, 0);
-		XGrabKeyboard(s_data.display, s_data.window, true, GrabModeAsync,
-		    GrabModeAsync, CurrentTime);
-		XGrabPointer(s_data.display, s_data.window, true,
-		    ButtonPressMask, GrabModeAsync, GrabModeAsync,
-		    s_data.window, None, CurrentTime);
-#endif
-
-		XSync(s_data.display, true);
-
-		/* set window title */
-		XTextProperty l_window_name;
-		static uint8_t l_window_title[] = MARSHMALLOW_BUILD_TITLE;
-		l_window_name.value    = l_window_title;
-		l_window_name.encoding = XA_STRING;
-		l_window_name.format   = 8;
-		l_window_name.nitems   = strlen(MARSHMALLOW_BUILD_TITLE);
-		XSetWMName(s_data.display, s_data.window, &l_window_name);
-
-		/* catch window manager delete event */
-		s_data.wm_delete = XInternAtom(s_data.display, "WM_DELETE_WINDOW", false);
-		XSetWMProtocols(s_data.display, s_data.window, &s_data.wm_delete, 1);
-
-		/*** GL ***/
-
-#ifdef MARSHMALLOW_OPENGL_GLES2
-		s_data.egl_display = eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(s_data.display));
-		if (s_data.egl_display == EGL_NO_DISPLAY) {
-			MMERROR("No EGL display was found.");
-			return(false);
-		}
-		
-		if (!eglInitialize(s_data.egl_display, 0, 0)) {
-			MMERROR("EGL initialization failed.");
-			return(false);
-		}
-		
-		EGLint l_attr[] = {
-			EGL_BUFFER_SIZE, d,
-			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-			EGL_NONE, EGL_NONE
-		};
-
-		EGLint l_config_count;
-		EGLConfig l_config;
-		if (!eglChooseConfig(s_data.egl_display, l_attr, &l_config, 1, &l_config_count))
-			MMERROR("No EGL config was chosen. EGLERROR=" << eglGetError());
-
-		s_data.egl_surface = eglCreateWindowSurface(s_data.egl_display, l_config, (EGLNativeWindowType) s_data.window, 0);
-		if (s_data.egl_surface == EGL_NO_SURFACE) {
-			MMERROR("No EGL surface was created. EGLERROR=" << eglGetError());
-			return(false);
-		}
-
-		EGLint l_ctxattr[] = {
-			EGL_CONTEXT_CLIENT_VERSION, 2,
-			EGL_NONE, EGL_NONE
-		};
-		s_data.egl_context = eglCreateContext(s_data.egl_display, l_config, EGL_NO_CONTEXT, l_ctxattr);
-		if (s_data.egl_context == EGL_NO_CONTEXT) {
-			MMERROR("No EGL context was created. EGLERROR=" << eglGetError());
-			return(false);
-		}
-		
-		if (!eglMakeCurrent(s_data.egl_display, s_data.egl_surface, s_data.egl_surface, s_data.egl_context)) {
-			MMERROR("Failed to switch current EGL context. EGLERROR=" << eglGetError());
-			return(false);
-		}
-#else
-		/* create context */
-
-		if (!(s_data.context = glXCreateContext(s_data.display, &l_vinfo, 0, GL_TRUE))) {
-			MMERROR("Failed to create context!");
-			return(false);
-		}
-
-		if (!glXMakeCurrent(s_data.display, s_data.window, s_data.context)) {
-			MMERROR("Failed to make context current!");
-			return(false);
-		}
-
-		if (!glXIsDirect(s_data.display, s_data.context)) {
-			MMERROR("GLX context doesn't support direct rendering.");
-			return(false);
-		}
-
-#if 0
-		/* vsync */
-
-		if (GLEE_GLX_SGI_swap_control)
-			glXSwapIntervalSGI(v ? 1 : 0);
-#endif
-
-#endif
-
-		/* initialize context */
-
-		glViewport(0, 0, w, h);
-
-		if(glGetError() != GL_NO_ERROR) {
-			MMERROR("GLX failed during initialization.");
-			return(false);
-		}
-
-		/* set viewport size */
-
-		s_data.size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
-		s_data.size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
-
-		Viewport::SetCamera(s_data.camera);
-
-		return(s_data.loaded = true);
-	}
-
-	void
-	DestroyWindow(void)
-	{
-		if (s_data.display) {
-#ifdef MARSHMALLOW_OPENGL_GLES2
-			eglMakeCurrent(s_data.egl_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-			eglDestroyContext(s_data.egl_display, s_data.egl_context);
-			eglDestroySurface(s_data.egl_display, s_data.egl_surface);
-			eglTerminate(s_data.egl_display);
-#else
-			glXMakeCurrent(s_data.display, None, 0);
-			if (s_data.context) glXDestroyContext(s_data.display, s_data.context);
-			if (s_data.fullscreen) {
-				XF86VidModeSwitchToMode(s_data.display, s_data.screen, &s_data.dvminfo);
-				XF86VidModeSetViewPort(s_data.display, s_data.screen, 0, 0);
-			}
-#endif
-			if (s_data.window) XDestroyWindow(s_data.display, s_data.window);
-			XCloseDisplay(s_data.display);
-		}
-
-#ifdef MARSHMALLOW_OPENGL_GLES2
-		s_data.egl_context = EGL_NO_CONTEXT;
-		s_data.egl_display = EGL_NO_DISPLAY;
-		s_data.egl_surface = EGL_NO_SURFACE;
-#else
-		s_data.context = 0;
-#endif
-		s_data.display = 0;
-		s_data.loaded = false;
-		s_data.screen = 0;
-		s_data.window = 0;
-		s_data.wm_delete = 0;
+		s_data.loaded = true;
 	}
 
 	void
@@ -442,6 +123,7 @@ namespace
 		                 powf(s_data.scaled_size[1] / 2.f, 2.f);
 	}
 
+#if 0
 	void
 	HandleKeyEvent(XKeyEvent &key)
 	{
@@ -579,6 +261,7 @@ namespace
 			else s_keys_pressed.push_front(l_key);
 		}
 	}
+#endif
 } // namespace
 
 /******************************************************************************/
@@ -586,13 +269,13 @@ namespace
 bool
 Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 {
+	MMUNUSED(w);
+	MMUNUSED(h);
+	MMUNUSED(d);
+	MMUNUSED(f);
+	MMUNUSED(v);
+
 	InitializeViewport();
-
-	if (!CreateWindow(w, h, d, f, v)) {
-		DestroyWindow();
-		return(false);
-	}
-
 	Painter::Initialize();
 	return(true);
 }
@@ -601,24 +284,28 @@ void
 Viewport::Finalize(void)
 {
 	Painter::Finalize();
-	DestroyWindow();
 }
 
 bool
 Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 {
-	DestroyWindow();
-
-	if(!CreateWindow(w, h, d, f, v)) {
-		DestroyWindow();
-		return(false);
-	}
+	/* XXX: TODO */
 	return(true);
 }
 
 void
 Viewport::Tick(void)
 {
+	WPAD_ScanPads();
+
+	u32 pressed = WPAD_ButtonsDown(0);
+
+	if ( pressed & WPAD_BUTTON_HOME ) {
+		Event::QuitEvent l_event(-1);
+		Event::EventManager::Instance()->dispatch(l_event);
+	}
+
+#if 0
 	XEvent e;
 
 	while(XPending(s_data.display)) {
@@ -648,16 +335,13 @@ Viewport::Tick(void)
 		default: MMINFO("Unknown viewport event received."); break;
 		}
 	}
+#endif
 }
 
 void
 Viewport::SwapBuffer(void)
 {
-#ifdef MARSHMALLOW_OPENGL_GLES2
-	eglSwapBuffers(s_data.egl_display, s_data.egl_surface);
-#else
-	glXSwapBuffers(s_data.display, s_data.window);
-#endif
+	VIDEO_WaitVSync();
 	Painter::Reset();
 }
 

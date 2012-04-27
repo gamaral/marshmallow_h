@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "game/pausescenelayer.h"
+#pragma once
 
 /*!
  * @file
@@ -34,58 +34,77 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "math/point2.h"
-#include "math/size2.h"
+#ifndef MARSHMALLOW_GRAPHICS_GX_VERTEXDATA_H
+#define MARSHMALLOW_GRAPHICS_GX_VERTEXDATA_H 1
 
-#include "graphics/painter.h"
-#include "graphics/quadmesh.h"
-#include "graphics/viewport.h"
+#include "graphics/ivertexdata.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+#include "core/global.h"
+#include "core/identifier.h"
 
-struct PauseSceneLayer::Private
+#include <wiiuse/wpad.h>
+#include <gccore.h>
+
+MARSHMALLOW_NAMESPACE_BEGIN
+
+namespace Graphics
 {
-	Graphics::SharedMesh mesh;
-};
 
-PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, IScene &s)
-    : SceneLayerBase(i, s, slfUpdateBlock)
-    , m_p(new Private)
+namespace GX
 {
+
+	/*! @brief Graphics GX Vertex Data Class */
+	class VertexData : public IVertexData
+	{
+		Core::Identifier m_id;
+		float *m_data;
+		uint16_t m_count;
+		uint32_t m_bufferId;
+
+		NO_ASSIGN_COPY(VertexData);
+	public:
+		VertexData(uint16_t count);
+		virtual ~VertexData(void);
+
+		const float * data(void) const
+		    { return(isBuffered() ? 0 : m_data); }
+
+		/* VBO */
+
+		void buffer(void);
+		void unbuffer(void);
+
+		bool isBuffered(void) const
+		    { return(m_bufferId != 0); }
+
+		uint32_t bufferId(void) const
+		    { return(m_bufferId); }
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & id(void) const
+		    { return(m_id); }
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
+
+		VIRTUAL bool get(uint16_t index, float &x, float &y) const;
+		VIRTUAL bool set(uint16_t index, float x, float y);
+
+		VIRTUAL uint16_t count(void) const
+		    { return(m_count); }
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
+	};
+	typedef Core::Shared<VertexData> SharedVertexData;
+	typedef Core::Weak<VertexData> WeakVertexData;
+
 }
 
-PauseSceneLayer::~PauseSceneLayer(void)
-{
-	delete m_p;
-	m_p = 0;
 }
 
-Graphics::SharedMesh
-PauseSceneLayer::mesh(void) const
-{
-	return(m_p->mesh);
-}
+MARSHMALLOW_NAMESPACE_END
 
-void
-PauseSceneLayer::render(void)
-{
-	if (!m_p->mesh) {
-		Graphics::QuadMesh *l_mesh = new Graphics::QuadMesh(Graphics::Viewport::Size());
-		l_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.25f));
-		m_p->mesh = l_mesh;
-	}
-
-	Graphics::Painter::PushMatrix();
-	Graphics::Painter::ProjectionMatrix();
-	Graphics::Painter::Draw(*m_p->mesh, Math::Point2(0,0));
-	Graphics::Painter::PopMatrix();
-}
-
-const Core::Type &
-PauseSceneLayer::Type(void)
-{
-	static const Core::Type s_type("Game::PauseSceneLayer");
-	return(s_type);
-}
-
+#endif

@@ -34,11 +34,13 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cmath>
+#include "math/pair.h"
 
 #include "core/logger.h"
 
 #include "graphics/transform.h"
+
+#include <cmath>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
@@ -152,20 +154,5 @@ Viewport::Type(void)
 {
 	static const Core::Type s_type("DUMMY");
 	return(s_type);
-}
-
-void
-Viewport::LoadIdentity(void)
-{
-}
-
-void
-Viewport::PushMatrix(void)
-{
-}
-
-void
-Viewport::PopMatrix(void)
-{
 }
 

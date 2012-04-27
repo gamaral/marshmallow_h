@@ -6,35 +6,44 @@ set(MARSHMALLOW_GRAPHICS_LIBS marshmallow_core
 	                      marshmallow_event
 	                      marshmallow_math)
 
+if(MARSHMALLOW_VIEWPORT_GRAB_INPUT)
+	add_definitions(-DMARSHMALLOW_VIEWPORT_GRAB_INPUT)
+endif()
+
 if(MARSHMALLOW_VIEWPORT_OPENGL)
 
 	include_directories(${ZLIB_INCLUDE_DIR})
+	include_directories(${PNG_PNG_INCLUDE_DIR})
 
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-	                              opengl/extensions/GLee.c
 	                              opengl/factory.cpp
-	                              opengl/glpng/glpng.c
 	                              opengl/painter.cpp
 	                              opengl/texturecoordinatedata.cpp
 	                              opengl/texturedata.cpp
 	                              opengl/vertexdata.cpp)
 
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
-	                              ${PNG_LIBRARIES}
-	                              ${OPENGL_gl_LIBRARY})
+	                              ${PNG_LIBRARIES})
 
-	# GLee requirement
-	if(APPLE)
-        	FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
+	if(MARSHMALLOW_OPENGL_GLES2)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
-		                              ${COREFOUNDATION_LIBRARY})
+		                              ${EGL_LIBRARY}
+		                              ${GLES2_LIBRARY})
+		add_definitions(-DMARSHMALLOW_OPENGL_GLES2)
+	else()
+		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
+		                              ${OPENGL_gl_LIBRARY})
 	endif()
 
 	if(MARSHMALLOW_OPENGL_GLX)
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-glx.cpp)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
-		                              ${X11_LIBRARIES} Xxf86vm)
+		                              ${X11_X11_LIB})
+		if(NOT MARSHMALLOW_OPENGL_GLES2)
+			set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
+			                              Xxf86vm)
+		endif()
 	elseif(MARSHMALLOW_OPENGL_WGL)
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-wgl.cpp)
@@ -54,32 +63,32 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 		message(WARNING "No OpenGL viewport selected!")
 	endif()
 
-	if(MARSHMALLOW_OPENGL_GLES)
-		add_definitions(-DMARSHMALLOW_OPENGL_GLES)
-	endif()
-
 	add_definitions(-DMARSHMALLOW_VIEWPORT_OPENGL)
 
-elseif(MARSHMALLOW_VIEWPORT_SDL)
-
-	include_directories(${SDL_INCLUDE_DIR})
+elseif(MARSHMALLOW_VIEWPORT_GX)
 
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-		sdl/factory.cpp
-		sdl/painter.cpp
-		sdl/texturecoordinatedata.cpp
-		sdl/texturedata.cpp
-		sdl/vertexdata.cpp
-		sdl/viewport.cpp)
+	                              gx/factory.cpp
+	                              gx/painter.cpp
+	                              gx/texturecoordinatedata.cpp
+	                              gx/texturedata.cpp
+	                              gx/vertexdata.cpp
+	                              gx/viewport.cpp)
+
+	find_library(BTE_LIBRARY
+	    NAMES bte
+	    PATHS ${DEVKITPRO}/libogc/lib/wii
+	)
+	find_library(WIIUSE_LIBRARY
+	    NAMES wiiuse
+	    PATHS ${DEVKITPRO}/libogc/lib/wii
+	)
 
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
-	                              ${SDL_LIBRARY})
+	                              ${WIIUSE_LIBRARY}
+	                              ${BTE_LIBRARY})
 
-	if(SDLIMAGE_FOUND)
-		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
-	                                      ${SDLIMAGE_LIBRARY})
-		add_definitions(-DWITH_SDL_IMAGE)
-	endif()
+	add_definitions(-DMARSHMALLOW_VIEWPORT_GX)
 
 elseif(MARSHMALLOW_VIEWPORT_DUMMY)
 	message(WARNING "You currently only have MARSHMALLOW_VIEWPORT_DUMMY enabled!\n"

@@ -37,7 +37,6 @@
 #include "core/logger.h"
 
 #include <zlib.h>
-#include <zutil.h>
 
 MARSHMALLOW_NAMESPACE_USE
 
@@ -91,7 +90,7 @@ Core::Gzip::Deflate(const char *in, size_t in_size, char **out, int l)
 	l_stream.zfree  = static_cast<free_func>(0);
 	l_stream.opaque = static_cast<voidpf>(0);
 
-	if (deflateInit2(&l_stream, l, Z_DEFLATED, 16, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY) != Z_OK) {
+	if (deflateInit2(&l_stream, l, Z_DEFLATED, 16, 8, Z_DEFAULT_STRATEGY) != Z_OK) {
 		MMWARNING("Failed to initialize deflate.");
 		return(0);
 	}

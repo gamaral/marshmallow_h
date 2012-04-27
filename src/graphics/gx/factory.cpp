@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "graphics/factory.h"
 
 /*!
  * @file
@@ -34,68 +34,30 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_GRAPHICS_SDL_VERTEXDATA_H
-#define MARSHMALLOW_GRAPHICS_SDL_VERTEXDATA_H 1
+#include "core/shared.h"
 
-#include "graphics/ivertexdata.h"
+#include "texturecoordinatedata.h"
+#include "texturedata.h"
+#include "vertexdata.h"
 
-#include "core/global.h"
-#include "core/identifier.h"
+MARSHMALLOW_NAMESPACE_USE
+using namespace Graphics;
 
-struct SDL_Rect;
-
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Math
+SharedTextureCoordinateData
+Factory::CreateTextureCoordinateData(uint16_t c)
 {
-	class Point2;
+	return(new GX::TextureCoordinateData(c));
 }
 
-namespace Graphics
+SharedTextureData
+Factory::CreateTextureData(void)
 {
-
-namespace SDL
-{
-
-	/*! @brief Graphics SDL Vertex Data Class */
-	class VertexData : public IVertexData
-	{
-		Core::Identifier m_id;
-		float   *m_data;
-		uint16_t m_count;
-
-		NO_ASSIGN_COPY(VertexData);
-	public:
-		VertexData(uint16_t count);
-		virtual ~VertexData(void);
-
-		bool asRect(const Math::Point2 &translation, SDL_Rect &rect) const;
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Identifier & id(void) const
-		    { return(m_id); }
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type()); }
-
-		VIRTUAL bool get(uint16_t index, float &x, float &y) const;
-		VIRTUAL bool set(uint16_t index, float x, float y);
-
-		VIRTUAL uint16_t count(void) const
-		    { return(m_count); }
-
-	public: /* static */
-
-		static const Core::Type & Type(void);
-	};
-	typedef Core::Shared<VertexData> SharedVertexData;
-	typedef Core::Weak<VertexData> WeakVertexData;
-
+	return(new GX::TextureData());
 }
 
+SharedVertexData
+Factory::CreateVertexData(uint16_t c)
+{
+	return(new GX::VertexData(c));
 }
 
-MARSHMALLOW_NAMESPACE_END
-
-#endif

@@ -5,14 +5,20 @@ endif()
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${DEBUG_FLAGS}")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${DEBUG_FLAGS}")
 
+################################################################## DEFINITIONS #
+
+if(MARSHMALLOW_WII)
+	add_definitions(-DMARSHMALLOW_WII)
+endif()
+
+if(BUILD_SHARED_LIBS)
+	add_definitions(-DMARSHMALLOW_SHARED)
+endif()
+
 ##################################################################### INCLUDES #
 
 include_directories(${PROJECT_BINARY_DIR}/src
                     ${PROJECT_SOURCE_DIR}/src)
-
-if (WIN32 AND BUILD_SHARED_LIBS)
-    add_definitions(-DMARSHMALLOW_DLL)
-endif()
 
 ############################################################## SUB DIRECTORIES #
 

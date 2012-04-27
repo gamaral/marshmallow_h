@@ -48,11 +48,11 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
 ####################################################################### GLOBAL #
 
-if (BUILD_UNIT_TESTS)
+if(BUILD_UNIT_TESTS)
 	enable_testing()
-endif (BUILD_UNIT_TESTS)
+endif(BUILD_UNIT_TESTS)
 
-if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 	set(CMAKE_CXX_FLAGS "-fno-rtti -fno-exceptions ${CMAKE_CXX_FLAGS}")
 endif()
@@ -73,18 +73,21 @@ set(MARSHMALLOW_VIEWPORT_DEPTH   "24"     CACHE STRING "Viewport default depth")
 
 option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode" OFF)
 option(MARSHMALLOW_VIEWPORT_VSYNC      "Viewport default vsync mode"      ON)
+option(MARSHMALLOW_VIEWPORT_GRAB_INPUT "Takeover viewport input devices" OFF)
+
 
 option(MARSHMALLOW_VIEWPORT_DUMMY  "Use Dummy Viewport (testing)" ON)
 option(MARSHMALLOW_VIEWPORT_OPENGL "Use OpenGL Viewport"          OFF)
-option(MARSHMALLOW_VIEWPORT_SDL    "Use SDL Viewport"             OFF)
+option(MARSHMALLOW_VIEWPORT_GX     "Use GX Viewport (wii)"        OFF)
 
 option(MARSHMALLOW_DUMMY_FAIL "Make dummy viewport fail initialization" OFF)
 
-option(MARSHMALLOW_OPENGL_WGL  "Use OpenGL WGL Viewport (windows)" OFF)
-option(MARSHMALLOW_OPENGL_GLX  "Use OpenGL GLX Viewport (unix)"    OFF)
-option(MARSHMALLOW_OPENGL_SDL  "Use OpenGL SDL Viewport (sdl)"     OFF)
-option(MARSHMALLOW_OPENGL_QT4  "Use OpenGL Qt4 Viewport (qt4)"     OFF)
-option(MARSHMALLOW_OPENGL_GLES "Use OpenGL ES (gles)"              OFF)
+option(MARSHMALLOW_OPENGL_WGL "Use OpenGL WGL Viewport (windows)" OFF)
+option(MARSHMALLOW_OPENGL_GLX "Use OpenGL GLX Viewport (unix)"    OFF)
+option(MARSHMALLOW_OPENGL_SDL "Use OpenGL SDL Viewport (sdl)"     OFF)
+option(MARSHMALLOW_OPENGL_QT4 "Use OpenGL Qt4 Viewport (qt4)"     OFF)
+
+option(MARSHMALLOW_OPENGL_GLES2 "Use EGL + OpenGL ES 2.0 (requires GLX)" OFF)
 
 option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG" ON)
 option(MARSHMALLOW_CONTRIB_LUA    "Use bundled LUA"    ON)
@@ -134,49 +137,29 @@ endif()
 ##################################################################### VIEWPORT #
 
 if(MARSHMALLOW_VIEWPORT_OPENGL)
-	if(MARSHMALLOW_OPENGL_GLX)
-		find_package(X11)
-
-		if(APPLE)
-			set(OPENGL_FOUND 1)
-			include_directories(/usr/X11R6/include)
-			link_directories(/usr/X11R6/lib)
-			set(OPENGL_LIBRARIES GL X11 GLU glut)
-			message(STATUS "X11 GLX on Mac OSX... living on the edge.")
-		else()
-			find_package(OpenGL)
-		endif()
-
-		if(NOT OPENGL_FOUND)
-			message(FATAL_ERROR "GLX viewport: OpenGL was not found.")
-		elseif(NOT X11_FOUND)
-			message(FATAL_ERROR "GLX viewport: X11 was not found.")
-		endif()
-
-		include_directories(${X11_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR})
-	elseif(MARSHMALLOW_OPENGL_WGL)
+	if(MARSHMALLOW_OPENGL_GLES2)
+		find_package(EGL)
+		find_package(GLES2)
+		include_directories(${EGL_INCLUDE_DIR}
+		                    ${GLES2_INCLUDE_DIR})
+	else()
 		find_package(OpenGL)
 		include_directories(${OPENGL_INCLUDE_DIR})
+	endif()
+
+
+	if(MARSHMALLOW_OPENGL_GLX)
+		find_package(X11)
+		include_directories(${X11_INCLUDE_DIR})
 	elseif(MARSHMALLOW_OPENGL_SDL)
-		find_package(OpenGL)
 		find_package(SDL)
 	elseif(MARSHMALLOW_OPENGL_QT4)
-		find_package(OpenGL)
 		find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
 		include(${QT_USE_FILE})
 	endif()
 
-	if(!OPENGL_FOUND AND !GLES_FOUND)
-		message(FATAL_ERROR "OpenGL was not found and *is* very much a requirement.")
-	endif()
-elseif(MARSHMALLOW_VIEWPORT_SDL)
-	find_package(SDL)
-	find_package(SDL_image)
-
-	if(!SDL_FOUND)
-		message(FATAL_ERROR "SDL was not found and *is* very much a requirement.")
-	elseif(!SDLIMAGE_FOUND)
-		message(WARNING "SDL image was not found, only BMP files will be loaded successfully.")
+	if(NOT OPENGL_FOUND)
+		message(FATAL_ERROR "OpenGL was not found and *is* very much a requirement for the viewport selected.")
 	endif()
 endif()
 

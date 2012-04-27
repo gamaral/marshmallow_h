@@ -9,6 +9,10 @@ if (BUILD_SHARED_LIBS)
     add_definitions(-DZLIB_DLL)
 endif()
 
+if (MARSHMALLOW_WII)
+	include_directories(wii)
+endif()
+
 check_include_file(sys/types.h HAVE_SYS_TYPES_H)
 check_include_file(stdint.h    HAVE_STDINT_H)
 check_include_file(stddef.h    HAVE_STDDEF_H)

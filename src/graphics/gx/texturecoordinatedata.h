@@ -34,40 +34,51 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_GRAPHICS_SDL_TEXTUREDATA_H
-#define MARSHMALLOW_GRAPHICS_SDL_TEXTUREDATA_H 1
+#ifndef MARSHMALLOW_GRAPHICS_GX_TEXTURECOORDINATEDATA_H
+#define MARSHMALLOW_GRAPHICS_GX_TEXTURECOORDINATEDATA_H 1
 
-#include "graphics/itexturedata.h"
+#include "graphics/itexturecoordinatedata.h"
 
+#include "core/global.h"
 #include "core/identifier.h"
 
-#include "math/size2.h"
-
-struct SDL_Surface;
+#include <wiiuse/wpad.h>
+#include <gccore.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
 {
 
-namespace SDL
+namespace GX
 {
 
-	/*! @brief Graphic SDL Texture Data Class */
-	class TextureData : public ITextureData
+	/*! @brief Graphics GX Texture Coordinate Data Class */
+	class TextureCoordinateData : public ITextureCoordinateData
 	{
 		Core::Identifier m_id;
-		Math::Size2i m_size;
-		SDL_Surface *m_surface;
+		float *m_data;
+		uint16_t m_count;
+		uint32_t m_bufferId;
 
-		NO_ASSIGN_COPY(TextureData);
+		NO_ASSIGN_COPY(TextureCoordinateData);
 	public:
+		TextureCoordinateData(uint16_t count);
+		virtual ~TextureCoordinateData(void);
 
-		TextureData(void);
-		virtual ~TextureData(void);
+		const float * data(void) const
+		    { return(isBuffered() ? 0 : m_data); }
 
-		SDL_Surface *surface(void) const
-		    { return(m_surface); }
+		/* VBO */
+
+		void buffer(void);
+		void unbuffer(void);
+
+		bool isBuffered(void) const
+		    { return(m_bufferId != 0); }
+
+		uint32_t bufferId(void) const
+		    { return(m_bufferId); }
 
 	public: /* virtual */
 
@@ -77,21 +88,18 @@ namespace SDL
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
 
-		VIRTUAL bool load(const Core::Identifier &id);
-		VIRTUAL void unload(void);
+		VIRTUAL bool get(uint16_t index, float &u, float &v) const;
+		VIRTUAL bool set(uint16_t index, float u, float v);
 
-		VIRTUAL bool isLoaded(void) const
-		    { return(m_surface != 0); }
-
-		VIRTUAL const Math::Size2i & size(void) const
-		    { return(m_size); }
+		VIRTUAL uint16_t count(void) const
+		    { return(m_count); }
 
 	public: /* static */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<TextureData> SharedTextureData;
-	typedef Core::Weak<TextureData> WeakTextureData;
+	typedef Core::Shared<TextureCoordinateData> SharedTextureCoordinateData;
+	typedef Core::Weak<TextureCoordinateData> WeakTextureCoordinateData;
 
 }
 

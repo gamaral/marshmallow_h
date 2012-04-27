@@ -43,6 +43,7 @@
 #include "event/renderevent.h"
 #include "event/updateevent.h"
 
+#include "graphics/painter.h"
 #include "graphics/viewport.h"
 
 #include "game/factory.h"
@@ -379,6 +380,8 @@ EngineBase::second(void)
 void
 EngineBase::render(void)
 {
+	Graphics::Painter::Render();
+
 	Event::RenderEvent event;
 	eventManager()->dispatch(event);
 

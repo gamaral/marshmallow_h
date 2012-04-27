@@ -53,13 +53,17 @@
 #include <stack>
 
 MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics::OpenGL;
+using namespace Graphics::GX;
 using namespace Graphics;
 
 /******************************************************************************/
 
 namespace
 {
+	Math::Matrix4 s_matrix_current;
+	std::stack<Math::Matrix4> s_matrix_stack;
+
+#if 0
 	static const char s_vertex_shader[] =
 	  "attribute vec2 a_texCoord;\n"
 	  "attribute vec4 a_position;\n"
@@ -89,7 +93,7 @@ namespace
 	     "  gl_FragColor = texture2D(s_texture, v_texCoord) * u_color;"
 	  "}\n";
 
-	GLuint s_program_object;
+	uint32_t s_program_object;
 
 	GLint s_location_color;
 	GLint s_location_matrix;
@@ -100,9 +104,6 @@ namespace
 	GLint s_location_usecolor;
 
 	static Core::Identifier s_last_texture_id;
-
-	Math::Matrix4 s_matrix_current;
-	std::stack<Math::Matrix4> s_matrix_stack;
 
 	GLuint
 	loadShader(GLenum type, const char *src)
@@ -186,15 +187,15 @@ namespace
 	void
 	DrawQuadMesh(const QuadMesh &g)
 	{
-		OpenGL::SharedVertexData l_vdata =
+		GX::SharedVertexData l_vdata =
 			g.vertexData()
-			    .staticCast<OpenGL::VertexData>();
+			    .staticCast<GX::VertexData>();
 
 		if (!l_vdata) return;
 
-		OpenGL::SharedTextureCoordinateData l_tcdata =
+		GX::SharedTextureCoordinateData l_tcdata =
 			g.textureCoordinateData()
-			    .staticCast<OpenGL::TextureCoordinateData>();
+			    .staticCast<GX::TextureCoordinateData>();
 
 		/* ** vertex ** */
 
@@ -232,6 +233,7 @@ namespace
 		if (l_tcdata) glDisableVertexAttribArray(s_location_texcoord);
 		glDisableVertexAttribArray(s_location_position);
 	}
+#endif
 } // namespace
 
 /******************************************************************************/
@@ -239,6 +241,7 @@ namespace
 void
 Painter::Initialize(void)
 {
+#if 0
 	if ((s_program_object = loadProgram()) == 0)
 		MMFATAL("Failed to load primary shaders");
 
@@ -263,6 +266,7 @@ Painter::Initialize(void)
 	Reset();
 
 	Viewport::SwapBuffer();
+#endif
 }
 
 void
@@ -273,12 +277,15 @@ Painter::Finalize(void)
 void
 Painter::Render(void)
 {
+#if 0
 	glUniformMatrix4fv(s_location_matrix, 1, GL_FALSE, s_matrix_current.data());
+#endif
 }
 
 void
 Painter::Reset(void)
 {
+#if 0
 	glClearColor(.0f, .0f, .0f, .0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	ProjectionMatrix();
@@ -287,6 +294,7 @@ Painter::Reset(void)
 	l_view[12] *= -1.f;
 	l_view[13] *= -1.f;
 	s_matrix_current *= l_view;
+#endif
 }
 
 Math::Matrix4 &
@@ -332,6 +340,7 @@ Painter::PopMatrix(void)
 void
 Painter::Draw(const IMesh &m, const Math::Point2 &o)
 {
+#if 0
 	float l_scale[2];
 	m.scale(l_scale[0], l_scale[1]);
 
@@ -355,9 +364,9 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 	if (s_last_texture_id != m.textureData()->id()) {
 		s_last_texture_id = m.textureData()->id();
 		if (m.textureData()->isLoaded()) {
-			OpenGL::SharedTextureData l_data =
+			GX::SharedTextureData l_data =
 				m.textureData()
-				    .staticCast<OpenGL::TextureData>();
+				    .staticCast<GX::TextureData>();
 			glBindTexture(GL_TEXTURE_2D, l_data->textureId());
 			glUniform1i(s_location_usecolor, 0);
 		}
@@ -373,5 +382,6 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 	else MMWARNING("Unknown mesh type");
 
 	glDisable(GL_BLEND);
+#endif
 }
 

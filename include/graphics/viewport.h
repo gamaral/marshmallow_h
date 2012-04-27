@@ -96,15 +96,6 @@ namespace Graphics
 
 		MARSHMALLOW_GRAPHICS_EXPORT
 		const Math::Size2i & WindowSize(void);
-
-		MARSHMALLOW_GRAPHICS_EXPORT
-		void LoadIdentity(void);
-
-		MARSHMALLOW_GRAPHICS_EXPORT
-		void PushMatrix(void);
-
-		MARSHMALLOW_GRAPHICS_EXPORT
-		void PopMatrix(void);
 	}
 }
 

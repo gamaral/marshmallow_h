@@ -12,6 +12,9 @@
   </data>
  </layer>
  <layer name="clouds" width="80" height="20" opacity="0.75">
+  <properties>
+   <property name="scale" value="2"/>
+  </properties>
   <data encoding="base64" compression="zlib">
    eJztV0kSwzAI43tt+oEu+f83wiUXz5CIWNjQVjPcXLFIuM4iIg/5DTw1XhpvjY/G2sF107gTuHaeRWJ1GJUHxa5FC2+dXk2vzoHpHQ+i5+GFxc/yF8qDnpulmxesOlGe7HPJdl9VQ6S+M7TJ7gdPfb3aWLmOasi+7xH1WfOwckXpUhWjPYPmY8yZ/c6ohLM5Iz1XfWe0vUXUE93zTE+2vVXEKE9+492BwNM3482C5GOdYf7OgsefDC8jHKwzV/P/URveHYm4O3s5M/3vnu1IxE71cmb8vtoAMlBm9A==
   </data>

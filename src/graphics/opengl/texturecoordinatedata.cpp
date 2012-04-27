@@ -62,9 +62,6 @@ TextureCoordinateData::~TextureCoordinateData(void)
 void
 TextureCoordinateData::buffer(void)
 {
-	if (!GLEE_ARB_vertex_buffer_object)
-		return;
-
 	if (!isBuffered())
 		glGenBuffers(1, &m_bufferId);
 
@@ -78,7 +75,7 @@ TextureCoordinateData::buffer(void)
 void
 TextureCoordinateData::unbuffer(void)
 {
-	if (!GLEE_ARB_vertex_buffer_object || !isBuffered())
+	if (!isBuffered())
 		return;
 
 	MMVERBOSE("Unbuffered data. ID: " << m_bufferId << ".");

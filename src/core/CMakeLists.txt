@@ -11,7 +11,14 @@ include_directories(${ZLIB_INCLUDE_DIR})
 set(MARSHMALLOW_CORE_LIBS ${MARSHMALLOW_CORE_LIBS} ${ZLIB_LIBRARIES})
 
 # platform specific implementations
-if(UNIX)
+if(MARSHMALLOW_WII)
+	find_library(OGC_LIBRARY
+	    NAMES ogc
+	    PATHS ${DEVKITPRO}/libogc/lib/wii
+	)
+	set(MARSHMALLOW_CORE_SRCS ${MARSHMALLOW_CORE_SRCS} wii/platform.cpp)
+	set(MARSHMALLOW_CORE_LIBS ${MARSHMALLOW_CORE_LIBS} ${OGC_LIBRARY})
+elseif(UNIX)
 	set(MARSHMALLOW_CORE_SRCS ${MARSHMALLOW_CORE_SRCS} unix/platform.cpp)
 elseif(WIN32)
 	set(MARSHMALLOW_CORE_SRCS ${MARSHMALLOW_CORE_SRCS} win32/platform.cpp)

@@ -28,6 +28,8 @@
 
 #include <core/logger.h>
 
+#include <math/pair.h>
+
 #include <graphics/transform.h>
 #include <graphics/viewport.h>
 
@@ -51,7 +53,7 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(60, 60, MARSHMALLOW_BUSYWAIT)
+	: EngineBase(30, 60, MARSHMALLOW_BUSYWAIT)
 	{
 	}
 

@@ -37,12 +37,22 @@
 #include "core/type.h"
 #include "core/logger.h"
 
+#include "math/matrix4.h"
 #include "math/point2.h"
 
 #include "graphics/imesh.h"
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
+
+/******************************************************************************/
+
+namespace
+{
+	Math::Matrix4 s_matrix_current;
+} // namespace
+
+/******************************************************************************/
 
 void
 Painter::Initialize(void)
@@ -51,6 +61,43 @@ Painter::Initialize(void)
 
 void
 Painter::Finalize(void)
+{
+}
+
+void
+Painter::Render(void)
+{
+}
+
+void
+Painter::Reset(void)
+{
+}
+
+Math::Matrix4 &
+Painter::Matrix(void)
+{
+	return(s_matrix_current);
+}
+
+void
+Painter::LoadIdentity(void)
+{
+	s_matrix_current = Math::Matrix4::Identity();
+}
+
+void
+Painter::ProjectionMatrix(void)
+{
+}
+
+void
+Painter::PushMatrix(void)
+{
+}
+
+void
+Painter::PopMatrix(void)
 {
 }
 

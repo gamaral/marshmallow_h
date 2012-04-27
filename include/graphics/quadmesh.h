@@ -40,6 +40,7 @@
 #include <graphics/meshbase.h>
 
 #include <math/rect2.h>
+#include <math/size2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
@@ -57,7 +58,8 @@ namespace Graphics
 		         const Math::Vector2 &bl,
 		         const Math::Vector2 &br,
 		         const Math::Vector2 &tr);
-		QuadMesh(const Math::Rect2 &rect);
+		QuadMesh(const Math::Rect2  &rect);
+		QuadMesh(const Math::Size2f &size);
 		QuadMesh(float width, float height);
 		QuadMesh(void);
 		QuadMesh(SharedTextureCoordinateData tc, SharedTextureData t, SharedVertexData v);

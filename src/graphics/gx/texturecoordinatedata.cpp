@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "vertexdata.h"
+#include "texturecoordinatedata.h"
 
 /*!
  * @file
@@ -34,77 +34,91 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/logger.h"
-
-#include "graphics/viewport.h"
-
-#include <SDL_video.h>
-
 #include <cstring>
+
+#include "core/logger.h"
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
-using namespace SDL;
+using namespace GX;
 
-VertexData::VertexData(uint16_t c)
+TextureCoordinateData::TextureCoordinateData(uint16_t c)
 #define AXES 2
     : m_id()
     , m_data(new float[c * AXES]) // TODO: replace with custom allocator
     , m_count(c)
+    , m_bufferId(0)
 {
 	memset(m_data, 0, m_count * AXES);
+	buffer();
 }
 
-VertexData::~VertexData(void)
+TextureCoordinateData::~TextureCoordinateData(void)
 {
+	unbuffer();
 	delete[] m_data;
 }
 
-bool
-VertexData::asRect(const Math::Point2 &t, SDL_Rect &r) const
+void
+TextureCoordinateData::buffer(void)
 {
-	if (m_count != 4 /* has four sides */) {
-		MMWARNING("Can't convert to rect, object has more than 4 sides.");
-		return(false);
+#if 0
+	if (!isBuffered())
+		glGenBuffers(1, &m_bufferId);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_bufferId);
+	glBufferData(GL_ARRAY_BUFFER, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
+	MMVERBOSE("Buffered data. ID: " << m_bufferId << ".");
+}
+
+void
+TextureCoordinateData::unbuffer(void)
+{
+	if (!isBuffered())
+		return;
+
+	MMVERBOSE("Unbuffered data. ID: " << m_bufferId << ".");
+
+#if 0
+	glDeleteBuffers(1, &m_bufferId);
+	m_bufferId = 0;
+#endif
+}
+
+bool
+TextureCoordinateData::get(uint16_t i, float &u, float &v) const
+{
+	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
+	u = m_data[l_offset];
+	v = m_data[l_offset + 1];
+	return(true);
+}
+
+bool
+TextureCoordinateData::set(uint16_t i, float u, float v)
+{
+	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
+	m_data[l_offset] = u;
+	m_data[l_offset + 1] = v;
+
+#if 0
+	/* update vbo object */
+	if (isBuffered()) {
+		glBindBuffer(GL_ARRAY_BUFFER, m_bufferId);
+		glBufferSubData(GL_ARRAY_BUFFER, l_offset * sizeof(GLfloat), AXES * sizeof(GLfloat), &m_data[l_offset]);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
+#endif
 
-	const Math::Size2f &l_vsize = Viewport::Size();
-	const Math::Size2i &l_wsize = Viewport::WindowSize();
-	const Math::Size2f l_hvsize = l_vsize / 2.f;
-
-	const float l_ratio_x =  static_cast<float>(l_wsize.width())  / l_vsize.width();
-	const float l_ratio_y = -static_cast<float>(l_wsize.height()) / l_vsize.height();
-
-	r.x = Sint16(( t.x() + m_data[0] + l_hvsize.width())  * l_ratio_x);
-	r.y = Sint16(( t.y() + m_data[1] - l_hvsize.height()) * l_ratio_y);
-	r.w = Uint16((m_data[6] - m_data[0]) * l_ratio_x);
-	r.h = Uint16((m_data[1] - m_data[7]) * l_ratio_y);
-
-	return(true);
-}
-
-bool
-VertexData::get(uint16_t i, float &x, float &y) const
-{
-	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
-	x = m_data[l_offset];
-	y = m_data[l_offset + 1];
-	return(true);
-}
-
-bool
-VertexData::set(uint16_t i, float x, float y)
-{
-	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
-	m_data[l_offset] = x;
-	m_data[l_offset + 1] = y;
 	return(true);
 }
 
 const Core::Type &
-VertexData::Type(void)
+TextureCoordinateData::Type(void)
 {
-	static const Core::Type sType("Graphics::SDL::VertexData");
+	static const Core::Type sType("Graphics::GX::TextureCoordinateData");
 	return(sType);
 }
 

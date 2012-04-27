@@ -37,9 +37,7 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 
-#include "headers.h"
-
-#include <png.h>
+#include <gccore.h>
 
 #include <cstdlib>
 
@@ -58,6 +56,7 @@ struct Texture
 bool
 LoadTexturePNG(const std::string &filename, Texture &data)
 {
+#if 0
 	FILE *png_file;
 	if ((png_file = fopen(filename.c_str(), "rb")) == 0)
 		return(false);
@@ -118,7 +117,7 @@ LoadTexturePNG(const std::string &filename, Texture &data)
 
 	png_destroy_read_struct(&png_ptr, &info_ptr, 0);
 	fclose(png_file);
-
+#endif
 	return(true);
 }
 
@@ -136,7 +135,7 @@ UnloadTexture(Texture &data)
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
-using namespace OpenGL;
+using namespace GX;
 
 TextureData::TextureData(void)
     : m_id(),
@@ -153,6 +152,7 @@ TextureData::~TextureData(void)
 bool
 TextureData::load(const Core::Identifier &i)
 {
+#if 0
 	if (m_texture_id) {
 		MMERROR("Load texture asset called on active texture.");
 		return(false);
@@ -189,6 +189,7 @@ TextureData::load(const Core::Identifier &i)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	m_id = i;
+#endif
 
 	MMINFO("Texture loaded.");
 
@@ -198,8 +199,10 @@ TextureData::load(const Core::Identifier &i)
 void
 TextureData::unload(void)
 {
+#if 0
 	if (m_texture_id)
 		glDeleteTextures(1, &m_texture_id);
+#endif
 
 	m_size = Math::Size2i();
 	m_texture_id = 0;
@@ -210,7 +213,7 @@ TextureData::unload(void)
 const Core::Type &
 TextureData::Type(void)
 {
-	static const Core::Type sType("Graphics::OpenGL::TextureData");
+	static const Core::Type sType("Graphics::GX::TextureData");
 	return(sType);
 }
 

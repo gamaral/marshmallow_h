@@ -28,6 +28,8 @@
 
 #include <core/logger.h>
 
+#include <math/pair.h>
+
 #include <graphics/factory.h>
 #include <graphics/transform.h>
 #include <graphics/viewport.h>
@@ -37,9 +39,10 @@
 #include <game/scenemanager.h>
 #include <game/tilemapscenelayer.h>
 
+#include <cmath>
 #include <cstdlib>
 
-#define TIMEOUT 16
+#define TIMEOUT 30
 
 MARSHMALLOW_NAMESPACE_USE
 
@@ -121,7 +124,7 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(60, 60, MARSHMALLOW_BUSYWAIT)
+	: EngineBase(10, 10, MARSHMALLOW_BUSYWAIT)
 	, m_stop_timer(0)
 	{
 	}
@@ -147,7 +150,7 @@ public:
 			stop();
 
 		Graphics::Transform l_camera = Graphics::Viewport::Camera();
-		l_camera.setScale(Math::Pair(0.125 + m_stop_timer / 8.f, 0.125 + m_stop_timer / 8.f));
+		l_camera.setScale(Math::Pair(1.5 + cosf(m_stop_timer), 1.5 + cosf(m_stop_timer)));
 		l_camera.setRotation((25 * m_stop_timer) % 360);
 		Graphics::Viewport::SetCamera(l_camera);
 	}

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "texturedata.h"
+#include "vertexdata.h"
 
 /*!
  * @file
@@ -34,80 +34,92 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/identifier.h"
-#include "core/logger.h"
+#include <cstring>
 
-#ifdef WITH_SDL_IMAGE
-#  include <SDL_image.h>
-#else
-#  include <SDL_video.h>
-#endif
+#include "core/logger.h"
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
-using namespace SDL;
+using namespace GX;
 
-TextureData::TextureData(void)
-    : m_id(),
-      m_size(),
-      m_surface(0)
+VertexData::VertexData(uint16_t c)
+#define AXES 2
+    : m_id()
+    , m_data(new float[c * AXES]) // TODO: replace with custom allocator
+    , m_count(c)
+    , m_bufferId(0)
 {
+	memset(m_data, 0, m_count * AXES);
+	buffer();
 }
 
-TextureData::~TextureData(void)
+VertexData::~VertexData(void)
 {
-	unload();
+	unbuffer();
+	delete[] m_data;
+}
+
+void
+VertexData::buffer(void)
+{
+#if 0
+	if (!isBuffered())
+		glGenBuffers(1, &m_bufferId);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_bufferId);
+	glBufferData(GL_ARRAY_BUFFER, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
+
+	MMVERBOSE("Buffered data. ID: " << m_bufferId << ".");
+}
+
+void
+VertexData::unbuffer(void)
+{
+	if (!isBuffered())
+		return;
+
+	MMVERBOSE("Unbuffered data. ID: " << m_bufferId << ".");
+
+#if 0
+	glDeleteBuffers(1, &m_bufferId);
+#endif
+	m_bufferId = 0;
 }
 
 bool
-TextureData::load(const Core::Identifier &i)
+VertexData::get(uint16_t i, float &x, float &y) const
 {
-	if (m_surface) {
-		MMERROR("Load texture asset called on active texture.");
-		return(false);
+	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
+	x = m_data[l_offset];
+	y = m_data[l_offset + 1];
+	return(true);
+}
+
+bool
+VertexData::set(uint16_t i, float x, float y)
+{
+	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
+	m_data[l_offset] = x;
+	m_data[l_offset + 1] = y;
+
+#if 0
+	/* update vbo object */
+	if (isBuffered()) {
+		glBindBuffer(GL_ARRAY_BUFFER, m_bufferId);
+		glBufferSubData(GL_ARRAY_BUFFER, l_offset * sizeof(GLfloat), AXES * sizeof(GLfloat), &m_data[l_offset]);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
-
-	SDL_Surface *l_surface = 0;
-#ifdef WITH_SDL_IMAGE
-	if((l_surface = IMG_Load(i)) == 0)
-#else
-	if((l_surface = SDL_LoadBMP(i)) == 0)
 #endif
-	{
-		MMERROR("Failed to load texture (" << i.str() << ").");
-		return(false);
-	}
-
-#ifdef WITH_SDL_IMAGE
-	m_surface = SDL_DisplayFormatAlpha(l_surface);
-#else
-	m_surface = SDL_DisplayFormat(l_surface);
-#endif
-	SDL_FreeSurface(l_surface);
-
-	m_size = Math::Size2i(m_surface->w, m_surface->h);
-
-	MMINFO("Texture loaded.");
 
 	return(true);
 }
 
-void
-TextureData::unload(void)
-{
-	if (m_surface)
-		SDL_FreeSurface(m_surface);
-
-	m_size = Math::Size2i::Zero();
-	m_surface = 0;
-
-	MMINFO("Texture unloaded.");
-}
-
 const Core::Type &
-TextureData::Type(void)
+VertexData::Type(void)
 {
-	static const Core::Type sType("Graphics::SDL::TextureData");
+	static const Core::Type sType("Graphics::GX::VertexData");
 	return(sType);
 }
 
