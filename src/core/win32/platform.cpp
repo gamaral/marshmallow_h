@@ -60,7 +60,7 @@ Platform::Finalize(void)
 }
 
 void
-Platform::Sleep(TIME t)
+Platform::Sleep(MMTIME t)
 {
 	if (t > 0) SleepEx(static_cast<DWORD>(t), true);
 }
@@ -71,19 +71,19 @@ Platform::StartTime(void)
 	return(s_start_time);
 }
 
-TIME
+MMTIME
 Platform::TimeStamp(void)
 {
-	FILETIME        l_ft;
+	FILEMMTIME        l_ft;
 	LARGE_INTEGER   l_li;
 	INT64           l_micro_seconds;
-	TIME            l_mseconds;
+	MMTIME            l_mseconds;
 
 	GetSystemTimeAsFileTime(&l_ft);
 	l_li.LowPart  = l_ft.dwLowDateTime;
 	l_li.HighPart = l_ft.dwHighDateTime;
-#define EPOCHFILETIME (1164447360000000i64)
-	l_micro_seconds = (l_li.QuadPart / 10) - EPOCHFILETIME;
+#define EPOCHFILEMMTIME (1164447360000000i64)
+	l_micro_seconds = (l_li.QuadPart / 10) - EPOCHFILEMMTIME;
 #define MICROSECONDS_PER_MILLISECOND 1000
 #define MILLISECONDS_PER_SECOND 1000
 	l_mseconds = (l_micro_seconds / MICROSECONDS_PER_MILLISECOND)
@@ -92,7 +92,7 @@ Platform::TimeStamp(void)
 }
 
 TimeData
-Platform::TimeStampToTimeData(TIME timestamp)
+Platform::TimeStampToTimeData(MMTIME timestamp)
 {
 	TimeData l_ts;
 	struct tm l_time;

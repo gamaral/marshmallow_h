@@ -67,7 +67,7 @@ Platform::Finalize(void)
 }
 
 void
-Platform::Sleep(TIME timeout)
+Platform::Sleep(MMTIME timeout)
 {
 	if (timeout <= 0) return;
 
@@ -86,17 +86,17 @@ Platform::StartTime(void)
 	return(s_start_time);
 }
 
-TIME
+MMTIME
 Platform::TimeStamp(void)
 {
 	struct timeval time;
 	gettimeofday(&time, 0);
-	TIME out = static_cast<TIME>(((time.tv_sec - s_start_time) * 1000) + (time.tv_usec / 1000));
+	MMTIME out = static_cast<MMTIME>(((time.tv_sec - s_start_time) * 1000) + (time.tv_usec / 1000));
 	return(out);
 }
 
 TimeData
-Platform::TimeStampToTimeData(TIME timestamp)
+Platform::TimeStampToTimeData(MMTIME timestamp)
 {
 	TimeData l_ts;
 	struct tm l_time;

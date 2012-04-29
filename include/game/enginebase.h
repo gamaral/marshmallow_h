@@ -114,7 +114,7 @@ namespace Game
 		/*!
 		 * @brief Time that has elapsed since last tick
 		 */
-		TIME deltaTime(void) const;
+		MMTIME deltaTime(void) const;
 
 		/*!
 		 * @brief Actual frame rate achieved

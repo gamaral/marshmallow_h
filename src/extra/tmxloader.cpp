@@ -196,14 +196,14 @@ TMXLoader::Private::processMap(XMLElement &m)
 			continue;
 
 		/* scale property */
-		if (STRCASECMP(l_pname, "scale") == 0) {
+		if (MMSTRCASECMP(l_pname, "scale") == 0) {
 			const char *l_value = l_property->Attribute("value");
 			if (!l_value) {
 				MMWARNING("Skipping incomplete scale property.");
 				continue;
 			}
 
-			if (STRCASECMP(l_value, "screen") == 0) {
+			if (MMSTRCASECMP(l_value, "screen") == 0) {
 				const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
 
 				/*
@@ -335,7 +335,7 @@ TMXLoader::Private::processLayer(XMLElement &e)
 			}
 
 			Math::Size2f l_scale = l_layer->scale();
-			if (STRCASECMP(l_value, "screen") == 0) {
+			if (MMSTRCASECMP(l_value, "screen") == 0) {
 				const Math::Size2f &l_vsize = Graphics::Viewport::Size();
 				const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
 

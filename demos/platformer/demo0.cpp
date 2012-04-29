@@ -135,7 +135,7 @@ MMain(int argc, char *argv[])
 	MMUNUSED(argc);
 	MMUNUSED(argv);
 
-	if (-1 == CHDIR(DEMO_CWD))
+	if (-1 == MMCHDIR(DEMO_CWD))
 		MMFATAL("Failed to change working directory \"" << DEMO_CWD << "\". ABORT!");
 
 	return(Demo().run());

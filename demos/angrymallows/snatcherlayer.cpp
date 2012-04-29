@@ -67,7 +67,7 @@ SnatcherLayer::registerEntity(Game::IEntity &e)
 void
 SnatcherLayer::deregisterEntity(Game::IEntity &e)
 {
-	register UID l_id = e.id();
+	register MMUID l_id = e.id();
 	UIDList::reverse_iterator l_i;
 
 	for (l_i = m_entities.rbegin(); l_i != m_entities.rend();) {

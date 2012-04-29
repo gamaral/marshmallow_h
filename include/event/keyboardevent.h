@@ -193,7 +193,7 @@ namespace Event
 		NO_ASSIGN_COPY(KeyboardEvent);
 	public:
 
-		KeyboardEvent(KBKeys key, KBActions action, TIME timestamp = 0);
+		KeyboardEvent(KBKeys key, KBActions action, MMTIME timestamp = 0);
 		virtual ~KeyboardEvent(void);
 
 		KBActions action(void) const;

@@ -59,7 +59,7 @@ MARSHMALLOW_NAMESPACE_USE
 
 Demo::Demo(const char *f)
     : EngineBase(60, 60, MARSHMALLOW_BUSYWAIT)
-    , m_filename(STRDUP(f))
+    , m_filename(MMSTRDUP(f))
 {
 }
 

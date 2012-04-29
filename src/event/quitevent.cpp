@@ -44,7 +44,7 @@ struct QuitEvent::Private
 	int code;
 };
 
-QuitEvent::QuitEvent(int c, TIME t)
+QuitEvent::QuitEvent(int c, MMTIME t)
     : EventBase(t, HighPriority)
     , m_p(new Private)
 {

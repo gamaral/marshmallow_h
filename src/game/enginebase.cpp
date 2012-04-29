@@ -71,7 +71,7 @@ struct EngineBase::Private
 	Game::SharedFactory        factory;
 	int    fps;
 	int    ups;
-	TIME   delta_time;
+	MMTIME   delta_time;
 	int    exit_code;
 	int    frame_rate;
 #if MARSHMALLOW_DEBUG
@@ -223,7 +223,7 @@ EngineBase::ups(void) const
 	return(m_p->ups);
 }
 
-TIME
+MMTIME
 EngineBase::deltaTime(void) const
 {
 	return(m_p->delta_time);
@@ -245,17 +245,17 @@ EngineBase::run(void)
 	}
 
 #define MILLISECONDS_PER_SECOND 1000
-	TIME l_render = 0;
-	TIME l_render_target = MILLISECONDS_PER_SECOND / m_p->fps;
+	MMTIME l_render = 0;
+	MMTIME l_render_target = MILLISECONDS_PER_SECOND / m_p->fps;
 
-	TIME l_update = 0;
-	TIME l_update_target = MILLISECONDS_PER_SECOND / m_p->ups;
+	MMTIME l_update = 0;
+	MMTIME l_update_target = MILLISECONDS_PER_SECOND / m_p->ups;
 
-	TIME l_second = 0;
-	TIME l_second_target = MILLISECONDS_PER_SECOND;
+	MMTIME l_second = 0;
+	MMTIME l_second_target = MILLISECONDS_PER_SECOND;
 
-	TIME l_tick;
-	TIME l_tick_target = MMMIN(l_render_target, l_update_target);
+	MMTIME l_tick;
+	MMTIME l_tick_target = MMMIN(l_render_target, l_update_target);
 
 	bool l_wait;
 

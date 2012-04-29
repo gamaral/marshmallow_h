@@ -46,7 +46,7 @@ hash_compare_test(void)
 	TEST("ZERO SAME AS NULL-HASH",
 	     0 == Core::Hash());
 	TEST("ZERO NOT SAME AS TEST HASH",
-	     0 != Core::Hash("test", 4, ~static_cast<UID>(0)));
+	     0 != Core::Hash("test", 4, ~static_cast<MMUID>(0)));
 }
 
 void

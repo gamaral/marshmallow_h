@@ -62,7 +62,7 @@ namespace Core
 		 * @param length Data length
 		 * @param mask UID mask
 		 */
-		Hash(const char *d, size_t length, UID mask);
+		Hash(const char *d, size_t length, MMUID mask);
 
 		/*!
 		 * @brief Hash Copy Contructor
@@ -72,11 +72,11 @@ namespace Core
 		virtual ~Hash(void);
 
 		/*! @brief Datum */
-		UID result(void) const;
+		MMUID result(void) const;
 
 	public: /* operator */
 
-		operator UID() const;
+		operator MMUID() const;
 
 		Hash & operator=(const Hash &rhs);
 
@@ -87,11 +87,11 @@ namespace Core
 	public: /* static */
 
 		/*! @brief One-at-a-Time Hash */
-		static UID Algorithm(const char *data, size_t length, UID mask);
+		static MMUID Algorithm(const char *data, size_t length, MMUID mask);
 
 	protected:
 
-		void rehash(const char *d, size_t length, UID mask);
+		void rehash(const char *d, size_t length, MMUID mask);
 	};
 }
 

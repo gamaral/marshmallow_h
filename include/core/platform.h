@@ -71,7 +71,7 @@ namespace Core
 		 * @brief Sleep in milliseconds
 		 */
 		MARSHMALLOW_CORE_EXPORT
-		void Sleep(TIME timeout);
+		void Sleep(MMTIME timeout);
 
 		/*!
 		 * @brief Start system time
@@ -83,7 +83,7 @@ namespace Core
 		 * @brief Milliseconds since StartTime()
 		 */
 		MARSHMALLOW_CORE_EXPORT
-		TIME TimeStamp(void);
+		MMTIME TimeStamp(void);
 
 		/*!
 		 * @brief Reinterpret an internal timestamp
@@ -91,7 +91,7 @@ namespace Core
 		 *         formats.
 		 */
 		MARSHMALLOW_CORE_EXPORT
-		TimeData TimeStampToTimeData(TIME timestamp);
+		TimeData TimeStampToTimeData(MMTIME timestamp);
 
 		/*************************************************** location */
 
@@ -105,7 +105,7 @@ struct TimeData
 {
     char string[21];
     time_t system;
-    TIME internal;
+    MMTIME internal;
 };
 
 MARSHMALLOW_NAMESPACE_END

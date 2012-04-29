@@ -69,7 +69,7 @@ namespace Core
 		virtual ~StrHash(void);
 
 		/*! @brief Unique ID */
-		UID uid(void) const
+		MMUID uid(void) const
 		    { return(result()); }
 
 		/*! @brief Hashed String */

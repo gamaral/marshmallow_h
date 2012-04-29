@@ -53,7 +53,7 @@ namespace Event
 		NO_ASSIGN_COPY(QuitEvent);
 	public:
 
-		QuitEvent(int code = 0, TIME timestamp = 0);
+		QuitEvent(int code = 0, MMTIME timestamp = 0);
 		virtual ~QuitEvent(void);
 
 		int code(void) const;

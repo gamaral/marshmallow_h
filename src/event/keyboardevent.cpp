@@ -45,7 +45,7 @@ struct KeyboardEvent::Private
 	KBKeys key;
 };
 
-KeyboardEvent::KeyboardEvent(KBKeys k, KBActions a, TIME t)
+KeyboardEvent::KeyboardEvent(KBKeys k, KBActions a, MMTIME t)
     : EventBase(t, HighPriority)
     , m_p(new Private)
 {

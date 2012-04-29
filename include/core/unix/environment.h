@@ -44,18 +44,18 @@
 
 /********************************************************************** types */
 
-#define TIME     int
-#define TIME_MAX INT_MAX
-#define UID      uint32_t
+#define MMTIME     int
+#define MMTIME_MAX INT_MAX
+#define MMUID      uint32_t
 
 /******************************************************************** defines */
 
-#define CHDIR      chdir
-#define INFINITE   TIME_MAX
+#define MMCHDIR      chdir
+#define MMINFINITE   TIME_MAX
 #define MMFUNCTION __PRETTY_FUNCTION__
-#define NOOP       (void)0
-#define STRCASECMP strcasecmp
-#define STRDUP     strdup
+#define MMNOOP       (void)0
+#define MMSTRCASECMP strcasecmp
+#define MMSTRDUP     strdup
 
 /******************************************************************** unused */
 

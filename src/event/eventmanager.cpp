@@ -57,7 +57,7 @@ namespace {
 
 	typedef std::list<IEventListener *> EventListenerList;
 	typedef Core::Shared<EventListenerList> SharedEventListenerList;
-	typedef std::map<UID, SharedEventListenerList> EventListenerMap;
+	typedef std::map<MMUID, SharedEventListenerList> EventListenerMap;
 	typedef std::list<SharedEvent> EventList;
 } // namespace
 
@@ -176,7 +176,7 @@ EventManager::dequeue(const SharedEvent &event, bool all)
 	EventList &l_queue = m_p->queue[m_p->active_queue == 0 ? 1 : 0];
 
 	if (all) {
-		const UID l_type = event->type();
+		const MMUID l_type = event->type();
 		EventList::reverse_iterator l_i = l_queue.rbegin();
 
 		while (l_i != l_queue.rend()) {

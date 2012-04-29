@@ -76,18 +76,12 @@ option(MARSHMALLOW_VIEWPORT_VSYNC      "Viewport default vsync mode"      ON)
 option(MARSHMALLOW_VIEWPORT_GRAB_INPUT "Takeover viewport input devices" OFF)
 
 
-option(MARSHMALLOW_VIEWPORT_DUMMY  "Use Dummy Viewport (testing)" ON)
-option(MARSHMALLOW_VIEWPORT_OPENGL "Use OpenGL Viewport"          OFF)
-option(MARSHMALLOW_VIEWPORT_GX     "Use GX Viewport (wii)"        OFF)
-
-option(MARSHMALLOW_DUMMY_FAIL "Make dummy viewport fail initialization" OFF)
-
-option(MARSHMALLOW_OPENGL_WGL "Use OpenGL WGL Viewport (windows)" OFF)
-option(MARSHMALLOW_OPENGL_GLX "Use OpenGL GLX Viewport (unix)"    OFF)
-option(MARSHMALLOW_OPENGL_SDL "Use OpenGL SDL Viewport (sdl)"     OFF)
-option(MARSHMALLOW_OPENGL_QT4 "Use OpenGL Qt4 Viewport (qt4)"     OFF)
-
-option(MARSHMALLOW_OPENGL_GLES2 "Use EGL + OpenGL ES 2.0 (requires GLX)" OFF)
+option(MARSHMALLOW_VIEWPORT_DUMMY          "Use Dummy Viewport (testing)" ON)
+if (MARSHMALLOW_WII)
+	option(MARSHMALLOW_VIEWPORT_GX     "Use GX Viewport (wii)"        ON)
+else()
+	option(MARSHMALLOW_VIEWPORT_OPENGL "Use OpenGL Viewport"          OFF)
+endif()
 
 option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG" ON)
 option(MARSHMALLOW_CONTRIB_LUA    "Use bundled LUA"    ON)
@@ -95,6 +89,26 @@ option(MARSHMALLOW_CONTRIB_ZLIB   "Use bundled ZLIB"   ON)
 
 option(MARSHMALLOW_WITH_BOX2D "Use Box2D" ON)
 option(MARSHMALLOW_WITH_LUA   "Use Lua"   OFF)
+
+########################################################### GLOBAL SUB-OPTIONS #
+
+if(MARSHMALLOW_VIEWPORT_DUMMY)
+	option(MARSHMALLOW_DUMMY_FAIL "Make dummy viewport fail initialization" OFF)
+endif()
+
+if(MARSHMALLOW_VIEWPORT_OPENGL)
+	if(UNIX)
+		option(MARSHMALLOW_OPENGL_GLX "Use OpenGL GLX Viewport (unix)"    OFF)
+	elseif(WIN32)
+		option(MARSHMALLOW_OPENGL_WGL "Use OpenGL WGL Viewport (windows)" OFF)
+	endif()
+	option(MARSHMALLOW_OPENGL_SDL "Use OpenGL SDL Viewport (sdl)"     OFF)
+	option(MARSHMALLOW_OPENGL_QT4 "Use OpenGL Qt4 Viewport (qt4)"     OFF)
+
+	if(MARSHMALLOW_OPENGL_GLX)
+		option(MARSHMALLOW_OPENGL_GLES2 "Use EGL + OpenGL ES 2.0 (requires GLX)" OFF)
+	endif()
+endif()
 
 ####################################################################### CONFIG #
 
@@ -109,7 +123,7 @@ configure_file(
 
 ##################################################################### PLATFORM #
 
-if(UNIX)
+if(UNIX OR MARSHMALLOW_WII)
 	configure_file(
 	    ${PROJECT_SOURCE_DIR}/include/core/unix/environment.h
 	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY

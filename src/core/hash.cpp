@@ -39,7 +39,7 @@ using namespace Core;
 
 struct Hash::Private
 {
-	UID result;
+	MMUID result;
 };
 
 Hash::Hash(void)
@@ -48,7 +48,7 @@ Hash::Hash(void)
 	m_p->result = 0;
 }
 
-Hash::Hash(const char *d, size_t length, UID mask)
+Hash::Hash(const char *d, size_t length, MMUID mask)
     : m_p(new Private)
 {
 	m_p->result = Algorithm(d, length, mask);
@@ -66,13 +66,13 @@ Hash::~Hash(void)
 	m_p = 0;
 }
 
-UID
+MMUID
 Hash::result(void) const
 {
 	return(m_p->result);
 }
 
-Hash::operator UID() const
+Hash::operator MMUID() const
 {
 	return(m_p->result);
 }
@@ -103,16 +103,16 @@ Hash::operator<(const Hash &rhs) const
 	return(m_p->result < rhs.m_p->result);
 }
 
-UID
-Hash::Algorithm(const char *data, size_t length, UID mask)
+MMUID
+Hash::Algorithm(const char *data, size_t length, MMUID mask)
 {
 	if (!data) return(0);
 
-	UID l_hash = 0;
+	MMUID l_hash = 0;
 	size_t l_i;
 
 	for(l_i = 0; l_i < length; ++l_i) {
-		l_hash += static_cast<UID>(data[l_i]);
+		l_hash += static_cast<MMUID>(data[l_i]);
 		l_hash += (l_hash << 0x0A);
 		l_hash ^= (l_hash >> 0x06);
 	}
@@ -125,7 +125,7 @@ Hash::Algorithm(const char *data, size_t length, UID mask)
 }
 
 void
-Hash::rehash(const char *d, size_t length, UID mask)
+Hash::rehash(const char *d, size_t length, MMUID mask)
 {
 	m_p->result = Algorithm(d, length, mask);
 }

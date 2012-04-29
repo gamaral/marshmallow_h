@@ -63,7 +63,7 @@ namespace Event
 		/*!
 		 * @brief Event TimeStamp
 		 */
-		virtual TIME timeStamp(void) const = 0;
+		virtual MMTIME timeStamp(void) const = 0;
 	};
 	typedef Core::Shared<IEvent> SharedEvent;
 	typedef Core::Weak<IEvent> WeakEvent;

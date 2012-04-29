@@ -41,11 +41,11 @@ using namespace Event;
 
 struct EventBase::Private
 {
-	TIME timestamp;
+	MMTIME timestamp;
 	uint8_t priority;
 };
 
-EventBase::EventBase(TIME t, uint8_t p)
+EventBase::EventBase(MMTIME t, uint8_t p)
     : m_p(new Private)
 {
 	m_p->timestamp = (t == 0) ? NOW() : t;
@@ -64,7 +64,7 @@ EventBase::priority(void) const
 	return(m_p->priority);
 }
 
-TIME
+MMTIME
 EventBase::timeStamp(void) const
 {
 	return(m_p->timestamp);

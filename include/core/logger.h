@@ -51,19 +51,19 @@
 #if MARSHMALLOW_DEBUG && MARSHMALLOW_DEBUG_VERBOSITY >= 1
 #   define MMWARNING(x) MMLOG("WARN", x)
 #else
-#   define MMWARNING(x) NOOP
+#   define MMWARNING(x) MMNOOP
 #endif
 
 #if MARSHMALLOW_DEBUG && MARSHMALLOW_DEBUG_VERBOSITY >= 2
 #   define MMINFO(x) MMLOG("INFO", x)
 #else
-#   define MMINFO(x) NOOP
+#   define MMINFO(x) MMNOOP
 #endif
 
 #if MARSHMALLOW_DEBUG && MARSHMALLOW_DEBUG_VERBOSITY >= 3
 #   define MMVERBOSE(x) MMLOG("VERB", x)
 #else
-#   define MMVERBOSE(x) NOOP
+#   define MMVERBOSE(x) MMNOOP
 #endif
 
 #endif

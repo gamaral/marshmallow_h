@@ -44,17 +44,18 @@
 
 /********************************************************************** types */
 
-#define TIME     int
-#define TIME_MAX INT_MAX
-#define UID      uint32_t
+#define MMTIME     int
+#define MMTIME_MAX INT_MAX
+#define MMUID      uint32_t
 
 /******************************************************************** defines */
 
-#define CHDIR      _chdir
+#define MMCHDIR      _chdir
 #define MMFUNCTION __FUNCTION__
-#define NOOP       __noop
-#define STRCASECMP lstrcmpiA
-#define STRDUP     _strdup
+#define MMINFINITE   TIME_MAX
+#define MMNOOP       __noop
+#define MMSTRCASECMP lstrcmpiA
+#define MMSTRDUP     _strdup
 
 /******************************************************************** exports */
 

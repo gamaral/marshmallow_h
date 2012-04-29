@@ -56,7 +56,7 @@ StrHash::StrHash(const char *s)
     , m_p(new Private)
 {
 	m_p->str = s;
-	rehash(s, m_p->str.length(), ~static_cast<UID>(0));
+	rehash(s, m_p->str.length(), ~static_cast<MMUID>(0));
 }
 
 StrHash::StrHash(const std::string &s)
@@ -64,7 +64,7 @@ StrHash::StrHash(const std::string &s)
     , m_p(new Private)
 {
 	m_p->str = s;
-	rehash(m_p->str.c_str(), m_p->str.length(), ~static_cast<UID>(0));
+	rehash(m_p->str.c_str(), m_p->str.length(), ~static_cast<MMUID>(0));
 }
 
 StrHash::StrHash(const StrHash &c)
