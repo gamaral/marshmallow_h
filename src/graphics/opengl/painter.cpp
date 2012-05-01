@@ -60,7 +60,7 @@ using namespace Graphics;
 
 namespace
 {
-	static const char s_vertex_shader[] =
+	const char s_vertex_shader[] =
 	  "attribute vec2 a_texCoord;\n"
 	  "attribute vec4 a_position;\n"
 
@@ -74,7 +74,7 @@ namespace
 	     "v_texCoord = a_texCoord;"
 	  "}\n";
 
-	static const char s_fragment_shader[] =
+	const char s_fragment_shader[] =
 	  "precision mediump float;\n"
 
 	  "uniform bool u_usecolor;\n"
@@ -89,17 +89,17 @@ namespace
 	     "  gl_FragColor = texture2D(s_texture, v_texCoord) * u_color;"
 	  "}\n";
 
+	GLuint s_location_position;
+	GLuint s_location_texcoord;
 	GLuint s_program_object;
 
 	GLint s_location_color;
 	GLint s_location_matrix;
 	GLint s_location_model;
-	GLint s_location_position;
 	GLint s_location_sampler;
-	GLint s_location_texcoord;
 	GLint s_location_usecolor;
 
-	static Core::Identifier s_last_texture_id;
+	Core::Identifier s_last_texture_id;
 
 	Math::Matrix4 s_matrix_current;
 	std::stack<Math::Matrix4> s_matrix_stack;
@@ -184,7 +184,7 @@ namespace
 	}
 
 	void
-	DrawQuadMesh(const QuadMesh &g)
+	DrawQuadMesh(const QuadMesh &g, bool tcoords)
 	{
 		OpenGL::SharedVertexData l_vdata =
 			g.vertexData()
@@ -205,16 +205,14 @@ namespace
 		glVertexAttribPointer(s_location_position, 2, GL_FLOAT, GL_FALSE, 0,
 		    (l_vdata->isBuffered() ? 0 : l_vdata->data()));
 
-		/* cleanup */
-		if (l_vdata->isBuffered() && !l_tcdata->isBuffered())
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+		/* ** texture coordinates ** */
 
-		/* ** texture ** */
-
-		if (l_tcdata) {
+		if (tcoords) {
 			/* bind buffer */
 			if (l_tcdata->isBuffered())
 				glBindBuffer(GL_ARRAY_BUFFER, l_tcdata->bufferId());
+			else if (l_vdata->isBuffered())
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 			glVertexAttribPointer(s_location_texcoord, 2, GL_FLOAT, GL_FALSE, 0,
 			    (l_tcdata->isBuffered() ? 0 : l_tcdata->data()));
@@ -222,14 +220,15 @@ namespace
 			/* cleanup */
 			if (l_tcdata->isBuffered())
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
-		}
+		} else if (l_vdata->isBuffered())
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glEnableVertexAttribArray(s_location_position);
-		if (l_tcdata) glEnableVertexAttribArray(s_location_texcoord);
+		if (tcoords) glEnableVertexAttribArray(s_location_texcoord);
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, MARSHMALLOW_QUAD_VERTEXES);
 
-		if (l_tcdata) glDisableVertexAttribArray(s_location_texcoord);
+		if (tcoords) glDisableVertexAttribArray(s_location_texcoord);
 		glDisableVertexAttribArray(s_location_position);
 	}
 } // namespace
@@ -239,11 +238,20 @@ namespace
 void
 Painter::Initialize(void)
 {
-	if ((s_program_object = loadProgram()) == 0)
-		MMFATAL("Failed to load primary shaders");
+	static const char s_error_msg[] = "Failed to load primary shaders";
 
-	s_location_position = glGetAttribLocation(s_program_object, "a_position");
-	s_location_texcoord = glGetAttribLocation(s_program_object, "a_texCoord");
+	if ((s_program_object = loadProgram()) == 0)
+		MMFATAL(s_error_msg);
+
+	GLint l_location;
+
+	if ((l_location = glGetAttribLocation(s_program_object, "a_position")) == -1)
+		MMFATAL(s_error_msg);
+	s_location_position = static_cast<GLuint>(l_location);
+
+	if ((l_location = glGetAttribLocation(s_program_object, "a_texCoord")) == -1)
+		MMFATAL(s_error_msg);
+	s_location_texcoord = static_cast<GLuint>(l_location);
 
 	s_location_color = glGetUniformLocation(s_program_object, "u_color");
 	s_location_matrix = glGetUniformLocation(s_program_object, "u_matrix");
@@ -279,7 +287,7 @@ Painter::Render(void)
 void
 Painter::Reset(void)
 {
-	glClearColor(.0f, .0f, .0f, .0f);
+	glClearColor(.0f, .0f, .0f, .1f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	ProjectionMatrix();
 
@@ -348,7 +356,7 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 
 	/* color */
 	const Graphics::Color &l_color = m.color();
-	glUniform4f(s_location_color, l_color.red(), l_color.green(), l_color.blue(), l_color.alpha() );
+	glUniform4f(s_location_color, l_color.red(), l_color.green(), l_color.blue(), l_color.alpha());
 
 	/* set texture */
 	glActiveTexture(GL_TEXTURE0);
@@ -361,15 +369,15 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 			glBindTexture(GL_TEXTURE_2D, l_data->textureId());
 			glUniform1i(s_location_usecolor, 0);
 		}
-		else {
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glUniform1i(s_location_usecolor, 1);
-		}
+		else glUniform1i(s_location_usecolor, 1);
 	}
+
+	/* texture coordinates */
+	const bool l_tcoords = s_last_texture_id.uid() && m.textureCoordinateData();
 
 	/* actually draw graphic */
 	if (QuadMesh::Type() == m.type())
-		DrawQuadMesh(static_cast<const QuadMesh &>(m));
+		DrawQuadMesh(static_cast<const QuadMesh &>(m), l_tcoords);
 	else MMWARNING("Unknown mesh type");
 
 	glDisable(GL_BLEND);
