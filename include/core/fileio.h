@@ -61,14 +61,34 @@ namespace Core
 	public:
 
 		FileIO(void);
+
+		/*! @brief Construct and attempt to open file
+		 *  @param filename Path of file to be open
+		 *  @param mode Open mode
+		 */
 		FileIO(const Identifier &filename, DIOMode mode = DIOReadOnly);
 		virtual ~FileIO(void);
 
+		/*! Path of file to be opened
+		 *  @return Path of file
+		 */
+		const Identifier & fileName(void) const;
+
+		/*! Set path of file to be opened */
+		void setFileName(const Identifier &filename);
+
 	public: /* virtual */
 
-		VIRTUAL bool open(const Identifier &filename, DIOMode mode = DIOReadOnly);
+		/*! Opens DIO device
+		 *
+		 *  Requires a valid filename
+		 *  @param mode Open mode
+		 *  @return true on success
+		 */
+		VIRTUAL bool open(DIOMode mode = DIOReadOnly);
 		VIRTUAL void close(void);
 
+		VIRTUAL DIOMode mode(void) const;
 		VIRTUAL bool isOpen(void) const;
 
 		VIRTUAL size_t read(char *buffer, size_t bsize);

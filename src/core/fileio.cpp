@@ -42,6 +42,7 @@ using namespace Core;
 struct FileIO::Private
 {
 	Identifier filename;
+	DIOMode    mode;
 	FILE      *handle;
 };
 
@@ -49,13 +50,16 @@ FileIO::FileIO(void)
     : m_p(new Private)
 {
 	m_p->handle = 0;
+	m_p->mode = DIOInvalid;
 }
 
 FileIO::FileIO(const Identifier &fn, DIOMode m)
     : m_p(new Private)
 {
 	m_p->handle = 0;
-	open(fn, m);
+	m_p->mode = DIOInvalid;
+	setFileName(fn);
+	open(m);
 }
 
 FileIO::~FileIO(void)
@@ -65,9 +69,31 @@ FileIO::~FileIO(void)
 	m_p = 0;
 }
 
-bool
-FileIO::open(const Identifier &fn, DIOMode m)
+const Identifier &
+FileIO::fileName(void) const
 {
+	return(m_p->filename);
+}
+
+void
+FileIO::setFileName(const Identifier &fn)
+{
+	if (isOpen()) {
+		MMERROR("Can't change filename on open device.");
+		return;
+	}
+
+	m_p->filename = fn;
+}
+
+bool
+FileIO::open(DIOMode m)
+{
+	if (!m_p->filename) {
+		MMWARNING("Tried to open device without a filename.");
+		return(false);
+	}
+
 	char l_mode[4] = {0, 0, 0, 0};
 	unsigned char l_mode_c = 0;
 
@@ -78,7 +104,8 @@ FileIO::open(const Identifier &fn, DIOMode m)
 	if (m && DIOBinary)
 		l_mode[l_mode_c++] = 'b';
 	
-	m_p->handle = fopen(fn, l_mode);
+	m_p->handle = fopen(m_p->filename, l_mode);
+	m_p->mode = m;
 	return(m_p->handle != 0);
 }
 
@@ -87,7 +114,14 @@ FileIO::close(void)
 {
 	fclose(m_p->handle);
 	m_p->handle = 0;
+	m_p->mode = DIOInvalid;
 	m_p->filename = Identifier();
+}
+
+DIOMode
+FileIO::mode(void) const
+{
+	return(m_p->mode);
 }
 
 bool

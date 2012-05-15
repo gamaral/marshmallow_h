@@ -98,7 +98,6 @@ buffer_write_test(void)
 	l_bytes_written = l_buffer.seek(-11, Core::DIOEnd);
 	TEST("BUFFER WRITE SEEK END -11 OK", l_bytes_written);
 
-	asm("int3");
 	l_bytes_written = l_buffer.write("is a test!", 10);
 	TEST("BUFFER WRITE WRITE 10 OK", 10 == l_bytes_written);
 	TEST("BUFFER WRITE WRITE 10 COMPARE", 0 == strcmp(l_scratch, s_content));

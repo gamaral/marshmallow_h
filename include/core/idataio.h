@@ -46,14 +46,17 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 
+	/*! @brief Data IO Modes */
 	enum DIOMode
 	{
+		DIOInvalid   = 0,
 		DIOReadOnly  = 1,
 		DIOWriteOnly = 2,
 		DIOReadWrite = DIOReadOnly | DIOWriteOnly,
 		DIOBinary    = 4
 	};
 
+	/*! @brief Data IO Seek Locations */
 	enum DIOSeek
 	{
 		DIOStart,
@@ -66,9 +69,24 @@ namespace Core
 	{
 		virtual ~IDataIO(void) {};
 
-		virtual bool open(const Identifier &id, DIOMode mode = DIOReadOnly) = 0;
+		/*! Opens DIO device
+		 *  @param mode Open mode
+		 *  @return true on success
+		 */
+		virtual bool open(DIOMode mode = DIOReadOnly) = 0;
+
+		/*! Closes DIO device */
 		virtual void close(void) = 0;
 
+		/*! Return current open mode, DIOInvalid is returned when device
+		 *  is closed.
+		 *  @return current open mode
+		 */
+		virtual DIOMode mode(void) const = 0;
+
+		/*! Check the device's open state
+		 *  @return true if device is open
+		 */
 		virtual bool isOpen(void) const = 0;
 
 		virtual size_t read(char *buffer, size_t bsize) = 0;

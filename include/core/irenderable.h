@@ -52,6 +52,7 @@ namespace Core
 	{
 		virtual ~IRenderable(void) {};
 
+		/*! @brief Render feature */
 		virtual void render(void) = 0;
 	};
 	typedef Shared<IRenderable> SharedRenderable;

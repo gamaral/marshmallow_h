@@ -52,6 +52,7 @@ namespace Core
 	{
 		virtual ~IUpdateable(void) {};
 
+		/*! @brief Update feature */
 		virtual void update(float delta) = 0;
 	};
 	typedef Shared<IUpdateable> SharedUpdateable;

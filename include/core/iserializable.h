@@ -56,7 +56,13 @@ namespace Core
 	{
 		virtual ~ISerializable(void) {};
 
+		/*! @brief Serialization feature
+		 *  @param node XML node
+		 */
 		virtual bool serialize(XMLElement &node) const = 0;
+		/*! @brief Deserialization feature
+		 *  @param node XML node
+		 */
 		virtual bool deserialize(XMLElement &node) = 0;
 	};
 	typedef Shared<ISerializable> SharedSerializable;

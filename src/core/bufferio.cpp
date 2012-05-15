@@ -43,26 +43,19 @@ using namespace Core;
 
 struct BufferIO::Private
 {
-	char        *buffer;
+	char       *buffer;
 	const char *const_buffer;
+	DIOMode     mode;
 	long        cursor;
 	size_t      size;
 };
-
-BufferIO::BufferIO(void)
-    : m_p(new Private)
-{
-	m_p->buffer = 0;
-	m_p->const_buffer = 0;
-	m_p->cursor = 0;
-	m_p->size = 0;
-}
 
 BufferIO::BufferIO(char *b, size_t s)
     : m_p(new Private)
 {
 	m_p->buffer = b;
 	m_p->const_buffer = b;
+	m_p->mode = DIOReadWrite;
 	m_p->cursor = 0;
 	m_p->size = s;
 }
@@ -72,6 +65,7 @@ BufferIO::BufferIO(const char *cb, size_t s)
 {
 	m_p->buffer = 0;
 	m_p->const_buffer = cb;
+	m_p->mode = DIOReadOnly;
 	m_p->cursor = 0;
 	m_p->size = s;
 }
@@ -84,7 +78,7 @@ BufferIO::~BufferIO(void)
 }
 
 bool
-BufferIO::open(const Identifier &, DIOMode)
+BufferIO::open(DIOMode)
 {
 	MMWARNING("BufferIO open was called, it will be ignored.");
 	return(isOpen());
@@ -95,14 +89,21 @@ BufferIO::close(void)
 {
 	m_p->buffer = 0;
 	m_p->const_buffer = 0;
+	m_p->mode = DIOInvalid;
 	m_p->cursor = 0;
 	m_p->size = 0;
+}
+
+DIOMode
+BufferIO::mode(void) const
+{
+	return(m_p->mode);
 }
 
 bool
 BufferIO::isOpen(void) const
 {
-	return(m_p->const_buffer);
+	return(m_p->const_buffer && m_p->mode != DIOInvalid);
 }
 
 size_t

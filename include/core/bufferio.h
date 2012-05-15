@@ -29,7 +29,7 @@
 #pragma once
 
 /*!
- * @buffer
+ * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
@@ -58,16 +58,32 @@ namespace Core
 		NO_ASSIGN_COPY(BufferIO);
 	public:
 
-		BufferIO(void);
+		/*! @brief Construct read-write device from buffer
+		 *  @param buffer Data buffer
+		 *  @param size Data buffer size
+		 *
+		 *  Device is opened automatically.
+		 */
 		explicit BufferIO(char *buffer, size_t size);
+
+		/*! @brief Construct read-only device from buffer
+		 *  @param buffer Data buffer
+		 *  @param size Data buffer size
+		 *
+		 *  Device is opened automatically.
+		 */
 		explicit BufferIO(const char *buffer, size_t size);
 		virtual ~BufferIO(void);
 
 	public: /* virtual */
 
-		VIRTUAL bool open(const Identifier &ignored, DIOMode mode = DIOReadOnly);
+		/*! @brief Ignored
+		 *  @return true
+		 */
+		VIRTUAL bool open(DIOMode mode = DIOReadOnly);
 		VIRTUAL void close(void);
 
+		VIRTUAL DIOMode mode(void) const;
 		VIRTUAL bool isOpen(void) const;
 
 		VIRTUAL size_t read(char *buffer, size_t bsize);
