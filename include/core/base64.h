@@ -44,37 +44,37 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core
 {
-	/*! @brief Core Base64 Interface */
+	/*!
+	 * @brief A collection of methods used to encode and decode data
+	 */
 	namespace Base64
 	{
-		/*! @brief Core Base64 decoder
-		 *  @param in In buffer
-		 *  @param in_size In buffer size
-		 *  @param out Out buffer pointer
+		/*!
+		 * Decode a Base64 buffer, out buffer allocation is handled by
+		 * the function.
 		 *
-		 *  Decode a Base64 buffer, out buffer allocation is handled by
-		 *  the function.
+		 * Deallocation will be automatic by the double buffered
+		 * allocator. (not yet implemented)
 		 *
-		 *  Deallocation will be automatic by the double buffered
-		 *  allocator. (not yet implemented)
-		 *
-		 *  @return Out buffer size
+		 * @param in In buffer
+		 * @param in_size In buffer size
+		 * @param out Out buffer pointer
+		 * @return Out buffer size
 		 */
 		MARSHMALLOW_CORE_EXPORT
 		size_t Decode(const char *in, size_t in_size, char **out);
 
-		/*! @brief Base64 encoder
-		 *  @param in In buffer
-		 *  @param in_size In buffer size
-		 *  @param out Out buffer pointer
+		/*!
+		 * Encode buffer as Base64, out buffer allocation is handled by
+		 * the function.
 		 *
-		 *  Encode buffer as Base64, out buffer allocation is handled by
-		 *  the function.
+		 * Deallocation will be automatic by the double buffered
+		 * allocator. (not yet implemented)
 		 *
-		 *  Deallocation will be automatic by the double buffered
-		 *  allocator. (not yet implemented)
-		 *
-		 *  @return Out buffer size
+		 * @param in In buffer
+		 * @param in_size In buffer size
+		 * @param out Out buffer pointer
+		 * @return Out buffer size
 		 */
 		MARSHMALLOW_CORE_EXPORT
 		size_t Encode(const char *in, size_t in_size, char **out);

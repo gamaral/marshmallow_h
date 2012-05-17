@@ -51,7 +51,9 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 
-	/*! @brief Core Assets Asset Interface */
+	/*!
+	 * @brief Asset Interface
+	 */
 	struct IAsset
 	{
 		virtual ~IAsset(void) {};

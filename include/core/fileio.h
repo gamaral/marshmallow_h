@@ -50,7 +50,9 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 
-	/*! @brief Core File IO Interface */
+	/*!
+	 * @brief An IDataIO implementation of a file buffer device
+	 */
 	class MARSHMALLOW_CORE_EXPORT
 	FileIO : public IDataIO
 	{
@@ -62,28 +64,34 @@ namespace Core
 
 		FileIO(void);
 
-		/*! @brief Construct and attempt to open file
-		 *  @param filename Path of file to be open
-		 *  @param mode Open mode
+		/*!
+		 * @brief Construct and attempt to open file
+		 * @param filename Path of file to be open
+		 * @param mode Open mode
 		 */
 		FileIO(const Identifier &filename, DIOMode mode = DIOReadOnly);
 		virtual ~FileIO(void);
 
-		/*! Path of file to be opened
-		 *  @return Path of file
+		/*!
+		 * Path of file to be opened
+		 * @return Path of file
 		 */
 		const Identifier & fileName(void) const;
 
-		/*! Set path of file to be opened */
+		/*!
+		 * Set path of file to be opened
+		 */
 		void setFileName(const Identifier &filename);
 
 	public: /* virtual */
 
-		/*! Opens DIO device
+		/*!
+		 * Open device
 		 *
-		 *  Requires a valid filename
-		 *  @param mode Open mode
-		 *  @return true on success
+		 * Requires a valid filename
+		 *
+		 * @param mode Open mode
+		 * @return true on success
 		 */
 		VIRTUAL bool open(DIOMode mode = DIOReadOnly);
 		VIRTUAL void close(void);

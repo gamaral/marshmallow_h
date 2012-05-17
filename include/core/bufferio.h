@@ -48,7 +48,9 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 
-	/*! @brief Core Buffer IO Interface */
+	/*!
+	 * @brief An IDataIO implementation of a simple memory buffer device
+	 */
 	class MARSHMALLOW_CORE_EXPORT
 	BufferIO : public IDataIO
 	{
@@ -58,27 +60,30 @@ namespace Core
 		NO_ASSIGN_COPY(BufferIO);
 	public:
 
-		/*! @brief Construct read-write device from buffer
-		 *  @param buffer Data buffer
-		 *  @param size Data buffer size
+		/*!
+		 * Device is opened automatically
 		 *
-		 *  Device is opened automatically.
+		 * @brief Construct read-write device from buffer
+		 * @param buffer Data buffer
+		 * @param size Data buffer size
 		 */
 		explicit BufferIO(char *buffer, size_t size);
 
-		/*! @brief Construct read-only device from buffer
-		 *  @param buffer Data buffer
-		 *  @param size Data buffer size
+		/*!
+		 * Device is opened automatically
 		 *
-		 *  Device is opened automatically.
+		 * @brief Construct read-only device from buffer
+		 * @param buffer Data buffer
+		 * @param size Data buffer size
 		 */
 		explicit BufferIO(const char *buffer, size_t size);
 		virtual ~BufferIO(void);
 
 	public: /* virtual */
 
-		/*! @brief Ignored
-		 *  @return true
+		/*!
+		 * @brief Ignored
+		 * @return true
 		 */
 		VIRTUAL bool open(DIOMode mode = DIOReadOnly);
 		VIRTUAL void close(void);

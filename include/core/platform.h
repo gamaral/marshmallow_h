@@ -50,45 +50,43 @@ struct TimeData;
 
 namespace Core
 {
-	/*! @brief Core Platform Interface */
+	/*!
+	 * @brief A collection of platform-specific methods
+	 */
 	namespace Platform
 	{
-		/*!
-		 * @brief Platform specific initialization
-		 */
 		MARSHMALLOW_CORE_EXPORT
 		void Initialize(void);
 
-		/*!
-		 * @brief Platform specific finalization
-		 */
 		MARSHMALLOW_CORE_EXPORT
 		void Finalize(void);
 
 		/****************************************************** time */
 
 		/*!
-		 * @brief Sleep in milliseconds
+		 * Call the platform specific sleep function
+		 *
+		 * @param timeout Timeout in milliseconds
 		 */
 		MARSHMALLOW_CORE_EXPORT
 		void Sleep(MMTIME timeout);
 
 		/*!
-		 * @brief Start system time
+		 * Returns the engine start system time
 		 */
 		MARSHMALLOW_CORE_EXPORT
 		time_t StartTime(void);
 
 		/*!
-		 * @brief Milliseconds since StartTime()
+		 * Returns Milliseconds since engine was started (StartTime())
 		 */
 		MARSHMALLOW_CORE_EXPORT
 		MMTIME TimeStamp(void);
 
 		/*!
-		 * @brief Reinterpret an internal timestamp
-		 * @return Internal timestamp in system timestamp and string
-		 *         formats.
+		 * Reinterprets an internal timestamp into TimeData
+		 *
+		 * @param timestamp Internal timestamp
 		 */
 		MARSHMALLOW_CORE_EXPORT
 		TimeData TimeStampToTimeData(MMTIME timestamp);
@@ -100,7 +98,10 @@ namespace Core
 	}
 }
 
-/*! @brief Time Data Struct */
+/*!
+ * The TimeData structure contains a reinterpreted internal time stamp as both
+ * system time and a string
+ */
 struct TimeData
 {
     char string[21];

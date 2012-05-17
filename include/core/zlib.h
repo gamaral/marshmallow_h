@@ -44,7 +44,9 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core
 {
-	/*! @brief Core Zlib Interface */
+	/*!
+	 * @brief A collection of methods used to inflate and deflate data
+	 */
 	namespace Zlib
 	{
 		enum CompressionLevel
@@ -56,36 +58,34 @@ namespace Core
 			
 		};
 
-		/*! @brief Zlib inflate
-		 *  @param in In buffer
-		 *  @param in_size In buffer size
-		 *  @param out_size Out buffer max size estimate
-		 *  @param out Out buffer pointer
+		/*!
+		 * Inflate a zlib compressed buffer, out buffer allocation is
+		 * handled by the function.
 		 *
-		 *  Inflate a zlib compressed buffer, out buffer allocation is
-		 *  handled by the function.
+		 * Deallocation will be automatic by the double buffered
+		 * allocator. (not yet implemented)
 		 *
-		 *  Deallocation will be automatic by the double buffered
-		 *  allocator. (not yet implemented)
-		 *
-		 *  @return Actual out buffer size
+		 * @param in In buffer
+		 * @param in_size In buffer size
+		 * @param out_size Out buffer max size estimate
+		 * @param out Out buffer pointer
+		 * @return Actual out buffer size
 		 */
 		MARSHMALLOW_CORE_EXPORT
 		size_t Inflate(const char *in, size_t in_size, size_t out_size, char **out);
 
-		/*! @brief Zlib deflate
-		 *  @param in In buffer
-		 *  @param in_size In buffer size
-		 *  @param out Out buffer pointer
-		 *  @param level Compression level
+		/*!
+		 * Deflate a buffer using zlib compression, out buffer
+		 * allocation is handled by the function.
 		 *
-		 *  Deflate a buffer using zlib compression, out buffer
-		 *  allocation is handled by the function.
+		 * Deallocation will be automatic by the double buffered
+		 * allocator. (not yet implemented)
 		 *
-		 *  Deallocation will be automatic by the double buffered
-		 *  allocator. (not yet implemented)
-		 *
-		 *  @return Actual Out buffer size
+		 * @param in In buffer
+		 * @param in_size In buffer size
+		 * @param out Out buffer pointer
+		 * @param level Compression level
+		 * @return Actual Out buffer size
 		 */
 		MARSHMALLOW_CORE_EXPORT
 		size_t Deflate(const char *in, size_t in_size, char **out, int level = DefaultCompression);

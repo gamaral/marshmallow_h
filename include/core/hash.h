@@ -44,7 +44,11 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core
 {
-	/*! @brief Core Hash Class */
+	/*!
+	 * As it's name suggests Core::Hash is used hash a random assortment of
+	 * data into a Unique Identifier (UID) that can later be used to do
+	 * quick comparisons.
+	 */
 	class MARSHMALLOW_CORE_EXPORT
 	Hash
 	{
@@ -53,11 +57,11 @@ namespace Core
 
 	public:
 
-		/*! @brief Hash Contructor */
 		Hash(void);
 
 		/*!
-		 * @brief Hash Contructor
+		 * Hash Contructor
+		 *
 		 * @param d Data to hash
 		 * @param length Data length
 		 * @param mask UID mask
@@ -65,13 +69,16 @@ namespace Core
 		Hash(const char *d, size_t length, MMUID mask);
 
 		/*!
-		 * @brief Hash Copy Contructor
+		 * Hash Copy Contructor
+		 *
 		 * @param copy Hash
 		 */
 		Hash(const Hash &copy);
 		virtual ~Hash(void);
 
-		/*! @brief Datum */
+		/*!
+		 * @brief Datum
+		 */
 		MMUID result(void) const;
 
 	public: /* operator */
@@ -86,7 +93,11 @@ namespace Core
 
 	public: /* static */
 
-		/*! @brief One-at-a-Time Hash */
+		/*!
+		 * @brief Hash algorithm
+		 *
+		 * One-at-a-time hash is used.
+		 */
 		static MMUID Algorithm(const char *data, size_t length, MMUID mask);
 
 	protected:

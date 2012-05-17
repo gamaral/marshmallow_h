@@ -47,12 +47,16 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 
-	/*! @brief Core Updateable Interface */
+	/*!
+	 * @brief Updateable Interface
+	 */
 	struct IUpdateable
 	{
 		virtual ~IUpdateable(void) {};
 
-		/*! @brief Update feature */
+		/*!
+		 * @brief Update feature
+		 */
 		virtual void update(float delta) = 0;
 	};
 	typedef Shared<IUpdateable> SharedUpdateable;

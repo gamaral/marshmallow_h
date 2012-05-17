@@ -47,12 +47,16 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 
-	/*! @brief Core Renderable Interface */
+	/*!
+	 * @brief Renderable Interface
+	 */
 	struct IRenderable
 	{
 		virtual ~IRenderable(void) {};
 
-		/*! @brief Render feature */
+		/*!
+		 * @brief Render feature
+		 */
 		virtual void render(void) = 0;
 	};
 	typedef Shared<IRenderable> SharedRenderable;

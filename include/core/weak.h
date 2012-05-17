@@ -51,7 +51,9 @@ namespace Core
 
 	struct SharedData;
 
-	/*! @brief Weak Pointer Class */
+	/*!
+	 * @brief Weak Pointer
+	 */
 	template <class T>
 	class Weak
 	{

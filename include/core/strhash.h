@@ -45,7 +45,9 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core
 {
-	/*! @brief Core StrHash Class */
+	/*!
+	 * An extended Core:Hash that uses a string as the buffer to hash.
+	 */
 	class MARSHMALLOW_CORE_EXPORT
 	StrHash : public Hash
 	{
@@ -68,11 +70,15 @@ namespace Core
 		StrHash(const StrHash &copy);
 		virtual ~StrHash(void);
 
-		/*! @brief Unique ID */
+		/*!
+		 * @brief Unique ID
+		 */
 		MMUID uid(void) const
 		    { return(result()); }
 
-		/*! @brief Hashed String */
+		/*!
+		 * @brief Hashed String
+		 */
 		const std::string & str(void) const;
 
 	public: /* operator */

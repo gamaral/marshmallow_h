@@ -51,17 +51,22 @@ namespace Core
 	template <class T> class Shared;
 	template <class T> class Weak;
 
-	/*! @brief Core Serializable Interface */
+	/*!
+	 * @brief Serializable Interface
+	 */
 	struct ISerializable
 	{
 		virtual ~ISerializable(void) {};
 
-		/*! @brief Serialization feature
-		 *  @param node XML node
+		/*!
+		 * @brief Serialization feature
+		 * @param node XML node
 		 */
 		virtual bool serialize(XMLElement &node) const = 0;
-		/*! @brief Deserialization feature
-		 *  @param node XML node
+
+		/*!
+		 * @brief Deserialization feature
+		 * @param node XML node
 		 */
 		virtual bool deserialize(XMLElement &node) = 0;
 	};

@@ -41,7 +41,9 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-/*! Core Package */
+/*!
+ * Core Package
+ */
 namespace Core
 {
 	class StrHash;
