@@ -36,6 +36,8 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 	endif()
 
 	if(MARSHMALLOW_OPENGL_GLX)
+		include_directories(${X11_INCLUDE_DIR})
+
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-glx.cpp)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
@@ -59,6 +61,18 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 		                              opengl/viewport-qt4.cpp)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${QT_LIBRARIES})
+
+	#
+	# Broadcom VideoCore (Used in Raspberry Pi)
+	#
+	elseif(MARSHMALLOW_OPENGL_VC)
+		include_directories(${BCM_HOST_INCLUDE_DIR})
+
+		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
+		                              opengl/viewport-vc.cpp)
+
+		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
+		                              ${BCM_HOST_LIBRARY})
 	else()
 		message(WARNING "No OpenGL viewport selected!")
 	endif()
