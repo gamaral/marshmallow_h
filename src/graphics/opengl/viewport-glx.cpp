@@ -124,6 +124,8 @@ namespace
 	bool
 	CreateWindow(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 	{
+		MMUNUSED(v);
+
 #ifdef MARSHMALLOW_OPENGL_GLES2
 		s_data.egl_context = EGL_NO_CONTEXT;
 		s_data.egl_display = EGL_NO_DISPLAY;

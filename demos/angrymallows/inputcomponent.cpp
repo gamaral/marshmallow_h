@@ -95,15 +95,15 @@ InputComponent::update(float)
 			const float l_mass = m_body->body()->GetMass();
 			if (m_jump) {
 				m_body->body()->ApplyLinearImpulse(b2Vec2(0, l_mass * m_linear_impulse),
-				    m_body->body()->GetWorldCenter());
+				    m_body->body()->GetWorldCenter(), true);
 				m_state = ICJumping;
 			}
 
 			if (m_left && l_vel.x > -.5f)
-				m_body->body()->ApplyAngularImpulse(l_mass *  m_angular_impulse);
+				m_body->body()->ApplyAngularImpulse(l_mass *  m_angular_impulse, true);
 
 			if (m_right && l_vel.x < .5f)
-				m_body->body()->ApplyAngularImpulse(l_mass * -m_angular_impulse);
+				m_body->body()->ApplyAngularImpulse(l_mass * -m_angular_impulse, true);
 
 			break;
 		}

@@ -8,14 +8,13 @@
 #
 ###############################################################################
 
-find_path(EGL_INCLUDE_DIR egl.h
+find_path(EGL_INCLUDE_DIR EGL/egl.h
 	HINTS $ENV{EGLDIR}
-	PATH_SUFFIXES include/EGL include
+	PATH_SUFFIXES include
 	PATHS ~/Library/Frameworks
 	      /Library/Frameworks
 	      /usr/local/include/EGL
 	      /usr/local/include
-	      /usr/include/EGL
 	      /usr/include
 	      /opt/local
 	      /opt

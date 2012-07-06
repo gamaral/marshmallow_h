@@ -8,9 +8,9 @@
 #
 ###############################################################################
 
-find_path(GLES2_INCLUDE_DIR gl2.h
+find_path(GLES2_INCLUDE_DIR GLES2/gl2.h
 	HINTS $ENV{GLES2DIR}
-	PATH_SUFFIXES include/GLES2 include
+	PATH_SUFFIXES include
 	PATHS ~/Library/Frameworks
 	      /Library/Frameworks
 	      /usr/local
