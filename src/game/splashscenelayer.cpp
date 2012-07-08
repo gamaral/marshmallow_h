@@ -44,8 +44,10 @@
 #include "event/ievent.h"
 #include "event/keyboardevent.h"
 
+#include "graphics/itexturedata.h"
 #include "graphics/painter.h"
 #include "graphics/quadmesh.h"
+#include "graphics/viewport.h"
 
 #include "game/engine.h"
 #include "game/iscene.h"
@@ -86,6 +88,8 @@ struct SplashSceneLayer::Private
 
 	void setState(int state);
 
+	void calculateQuadScale(void);
+
 	SplashSceneLayer &_interface;
 
 	Graphics::SharedQuadMesh mesh;
@@ -122,6 +126,25 @@ SplashSceneLayer::Private::setState(int s)
 	}
 
 	state = static_cast<SplashState>(s);
+}
+
+void
+SplashSceneLayer::Private::calculateQuadScale(void)
+{
+	if (!mesh->textureData())
+		return;
+
+	const Math::Size2i &l_texture_size = mesh->textureData()->size();
+	const Math::Size2i &l_window_size = Graphics::Viewport::WindowSize();
+
+	float l_pixel_scale_x =
+	    static_cast<float>(l_texture_size.width()) /
+	        static_cast<float>(l_window_size.width());
+	float l_pixel_scale_y =
+	    static_cast<float>(l_texture_size.height()) /
+	        static_cast<float>(l_window_size.height());
+
+	mesh->setScale(l_pixel_scale_x, l_pixel_scale_y);
 }
 
 /******************************************************************************/
@@ -208,7 +231,7 @@ SplashSceneLayer::render(void)
 	Graphics::Painter::PushMatrix();
 	Graphics::Painter::LoadIdentity();
 
-	Graphics::Painter::Draw(*m_p->mesh, Math::Point2(0,0));
+	Graphics::Painter::Draw(*m_p->mesh, Math::Point2(0, 0));
 
 	Graphics::Painter::PopMatrix();
 }
@@ -227,6 +250,10 @@ SplashSceneLayer::update(float d)
 	switch (m_p->state) {
 	case ssInit:
 		m_p->setState(ssFadeIn);
+
+		/* adjust quad scale based on texture data */
+		m_p->calculateQuadScale();
+
 		break;
 	case ssFadeIn:
 		if (m_p->timer < m_p->fade) {

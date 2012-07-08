@@ -55,11 +55,12 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 {
 	MMUNUSED(w);
 	MMUNUSED(h);
 	MMUNUSED(d);
+	MMUNUSED(r);
 	MMUNUSED(f);
 	MMUNUSED(v);
 
@@ -67,7 +68,8 @@ Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
 	s_camera.setScale(Math::Pair::One());
 	s_camera.setTranslation(Math::Point2::Zero());
 
-	MMINFO("Dummy viewport initialized a " << d << " bit (" << w << "x" << h << ") display (" << (f ? "FULLSCREEN" : "WINDOWED") << ").");
+	MMINFO("Dummy viewport initialized a " << d << " bit (" << w << "x" << h
+	       << ") display (" << (f ? "FULLSCREEN" : "WINDOWED") << ").");
 
 #if MARSHMALLOW_DUMMY_FAIL
 	return(false);
@@ -83,11 +85,12 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 {
 	MMUNUSED(w);
 	MMUNUSED(h);
 	MMUNUSED(d);
+	MMUNUSED(r);
 	MMUNUSED(f);
 	MMUNUSED(v);
 	MMINFO("Dummy viewport redisplayed using a " << d << " bit (" << w << "x" << h << ") display (" << (f ? "FULLSCREEN" : "WINDOWED") << ").");
@@ -119,10 +122,14 @@ Viewport::SetCamera(const Graphics::Transform &camera)
 float
 Viewport::Radius2(void)
 {
+	const Math::Size2f &size = Size();
+
 	/* calculate radius^2 */
 #define HALF_VIEWPORT_SIZE 2.f
-	const float l_w = MARSHMALLOW_VIEWPORT_VWIDTH  / (s_camera.scale().first()  * HALF_VIEWPORT_SIZE);
-	const float l_h = MARSHMALLOW_VIEWPORT_VHEIGHT / (s_camera.scale().second() * HALF_VIEWPORT_SIZE);
+	const float l_w = size.width() /
+	    (s_camera.scale().first() * HALF_VIEWPORT_SIZE);
+	const float l_h = size.height() /
+	    (s_camera.scale().second() * HALF_VIEWPORT_SIZE);
 	return(powf(l_w, 2.f) + powf(l_h, 2.f));
 }
 
@@ -130,22 +137,24 @@ const Math::Size2f &
 Viewport::ScaledSize(void)
 {
 	const static Math::Size2f s_scaled_size
-	    (MARSHMALLOW_VIEWPORT_VWIDTH  / s_camera.scale().first(),
-	     MARSHMALLOW_VIEWPORT_VHEIGHT / s_camera.scale().second());
+	    (MARSHMALLOW_VIEWPORT_WIDTH  / s_camera.scale().first(),
+	     MARSHMALLOW_VIEWPORT_HEIGHT / s_camera.scale().second());
 	return(s_scaled_size);
 }
 
 const Math::Size2f &
 Viewport::Size(void)
 {
-	const static Math::Size2f s_size(MARSHMALLOW_VIEWPORT_VWIDTH, MARSHMALLOW_VIEWPORT_VHEIGHT);
+	const static Math::Size2f s_size(MARSHMALLOW_VIEWPORT_WIDTH,
+	                                 MARSHMALLOW_VIEWPORT_HEIGHT);
 	return(s_size);
 }
 
 const Math::Size2i &
 Viewport::WindowSize(void)
 {
-	const static Math::Size2i s_wsize(MARSHMALLOW_VIEWPORT_WIDTH, MARSHMALLOW_VIEWPORT_HEIGHT);
+	const static Math::Size2i s_wsize(MARSHMALLOW_VIEWPORT_WIDTH,
+	                                  MARSHMALLOW_VIEWPORT_HEIGHT);
 	return(s_wsize);
 }
 

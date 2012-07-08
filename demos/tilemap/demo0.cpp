@@ -124,7 +124,9 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(10, 10, MARSHMALLOW_BUSYWAIT)
+	: EngineBase(MARSHMALLOW_VIEWPORT_REFRESH,
+	             MARSHMALLOW_VIEWPORT_REFRESH / 4,
+	             MARSHMALLOW_LITESLEEP)
 	, m_stop_timer(0)
 	{
 	}

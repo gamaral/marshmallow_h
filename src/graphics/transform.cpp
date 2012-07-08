@@ -75,7 +75,7 @@ Transform::Private::updateMatrix(void)
 	l_scale[0] = scale.first();
 	l_scale[5] = scale.second();
 
-	matrix = l_translate * l_rotate * l_scale;
+	matrix = l_scale * l_translate * l_rotate;
 }
 
 Transform::Transform(void)

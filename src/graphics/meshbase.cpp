@@ -239,6 +239,13 @@ MeshBase::deserialize(XMLElement &n)
 		l_child->QueryFloatAttribute("a", &m_p->color[3]);
 	}
 
+	/* scale */
+	l_child = n.FirstChildElement("scale");
+	if (l_child) {
+		l_child->QueryFloatAttribute("x", &m_p->scale[0]);
+		l_child->QueryFloatAttribute("y", &m_p->scale[1]);
+	}
+
 	/* texture */
 	l_child = n.FirstChildElement("texture");
 	if (l_child) {

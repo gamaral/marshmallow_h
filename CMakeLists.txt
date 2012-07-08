@@ -65,15 +65,15 @@ set(MARSHMALLOW_BUILD_TITLE "Marshmallow Engine" CACHE STRING "Build Title")
 option(MARSHMALLOW_DEBUG "Marshmallow Debugging" OFF)
 set(MARSHMALLOW_DEBUG_VERBOSITY "0" CACHE STRING "Verbosity Level")
 
-set(MARSHMALLOW_VIEWPORT_HEIGHT  "480"    CACHE STRING "Viewport window height")
-set(MARSHMALLOW_VIEWPORT_WIDTH   "640"    CACHE STRING "Viewport window width")
-set(MARSHMALLOW_VIEWPORT_VHEIGHT "480.0f" CACHE STRING "Viewport virtual height")
-set(MARSHMALLOW_VIEWPORT_VWIDTH  "640.0f" CACHE STRING "Viewport virtual width")
-set(MARSHMALLOW_VIEWPORT_DEPTH   "24"     CACHE STRING "Viewport default depth")
+set(MARSHMALLOW_VIEWPORT_WIDTH   "640" CACHE STRING "Viewport native width")
+set(MARSHMALLOW_VIEWPORT_HEIGHT  "480" CACHE STRING "Viewport native height")
+set(MARSHMALLOW_VIEWPORT_DEPTH   "24"  CACHE STRING "Viewport default depth")
+set(MARSHMALLOW_VIEWPORT_REFRESH "60"  CACHE STRING "Viewport default refresh rate")
 
 option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode" OFF)
+option(MARSHMALLOW_VIEWPORT_GRAB_INPUT "Takeover viewport input devices"  ON)
+option(MARSHMALLOW_VIEWPORT_LOCK_WIDTH "Use width for aspect ratio resolucion" ON)
 option(MARSHMALLOW_VIEWPORT_VSYNC      "Viewport default vsync mode"      ON)
-option(MARSHMALLOW_VIEWPORT_GRAB_INPUT "Takeover viewport input devices" OFF)
 
 
 option(MARSHMALLOW_VIEWPORT_DUMMY          "Use Dummy Viewport (testing)" ON)

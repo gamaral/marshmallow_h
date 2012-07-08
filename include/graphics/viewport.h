@@ -60,6 +60,7 @@ namespace Graphics
 		bool Initialize( uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
 		                 uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
 		                 uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
+		                 uint8_t refresh = MARSHMALLOW_VIEWPORT_REFRESH,
 		                 bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
 		                 bool      vsync = MARSHMALLOW_VIEWPORT_VSYNC);
 
@@ -70,6 +71,7 @@ namespace Graphics
 		bool Redisplay( uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
 		                uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
 		                uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
+		                uint8_t refresh = MARSHMALLOW_VIEWPORT_REFRESH,
 		                bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
 		                bool      vsync = MARSHMALLOW_VIEWPORT_VSYNC);
 

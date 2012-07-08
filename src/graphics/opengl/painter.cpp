@@ -75,8 +75,9 @@ namespace
 	  "}\n";
 
 	const char s_fragment_shader[] =
+#ifdef MARSHMALLOW_OPENGL_GLES2
 	  "precision mediump float;\n"
-
+#endif
 	  "uniform bool u_usecolor;\n"
 	  "uniform sampler2D s_texture;\n"
 	  "uniform vec4 u_color;\n"
@@ -103,6 +104,8 @@ namespace
 
 	Math::Matrix4 s_matrix_current;
 	std::stack<Math::Matrix4> s_matrix_stack;
+
+	bool s_location_matrix_invalidated;
 
 	GLuint
 	loadShader(GLenum type, const char *src)
@@ -183,6 +186,17 @@ namespace
 		return(l_program_object);
 	}
 
+	inline void
+	UpdateLocationMatrix(void)
+	{
+		if (!s_location_matrix_invalidated)
+			return;
+
+		s_location_matrix_invalidated = false;
+		glUniformMatrix4fv(s_location_matrix, 1, GL_FALSE,
+		                   s_matrix_current.data());
+	}
+
 	void
 	DrawQuadMesh(const QuadMesh &g, bool tcoords)
 	{
@@ -240,6 +254,8 @@ Painter::Initialize(void)
 {
 	static const char s_error_msg[] = "Failed to load primary shaders";
 
+	s_location_matrix_invalidated = true;
+
 	if ((s_program_object = loadProgram()) == 0)
 		MMFATAL(s_error_msg);
 
@@ -281,12 +297,14 @@ Painter::Finalize(void)
 void
 Painter::Render(void)
 {
-	glUniformMatrix4fv(s_location_matrix, 1, GL_FALSE, s_matrix_current.data());
+	UpdateLocationMatrix();
 }
 
 void
 Painter::Reset(void)
 {
+	s_location_matrix_invalidated = true;
+
 	glClearColor(.0f, .0f, .0f, .1f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	ProjectionMatrix();
@@ -306,12 +324,14 @@ Painter::Matrix(void)
 void
 Painter::LoadIdentity(void)
 {
+	s_location_matrix_invalidated = true;
 	s_matrix_current = Math::Matrix4::Identity();
 }
 
 void
 Painter::ProjectionMatrix(void)
 {
+	s_location_matrix_invalidated = true;
 	s_matrix_current = Math::Matrix4::Identity();
 	s_matrix_current[0]  =  2.f / Viewport::Size().width();
 	s_matrix_current[5]  =  2.f / Viewport::Size().height();
@@ -327,6 +347,8 @@ Painter::PushMatrix(void)
 void
 Painter::PopMatrix(void)
 {
+	s_location_matrix_invalidated = true;
+
 	if (s_matrix_stack.size() <= 0) {
 		MMWARNING("Matrix stack is empty! Ignoring pop matrix.");
 		s_matrix_current = Math::Matrix4::Identity();
@@ -348,6 +370,7 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 	l_model.setRotation(m.rotation());
 	l_model.setScale(Math::Pair(l_scale[0], l_scale[1]));
 
+	UpdateLocationMatrix();
 	glUniformMatrix4fv(s_location_model, 1, GL_FALSE, l_model.matrix().data());
 
 	/* set blending */

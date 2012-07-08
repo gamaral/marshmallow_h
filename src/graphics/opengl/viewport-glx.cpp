@@ -122,7 +122,7 @@ namespace
 	}
 
 	bool
-	CreateWindow(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+	CreateWindow(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 	{
 		MMUNUSED(v);
 
@@ -184,14 +184,24 @@ namespace
 			XF86VidModeModeLine l_cmline;
 			int l_cdotclock;
 			XF86VidModeModeInfo **l_modes;
-			int l_mode_count;
+			int l_mode_count = 0;
 			int l_mode_selected = -1;
 
-			XF86VidModeGetModeLine(s_data.display, s_data.screen, &l_cdotclock, &l_cmline);
-			XF86VidModeGetAllModeLines(s_data.display, s_data.screen, &l_mode_count, &l_modes);
+			XF86VidModeGetModeLine(s_data.display, s_data.screen,
+			                       &l_cdotclock, &l_cmline);
+			XF86VidModeGetAllModeLines(s_data.display, s_data.screen,
+			                           &l_mode_count, &l_modes);
 			s_data.dvminfo.dotclock = 0;
 			for (int i = 0; i < l_mode_count; ++i) {
-				MMINFO("Display mode (" << l_modes[i]->hdisplay << "x" << l_modes[i]->vdisplay << ") [" << i << "]");
+				const int l_refresh = (l_modes[i]->dotclock * 1000) /
+				    (l_modes[i]->vtotal * l_modes[i]->htotal);
+
+				MMINFO("Display mode (" << l_modes[i]->hdisplay
+				                        << "x"
+				                        << l_modes[i]->vdisplay
+				                        << "@"
+				                        << l_refresh
+				                        << ") [" << i << "]");
 
 				if (!s_data.dvminfo.dotclock &&
 				    l_modes[i]->hdisplay == l_cmline.hdisplay &&
@@ -200,9 +210,11 @@ namespace
 					MMINFO("Found current display mode.");
 					s_data.dvminfo = *l_modes[i];
 				}
+
 				if (l_mode_selected == -1 &&
 				    l_modes[i]->hdisplay == w &&
-				    l_modes[i]->vdisplay == h) {
+				    l_modes[i]->vdisplay == h &&
+				    l_refresh == r) {
 					MMINFO("Found appropriate display mode.");
 					l_mode_selected = i;
 				}
@@ -213,8 +225,13 @@ namespace
 				return(false);
 			}
 
-			XF86VidModeSwitchToMode(s_data.display, s_data.screen, l_modes[l_mode_selected]);
-			XF86VidModeSetViewPort(s_data.display, s_data.screen, 0, 0);
+			if (XF86VidModeSwitchToMode(s_data.display, s_data.screen,
+			                            l_modes[l_mode_selected]) == False) {
+				MMERROR("Unable to switch display modes.");
+				return(false);
+			}
+			XF86VidModeSetViewPort(s_data.display, s_data.screen,
+			                       0, 0);
 			XFree(l_modes);
 
 			/* allow display to settle after vidmode switch */
@@ -281,7 +298,7 @@ namespace
 		XkbSetDetectableAutoRepeat(s_data.display, true, 0);
 
 #ifdef MARSHMALLOW_VIEWPORT_GRAB_INPUT
-		/* take over pointer and keyboard */
+		/* take pointer and keyboard */
 		XWarpPointer(s_data.display, None, s_data.window, 0, 0, 0, 0, 0, 0);
 		XGrabKeyboard(s_data.display, s_data.window, true, GrabModeAsync,
 		    GrabModeAsync, CurrentTime);
@@ -320,18 +337,22 @@ namespace
 		}
 		
 		EGLint l_attr[] = {
-			EGL_BUFFER_SIZE, d,
-			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+			EGL_BUFFER_SIZE,     d,
+			EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
 			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-			EGL_NONE, EGL_NONE
+			EGL_NONE,            EGL_NONE
 		};
 
 		EGLint l_config_count;
 		EGLConfig l_config;
-		if (!eglChooseConfig(s_data.egl_display, l_attr, &l_config, 1, &l_config_count))
+		if (!eglChooseConfig(s_data.egl_display, l_attr, &l_config, 1,
+		                     &l_config_count))
 			MMERROR("No EGL config was chosen. EGLERROR=" << eglGetError());
 
-		s_data.egl_surface = eglCreateWindowSurface(s_data.egl_display, l_config, (EGLNativeWindowType) s_data.window, 0);
+		s_data.egl_surface =
+		    eglCreateWindowSurface(s_data.egl_display, l_config,
+		                           (EGLNativeWindowType)s_data.window,
+		                           0);
 		if (s_data.egl_surface == EGL_NO_SURFACE) {
 			MMERROR("No EGL surface was created. EGLERROR=" << eglGetError());
 			return(false);
@@ -339,7 +360,7 @@ namespace
 
 		EGLint l_ctxattr[] = {
 			EGL_CONTEXT_CLIENT_VERSION, 2,
-			EGL_NONE, EGL_NONE
+			EGL_NONE,                   EGL_NONE
 		};
 		s_data.egl_context = eglCreateContext(s_data.egl_display, l_config, EGL_NO_CONTEXT, l_ctxattr);
 		if (s_data.egl_context == EGL_NO_CONTEXT) {
@@ -389,8 +410,15 @@ namespace
 
 		/* set viewport size */
 
-		s_data.size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
-		s_data.size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
+#if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
+		s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
+		s_data.size[1] = static_cast<float>(h) *
+		    (MARSHMALLOW_VIEWPORT_WIDTH / static_cast<float>(w));
+#else
+		s_data.size[0] = static_cast<float>(w) *
+		    (MARSHMALLOW_VIEWPORT_HEIGHT / static_cast<float>(h));
+		s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
+#endif
 
 		Viewport::SetCamera(s_data.camera);
 
@@ -586,11 +614,11 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 {
 	InitializeViewport();
 
-	if (!CreateWindow(w, h, d, f, v)) {
+	if (!CreateWindow(w, h, d, r, f, v)) {
 		DestroyWindow();
 		return(false);
 	}
@@ -607,11 +635,11 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 {
 	DestroyWindow();
 
-	if(!CreateWindow(w, h, d, f, v)) {
+	if(!CreateWindow(w, h, d, r, f, v)) {
 		DestroyWindow();
 		return(false);
 	}

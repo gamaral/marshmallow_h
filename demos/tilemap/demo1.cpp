@@ -53,7 +53,9 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(30, 60, MARSHMALLOW_BUSYWAIT)
+	: EngineBase(MARSHMALLOW_VIEWPORT_REFRESH,
+	             MARSHMALLOW_VIEWPORT_REFRESH,
+	             MARSHMALLOW_LITESLEEP)
 	{
 	}
 
@@ -79,7 +81,7 @@ public:
 		sceneManager()->pushScene(l_scene);
 
 		Graphics::Transform l_camera = Graphics::Viewport::Camera();
-		l_camera.setScale(Math::Pair(1.f, 1.f));
+		l_camera.setScale(Math::Pair(2.f, 2.f));
 		Graphics::Viewport::SetCamera(l_camera);
 
 		return(true);

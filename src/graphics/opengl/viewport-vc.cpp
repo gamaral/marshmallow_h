@@ -61,6 +61,8 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 
+#define VC_MODE_MAX 16
+
 /******************************************************************************/
 
 namespace
@@ -109,7 +111,7 @@ namespace
 	}
 
 	bool
-	CreateWindow(uint16_t w, uint16_t h, uint8_t d, bool, bool)
+	CreateSurface(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool, bool)
 	{
 		VC_RECT_T l_dst_rect;
 		VC_RECT_T l_src_rect;
@@ -131,9 +133,6 @@ namespace
 		/*** VC ***/
 
 		l_src_rect.x = l_src_rect.y = 0;
-		l_src_rect.width  = w << 16;
-		l_src_rect.height = h << 16;
-
 		l_dst_rect.x = l_dst_rect.y = 0;
 		l_dst_rect.width  = w;
 		l_dst_rect.height = h;
@@ -142,38 +141,136 @@ namespace
 		 * Try to use display size, if not use default window width and
 		 * height.
 		 */
-		uint32_t l_display_width;
-		uint32_t l_display_height;
-		if (graphics_get_display_size(DISPMANX_ID_MAIN_LCD,
-			                     &l_display_width,
-			                     &l_display_height) >= 0) {
-			const float l_ratio = float(w) / float(h);
+		uint16_t l_display = DISPMANX_ID_SDTV; /* default to tv output */
 
-			MMINFO("Got VC display size (" << l_display_width
-			                               << "x"
-			                               << l_display_height
-			                               << ")");
+		/*
+		 * Power on HDMI port in stand-by mode (for state testing)
+		 */
+		vc_tv_hdmi_power_on_explicit(HDMI_MODE_HDMI,
+		                             HDMI_RES_GROUP_CEA,
+		                             HDMI_CEA_OFF);
 
-			/* recalculate */
-			l_dst_rect.width  = l_display_height * l_ratio; /* keep aspect ratio*/
-			l_dst_rect.height = l_display_height;
-			l_dst_rect.x      = (l_display_width - l_dst_rect.width) / 2;
+		TV_GET_STATE_RESP_T l_tvstate;
+		if (vc_tv_get_state(&l_tvstate) >= 0) {
+			MMINFO("VC: state=" << l_tvstate.state);
 
-			l_src_rect.width  = l_dst_rect.width  << 16;
-			l_src_rect.height = l_dst_rect.height << 16;
+			/*
+			 *  HDMI/DVI
+			 */
+			if ((l_tvstate.state & VC_HDMI_UNPLUGGED) == 0) {
+				l_display = DISPMANX_ID_HDMI;
+				HDMI_RES_GROUP_T l_group  = HDMI_RES_GROUP_CEA;
+				HDMI_RES_GROUP_T l_pgroup = HDMI_RES_GROUP_CEA;
+				uint32_t l_mode  = HDMI_CEA_OFF;
+				uint32_t l_pmode = HDMI_CEA_OFF;
 
-			s_data.wsize[0]   = l_dst_rect.width;
-			s_data.wsize[1]   = l_dst_rect.height;
+				/* check for HDMI */
+				if ((l_tvstate.state & VC_HDMI_DVI) == VC_HDMI_DVI) {
+					l_display = DISPMANX_ID_MAIN_LCD;
+					l_group   = HDMI_RES_GROUP_DMT;
+				}
+
+				/* search for an appropriate mode */
+				TV_SUPPORTED_MODE_T l_modes[VC_MODE_MAX];
+				uint8_t l_mode_abort = 3;
+
+				do {
+					int l_modes_returned =
+					    vc_tv_hdmi_get_supported_modes(l_group, &l_modes[0], VC_MODE_MAX, &l_pgroup, &l_pmode);
+
+					/* check if we are using preferred group */
+					if (l_group != l_pgroup) {
+						l_group = l_pgroup;
+						continue;
+					}
+
+					/* sanity check */
+					if (l_modes_returned <= 0) {
+						MMERROR("HDMI: No modes available!");
+						return(false);
+					}
+
+					/* search mode array for closest match */
+					for (int i = 0; i < l_modes_returned; ++i)
+						if (l_modes[i].frame_rate == r &&
+						    l_modes[i].width      >= w &&
+						    l_modes[i].height     >= h) {
+							l_mode = l_modes[i].code;
+							break;
+						}
+
+					break; /* got this far, success! */
+				} while(l_mode_abort-- > 0);
+
+				/* check if we aborted */
+				if (l_mode_abort == 0) {
+					MMERROR("HDMI: Never found valid mode!");
+					return(false);
+				}
+
+				/*
+				 * default to preferred mode if no suitable mode
+				 * was found.
+				 */
+				if (l_mode == HDMI_CEA_OFF) {
+					MMERROR("HDMI: No suitable video mode found,"
+					        " defaulting to preferred.");
+					l_mode = l_pmode;
+				}
+
+				/* switch to stand-by */
+				if ((l_tvstate.state & VC_HDMI_STANDBY) == 0)
+					vc_tv_power_off();
+
+				/* turn on in correct mode */
+				vc_tv_hdmi_power_on_explicit(l_display == DISPMANX_ID_HDMI? HDMI_MODE_HDMI : HDMI_MODE_DVI,
+				                             l_group,
+				                             l_mode);
+
+				/* update state */
+				if (vc_tv_get_state(&l_tvstate) < 0) {
+					MMERROR("HDMI: Failed to query tv state.");
+					return(false);
+				}
+			}
+
+			/*
+			 *  SDTV
+			 */
+			else {
+				/* make sure HDMI port is off */
+				MMINFO("SDTV: Turning off HDMI port");
+				vc_tv_hdmi_power_on_explicit(HDMI_MODE_OFF,
+				                             HDMI_RES_GROUP_CEA,
+				                             HDMI_CEA_OFF);
+			}
+
+			if (l_tvstate.width <= 0 || l_tvstate.height <= 0) {
+				MMERROR("VC: Invalid TV size returned.");
+				return(false);
+			}
 		}
 
-		s_data.display = vc_dispmanx_display_open(DISPMANX_ID_MAIN_LCD);
+		s_data.display = vc_dispmanx_display_open(l_display);
 		if (s_data.display == 0) {
-			MMERROR("Failed to open VC display.");
+			MMERROR("VC: Failed to open display.");
 			return(false);
 		}
 
-		s_data.dispman_update = vc_dispmanx_update_start(0);
+		DISPMANX_MODEINFO_T l_display_info;
+		if (vc_dispmanx_display_get_info(s_data.display, &l_display_info) != 0) {
+			MMERROR("VC: Failed to get display info.");
+			return(false);
+		}
 
+		/* recalculate sizes */
+		s_data.wsize[0]   = l_dst_rect.width  = l_display_info.width;
+		s_data.wsize[1]   = l_dst_rect.height = l_display_info.height;
+		l_src_rect.width  = l_dst_rect.width  << 16;
+		l_src_rect.height = l_dst_rect.height << 16;
+		MMINFO("VC: Display size (" << s_data.wsize[0] << "x" << s_data.wsize[1] << ")");
+
+		s_data.dispman_update  = vc_dispmanx_update_start(0);
 		s_data.dispman_element = vc_dispmanx_element_add
 		    (s_data.dispman_update,
 		     s_data.display,
@@ -195,29 +292,46 @@ namespace
 
 		s_data.egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 		if (s_data.egl_display == EGL_NO_DISPLAY) {
-			MMERROR("No EGL display was found. EGLERROR=" << eglGetError());
+			MMERROR("EGL: No display was found. EGLERROR=" << eglGetError());
 			return(false);
 		}
 		
 		if (!eglInitialize(s_data.egl_display, 0, 0)) {
-			MMERROR("EGL initialization failed.");
+			MMERROR("EGL: Initialization failed.");
 			return(false);
 		}
-		
+
+		/* color sizes */
+		EGLint l_color_sizes[3];
+		switch (l_display_info.input_format) {
+		case VCOS_DISPLAY_INPUT_FORMAT_RGB888:
+			l_color_sizes[0] = l_color_sizes[1] = l_color_sizes [2] = 8;
+			break;
+		case VCOS_DISPLAY_INPUT_FORMAT_RGB565:
+			l_color_sizes[1] = 6;
+			l_color_sizes[0] = l_color_sizes[2] = 5;
+			break;
+		default:
+			l_color_sizes[0] = l_color_sizes[1] = l_color_sizes [2] = 0;
+		}
+
 		EGLint l_attr[] = {
 			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-			EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-			EGL_NONE, EGL_NONE
+			EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
+			EGL_RED_SIZE,        l_color_sizes[0],
+			EGL_GREEN_SIZE,      l_color_sizes[1],
+			EGL_BLUE_SIZE,       l_color_sizes[2],
+			EGL_NONE,            EGL_NONE
 		};
 
 		EGLint l_config_count;
 		EGLConfig l_config;
 		if (!eglChooseConfig(s_data.egl_display, l_attr, &l_config, 1, &l_config_count))
-			MMERROR("No EGL config was chosen. EGLERROR=" << eglGetError());
+			MMERROR("EGL: No config was chosen. EGLERROR=" << eglGetError());
 
 		s_data.egl_surface = eglCreateWindowSurface(s_data.egl_display, l_config, (EGLNativeWindowType) &s_data.window, 0);
 		if (s_data.egl_surface == EGL_NO_SURFACE) {
-			MMERROR("No EGL surface was created. EGLERROR=" << eglGetError());
+			MMERROR("EGL: No surface was created. EGLERROR=" << eglGetError());
 			return(false);
 		}
 
@@ -227,12 +341,12 @@ namespace
 		};
 		s_data.egl_context = eglCreateContext(s_data.egl_display, l_config, EGL_NO_CONTEXT, l_ctxattr);
 		if (s_data.egl_context == EGL_NO_CONTEXT) {
-			MMERROR("No EGL context was created. EGLERROR=" << eglGetError());
+			MMERROR("EGL: No context was created. EGLERROR=" << eglGetError());
 			return(false);
 		}
 		
 		if (!eglMakeCurrent(s_data.egl_display, s_data.egl_surface, s_data.egl_surface, s_data.egl_context)) {
-			MMERROR("Failed to switch current EGL context. EGLERROR=" << eglGetError());
+			MMERROR("EGL: Failed to switch current context. EGLERROR=" << eglGetError());
 			return(false);
 		}
 
@@ -241,14 +355,14 @@ namespace
 		glViewport(0, 0, l_dst_rect.width, l_dst_rect.height);
 
 		if(glGetError() != GL_NO_ERROR) {
-			MMERROR("GL failed during initialization.");
+			MMERROR("GL: Failed during initialization.");
 			return(false);
 		}
 
 		/* set viewport size */
 
-		s_data.size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
-		s_data.size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
+		s_data.size[0] = MARSHMALLOW_VIEWPORT_VSCALE * s_data.wsize[0];
+		s_data.size[1] = MARSHMALLOW_VIEWPORT_VSCALE * s_data.wsize[1];
 
 		Viewport::SetCamera(s_data.camera);
 
@@ -256,7 +370,7 @@ namespace
 	}
 
 	void
-	DestroyWindow(void)
+	DestroySurface(void)
 	{
 		if (s_data.display) {
 			eglMakeCurrent(s_data.egl_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -277,6 +391,12 @@ namespace
 		s_data.display = 0;
 		s_data.loaded = false;
 		s_data.screen = 0;
+
+		/* power off */
+		vc_tv_hdmi_power_on_explicit(HDMI_MODE_OFF,
+		                             HDMI_RES_GROUP_CEA,
+		                             HDMI_CEA_OFF);
+		vc_tv_power_off();
 	}
 
 	void
@@ -295,14 +415,14 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 {
 	bcm_host_init();
 
 	InitializeViewport();
 
-	if (!CreateWindow(w, h, d, f, v)) {
-		DestroyWindow();
+	if (!CreateSurface(w, h, d, r, f, v)) {
+		DestroySurface();
 		return(false);
 	}
 
@@ -314,18 +434,18 @@ void
 Viewport::Finalize(void)
 {
 	Painter::Finalize();
-	DestroyWindow();
+	DestroySurface();
 
 	bcm_host_deinit();
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 {
-	DestroyWindow();
+	DestroySurface();
 
-	if(!CreateWindow(w, h, d, f, v)) {
-		DestroyWindow();
+	if(!CreateSurface(w, h, d, r, f, v)) {
+		DestroySurface();
 		return(false);
 	}
 	return(true);

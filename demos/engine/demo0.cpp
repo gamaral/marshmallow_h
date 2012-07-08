@@ -199,8 +199,10 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(30, 60, MARSHMALLOW_BUSYWAIT),
-	  m_debugListener(new Event::DebugEventListener("log.txt"))
+	: EngineBase(MARSHMALLOW_VIEWPORT_REFRESH,
+	             MARSHMALLOW_VIEWPORT_REFRESH,
+	             MARSHMALLOW_LITESLEEP)
+	, m_debugListener(new Event::DebugEventListener("log.txt"))
 	{
 	}
 

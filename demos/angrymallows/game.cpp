@@ -58,7 +58,9 @@ MARSHMALLOW_NAMESPACE_USE
 #define STATE_FILENAME "savedstate.xml"
 
 Demo::Demo(const char *f)
-    : EngineBase(60, 60, MARSHMALLOW_BUSYWAIT)
+    : EngineBase(MARSHMALLOW_VIEWPORT_REFRESH,
+                 MARSHMALLOW_VIEWPORT_REFRESH,
+                 MARSHMALLOW_LITESLEEP)
     , m_filename(MMSTRDUP(f))
 {
 }
