@@ -85,8 +85,17 @@ namespace Graphics
 		MARSHMALLOW_GRAPHICS_EXPORT
 		void PopMatrix(void);
 
+		/*!
+		 * Draw a single mesh
+		 */
 		MARSHMALLOW_GRAPHICS_EXPORT
 		void Draw(const IMesh &mesh, const Math::Point2 &origin);
+
+		/*!
+		 * Draw a single mesh in multiple origins
+		 */
+		MARSHMALLOW_GRAPHICS_EXPORT
+		void Draw(const IMesh &mesh, const Math::Point2 *origins, int count = 1);
 	}
 }
 

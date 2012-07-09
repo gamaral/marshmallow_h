@@ -6,8 +6,6 @@ set(MARSHMALLOW_BUILD_TITLE "Marshmallow Raspberry Pi" CACHE STRING "Build Title
 
 set(MARSHMALLOW_VIEWPORT_HEIGHT  "480"    CACHE STRING "Viewport window height")
 set(MARSHMALLOW_VIEWPORT_WIDTH   "720"    CACHE STRING "Viewport window width")
-set(MARSHMALLOW_VIEWPORT_VHEIGHT "480.0f" CACHE STRING "Viewport virtual height")
-set(MARSHMALLOW_VIEWPORT_VWIDTH  "720.0f" CACHE STRING "Viewport virtual width")
 set(MARSHMALLOW_VIEWPORT_DEPTH   "32"     CACHE STRING "Viewport default depth")
 
 option(MARSHMALLOW_VIEWPORT_OPENGL "Use OpenGL Viewport"                 ON)

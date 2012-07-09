@@ -44,12 +44,14 @@
 #include "graphics/transform.h"
 
 #include "headers.h"
+#include "extensions.h"
 
 #include <cmath>
 #include <list>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
+using namespace OpenGL;
 
 /******************************************************************************/
 
@@ -69,7 +71,6 @@ namespace
 		bool          loaded;
 	} s_data;
 
-	void UpdateViewport(void);
 	void UpdateCamera(void);
 	void HandleKeyEvent(int keycode, bool down);
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -77,7 +78,7 @@ namespace
 	void InitializeViewport(void)
 	{
 		s_data.camera.setRotation(.0f);
-		s_data.camera.setScale(Math::Pair::One());
+		s_data.camera.setScale(Math::Size2f::Identity());
 		s_data.camera.setTranslation(Math::Point2::Zero());
 
 		s_data.dcontext = 0;
@@ -90,7 +91,7 @@ namespace
 	}
 
 	bool
-	CreateWWindow(int w, int h, int d, bool f, bool v)
+	CreateWWindow(uint16_t  w, uint16_t  h, uint8_t d, uint8_t r, bool f, bool v)
 	{
 		s_data.context     = 0;
 		s_data.dcontext    = 0;
@@ -210,14 +211,16 @@ namespace
 			return(false);
 		}
 
+		InitializeExtensions(reinterpret_cast<PFNGLGETPROCADDRESSPROC>(wglGetProcAddress));
+
 		ShowWindow(s_data.window, SW_SHOW);
 		SetForegroundWindow(s_data.window);
 		SetFocus(s_data.window);
 
 		/* vsync */
 
-		if(GLEE_WGL_EXT_swap_control)
-			wglSwapIntervalEXT(s ? 1 : 0);
+		if (glSwapInterval)
+			glSwapInterval(v ? 1 : 0);
 
 		/* set defaults */
 
@@ -233,26 +236,29 @@ namespace
 		glDisable(GL_LIGHTING);
 		glEnable(GL_CULL_FACE);
 
-		/* set viewport size */
-
-		s_data.size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
-		s_data.size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
-
 		/* initialize context */
 
-		glViewport(0, 0, w, h);
-
-		glClearColor(.0f, .0f, .0f, .0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		UpdateViewport();
-
-		Viewport::SetCamera(s_data.camera);
-		Viewport::SwapBuffer();
+		glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
 
 		if(glGetError() != GL_NO_ERROR) {
 			MMERROR("WGL failed during initialization.");
 			return(false);
 		}
+
+		/* set viewport size */
+
+#if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
+		s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
+		s_data.size[1] = (MARSHMALLOW_VIEWPORT_WIDTH * static_cast<float>(s_data.wsize[1])) /
+		    static_cast<float>(s_data.wsize[0]);
+
+#else
+		s_data.size[0] = (MARSHMALLOW_VIEWPORT_HEIGHT * static_cast<float>(s_data.wsize[0])) /
+		    static_cast<float>(s_data.wsize[1]);
+		s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
+#endif
+
+		Viewport::SetCamera(s_data.camera);
 
 		return(s_data.loaded = true);
 	}
@@ -293,28 +299,11 @@ namespace
 	}
 
 	void
-	UpdateViewport(void)
-	{
-		const float l_hw = s_data.size[0] / 2.f;
-		const float l_hh = s_data.size[1] / 2.f;
-
-		/* update projection */
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-l_hw, l_hw, -l_hh, l_hh, -1.f, 1.f);
-		glMatrixMode(GL_MODELVIEW);
-
-		/* update camera */
-		UpdateCamera();
-	}
-
-	void
 	UpdateCamera(void)
 	{
 		/* calculate scaled viewport size */
-		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().first();
-		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().second();
+		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().width();
+		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().height();
 
 		/* calculate magnitude and pass it off as radius squared */
 		s_data.radius2 = powf(s_data.scaled_size[0] / 2.f, 2.f) +
@@ -458,11 +447,11 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 {
 	InitializeViewport();
 
-	if (!CreateWWindow(w, h, d, f, v)) {
+	if (!CreateWWindow(w, h, d, r, f, v)) {
 		DestroyWWindow();
 		return(false);
 	}
@@ -479,11 +468,11 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 {
 	DestroyWWindow();
 
-	if(!CreateWWindow(w, h, d, f, v)) {
+	if(!CreateWWindow(w, h, d, r, f, v)) {
 		DestroyWWindow();
 		return(false);
 	}
@@ -512,14 +501,7 @@ void
 Viewport::SwapBuffer(void)
 {
 	SwapBuffers(s_data.dcontext);
-
-	glClearColor(.0f, .0f, .0f, .0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
-
-	glRotatef(s_data.camera.rotation(), .0f, .0f, 1.f);
-	glScalef(s_data.camera.scale().first(), s_data.camera.scale().second(), 0.f);
-	glTranslatef(s_data.camera.translation().x() * -1, s_data.camera.translation().y() * -1, 0.f);
+	Painter::Reset();
 }
 
 const Graphics::Transform &
@@ -564,23 +546,5 @@ Viewport::Type(void)
 {
 	static const Core::Type s_type("WGL");
 	return(s_type);
-}
-
-void
-Viewport::LoadIdentity(void)
-{
-	glLoadIdentity();
-}
-
-void
-Viewport::PushMatrix(void)
-{
-	glPushMatrix();
-}
-
-void
-Viewport::PopMatrix(void)
-{
-	glPopMatrix();
 }
 

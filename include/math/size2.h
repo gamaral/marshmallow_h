@@ -64,9 +64,9 @@ namespace Math
 		    { m_value[0] = copy.m_value[0];
 		      m_value[1] = copy.m_value[1]; }
 
-		const T & width(void) const
+		inline const T & width(void) const
 		    { return(m_value[0]); }
-		const T & height(void) const
+		inline const T & height(void) const
 		    { return(m_value[1]); }
 
 		T area(void) const
@@ -90,10 +90,10 @@ namespace Math
 		    { return( m_value[0] == rhs.m_value[0]
 		           && m_value[1] == rhs.m_value[1]); }
 
-		T & operator[](int i)
+		inline T & operator[](int i)
 		    { return(m_value[i % 2]); }
 
-		const T & operator[](int i) const
+		inline const T & operator[](int i) const
 		    { return(m_value[i % 2]); }
 
 		Size2<T> operator*(const T &c) const

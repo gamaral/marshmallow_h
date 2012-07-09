@@ -382,10 +382,8 @@ EngineBase::tick(void)
 void
 EngineBase::second(void)
 {
-#if MARSHMALLOW_DEBUG
-	MMINFO("FPS=" << m_p->frame_rate);
+	MMDEBUG("FPS=" << m_p->frame_rate);
 	MMINFO("TPS=" << m_p->tick_rate);
-#endif
 }
 
 void

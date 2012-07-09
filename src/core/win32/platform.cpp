@@ -74,7 +74,7 @@ Platform::StartTime(void)
 MMTIME
 Platform::TimeStamp(void)
 {
-	FILEMMTIME        l_ft;
+	FILETIME        l_ft;
 	LARGE_INTEGER   l_li;
 	INT64           l_micro_seconds;
 	MMTIME            l_mseconds;

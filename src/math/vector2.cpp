@@ -49,12 +49,6 @@ Vector2::Vector2(float ax, float ay)
 	m_value[1] = ay;
 }
 
-Vector2::Vector2(const Vector2 &c)
-{
-	m_value[0] = c.x();
-	m_value[1] = c.y();
-}
-
 Vector2
 Vector2::normalized(const float *m) const
 {
@@ -99,14 +93,6 @@ float
 Vector2::dot(const Vector2 &b) const
 {
 	return((x() * b.x()) + (y() * b.y()));
-}
-
-Vector2 &
-Vector2::operator=(const Vector2 &rhs)
-{
-	m_value[0] = rhs.m_value[0];
-	m_value[1] = rhs.m_value[1];
-	return(*this);
 }
 
 bool

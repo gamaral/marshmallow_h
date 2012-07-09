@@ -36,8 +36,6 @@
 
 #include "core/logger.h"
 
-#include "math/pair.h"
-
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
@@ -93,7 +91,7 @@ namespace
 	void InitializeViewport(void)
 	{
 		s_data.camera.setRotation(.0f);
-		s_data.camera.setScale(Math::Pair::One());
+		s_data.camera.setScale(Math::Size2f::Identity());
 		s_data.camera.setTranslation(Math::Point2::Zero());
 
 		s_data.egl_context = EGL_NO_CONTEXT;
@@ -158,80 +156,25 @@ namespace
 			 *  HDMI/DVI
 			 */
 			if ((l_tvstate.state & VC_HDMI_UNPLUGGED) == 0) {
-				l_display = DISPMANX_ID_HDMI;
-				HDMI_RES_GROUP_T l_group  = HDMI_RES_GROUP_CEA;
-				HDMI_RES_GROUP_T l_pgroup = HDMI_RES_GROUP_CEA;
-				uint32_t l_mode  = HDMI_CEA_OFF;
-				uint32_t l_pmode = HDMI_CEA_OFF;
-
-				/* check for HDMI */
-				if ((l_tvstate.state & VC_HDMI_DVI) == VC_HDMI_DVI) {
-					l_display = DISPMANX_ID_MAIN_LCD;
-					l_group   = HDMI_RES_GROUP_DMT;
-				}
-
-				/* search for an appropriate mode */
-				TV_SUPPORTED_MODE_T l_modes[VC_MODE_MAX];
-				uint8_t l_mode_abort = 3;
-
-				do {
-					int l_modes_returned =
-					    vc_tv_hdmi_get_supported_modes(l_group, &l_modes[0], VC_MODE_MAX, &l_pgroup, &l_pmode);
-
-					/* check if we are using preferred group */
-					if (l_group != l_pgroup) {
-						l_group = l_pgroup;
-						continue;
-					}
-
-					/* sanity check */
-					if (l_modes_returned <= 0) {
-						MMERROR("HDMI: No modes available!");
-						return(false);
-					}
-
-					/* search mode array for closest match */
-					for (int i = 0; i < l_modes_returned; ++i)
-						if (l_modes[i].frame_rate == r &&
-						    l_modes[i].width      >= w &&
-						    l_modes[i].height     >= h) {
-							l_mode = l_modes[i].code;
-							break;
-						}
-
-					break; /* got this far, success! */
-				} while(l_mode_abort-- > 0);
-
-				/* check if we aborted */
-				if (l_mode_abort == 0) {
-					MMERROR("HDMI: Never found valid mode!");
-					return(false);
-				}
-
-				/*
-				 * default to preferred mode if no suitable mode
-				 * was found.
-				 */
-				if (l_mode == HDMI_CEA_OFF) {
-					MMERROR("HDMI: No suitable video mode found,"
-					        " defaulting to preferred.");
-					l_mode = l_pmode;
-				}
-
 				/* switch to stand-by */
 				if ((l_tvstate.state & VC_HDMI_STANDBY) == 0)
 					vc_tv_power_off();
 
 				/* turn on in correct mode */
-				vc_tv_hdmi_power_on_explicit(l_display == DISPMANX_ID_HDMI? HDMI_MODE_HDMI : HDMI_MODE_DVI,
-				                             l_group,
-				                             l_mode);
+				vc_tv_hdmi_power_on_preferred();
 
 				/* update state */
 				if (vc_tv_get_state(&l_tvstate) < 0) {
 					MMERROR("HDMI: Failed to query tv state.");
 					return(false);
 				}
+
+				/* check connection type */
+				if ((l_tvstate.state & VC_HDMI_HDMI) == VC_HDMI_HDMI)
+					l_display = DISPMANX_ID_HDMI;
+				else if ((l_tvstate.state & VC_HDMI_DVI) == VC_HDMI_DVI)
+					l_display = DISPMANX_ID_MAIN_LCD;
+
 			}
 
 			/*
@@ -352,7 +295,7 @@ namespace
 
 		/* initialize context */
 
-		glViewport(0, 0, l_dst_rect.width, l_dst_rect.height);
+		glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
 
 		if(glGetError() != GL_NO_ERROR) {
 			MMERROR("GL: Failed during initialization.");
@@ -361,8 +304,15 @@ namespace
 
 		/* set viewport size */
 
-		s_data.size[0] = MARSHMALLOW_VIEWPORT_VSCALE * s_data.wsize[0];
-		s_data.size[1] = MARSHMALLOW_VIEWPORT_VSCALE * s_data.wsize[1];
+#if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
+		s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
+		s_data.size[1] = static_cast<float>(s_data.wsize[1]) *
+		    (MARSHMALLOW_VIEWPORT_WIDTH / static_cast<float>(s_data.wsize[0]));
+#else
+		s_data.size[0] = static_cast<float>(s_data.wsize[0]) *
+		    (MARSHMALLOW_VIEWPORT_HEIGHT / static_cast<float>(s_data.wsize[1]));
+		s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
+#endif
 
 		Viewport::SetCamera(s_data.camera);
 
@@ -403,8 +353,8 @@ namespace
 	UpdateCamera(void)
 	{
 		/* calculate scaled viewport size */
-		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().first();
-		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().second();
+		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().width();
+		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().height();
 
 		/* calculate magnitude and pass it off as radius squared */
 		s_data.radius2 = powf(s_data.scaled_size[0] / 2.f, 2.f) +

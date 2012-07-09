@@ -28,8 +28,6 @@
 
 #include <core/logger.h>
 
-#include <math/pair.h>
-
 #include <graphics/transform.h>
 #include <graphics/viewport.h>
 
@@ -81,7 +79,7 @@ public:
 		sceneManager()->pushScene(l_scene);
 
 		Graphics::Transform l_camera = Graphics::Viewport::Camera();
-		l_camera.setScale(Math::Pair(2.f, 2.f));
+		l_camera.setScale(Math::Size2f(2.f, 2.f));
 		Graphics::Viewport::SetCamera(l_camera);
 
 		return(true);

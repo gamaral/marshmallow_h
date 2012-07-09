@@ -56,12 +56,14 @@ namespace Math
 		float m_value[2];
 	public:
 		Vector2(float x = 0.f, float y = 0.f);
-		Vector2(const Vector2 &copy);
 
 		const float & x(void) const
 		    { return(m_value[0]); }
 		const float & y(void) const
 		    { return(m_value[1]); }
+
+		inline void set(float ax, float ay)
+		    { m_value[0] = ax, m_value[1] = ay; }
 
 		Vector2 normalized(const float *magnitude = 0) const;
 		Vector2 & normalize(const float *magnitude = 0);
@@ -74,7 +76,6 @@ namespace Math
 
 	public: /* operators */
 
-		Vector2 & operator=(const Vector2 &rhs);
 		bool operator==(const Vector2 &rhs) const;
 
 		float & operator[](int i)

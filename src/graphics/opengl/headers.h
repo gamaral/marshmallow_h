@@ -37,17 +37,20 @@
 #ifndef GRAPHICS_OPENGL_HEADERS_H
 #define GRAPHICS_OPENGL_HEADERS_H 1
 
-#if defined(_WIN32)
+#ifdef _WIN32
 #  include <windows.h>
 #endif
 
 #ifdef MARSHMALLOW_OPENGL_GLES2
 #  include <GLES2/gl2.h>
-#elif defined(__APPLE__)
-#  include <OpenGL/gl.h>
+#  include "extensions/gl2ext.h"
 #else
-#  define GL_GLEXT_PROTOTYPES
-#  include <GL/glx.h>
+#  if defined(__APPLE__)
+#    include <OpenGL/gl.h>
+#  else
+#    include <GL/gl.h>
+#  endif
+#  include "extensions/glext.h"
 #endif
 
 #endif

@@ -104,8 +104,17 @@ Painter::PopMatrix(void)
 void
 Painter::Draw(const IMesh &m, const Math::Point2 &p)
 {
+	Draw(m, &p, 1);
+}
+
+void
+Painter::Draw(const IMesh &m, const Math::Point2 *p, int c)
+{
+	/* Unused if not in verbose debug mode */
 	MMUNUSED(m);
 	MMUNUSED(p);
-	MMINFO("Drawind " << m.type().str() << " at (" << p.x() << ", " << p.y() << ").");
+
+	for (int i = 0; i < c; ++i)
+		MMVERBOSE("Drawind " << m.type().str() << " at (" << p[i].x() << ", " << p[i].y() << ").");
 }
 

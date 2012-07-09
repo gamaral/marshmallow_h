@@ -123,10 +123,10 @@ PlayerEntity::update(float d)
 			    Game::Engine::Instance()->sceneManager()->activeScene()->getLayer("platform").staticCast<Game::TilemapSceneLayer>();
 			const Math::Size2f &l_hrsize = l_platform_layer->virtualHalfSize();
 
-			l_limit = l_hrsize.width() - (Graphics::Viewport::Size().width() / 2.f);
+			l_limit = l_hrsize.width() - (Graphics::Viewport::Size().width() / (2.f * l_camera.scale().width()));
 			if (l_pos.x() < -l_limit) l_pos[0] = -l_limit;
 			else if (l_pos.x() > l_limit) l_pos[0] = l_limit;
-			l_limit = l_hrsize.height() - (Graphics::Viewport::Size().height() / 2.f);
+			l_limit = l_hrsize.height() - (Graphics::Viewport::Size().height() / (2.f * l_camera.scale().height()));
 			if (l_pos.y() < -l_limit) l_pos[1] = -l_limit;
 			else if (l_pos.y() > l_limit) l_pos[1] = l_limit;
 

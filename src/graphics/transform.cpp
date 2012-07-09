@@ -34,9 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "math/pair.h"
-#include "math/point2.h"
 #include "math/matrix4.h"
+#include "math/point2.h"
+#include "math/size2.h"
 
 #include <cmath>
 
@@ -46,7 +46,7 @@ using namespace Graphics;
 struct Transform::Private
 {
 	float rotation;
-	Math::Pair scale;
+	Math::Size2f scale;
 	Math::Point2 translation;
 
 	Math::Matrix4 matrix;
@@ -72,8 +72,8 @@ Transform::Private::updateMatrix(void)
 	}
 
 	Math::Matrix4 l_scale;
-	l_scale[0] = scale.first();
-	l_scale[5] = scale.second();
+	l_scale[0] = scale.width();
+	l_scale[5] = scale.height();
 
 	matrix = l_scale * l_translate * l_rotate;
 }
@@ -82,7 +82,7 @@ Transform::Transform(void)
     : m_p(new Private)
 {
 	m_p->rotation = 0.f;
-	m_p->scale = Math::Pair::One();
+	m_p->scale = Math::Size2f::Identity();
 	m_p->updateMatrix();
 }
 
@@ -114,14 +114,14 @@ Transform::setRotation(float value)
 	m_p->updateMatrix();
 }
 
-const Math::Pair &
+const Math::Size2f &
 Transform::scale(void) const
 {
 	return(m_p->scale);
 }
 
 void
-Transform::setScale(const Math::Pair &value)
+Transform::setScale(const Math::Size2f &value)
 {
 	m_p->scale = value;
 	m_p->updateMatrix();

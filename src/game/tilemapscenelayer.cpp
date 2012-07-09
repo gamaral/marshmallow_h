@@ -36,6 +36,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <map>
 
 #include "math/point2.h"
 #include "math/vector2.h"
@@ -128,11 +129,21 @@ TilemapSceneLayer::Private::render(void)
 {
 	if (!data || !visible) return;
 
+	typedef std::map<uint32_t, uint32_t> TileIndexCount;
+	typedef std::pair<float, float> Origin;
+	typedef std::multimap<uint32_t, Origin> TileIndexOrigins;
+	typedef std::pair<uint32_t, Origin> TileIndexOrigin;
+	typedef std::pair<TileIndexOrigins::iterator, TileIndexOrigins::iterator> TileIndexOriginsRange;
+	TileIndexCount   l_tile_count;
+	TileIndexOrigins l_tile_origins;
+	uint32_t         l_tile_count_max = 0;
+
 	/* calculate visible row and column range */
 
-	const bool  l_camera_rotated = Graphics::Viewport::Camera().rotation() != 0;
-	const float l_camera_x = Graphics::Viewport::Camera().translation().x() + translate.x();
-	const float l_camera_y = Graphics::Viewport::Camera().translation().y() + translate.y();
+	const Graphics::Transform &l_camera = Graphics::Viewport::Camera();
+	const bool  l_camera_rotated = l_camera.rotation() != 0;
+	const float l_camera_x = l_camera.translation().x() + translate.x();
+	const float l_camera_y = l_camera.translation().y() + translate.y();
 
 	float col_start_cam;
 	float col_stop_cam;
@@ -147,7 +158,8 @@ TilemapSceneLayer::Private::render(void)
 		row_stop_cam  = l_camera_y - l_visible_radius;
 	}
 	else {
-		const Math::Size2f l_hviewport_size = Graphics::Viewport::ScaledSize() / 2.f;
+		Math::Size2f l_hviewport_size = Graphics::Viewport::ScaledSize() / 2.f;
+
 		col_start_cam = l_camera_x - l_hviewport_size.width()  - hrtile_size.width();
 		col_stop_cam  = l_camera_x + l_hviewport_size.width()  + hrtile_size.width();
 		row_start_cam = l_camera_y + l_hviewport_size.height() + hrtile_size.height();
@@ -163,9 +175,7 @@ TilemapSceneLayer::Private::render(void)
 	int row_stop  = static_cast<int>(ceilf(((row_stop_cam - hrsize.height()) / rsize.height())
 	    * static_cast<float>(-size.height())));
 
-	/* draw tiles */
-
-	Graphics::Color l_color(1.f, 1.f, 1.f, opacity);
+	/* calculate tile origins */
 
 	for (int l_r = row_start; l_r < row_stop; ++l_r) {
 		const int l_rindex = l_r % size.height();
@@ -192,21 +202,46 @@ TilemapSceneLayer::Private::render(void)
 			/* offset to bottom of tile (we draw up) */
 			l_y -= rtile_size.height();
 
-			uint32_t l_tioffset;
-			Graphics::SharedTileset l_ts = tileset(l_tindex, &l_tioffset);
-			Graphics::SharedTextureCoordinateData l_tcd;
+			/* add to cache */
 
-			if (l_ts) {
-				Graphics::SharedVertexData &l_svdata = vertexes[l_tioffset];
+			uint32_t l_current_count = (l_tile_count[l_tindex] += 1);
+			if (l_tile_count_max < l_current_count)
+				l_tile_count_max = l_current_count;
 
-				Graphics::QuadMesh l_mesh(l_ts->getTextureCoordinateData(static_cast<uint16_t>(l_tindex - l_tioffset)),
-				    l_ts->textureData(), l_svdata);
-				l_mesh.setColor(l_color);
-
-				Graphics::Painter::Draw(l_mesh, Math::Point2(l_x, l_y));
-			}
+			l_tile_origins.insert(TileIndexOrigin(l_tindex, Origin(l_x, l_y)));
 		}
 	}
+
+	/* draw tiles */
+
+	Math::Point2   *l_origins = new Math::Point2[l_tile_count_max];
+	Graphics::Color l_color(1.f, 1.f, 1.f, opacity);
+
+	TileIndexCount::iterator ti;
+	TileIndexCount::iterator te = l_tile_count.end();
+	for (ti = l_tile_count.begin(); ti != te; ++ti) {
+		TileIndexOriginsRange l_range = l_tile_origins.equal_range(ti->first);
+		TileIndexOrigins::iterator oi;
+		uint32_t oic = 0;
+		for (oi = l_range.first; oi != l_range.second; ++oi)
+			l_origins[oic++].set(oi->second.first, oi->second.second);
+
+		assert(oic == ti->second && "Tile origin count mismatch!");
+
+		uint32_t l_tioffset;
+		Graphics::SharedTileset l_ts = tileset(ti->first, &l_tioffset);
+		Graphics::SharedTextureCoordinateData l_tcd;
+		if (l_ts) {
+			Graphics::SharedVertexData &l_svdata = vertexes[l_tioffset];
+
+			Graphics::QuadMesh l_mesh(l_ts->getTextureCoordinateData(static_cast<uint16_t>(ti->first - l_tioffset)),
+			    l_ts->textureData(), l_svdata);
+			l_mesh.setColor(l_color);
+
+			Graphics::Painter::Draw(l_mesh, l_origins, oic);
+		}
+	}
+	delete [] l_origins;
 }
 
 void

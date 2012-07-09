@@ -38,8 +38,6 @@ MARSHMALLOW_NAMESPACE_USE
 
 #include <core/logger.h>
 
-#include <math/pair.h>
-
 #include <event/keyboardevent.h>
 
 #include <graphics/transform.h>
@@ -82,7 +80,7 @@ Demo::initialize(void)
 	eventManager()->connect(this, Event::KeyboardEvent::Type());
 
 	Graphics::Transform l_camera = Graphics::Viewport::Camera();
-	l_camera.setScale(Math::Pair(280.f, 280.f));
+	l_camera.setScale(Math::Size2f(280.f, 280.f));
 	l_camera.setTranslation(Math::Point2(0.f, -0.2f));
 	Graphics::Viewport::SetCamera(l_camera);
 

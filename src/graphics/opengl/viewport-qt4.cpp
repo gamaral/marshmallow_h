@@ -36,8 +36,6 @@
 
 #include "core/logger.h"
 
-#include "math/pair.h"
-
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
@@ -49,6 +47,7 @@
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QKeyEvent>
 
+#include <QtOpenGL/QGLFormat>
 #include <QtOpenGL/QGLWidget>
 
 #include <cmath>
@@ -71,23 +70,27 @@ namespace
 	public:
 
 		ViewportWidget(uint16_t w, uint16_t h, bool f)
+		    : QGLWidget(QGLFormat(QGL::DoubleBuffer|QGL::DirectRendering|QGL::NoDepthBuffer))
 		{
 			setAutoBufferSwap(false);
 			setFixedSize(w, h);
 			setWindowTitle(MARSHMALLOW_BUILD_TITLE);
 
-			m_wsize[0] = w;
-			m_wsize[1] = h;
-
 			m_camera.setRotation(.0f);
-			m_camera.setScale(Math::Pair::One());
+			m_camera.setScale(Math::Size2f::Identity());
 			m_camera.setTranslation(Math::Point2::Zero());
 
 			m_size.zero();
 			m_scaled_size.zero();
 
-			if (!f) {
-				const QRect &desktop = QApplication::desktop()->availableGeometry();
+			const QRect &desktop = QApplication::desktop()->availableGeometry();
+			if (f) {
+				m_wsize[0] = desktop.width();
+				m_wsize[1] = desktop.height();
+			}
+			else {
+				m_wsize[0] = w;
+				m_wsize[1] = h;
 				move((desktop.width() / 2) - (w / 2), (desktop.height() / 2) - (h / 2));
 			}
 		}
@@ -117,8 +120,8 @@ namespace
 			m_camera = c;
 
 			/* calculate scaled viewport size */
-			m_scaled_size[0] = m_size[0] / m_camera.scale().first();
-			m_scaled_size[1] = m_size[1] / m_camera.scale().second();
+			m_scaled_size[0] = m_size[0] / m_camera.scale().width();
+			m_scaled_size[1] = m_size[1] / m_camera.scale().height();
 
 			/* calculate magnitude and pass it off as radius squared */
 			m_radius2 = powf(m_scaled_size[0] / 2.f, 2.f) +
@@ -141,36 +144,45 @@ namespace
 
 			/* set viewport size */
 
-			m_size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
-			m_size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
+#if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
+			m_size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
+			m_size[1] = static_cast<float>(m_wsize[1]) *
+			    (MARSHMALLOW_VIEWPORT_WIDTH / static_cast<float>(m_wsize[0]));
+#else
+			m_size[0] = static_cast<float>(m_wsize[0]) *
+			    (MARSHMALLOW_VIEWPORT_HEIGHT / static_cast<float>(m_wsize[1]));
+			m_size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
+#endif
 
 			Viewport::SetCamera(m_camera);
 
 		}
 
 		VIRTUAL void
-		closeEvent(QCloseEvent * event)
+		closeEvent(QCloseEvent *e)
 		{
+			MMUNUSED(e);
+
 			Event::QuitEvent l_event(-1);
 			Event::EventManager::Instance()->dispatch(l_event);
 		}
 
 		VIRTUAL void
-		keyPressEvent(QKeyEvent *event)
+		keyPressEvent(QKeyEvent *e)
 		{
-			handleKeyEvent(*event, true);
+			handleKeyEvent(*e, true);
 		}
 
 		VIRTUAL void
-		keyReleaseEvent(QKeyEvent *event)
+		keyReleaseEvent(QKeyEvent *e)
 		{
-			handleKeyEvent(*event, false);
+			handleKeyEvent(*e, false);
 		}
 
 	protected:
 
 		void
-		handleKeyEvent(const QKeyEvent &event, bool down)
+		handleKeyEvent(const QKeyEvent &e, bool down)
 		{
 			typedef std::list<Event::KBKeys> KeyList;
 			static KeyList s_keys_pressed;
@@ -179,7 +191,7 @@ namespace
 			Event::KBActions l_action =
 			    (down ? Event::KeyPressed : Event::KeyReleased);
 
-			int keycode = event.key();
+			int keycode = e.key();
 
 			/* force lower case */
 			if (keycode >= 65 && keycode <= 90)
@@ -279,7 +291,7 @@ namespace
 		/* check status */
 
 		if (!s_window->format().directRendering()) {
-			MMERROR("GL context doesn't support direct rendering.");
+			MMERROR("GL: Context doesn't support direct rendering.");
 			return(false);
 		}
 
@@ -315,7 +327,7 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, uint8_t, bool f, bool v)
 {
 	static int argc = 0;
 	static char **argv = 0;
@@ -341,7 +353,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, uint8_t, bool f, bool v)
 {
 	DestroyWindow();
 
@@ -404,7 +416,7 @@ Viewport::WindowSize(void)
 const Core::Type &
 Viewport::Type(void)
 {
-	static const Core::Type s_type("QT");
+	static const Core::Type s_type("QT4");
 	return(s_type);
 }
 

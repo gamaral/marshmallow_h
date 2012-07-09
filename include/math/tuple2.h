@@ -53,16 +53,17 @@ namespace Math
 	public:
 
 		Tuple2(float first = 0.f, float second = 0.f);
-		Tuple2(const Tuple2 &copy);
 
 		const float & first(void) const
 		    { return(m_value[0]); }
 		const float & second(void) const
 		    { return(m_value[1]); }
 
+		inline void set(float a, float b)
+		    { m_value[0] = a, m_value[1] = b; }
+
 	public: /* operators */
 
-		Tuple2 & operator=(const Tuple2 &rhs);
 		bool operator==(const Tuple2 &rhs) const;
 
 		float & operator[](int i)

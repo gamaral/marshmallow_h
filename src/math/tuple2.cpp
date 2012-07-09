@@ -43,20 +43,6 @@ Tuple2::Tuple2(float ax, float ay)
 	m_value[1] = ay;
 }
 
-Tuple2::Tuple2(const Tuple2 &c)
-{
-	m_value[0] = c.m_value[0];
-	m_value[1] = c.m_value[1];
-}
-
-Tuple2 &
-Tuple2::operator=(const Tuple2 &rhs)
-{
-	m_value[0] = rhs.m_value[0];
-	m_value[1] = rhs.m_value[1];
-	return(*this);
-}
-
 bool
 Tuple2::operator==(const Tuple2 &rhs) const
 {

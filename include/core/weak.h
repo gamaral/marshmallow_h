@@ -64,43 +64,46 @@ namespace Core
 		Weak(void)
 		    : m_data(0) {};
 		Weak(SharedData *data)
-		    : m_data(data) { if (m_data) ++m_data->wrefs;}
+		    : m_data(data) { if (m_data) ++m_data->wrefs; }
 		Weak(const Weak &copy);
 		~Weak(void)
 		    { clear(); }
 
-		void clear(void);
+		inline void clear(void);
 
-		T * raw(void) const
+		inline T * raw(void) const
 		    { assert(m_data && m_data->ptr);
 		      return(reinterpret_cast<T *>(m_data->ptr)); }
 
-		template <class U> Weak<U> cast(void) const;
-		template <class U> Weak<U> staticCast(void) const;
+		template <class U>
+		inline Weak<U> cast(void) const;
+
+		template <class U>
+		inline Weak<U> staticCast(void) const;
 
 	public: /* operator */
 
-		operator bool(void) const
+		inline operator bool(void) const
 		    { return(m_data && m_data->ptr); }
 
-		operator Shared<T>(void) const
+		inline operator Shared<T>(void) const
 		    { assert(m_data && m_data->ptr);
 		      return(Shared<T>(m_data)); }
 
-		T & operator *(void) const
+		inline T & operator *(void) const
 		    { assert(m_data && m_data->ptr);
 		      return(*reinterpret_cast<T *>(m_data->ptr)); }
 
-		T * operator ->(void) const
+		inline T * operator ->(void) const
 		    { assert(m_data && m_data->ptr);
 		      return(reinterpret_cast<T *>(m_data->ptr)); }
 
-		Weak & operator =(const Weak &rhs);
+		inline Weak & operator =(const Weak &rhs);
 
-		bool operator ==(const Weak &rhs) const
+		inline bool operator ==(const Weak &rhs) const
 		    { return(this == &rhs || m_data == rhs.m_data); }
 
-		bool operator !=(const Weak &rhs) const
+		inline bool operator !=(const Weak &rhs) const
 		    { return(this != &rhs && m_data != rhs.m_data); }
 	};
 
@@ -135,10 +138,8 @@ namespace Core
 
 		clear();
 
-		if (rhs) {
-			m_data = rhs.m_data;
+		if ((m_data = rhs.m_data))
 			++m_data->wrefs;
-		}
 
 		return(*this);
 	}
@@ -148,8 +149,7 @@ namespace Core
 	Weak<T>::clear(void)
 	{
 		if (m_data && --m_data->wrefs <= 0 && m_data->ptr == 0)
-			delete m_data;
-		m_data = 0;
+			delete m_data, m_data = 0;
 	}
 }
 

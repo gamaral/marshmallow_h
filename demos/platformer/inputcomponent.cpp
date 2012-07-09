@@ -77,8 +77,9 @@ InputComponent::~InputComponent(void)
 bool
 InputComponent::inMotion(void) const
 {
-	return(((direction() == ICDLeft)  && m_left)
-	    || ((direction() == ICDRight) && m_right));
+	Direction l_dir = direction();
+	return((l_dir == ICDLeft  && m_left) ||
+	       (l_dir == ICDRight && m_right));
 }
 
 void

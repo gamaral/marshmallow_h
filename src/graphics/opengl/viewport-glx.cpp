@@ -36,8 +36,6 @@
 
 #include "core/logger.h"
 
-#include "math/pair.h"
-
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
@@ -50,9 +48,6 @@
 #include <X11/Xatom.h>
 #include <X11/Xmd.h>
 #include <X11/Xutil.h>
-#ifndef MARSHMALLOW_OPENGL_GLES2
-#  include <X11/extensions/xf86vmode.h>
-#endif
 
 #include "headers.h"
 #ifdef MARSHMALLOW_OPENGL_GLES2
@@ -60,6 +55,7 @@
 #else
 #  include <GL/glx.h>
 #endif
+#include "extensions.h"
 
 #include <cmath>
 #include <cstring>
@@ -67,6 +63,7 @@
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
+using namespace OpenGL;
 
 /******************************************************************************/
 
@@ -83,7 +80,6 @@ namespace
 		EGLSurface    egl_surface;
 #else
 		GLXContext    context;
-		XF86VidModeModeInfo dvminfo;
 #endif
 		Atom          wm_delete;
 		Transform     camera;
@@ -100,7 +96,7 @@ namespace
 	void InitializeViewport(void)
 	{
 		s_data.camera.setRotation(.0f);
-		s_data.camera.setScale(Math::Pair::One());
+		s_data.camera.setScale(Math::Size2f::Identity());
 		s_data.camera.setTranslation(Math::Point2::Zero());
 
 #ifdef MARSHMALLOW_OPENGL_GLES2
@@ -124,9 +120,11 @@ namespace
 	bool
 	CreateWindow(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 	{
+		MMUNUSED(r);
 		MMUNUSED(v);
 
 #ifdef MARSHMALLOW_OPENGL_GLES2
+		MMUNUSED(r);
 		s_data.egl_context = EGL_NO_CONTEXT;
 		s_data.egl_display = EGL_NO_DISPLAY;
 		s_data.egl_surface = EGL_NO_SURFACE;
@@ -177,73 +175,22 @@ namespace
 			PointerMotionMask  |
 			StructureNotifyMask;
 
-		/* create window */
+		/*
+		 * ** FULLSCREEN MODE **
+		 */
 		if (s_data.fullscreen) {
-#ifndef MARSHMALLOW_OPENGL_GLES2
-			/* get display modes */
-			XF86VidModeModeLine l_cmline;
-			int l_cdotclock;
-			XF86VidModeModeInfo **l_modes;
-			int l_mode_count = 0;
-			int l_mode_selected = -1;
 
-			XF86VidModeGetModeLine(s_data.display, s_data.screen,
-			                       &l_cdotclock, &l_cmline);
-			XF86VidModeGetAllModeLines(s_data.display, s_data.screen,
-			                           &l_mode_count, &l_modes);
-			s_data.dvminfo.dotclock = 0;
-			for (int i = 0; i < l_mode_count; ++i) {
-				const int l_refresh = (l_modes[i]->dotclock * 1000) /
-				    (l_modes[i]->vtotal * l_modes[i]->htotal);
-
-				MMINFO("Display mode (" << l_modes[i]->hdisplay
-				                        << "x"
-				                        << l_modes[i]->vdisplay
-				                        << "@"
-				                        << l_refresh
-				                        << ") [" << i << "]");
-
-				if (!s_data.dvminfo.dotclock &&
-				    l_modes[i]->hdisplay == l_cmline.hdisplay &&
-				    l_modes[i]->vdisplay == l_cmline.vdisplay &&
-				    static_cast<int>(l_modes[i]->dotclock) == l_cdotclock) {
-					MMINFO("Found current display mode.");
-					s_data.dvminfo = *l_modes[i];
-				}
-
-				if (l_mode_selected == -1 &&
-				    l_modes[i]->hdisplay == w &&
-				    l_modes[i]->vdisplay == h &&
-				    l_refresh == r) {
-					MMINFO("Found appropriate display mode.");
-					l_mode_selected = i;
-				}
-			}
-
-			if (l_mode_selected == -1) {
-				MMERROR("Unable to find a suitable display mode.");
-				return(false);
-			}
-
-			if (XF86VidModeSwitchToMode(s_data.display, s_data.screen,
-			                            l_modes[l_mode_selected]) == False) {
-				MMERROR("Unable to switch display modes.");
-				return(false);
-			}
-			XF86VidModeSetViewPort(s_data.display, s_data.screen,
-			                       0, 0);
-			XFree(l_modes);
-
-			/* allow display to settle after vidmode switch */
-			XSync(s_data.display, true);
-#endif
+			/* default window size to display size */
+			s_data.wsize[0] = DisplayWidth(s_data.display,  s_data.screen);
+			s_data.wsize[1] = DisplayHeight(s_data.display, s_data.screen);
 
 			/* create a fullscreen window */
 			l_swattr.override_redirect = true;
 			s_data.window = XCreateWindow
 			   (s_data.display,
 			    l_rwindow,
-			    0, 0, w, h, 0,
+			    0, 0, s_data.wsize[0], s_data.wsize[1],
+			    1,
 			    l_vinfo.depth,
 			    InputOutput,
 			    l_vinfo.visual,
@@ -266,13 +213,17 @@ namespace
 			l_event.xclient.data.l[1]    = static_cast<long>(l_fullscreen);
 			XSendEvent(s_data.display, l_rwindow, false, SubstructureNotifyMask, &l_event );
 		}
+
+		/*
+		 * ** WINDOW MODE **
+		 */
 		else {
 			s_data.window = XCreateWindow
 			   (s_data.display,
 			    l_rwindow,
-			    (DisplayWidth(s_data.display, s_data.screen) - w) / 2,
-			    (DisplayHeight(s_data.display, s_data.screen) - h) / 2,
-			    w, h,
+			    (DisplayWidth(s_data.display,  s_data.screen) - s_data.wsize[0]) / 2,
+			    (DisplayHeight(s_data.display, s_data.screen) - s_data.wsize[1]) / 2,
+			    s_data.wsize[0], s_data.wsize[1],
 			    1,
 			    l_vinfo.depth,
 			    InputOutput,
@@ -288,10 +239,10 @@ namespace
 				return(false);
 			}
 			l_size_hints->flags = PMinSize|PMaxSize;
-			l_size_hints->min_width = w;
-			l_size_hints->min_height = h;
-			l_size_hints->max_width = w;
-			l_size_hints->max_height = h;
+			l_size_hints->min_width = s_data.wsize[0];
+			l_size_hints->min_height = s_data.wsize[1];
+			l_size_hints->max_width = s_data.wsize[0];
+			l_size_hints->max_height = s_data.wsize[1];
 			XSetWMNormalHints(s_data.display, s_data.window, l_size_hints);
 			XFree(l_size_hints);
 		}
@@ -327,12 +278,12 @@ namespace
 #ifdef MARSHMALLOW_OPENGL_GLES2
 		s_data.egl_display = eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(s_data.display));
 		if (s_data.egl_display == EGL_NO_DISPLAY) {
-			MMERROR("No EGL display was found.");
+			MMERROR("EGL: No display was found.");
 			return(false);
 		}
 		
 		if (!eglInitialize(s_data.egl_display, 0, 0)) {
-			MMERROR("EGL initialization failed.");
+			MMERROR("EGL: Initialization failed.");
 			return(false);
 		}
 		
@@ -347,14 +298,14 @@ namespace
 		EGLConfig l_config;
 		if (!eglChooseConfig(s_data.egl_display, l_attr, &l_config, 1,
 		                     &l_config_count))
-			MMERROR("No EGL config was chosen. EGLERROR=" << eglGetError());
+			MMERROR("EGL: No config was chosen. EGLERROR=" << eglGetError());
 
 		s_data.egl_surface =
 		    eglCreateWindowSurface(s_data.egl_display, l_config,
 		                           (EGLNativeWindowType)s_data.window,
 		                           0);
 		if (s_data.egl_surface == EGL_NO_SURFACE) {
-			MMERROR("No EGL surface was created. EGLERROR=" << eglGetError());
+			MMERROR("EGL: No surface was created. EGLERROR=" << eglGetError());
 			return(false);
 		}
 
@@ -364,47 +315,49 @@ namespace
 		};
 		s_data.egl_context = eglCreateContext(s_data.egl_display, l_config, EGL_NO_CONTEXT, l_ctxattr);
 		if (s_data.egl_context == EGL_NO_CONTEXT) {
-			MMERROR("No EGL context was created. EGLERROR=" << eglGetError());
+			MMERROR("EGL: Context was created. EGLERROR=" << eglGetError());
 			return(false);
 		}
-		
+
 		if (!eglMakeCurrent(s_data.egl_display, s_data.egl_surface, s_data.egl_surface, s_data.egl_context)) {
-			MMERROR("Failed to switch current EGL context. EGLERROR=" << eglGetError());
+			MMERROR("EGL: Failed to switch current context. EGLERROR=" << eglGetError());
 			return(false);
 		}
+
+		InitializeExtensions(eglGetProcAddress);
 #else
 		/* create context */
 
 		if (!(s_data.context = glXCreateContext(s_data.display, &l_vinfo, 0, GL_TRUE))) {
-			MMERROR("Failed to create context!");
+			MMERROR("GLX: Failed to create context!");
 			return(false);
 		}
 
 		if (!glXMakeCurrent(s_data.display, s_data.window, s_data.context)) {
-			MMERROR("Failed to make context current!");
+			MMERROR("GLX: Failed to make context current!");
 			return(false);
 		}
 
 		if (!glXIsDirect(s_data.display, s_data.context)) {
-			MMERROR("GLX context doesn't support direct rendering.");
+			MMERROR("GLX: Context doesn't support direct rendering.");
 			return(false);
 		}
 
-#if 0
+		InitializeExtensions(reinterpret_cast<PFNGLGETPROCADDRESSPROC>(&glXGetProcAddress));
+
 		/* vsync */
 
-		if (GLEE_GLX_SGI_swap_control)
-			glXSwapIntervalSGI(v ? 1 : 0);
-#endif
+		if (glSwapInterval)
+			glSwapInterval(v ? 1 : 0);
 
 #endif
 
 		/* initialize context */
 
-		glViewport(0, 0, w, h);
+		glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
 
 		if(glGetError() != GL_NO_ERROR) {
-			MMERROR("GLX failed during initialization.");
+			MMERROR("GLX: Failed during initialization.");
 			return(false);
 		}
 
@@ -412,11 +365,12 @@ namespace
 
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
 		s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
-		s_data.size[1] = static_cast<float>(h) *
-		    (MARSHMALLOW_VIEWPORT_WIDTH / static_cast<float>(w));
+		s_data.size[1] = (MARSHMALLOW_VIEWPORT_WIDTH * static_cast<float>(s_data.wsize[1])) /
+			static_cast<float>(s_data.wsize[0]);
+
 #else
-		s_data.size[0] = static_cast<float>(w) *
-		    (MARSHMALLOW_VIEWPORT_HEIGHT / static_cast<float>(h));
+		s_data.size[0] = (MARSHMALLOW_VIEWPORT_HEIGHT * static_cast<float>(s_data.wsize[0])) /
+			static_cast<float>(s_data.wsize[1]);
 		s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
 #endif
 
@@ -436,13 +390,11 @@ namespace
 			eglTerminate(s_data.egl_display);
 #else
 			glXMakeCurrent(s_data.display, None, 0);
-			if (s_data.context) glXDestroyContext(s_data.display, s_data.context);
-			if (s_data.fullscreen) {
-				XF86VidModeSwitchToMode(s_data.display, s_data.screen, &s_data.dvminfo);
-				XF86VidModeSetViewPort(s_data.display, s_data.screen, 0, 0);
-			}
+			if (s_data.context)
+			    glXDestroyContext(s_data.display, s_data.context);
 #endif
-			if (s_data.window) XDestroyWindow(s_data.display, s_data.window);
+			if (s_data.window)
+			    XDestroyWindow(s_data.display, s_data.window);
 			XCloseDisplay(s_data.display);
 		}
 
@@ -464,8 +416,8 @@ namespace
 	UpdateCamera(void)
 	{
 		/* calculate scaled viewport size */
-		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().first();
-		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().second();
+		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().width();
+		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().height();
 
 		/* calculate magnitude and pass it off as radius squared */
 		s_data.radius2 = powf(s_data.scaled_size[0] / 2.f, 2.f) +

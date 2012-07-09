@@ -63,8 +63,8 @@ LoadTexturePNG(const std::string &filename, Texture &data)
 		return(false);
 
 	unsigned char header[8];
-	fread(header, 1, 8, png_file);
-	if (png_sig_cmp(header, 0, 8) != 0) {
+	if (fread(header, 1, 8, png_file) != 8 ||
+	    png_sig_cmp(header, 0, 8) != 0) {
 		fclose(png_file);
 		return(false);
 	}

@@ -48,6 +48,12 @@
 #define MMFATAL(x) MMLOG("FATAL", x), exit(-1)
 #define MMERROR(x) MMLOG("ERROR", x)
 
+#if MARSHMALLOW_DEBUG
+#   define MMDEBUG(x) MMLOG("DEBUG", x)
+#else
+#   define MMDEBUG(x) MMNOOP
+#endif
+
 #if MARSHMALLOW_DEBUG && MARSHMALLOW_DEBUG_VERBOSITY >= 1
 #   define MMWARNING(x) MMLOG("WARN", x)
 #else

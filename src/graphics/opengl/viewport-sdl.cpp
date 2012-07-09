@@ -36,8 +36,6 @@
 
 #include "core/logger.h"
 
-#include "math/pair.h"
-
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
@@ -75,7 +73,7 @@ namespace
 	void InitializeViewport(void)
 	{
 		s_data.camera.setRotation(.0f);
-		s_data.camera.setScale(Math::Pair::One());
+		s_data.camera.setScale(Math::Size2f::Identity());
 		s_data.camera.setTranslation(Math::Point2::Zero());
 
 		s_data.display = 0;
@@ -90,16 +88,19 @@ namespace
 	{
 		s_data.loaded  = false;
 
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); 
+
 #if SDL_VERSION_ATLEAST(1,3,0)
 		if (!SDL_GL_SetSwapInterval(v ? 1 : 0))
-			MMERROR("FAILED! VSYNC: " << SDL_GetError());
+			MMERROR("SDL: Failed to set swap interval. SDLERROR=" << SDL_GetError());
 #else
 		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, (v ? 1 : 0));
 #endif
-		s_data.display = SDL_SetVideoMode(w, h, d, SDL_HWSURFACE
-		                                         | SDL_GL_DOUBLEBUFFER
-		                                         | SDL_OPENGL
-		                                         | (f? SDL_FULLSCREEN : 0));
+		s_data.display = SDL_SetVideoMode(f ? 0 : w, f ? 0 : h, d,
+		                                  SDL_HWSURFACE |
+		                                  SDL_GL_DOUBLEBUFFER |
+		                                  SDL_OPENGL |
+		                                  (f? SDL_FULLSCREEN : 0));
 
 		if (!s_data.display) {
 			MMERROR("Failed to create an SDL surface.");
@@ -109,12 +110,12 @@ namespace
 		SDL_WM_SetCaption(MARSHMALLOW_BUILD_TITLE, MARSHMALLOW_BUILD_TITLE);
 
 		s_data.fullscreen = f;
-		s_data.wsize[0] = w;
-		s_data.wsize[1] = h;
+		s_data.wsize[0] = s_data.display->w;
+		s_data.wsize[1] = s_data.display->h;
 
 		/* initialize context */
 
-		glViewport(0, 0, w, h);
+		glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
 
 		if(glGetError() != GL_NO_ERROR) {
 			MMERROR("GL failed during initialization.");
@@ -123,8 +124,15 @@ namespace
 
 		/* set viewport size */
 
-		s_data.size[0] = MARSHMALLOW_VIEWPORT_VWIDTH;
-		s_data.size[1] = MARSHMALLOW_VIEWPORT_VHEIGHT;
+#if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
+		s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
+		s_data.size[1] = static_cast<float>(s_data.wsize[1]) *
+		    (MARSHMALLOW_VIEWPORT_WIDTH / static_cast<float>(s_data.wsize[0]));
+#else
+		s_data.size[0] = static_cast<float>(s_data.wsize[0]) *
+		    (MARSHMALLOW_VIEWPORT_HEIGHT / static_cast<float>(s_data.wsize[1]));
+		s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
+#endif
 
 		Viewport::SetCamera(s_data.camera);
 
@@ -142,8 +150,8 @@ namespace
 	UpdateCamera(void)
 	{
 		/* calculate scaled viewport size */
-		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().first();
-		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().second();
+		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().width();
+		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().height();
 
 		/* calculate magnitude and pass it off as radius squared */
 		s_data.radius2 = powf(s_data.scaled_size[0] / 2.f, 2.f) +
@@ -186,8 +194,10 @@ namespace
 /******************************************************************************/
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 {
+	MMUNUSED(r);
+
 	/* force video center */
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_CENTERED=1"));
 
@@ -216,8 +226,10 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, bool f, bool v)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 {
+	MMUNUSED(r);
+
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
 		MMERROR("SDL viewport initialization failed.");

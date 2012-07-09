@@ -76,34 +76,37 @@ namespace Core
 		~Shared(void)
 		    { clear(); }
 
-		void clear(void);
+		inline void clear(void);
 
-		T * raw(void) const
+		inline T * raw(void) const
 		    { return(m_data ? reinterpret_cast<T *>(m_data->ptr) : 0); }
 
-		template <class U> Shared<U> cast(void) const;
-		template <class U> Shared<U> staticCast(void) const;
+		template <class U>
+		inline Shared<U> cast(void) const;
+
+		template <class U>
+		inline Shared<U> staticCast(void) const;
 
 	public: /* operator */
 
-		operator bool(void) const
+		inline operator bool(void) const
 		    { return(m_data != 0 && m_data->ptr != 0); }
 
-		operator Weak<T>(void) const
+		inline operator Weak<T>(void) const
 		    { return(Weak<T>(m_data)); }
 
-		T & operator *(void) const
+		inline T & operator *(void) const
 		    { return(*reinterpret_cast<T *>(m_data->ptr)); }
 
-		T * operator ->(void) const
+		inline T * operator ->(void) const
 		    { return(reinterpret_cast<T *>(m_data->ptr)); }
 
-		Shared & operator =(const Shared &rhs);
+		inline Shared & operator =(const Shared &rhs);
 
-		bool operator ==(const Shared &rhs) const
+		inline bool operator ==(const Shared &rhs) const
 		    { return(this == &rhs || m_data == rhs.m_data); }
 
-		bool operator !=(const Shared &rhs) const
+		inline bool operator !=(const Shared &rhs) const
 		    { return(this != &rhs && m_data != rhs.m_data); }
 	};
 
@@ -148,10 +151,8 @@ namespace Core
 
 		clear();
 
-		if (rhs) {
-			m_data = rhs.m_data;
+		if ((m_data = rhs.m_data))
 			++m_data->refs;
-		}
 
 		return(*this);
 	}
@@ -162,14 +163,11 @@ namespace Core
 	{
 		if (m_data && --m_data->refs <= 0) {
 			T *ptr = reinterpret_cast<T *>(m_data->ptr);
-			delete ptr;
+			delete ptr, m_data->ptr = 0;
 
 			if (m_data->wrefs <= 0)
-				delete m_data;
-			else
-				m_data->ptr = 0;
+				delete m_data, m_data = 0;
 		}
-		m_data = 0;
 	}
 }
 

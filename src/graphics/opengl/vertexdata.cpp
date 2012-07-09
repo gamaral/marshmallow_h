@@ -38,6 +38,8 @@
 
 #include "core/logger.h"
 
+#include "extensions.h"
+
 MARSHMALLOW_NAMESPACE_USE
 using namespace Graphics;
 using namespace OpenGL;
@@ -50,12 +52,15 @@ VertexData::VertexData(uint16_t c)
     , m_bufferId(0)
 {
 	memset(m_data, 0, m_count * AXES);
-	buffer();
+
+	if (glGenBuffers)
+		buffer();
 }
 
 VertexData::~VertexData(void)
 {
 	unbuffer();
+
 	delete[] m_data;
 }
 

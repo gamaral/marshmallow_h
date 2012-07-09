@@ -45,20 +45,6 @@ Point2::Point2(float ax, float ay)
 	m_value[1] = ay;
 }
 
-Point2::Point2(const Point2 &c)
-{
-	m_value[0] = c.x();
-	m_value[1] = c.y();
-}
-
-Point2 &
-Point2::operator=(const Point2 &rhs)
-{
-	m_value[0] = rhs.m_value[0];
-	m_value[1] = rhs.m_value[1];
-	return(*this);
-}
-
 bool
 Point2::operator==(const Point2 &rhs) const
 {

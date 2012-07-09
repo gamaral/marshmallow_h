@@ -88,7 +88,7 @@ public:
 		ICDJump  = 2
 	};
 
-	Direction direction(void) const
+	inline Direction direction(void) const
 	    { return(static_cast<Direction>(m_direction)); }
 
 	bool inMotion(void) const;

@@ -38,13 +38,13 @@
 #include "core/type.h"
 
 #include "math/matrix4.h"
-#include "math/pair.h"
 #include "math/point2.h"
 
 #include "graphics/quadmesh.h"
 #include "graphics/transform.h"
 #include "graphics/viewport.h"
 
+#include "extensions.h"
 #include "texturecoordinatedata.h"
 #include "texturedata.h"
 #include "vertexdata.h"
@@ -198,7 +198,7 @@ namespace
 	}
 
 	void
-	DrawQuadMesh(const QuadMesh &g, bool tcoords)
+	BeginDrawQuadMesh(const QuadMesh &g, bool tcoords)
 	{
 		OpenGL::SharedVertexData l_vdata =
 			g.vertexData()
@@ -239,9 +239,17 @@ namespace
 
 		glEnableVertexAttribArray(s_location_position);
 		if (tcoords) glEnableVertexAttribArray(s_location_texcoord);
+	}
 
+	inline void
+	DrawQuadMesh(void)
+	{
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, MARSHMALLOW_QUAD_VERTEXES);
+	}
 
+	inline void
+	EndDrawQuadMesh(bool tcoords)
+	{
 		if (tcoords) glDisableVertexAttribArray(s_location_texcoord);
 		glDisableVertexAttribArray(s_location_position);
 	}
@@ -362,16 +370,16 @@ Painter::PopMatrix(void)
 void
 Painter::Draw(const IMesh &m, const Math::Point2 &o)
 {
+	Draw(m, &o, 1);
+}
+
+void
+Painter::Draw(const IMesh &m, const Math::Point2 *o, int c)
+{
 	float l_scale[2];
 	m.scale(l_scale[0], l_scale[1]);
 
-	Graphics::Transform l_model;
-	l_model.setTranslation(o);
-	l_model.setRotation(m.rotation());
-	l_model.setScale(Math::Pair(l_scale[0], l_scale[1]));
-
 	UpdateLocationMatrix();
-	glUniformMatrix4fv(s_location_model, 1, GL_FALSE, l_model.matrix().data());
 
 	/* set blending */
 	glEnable(GL_BLEND);
@@ -395,13 +403,35 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 		else glUniform1i(s_location_usecolor, 1);
 	}
 
-	/* texture coordinates */
+	/* prepare model amatrix */
+	Graphics::Transform l_model;
+	l_model.setRotation(m.rotation());
+	l_model.setScale(Math::Size2f(l_scale[0], l_scale[1]));
+
+	/* check mesh for texture coordinates */
 	const bool l_tcoords = s_last_texture_id.uid() && m.textureCoordinateData();
 
-	/* actually draw graphic */
+	/* prepare to draw mesh */
 	if (QuadMesh::Type() == m.type())
-		DrawQuadMesh(static_cast<const QuadMesh &>(m), l_tcoords);
+		BeginDrawQuadMesh(static_cast<const QuadMesh &>(m), l_tcoords);
 	else MMWARNING("Unknown mesh type");
+
+	/* draw mesh(es) */
+	for (int i = 0; i < c; ++i) {
+
+		/* update model matrix */
+		l_model.setTranslation(o[i]);
+		glUniformMatrix4fv(s_location_model, 1, GL_FALSE, l_model.matrix().data());
+
+		/* actually draw graphic */
+		if (QuadMesh::Type() == m.type())
+			DrawQuadMesh();
+
+	}
+
+	/* cleanup */
+	if (QuadMesh::Type() == m.type())
+		EndDrawQuadMesh(l_tcoords);
 
 	glDisable(GL_BLEND);
 }

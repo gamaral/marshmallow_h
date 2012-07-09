@@ -45,12 +45,10 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Math
 {
-	class Tuple2;
-	typedef Tuple2 Pair;
-
-	class Point2;
-
 	class Matrix4;
+	class Point2;
+	template <typename T> class Size2;
+	typedef Size2<float> Size2f;
 }
 
 namespace Graphics
@@ -71,8 +69,8 @@ namespace Graphics
 		float rotation(void) const;
 		void setRotation(float value);
 
-		const Math::Pair & scale(void) const;
-		void setScale(const Math::Pair &value);
+		const Math::Size2f & scale(void) const;
+		void setScale(const Math::Size2f &value);
 
 		const Math::Point2 & translation(void) const;
 		void setTranslation(const Math::Point2 &value);

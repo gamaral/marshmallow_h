@@ -34,8 +34,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "math/pair.h"
-
 #include "core/logger.h"
 
 #include "graphics/transform.h"
@@ -65,7 +63,7 @@ Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool 
 	MMUNUSED(v);
 
 	s_camera.setRotation(.0f);
-	s_camera.setScale(Math::Pair::One());
+	s_camera.setScale(Math::Size2f::Identity());
 	s_camera.setTranslation(Math::Point2::Zero());
 
 	MMINFO("Dummy viewport initialized a " << d << " bit (" << w << "x" << h
@@ -127,9 +125,9 @@ Viewport::Radius2(void)
 	/* calculate radius^2 */
 #define HALF_VIEWPORT_SIZE 2.f
 	const float l_w = size.width() /
-	    (s_camera.scale().first() * HALF_VIEWPORT_SIZE);
+	    (s_camera.scale().width() * HALF_VIEWPORT_SIZE);
 	const float l_h = size.height() /
-	    (s_camera.scale().second() * HALF_VIEWPORT_SIZE);
+	    (s_camera.scale().height() * HALF_VIEWPORT_SIZE);
 	return(powf(l_w, 2.f) + powf(l_h, 2.f));
 }
 
@@ -137,8 +135,8 @@ const Math::Size2f &
 Viewport::ScaledSize(void)
 {
 	const static Math::Size2f s_scaled_size
-	    (MARSHMALLOW_VIEWPORT_WIDTH  / s_camera.scale().first(),
-	     MARSHMALLOW_VIEWPORT_HEIGHT / s_camera.scale().second());
+	    (MARSHMALLOW_VIEWPORT_WIDTH  / s_camera.scale().width(),
+	     MARSHMALLOW_VIEWPORT_HEIGHT / s_camera.scale().height());
 	return(s_scaled_size);
 }
 

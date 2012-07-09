@@ -1,6 +1,6 @@
 add_definitions(-DMARSHMALLOW_GRAPHICS_LIBRARY)
 
-file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp)
+file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp *.h)
 
 set(MARSHMALLOW_GRAPHICS_LIBS marshmallow_core
 	                      marshmallow_event
@@ -16,6 +16,7 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 	include_directories(${PNG_PNG_INCLUDE_DIR})
 
 	set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
+	                              opengl/extensions.cpp
 	                              opengl/factory.cpp
 	                              opengl/painter.cpp
 	                              opengl/texturecoordinatedata.cpp
@@ -42,37 +43,38 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 		                              opengl/viewport-glx.cpp)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${X11_X11_LIB})
-		if(NOT MARSHMALLOW_OPENGL_GLES2)
-			set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
-			                              Xxf86vm)
-		endif()
+		add_definitions(-DMARSHMALLOW_OPENGL_GLX)
 	elseif(MARSHMALLOW_OPENGL_WGL)
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-wgl.cpp)
+		add_definitions(-DMARSHMALLOW_OPENGL_WGL)
 	elseif(MARSHMALLOW_OPENGL_SDL)
 		include_directories(${SDL_INCLUDE_DIR})
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-sdl.cpp)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${SDL_LIBRARY})
+		add_definitions(-DMARSHMALLOW_OPENGL_SDL)
 	elseif(MARSHMALLOW_OPENGL_QT4)
 		include_directories(${QT_INCLUDE_DIR})
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-qt4.cpp)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${QT_LIBRARIES})
+		add_definitions(-DMARSHMALLOW_OPENGL_QT4)
 
 	#
 	# Broadcom VideoCore (Used in Raspberry Pi)
 	#
 	elseif(MARSHMALLOW_OPENGL_VC)
-		include_directories(${BCM_HOST_INCLUDE_DIR})
+		include_directories(${BCM_HOST_INCLUDE_DIRS})
 
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-vc.cpp)
 
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${BCM_HOST_LIBRARY})
+		add_definitions(-DMARSHMALLOW_OPENGL_VC)
 	else()
 		message(WARNING "No OpenGL viewport selected!")
 	endif()
