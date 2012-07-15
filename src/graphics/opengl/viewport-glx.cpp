@@ -62,8 +62,8 @@
 #include <list>
 
 MARSHMALLOW_NAMESPACE_USE
+using namespace Graphics::OpenGL;
 using namespace Graphics;
-using namespace OpenGL;
 
 /******************************************************************************/
 
@@ -324,7 +324,9 @@ namespace
 			return(false);
 		}
 
-		InitializeExtensions(eglGetProcAddress);
+		/* extensions */
+
+		InitializeExtensions(eglQueryString(s_data.egl_display, EGL_EXTENSIONS));
 #else
 		/* create context */
 
@@ -343,14 +345,15 @@ namespace
 			return(false);
 		}
 
-		InitializeExtensions(reinterpret_cast<PFNGLGETPROCADDRESSPROC>(&glXGetProcAddress));
+		/* extensions */
+
+		InitializeExtensions(glXQueryExtensionsString(s_data.display, s_data.screen));
+#endif
 
 		/* vsync */
 
-		if (glSwapInterval)
+		if (HasExtension("GLX_SGI_swap_control"))
 			glSwapInterval(v ? 1 : 0);
-
-#endif
 
 		/* initialize context */
 
@@ -563,8 +566,19 @@ namespace
 	}
 } // namespace
 
-/******************************************************************************/
+/***************************************************************** Extensions */
 
+PFNPROC
+OpenGL::glGetProcAddress(const char *f)
+{
+#ifdef MARSHMALLOW_OPENGL_GLES2
+	return(eglGetProcAddress(f));
+#else
+	return(glXGetProcAddress(reinterpret_cast<const GLubyte *>(f)));
+#endif
+}
+
+/******************************************************************************/
 bool
 Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
 {

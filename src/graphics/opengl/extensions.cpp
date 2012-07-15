@@ -28,6 +28,9 @@
 
 #include "extensions.h"
 
+#include <set>
+#include <string>
+
 #include <cassert>
 
 /*!
@@ -36,6 +39,41 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+/******************************************************************************/
+
+namespace
+{
+	std::set<std::string> s_supported_extensions;
+
+	void
+	ParseExtensionsString(const char *e)
+	{
+		if (!e) return;
+
+		bool l_next = false;
+		size_t l_start = 0;
+		for (size_t i = 0; e[i] != '\0'; ++i)
+			switch(e[i]) {
+			case ' ':
+				if (l_next) continue;
+
+				s_supported_extensions.insert
+				    (std::string(e, l_start, i - l_start));
+
+				l_next = true;
+			break;
+
+			default:
+				if (!l_next) continue;
+
+				l_start = i;
+				l_next = false;
+			}
+	}
+}
+
+/******************************************************************************/
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics
@@ -43,22 +81,17 @@ namespace Graphics
 
 namespace OpenGL
 {
-	PFNGLGETPROCADDRESSPROC glGetProcAddress = 0;
 
 #ifndef MARSHMALLOW_OPENGL_GLES2
+	/* required */
 	PFNGLATTACHSHADERPROC glAttachShader = 0;
-	PFNGLBINDBUFFERARBPROC glBindBuffer = 0;
-	PFNGLBUFFERDATAARBPROC glBufferData = 0;
-	PFNGLBUFFERSUBDATAARBPROC glBufferSubData = 0;
 	PFNGLCOMPILESHADERARBPROC glCompileShader = 0;
 	PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgram = 0;
 	PFNGLCREATESHADEROBJECTARBPROC glCreateShader = 0;
-	PFNGLDELETEBUFFERSARBPROC glDeleteBuffers = 0;
 	PFNGLDELETEPROGRAMPROC glDeleteProgram = 0;
 	PFNGLDELETESHADERPROC glDeleteShader = 0;
 	PFNGLDISABLEVERTEXATTRIBARRAYARBPROC glDisableVertexAttribArray = 0;
 	PFNGLENABLEVERTEXATTRIBARRAYARBPROC glEnableVertexAttribArray = 0;
-	PFNGLGENBUFFERSARBPROC glGenBuffers = 0;
 	PFNGLGETATTRIBLOCATIONARBPROC glGetAttribLocation = 0;
 	PFNGLGETPROGRAMIVARBPROC glGetProgramiv = 0;
 	PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog = 0;
@@ -71,6 +104,13 @@ namespace OpenGL
 	PFNGLUNIFORMMATRIX4FVARBPROC glUniformMatrix4fv = 0;
 	PFNGLUSEPROGRAMOBJECTARBPROC glUseProgram = 0;
 	PFNGLVERTEXATTRIBPOINTERARBPROC glVertexAttribPointer = 0;
+
+	/* optional - GL_ARB_vertex_buffer_object */
+	PFNGLBINDBUFFERARBPROC glBindBuffer = 0;
+	PFNGLBUFFERDATAARBPROC glBufferData = 0;
+	PFNGLBUFFERSUBDATAARBPROC glBufferSubData = 0;
+	PFNGLDELETEBUFFERSARBPROC glDeleteBuffers = 0;
+	PFNGLGENBUFFERSARBPROC glGenBuffers = 0;
 #endif
 
 #if defined(MARSHMALLOW_OPENGL_GLX)
@@ -81,27 +121,18 @@ namespace OpenGL
 #endif
 
 	void
-	InitializeExtensions(PFNGLGETPROCADDRESSPROC addr)
+	InitializeExtensions(const char *extensions)
 	{
-		glGetProcAddress = addr;
-		assert(glGetProcAddress && "Invalid glGetProcAddress!");
+		/* parse extensions strings */
+		s_supported_extensions.clear();
+		ParseExtensionsString(reinterpret_cast<const char *>
+		    (glGetString(GL_EXTENSIONS)));
+		ParseExtensionsString(extensions);
 
 #ifndef MARSHMALLOW_OPENGL_GLES2
 		glAttachShader = reinterpret_cast<PFNGLATTACHSHADERPROC>
 		    (glGetProcAddress("glAttachShader"));
 		assert(glAttachShader);
-
-		glBindBuffer = reinterpret_cast<PFNGLBINDBUFFERARBPROC>
-		    (glGetProcAddress("glBindBufferARB"));
-		assert(glBindBuffer);
-
-		glBufferData = reinterpret_cast<PFNGLBUFFERDATAARBPROC>
-		    (glGetProcAddress("glBufferDataARB"));
-		assert(glBufferData);
-
-		glBufferSubData = reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>
-		    (glGetProcAddress("glBufferSubDataARB"));
-		assert(glBufferSubData);
 
 		glCompileShader = reinterpret_cast<PFNGLCOMPILESHADERARBPROC>
 		    (glGetProcAddress("glCompileShaderARB"));
@@ -114,10 +145,6 @@ namespace OpenGL
 		glCreateShader = reinterpret_cast<PFNGLCREATESHADEROBJECTARBPROC>
 		    (glGetProcAddress("glCreateShaderObjectARB"));
 		assert(glCreateShader);
-
-		glDeleteBuffers = reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>
-		    (glGetProcAddress("glDeleteBuffersARB"));
-		assert(glDeleteBuffers);
 
 		glDeleteProgram = reinterpret_cast<PFNGLDELETEPROGRAMPROC>
 		    (glGetProcAddress("glDeleteProgram"));
@@ -134,10 +161,6 @@ namespace OpenGL
 		glEnableVertexAttribArray = reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYARBPROC>
 		    (glGetProcAddress("glEnableVertexAttribArrayARB"));
 		assert(glEnableVertexAttribArray);
-
-		glGenBuffers = reinterpret_cast<PFNGLGENBUFFERSARBPROC>
-		    (glGetProcAddress("glGenBuffersARB"));
-		assert(glGenBuffers);
 
 		glGetAttribLocation = reinterpret_cast<PFNGLGETATTRIBLOCATIONARBPROC>
 		    (glGetProcAddress("glGetAttribLocationARB"));
@@ -186,12 +209,35 @@ namespace OpenGL
 		glVertexAttribPointer = reinterpret_cast<PFNGLVERTEXATTRIBPOINTERARBPROC>
 		    (glGetProcAddress("glVertexAttribPointerARB"));
 		assert(glVertexAttribPointer);
+
+		if (HasExtension("GL_ARB_vertex_buffer_object")) {
+			glBindBuffer = reinterpret_cast<PFNGLBINDBUFFERARBPROC>
+			    (glGetProcAddress("glBindBufferARB"));
+
+			glDeleteBuffers = reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>
+			    (glGetProcAddress("glDeleteBuffersARB"));
+
+			glGenBuffers = reinterpret_cast<PFNGLGENBUFFERSARBPROC>
+			    (glGetProcAddress("glGenBuffersARB"));
+
+			glBufferData = reinterpret_cast<PFNGLBUFFERDATAARBPROC>
+			    (glGetProcAddress("glBufferDataARB"));
+
+			glBufferSubData = reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>
+			    (glGetProcAddress("glBufferSubDataARB"));
+		}
 #endif
 
 #if defined(MARSHMALLOW_OPENGL_GLX)
 		glSwapInterval = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>
 		    (glGetProcAddress("glXSwapIntervalSGI"));
 #elif defined(MARSHMALLOW_OPENGL_WGL)
+		PFNWGLGETEXTENSIONSSTRINGEXTPROC wglGetExtensionsStringEXT =
+		    reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGEXTPROC>
+		        (glGetProcAddress("wglGetExtensionsStringEXT"));
+		if (wglGetExtensionsStringEXT)
+			ParseExtensionsString(wglGetExtensionsStringEXT());
+
 		glActiveTexture = reinterpret_cast<PFNGLACTIVETEXTUREARBPROC>
 		    (glGetProcAddress("glActiveTextureARB"));
 		assert(glActiveTexture);
@@ -199,7 +245,15 @@ namespace OpenGL
 		glSwapInterval = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>
 		    (glGetProcAddress("wglSwapIntervalEXT"));
 #endif
+	}
 
+	bool
+	HasExtension(const char *e)
+	{
+		static std::set<std::string>::const_iterator s_end =
+			s_supported_extensions.end();
+
+		return(s_supported_extensions.find(e) != s_end);
 	}
 }
 

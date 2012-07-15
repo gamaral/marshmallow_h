@@ -43,6 +43,8 @@
 #include "graphics/painter.h"
 #include "graphics/transform.h"
 
+#include "extensions.h"
+
 #include <QtGui/QApplication>
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QKeyEvent>
@@ -54,6 +56,7 @@
 #include <list>
 
 MARSHMALLOW_NAMESPACE_USE
+using namespace Graphics::OpenGL;
 using namespace Graphics;
 
 /******************************************************************************/
@@ -133,6 +136,10 @@ namespace
 		VIRTUAL void
 		initializeGL()
 		{
+			/* extensions */
+
+			InitializeExtensions();
+
 			/* initialize context */
 
 			glViewport(0, 0, m_wsize.width(), m_wsize.height());
@@ -295,18 +302,6 @@ namespace
 			return(false);
 		}
 
-#if 0
-		/* vsync */
-
-#if GLX_SGI_swap_control
-		if (GLEE_GLX_SGI_swap_control)
-			glXSwapIntervalSGI(v ? 1 : 0);
-#elif WGL_EXT_swap_control
-		if(GLEE_WGL_EXT_swap_control)
-			wglSwapIntervalEXT(v ? 1 : 0);
-#endif
-#endif
-
 		if(glGetError() != GL_NO_ERROR) {
 			MMERROR("GL failed during initialization.");
 			return(false);
@@ -323,6 +318,22 @@ namespace
 	}
 
 } // namespace
+
+/***************************************************************** Extensions */
+
+PFNPROC
+OpenGL::glGetProcAddress(const char *f)
+{
+	union {
+		PFNPROC fptr;
+		void *ptr;
+	} conv;
+
+	assert(s_window && s_window->context() && "Invalid GL context!");
+
+	conv.ptr = s_window->context()->getProcAddress(f);
+	return(conv.fptr);
+}
 
 /******************************************************************************/
 

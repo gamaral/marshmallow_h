@@ -44,12 +44,15 @@
 #include "graphics/transform.h"
 
 #include "headers.h"
+#include "extensions.h"
+
 #include <SDL.h>
 
 #include <cmath>
 #include <list>
 
 MARSHMALLOW_NAMESPACE_USE
+using namespace Graphics::OpenGL;
 using namespace Graphics;
 
 /******************************************************************************/
@@ -112,6 +115,10 @@ namespace
 		s_data.fullscreen = f;
 		s_data.wsize[0] = s_data.display->w;
 		s_data.wsize[1] = s_data.display->h;
+
+		/* extensions */
+
+		InitializeExtensions();
 
 		/* initialize context */
 
@@ -190,6 +197,20 @@ namespace
 		}
 	}
 } // namespace
+
+/***************************************************************** Extensions */
+
+PFNPROC
+OpenGL::glGetProcAddress(const char *f)
+{
+	union {
+		PFNPROC fptr;
+		void *ptr;
+	} conv;
+
+	conv.ptr = SDL_GL_GetProcAddress(f);
+	return(conv.fptr);
+}
 
 /******************************************************************************/
 

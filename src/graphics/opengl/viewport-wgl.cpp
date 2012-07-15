@@ -50,8 +50,8 @@
 #include <list>
 
 MARSHMALLOW_NAMESPACE_USE
+using namespace Graphics::OpenGL;
 using namespace Graphics;
-using namespace OpenGL;
 
 /******************************************************************************/
 
@@ -170,6 +170,9 @@ namespace
 			MMERROR("Failed to create window");
 			return(false);
 		}
+		ShowWindow(s_data.window, SW_SHOW);
+		SetForegroundWindow(s_data.window);
+		SetFocus(s_data.window);
 
 		/* create device context */
 		if (!(s_data.dcontext = GetDC(s_data.window))) {
@@ -201,40 +204,24 @@ namespace
 
 		/* create wiggle context */
 		if (!(s_data.context = wglCreateContext(s_data.dcontext))) {
-			MMERROR("Failed to create OpenGL context");
+			MMERROR("WGL: Failed to create context");
 			return(false);
 		}
 
 		/* make wgl context current */
 		if(!wglMakeCurrent(s_data.dcontext, s_data.context)) {
-			MMERROR("Failed to set current OpenGL context");
+			MMERROR("WGL: Failed to set current context");
 			return(false);
 		}
 
-		InitializeExtensions(reinterpret_cast<PFNGLGETPROCADDRESSPROC>(wglGetProcAddress));
+		/* extensions */
 
-		ShowWindow(s_data.window, SW_SHOW);
-		SetForegroundWindow(s_data.window);
-		SetFocus(s_data.window);
+		InitializeExtensions();
 
 		/* vsync */
 
-		if (glSwapInterval)
+		if (HasExtension("WGL_EXT_swap_control"))
 			glSwapInterval(v ? 1 : 0);
-
-		/* set defaults */
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glEnable(GL_POINT_SMOOTH);
-		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-
-		glEnable(GL_TEXTURE_2D);
-
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_LIGHTING);
-		glEnable(GL_CULL_FACE);
 
 		/* initialize context */
 
@@ -273,10 +260,10 @@ namespace
 
 		if (s_data.context) {
 			if (!wglMakeCurrent(0, 0))
-				MMWARNING("Failed to unset current OpenGL context");
+				MMWARNING("WGL: Failed to unset current context");
 
 			if (!wglDeleteContext(s_data.context))
-				MMWARNING("Failed to delete OpenGL context");
+				MMWARNING("WGL: Failed to delete context");
 
 			s_data.context = 0;
 		}
@@ -359,7 +346,7 @@ namespace
 			case VK_INSERT:       l_key = Event::KEY_INSERT; break;
 			case VK_LCONTROL:     l_key = Event::KEY_CONTROL_R; break;
 			case VK_LEFT:         l_key = Event::KEY_LEFT; break;
-			case VK_LSHIFT:       l_key = Event::KEY_SHIFT_L; break;
+			case VK_SHIFT:        l_key = Event::KEY_SHIFT_L; break;
 			case VK_MENU:         l_key = Event::KEY_MENU; break;
 			case VK_MULTIPLY:     l_key = Event::KEY_KMULTIPLY; break;
 			case VK_NEXT:         l_key = Event::KEY_PAGE_DOWN; break;
@@ -443,6 +430,14 @@ namespace
 		return(DefWindowProc(hwnd, uMsg, wParam, lParam));
 	}
 } // namespace
+
+/***************************************************************** Extensions */
+
+PFNPROC
+OpenGL::glGetProcAddress(const char *f)
+{
+	return(reinterpret_cast<PFNPROC>(wglGetProcAddress(f)));
+}
 
 /******************************************************************************/
 

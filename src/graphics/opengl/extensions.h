@@ -61,29 +61,16 @@ namespace Graphics
 
 namespace OpenGL
 {
-	typedef void (*PFNPROC)(void);
-	typedef PFNPROC (*PFNGLGETPROCADDRESSPROC)(const char*);
-	extern PFNGLGETPROCADDRESSPROC glGetProcAddress;
-
-	/*
-	 * Must be called by the viewport.
-	 */
-	void InitializeExtensions(PFNGLGETPROCADDRESSPROC addr);
-
 #ifndef MARSHMALLOW_OPENGL_GLES2
+	/* required */
 	extern PFNGLATTACHSHADERPROC glAttachShader;
-	extern PFNGLBINDBUFFERARBPROC glBindBuffer;
-	extern PFNGLBUFFERDATAARBPROC glBufferData;
-	extern PFNGLBUFFERSUBDATAARBPROC glBufferSubData;
 	extern PFNGLCOMPILESHADERARBPROC glCompileShader;
 	extern PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgram;
 	extern PFNGLCREATESHADEROBJECTARBPROC glCreateShader;
-	extern PFNGLDELETEBUFFERSARBPROC glDeleteBuffers;
 	extern PFNGLDELETEPROGRAMPROC glDeleteProgram;
 	extern PFNGLDELETESHADERPROC glDeleteShader;
 	extern PFNGLDISABLEVERTEXATTRIBARRAYARBPROC glDisableVertexAttribArray;
 	extern PFNGLENABLEVERTEXATTRIBARRAYARBPROC glEnableVertexAttribArray;
-	extern PFNGLGENBUFFERSARBPROC glGenBuffers;
 	extern PFNGLGETATTRIBLOCATIONARBPROC glGetAttribLocation;
 	extern PFNGLGETPROGRAMIVARBPROC glGetProgramiv;
 	extern PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
@@ -96,6 +83,14 @@ namespace OpenGL
 	extern PFNGLUNIFORMMATRIX4FVARBPROC glUniformMatrix4fv;
 	extern PFNGLUSEPROGRAMOBJECTARBPROC glUseProgram;
 	extern PFNGLVERTEXATTRIBPOINTERARBPROC glVertexAttribPointer;
+
+	/* optional - GL_ARB_vertex_buffer_object */
+	extern PFNGLBINDBUFFERARBPROC glBindBuffer;
+	extern PFNGLBUFFERDATAARBPROC glBufferData;
+	extern PFNGLBUFFERSUBDATAARBPROC glBufferSubData;
+	extern PFNGLDELETEBUFFERSARBPROC glDeleteBuffers;
+	extern PFNGLGENBUFFERSARBPROC glGenBuffers;
+
 #endif
 
 #if defined(MARSHMALLOW_OPENGL_GLX)
@@ -105,6 +100,22 @@ namespace OpenGL
 	extern PFNWGLSWAPINTERVALEXTPROC glSwapInterval;
 #endif
 
+	/*!
+	 * Must be called by the viewport after context creation.
+	 * @param extensions Viewport extensions string.
+	 */
+	void InitializeExtensions(const char *extensions = 0);
+
+	/*!
+	 * Returns true if extension is supported.
+	 */
+	bool HasExtension(const char *extension);
+
+	/*!
+	 * Must be implemented by viewport.
+	 */
+	typedef void (*PFNPROC)(void);
+	PFNPROC glGetProcAddress(const char *func);
 }
 
 }

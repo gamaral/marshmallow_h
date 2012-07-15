@@ -51,15 +51,15 @@
 #else
 #  error EGL/GLES2 is disabled!
 #endif
+#include "extensions.h"
 
 #include <cmath>
 #include <cstring>
 #include <list>
 
 MARSHMALLOW_NAMESPACE_USE
+using namespace Graphics::OpenGL;
 using namespace Graphics;
-
-#define VC_MODE_MAX 16
 
 /******************************************************************************/
 
@@ -293,6 +293,10 @@ namespace
 			return(false);
 		}
 
+		/* extensions */
+
+		InitializeExtensions(eglQueryString(s_data.egl_display, EGL_EXTENSIONS));
+
 		/* initialize context */
 
 		glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
@@ -361,6 +365,14 @@ namespace
 		                 powf(s_data.scaled_size[1] / 2.f, 2.f);
 	}
 } // namespace
+
+/***************************************************************** Extensions */
+
+PFNPROC
+OpenGL::glGetProcAddress(const char *f)
+{
+	return(eglGetProcAddress(f));
+}
 
 /******************************************************************************/
 

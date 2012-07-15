@@ -135,8 +135,8 @@ UnloadTexture(Texture &data)
 }
 
 MARSHMALLOW_NAMESPACE_USE
+using namespace Graphics::OpenGL;
 using namespace Graphics;
-using namespace OpenGL;
 
 TextureData::TextureData(void)
     : m_id(),

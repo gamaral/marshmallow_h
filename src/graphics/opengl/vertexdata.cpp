@@ -41,8 +41,8 @@
 #include "extensions.h"
 
 MARSHMALLOW_NAMESPACE_USE
+using namespace Graphics::OpenGL;
 using namespace Graphics;
-using namespace OpenGL;
 
 VertexData::VertexData(uint16_t c)
 #define AXES 2
@@ -53,7 +53,7 @@ VertexData::VertexData(uint16_t c)
 {
 	memset(m_data, 0, m_count * AXES);
 
-	if (glGenBuffers)
+	if (HasExtension("GL_ARB_vertex_buffer_object"))
 		buffer();
 }
 
