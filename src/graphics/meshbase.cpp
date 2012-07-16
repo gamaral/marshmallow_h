@@ -68,8 +68,7 @@ MeshBase::MeshBase(SharedTextureCoordinateData tc, SharedTextureData t, SharedVe
 
 MeshBase::~MeshBase(void)
 {
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 void

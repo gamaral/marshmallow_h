@@ -60,8 +60,7 @@ SceneBase::~SceneBase(void)
 {
 	m_p->layers.clear();
 
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 const Core::Identifier &

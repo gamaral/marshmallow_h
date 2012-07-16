@@ -41,16 +41,20 @@
 #  include <windows.h>
 #endif
 
+/*
+ * Avoid automatic glext inclusion, this will allow us to detect GL/GLES 2.0
+ * support properly.
+ */
+#define GL_GLEXT_LEGACY
+
 #ifdef MARSHMALLOW_OPENGL_GLES2
 #  include <GLES2/gl2.h>
-#  include "extensions/gl2ext.h"
 #else
-#  if defined(__APPLE__)
+#  ifdef __APPLE__
 #    include <OpenGL/gl.h>
 #  else
 #    include <GL/gl.h>
 #  endif
-#  include "extensions/glext.h"
 #endif
 
 #endif

@@ -572,8 +572,7 @@ TMXLoader::TMXLoader(Game::IScene &s)
 
 TMXLoader::~TMXLoader(void)
 {
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 bool

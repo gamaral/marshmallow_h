@@ -67,8 +67,7 @@ MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
 
 MovementComponent::~MovementComponent(void)
 {
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 Math::Vector2 &

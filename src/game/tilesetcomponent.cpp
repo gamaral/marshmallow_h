@@ -54,8 +54,7 @@ TilesetComponent::TilesetComponent(const Core::Identifier &i, IEntity &e)
 
 TilesetComponent::~TilesetComponent(void)
 {
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 Graphics::SharedTileset &

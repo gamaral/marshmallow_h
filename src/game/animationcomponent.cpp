@@ -211,8 +211,7 @@ AnimationComponent::AnimationComponent(const Core::Identifier &i, IEntity &e)
 
 AnimationComponent::~AnimationComponent(void)
 {
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 void

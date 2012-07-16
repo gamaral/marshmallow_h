@@ -42,6 +42,7 @@
 #include <game/entity.h>
 #include <game/entityscenelayer.h>
 #include <game/movementcomponent.h>
+#include <game/pausescenelayer.h>
 #include <game/positioncomponent.h>
 #include <game/rendercomponent.h>
 #include <game/scenebase.h>
@@ -215,6 +216,7 @@ public:
 		if (!EngineBase::initialize())
 			return(false);
 
+		eventManager()->connect(this, Event::KeyboardEvent::Type());
 		eventManager()->connect(&*m_debugListener, Event::KeyboardEvent::Type());
 
 		Game::SharedScene l_scene(new DemoScene);
@@ -225,11 +227,43 @@ public:
 
 	VIRTUAL void finalize(void)
 	{
-		if (isValid())
+		if (isValid()) {
 			eventManager()->disconnect(&*m_debugListener, Event::KeyboardEvent::Type());
+			eventManager()->disconnect(this, Event::KeyboardEvent::Type());
+		}
 
 		EngineBase::finalize();
 	}
+
+	VIRTUAL bool handleEvent(const Event::IEvent &e)
+	{
+		if (EngineBase::handleEvent(e))
+			return(true);
+
+		if (e.type() != Event::KeyboardEvent::Type())
+			return(false);
+
+		const Event::KeyboardEvent &l_kevent =
+		    static_cast<const Event::KeyboardEvent &>(e);
+
+		if (l_kevent.action() != Event::KeyPressed)
+			return(false);
+
+		if (l_kevent.key() == Event::KEY_RETURN ||
+                    l_kevent.key() == Event::KEY_Y) {
+			Game::SharedScene l_scene = sceneManager()->activeScene();
+			if (l_scene->getLayer("pause"))
+				l_scene->removeLayer("pause");
+			else
+				l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
+		} else if (l_kevent.key() == Event::KEY_ESCAPE ||
+                           l_kevent.key() == Event::KEY_P) {
+			stop();
+		} else return(false);
+
+		return(true);
+	}
+
 };
 
 int
@@ -238,8 +272,11 @@ MMain(int argc, char *argv[])
 	MMUNUSED(argc);
 	MMUNUSED(argv);
 
-	if (-1 == MMCHDIR(DEMO_CWD))
-		MMFATAL("Failed to change working directory \"" << DEMO_CWD << "\". ABORT!");
+	const char *l_cwd = getenv("MM_DEMO_CWD");
+	if (!l_cwd) l_cwd = DEMO_CWD;
+
+	if (-1 == MMCHDIR(l_cwd))
+		MMFATAL("Failed to change working directory \"" << l_cwd << "\". ABORT!");
 
 	return(Demo().run());
 }

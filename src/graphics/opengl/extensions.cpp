@@ -28,16 +28,16 @@
 
 #include "extensions.h"
 
-#include <set>
-#include <string>
-
-#include <cassert>
-
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
+
+#include <set>
+#include <string>
+
+#include <cassert>
 
 /******************************************************************************/
 
@@ -82,7 +82,7 @@ namespace Graphics
 namespace OpenGL
 {
 
-#ifndef MARSHMALLOW_OPENGL_GLES2
+#ifndef MMGL20_CAPABLE
 	/* required */
 	PFNGLATTACHSHADERPROC glAttachShader = 0;
 	PFNGLCOMPILESHADERARBPROC glCompileShader = 0;
@@ -113,7 +113,7 @@ namespace OpenGL
 	PFNGLGENBUFFERSARBPROC glGenBuffers = 0;
 #endif
 
-#if defined(MARSHMALLOW_OPENGL_GLX)
+#if defined(MARSHMALLOW_OPENGL_GLX) && !defined(MARSHMALLOW_OPENGL_GLES2)
 	PFNGLXSWAPINTERVALSGIPROC glSwapInterval = 0;
 #elif defined(MARSHMALLOW_OPENGL_WGL)
 	PFNGLACTIVETEXTUREARBPROC glActiveTexture = 0;
@@ -129,7 +129,7 @@ namespace OpenGL
 		    (glGetString(GL_EXTENSIONS)));
 		ParseExtensionsString(extensions);
 
-#ifndef MARSHMALLOW_OPENGL_GLES2
+#ifndef MMGL20_CAPABLE
 		glAttachShader = reinterpret_cast<PFNGLATTACHSHADERPROC>
 		    (glGetProcAddress("glAttachShader"));
 		assert(glAttachShader);
@@ -228,7 +228,7 @@ namespace OpenGL
 		}
 #endif
 
-#if defined(MARSHMALLOW_OPENGL_GLX)
+#if defined(MARSHMALLOW_OPENGL_GLX) && !defined(MARSHMALLOW_OPENGL_GLES2)
 		glSwapInterval = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>
 		    (glGetProcAddress("glXSwapIntervalSGI"));
 #elif defined(MARSHMALLOW_OPENGL_WGL)

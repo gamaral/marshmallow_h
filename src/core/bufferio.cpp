@@ -73,8 +73,8 @@ BufferIO::BufferIO(const char *cb, size_t s)
 BufferIO::~BufferIO(void)
 {
 	close();
-	delete m_p;
-	m_p = 0;
+
+	delete m_p, m_p = 0;
 }
 
 bool

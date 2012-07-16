@@ -78,8 +78,7 @@ Box2DComponent::Box2DComponent(const Core::Identifier &i, IEntity &e)
 
 Box2DComponent::~Box2DComponent(void)
 {
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 b2Body *

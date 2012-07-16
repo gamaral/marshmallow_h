@@ -41,17 +41,26 @@
 
 #include "headers.h"
 
-#ifdef MARSHMALLOW_OPENGL_GLES2
-#  include "extensions/gl2ext.h"
-#else
-#  include "extensions/glext.h"
+/* skip functions we know we should support already. */
+#if defined(GL_VERSION_2_0) || defined(GL_ES_VERSION_2_0)
+#  define MMGL20_CAPABLE
 #endif
 
-#if defined(MARSHMALLOW_OPENGL_GLX)
-#  include <GL/glx.h>
-#  include <GL/glxext.h>
-#elif defined(MARSHMALLOW_OPENGL_WGL)
-#  include "extensions/wglext.h"
+#ifdef MARSHMALLOW_OPENGL_GLES2
+#  include <GLES2/gl2ext.h>
+#else
+#  if defined(MARSHMALLOW_OPENGL_GLX)
+#    include <GL/glext.h>
+#    include <GL/glx.h>
+#    include <GL/glxext.h>
+#  elif defined(MARSHMALLOW_OPENGL_WGL)
+#    include "extensions/glext.h"
+#    include "extensions/wglext.h"
+#  elif defined(__APPLE__)
+#    include <OpenGL/glext.h>
+#  else
+#    include "extensions/glext.h"
+#  endif
 #endif
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -61,7 +70,7 @@ namespace Graphics
 
 namespace OpenGL
 {
-#ifndef MARSHMALLOW_OPENGL_GLES2
+#ifndef MMGL20_CAPABLE
 	/* required */
 	extern PFNGLATTACHSHADERPROC glAttachShader;
 	extern PFNGLCOMPILESHADERARBPROC glCompileShader;
@@ -90,10 +99,9 @@ namespace OpenGL
 	extern PFNGLBUFFERSUBDATAARBPROC glBufferSubData;
 	extern PFNGLDELETEBUFFERSARBPROC glDeleteBuffers;
 	extern PFNGLGENBUFFERSARBPROC glGenBuffers;
-
 #endif
 
-#if defined(MARSHMALLOW_OPENGL_GLX)
+#if defined(MARSHMALLOW_OPENGL_GLX) && !defined(MARSHMALLOW_OPENGL_GLES2)
 	extern PFNGLXSWAPINTERVALSGIPROC glSwapInterval;
 #elif defined(MARSHMALLOW_OPENGL_WGL)
 	extern PFNGLACTIVETEXTUREARBPROC glActiveTexture;

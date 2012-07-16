@@ -56,8 +56,7 @@ ComponentBase::ComponentBase(const Core::Identifier &i, IEntity &e)
 
 ComponentBase::~ComponentBase(void)
 {
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 const Core::Identifier &

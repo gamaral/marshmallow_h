@@ -163,11 +163,14 @@ namespace Core
 	{
 		if (m_data && --m_data->refs <= 0) {
 			T *ptr = reinterpret_cast<T *>(m_data->ptr);
-			delete ptr, m_data->ptr = 0;
+			delete ptr;
 
 			if (m_data->wrefs <= 0)
-				delete m_data, m_data = 0;
-		}
+				delete m_data;
+			else
+				m_data->ptr = 0;
+                }
+		m_data = 0;
 	}
 }
 

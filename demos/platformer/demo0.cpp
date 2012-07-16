@@ -97,15 +97,18 @@ public:
 		if (l_kevent.action() != Event::KeyPressed)
 			return(false);
 
-		if (l_kevent.key() == Event::KEY_RETURN) {
+		if (l_kevent.key() == Event::KEY_RETURN ||
+                    l_kevent.key() == Event::KEY_Y) {
 			Game::SharedScene l_scene = sceneManager()->activeScene();
 			if (l_scene->getLayer("pause"))
 				l_scene->removeLayer("pause");
 			else
 				l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
-		} else if (l_kevent.key() == Event::KEY_ESCAPE) {
+		} else if (l_kevent.key() == Event::KEY_ESCAPE ||
+                           l_kevent.key() == Event::KEY_P) {
 			stop();
-		} else if (l_kevent.key() == Event::KEY_F1) {
+		} else if (l_kevent.key() == Event::KEY_F1 ||
+                           l_kevent.key() == Event::KEY_R) {
 			loadLevel();
 		} else return(false);
 
@@ -137,8 +140,11 @@ MMain(int argc, char *argv[])
 	MMUNUSED(argc);
 	MMUNUSED(argv);
 
-	if (-1 == MMCHDIR(DEMO_CWD))
-		MMFATAL("Failed to change working directory \"" << DEMO_CWD << "\". ABORT!");
+	const char *l_cwd = getenv("MM_DEMO_CWD");
+	if (!l_cwd) l_cwd = DEMO_CWD;
+
+	if (-1 == MMCHDIR(l_cwd))
+		MMFATAL("Failed to change working directory \"" << l_cwd << "\". ABORT!");
 
 	return(Demo().run());
 }

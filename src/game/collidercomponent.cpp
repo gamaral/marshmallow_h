@@ -85,8 +85,7 @@ ColliderComponent::~ColliderComponent(void)
 		/* deregister as collider */
 		m_p->layer->deregisterCollider(*this);
 	}
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 int &

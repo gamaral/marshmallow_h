@@ -54,8 +54,7 @@ SizeComponent::SizeComponent(const Core::Identifier &i, IEntity &e)
 
 SizeComponent::~SizeComponent(void)
 {
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 Math::Size2f &

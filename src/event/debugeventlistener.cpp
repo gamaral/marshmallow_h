@@ -61,8 +61,8 @@ DebugEventListener::DebugEventListener(const std::string &f)
 DebugEventListener::~DebugEventListener(void)
 {
 	m_p->filestream.close();
-	delete m_p;
-	m_p = 0;
+
+	delete m_p, m_p = 0;
 }
 
 bool

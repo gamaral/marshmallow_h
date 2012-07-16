@@ -149,7 +149,8 @@ namespace Core
 	Weak<T>::clear(void)
 	{
 		if (m_data && --m_data->wrefs <= 0 && m_data->ptr == 0)
-			delete m_data, m_data = 0;
+			delete m_data;
+		m_data = 0;
 	}
 }
 

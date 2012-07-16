@@ -160,8 +160,7 @@ SplashSceneLayer::~SplashSceneLayer(void)
 {
 	Game::Engine::Instance()->eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 Graphics::SharedQuadMesh

@@ -45,7 +45,7 @@
 #include <tinyxml2.h>
 
 #if MARSHMALLOW_VIEWPORT_OPENGL
-#  define TILE_ADJUSTMENT 0.0000001f
+#  define TILE_ADJUSTMENT 0.000001f
 #else
 #  define TILE_ADJUSTMENT 0.f
 #endif
@@ -92,8 +92,7 @@ TilesetBase::~TilesetBase(void)
 	/* reset will clear out cache data and return */
 	reset();
 
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 void
@@ -231,14 +230,10 @@ TilesetBase::reset(void)
 	const int l_old_item_count = m_p->size.area();
 	for (int i = 0; i < l_old_item_count; ++i)
 		delete m_p->cache[i];
-	delete[] m_p->cache;
-	m_p->cache = 0;
+	delete[] m_p->cache, m_p->cache = 0;
+	delete[] m_p->offset_col, m_p->offset_col  = 0;
+	delete[] m_p->offset_row, m_p->offset_row  = 0;
 
-	delete[] m_p->offset_col;
-	delete[] m_p->offset_row;
-
-	m_p->offset_col  = 0;
-	m_p->offset_row  = 0;
 	m_p->spacing_col = 0;
 	m_p->spacing_row = 0;
 	m_p->size.zero();

@@ -111,8 +111,7 @@ EngineBase::~EngineBase(void)
 {
 	if (this == s_instance) s_instance = 0;
 
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 bool

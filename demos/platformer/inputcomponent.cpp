@@ -171,20 +171,24 @@ InputComponent::handleEvent(const Event::IEvent &e)
 	const Event::KeyboardEvent &l_kevent =
 	    static_cast<const Event::KeyboardEvent &>(e);
 
-	if (l_kevent.key() == Event::KEY_LEFT) {
+	if (l_kevent.key() == Event::KEY_LEFT ||
+            l_kevent.key() == Event::KEY_A) {
 		if ((m_left = (l_kevent.action() == Event::KeyPressed)))
 			m_direction_stack.push_front(ICDLeft);
 		else m_direction_stack.remove(ICDLeft);
 	}
-	else if (l_kevent.key() == Event::KEY_RIGHT) {
+	else if (l_kevent.key() == Event::KEY_RIGHT ||
+                 l_kevent.key() == Event::KEY_D) {
 		if ((m_right = (l_kevent.action() == Event::KeyPressed)))
 			m_direction_stack.push_front(ICDRight);
 		else m_direction_stack.remove(ICDRight);
 	}
-	else if (l_kevent.key() == Event::KEY_SPACE) {
+	else if (l_kevent.key() == Event::KEY_SPACE ||
+                 l_kevent.key() == Event::KEY_M) {
 		m_jump = (l_kevent.action() == Event::KeyPressed ? true : false);
 	}
-	else if (l_kevent.key() == Event::KEY_SHIFT_L) {
+	else if (l_kevent.key() == Event::KEY_SHIFT_L ||
+                 l_kevent.key() == Event::KEY_J) {
 		m_max_speed += l_kevent.action() == Event::KeyPressed ? 200 : -200;
 	}
 

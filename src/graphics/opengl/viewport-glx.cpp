@@ -348,12 +348,12 @@ namespace
 		/* extensions */
 
 		InitializeExtensions(glXQueryExtensionsString(s_data.display, s_data.screen));
-#endif
-
+		
 		/* vsync */
 
 		if (HasExtension("GLX_SGI_swap_control"))
 			glSwapInterval(v ? 1 : 0);
+#endif
 
 		/* initialize context */
 

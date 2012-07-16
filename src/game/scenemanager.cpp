@@ -80,8 +80,7 @@ SceneManager::~SceneManager(void)
 
 	m_p->stack.clear();
 
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 void

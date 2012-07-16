@@ -60,8 +60,7 @@ SceneLayerBase::SceneLayerBase(const Core::Identifier &i, IScene &s, int f)
 
 SceneLayerBase::~SceneLayerBase(void)
 {
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 const Core::Identifier &

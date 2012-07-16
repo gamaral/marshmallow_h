@@ -28,6 +28,9 @@
 
 #include <core/logger.h>
 
+#include <event/eventmanager.h>
+#include <event/keyboardevent.h>
+
 #include <graphics/factory.h>
 #include <graphics/transform.h>
 #include <graphics/viewport.h>
@@ -134,12 +137,22 @@ public:
 		if (!EngineBase::initialize())
 			return(false);
 
+		eventManager()->connect(this, Event::KeyboardEvent::Type());
+
 		Game::SharedScene l_scene(new DemoScene);
 		sceneManager()->pushScene(l_scene);
 
 		second();
 
 		return(true);
+	}
+
+	VIRTUAL void finalize(void)
+	{
+		if (isValid())
+			eventManager()->disconnect(this, Event::KeyboardEvent::Type());
+
+		EngineBase::finalize();
 	}
 
 	VIRTUAL void second(void)
@@ -154,6 +167,28 @@ public:
 		l_camera.setRotation((25 * m_stop_timer) % 360);
 		Graphics::Viewport::SetCamera(l_camera);
 	}
+
+	VIRTUAL bool handleEvent(const Event::IEvent &e)
+	{
+		if (EngineBase::handleEvent(e))
+			return(true);
+
+		if (e.type() != Event::KeyboardEvent::Type())
+			return(false);
+
+		const Event::KeyboardEvent &l_kevent =
+		    static_cast<const Event::KeyboardEvent &>(e);
+
+		if (l_kevent.action() != Event::KeyPressed)
+			return(false);
+
+		if (l_kevent.key() == Event::KEY_ESCAPE ||
+                    l_kevent.key() == Event::KEY_P) {
+			stop();
+		} else return(false);
+
+		return(true);
+	}
 };
 
 int
@@ -161,8 +196,13 @@ MMain(int argc, char *argv[])
 {
 	MMUNUSED(argc);
 	MMUNUSED(argv);
-	if (-1 == MMCHDIR(DEMO_CWD))
-		MMFATAL("Failed to change working directory \"" << DEMO_CWD << "\". ABORT!");
+	
+	const char *l_cwd = getenv("MM_DEMO_CWD");
+	if (!l_cwd) l_cwd = DEMO_CWD;
+
+	if (-1 == MMCHDIR(l_cwd))
+		MMFATAL("Failed to change working directory \"" << l_cwd << "\". ABORT!");
+
 	return(Demo().run());
 }
 

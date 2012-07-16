@@ -86,8 +86,7 @@ EventManager::~EventManager(void)
 {
 	if (s_instance == this) s_instance = 0;
 
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 const Core::Identifier &

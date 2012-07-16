@@ -70,8 +70,7 @@ EntitySceneLayer::~EntitySceneLayer(void)
 {
 	m_p->entities.clear();
 
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 void

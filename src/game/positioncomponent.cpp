@@ -52,8 +52,7 @@ PositionComponent::PositionComponent(const Core::Identifier &i, IEntity &e)
 
 PositionComponent::~PositionComponent(void)
 {
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 Math::Point2 &

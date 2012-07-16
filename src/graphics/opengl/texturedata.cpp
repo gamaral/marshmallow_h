@@ -37,7 +37,7 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 
-#include "headers.h"
+#include "extensions.h"
 
 #include <png.h>
 

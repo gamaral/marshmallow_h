@@ -62,8 +62,7 @@ Hash::Hash(const Hash &copy)
 
 Hash::~Hash(void)
 {
-	delete m_p;
-	m_p = 0;
+	delete m_p, m_p = 0;
 }
 
 MMUID
