@@ -21,7 +21,7 @@ list(APPEND BCM_HOST_INCLUDE_DIRS ${BCM_HOST_INCLUDE_DIR})
 
 find_path(BCM_HOST_PTHREADS_INCLUDE_DIR vcos_platform_types.h
 	HINTS $ENV{BCM_HOSTDIR}
-	PATH_SUFFIXES include/interface/vcos/pthreads
+	PATH_SUFFIXES "interface/vcos/pthreads"
 	PATHS /usr/local
 	      /usr
 	      /opt/vc
