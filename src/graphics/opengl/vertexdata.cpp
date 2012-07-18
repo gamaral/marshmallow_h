@@ -53,8 +53,12 @@ VertexData::VertexData(uint16_t c)
 {
 	memset(m_data, 0, m_count * AXES);
 
+#ifdef MMGL20_CAPABLE
+	buffer();
+#else
 	if (HasExtension("GL_ARB_vertex_buffer_object"))
 		buffer();
+#endif
 }
 
 VertexData::~VertexData(void)

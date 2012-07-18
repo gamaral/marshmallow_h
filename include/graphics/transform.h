@@ -60,6 +60,12 @@ namespace Graphics
 		struct Private;
 		Private *m_p;
 	public:
+		enum MatrixType
+		{
+			mtModel,
+			mtView
+		};
+	public:
 		Transform(void);
 		Transform(const Transform &other);
 		virtual ~Transform(void);
@@ -75,7 +81,7 @@ namespace Graphics
 		const Math::Point2 & translation(void) const;
 		void setTranslation(const Math::Point2 &value);
 
-		const Math::Matrix4 & matrix(void) const;
+		const Math::Matrix4 & matrix(MatrixType type = mtModel) const;
 	};
 	typedef Core::Shared<Transform> SharedTransform;
 	typedef Core::Weak<Transform> WeakTransform;

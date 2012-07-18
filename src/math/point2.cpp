@@ -131,6 +131,24 @@ Point2::operator-=(const Vector2 &rhs)
 }
 
 Point2
+Point2::operator*(float rhs) const
+{
+	return(Point2(m_value[0] * rhs, m_value[1] * rhs));
+}
+
+Point2
+Point2::operator+(float rhs) const
+{
+	return(Point2(m_value[0] + rhs, m_value[1] + rhs));
+}
+
+Point2
+Point2::operator-(float rhs) const
+{
+	return(Point2(m_value[0] - rhs, m_value[1] - rhs));
+}
+
+Point2
 Point2::operator*(const Point2 &rhs) const
 {
 	return(Point2(m_value[0] * rhs[0], m_value[1] * rhs[1]));

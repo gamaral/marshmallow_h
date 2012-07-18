@@ -45,51 +45,71 @@ using namespace Graphics;
 
 struct Transform::Private
 {
+	bool invalidated;
+
 	float rotation;
 	Math::Size2f scale;
 	Math::Point2 translation;
 
 	Math::Matrix4 matrix;
 
-	void updateMatrix(void);
+	void rebuildMatrix(MatrixType type);
 };
 
 void
-Transform::Private::updateMatrix(void)
+Transform::Private::rebuildMatrix(MatrixType type)
 {
-	Math::Matrix4 l_translate;
-	l_translate[12] = translation.x();
-	l_translate[13] = translation.y();
+	using namespace Math;
 
-	Math::Matrix4 l_rotate;
+	Matrix4 l_rotate;
+	Matrix4 l_scale;
+	Matrix4 l_translate;
+
 	if (rotation != 0) {
 #define DEGREE_TO_RADIAN 0.0174532925f
-		float l_rotation_rad = rotation * DEGREE_TO_RADIAN;
-		l_rotate[0] = cosf(l_rotation_rad);
-		l_rotate[1] = sinf(l_rotation_rad);
-		l_rotate[4] = -l_rotate[1];
-		l_rotate[5] =  l_rotate[0];
+		const float l_rotation_rad = rotation ? rotation * DEGREE_TO_RADIAN : 0;
+		l_rotate[Matrix4::m11] =  cosf(l_rotation_rad);
+		l_rotate[Matrix4::m21] =  sinf(l_rotation_rad);
+		l_rotate[Matrix4::m12] = -l_rotate[Matrix4::m21];
+		l_rotate[Matrix4::m22] =  l_rotate[Matrix4::m11];
 	}
 
-	Math::Matrix4 l_scale;
-	l_scale[0] = scale.width();
-	l_scale[5] = scale.height();
+	l_scale[Matrix4::m11] = scale.width();
+	l_scale[Matrix4::m22] = scale.height();
 
-	matrix = l_scale * l_translate * l_rotate;
+	switch (type) {
+	case mtModel:
+		l_translate[Matrix4::m14] = translation.x();
+		l_translate[Matrix4::m24] = translation.y();
+
+		matrix = l_translate * l_scale * l_rotate;
+		break;
+
+	case mtView:
+		l_translate[Matrix4::m14] = -translation.x();
+		l_translate[Matrix4::m24] = -translation.y();
+
+		matrix = l_scale * l_rotate * l_translate;
+		break;
+	}
+
+	invalidated = false;
 }
 
 Transform::Transform(void)
     : m_p(new Private)
 {
+	m_p->invalidated = true;
 	m_p->rotation = 0.f;
 	m_p->scale = Math::Size2f::Identity();
-	m_p->updateMatrix();
+	m_p->translation = Math::Point2::Zero();
 }
 
 Transform::Transform(const Transform &other)
     : m_p(new Private)
 {
-	m_p->rotation = 0.f;
+	m_p->invalidated = other.m_p->invalidated;
+	m_p->rotation = other.m_p->rotation;
 	m_p->scale = other.m_p->scale;
 	m_p->translation = other.m_p->translation;
 	m_p->matrix = other.m_p->matrix;
@@ -110,7 +130,7 @@ void
 Transform::setRotation(float value)
 {
 	m_p->rotation = value;
-	m_p->updateMatrix();
+	m_p->invalidated = true;
 }
 
 const Math::Size2f &
@@ -123,7 +143,7 @@ void
 Transform::setScale(const Math::Size2f &value)
 {
 	m_p->scale = value;
-	m_p->updateMatrix();
+	m_p->invalidated = true;
 }
 
 const Math::Point2 &
@@ -136,19 +156,23 @@ void
 Transform::setTranslation(const Math::Point2 &value)
 {
 	m_p->translation = value;
-	m_p->updateMatrix();
+	m_p->invalidated = true;
 }
 
 const Math::Matrix4 &
-Transform::matrix(void) const
+Transform::matrix(MatrixType type) const
 {
+	if (m_p->invalidated)
+		m_p->rebuildMatrix(type);
+
 	return(m_p->matrix);
 }
 
 Transform &
-Transform::operator =(const Transform& rhs)
+Transform::operator =(const Transform &rhs)
 {
 	if (this != &rhs) {
+		m_p->invalidated = rhs.m_p->invalidated;
 		m_p->rotation = rhs.m_p->rotation;
 		m_p->scale = rhs.m_p->scale;
 		m_p->translation = rhs.m_p->translation;

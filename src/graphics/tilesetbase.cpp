@@ -45,7 +45,7 @@
 #include <tinyxml2.h>
 
 #if MARSHMALLOW_VIEWPORT_OPENGL
-#  define TILE_ADJUSTMENT 0.000001f
+#  define TILE_ADJUSTMENT 0.0001f
 #else
 #  define TILE_ADJUSTMENT 0.f
 #endif

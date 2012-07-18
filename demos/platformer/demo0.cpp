@@ -68,6 +68,10 @@ public:
 		if (!EngineBase::initialize())
 			return(false);
 
+		Graphics::Transform l_camera = Graphics::Viewport::Camera();
+		l_camera.setScale(Math::Size2f(1.4f, 1.4f));
+		Graphics::Viewport::SetCamera(l_camera);
+
 		eventManager()->connect(this, Event::KeyboardEvent::Type());
 
 		loadLevel();

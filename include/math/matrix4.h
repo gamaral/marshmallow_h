@@ -48,10 +48,19 @@ namespace Math
 	class MARSHMALLOW_MATH_EXPORT
 	Matrix4
 	{
-		float m_value[16];
+		float m_value[16]; // 4*4
+	public:
+		enum Positions
+		{
+			m11, m21, m31, m41,
+			m12, m22, m32, m42,
+			m13, m23, m33, m43,
+			m14, m24, m34, m44,
+			mmm
+		};
+
 	public:
 		explicit Matrix4(const float *values = 0);
-		Matrix4(const Matrix4 &copy);
 
 		float cell(int row, int col) const
 		    { return(m_value[(row * 4) + col]); }
@@ -63,17 +72,18 @@ namespace Math
 
 	public: /* operators */
 
-		Matrix4 & operator=(const Matrix4 &rhs);
 		bool operator==(const Matrix4 &rhs) const;
 
 		Matrix4 operator*(const Matrix4 &rhs) const;
+
 		Matrix4 & operator*=(const Matrix4 &rhs);
+
+		float operator[](int i) const
+		    { return(m_value[i]); }
 
 		float & operator[](int i)
 		    { return(m_value[i]); }
 
-		float operator[](int i) const
-		    { return(m_value[i]); }
 
 	public: /* static */
 

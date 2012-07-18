@@ -311,16 +311,14 @@ Painter::Render(void)
 void
 Painter::Reset(void)
 {
+	using namespace Math;
 	s_location_matrix_invalidated = true;
 
 	glClearColor(.0f, .0f, .0f, .1f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	ProjectionMatrix();
 
-	Math::Matrix4 l_view = Viewport::Camera().matrix();
-	l_view[12] *= -1.f;
-	l_view[13] *= -1.f;
-	s_matrix_current *= l_view;
+	s_matrix_current *= Viewport::Camera().matrix(Transform::mtView);
 }
 
 Math::Matrix4 &
@@ -339,11 +337,12 @@ Painter::LoadIdentity(void)
 void
 Painter::ProjectionMatrix(void)
 {
+	using namespace Math;
 	s_location_matrix_invalidated = true;
-	s_matrix_current = Math::Matrix4::Identity();
-	s_matrix_current[0]  =  2.f / Viewport::Size().width();
-	s_matrix_current[5]  =  2.f / Viewport::Size().height();
-	s_matrix_current[10] = -1.f;
+	s_matrix_current = Matrix4::Identity();
+	s_matrix_current[Matrix4::m11] =  2.f / Viewport::Size().width();
+	s_matrix_current[Matrix4::m22] =  2.f / Viewport::Size().height();
+	s_matrix_current[Matrix4::m33] = -1.f;
 }
 
 void
