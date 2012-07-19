@@ -2,6 +2,14 @@ set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_VERSION 1)
 set(CMAKE_SYSTEM_PROCESSOR $ENV{RPITOOLCHAIN_TARGET})
 
+if ("$ENV{RPIFIRMWARE}" STREQUAL ""
+    OR "$ENV{RPITOOLCHAIN}" STREQUAL ""
+    OR "$ENV{RPITOOLCHAIN_HOST}" STREQUAL ""
+    OR "$ENV{RPITOOLCHAIN_TARGET}" STREQUAL "")
+	message(FATAL_ERROR "\n*** Invalid toolchain environment ***\n"
+	                    "Please source the toolchain environment file.\n")
+endif()
+
 set(RPIFIRMWARE         $ENV{RPIFIRMWARE}                                 CACHE INTERNAL "" FORCE)
 set(RPITOOLCHAIN        $ENV{RPITOOLCHAIN}                                CACHE INTERNAL "" FORCE)
 set(RPITOOLCHAIN_HOST   $ENV{RPITOOLCHAIN_HOST}                           CACHE INTERNAL "" FORCE)
