@@ -3,6 +3,7 @@
 build/
 debug
 docs/
+gmon.out
 log.txt
 tags
 target/

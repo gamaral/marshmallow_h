@@ -73,7 +73,7 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 		                              opengl/viewport-vc.cpp)
 
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
-		                              ${BCM_HOST_LIBRARY})
+		                              ${BCM_HOST_LIBRARIES})
 		add_definitions(-DMARSHMALLOW_OPENGL_VC)
 	else()
 		message(WARNING "No OpenGL viewport selected!")
