@@ -67,4 +67,32 @@ Windows
 
     Tested on Win7 x86/x64 (VS2010)
 
+Raspberry Pi
+------------
+
+== Native ==
+
+Run the following commands in your *marshmallow_h* base:
+
+    cd build
+    cmake -C ../cmake/Cache-raspberrypi.cmake ..
+    make
+
+== Cross-compile ==
+
+First, you will need to clone my RPi toolchain:
+
+    git clone --depth 0 --recursive git://github.com/gamaral/rpi-toolchain.git
+
+Secondly, you will need to source the "env" file found in the *rpi-toolchain*
+base:
+
+    source rpi-toolchain/env
+
+Finally, run the following commands in your *marshmallow_h* base:
+
+    cd build
+    cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-raspberrypi.cmake -C ../cmake/Cache-raspberrypi.cmake ..
+    make
+
 vim:syn=notes:
