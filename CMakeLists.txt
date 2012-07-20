@@ -139,6 +139,7 @@ if(UNIX OR MARSHMALLOW_WII)
 	if(NOT M_LIBRARY)
 		message(FATAL_ERROR "No math library found.")
 	endif()
+	MARK_AS_ADVANCED(M_LIBRARY)
 elseif(WIN32)
 	configure_file(
 	    ${PROJECT_SOURCE_DIR}/include/core/win32/environment.h

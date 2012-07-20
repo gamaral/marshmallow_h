@@ -23,8 +23,8 @@ option(MARSHMALLOW_WITH_LUA            "Use Lua"                                
 
 option(BUILD_SHARED_LIBS "Build a shared library"                                 ON)
 
-set(CMAKE_C_FLAGS   "-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=softfp" CACHE STRING "")
-set(CMAKE_CXX_FLAGS "-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=softfp" CACHE STRING "")
+set(CMAKE_C_FLAGS   "-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"   CACHE STRING "")
+set(CMAKE_CXX_FLAGS "-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"   CACHE STRING "")
 set(CMAKE_C_FLAGS_RELEASE   "-fomit-frame-pointer"                    CACHE STRING "")
 set(CMAKE_CXX_FLAGS_RELEASE "-fomit-frame-pointer"                    CACHE STRING "")
 

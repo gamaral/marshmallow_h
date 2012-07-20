@@ -142,14 +142,15 @@ namespace
 		uint16_t l_display = DISPMANX_ID_SDTV; /* default to tv output */
 
 		/*
-		 * Power on HDMI port in stand-by mode (for state testing)
+		 * Power on SDTV (for state testing)
 		 */
-		vc_tv_hdmi_power_on_explicit(HDMI_MODE_HDMI,
-		                             HDMI_RES_GROUP_CEA,
-		                             HDMI_CEA_OFF);
+		if (vc_tv_sdtv_power_on(SDTV_MODE_NTSC, 0) != 0) {
+			MMERROR("SDTV: Failed to power on.");
+			return(false);
+		}
 
 		TV_GET_STATE_RESP_T l_tvstate;
-		if (vc_tv_get_state(&l_tvstate) >= 0) {
+		if (vc_tv_get_state(&l_tvstate) == 0) {
 			MMINFO("VC: state=" << l_tvstate.state);
 
 			/*
@@ -160,11 +161,14 @@ namespace
 				if ((l_tvstate.state & VC_HDMI_STANDBY) == 0)
 					vc_tv_power_off();
 
-				/* turn on in correct mode */
-				vc_tv_hdmi_power_on_preferred();
+				/* power on in correct mode */
+				if (vc_tv_hdmi_power_on_preferred() != 0) {
+					MMERROR("HDMI: Failed to power on.");
+					return(false);
+				}
 
 				/* update state */
-				if (vc_tv_get_state(&l_tvstate) < 0) {
+				if (vc_tv_get_state(&l_tvstate) != 0) {
 					MMERROR("HDMI: Failed to query tv state.");
 					return(false);
 				}
@@ -174,18 +178,6 @@ namespace
 					l_display = DISPMANX_ID_HDMI;
 				else if ((l_tvstate.state & VC_HDMI_DVI) == VC_HDMI_DVI)
 					l_display = DISPMANX_ID_MAIN_LCD;
-
-			}
-
-			/*
-			 *  SDTV
-			 */
-			else {
-				/* make sure HDMI port is off */
-				MMINFO("SDTV: Turning off HDMI port");
-				vc_tv_hdmi_power_on_explicit(HDMI_MODE_OFF,
-				                             HDMI_RES_GROUP_CEA,
-				                             HDMI_CEA_OFF);
 			}
 
 			if (l_tvstate.width <= 0 || l_tvstate.height <= 0) {
@@ -347,9 +339,6 @@ namespace
 		s_data.screen = 0;
 
 		/* power off */
-		vc_tv_hdmi_power_on_explicit(HDMI_MODE_OFF,
-		                             HDMI_RES_GROUP_CEA,
-		                             HDMI_CEA_OFF);
 		vc_tv_power_off();
 	}
 
