@@ -151,8 +151,9 @@ SplashSceneLayer::Private::calculateQuadScale(void)
 
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock)
-    , m_p(new Private(*this))
+    , m_p(0)
 {
+	m_p = new Private(*this);
 	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
 }
 

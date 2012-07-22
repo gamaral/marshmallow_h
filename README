@@ -11,88 +11,96 @@ won’t be limited to such, but most of the base features will focus on that era
 of gaming. This engine will act as the backbone for the Marshmallow
 Entertainment System.
 
-    http://bit.ly/marshmallow_h
+	http://marshmallow.me/
 
 Source
 ======
 
-    $ git clone --recursive git://github.com/gamaral/marshmallow_h.git
+	$ git clone --recursive git://github.com/gamaral/marshmallow_h.git
 
-    Notice the *--recursive* switch, it's needed so that submodules get checked
-    out along with the main repository.
+Notice the *--recursive* switch, it's needed so that submodules get checked out
+along with the main repository.
 
 Building
 ========
 
-    I include many predefined cmake configurations, please take a look at the
-    "cmake" folder in the project root, filenames are pretty self-explanatory.
+I include many predefined cmake init-caches, please take a look at the "cmake"
+directory in the project root, filenames are pretty self-explanatory.
 
 Linux/BSD
 ---------
 
 Run the following from project root:
 
-    cd build
-    cmake -C ../cmake/Cache-release_glx.cmake ..
-    make
+	$ cd build
+	$ cmake -C ../cmake/Cache-release_glx.cmake ..
+	$ make
 
-    Marshmallow's go-to compiler is Clang, the example above uses gcc since it's
-    almost guaranteed to be on the system (unlike Clang).
+Marshmallow's go-to compiler is Clang, the example above uses gcc since it's
+almost guaranteed to be on the system (unlike Clang).
 
 Mac OSX
 -------
 
-Run the following from project root:
+Run the following from project root using Terminal:
 
-    cd build
-    cmake -G Xcode -C ../cmake/Cache-release_qt4.cmake ..
-    make
+	$ cd build
+	$ cmake -G Xcode -C ../cmake/Cache-opengl-qt4.cmake ..
+	$ make
 
-    Launch Xcode and open the project file in the build directory, CGL is
-    currently unsupported (due to my lazyness, so SDL and QT4 can be used for
-    now).
+Launch Xcode and open the project file in the build directory, CGL is currently
+unsupported (due to my lazyness, so SDL and QT4 can be used for now).
 
 Windows
 -------
 
-    Run CMakeGui with `source` set to project root and `output` to the build
-    directory. Make sure to run the configure step at least twice after changing
-    the backend or you might get issues with libpng not being found.
+Run the following from project root using the Command Line terminal:
 
-    The OpenGL backend and WGL viewport are turned off by default, you will
-    need to turn it ON using ccmake/cmake-gui.
+	$ cd build
+	$ cmake -C ..\cmake\Cache-opengl-wgl.cmake ..
 
-    Configure and Generate a VS 2008/2010 solution, or generate makefiles to build
-    from the command line using nmake or jom (https://qt.gitorious.org/qt-labs/jom)
+Now open Visual Studio and open the MARSHMALLOW solution located in the build
+directory.
 
-    Tested on Win7 x86/x64 (VS2010)
+Tested on Win7 x86/x64 (VS2010)
 
 Raspberry Pi
 ------------
 
-== Native ==
+* Native
 
 Run the following commands in your *marshmallow_h* base:
 
-    cd build
-    cmake -C ../cmake/Cache-raspberrypi.cmake ..
-    make
+	$ cd build
+	$ cmake -C ../cmake/Cache-raspberrypi.cmake ..
+	$ make
 
-== Cross-compile ==
+* Cross-compile
 
-First, you will need to clone my RPi toolchain:
+To start, you will need to clone my RPi toolchain:
 
-    git clone --depth 0 --recursive git://github.com/gamaral/rpi-toolchain.git
+	$ git clone --depth 1 git://github.com/gamaral/rpi-toolchain.git
 
-Secondly, you will need to source the "env" file found in the *rpi-toolchain*
-base:
+At this point you have the base of the toolchain but no actual submodules, you
+will now need to *quick-clone* the submodules:
 
-    source rpi-toolchain/env
+	$ cd rpi-toolchain
+	$ scripts/quick-clone
 
-Finally, run the following commands in your *marshmallow_h* base:
+The *rpi-toolchain* requires some special environment variables to be exported
+in order to work with *marshmallow_h*, this is handled by the nifty *env* file
+in the toolchain base:
 
-    cd build
-    cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-raspberrypi.cmake -C ../cmake/Cache-raspberrypi.cmake ..
-    make
+	$ source rpi-toolchain/env
+
+Keep in mind you might need to *source* that same environment file again if you
+plan to reconfigure at a later time.
+
+We are now ready to configure *marshmallow_h*, change into the base directory
+and run the following commands:
+
+	$ cd build
+	$ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-raspberrypi.cmake -C ../cmake/Cache-raspberrypi.cmake ..
+	$ make
 
 vim:syn=notes:

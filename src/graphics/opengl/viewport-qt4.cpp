@@ -92,16 +92,21 @@ public:
 
 		/* set viewport size */
 
+		if (fullscreen) {
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-		m_size[0] = _width;
-		m_size[1] = (_width * static_cast<float>(m_wsize.height()) /
-		    static_cast<float>(m_wsize.width()));
-
+			m_size[0] = static_cast<float>(_width);
+			m_size[1] = (m_size[0] * static_cast<float>(m_wsize[1])) /
+			    static_cast<float>(m_wsize[0]);
 #else
-		m_size[0] = (_height * static_cast<float>(m_wsize.width())) /
-		    static_cast<float>(m_wsize.height());
-		m_size[1] = _height;
+			m_size[1] = static_cast<float>(_height);
+			m_size[0] = (m_size[1] * static_cast<float>(m_wsize[0])) /
+			    static_cast<float>(m_wsize[1]);
 #endif
+		}
+		else {
+			m_size[0] = static_cast<float>(_width);
+			m_size[1] = static_cast<float>(_height);
+		}
 	}
 
 	virtual ~ViewportWidget(void)
@@ -119,11 +124,11 @@ protected: /* virtual */
 	VIRTUAL void
 	initializeGL()
 	{
-		using namespace Graphics;
+		using namespace Graphics::OpenGL;
 
 		/* extensions */
 
-		OpenGL::InitializeExtensions();
+		Extensions::Initialize();
 
 		/* initialize context */
 

@@ -68,9 +68,10 @@ namespace Game
 	typedef Core::Shared<ISceneLayer> SharedSceneLayer;
 
 	/*! @brief Game Factory Interface */
-	struct IFactory
+	struct MARSHMALLOW_GAME_EXPORT
+	IFactory
 	{
-		virtual ~IFactory(void) {};
+		virtual ~IFactory(void);
 
 		virtual SharedScene createScene(const Core::Type &type,
 		    const Core::Identifier &identifier) const = 0;

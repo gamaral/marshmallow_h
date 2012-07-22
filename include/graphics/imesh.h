@@ -60,9 +60,10 @@ namespace Graphics { /************************************ Graphics Namespace */
 	class Color;
 
 	/*! @brief Graphics Mesh Interface */
-	struct IMesh : public Core::ISerializable
+	struct MARSHMALLOW_GRAPHICS_EXPORT
+	IMesh : public Core::ISerializable
 	{
-		virtual ~IMesh(void) {};
+		virtual ~IMesh(void);
 
 		virtual const SharedTextureCoordinateData & textureCoordinateData(void) const = 0;
 		virtual const SharedTextureData & textureData(void) const = 0;

@@ -71,7 +71,8 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
 
-		VIRTUAL bool load(const Core::Identifier &id);
+		VIRTUAL bool load(const Core::Identifier &id,
+		                  ScaleMode min, ScaleMode mag);
 		VIRTUAL void unload(void);
 
 		VIRTUAL bool isLoaded(void) const

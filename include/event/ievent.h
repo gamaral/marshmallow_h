@@ -46,9 +46,10 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event
 {
 	/*! @brief Event Interface */
-	struct IEvent
+	struct MARSHMALLOW_EVENT_EXPORT
+	IEvent
 	{
-		virtual ~IEvent(void) {};
+		virtual ~IEvent(void);
 
 		/*!
 		 * @brief Event Type

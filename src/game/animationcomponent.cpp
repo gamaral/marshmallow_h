@@ -205,8 +205,9 @@ AnimationComponent::Private::animate(float d)
 
 AnimationComponent::AnimationComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_p(new Private(*this))
+    , m_p(0)
 {
+	m_p = new Private(*this);
 }
 
 AnimationComponent::~AnimationComponent(void)

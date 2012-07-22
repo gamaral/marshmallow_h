@@ -94,9 +94,9 @@ LoadTexturePNG(const std::string &filename, Texture &data)
 
 	png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND, 0);
 
-	data.width  = png_get_image_width(png_ptr, info_ptr);
+	data.width  = png_get_image_width(png_ptr,  info_ptr);
 	data.height = png_get_image_height(png_ptr, info_ptr);
-	data.depth  = png_get_bit_depth(png_ptr, info_ptr);
+	data.depth  = png_get_bit_depth(png_ptr,    info_ptr);
 	png_byte color_type = png_get_color_type(png_ptr, info_ptr);
 
 	if((color_type & PNG_COLOR_TYPE_RGBA) == PNG_COLOR_TYPE_RGBA)
@@ -151,16 +151,18 @@ TextureData::~TextureData(void)
 }
 
 bool
-TextureData::load(const Core::Identifier &i)
+TextureData::load(const Core::Identifier &_id, ScaleMode min, ScaleMode mag)
 {
+	using Graphics::OpenGL::Extensions::glGenerateMipmap;
+
 	if (m_texture_id) {
 		MMERROR("Load texture asset called on active texture.");
 		return(false);
 	}
 
 	Texture tdata;
-	if (!LoadTexturePNG(i.str(), tdata)) {
-		MMERROR("Failed to load texture: " << id().str());
+	if (!LoadTexturePNG(_id.str(), tdata)) {
+		MMERROR("Failed to load texture: " << _id.str());
 		return(false);
 	}
 
@@ -169,26 +171,58 @@ TextureData::load(const Core::Identifier &i)
 	case 4: l_format = GL_RGBA; break;
 	case 3: l_format = GL_RGB;  break;
 	default:
-		MMERROR("Unknown format for texture: " << id().str());
+		MMERROR("Unknown format for texture: " << _id.str());
 		return(false);
 	}
+
+	/* update object details */
+
+	m_id   = _id;
+	m_size = Math::Size2i(tdata.width, tdata.height);
+
+	/* calculate min/mag */
+
+	const bool l_mipmaps = (glGenerateMipmap != 0);
+
+	GLint l_mag_scale;
+	switch(mag) {
+	case smLinear: l_mag_scale = GL_LINEAR; break;
+
+	default:
+	case smNearest: l_mag_scale = GL_NEAREST; break;
+	}
+
+	GLint l_min_scale;
+	switch(min) {
+	case smLinear:
+		l_min_scale = l_mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+		break;
+
+	default:
+	case smNearest:
+		l_min_scale = l_mipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
+		break;
+	}
+
+	/* bind texture */
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	glGenTextures(1, &m_texture_id);
 	glBindTexture(GL_TEXTURE_2D, m_texture_id);
 
-	m_size = Math::Size2i(tdata.width, tdata.height);
-	glTexImage2D(GL_TEXTURE_2D, 0, l_format, tdata.width, tdata.height, 0, l_format, GL_UNSIGNED_BYTE, tdata.pixels);
-	UnloadTexture(tdata);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, l_mag_scale);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, l_min_scale);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	m_id = i;
+	glTexImage2D(GL_TEXTURE_2D, 0, l_format, tdata.width, tdata.height, 0,
+	             l_format, GL_UNSIGNED_BYTE, tdata.pixels);
+	if (l_mipmaps) glGenerateMipmap(GL_TEXTURE_2D);
+
+	/* unload local-copy */
+	UnloadTexture(tdata);
 
 	MMINFO("Texture loaded.");
 

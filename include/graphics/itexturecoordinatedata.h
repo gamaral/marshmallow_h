@@ -47,9 +47,10 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 
 	/*! @brief Graphics Texture Coordinate Data Interface */
-	struct ITextureCoordinateData : public Core::IAsset
+	struct MARSHMALLOW_GRAPHICS_EXPORT
+	ITextureCoordinateData : public Core::IAsset
 	{
-		virtual ~ITextureCoordinateData(void) {};
+		virtual ~ITextureCoordinateData(void);
 
 		virtual bool get(uint16_t index, float &u, float &v) const = 0;
 		virtual bool set(uint16_t index, float  u, float  v) = 0;

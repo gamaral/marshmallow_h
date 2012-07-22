@@ -40,13 +40,13 @@ extern int MMain(int argc, char *argv[]);
 
 #if MARSHMALLOW_DEBUG
 int
-main(int argc, char *argv[])
+__stdcall main(int argc, char *argv[])
 {
 	return(MMain(argc, argv));
 }
 #else
 int
-WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+__stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	char *noargs[] = {0};
 	return(MMain(0, noargs));

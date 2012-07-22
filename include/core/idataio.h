@@ -65,9 +65,10 @@ namespace Core
 	/*!
 	 * @brief DataIO Device Interface
 	 */
-	struct IDataIO
+	struct MARSHMALLOW_CORE_EXPORT
+	IDataIO
 	{
-		virtual ~IDataIO(void) {};
+		virtual ~IDataIO(void);
 
 		/*!
 		 * Opens DIO device

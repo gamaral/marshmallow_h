@@ -53,11 +53,12 @@ namespace Game
 	class EntitySceneLayer;
 
 	/*! @brief Game Entity Interface */
-	struct IEntity : public Core::IRenderable
-	               , public Core::IUpdateable
-	               , public Core::ISerializable
+	struct MARSHMALLOW_GAME_EXPORT
+	IEntity : public Core::IRenderable
+	        , public Core::IUpdateable
+	        , public Core::ISerializable
 	{
-		virtual ~IEntity(void) {};
+		virtual ~IEntity(void);
 
 		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;

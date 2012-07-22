@@ -150,7 +150,7 @@ BufferIO::seek(long o, DIOSeek on)
 		break;
 	case DIOCurrent:
 		if ((m_p->cursor + o) >= 0 &&
-		    (m_p->cursor + o) < m_p->size)
+		    static_cast<size_t>(m_p->cursor + o) < m_p->size)
 			l_cursor = m_p->cursor + o;
 		break;
 	default: return(false);

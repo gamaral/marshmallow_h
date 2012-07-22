@@ -51,11 +51,22 @@ namespace Math { /******************************************** Math Namespace */
 namespace Graphics { /************************************ Graphics Namespace */
 
 	/*! @brief Graphics Texture Data Interface */
-	struct ITextureData : public Core::IAsset
+	struct MARSHMALLOW_GRAPHICS_EXPORT
+	ITextureData : public Core::IAsset
 	{
-		virtual ~ITextureData(void) {};
+		virtual ~ITextureData(void);
 
-		virtual bool load(const Core::Identifier &id) = 0;
+		enum ScaleMode
+		{
+			smNearest,
+			smLinear,
+			smModes,
+			smDefault = smNearest
+		};
+
+		virtual bool load(const Core::Identifier &id,
+		                  ScaleMode min = smDefault,
+		                  ScaleMode mag = smDefault) = 0;
 		virtual void unload(void) = 0;
 		virtual bool isLoaded(void) const = 0;
 

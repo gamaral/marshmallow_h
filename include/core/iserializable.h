@@ -54,9 +54,10 @@ namespace Core
 	/*!
 	 * @brief Serializable Interface
 	 */
-	struct ISerializable
+	struct MARSHMALLOW_CORE_EXPORT
+	ISerializable
 	{
-		virtual ~ISerializable(void) {};
+		virtual ~ISerializable(void);
 
 		/*!
 		 * @brief Serialization feature

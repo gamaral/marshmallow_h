@@ -57,9 +57,10 @@ namespace Graphics { /************************************ Graphics Namespace */
 	typedef Core::Shared<ITextureData> SharedTextureData;
 
 	/*! @brief Graphics Tileset Interface */
-	struct ITileset : public Core::ISerializable
+	struct MARSHMALLOW_GRAPHICS_EXPORT
+	ITileset : public Core::ISerializable
 	{
-		virtual ~ITileset(void) {};
+		virtual ~ITileset(void);
 
 		virtual const Core::Identifier & name(void) const = 0;
 		virtual const Math::Size2i & size(void) const = 0;

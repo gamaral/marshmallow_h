@@ -77,7 +77,7 @@ Platform::TimeStamp(void)
 	FILETIME        l_ft;
 	LARGE_INTEGER   l_li;
 	INT64           l_micro_seconds;
-	MMTIME            l_mseconds;
+	MMTIME          l_mseconds;
 
 	GetSystemTimeAsFileTime(&l_ft);
 	l_li.LowPart  = l_ft.dwLowDateTime;
@@ -86,8 +86,9 @@ Platform::TimeStamp(void)
 	l_micro_seconds = (l_li.QuadPart / 10) - EPOCHFILEMMTIME;
 #define MICROSECONDS_PER_MILLISECOND 1000
 #define MILLISECONDS_PER_SECOND 1000
-	l_mseconds = (l_micro_seconds / MICROSECONDS_PER_MILLISECOND)
-	    - (s_start_time * MILLISECONDS_PER_SECOND);
+	l_mseconds = static_cast<MMTIME>
+	    ((l_micro_seconds / MICROSECONDS_PER_MILLISECOND)
+	         - (s_start_time * MILLISECONDS_PER_SECOND));
 	return(l_mseconds);
 }
 

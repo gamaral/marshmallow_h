@@ -41,12 +41,12 @@
 
 #include "headers.h"
 
-/* skip functions we know we should support already. */
+/* used to skip functions we know we should support already. */
 #if defined(GL_VERSION_2_0) || defined(GL_ES_VERSION_2_0)
-#  define MMGL20_CAPABLE
+#  define MMGL_VERSION_2_0 1
 #endif
 
-#ifdef MARSHMALLOW_OPENGL_ES2_EGL
+#ifdef MARSHMALLOW_OPENGL_ES2
 #  include <GLES2/gl2ext.h>
 #else
 #  if defined(MARSHMALLOW_OPENGL_X11)
@@ -67,8 +67,16 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
-#ifndef MMGL20_CAPABLE
-	/* required */
+	/*!
+	 * Must be implemented by viewport.
+	 */
+	typedef void (*PFNPROC)(void);
+	PFNPROC glGetProcAddress(const char *func);
+
+	/*
+	 * Required, no checks needed.
+	 */
+#ifndef MMGL_VERSION_2_0
 	extern PFNGLATTACHSHADERPROC glAttachShader;
 	extern PFNGLCOMPILESHADERARBPROC glCompileShader;
 	extern PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgram;
@@ -89,39 +97,57 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 	extern PFNGLUNIFORMMATRIX4FVARBPROC glUniformMatrix4fv;
 	extern PFNGLUSEPROGRAMOBJECTARBPROC glUseProgram;
 	extern PFNGLVERTEXATTRIBPOINTERARBPROC glVertexAttribPointer;
+	extern PFNGLACTIVETEXTUREARBPROC glActiveTexture;
+#endif
 
-	/* optional - GL_ARB_vertex_buffer_object */
+namespace Extensions { /************** Graphics::OpenGL::Extensions Namespace */
+
+	/*
+	 * The following are optional.
+	 */
+
+    /* GL_ARB_vertex_buffer_object */
+
+	typedef void (*PFNGLBINDBUFFERARBPROC) (GLenum target, GLuint buffer);
+	typedef void (*PFNGLBUFFERDATAARBPROC) (GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage);
+	typedef void (*PFNGLBUFFERSUBDATAARBPROC) (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
+	typedef void (*PFNGLDELETEBUFFERSARBPROC) (GLsizei n, const GLuint *buffers);
+	typedef void (*PFNGLGENBUFFERSARBPROC) (GLsizei n, GLuint *buffers);
+    
 	extern PFNGLBINDBUFFERARBPROC glBindBuffer;
 	extern PFNGLBUFFERDATAARBPROC glBufferData;
 	extern PFNGLBUFFERSUBDATAARBPROC glBufferSubData;
 	extern PFNGLDELETEBUFFERSARBPROC glDeleteBuffers;
 	extern PFNGLGENBUFFERSARBPROC glGenBuffers;
-#endif
 
-#if defined(MARSHMALLOW_OPENGL_X11) && !defined(MARSHMALLOW_OPENGL_ES2_EGL)
-	extern PFNGLXSWAPINTERVALSGIPROC glSwapInterval;
-#elif defined(MARSHMALLOW_OPENGL_WGL)
-	extern PFNGLACTIVETEXTUREARBPROC glActiveTexture;
-	extern PFNWGLSWAPINTERVALEXTPROC glSwapInterval;
+    /* GL_ARB_framebuffer_object */
+
+	typedef void (*PFNGLGENERATEMIPMAPPROC) (GLenum target);
+
+	extern PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
+
+	/*
+	 * The following are optional-platform dependent
+	 */
+
+#if defined(GLX_SGI_swap_control)
+	extern PFNGLXSWAPINTERVALSGIPROC glxSwapInterval;
+#elif defined(WGL_EXT_swap_control)
+	extern PFNWGLSWAPINTERVALEXTPROC wglSwapInterval;
 #endif
 
 	/*!
 	 * Must be called by the viewport after context creation.
 	 * @param extensions Viewport extensions string.
 	 */
-	void InitializeExtensions(const char *extensions = 0);
+	void Initialize(const char *extensions = 0);
 
 	/*!
 	 * Returns true if extension is supported.
 	 */
-	bool HasExtension(const char *extension);
+	bool Supported(const char *extension);
 
-	/*!
-	 * Must be implemented by viewport.
-	 */
-	typedef void (*PFNPROC)(void);
-	PFNPROC glGetProcAddress(const char *func);
-
+} /*********************************** Graphics::OpenGL::Extensions Namespace */
 } /*********************************************** Graphics::OpenGL Namespace */
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END

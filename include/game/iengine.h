@@ -61,12 +61,13 @@ namespace Game
 	typedef Core::Shared<IFactory> SharedFactory;
 
 	/*! @brief Game Engine Interface */
-	struct IEngine : public Core::IRenderable
-	               , public Core::IUpdateable
-	               , public Core::ISerializable
-	               , public Event::IEventListener
+	struct MARSHMALLOW_GAME_EXPORT
+	IEngine : public Core::IRenderable
+	        , public Core::IUpdateable
+	        , public Core::ISerializable
+	        , public Event::IEventListener
 	{
-		virtual ~IEngine(void) {};
+		virtual ~IEngine(void);
 
 		/*!
 		 * @brief Start Engine

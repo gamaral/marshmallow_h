@@ -47,9 +47,10 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 
 	/*! @brief Graphics Vertex Data Interface */
-	struct IVertexData : public Core::IAsset
+	struct MARSHMALLOW_GRAPHICS_EXPORT
+	IVertexData : public Core::IAsset
 	{
-		virtual ~IVertexData(void) {};
+		virtual ~IVertexData(void);
 
 		virtual bool get(uint16_t index, float &x, float &y) const = 0;
 		virtual bool set(uint16_t index, float  x, float  y) = 0;

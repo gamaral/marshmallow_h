@@ -46,10 +46,13 @@
 #include <bcm_host.h>
 
 #include "headers.h"
-#ifdef MARSHMALLOW_OPENGL_ES2_EGL
+#ifdef MARSHMALLOW_OPENGL_EGL
 #  include <EGL/egl.h>
 #else
-#  error EGL/GLES2 is disabled!
+#  error Building without EGL support!
+#endif
+#ifndef MARSHMALLOW_OPENGL_ES2
+#  error Building without GLESv2 support!
 #endif
 #include "extensions.h"
 
@@ -131,18 +134,23 @@ CreateDisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t refresh, b
 		return(false);
 	}
 
-	/* set viewport size */
+	/* viewport size */
 
+	if (fullscreen) {
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-	s_data.size[0] = width;
-	s_data.size[1] = (width * static_cast<float>(s_data.wsize[1])) /
-	    static_cast<float>(s_data.wsize[0]);
-
+		s_data.size[0] = static_cast<float>(width);
+		s_data.size[1] = (s_data.size[0] * static_cast<float>(s_data.wsize[1])) /
+		    static_cast<float>(s_data.wsize[0]);
 #else
-	s_data.size[0] = (height * static_cast<float>(s_data.wsize[0])) /
-	    static_cast<float>(s_data.wsize[1]);
-	s_data.size[1] = height;
+		s_data.size[1] = static_cast<float>(height);
+		s_data.size[0] = (s_data.size[1] * static_cast<float>(s_data.wsize[0])) /
+		    static_cast<float>(s_data.wsize[1]);
 #endif
+	}
+	else {
+		s_data.size[0] = static_cast<float>(width);
+		s_data.size[1] = static_cast<float>(height);
+	}
 
 	Camera::Update();
 
@@ -178,7 +186,7 @@ DestroyDisplay(void)
 bool
 GLCreateSurface(uint8_t depth, bool vsync)
 {
-	using namespace Graphics;
+	using namespace Graphics::OpenGL;
 
 	s_data.egl_dpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 	if (s_data.egl_dpy == EGL_NO_DISPLAY) {
@@ -247,7 +255,7 @@ GLCreateSurface(uint8_t depth, bool vsync)
 
 	/* extensions */
 
-	OpenGL::InitializeExtensions(eglQueryString(s_data.egl_dpy, EGL_EXTENSIONS));
+	Extensions::Initialize(eglQueryString(s_data.egl_dpy, EGL_EXTENSIONS));
 
 	/* vsync */
 

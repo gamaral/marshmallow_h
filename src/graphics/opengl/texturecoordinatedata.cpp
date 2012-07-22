@@ -53,12 +53,8 @@ TextureCoordinateData::TextureCoordinateData(uint16_t c)
 {
 	memset(m_data, 0, m_count * AXES);
 
-#ifdef MMGL20_CAPABLE
-	buffer();
-#else
-	if (HasExtension("GL_ARB_vertex_buffer_object"))
+	if (Extensions::glGenBuffers)
 		buffer();
-#endif
 }
 
 TextureCoordinateData::~TextureCoordinateData(void)
@@ -70,6 +66,10 @@ TextureCoordinateData::~TextureCoordinateData(void)
 void
 TextureCoordinateData::buffer(void)
 {
+	using Graphics::OpenGL::Extensions::glBindBuffer;
+	using Graphics::OpenGL::Extensions::glBufferData;
+	using Graphics::OpenGL::Extensions::glGenBuffers;
+
 	if (!isBuffered())
 		glGenBuffers(1, &m_bufferId);
 
@@ -83,6 +83,8 @@ TextureCoordinateData::buffer(void)
 void
 TextureCoordinateData::unbuffer(void)
 {
+	using Graphics::OpenGL::Extensions::glDeleteBuffers;
+
 	if (!isBuffered())
 		return;
 
@@ -104,6 +106,9 @@ TextureCoordinateData::get(uint16_t i, float &u, float &v) const
 bool
 TextureCoordinateData::set(uint16_t i, float u, float v)
 {
+	using Graphics::OpenGL::Extensions::glBindBuffer;
+	using Graphics::OpenGL::Extensions::glBufferSubData;
+
 	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
 	m_data[l_offset] = u;
 	m_data[l_offset + 1] = v;

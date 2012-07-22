@@ -67,7 +67,7 @@ public:
 		if (!EngineBase::initialize())
 			return(false);
 
-		Graphics::Camera::SetZoom(1.4f);
+		Graphics::Camera::SetZoom(2.f);
 
 		eventManager()->connect(this, Event::KeyboardEvent::Type());
 

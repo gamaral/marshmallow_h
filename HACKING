@@ -3,11 +3,6 @@
 ====================================================================================
             “The only game engine that tastes better slightly burned!”
 
-Submodules
-----------
-
-    $ git submodule update --init
-
 Coding Standard
 ---------------
 
@@ -15,8 +10,8 @@ Coding Standard
 
 Things to keep in mind while working on Marshmallow:
 
-  * Engine is primarily targeted to Unix systems (that includes Mac OSX),
-    but any work to keep this working on Windows systems is apprecitated.
+  * Engine is primarily targeted to Unix systems (that includes embedded and Mac
+    OSX), but any work to keep this working on Windows systems is apprecitated.
 
   * Follow the coding style, copy what you see in other files:
 

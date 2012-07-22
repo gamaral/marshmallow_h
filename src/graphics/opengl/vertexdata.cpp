@@ -53,12 +53,8 @@ VertexData::VertexData(uint16_t c)
 {
 	memset(m_data, 0, m_count * AXES);
 
-#ifdef MMGL20_CAPABLE
-	buffer();
-#else
-	if (HasExtension("GL_ARB_vertex_buffer_object"))
+	if (Extensions::glGenBuffers)
 		buffer();
-#endif
 }
 
 VertexData::~VertexData(void)
@@ -71,6 +67,10 @@ VertexData::~VertexData(void)
 void
 VertexData::buffer(void)
 {
+	using Graphics::OpenGL::Extensions::glBindBuffer;
+	using Graphics::OpenGL::Extensions::glBufferData;
+	using Graphics::OpenGL::Extensions::glGenBuffers;
+
 	if (!isBuffered())
 		glGenBuffers(1, &m_bufferId);
 
@@ -84,6 +84,8 @@ VertexData::buffer(void)
 void
 VertexData::unbuffer(void)
 {
+	using Graphics::OpenGL::Extensions::glDeleteBuffers;
+
 	if (!isBuffered())
 		return;
 
@@ -105,6 +107,9 @@ VertexData::get(uint16_t i, float &x, float &y) const
 bool
 VertexData::set(uint16_t i, float x, float y)
 {
+	using Graphics::OpenGL::Extensions::glBindBuffer;
+	using Graphics::OpenGL::Extensions::glBufferSubData;
+
 	const uint16_t l_offset = static_cast<uint16_t>((i % m_count) * AXES);
 	m_data[l_offset] = x;
 	m_data[l_offset + 1] = y;

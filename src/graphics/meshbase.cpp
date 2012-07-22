@@ -44,6 +44,33 @@
 #include <tinyxml2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace { /******************************************** Anonymous Namespace */
+
+static const char * s_scalemode_string[Graphics::ITextureData::smModes] =
+    { "nearest", "linear" };
+
+Graphics::ITextureData::ScaleMode
+StringToScaleMode(const char *str)
+{
+	using namespace Graphics;
+
+	if (!str) return(ITextureData::smDefault);
+
+	for (int i = 0; i < ITextureData::smModes; ++i)
+		if (MMSTRCASECMP(str, s_scalemode_string[i]) == 0)
+			return(static_cast<ITextureData::ScaleMode>(i));
+
+	return(ITextureData::smDefault);
+}
+
+const char *
+ScaleModeToString(Graphics::ITextureData::ScaleMode mode)
+{
+	return(s_scalemode_string[mode]);
+}
+
+} /****************************************************** Anonymous Namespace */
+
 namespace Graphics { /************************************ Graphics Namespace */
 
 struct MeshBase::Private
@@ -249,7 +276,13 @@ MeshBase::deserialize(XMLElement &n)
 	l_child = n.FirstChildElement("texture");
 	if (l_child) {
 		const char *l_file = l_child->Attribute("id");
-		if (l_file) m_p->tdata->load(l_file);
+		if (l_file) {
+			const ITextureData::ScaleMode l_mag =
+			    StringToScaleMode(l_child->Attribute("mag"));
+			const ITextureData::ScaleMode l_min =
+			    StringToScaleMode(l_child->Attribute("min"));
+			m_p->tdata->load(l_file, l_mag, l_min);
+		}
 	}
 
 	/* texture coordinates */

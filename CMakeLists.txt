@@ -92,12 +92,13 @@ if(MARSHMALLOW_VIEWPORT_DUMMY)
 endif()
 
 if(MARSHMALLOW_VIEWPORT_OPENGL)
-	option(MARSHMALLOW_OPENGL_QT4     "Use OpenGL Qt4 Viewport (qt4)"            OFF)
-	option(MARSHMALLOW_OPENGL_SDL     "Use OpenGL SDL Viewport (sdl)"            OFF)
-	option(MARSHMALLOW_OPENGL_VC      "Use OpenGL VideoCore Viewport (broadcom)" OFF)
-	option(MARSHMALLOW_OPENGL_WGL     "Use OpenGL WGL Viewport (windows)"        OFF)
-	option(MARSHMALLOW_OPENGL_X11     "Use OpenGL X11 & GLX/EGL Viewport (unix)" OFF)
-	option(MARSHMALLOW_OPENGL_ES2_EGL "Use OpenGL ES 2.0 with EGL (x11/vc)"      OFF)
+	option(MARSHMALLOW_OPENGL_QT4 "Use OpenGL Qt4 Viewport (qt4)"            OFF)
+	option(MARSHMALLOW_OPENGL_SDL "Use OpenGL SDL Viewport (sdl)"            OFF)
+	option(MARSHMALLOW_OPENGL_VC  "Use OpenGL VideoCore Viewport (broadcom)" OFF)
+	option(MARSHMALLOW_OPENGL_WGL "Use OpenGL WGL Viewport (windows)"        OFF)
+	option(MARSHMALLOW_OPENGL_X11 "Use OpenGL X11 & GLX/EGL Viewport (unix)" OFF)
+	option(MARSHMALLOW_OPENGL_ES2 "Use OpenGL ES 2.0 (x11/vc)"               OFF)
+	option(MARSHMALLOW_OPENGL_EGL "Use EGL context (x11/vc)"                 OFF)
 endif()
 
 ####################################################################### CONFIG #
@@ -143,11 +144,14 @@ endif()
 ##################################################################### VIEWPORT #
 
 if(MARSHMALLOW_VIEWPORT_OPENGL)
-	if(MARSHMALLOW_OPENGL_ES2_EGL)
-		find_package(GLES2)
+	if(MARSHMALLOW_OPENGL_EGL)
 		find_package(EGL)
-		include_directories(${GLES2_INCLUDE_DIR}
-		                    ${EGL_INCLUDE_DIR})
+		include_directories(${EGL_INCLUDE_DIR})
+	endif()
+
+	if(MARSHMALLOW_OPENGL_ES2)
+		find_package(GLES2)
+		include_directories(${GLES2_INCLUDE_DIR})
 	else()
 		find_package(OpenGL)
 		include_directories(${OPENGL_INCLUDE_DIR})

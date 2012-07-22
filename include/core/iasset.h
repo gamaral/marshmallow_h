@@ -54,9 +54,10 @@ namespace Core
 	/*!
 	 * @brief Asset Interface
 	 */
-	struct IAsset
+	struct MARSHMALLOW_CORE_EXPORT
+	IAsset
 	{
-		virtual ~IAsset(void) {};
+		virtual ~IAsset(void);
 
 		virtual const Identifier & id(void) const = 0;
 		virtual const Type & type(void) const = 0;

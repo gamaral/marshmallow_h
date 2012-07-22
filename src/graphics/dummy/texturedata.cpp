@@ -53,15 +53,15 @@ TextureData::~TextureData(void)
 }
 
 void
-TextureData::setSize(const Math::Size2i &s)
+TextureData::setSize(const Math::Size2i &_size)
 {
-	m_size = s;
+	m_size = _size;
 }
 
 bool
-TextureData::load(const Core::Identifier &i)
+TextureData::load(const Core::Identifier &_id, ScaleMode, ScaleMode)
 {
-	m_id = i;
+	m_id = _id;
 	return(true);
 }
 

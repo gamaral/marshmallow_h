@@ -50,9 +50,10 @@ namespace Core
 	/*!
 	 * @brief Renderable Interface
 	 */
-	struct IRenderable
+	struct MARSHMALLOW_CORE_EXPORT
+	IRenderable
 	{
-		virtual ~IRenderable(void) {};
+		virtual ~IRenderable(void);
 
 		/*!
 		 * @brief Render feature

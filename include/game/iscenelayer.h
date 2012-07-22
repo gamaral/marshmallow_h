@@ -56,11 +56,12 @@ namespace Game
 	};
 
 	/*! @brief Game Scene Interface */
-	struct ISceneLayer : public Core::IRenderable
-	                   , public Core::IUpdateable
-	                   , public Core::ISerializable
+	struct MARSHMALLOW_GAME_EXPORT
+	ISceneLayer : public Core::IRenderable
+	            , public Core::IUpdateable
+	            , public Core::ISerializable
 	{
-		virtual ~ISceneLayer(void) {};
+		virtual ~ISceneLayer(void);
 
 		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;

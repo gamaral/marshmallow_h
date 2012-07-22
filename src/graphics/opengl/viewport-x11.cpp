@@ -51,7 +51,7 @@
 #include <cstring>
 
 #include "headers.h"
-#ifdef MARSHMALLOW_OPENGL_ES2_EGL
+#ifdef MARSHMALLOW_OPENGL_EGL
 #  include <EGL/egl.h>
 #else
 #  include <GL/glx.h>
@@ -74,7 +74,7 @@ struct ViewportData
 	XVisualInfo         vinfo;
 	Display            *dpy;
 	Math::Size2i        wsize;
-#ifdef MARSHMALLOW_OPENGL_ES2_EGL
+#ifdef MARSHMALLOW_OPENGL_EGL
 	EGLContext          egl_ctx;
 	EGLDisplay          egl_dpy;
 	EGLSurface          egl_surface;
@@ -100,7 +100,7 @@ ResetViewportData(void)
 	s_data.wm_delete = 0;
 	s_data.wsize[0] = s_data.wsize[1] = 0;
 
-#ifdef MARSHMALLOW_OPENGL_ES2_EGL
+#ifdef MARSHMALLOW_OPENGL_EGL
 	s_data.egl_ctx     = EGL_NO_CONTEXT;
 	s_data.egl_dpy     = EGL_NO_DISPLAY;
 	s_data.egl_surface = EGL_NO_SURFACE;
@@ -144,18 +144,23 @@ CreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen,
 		return(false);
 	}
 
-	/* set viewport size */
+	/* viewport size */
 
+	if (fullscreen) {
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-	s_data.size[0] = width;
-	s_data.size[1] = (width * static_cast<float>(s_data.wsize[1])) /
-	    static_cast<float>(s_data.wsize[0]);
-
+		s_data.size[0] = static_cast<float>(width);
+		s_data.size[1] = (s_data.size[0] * static_cast<float>(s_data.wsize[1])) /
+		    static_cast<float>(s_data.wsize[0]);
 #else
-	s_data.size[0] = (height * static_cast<float>(s_data.wsize[0])) /
-	    static_cast<float>(s_data.wsize[1]);
-	s_data.size[1] = height;
+		s_data.size[1] = static_cast<float>(height);
+		s_data.size[0] = (s_data.size[1] * static_cast<float>(s_data.wsize[0])) /
+		    static_cast<float>(s_data.wsize[1]);
 #endif
+	}
+	else {
+		s_data.size[0] = static_cast<float>(width);
+		s_data.size[1] = static_cast<float>(height);
+	}
 
 	Camera::Update();
 
@@ -166,7 +171,7 @@ void
 DestroyWindow(void)
 {
 	if (s_data.dpy) {
-#ifdef MARSHMALLOW_OPENGL_ES2_EGL
+#ifdef MARSHMALLOW_OPENGL_EGL
 		eglMakeCurrent(s_data.egl_dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 		eglDestroyContext(s_data.egl_dpy, s_data.egl_ctx);
 		eglDestroySurface(s_data.egl_dpy, s_data.egl_surface);
@@ -182,7 +187,7 @@ DestroyWindow(void)
 		XCloseDisplay(s_data.dpy);
 	}
 
-#ifdef MARSHMALLOW_OPENGL_ES2_EGL
+#ifdef MARSHMALLOW_OPENGL_EGL
 	s_data.egl_ctx     = EGL_NO_CONTEXT;
 	s_data.egl_dpy     = EGL_NO_DISPLAY;
 	s_data.egl_surface = EGL_NO_SURFACE;
@@ -471,9 +476,9 @@ X11CreateWindow(uint16_t w, uint16_t h, uint8_t depth, bool fullscreen)
 bool
 GLCreateSurface(bool vsync)
 {
-	using namespace Graphics;
+	using namespace Graphics::OpenGL;
 
-#ifdef MARSHMALLOW_OPENGL_ES2_EGL
+#ifdef MARSHMALLOW_OPENGL_EGL
 	s_data.egl_dpy = eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(s_data.dpy));
 	if (s_data.egl_dpy == EGL_NO_DISPLAY) {
 		MMERROR("EGL: No display was found.");
@@ -487,7 +492,11 @@ GLCreateSurface(bool vsync)
 	
 	EGLint l_attr[] = {
 		EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
+#ifdef MARSHMALLOW_OPENGL_ES2
 		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+#else
+		EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
+#endif
 		EGL_BUFFER_SIZE,     s_data.vinfo.depth,
 		EGL_DEPTH_SIZE,      0,
 		EGL_RED_SIZE,        0,
@@ -512,8 +521,18 @@ GLCreateSurface(bool vsync)
 		return(false);
 	}
 
+	/* bind api */
+
+#ifdef MARSHMALLOW_OPENGL_ES2
+	eglBindAPI(EGL_OPENGL_ES_API);
+#else
+	eglBindAPI(EGL_OPENGL_API);
+#endif
+
 	EGLint l_ctxattr[] = {
+#ifdef MARSHMALLOW_OPENGL_ES2
 		EGL_CONTEXT_CLIENT_VERSION, 2,
+#endif
 		EGL_NONE,                   EGL_NONE
 	};
 	s_data.egl_ctx = eglCreateContext(s_data.egl_dpy, l_config, EGL_NO_CONTEXT, l_ctxattr);
@@ -529,11 +548,16 @@ GLCreateSurface(bool vsync)
 
 	/* extensions */
 
-	OpenGL::InitializeExtensions(eglQueryString(s_data.egl_dpy, EGL_EXTENSIONS));
+	Extensions::Initialize(eglQueryString(s_data.egl_dpy, EGL_EXTENSIONS));
 
 	/* vsync */
 
-	eglSwapInterval(s_data.egl_dpy, vsync ? 1 : 0);
+	if (eglSwapInterval(s_data.egl_dpy, vsync ? 1 : 0) != EGL_TRUE)
+		MMWARNING("EGL: Ignored out vsync request!");
+
+	/* clear error state */
+
+	eglGetError();
 #else
 	if (!(s_data.ctx = glXCreateContext(s_data.dpy, &s_data.vinfo, 0, GL_TRUE))) {
 		MMERROR("GLX: Failed to create context!");
@@ -552,12 +576,12 @@ GLCreateSurface(bool vsync)
 
 	/* extensions */
 
-	OpenGL::InitializeExtensions(glXQueryExtensionsString(s_data.dpy, s_data.vinfo.screen));
+	Extensions::Initialize(glXQueryExtensionsString(s_data.dpy, s_data.vinfo.screen));
 	
 	/* vsync */
 
-	if (OpenGL::HasExtension("GLX_SGI_swap_control"))
-		OpenGL::glSwapInterval(vsync ? 1 : 0);
+	if (Extensions::glxSwapInterval)
+		Extensions::glxSwapInterval(vsync ? 1 : 0);
 #endif
 
 	return(true);
@@ -570,7 +594,7 @@ namespace Graphics { /************************************ Graphics Namespace */
 OpenGL::PFNPROC
 OpenGL::glGetProcAddress(const char *f)
 {
-#ifdef MARSHMALLOW_OPENGL_ES2_EGL
+#ifdef MARSHMALLOW_OPENGL_EGL
 	return(eglGetProcAddress(f));
 #else
 	return(glXGetProcAddress(reinterpret_cast<const GLubyte *>(f)));
@@ -652,7 +676,7 @@ Viewport::Tick(void)
 void
 Viewport::SwapBuffer(void)
 {
-#ifdef MARSHMALLOW_OPENGL_ES2_EGL
+#ifdef MARSHMALLOW_OPENGL_EGL
 	eglSwapBuffers(s_data.egl_dpy, s_data.egl_surface);
 #else
 	glXSwapBuffers(s_data.dpy, s_data.window);

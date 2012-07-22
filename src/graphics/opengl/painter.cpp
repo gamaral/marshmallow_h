@@ -70,7 +70,7 @@ const char s_vertex_shader[] =
   "}\n";
 
 const char s_fragment_shader[] =
-#ifdef MARSHMALLOW_OPENGL_ES2_EGL
+#ifdef MARSHMALLOW_OPENGL_ES2
   "precision mediump float;\n"
 #endif
   "uniform bool u_usecolor;\n"
@@ -207,6 +207,7 @@ void
 BeginDrawQuadMesh(const Graphics::QuadMesh &g, bool tcoords)
 {
 	using namespace Graphics::OpenGL;
+	using Graphics::OpenGL::Extensions::glBindBuffer;
 	using Graphics::OpenGL::SharedTextureCoordinateData;
 	using Graphics::OpenGL::SharedVertexData;
 	using Graphics::OpenGL::TextureCoordinateData;
@@ -305,9 +306,9 @@ Painter::Initialize(void)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_2D);
 
 	Reset();
 

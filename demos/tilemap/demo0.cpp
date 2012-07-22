@@ -161,8 +161,8 @@ public:
 		if (++m_stop_timer == TIMEOUT)
 			stop();
 
-		Graphics::Camera::SetRotation((25 * m_stop_timer) % 360);
-		Graphics::Camera::SetZoom(1.5 + cosf(m_stop_timer));
+		Graphics::Camera::SetRotation(static_cast<float>((25 * m_stop_timer) % 360));
+		Graphics::Camera::SetZoom(1.5f + cosf(static_cast<float>(m_stop_timer)));
 	}
 
 	VIRTUAL bool handleEvent(const Event::IEvent &e)

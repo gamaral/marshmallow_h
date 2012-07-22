@@ -60,13 +60,13 @@ namespace { /******************************************** Anonymous Namespace */
 
 struct ViewportData
 {
-	HDC                 dctx;
-	HGLRC               ctx;
-	HWND                window;
-	Math::Size2i        wsize;
-	Math::Size2f        size;
-	bool                fullscreen;
-	bool                loaded;
+	HDC          dctx;
+	HGLRC        ctx;
+	HWND         window;
+	Math::Size2i wsize;
+	Math::Size2f size;
+	bool         fullscreen;
+	bool         loaded;
 } s_data;
 
 void
@@ -117,18 +117,23 @@ CreateDisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t refresh,
 		return(false);
 	}
 
-	/* set viewport size */
+	/* viewport size */
 
+	if (fullscreen) {
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-	s_data.size[0] = width;
-	s_data.size[1] = (width * static_cast<float>(s_data.wsize[1])) /
-	    static_cast<float>(s_data.wsize[0]);
-
+		s_data.size[0] = static_cast<float>(width);
+		s_data.size[1] = (s_data.size[0] * static_cast<float>(s_data.wsize[1])) /
+		    static_cast<float>(s_data.wsize[0]);
 #else
-	s_data.size[0] = (height * static_cast<float>(s_data.wsize[0])) /
-	    static_cast<float>(s_data.wsize[1]);
-	s_data.size[1] = height;
+		s_data.size[1] = static_cast<float>(height);
+		s_data.size[0] = (s_data.size[1] * static_cast<float>(s_data.wsize[0])) /
+		    static_cast<float>(s_data.wsize[1]);
 #endif
+	}
+	else {
+		s_data.size[0] = static_cast<float>(width);
+		s_data.size[1] = static_cast<float>(height);
+	}
 
 	Camera::Update();
 
@@ -269,7 +274,7 @@ HandleKeyEvent(int keycode, bool down)
 bool
 GLCreateSurface(uint8_t vsync)
 {
-	using namespace Graphics;
+	using namespace Graphics::OpenGL;
 
 	/* create wiggle context */
 	if (!(s_data.ctx = wglCreateContext(s_data.dctx))) {
@@ -285,12 +290,12 @@ GLCreateSurface(uint8_t vsync)
 
 	/* extensions */
 
-	OpenGL::InitializeExtensions();
+	Extensions::Initialize();
 
 	/* vsync */
 
-	if (OpenGL::HasExtension("WGL_EXT_swap_control"))
-		OpenGL::glSwapInterval(vsync ? 1 : 0);
+	if (Extensions::wglSwapInterval)
+		Extensions::wglSwapInterval(vsync ? 1 : 0);
 
 	return(true);
 }

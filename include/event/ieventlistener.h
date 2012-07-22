@@ -48,9 +48,10 @@ namespace Event
 	struct IEvent;
 
 	/*! @brief Event Listener Interface */
-	struct IEventListener
+	struct MARSHMALLOW_EVENT_EXPORT
+	IEventListener
 	{
-		virtual ~IEventListener(void) {};
+		virtual ~IEventListener(void);
 
 		/*!
 		 * @brief Event Handler

@@ -117,7 +117,7 @@ CreateWindow(int width, int height, int depth, bool fullscreen, bool vsync)
 
 	/* extensions */
 
-	OpenGL::InitializeExtensions();
+	OpenGL::Extensions::Initialize();
 
 	/* initialize context */
 
@@ -128,18 +128,23 @@ CreateWindow(int width, int height, int depth, bool fullscreen, bool vsync)
 		return(false);
 	}
 
-	/* set viewport size */
+	/* viewport size */
 
+	if (fullscreen) {
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-	s_data.size[0] = width;
-	s_data.size[1] = (width * static_cast<float>(s_data.wsize[1])) /
-	    static_cast<float>(s_data.wsize[0]);
-
+		s_data.size[0] = static_cast<float>(width);
+		s_data.size[1] = (s_data.size[0] * static_cast<float>(s_data.wsize[1])) /
+		    static_cast<float>(s_data.wsize[0]);
 #else
-	s_data.size[0] = (height * static_cast<float>(s_data.wsize[0])) /
-	    static_cast<float>(s_data.wsize[1]);
-	s_data.size[1] = height;
+		s_data.size[1] = static_cast<float>(height);
+		s_data.size[0] = (s_data.size[1] * static_cast<float>(s_data.wsize[0])) /
+		    static_cast<float>(s_data.wsize[1]);
 #endif
+	}
+	else {
+		s_data.size[0] = static_cast<float>(width);
+		s_data.size[1] = static_cast<float>(height);
+	}
 
 	Camera::Update();
 

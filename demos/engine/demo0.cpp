@@ -134,7 +134,7 @@ public:
 			Game::SharedEntitySceneLayer l_layer(new Game::EntitySceneLayer("main", *this));
 			pushLayer(l_layer.staticCast<Game::ISceneLayer>());
 
-			srand(time(0));
+			srand(static_cast<unsigned int>(time(0)));
 
 			for (int i = 0; i < 4; i++) {
 			Game::SharedEntity l_entity(new Game::Entity("player", *l_layer));

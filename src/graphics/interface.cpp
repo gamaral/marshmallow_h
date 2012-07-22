@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "core/namespace.h"
 
 /*!
  * @file
@@ -34,34 +34,25 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_GAME_ICOMPONENT_H
-#define MARSHMALLOW_GAME_ICOMPONENT_H 1
-
-#include <core/irenderable.h>
-#include <core/iserializable.h>
-#include <core/iupdateable.h>
-
-#include <core/fd.h>
+#include "graphics/imesh.h"
+#include "graphics/itexturecoordinatedata.h"
+#include "graphics/itexturedata.h"
+#include "graphics/itileset.h"
+#include "graphics/ivertexdata.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
-namespace Game
-{
-	/*! @brief Game Component Interface */
-	struct MARSHMALLOW_GAME_EXPORT
-	IComponent : public Core::IRenderable
-	           , public Core::IUpdateable
-	           , public Core::ISerializable
-	{
-		virtual ~IComponent(void);
+	IMesh::~IMesh(void) {}
 
-		virtual const Core::Identifier & id(void) const = 0;
-		virtual const Core::Type & type(void) const = 0;
-	};
-	typedef Core::Shared<IComponent> SharedComponent;
-	typedef Core::Weak<IComponent> WeakComponent;
-}
+	ITextureCoordinateData::~ITextureCoordinateData(void) {}
 
+	ITextureData::~ITextureData(void) {}
+
+	ITileset::~ITileset(void) {}
+
+	IVertexData::~IVertexData(void) {}
+
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
-#endif

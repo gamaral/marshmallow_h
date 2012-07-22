@@ -69,7 +69,9 @@ namespace Dummy { /******************************** Graphics::Dummy Namespace */
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
 
-		VIRTUAL bool load(const Core::Identifier &id);
+		VIRTUAL bool load(const Core::Identifier &id,
+		                  ScaleMode min = smNearest,
+		                  ScaleMode mag = smNearest);
 		VIRTUAL void unload(void);
 
 		VIRTUAL bool isLoaded(void) const

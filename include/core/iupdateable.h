@@ -50,9 +50,10 @@ namespace Core
 	/*!
 	 * @brief Updateable Interface
 	 */
-	struct IUpdateable
+	struct MARSHMALLOW_CORE_EXPORT
+	IUpdateable
 	{
-		virtual ~IUpdateable(void) {};
+		virtual ~IUpdateable(void);
 
 		/*!
 		 * @brief Update feature

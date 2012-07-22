@@ -75,7 +75,7 @@ ParseExtensionsString(const char *e)
 namespace Graphics { /************************************ Graphics Namespace */
 namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
-#ifndef MMGL20_CAPABLE
+#ifndef MMGL_VERSION_2_0
 /* required */
 PFNGLATTACHSHADERPROC glAttachShader = 0;
 PFNGLCOMPILESHADERARBPROC glCompileShader = 0;
@@ -97,26 +97,32 @@ PFNGLUNIFORM4FARBPROC glUniform4f = 0;
 PFNGLUNIFORMMATRIX4FVARBPROC glUniformMatrix4fv = 0;
 PFNGLUSEPROGRAMOBJECTARBPROC glUseProgram = 0;
 PFNGLVERTEXATTRIBPOINTERARBPROC glVertexAttribPointer = 0;
+PFNGLACTIVETEXTUREARBPROC glActiveTexture = 0;
+#endif
 
-/* optional - GL_ARB_vertex_buffer_object */
+namespace Extensions { /********************** Graphics::Extensions Namespace */
+
+/* GL_ARB_vertex_buffer_object */
 PFNGLBINDBUFFERARBPROC glBindBuffer = 0;
 PFNGLBUFFERDATAARBPROC glBufferData = 0;
 PFNGLBUFFERSUBDATAARBPROC glBufferSubData = 0;
 PFNGLDELETEBUFFERSARBPROC glDeleteBuffers = 0;
 PFNGLGENBUFFERSARBPROC glGenBuffers = 0;
+
+/* GL_ARB_framebuffer_object */
+PFNGLGENERATEMIPMAPPROC glGenerateMipmap = 0;
+
+/* optional-platform dependent */
+#if defined(GLX_SGI_swap_control)
+	PFNGLXSWAPINTERVALSGIPROC glxSwapInterval = 0;
+#elif defined(WGL_EXT_swap_control)
+	PFNWGLSWAPINTERVALEXTPROC wglSwapInterval = 0;
 #endif
 
-#if defined(MARSHMALLOW_OPENGL_X11) && !defined(MARSHMALLOW_OPENGL_ES2_EGL)
-PFNGLXSWAPINTERVALSGIPROC glSwapInterval = 0;
-#elif defined(MARSHMALLOW_OPENGL_WGL)
-PFNGLACTIVETEXTUREARBPROC glActiveTexture = 0;
-PFNWGLSWAPINTERVALEXTPROC glSwapInterval = 0;
-#endif
-
-} /*********************************************** Graphics::OpenGL Namespace */
+} /*********************************** Graphics::OpenGL::Extensions Namespace */
 
 void
-OpenGL::InitializeExtensions(const char *extensions)
+Extensions::Initialize(const char *extensions)
 {
 	/* parse extensions strings */
 	s_supported_extensions.clear();
@@ -124,7 +130,7 @@ OpenGL::InitializeExtensions(const char *extensions)
 	    (glGetString(GL_EXTENSIONS)));
 	ParseExtensionsString(extensions);
 
-#ifndef MMGL20_CAPABLE
+#ifndef MMGL_VERSION_2_0
 	glAttachShader = reinterpret_cast<PFNGLATTACHSHADERPROC>
 	    (glGetProcAddress("glAttachShader"));
 	assert(glAttachShader);
@@ -205,7 +211,11 @@ OpenGL::InitializeExtensions(const char *extensions)
 	    (glGetProcAddress("glVertexAttribPointerARB"));
 	assert(glVertexAttribPointer);
 
-	if (HasExtension("GL_ARB_vertex_buffer_object")) {
+	glActiveTexture = reinterpret_cast<PFNGLACTIVETEXTUREARBPROC>
+	    (glGetProcAddress("glActiveTextureARB"));
+	assert(glActiveTexture);
+
+	if (Supported("GL_ARB_vertex_buffer_object")) {
 		glBindBuffer = reinterpret_cast<PFNGLBINDBUFFERARBPROC>
 		    (glGetProcAddress("glBindBufferARB"));
 
@@ -221,28 +231,41 @@ OpenGL::InitializeExtensions(const char *extensions)
 		glBufferSubData = reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>
 		    (glGetProcAddress("glBufferSubDataARB"));
 	}
+
+	if (Supported("GL_ARB_framebuffer_object")) {
+		glGenerateMipmap = reinterpret_cast<PFNGLGENERATEMIPMAPPROC>
+		    (glGetProcAddress("glGenerateMipmap"));
+	}
+#else
+	/* GL_ARB_vertex_buffer_object */
+	glBindBuffer = reinterpret_cast<PFNGLBINDBUFFERARBPROC>(&::glBindBuffer);
+	glDeleteBuffers = reinterpret_cast<PFNGLDELETEBUFFERSARBPROC>(&::glDeleteBuffers);
+	glGenBuffers = reinterpret_cast<PFNGLGENBUFFERSARBPROC>(&::glGenBuffers);
+	glBufferData = reinterpret_cast<PFNGLBUFFERDATAARBPROC>(&::glBufferData);
+	glBufferSubData = reinterpret_cast<PFNGLBUFFERSUBDATAARBPROC>(&::glBufferSubData);
+
+	/* GL_ARB_framebuffer_object */
+	glGenerateMipmap = reinterpret_cast<PFNGLGENERATEMIPMAPPROC>(&::glGenerateMipmap);
 #endif
 
-#if defined(MARSHMALLOW_OPENGL_X11) && !defined(MARSHMALLOW_OPENGL_ES2_EGL)
-	glSwapInterval = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>
+
+
+#if defined(GLX_SGI_swap_control)
+	glxSwapInterval = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>
 	    (glGetProcAddress("glXSwapIntervalSGI"));
-#elif defined(MARSHMALLOW_OPENGL_WGL)
+#elif defined(WGL_EXT_swap_control)
 	PFNWGLGETEXTENSIONSSTRINGEXTPROC wglGetExtensionsStringEXT =
 	    reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGEXTPROC>
 	        (glGetProcAddress("wglGetExtensionsStringEXT"));
 	if (wglGetExtensionsStringEXT) ParseExtensionsString(wglGetExtensionsStringEXT());
 
-	glActiveTexture = reinterpret_cast<PFNGLACTIVETEXTUREARBPROC>
-	    (glGetProcAddress("glActiveTextureARB"));
-	assert(glActiveTexture);
-
-	glSwapInterval = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>
+	wglSwapInterval = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>
 	    (glGetProcAddress("wglSwapIntervalEXT"));
 #endif
 }
 
 bool
-OpenGL::HasExtension(const char *e)
+Extensions::Supported(const char *e)
 {
 	static std::set<std::string>::const_iterator s_end =
 		s_supported_extensions.end();
@@ -250,6 +273,7 @@ OpenGL::HasExtension(const char *e)
 	return(s_supported_extensions.find(e) != s_end);
 }
 
+} /*********************************************** Graphics::OpenGL Namespace */
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
