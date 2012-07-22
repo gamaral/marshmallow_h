@@ -84,10 +84,11 @@ ResetViewportData(void)
 static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 bool GLCreateSurface(uint8_t vsync);
-bool WWCreateWindow(uint16_t  w, uint16_t  h, uint8_t depth, bool fullscreen);
+bool WWCreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen);
 
 bool
-CreateDisplay(uint16_t  w, uint16_t  h, uint8_t depth, uint8_t refresh, bool fullscreen, bool vsync)
+CreateDisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t refresh,
+              bool fullscreen, bool vsync)
 {
 	using namespace Graphics;
 
@@ -95,7 +96,7 @@ CreateDisplay(uint16_t  w, uint16_t  h, uint8_t depth, uint8_t refresh, bool ful
 
 	/* display */
 
-	if (!WWCreateWindow(w, h, depth, fullscreen)) {
+	if (!WWCreateWindow(width, height, depth, fullscreen)) {
 		MMERROR("VC: Failed to create display.");
 		return(false);
 	}
@@ -111,7 +112,7 @@ CreateDisplay(uint16_t  w, uint16_t  h, uint8_t depth, uint8_t refresh, bool ful
 
 	glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
 
-	if(glGetError() != GL_NO_ERROR) {
+	if (glGetError() != GL_NO_ERROR) {
 		MMERROR("WGL failed during initialization.");
 		return(false);
 	}
@@ -119,14 +120,14 @@ CreateDisplay(uint16_t  w, uint16_t  h, uint8_t depth, uint8_t refresh, bool ful
 	/* set viewport size */
 
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-	s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
-	s_data.size[1] = (MARSHMALLOW_VIEWPORT_WIDTH * static_cast<float>(s_data.wsize[1])) /
+	s_data.size[0] = width;
+	s_data.size[1] = (width * static_cast<float>(s_data.wsize[1])) /
 	    static_cast<float>(s_data.wsize[0]);
 
 #else
-	s_data.size[0] = (MARSHMALLOW_VIEWPORT_HEIGHT * static_cast<float>(s_data.wsize[0])) /
+	s_data.size[0] = (height * static_cast<float>(s_data.wsize[0])) /
 	    static_cast<float>(s_data.wsize[1]);
-	s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
+	s_data.size[1] = height;
 #endif
 
 	Camera::Update();
@@ -277,7 +278,7 @@ GLCreateSurface(uint8_t vsync)
 	}
 
 	/* make wgl context current */
-	if(!wglMakeCurrent(s_data.dctx, s_data.ctx)) {
+	if (!wglMakeCurrent(s_data.dctx, s_data.ctx)) {
 		MMERROR("WGL: Failed to set current context");
 		return(false);
 	}
@@ -295,11 +296,11 @@ GLCreateSurface(uint8_t vsync)
 }
 
 bool
-WWCreateWindow(uint16_t  w, uint16_t  h, uint8_t depth, bool fullscreen)
+WWCreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen)
 {
-	s_data.fullscreen  = fullscreen;
-	s_data.wsize[0]    = w;
-	s_data.wsize[1]    = h;
+	s_data.fullscreen = fullscreen;
+	s_data.wsize[0]   = width;
+	s_data.wsize[1]   = height;
 
 	WNDCLASS l_wc;
 	l_wc.style         = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -337,14 +338,15 @@ WWCreateWindow(uint16_t  w, uint16_t  h, uint8_t depth, bool fullscreen)
 		s_data.wsize[0] = l_warea.right;
 		s_data.wsize[1] = l_warea.bottom;
 		l_wrect = l_warea;
+		ShowCursor(false);
 	}
 	else {
 		l_wstyle[0] |= WS_OVERLAPPEDWINDOW;
 		l_wstyle[1] |= WS_EX_WINDOWEDGE;
-		l_wrect.left   = ((l_warea.right - l_warea.left) - w) / 2;
-		l_wrect.right  = l_wrect.left + w;
-		l_wrect.top    = ((l_warea.bottom - l_warea.top) - h) / 2;
-		l_wrect.bottom = l_wrect.top  + h;
+		l_wrect.left   = ((l_warea.right - l_warea.left) - width) / 2;
+		l_wrect.right  = l_wrect.left + width;
+		l_wrect.top    = ((l_warea.bottom - l_warea.top) - height) / 2;
+		l_wrect.bottom = l_wrect.top  + height;
 	}
 	AdjustWindowRectEx(&l_wrect, l_wstyle[0], false, l_wstyle[1]);
 
@@ -377,9 +379,9 @@ WWCreateWindow(uint16_t  w, uint16_t  h, uint8_t depth, bool fullscreen)
 	l_pfd.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
 	l_pfd.iPixelType = PFD_TYPE_RGBA;
 	l_pfd.cColorBits = depth;
-	l_pfd.cBlueBits  = 5;
-	l_pfd.cGreenBits = 6;
-	l_pfd.cRedBits   = 5;
+	l_pfd.cRedBits   = 0;
+	l_pfd.cGreenBits = 0;
+	l_pfd.cBlueBits  = 0;
 	l_pfd.cAlphaBits = 0;
 	l_pfd.iLayerType = PFD_MAIN_PLANE;
 
@@ -389,7 +391,7 @@ WWCreateWindow(uint16_t  w, uint16_t  h, uint8_t depth, bool fullscreen)
 		return(false);
 	}
 
-	if(!SetPixelFormat(s_data.dctx, l_pfindex, &l_pfd)) {
+	if (!SetPixelFormat(s_data.dctx, l_pfindex, &l_pfd)) {
 		MMERROR("Failed to bind pixel format to window context");
 		return(false);
 	}
@@ -445,11 +447,12 @@ OpenGL::glGetProcAddress(const char *f)
 /********************************************************* Graphics::Viewport */
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
+Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth,
+                     uint8_t refresh, bool fullscreen, bool vsync)
 {
 	Camera::Reset();
 
-	if (!CreateDisplay(w, h, d, r, f, v)) {
+	if (!CreateDisplay(width, height, depth, refresh, fullscreen, vsync)) {
 		DestroyDisplay();
 		return(false);
 	}
@@ -462,15 +465,17 @@ void
 Viewport::Finalize(void)
 {
 	Painter::Finalize();
+
 	DestroyDisplay();
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
+Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t depth,
+                    uint8_t refresh, bool fullscreen, bool vsync)
 {
 	DestroyDisplay();
 
-	if(!CreateDisplay(w, h, d, r, f, v)) {
+	if (!CreateDisplay(width, height, depth, refresh, fullscreen, vsync)) {
 		DestroyDisplay();
 		return(false);
 	}

@@ -110,10 +110,12 @@ ResetViewportData(void)
 }
 
 bool GLCreateSurface(bool vsync);
-bool X11CreateWindow(uint16_t w, uint16_t h, uint8_t depth, bool fullscreen);
+bool X11CreateWindow(uint16_t width, uint16_t height, uint8_t depth,
+                     bool fullscreen);
 
 bool
-CreateWindow(uint16_t w, uint16_t h, uint8_t depth, bool fullscreen, bool vsync)
+CreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen,
+             bool vsync)
 {
 	using namespace Graphics;
 
@@ -121,7 +123,7 @@ CreateWindow(uint16_t w, uint16_t h, uint8_t depth, bool fullscreen, bool vsync)
 
 	/* display */
 
-	if (!X11CreateWindow(w, h, depth, fullscreen)) {
+	if (!X11CreateWindow(width, height, depth, fullscreen)) {
 		MMERROR("X11: Failed to create window.");
 		return(false);
 	}
@@ -145,14 +147,14 @@ CreateWindow(uint16_t w, uint16_t h, uint8_t depth, bool fullscreen, bool vsync)
 	/* set viewport size */
 
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-	s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
-	s_data.size[1] = (MARSHMALLOW_VIEWPORT_WIDTH * static_cast<float>(s_data.wsize[1])) /
-		static_cast<float>(s_data.wsize[0]);
+	s_data.size[0] = width;
+	s_data.size[1] = (width * static_cast<float>(s_data.wsize[1])) /
+	    static_cast<float>(s_data.wsize[0]);
 
 #else
-	s_data.size[0] = (MARSHMALLOW_VIEWPORT_HEIGHT * static_cast<float>(s_data.wsize[0])) /
-		static_cast<float>(s_data.wsize[1]);
-	s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
+	s_data.size[0] = (height * static_cast<float>(s_data.wsize[0])) /
+	    static_cast<float>(s_data.wsize[1]);
+	s_data.size[1] = height;
 #endif
 
 	Camera::Update();
@@ -578,12 +580,12 @@ OpenGL::glGetProcAddress(const char *f)
 /********************************************************* Graphics::Viewport */
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t depth, uint8_t,
+Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth, uint8_t,
                      bool fullscreen, bool vsync)
 {
 	Camera::Reset();
 
-	if (!CreateWindow(w, h, depth, fullscreen, vsync)) {
+	if (!CreateWindow(width, height, depth, fullscreen, vsync)) {
 		DestroyWindow();
 		return(false);
 	}
@@ -601,12 +603,12 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t depth, uint8_t,
+Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t,
                     bool fullscreen, bool vsync)
 {
 	DestroyWindow();
 
-	if (!CreateWindow(w, h, depth, fullscreen, vsync)) {
+	if (!CreateWindow(width, height, depth, fullscreen, vsync)) {
 		DestroyWindow();
 		return(false);
 	}

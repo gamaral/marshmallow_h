@@ -73,7 +73,7 @@ ResetViewportData(void)
 }
 
 bool
-CreateWindow(int w, int h, int depth, bool fullscreen, bool vsync)
+CreateWindow(int width, int height, int depth, bool fullscreen, bool vsync)
 {
 	using namespace Graphics;
 
@@ -96,11 +96,13 @@ CreateWindow(int w, int h, int depth, bool fullscreen, bool vsync)
 #endif
 	
 	s_data.display =
-	    SDL_SetVideoMode(fullscreen ? 0 : w, fullscreen ? 0 : h, depth,
+	    SDL_SetVideoMode(fullscreen ? 0 : width,
+	                     fullscreen ? 0 : height,
+	                     depth,
 	                     SDL_HWSURFACE |
-	                     SDL_GL_DOUBLEBUFFER |
-	                     SDL_OPENGL |
-	                     (fullscreen? SDL_FULLSCREEN : 0));
+	                         SDL_GL_DOUBLEBUFFER |
+	                         SDL_OPENGL |
+	                         (fullscreen? SDL_FULLSCREEN : 0));
 
 	if (!s_data.display) {
 		MMERROR("Failed to create an SDL surface.");
@@ -129,13 +131,14 @@ CreateWindow(int w, int h, int depth, bool fullscreen, bool vsync)
 	/* set viewport size */
 
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-	s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
-	s_data.size[1] = static_cast<float>(s_data.wsize[1]) *
-	    (MARSHMALLOW_VIEWPORT_WIDTH / static_cast<float>(s_data.wsize[0]));
+	s_data.size[0] = width;
+	s_data.size[1] = (width * static_cast<float>(s_data.wsize[1])) /
+	    static_cast<float>(s_data.wsize[0]);
+
 #else
-	s_data.size[0] = static_cast<float>(s_data.wsize[0]) *
-	    (MARSHMALLOW_VIEWPORT_HEIGHT / static_cast<float>(s_data.wsize[1]));
-	s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
+	s_data.size[0] = (height * static_cast<float>(s_data.wsize[0])) /
+	    static_cast<float>(s_data.wsize[1]);
+	s_data.size[1] = height;
 #endif
 
 	Camera::Update();
@@ -201,7 +204,7 @@ OpenGL::glGetProcAddress(const char *f)
 /********************************************************* Graphics::Viewport */
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t depth, uint8_t,
+Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth, uint8_t,
                      bool fullscreen, bool vsync)
 {
 	/* force video center */
@@ -214,7 +217,7 @@ Viewport::Initialize(uint16_t w, uint16_t h, uint8_t depth, uint8_t,
 
 	Camera::Reset();
 
-	if (!CreateWindow(w, h, depth, fullscreen, vsync)) {
+	if (!CreateWindow(width, height, depth, fullscreen, vsync)) {
 		DestroyWindow();
 		return(false);
 	}
@@ -234,7 +237,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t depth, uint8_t,
+Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t,
                     bool fullscreen, bool vsync)
 {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
@@ -245,7 +248,7 @@ Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t depth, uint8_t,
 
 	DestroyWindow();
 
-	if (!CreateWindow(w, h, depth, fullscreen, vsync)) {
+	if (!CreateWindow(width, height, depth, fullscreen, vsync)) {
 		DestroyWindow();
 		return(false);
 	}

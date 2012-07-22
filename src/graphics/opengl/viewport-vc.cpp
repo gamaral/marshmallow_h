@@ -98,11 +98,11 @@ ResetViewportData(void)
 }
 
 bool GLCreateSurface(uint8_t depth, bool vsync);
-bool VCCreateDisplay(uint16_t w, uint16_t h, uint8_t refresh);
+bool VCCreateDisplay(uint16_t width, uint16_t height, uint8_t refresh);
 bool VCPowerOnDisplay(uint8_t refresh, uint16_t &display_id);
 
 bool
-CreateDisplay(uint16_t w, uint16_t h, uint8_t depth, uint8_t refresh, bool vsync)
+CreateDisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t refresh, bool vsync)
 {
 	using namespace Graphics;
 
@@ -110,7 +110,7 @@ CreateDisplay(uint16_t w, uint16_t h, uint8_t depth, uint8_t refresh, bool vsync
 
 	/* display */
 
-	if (!VCCreateDisplay(w, h, refresh)) {
+	if (!VCCreateDisplay(width, height, refresh)) {
 		MMERROR("VC: Failed to create display.");
 		return(false);
 	}
@@ -134,13 +134,14 @@ CreateDisplay(uint16_t w, uint16_t h, uint8_t depth, uint8_t refresh, bool vsync
 	/* set viewport size */
 
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-	s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
-	s_data.size[1] = static_cast<float>(s_data.wsize[1]) *
-	    (MARSHMALLOW_VIEWPORT_WIDTH / static_cast<float>(s_data.wsize[0]));
+	s_data.size[0] = width;
+	s_data.size[1] = (width * static_cast<float>(s_data.wsize[1])) /
+	    static_cast<float>(s_data.wsize[0]);
+
 #else
-	s_data.size[0] = static_cast<float>(s_data.wsize[0]) *
-	    (MARSHMALLOW_VIEWPORT_HEIGHT / static_cast<float>(s_data.wsize[1]));
-	s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
+	s_data.size[0] = (height * static_cast<float>(s_data.wsize[0])) /
+	    static_cast<float>(s_data.wsize[1]);
+	s_data.size[1] = height;
 #endif
 
 	Camera::Update();
@@ -256,18 +257,18 @@ GLCreateSurface(uint8_t depth, bool vsync)
 }
 
 bool
-VCCreateDisplay(uint16_t w, uint16_t h, uint8_t refresh)
+VCCreateDisplay(uint16_t width, uint16_t height, uint8_t refresh)
 {
 	VC_RECT_T l_dst_rect;
 	VC_RECT_T l_src_rect;
 
-	s_data.wsize[0] = w;
-	s_data.wsize[1] = h;
+	s_data.wsize[0] = width;
+	s_data.wsize[1] = height;
 
 	l_src_rect.x = l_src_rect.y = 0;
 	l_dst_rect.x = l_dst_rect.y = 0;
-	l_dst_rect.width  = w;
-	l_dst_rect.height = h;
+	l_dst_rect.width  = width;
+	l_dst_rect.height = height;
 
 	/* set SPD type to game */
 	vc_tv_hdmi_set_spd("MMGE", "MES", HDMI_SPD_TYPE_GAME);
@@ -391,14 +392,14 @@ OpenGL::glGetProcAddress(const char *f)
 /********************************************************* Graphics::Viewport */
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t depth, uint8_t refresh,
-                     bool, bool vsync)
+Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth,
+                     uint8_t refresh, bool, bool vsync)
 {
 	bcm_host_init();
 
 	Camera::Reset();
 
-	if (!CreateDisplay(w, h, depth, refresh, vsync)) {
+	if (!CreateDisplay(width, height, depth, refresh, vsync)) {
 		DestroyDisplay();
 		return(false);
 	}
@@ -418,12 +419,12 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t depth, uint8_t refresh,
-                    bool, bool vsync)
+Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t depth,
+                    uint8_t refresh, bool, bool vsync)
 {
 	DestroyDisplay();
 
-	if (!CreateDisplay(w, h, depth, refresh, vsync)) {
+	if (!CreateDisplay(width, height, depth, refresh, vsync)) {
 		DestroyDisplay();
 		return(false);
 	}

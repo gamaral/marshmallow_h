@@ -69,14 +69,12 @@ class ViewportWidget : public QGLWidget
 	Math::Size2f        m_size;
 public:
 
-	ViewportWidget(const QGLFormat &format, uint16_t w, uint16_t h, bool fullscreen)
-	    : QGLWidget(format)
+	ViewportWidget(const QGLFormat &_format, uint16_t _width, uint16_t _height,
+	               bool fullscreen)
+	    : QGLWidget(_format)
 	{
 		setAutoBufferSwap(false);
-		setFixedSize(w, h);
 		setWindowTitle(MARSHMALLOW_BUILD_TITLE);
-
-		m_size.zero();
 
 		const QRect &desktop = QApplication::desktop()->availableGeometry();
 		if (fullscreen) {
@@ -84,10 +82,26 @@ public:
 			m_wsize[1] = desktop.height();
 		}
 		else {
-			m_wsize[0] = w;
-			m_wsize[1] = h;
-			move((desktop.width() / 2) - (w / 2), (desktop.height() / 2) - (h / 2));
+			m_wsize[0] = _width;
+			m_wsize[1] = _height;
+			move((desktop.width()  / 2) - (_width  / 2),
+			     (desktop.height() / 2) - (_height / 2));
 		}
+
+		setFixedSize(m_wsize.width(), m_wsize.height());
+
+		/* set viewport size */
+
+#if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
+		m_size[0] = _width;
+		m_size[1] = (_width * static_cast<float>(m_wsize.height()) /
+		    static_cast<float>(m_wsize.width()));
+
+#else
+		m_size[0] = (_height * static_cast<float>(m_wsize.width())) /
+		    static_cast<float>(m_wsize.height());
+		m_size[1] = _height;
+#endif
 	}
 
 	virtual ~ViewportWidget(void)
@@ -119,18 +133,6 @@ protected: /* virtual */
 			MMERROR("GL: Failed during initialization.");
 			return;
 		}
-
-		/* set viewport size */
-
-#if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-		m_size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
-		m_size[1] = static_cast<float>(m_wsize[1]) *
-		    (MARSHMALLOW_VIEWPORT_WIDTH / static_cast<float>(m_wsize[0]));
-#else
-		m_size[0] = static_cast<float>(m_wsize[0]) *
-		    (MARSHMALLOW_VIEWPORT_HEIGHT / static_cast<float>(m_wsize[1]));
-		m_size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
-#endif
 	}
 
 	VIRTUAL void
@@ -254,7 +256,7 @@ static QApplication   *s_application(0);
 static ViewportWidget *s_window(0);
 
 bool
-CreateWidget(uint16_t w, uint16_t h, bool fullscreen, bool vsync)
+CreateWidget(uint16_t width, uint16_t height, bool fullscreen, bool vsync)
 {
 	using namespace Graphics;
 	QGLFormat l_format(QGL::DoubleBuffer|QGL::DirectRendering|QGL::NoDepthBuffer|QGL::Rgba);
@@ -266,7 +268,7 @@ CreateWidget(uint16_t w, uint16_t h, bool fullscreen, bool vsync)
 	l_format.setSwapInterval(vsync ? 1 : 0);
 	l_format.setVersion(2, 0);
 
-	s_window = new ViewportWidget(l_format, w, h, fullscreen);
+	s_window = new ViewportWidget(l_format, width, height, fullscreen);
 
 	/* show window */
 
@@ -321,14 +323,14 @@ OpenGL::glGetProcAddress(const char *f)
 /********************************************************* Graphics::Viewport */
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t, uint8_t,
+Viewport::Initialize(uint16_t width, uint16_t height, uint8_t, uint8_t,
                      bool fullscreen, bool vsync)
 {
 	static int    argc = 0;
 	static char **argv = 0;
 	s_application = new QApplication(argc, argv);
 
-	if (!CreateWidget(w, h, fullscreen, vsync)) {
+	if (!CreateWidget(width, height, fullscreen, vsync)) {
 		DestroyWidget();
 		return(false);
 	}
@@ -347,12 +349,12 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t, uint8_t,
+Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t, uint8_t,
                     bool fullscreen, bool vsync)
 {
 	DestroyWidget();
 
-	if (!CreateWidget(w, h, fullscreen, vsync)) {
+	if (!CreateWidget(width, height, fullscreen, vsync)) {
 		DestroyWidget();
 		return(false);
 	}
