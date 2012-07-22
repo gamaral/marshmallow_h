@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/viewport.h"
+#pragma once
 
 /*!
  * @file
@@ -34,82 +34,68 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/logger.h"
+#ifndef MARSHMALLOW_GRAPHICS_CAMERA_H
+#define MARSHMALLOW_GRAPHICS_CAMERA_H 1
 
-#include "graphics/camera.h"
+#include <core/type.h>
+
+#include <math/point2.h>
+#include <math/size2.h>
+
+#include <graphics/config.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 
-bool
-Viewport::Initialize(uint16_t, uint16_t, uint8_t, uint8_t, bool, bool)
-{
-	Camera::Reset();
+class Transform;
 
-	MMDEBUG("Dummy viewport initialized.");
+/*! @brief Graphics Camera Interface */
+namespace Camera { /****************************** Graphics::Camera Namespace */
 
-	Camera::Update();
+	MARSHMALLOW_GRAPHICS_EXPORT
+	void Reset(void);
 
-#if MARSHMALLOW_DUMMY_FAIL
-	return(false);
-#else
-	return(true);
-#endif
-}
+	MARSHMALLOW_GRAPHICS_EXPORT
+	void Update(void);
 
-void
-Viewport::Finalize(void)
-{
-	MMDEBUG("Dummy viewport finalized.");
-}
+	MARSHMALLOW_GRAPHICS_EXPORT
+	const Graphics::Transform & Transform(void);
 
-bool
-Viewport::Redisplay(uint16_t, uint16_t, uint8_t, uint8_t, bool, bool)
-{
-	MMDEBUG("Dummy viewport re-initialized.");
+	MARSHMALLOW_GRAPHICS_EXPORT
+	void SetTransform(const Graphics::Transform &transform);
 
-	Camera::Update();
+	MARSHMALLOW_GRAPHICS_EXPORT
+	const Math::Point2 & Position(void);
 
-#if MARSHMALLOW_DUMMY_FAIL
-	return(false);
-#else
-	return(true);
-#endif
-}
+	MARSHMALLOW_GRAPHICS_EXPORT
+	void SetPosition(const Math::Point2 &position);
 
-void
-Viewport::Tick(void)
-{
-}
+	MARSHMALLOW_GRAPHICS_EXPORT
+	void SetPosition(float x, float y);
 
-void
-Viewport::SwapBuffer(void)
-{
-}
+	MARSHMALLOW_GRAPHICS_EXPORT
+	float Rotation(void);
 
-const Math::Size2f &
-Viewport::Size(void)
-{
-	const static Math::Size2f s_size(MARSHMALLOW_VIEWPORT_WIDTH,
-	                                 MARSHMALLOW_VIEWPORT_HEIGHT);
-	return(s_size);
-}
+	MARSHMALLOW_GRAPHICS_EXPORT
+	void SetRotation(float rotation);
 
-const Math::Size2i &
-Viewport::WindowSize(void)
-{
-	const static Math::Size2i s_wsize(MARSHMALLOW_VIEWPORT_WIDTH,
-	                                  MARSHMALLOW_VIEWPORT_HEIGHT);
-	return(s_wsize);
-}
+	MARSHMALLOW_GRAPHICS_EXPORT
+	const Math::Size2f & Zoom(void);
 
-const Core::Type &
-Viewport::Type(void)
-{
-	static const Core::Type s_type("DUMMY");
-	return(s_type);
-}
+	MARSHMALLOW_GRAPHICS_EXPORT
+	void SetZoom(const Math::Size2f &zoom);
 
+	MARSHMALLOW_GRAPHICS_EXPORT
+	void SetZoom(float zoom);
+
+	MARSHMALLOW_GRAPHICS_EXPORT
+	float VisibleMagnitude2(void);
+
+	MARSHMALLOW_GRAPHICS_EXPORT
+	const Math::Size2f & Visiblility(void);
+
+} /*********************************************** Graphics::Camera Namespace */
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
+#endif

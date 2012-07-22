@@ -39,12 +39,12 @@
 
 #include <core/environment.h>
 #include <core/fd.h>
+
 #include <graphics/config.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
-namespace Graphics
-{
 	struct ITextureCoordinateData;
 	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
 
@@ -54,19 +54,19 @@ namespace Graphics
 	struct IVertexData;
 	typedef Core::Shared<IVertexData> SharedVertexData;
 
-	namespace Factory
-	{
-		MARSHMALLOW_GRAPHICS_EXPORT
-		SharedTextureCoordinateData CreateTextureCoordinateData(uint16_t count);
+namespace Factory { /**************************** Graphics::Factory Namespace */
 
-		MARSHMALLOW_GRAPHICS_EXPORT
-		SharedTextureData CreateTextureData(void);
+	MARSHMALLOW_GRAPHICS_EXPORT
+	SharedTextureCoordinateData CreateTextureCoordinateData(uint16_t count);
 
-		MARSHMALLOW_GRAPHICS_EXPORT
-		SharedVertexData CreateVertexData(uint16_t count);
-	}
-}
+	MARSHMALLOW_GRAPHICS_EXPORT
+	SharedTextureData CreateTextureData(void);
 
+	MARSHMALLOW_GRAPHICS_EXPORT
+	SharedVertexData CreateVertexData(uint16_t count);
+
+} /********************************************** Graphics::Factory Namespace */
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

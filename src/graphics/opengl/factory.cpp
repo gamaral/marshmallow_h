@@ -40,8 +40,8 @@
 #include "texturedata.h"
 #include "vertexdata.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
 SharedTextureCoordinateData
 Factory::CreateTextureCoordinateData(uint16_t c)
@@ -60,4 +60,7 @@ Factory::CreateVertexData(uint16_t c)
 {
 	return(new OpenGL::VertexData(c));
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

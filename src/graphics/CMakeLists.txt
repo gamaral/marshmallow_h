@@ -26,24 +26,24 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 	                              ${PNG_LIBRARIES})
 
-	if(MARSHMALLOW_OPENGL_GLES2)
+	if(MARSHMALLOW_OPENGL_ES2_EGL)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${EGL_LIBRARY}
 		                              ${GLES2_LIBRARY})
-		add_definitions(-DMARSHMALLOW_OPENGL_GLES2)
+		add_definitions(-DMARSHMALLOW_OPENGL_ES2_EGL)
 	else()
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${OPENGL_gl_LIBRARY})
 	endif()
 
-	if(MARSHMALLOW_OPENGL_GLX)
+	if(MARSHMALLOW_OPENGL_X11)
 		include_directories(${X11_INCLUDE_DIR})
 
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-		                              opengl/viewport-glx.cpp)
+		                              opengl/viewport-x11.cpp)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${X11_X11_LIB})
-		add_definitions(-DMARSHMALLOW_OPENGL_GLX)
+		add_definitions(-DMARSHMALLOW_OPENGL_X11)
 	elseif(MARSHMALLOW_OPENGL_WGL)
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-wgl.cpp)

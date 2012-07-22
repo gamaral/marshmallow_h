@@ -46,30 +46,27 @@
 #  define MMGL20_CAPABLE
 #endif
 
-#ifdef MARSHMALLOW_OPENGL_GLES2
+#ifdef MARSHMALLOW_OPENGL_ES2_EGL
 #  include <GLES2/gl2ext.h>
 #else
-#  if defined(MARSHMALLOW_OPENGL_GLX)
+#  if defined(MARSHMALLOW_OPENGL_X11)
 #    include <GL/glext.h>
 #    include <GL/glx.h>
 #    include <GL/glxext.h>
 #  elif defined(MARSHMALLOW_OPENGL_WGL)
-#    include "extensions/glext.h"
-#    include "extensions/wglext.h"
+#    include "GL/glext.h"
+#    include "GL/wglext.h"
 #  elif defined(__APPLE__)
 #    include <OpenGL/glext.h>
 #  else
-#    include "extensions/glext.h"
+#    include <GL/glext.h>
 #  endif
 #endif
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
-namespace Graphics
-{
-
-namespace OpenGL
-{
 #ifndef MMGL20_CAPABLE
 	/* required */
 	extern PFNGLATTACHSHADERPROC glAttachShader;
@@ -101,7 +98,7 @@ namespace OpenGL
 	extern PFNGLGENBUFFERSARBPROC glGenBuffers;
 #endif
 
-#if defined(MARSHMALLOW_OPENGL_GLX) && !defined(MARSHMALLOW_OPENGL_GLES2)
+#if defined(MARSHMALLOW_OPENGL_X11) && !defined(MARSHMALLOW_OPENGL_ES2_EGL)
 	extern PFNGLXSWAPINTERVALSGIPROC glSwapInterval;
 #elif defined(MARSHMALLOW_OPENGL_WGL)
 	extern PFNGLACTIVETEXTUREARBPROC glActiveTexture;
@@ -124,10 +121,9 @@ namespace OpenGL
 	 */
 	typedef void (*PFNPROC)(void);
 	PFNPROC glGetProcAddress(const char *func);
-}
 
-}
-
+} /*********************************************** Graphics::OpenGL Namespace */
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -47,7 +47,7 @@
  */
 #define GL_GLEXT_LEGACY
 
-#ifdef MARSHMALLOW_OPENGL_GLES2
+#ifdef MARSHMALLOW_OPENGL_ES2_EGL
 #  include <GLES2/gl2.h>
 #else
 #  ifdef __APPLE__

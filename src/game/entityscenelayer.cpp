@@ -38,8 +38,7 @@
 
 #include "math/vector2.h"
 
-#include "graphics/transform.h"
-#include "graphics/viewport.h"
+#include "graphics/camera.h"
 
 #include "game/factorybase.h"
 #include "game/ientity.h"
@@ -139,8 +138,8 @@ EntitySceneLayer::render(void)
 	EntityList::const_iterator l_i;
 
 	if (m_p->visiblility_testing) {
-		const Math::Point2 &l_camera_pos = Graphics::Viewport::Camera().translation();
-		const float l_visiblility_radius2 = Graphics::Viewport::Radius2();
+		const Math::Point2 &l_camera_pos = Graphics::Camera::Position();
+		const float l_visiblility_radius2 = Graphics::Camera::VisibleMagnitude2();
 
 		for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();l_i++) {
 			SharedEntity l_entity = (*l_i);

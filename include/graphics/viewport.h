@@ -45,62 +45,49 @@
 #include <graphics/config.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
-namespace Graphics
-{
 	class Transform;
 
-	/*! @brief Graphics Viewport Interface */
-	namespace Viewport
-	{
-		MARSHMALLOW_GRAPHICS_EXPORT
-		const Core::Type & Type(void);
+/*! @brief Graphics Viewport Interface */
+namespace Viewport { /************************** Graphics::Viewport Namespace */
 
-		MARSHMALLOW_GRAPHICS_EXPORT
-		bool Initialize( uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
-		                 uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
-		                 uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
-		                 uint8_t refresh = MARSHMALLOW_VIEWPORT_REFRESH,
-		                 bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
-		                 bool      vsync = MARSHMALLOW_VIEWPORT_VSYNC);
+	MARSHMALLOW_GRAPHICS_EXPORT
+	const Core::Type & Type(void);
 
-		MARSHMALLOW_GRAPHICS_EXPORT
-		void Finalize(void);
+	MARSHMALLOW_GRAPHICS_EXPORT
+	bool Initialize( uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
+			 uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
+			 uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
+			 uint8_t refresh = MARSHMALLOW_VIEWPORT_REFRESH,
+			 bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
+			 bool      vsync = MARSHMALLOW_VIEWPORT_VSYNC);
 
-		MARSHMALLOW_GRAPHICS_EXPORT
-		bool Redisplay( uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
-		                uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
-		                uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
-		                uint8_t refresh = MARSHMALLOW_VIEWPORT_REFRESH,
-		                bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
-		                bool      vsync = MARSHMALLOW_VIEWPORT_VSYNC);
+	MARSHMALLOW_GRAPHICS_EXPORT
+	void Finalize(void);
 
-		MARSHMALLOW_GRAPHICS_EXPORT
-		void Tick(void);
+	MARSHMALLOW_GRAPHICS_EXPORT
+	bool Redisplay( uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
+			uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
+			uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
+			uint8_t refresh = MARSHMALLOW_VIEWPORT_REFRESH,
+			bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
+			bool      vsync = MARSHMALLOW_VIEWPORT_VSYNC);
 
-		MARSHMALLOW_GRAPHICS_EXPORT
-		void SwapBuffer(void);
+	MARSHMALLOW_GRAPHICS_EXPORT
+	void Tick(void);
 
-		MARSHMALLOW_GRAPHICS_EXPORT
-		const Graphics::Transform & Camera(void);
+	MARSHMALLOW_GRAPHICS_EXPORT
+	void SwapBuffer(void);
 
-		MARSHMALLOW_GRAPHICS_EXPORT
-		void SetCamera(const Graphics::Transform &camera);
+	MARSHMALLOW_GRAPHICS_EXPORT
+	const Math::Size2f & Size(void);
 
-		MARSHMALLOW_GRAPHICS_EXPORT
-		float Radius2(void);
+	MARSHMALLOW_GRAPHICS_EXPORT
+	const Math::Size2i & WindowSize(void);
 
-		MARSHMALLOW_GRAPHICS_EXPORT
-		const Math::Size2f & ScaledSize(void);
-
-		MARSHMALLOW_GRAPHICS_EXPORT
-		const Math::Size2f & Size(void);
-
-		MARSHMALLOW_GRAPHICS_EXPORT
-		const Math::Size2i & WindowSize(void);
-	}
-}
-
+} /********************************************* Graphics::Viewport Namespace */
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

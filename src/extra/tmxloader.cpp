@@ -47,12 +47,12 @@
 #include "game/entity.h"
 #include "game/entityscenelayer.h"
 #include "game/factory.h"
-#include "game/iscene.h"
 #include "game/positioncomponent.h"
 #include "game/rendercomponent.h"
+#include "game/scenebase.h"
 #include "game/sizecomponent.h"
-#include "game/tilesetcomponent.h"
 #include "game/tilemapscenelayer.h"
+#include "game/tilesetcomponent.h"
 
 #include <tinyxml2.h>
 
@@ -75,6 +75,14 @@ using namespace Extra;
 
 namespace {
 	typedef std::map<uint16_t, Graphics::SharedTileset> TilesetCollection;
+
+	Graphics::Color
+	PixelToColor(uint16_t *p)
+	{
+		return(Graphics::Color(static_cast<float>(p[0]) / 255.f,
+		                       static_cast<float>(p[1]) / 255.f,
+		                       static_cast<float>(p[2]) / 255.f));
+	}
 } // namespace
 
 /******************************************************************************/
@@ -107,7 +115,6 @@ struct TMXLoader::Private
 	Math::Size2f hrmap_size;
 	Math::Size2i map_size;
 	Math::Size2i tile_size;
-
 };
 
 bool
@@ -223,6 +230,35 @@ TMXLoader::Private::processMap(XMLElement &m)
 			}
 
 			MMERROR("Invalid scale value encountered.");
+			continue;
+		}
+
+		/*
+		 * Parse scene background color
+		 */
+		else if (MMSTRCASECMP(l_pname, "bgcolor") == 0) {
+			const char *l_value = l_property->Attribute("value");
+			if (!l_value) {
+				MMWARNING("Skipping incomplete background color property.");
+				continue;
+			}
+
+			/*
+			 * Valid formats: #RRGGBB, RRGGBB.
+			 */
+			uint16_t l_pxl[3];
+			if ((sscanf(l_value, "#%2hx%2hx%2hx",
+			        &l_pxl[0], &l_pxl[1], &l_pxl[2]) != 3) &&
+			    (sscanf(l_value,  "%2hx%2hx%2hx",
+			        &l_pxl[0], &l_pxl[1], &l_pxl[2]) != 3)) {
+				MMWARNING("Skipping invalid background color value.");
+				continue;
+			}
+
+			/* set background color */
+			Game::SceneBase &l_scene_base =
+			    static_cast<Game::SceneBase &>(scene);
+			l_scene_base.setBackground(PixelToColor(l_pxl));
 			continue;
 		}
 

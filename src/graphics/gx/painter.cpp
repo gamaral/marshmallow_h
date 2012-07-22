@@ -49,7 +49,6 @@
 #include "texturedata.h"
 #include "vertexdata.h"
 
-#include <cstdlib>
 #include <stack>
 
 MARSHMALLOW_NAMESPACE_USE

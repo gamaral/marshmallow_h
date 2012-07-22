@@ -34,25 +34,22 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/type.h"
 #include "core/logger.h"
+#include "core/type.h"
 
 #include "math/matrix4.h"
 #include "math/point2.h"
 
+#include "graphics/color.h"
 #include "graphics/imesh.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace { /******************************************** Anonymous Namespace */
+	Math::Matrix4   s_matrix_current;
+	Graphics::Color s_bgcolor;
+} /****************************************************** Anonymous Namespace */
 
-/******************************************************************************/
-
-namespace
-{
-	Math::Matrix4 s_matrix_current;
-} // namespace
-
-/******************************************************************************/
+namespace Graphics { /************************************ Graphics Namespace */
 
 void
 Painter::Initialize(void)
@@ -74,6 +71,18 @@ Painter::Reset(void)
 {
 }
 
+const Color &
+Painter::BackgroundColor(void)
+{
+	return(s_bgcolor);
+}
+
+void
+Painter::SetBackgroundColor(const Color &color)
+{
+	s_bgcolor = color;
+}
+
 Math::Matrix4 &
 Painter::Matrix(void)
 {
@@ -87,7 +96,7 @@ Painter::LoadIdentity(void)
 }
 
 void
-Painter::ProjectionMatrix(void)
+Painter::LoadProjection(void)
 {
 }
 
@@ -115,6 +124,9 @@ Painter::Draw(const IMesh &m, const Math::Point2 *p, int c)
 	MMUNUSED(p);
 
 	for (int i = 0; i < c; ++i)
-		MMVERBOSE("Drawind " << m.type().str() << " at (" << p[i].x() << ", " << p[i].y() << ").");
+		MMVERBOSE("Drawing " << m.type().str() << " at (" << p[i].x() << ", " << p[i].y() << ").");
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

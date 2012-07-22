@@ -31,9 +31,8 @@
 #include <event/eventmanager.h>
 #include <event/keyboardevent.h>
 
+#include <graphics/camera.h>
 #include <graphics/factory.h>
-#include <graphics/transform.h>
-#include <graphics/viewport.h>
 
 #include <game/enginebase.h>
 #include <game/scenebase.h>
@@ -162,10 +161,8 @@ public:
 		if (++m_stop_timer == TIMEOUT)
 			stop();
 
-		Graphics::Transform l_camera = Graphics::Viewport::Camera();
-		l_camera.setScale(Math::Size2f(1.5 + cosf(m_stop_timer), 1.5 + cosf(m_stop_timer)));
-		l_camera.setRotation((25 * m_stop_timer) % 360);
-		Graphics::Viewport::SetCamera(l_camera);
+		Graphics::Camera::SetRotation((25 * m_stop_timer) % 360);
+		Graphics::Camera::SetZoom(1.5 + cosf(m_stop_timer));
 	}
 
 	VIRTUAL bool handleEvent(const Event::IEvent &e)

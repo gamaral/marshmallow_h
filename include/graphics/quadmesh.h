@@ -43,9 +43,8 @@
 #include <math/size2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
-namespace Graphics
-{
 	/*! @brief Graphics Quad Mesh Class */
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	QuadMesh : public MeshBase
@@ -55,9 +54,9 @@ namespace Graphics
 	public:
 
 		QuadMesh(const Math::Vector2 &tl,
-		         const Math::Vector2 &bl,
-		         const Math::Vector2 &br,
-		         const Math::Vector2 &tr);
+			 const Math::Vector2 &bl,
+			 const Math::Vector2 &br,
+			 const Math::Vector2 &tr);
 		QuadMesh(const Math::Rect2  &rect);
 		QuadMesh(const Math::Size2f &size);
 		QuadMesh(float width, float height);
@@ -79,8 +78,8 @@ namespace Graphics
 	};
 	typedef Core::Shared<QuadMesh> SharedQuadMesh;
 	typedef Core::Weak<QuadMesh> WeakQuadMesh;
-}
 
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

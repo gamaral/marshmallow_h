@@ -37,9 +37,8 @@ endif()
 
 ######################################################################## CMAKE #
 
-option(BUILD_SHARED_LIBS "Build a shared library" OFF)
+option(BUILD_SHARED_LIBS "Build a shared library" ON)
 option(BUILD_UNIT_TESTS "Build unit tests" OFF)
-set(CMAKE_BUILD_TYPE_SHARED_LIBS ON)
 set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
@@ -65,23 +64,19 @@ set(MARSHMALLOW_BUILD_TITLE "Marshmallow Engine" CACHE STRING "Build Title")
 option(MARSHMALLOW_DEBUG "Marshmallow Debugging" OFF)
 set(MARSHMALLOW_DEBUG_VERBOSITY "0" CACHE STRING "Verbosity Level")
 
-set(MARSHMALLOW_VIEWPORT_WIDTH   "640" CACHE STRING "Viewport native width")
+set(MARSHMALLOW_VIEWPORT_WIDTH   "720" CACHE STRING "Viewport native width")
 set(MARSHMALLOW_VIEWPORT_HEIGHT  "480" CACHE STRING "Viewport native height")
 set(MARSHMALLOW_VIEWPORT_DEPTH   "24"  CACHE STRING "Viewport default depth")
 set(MARSHMALLOW_VIEWPORT_REFRESH "60"  CACHE STRING "Viewport default refresh rate")
 
-option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode" OFF)
-option(MARSHMALLOW_VIEWPORT_GRAB_INPUT "Takeover viewport input devices"  ON)
-option(MARSHMALLOW_VIEWPORT_LOCK_WIDTH "Use width for aspect ratio resolucion" OFF)
-option(MARSHMALLOW_VIEWPORT_VSYNC      "Viewport default vsync mode"      ON)
+option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode"      OFF)
+option(MARSHMALLOW_VIEWPORT_GRAB_INPUT "Takeover viewport input devices"        ON)
+option(MARSHMALLOW_VIEWPORT_LOCK_WIDTH "Use width for aspect ratio resolution" OFF)
+option(MARSHMALLOW_VIEWPORT_VSYNC      "Viewport default vsync mode"            ON)
 
-
-option(MARSHMALLOW_VIEWPORT_DUMMY          "Use Dummy Viewport (testing)" ON)
-if (MARSHMALLOW_WII)
-	option(MARSHMALLOW_VIEWPORT_GX     "Use GX Viewport (wii)"        ON)
-else()
-	option(MARSHMALLOW_VIEWPORT_OPENGL "Use OpenGL Viewport"          OFF)
-endif()
+option(MARSHMALLOW_VIEWPORT_DUMMY  "Use Dummy Viewport (testing)"    ON)
+option(MARSHMALLOW_VIEWPORT_GX     "Use GX Viewport (wii)"          OFF)
+option(MARSHMALLOW_VIEWPORT_OPENGL "Use OpenGL Viewport (multiple)" OFF)
 
 option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG" ON)
 option(MARSHMALLOW_CONTRIB_LUA    "Use bundled LUA"    ON)
@@ -97,20 +92,12 @@ if(MARSHMALLOW_VIEWPORT_DUMMY)
 endif()
 
 if(MARSHMALLOW_VIEWPORT_OPENGL)
-	if(UNIX)
-		option(MARSHMALLOW_OPENGL_GLX "Use OpenGL GLX Viewport (unix)" OFF)
-		option(MARSHMALLOW_OPENGL_VC  "Use OpenGL VideoCore Viewport (broadcom)" OFF)
-	elseif(WIN32)
-		option(MARSHMALLOW_OPENGL_WGL "Use OpenGL WGL Viewport (windows)" OFF)
-	endif()
-	option(MARSHMALLOW_OPENGL_SDL "Use OpenGL SDL Viewport (sdl)"     OFF)
-	option(MARSHMALLOW_OPENGL_QT4 "Use OpenGL Qt4 Viewport (qt4)"     OFF)
-
-	if(MARSHMALLOW_OPENGL_GLX)
-		option(MARSHMALLOW_OPENGL_GLES2 "Use EGL + OpenGL ES 2.0 (requires GLX)" OFF)
-	elseif(MARSHMALLOW_OPENGL_VC)
-		option(MARSHMALLOW_OPENGL_GLES2 "Use EGL + OpenGL ES 2.0 (requires VC)" ON)
-	endif()
+	option(MARSHMALLOW_OPENGL_QT4     "Use OpenGL Qt4 Viewport (qt4)"            OFF)
+	option(MARSHMALLOW_OPENGL_SDL     "Use OpenGL SDL Viewport (sdl)"            OFF)
+	option(MARSHMALLOW_OPENGL_VC      "Use OpenGL VideoCore Viewport (broadcom)" OFF)
+	option(MARSHMALLOW_OPENGL_WGL     "Use OpenGL WGL Viewport (windows)"        OFF)
+	option(MARSHMALLOW_OPENGL_X11     "Use OpenGL X11 & GLX/EGL Viewport (unix)" OFF)
+	option(MARSHMALLOW_OPENGL_ES2_EGL "Use OpenGL ES 2.0 with EGL (x11/vc)"      OFF)
 endif()
 
 ####################################################################### CONFIG #
@@ -126,7 +113,7 @@ configure_file(
 
 ##################################################################### PLATFORM #
 
-if(UNIX OR MARSHMALLOW_WII)
+if(UNIX)
 	configure_file(
 	    ${PROJECT_SOURCE_DIR}/include/core/unix/environment.h
 	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
@@ -139,7 +126,8 @@ if(UNIX OR MARSHMALLOW_WII)
 	if(NOT M_LIBRARY)
 		message(FATAL_ERROR "No math library found.")
 	endif()
-	MARK_AS_ADVANCED(M_LIBRARY)
+
+	mark_as_advanced(M_LIBRARY)
 elseif(WIN32)
 	configure_file(
 	    ${PROJECT_SOURCE_DIR}/include/core/win32/environment.h
@@ -155,18 +143,18 @@ endif()
 ##################################################################### VIEWPORT #
 
 if(MARSHMALLOW_VIEWPORT_OPENGL)
-	if(MARSHMALLOW_OPENGL_GLES2)
-		find_package(EGL)
+	if(MARSHMALLOW_OPENGL_ES2_EGL)
 		find_package(GLES2)
-		include_directories(${EGL_INCLUDE_DIR}
-		                    ${GLES2_INCLUDE_DIR})
+		find_package(EGL)
+		include_directories(${GLES2_INCLUDE_DIR}
+		                    ${EGL_INCLUDE_DIR})
 	else()
 		find_package(OpenGL)
 		include_directories(${OPENGL_INCLUDE_DIR})
 	endif()
 
 
-	if(MARSHMALLOW_OPENGL_GLX)
+	if(MARSHMALLOW_OPENGL_X11)
 		find_package(X11)
 	elseif(MARSHMALLOW_OPENGL_SDL)
 		find_package(SDL)

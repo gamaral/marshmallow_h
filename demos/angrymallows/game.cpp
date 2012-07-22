@@ -40,8 +40,7 @@ MARSHMALLOW_NAMESPACE_USE
 
 #include <event/keyboardevent.h>
 
-#include <graphics/transform.h>
-#include <graphics/viewport.h>
+#include <graphics/camera.h>
 
 #include <game/iscene.h>
 #include <game/pausescenelayer.h>
@@ -79,10 +78,8 @@ Demo::initialize(void)
 
 	eventManager()->connect(this, Event::KeyboardEvent::Type());
 
-	Graphics::Transform l_camera = Graphics::Viewport::Camera();
-	l_camera.setScale(Math::Size2f(280.f, 280.f));
-	l_camera.setTranslation(Math::Point2(0.f, -0.2f));
-	Graphics::Viewport::SetCamera(l_camera);
+	Graphics::Camera::SetZoom(280.f);
+	Graphics::Camera::SetPosition(0.f, -0.2f);
 
 	return(reset());
 }

@@ -41,11 +41,11 @@
 #include "math/point2.h"
 #include "math/vector2.h"
 
+#include "graphics/camera.h"
 #include "graphics/factory.h"
 #include "graphics/painter.h"
 #include "graphics/quadmesh.h"
 #include "graphics/transform.h"
-#include "graphics/viewport.h"
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;
@@ -140,7 +140,7 @@ TilemapSceneLayer::Private::render(void)
 
 	/* calculate visible row and column range */
 
-	const Graphics::Transform &l_camera = Graphics::Viewport::Camera();
+	const Graphics::Transform &l_camera = Graphics::Camera::Transform();
 	const bool  l_camera_rotated = l_camera.rotation() != 0;
 	const float l_camera_x = l_camera.translation().x() + translate.x();
 	const float l_camera_y = l_camera.translation().y() + translate.y();
@@ -151,14 +151,14 @@ TilemapSceneLayer::Private::render(void)
 	float row_stop_cam;
 
 	if (l_camera_rotated) {
-		const float l_visible_radius = sqrtf(Graphics::Viewport::Radius2());
+		const float l_visible_radius = sqrtf(Graphics::Camera::VisibleMagnitude2());
 		col_start_cam = l_camera_x - l_visible_radius;
 		col_stop_cam  = l_camera_x + l_visible_radius;
 		row_start_cam = l_camera_y + l_visible_radius;
 		row_stop_cam  = l_camera_y - l_visible_radius;
 	}
 	else {
-		Math::Size2f l_hviewport_size = Graphics::Viewport::ScaledSize() / 2.f;
+		Math::Size2f l_hviewport_size = Graphics::Camera::Visiblility() / 2.f;
 
 		col_start_cam = l_camera_x - l_hviewport_size.width()  - hrtile_size.width();
 		col_stop_cam  = l_camera_x + l_hviewport_size.width()  + hrtile_size.width();

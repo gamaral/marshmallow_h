@@ -43,15 +43,13 @@
 #include <graphics/config.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Math
-{
+namespace Math { /******************************************** Math Namespace */
 	template <typename T> class Size2;
 	typedef Size2<int> Size2i;
-}
+} /*********************************************************** Math Namespace */
 
-namespace Graphics
-{
+namespace Graphics { /************************************ Graphics Namespace */
+
 	struct ITextureCoordinateData;
 	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
 
@@ -77,8 +75,8 @@ namespace Graphics
 	};
 	typedef Core::Shared<ITileset> SharedTileset;
 	typedef Core::Weak<ITileset> WeakTileset;
-}
 
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

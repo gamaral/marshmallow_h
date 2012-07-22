@@ -385,7 +385,7 @@ Viewport::WindowSize(void)
 const Core::Type &
 Viewport::Type(void)
 {
-	static const Core::Type s_type("GLX");
+	static const Core::Type s_type("GX");
 	return(s_type);
 }
 

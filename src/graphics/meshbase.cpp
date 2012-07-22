@@ -43,8 +43,8 @@
 
 #include <tinyxml2.h>
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
 struct MeshBase::Private
 {
@@ -280,4 +280,7 @@ MeshBase::deserialize(XMLElement &n)
 
 	return(true);
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

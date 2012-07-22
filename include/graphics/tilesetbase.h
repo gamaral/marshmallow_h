@@ -48,9 +48,8 @@
 #include <graphics/itexturecoordinatedata.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
-namespace Graphics
-{
 	/*! @brief Graphics Tileset Base Class */
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	TilesetBase : public ITileset
@@ -88,8 +87,8 @@ namespace Graphics
 	};
 	typedef Core::Shared<TilesetBase> SharedTilesetBase;
 	typedef Core::Weak<TilesetBase> WeakTilesetBase;
-}
 
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

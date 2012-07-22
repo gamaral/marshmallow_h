@@ -40,340 +40,366 @@
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
 
+#include "graphics/camera.h"
 #include "graphics/painter.h"
-#include "graphics/transform.h"
 
-#include "bcm_host.h"
+#include <bcm_host.h>
 
 #include "headers.h"
-#ifdef MARSHMALLOW_OPENGL_GLES2
+#ifdef MARSHMALLOW_OPENGL_ES2_EGL
 #  include <EGL/egl.h>
 #else
 #  error EGL/GLES2 is disabled!
 #endif
 #include "extensions.h"
 
-#include <cmath>
-#include <cstring>
-#include <list>
+/*
+ * VC Viewport Notes
+ *
+ * Fullscreen flag is ignored since we will always be fullscreen.
+ */
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics::OpenGL;
-using namespace Graphics;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace { /******************************************** Anonymous Namespace */
 
-/******************************************************************************/
-
-namespace
+struct ViewportData
 {
-	struct ViewportData {
-		EGL_DISPMANX_WINDOW_T window;
-		DISPMANX_ELEMENT_HANDLE_T dispman_element;
-		DISPMANX_UPDATE_HANDLE_T  dispman_update;
+	DISPMANX_DISPLAY_HANDLE_T dpy;
+	DISPMANX_ELEMENT_HANDLE_T dispman_element;
+	DISPMANX_UPDATE_HANDLE_T  dispman_update;
+	DISPLAY_INPUT_FORMAT_T    input_format;
+	Math::Size2i wsize;
+	int          screen;
 
-		DISPMANX_DISPLAY_HANDLE_T display;
+	EGL_DISPMANX_WINDOW_T window;
+	EGLContext  egl_ctx;
+	EGLDisplay  egl_dpy;
+	EGLSurface  egl_surface;
 
-		Math::Size2i  wsize;
-		int           screen;
-		EGLContext    egl_context;
-		EGLDisplay    egl_display;
-		EGLSurface    egl_surface;
+	Math::Size2f size;
+	bool         loaded;
+} s_data;
 
-		Transform     camera;
-		float         radius2;
-		Math::Size2f  size;
-		Math::Size2f  scaled_size;
-		bool          fullscreen;
-		bool          loaded;
-	} s_data;
+void
+ResetViewportData(void)
+{
+	s_data.egl_ctx     = EGL_NO_CONTEXT;
+	s_data.egl_dpy     = EGL_NO_DISPLAY;
+	s_data.egl_surface = EGL_NO_SURFACE;
 
-	void UpdateCamera(void);
+	s_data.dpy = 0;
+	s_data.dispman_element = 0;
+	s_data.dispman_update = 0;
+	s_data.screen = 0;
+	s_data.size.zero();
+	s_data.wsize[0] = s_data.wsize[1] = 0;
 
-	void InitializeViewport(void)
-	{
-		s_data.camera.setRotation(.0f);
-		s_data.camera.setScale(Math::Size2f::Identity());
-		s_data.camera.setTranslation(Math::Point2::Zero());
+	s_data.loaded = false;
+}
 
-		s_data.egl_context = EGL_NO_CONTEXT;
-		s_data.egl_display = EGL_NO_DISPLAY;
-		s_data.egl_surface = EGL_NO_SURFACE;
+bool GLCreateSurface(uint8_t depth, bool vsync);
+bool VCCreateDisplay(uint16_t w, uint16_t h, uint8_t refresh);
+bool VCPowerOnDisplay(uint8_t refresh, uint16_t &display_id);
 
-		s_data.display = 0;
-		s_data.dispman_element = 0;
-		s_data.dispman_update = 0;
-		s_data.fullscreen = false;
-		s_data.loaded = false;
-		s_data.screen = 0;
-		s_data.size.zero();
-		s_data.wsize[0] = s_data.wsize[1] = 0;
+bool
+CreateDisplay(uint16_t w, uint16_t h, uint8_t depth, uint8_t refresh, bool vsync)
+{
+	using namespace Graphics;
+
+	ResetViewportData();
+
+	/* display */
+
+	if (!VCCreateDisplay(w, h, refresh)) {
+		MMERROR("VC: Failed to create display.");
+		return(false);
 	}
 
-	bool
-	CreateSurface(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool, bool)
-	{
-		VC_RECT_T l_dst_rect;
-		VC_RECT_T l_src_rect;
+	/* context */
 
-		s_data.egl_context = EGL_NO_CONTEXT;
-		s_data.egl_display = EGL_NO_DISPLAY;
-		s_data.egl_surface = EGL_NO_SURFACE;
+	if (!GLCreateSurface(depth, vsync)) {
+		MMERROR("GL: Failed to create surface.");
+		return(false);
+	}
 
-		s_data.display   = 0;
-		s_data.loaded    = false;
-		s_data.screen    = 0;
-		s_data.dispman_element = 0;
-		s_data.dispman_update  = 0;
+	/* initialize context */
 
-		s_data.fullscreen = true;
-		s_data.wsize[0] = w;
-		s_data.wsize[1] = h;
+	glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
 
-		/*** VC ***/
+	if (glGetError() != GL_NO_ERROR) {
+		MMERROR("GL: Failed during initialization.");
+		return(false);
+	}
 
-		l_src_rect.x = l_src_rect.y = 0;
-		l_dst_rect.x = l_dst_rect.y = 0;
-		l_dst_rect.width  = w;
-		l_dst_rect.height = h;
-
-		/*
-		 * Try to use display size, if not use default window width and
-		 * height.
-		 */
-		uint16_t l_display = DISPMANX_ID_SDTV; /* default to tv output */
-
-		/*
-		 * Power on SDTV (for state testing)
-		 */
-		if (vc_tv_sdtv_power_on(SDTV_MODE_NTSC, 0) != 0) {
-			MMERROR("SDTV: Failed to power on.");
-			return(false);
-		}
-
-		TV_GET_STATE_RESP_T l_tvstate;
-		if (vc_tv_get_state(&l_tvstate) == 0) {
-			MMINFO("VC: state=" << l_tvstate.state);
-
-			/*
-			 *  HDMI/DVI
-			 */
-			if ((l_tvstate.state & VC_HDMI_UNPLUGGED) == 0) {
-				/* switch to stand-by */
-				if ((l_tvstate.state & VC_HDMI_STANDBY) == 0)
-					vc_tv_power_off();
-
-				/* power on in correct mode */
-				if (vc_tv_hdmi_power_on_preferred() != 0) {
-					MMERROR("HDMI: Failed to power on.");
-					return(false);
-				}
-
-				/* update state */
-				if (vc_tv_get_state(&l_tvstate) != 0) {
-					MMERROR("HDMI: Failed to query tv state.");
-					return(false);
-				}
-
-				/* check connection type */
-				if ((l_tvstate.state & VC_HDMI_HDMI) == VC_HDMI_HDMI)
-					l_display = DISPMANX_ID_HDMI;
-				else if ((l_tvstate.state & VC_HDMI_DVI) == VC_HDMI_DVI)
-					l_display = DISPMANX_ID_MAIN_LCD;
-			}
-
-			if (l_tvstate.width <= 0 || l_tvstate.height <= 0) {
-				MMERROR("VC: Invalid TV size returned.");
-				return(false);
-			}
-		}
-
-		s_data.display = vc_dispmanx_display_open(l_display);
-		if (s_data.display == 0) {
-			MMERROR("VC: Failed to open display.");
-			return(false);
-		}
-
-		DISPMANX_MODEINFO_T l_display_info;
-		if (vc_dispmanx_display_get_info(s_data.display, &l_display_info) != 0) {
-			MMERROR("VC: Failed to get display info.");
-			return(false);
-		}
-
-		/* recalculate sizes */
-		s_data.wsize[0]   = l_dst_rect.width  = l_display_info.width;
-		s_data.wsize[1]   = l_dst_rect.height = l_display_info.height;
-		l_src_rect.width  = l_dst_rect.width  << 16;
-		l_src_rect.height = l_dst_rect.height << 16;
-		MMINFO("VC: Display size (" << s_data.wsize[0] << "x" << s_data.wsize[1] << ")");
-
-		s_data.dispman_update  = vc_dispmanx_update_start(0);
-		s_data.dispman_element = vc_dispmanx_element_add
-		    (s_data.dispman_update,
-		     s_data.display,
-		     0 /*layer*/,
-		    &l_dst_rect,
-		     0 /*src*/,
-		    &l_src_rect,
-		     DISPMANX_PROTECTION_NONE,
-		     0 /*alpha*/,
-		     0 /*clamp*/,
-		     DISPMANX_NO_ROTATE /*transform*/);
-
-		s_data.window.element = s_data.dispman_element;
-		s_data.window.width   = l_dst_rect.width;
-		s_data.window.height  = l_dst_rect.height;
-		vc_dispmanx_update_submit_sync(s_data.dispman_update);
-
-		/*** GL ***/
-
-		s_data.egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-		if (s_data.egl_display == EGL_NO_DISPLAY) {
-			MMERROR("EGL: No display was found. EGLERROR=" << eglGetError());
-			return(false);
-		}
-		
-		if (!eglInitialize(s_data.egl_display, 0, 0)) {
-			MMERROR("EGL: Initialization failed.");
-			return(false);
-		}
-
-		/* color sizes */
-		EGLint l_color_sizes[3];
-		switch (l_display_info.input_format) {
-		case VCOS_DISPLAY_INPUT_FORMAT_RGB888:
-			l_color_sizes[0] = l_color_sizes[1] = l_color_sizes [2] = 8;
-			break;
-		case VCOS_DISPLAY_INPUT_FORMAT_RGB565:
-			l_color_sizes[1] = 6;
-			l_color_sizes[0] = l_color_sizes[2] = 5;
-			break;
-		default:
-			l_color_sizes[0] = l_color_sizes[1] = l_color_sizes [2] = 0;
-		}
-
-		EGLint l_attr[] = {
-			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-			EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
-			EGL_RED_SIZE,        l_color_sizes[0],
-			EGL_GREEN_SIZE,      l_color_sizes[1],
-			EGL_BLUE_SIZE,       l_color_sizes[2],
-			EGL_NONE,            EGL_NONE
-		};
-
-		EGLint l_config_count;
-		EGLConfig l_config;
-		if (!eglChooseConfig(s_data.egl_display, l_attr, &l_config, 1, &l_config_count))
-			MMERROR("EGL: No config was chosen. EGLERROR=" << eglGetError());
-
-		s_data.egl_surface = eglCreateWindowSurface(s_data.egl_display, l_config, (EGLNativeWindowType) &s_data.window, 0);
-		if (s_data.egl_surface == EGL_NO_SURFACE) {
-			MMERROR("EGL: No surface was created. EGLERROR=" << eglGetError());
-			return(false);
-		}
-
-		EGLint l_ctxattr[] = {
-			EGL_CONTEXT_CLIENT_VERSION, 2,
-			EGL_NONE, EGL_NONE
-		};
-		s_data.egl_context = eglCreateContext(s_data.egl_display, l_config, EGL_NO_CONTEXT, l_ctxattr);
-		if (s_data.egl_context == EGL_NO_CONTEXT) {
-			MMERROR("EGL: No context was created. EGLERROR=" << eglGetError());
-			return(false);
-		}
-		
-		if (!eglMakeCurrent(s_data.egl_display, s_data.egl_surface, s_data.egl_surface, s_data.egl_context)) {
-			MMERROR("EGL: Failed to switch current context. EGLERROR=" << eglGetError());
-			return(false);
-		}
-
-		/* extensions */
-
-		InitializeExtensions(eglQueryString(s_data.egl_display, EGL_EXTENSIONS));
-
-		/* initialize context */
-
-		glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
-
-		if(glGetError() != GL_NO_ERROR) {
-			MMERROR("GL: Failed during initialization.");
-			return(false);
-		}
-
-		/* set viewport size */
+	/* set viewport size */
 
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-		s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
-		s_data.size[1] = static_cast<float>(s_data.wsize[1]) *
-		    (MARSHMALLOW_VIEWPORT_WIDTH / static_cast<float>(s_data.wsize[0]));
+	s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
+	s_data.size[1] = static_cast<float>(s_data.wsize[1]) *
+	    (MARSHMALLOW_VIEWPORT_WIDTH / static_cast<float>(s_data.wsize[0]));
 #else
-		s_data.size[0] = static_cast<float>(s_data.wsize[0]) *
-		    (MARSHMALLOW_VIEWPORT_HEIGHT / static_cast<float>(s_data.wsize[1]));
-		s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
+	s_data.size[0] = static_cast<float>(s_data.wsize[0]) *
+	    (MARSHMALLOW_VIEWPORT_HEIGHT / static_cast<float>(s_data.wsize[1]));
+	s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
 #endif
 
-		Viewport::SetCamera(s_data.camera);
+	Camera::Update();
 
-		return(s_data.loaded = true);
+	return(s_data.loaded = true);
+}
+
+void
+DestroyDisplay(void)
+{
+	if (s_data.dpy) {
+		eglMakeCurrent(s_data.egl_dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+		eglDestroyContext(s_data.egl_dpy, s_data.egl_ctx);
+		eglDestroySurface(s_data.egl_dpy, s_data.egl_surface);
+		eglTerminate(s_data.egl_dpy);
+
+		if (s_data.dpy > 0) {
+			vc_dispmanx_element_remove(s_data.dispman_update, s_data.dispman_element);
+			vc_dispmanx_display_close(s_data.dpy);
+		}
 	}
 
-	void
-	DestroySurface(void)
-	{
-		if (s_data.display) {
-			eglMakeCurrent(s_data.egl_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-			eglDestroyContext(s_data.egl_display, s_data.egl_context);
-			eglDestroySurface(s_data.egl_display, s_data.egl_surface);
-			eglTerminate(s_data.egl_display);
+	vc_tv_power_off();
 
-			if (s_data.display > 0) {
-				vc_dispmanx_element_remove(s_data.dispman_update, s_data.dispman_element);
-				vc_dispmanx_display_close(s_data.display);
-			}
+	s_data.egl_ctx     = EGL_NO_CONTEXT;
+	s_data.egl_dpy     = EGL_NO_DISPLAY;
+	s_data.egl_surface = EGL_NO_SURFACE;
+
+	s_data.dpy    = 0;
+	s_data.loaded = false;
+	s_data.screen = 0;
+}
+
+bool
+GLCreateSurface(uint8_t depth, bool vsync)
+{
+	using namespace Graphics;
+
+	s_data.egl_dpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+	if (s_data.egl_dpy == EGL_NO_DISPLAY) {
+		MMERROR("EGL: No display was found. EGLERROR=" << eglGetError());
+		return(false);
+	}
+	
+	if (!eglInitialize(s_data.egl_dpy, 0, 0)) {
+		MMERROR("EGL: Initialization failed.");
+		return(false);
+	}
+
+	/* color sizes */
+	EGLint l_color_sizes[3];
+	switch (s_data.input_format) {
+	case VCOS_DISPLAY_INPUT_FORMAT_RGB888:
+		l_color_sizes[0] = l_color_sizes[1] = l_color_sizes [2] = 8;
+		break;
+	case VCOS_DISPLAY_INPUT_FORMAT_RGB565:
+		l_color_sizes[1] = 6;
+		l_color_sizes[0] = l_color_sizes[2] = 5;
+		break;
+	default:
+		l_color_sizes[0] = l_color_sizes[1] = l_color_sizes [2] = 0;
+	}
+
+	EGLint l_attr[] = {
+		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+		EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
+		EGL_BUFFER_SIZE,     depth,
+		EGL_DEPTH_SIZE,      0,
+		EGL_RED_SIZE,        l_color_sizes[0],
+		EGL_GREEN_SIZE,      l_color_sizes[1],
+		EGL_BLUE_SIZE,       l_color_sizes[2],
+		EGL_ALPHA_SIZE,      0,
+		EGL_NONE,            EGL_NONE
+	};
+
+	EGLint l_config_count;
+	EGLConfig l_config;
+	if (!eglChooseConfig(s_data.egl_dpy, l_attr, &l_config, 1, &l_config_count))
+		MMERROR("EGL: No config was chosen. EGLERROR=" << eglGetError());
+
+	s_data.egl_surface =
+	    eglCreateWindowSurface(s_data.egl_dpy, l_config,
+	        (EGLNativeWindowType) &s_data.window, 0);
+	if (s_data.egl_surface == EGL_NO_SURFACE) {
+		MMERROR("EGL: No surface was created. EGLERROR=" << eglGetError());
+		return(false);
+	}
+
+	EGLint l_ctxattr[] = {
+		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_NONE, EGL_NONE
+	};
+	s_data.egl_ctx = eglCreateContext(s_data.egl_dpy, l_config, EGL_NO_CONTEXT, l_ctxattr);
+	if (s_data.egl_ctx == EGL_NO_CONTEXT) {
+		MMERROR("EGL: No context was created. EGLERROR=" << eglGetError());
+		return(false);
+	}
+	
+	if (!eglMakeCurrent(s_data.egl_dpy, s_data.egl_surface, s_data.egl_surface, s_data.egl_ctx)) {
+		MMERROR("EGL: Failed to switch current context. EGLERROR=" << eglGetError());
+		return(false);
+	}
+
+	/* extensions */
+
+	OpenGL::InitializeExtensions(eglQueryString(s_data.egl_dpy, EGL_EXTENSIONS));
+
+	/* vsync */
+
+	eglSwapInterval(s_data.egl_dpy, vsync ? 1 : 0);
+
+	return(true);
+}
+
+bool
+VCCreateDisplay(uint16_t w, uint16_t h, uint8_t refresh)
+{
+	VC_RECT_T l_dst_rect;
+	VC_RECT_T l_src_rect;
+
+	s_data.wsize[0] = w;
+	s_data.wsize[1] = h;
+
+	l_src_rect.x = l_src_rect.y = 0;
+	l_dst_rect.x = l_dst_rect.y = 0;
+	l_dst_rect.width  = w;
+	l_dst_rect.height = h;
+
+	/* set SPD type to game */
+	vc_tv_hdmi_set_spd("MMGE", "MES", HDMI_SPD_TYPE_GAME);
+
+	uint16_t l_display_type;
+	if (!VCPowerOnDisplay(refresh, l_display_type)) {
+		MMERROR("VC: Failed to power on display.");
+		return(false);
+	}
+
+	s_data.dpy = vc_dispmanx_display_open(l_display_type);
+	if (s_data.dpy == 0) {
+		MMERROR("VC: Failed to open display.");
+		return(false);
+	}
+
+	DISPMANX_MODEINFO_T l_display_info;
+	if (vc_dispmanx_display_get_info(s_data.dpy, &l_display_info) != 0) {
+		MMERROR("VC: Failed to get display info.");
+		return(false);
+	}
+	/* recalculate sizes */
+	s_data.wsize[0]   = l_dst_rect.width  = l_display_info.width;
+	s_data.wsize[1]   = l_dst_rect.height = l_display_info.height;
+	l_src_rect.width  = l_dst_rect.width  << 16;
+	l_src_rect.height = l_dst_rect.height << 16;
+	MMINFO("VC: Display size (" << s_data.wsize[0] << "x" << s_data.wsize[1] << ")");
+
+	s_data.dispman_update  = vc_dispmanx_update_start(0);
+	s_data.dispman_element = vc_dispmanx_element_add
+	    (s_data.dispman_update,
+	     s_data.dpy,
+	     0 /*layer*/,
+	    &l_dst_rect,
+	     0 /*src*/,
+	    &l_src_rect,
+	     DISPMANX_PROTECTION_NONE,
+	     0 /*alpha*/,
+	     0 /*clamp*/,
+	     DISPMANX_NO_ROTATE /*transform*/);
+
+	s_data.window.element = s_data.dispman_element;
+	s_data.window.width   = l_dst_rect.width;
+	s_data.window.height  = l_dst_rect.height;
+	s_data.input_format   = l_display_info.input_format;
+	vc_dispmanx_update_submit_sync(s_data.dispman_update);
+
+	return(true);
+}
+
+bool
+VCPowerOnDisplay(uint8_t refresh, uint16_t &did)
+{
+	uint16_t l_display = DISPMANX_ID_SDTV; /* default to tv output */
+
+	/*
+	 * Power on SDTV (needed for state testing)
+	 */
+	if (vc_tv_sdtv_power_on(SDTV_MODE_NTSC, 0) != 0) {
+		MMERROR("SDTV: Failed to power on.");
+		return(false);
+	}
+
+	TV_GET_STATE_RESP_T l_tvstate;
+	if (vc_tv_get_state(&l_tvstate) != 0) {
+		MMERROR("HDMI: Failed to query initial tv state.");
+		return(false);
+	}
+
+	MMINFO("VC: state=" << l_tvstate.state);
+
+	/*
+	 *  HDMI/DVI
+	 */
+	if ((l_tvstate.state & VC_HDMI_UNPLUGGED) == 0) {
+
+		/* switch to stand-by */
+		if ((l_tvstate.state & VC_HDMI_STANDBY) == 0)
+			vc_tv_power_off();
+
+		/* power on in correct mode */
+		if (vc_tv_hdmi_power_on_best(0, 0, refresh, HDMI_NONINTERLACED,
+		    HDMI_MODE_MATCH_FRAMERATE) != 0) {
+			MMERROR("HDMI: Failed to power on.");
+			return(false);
 		}
 
-		s_data.egl_context = EGL_NO_CONTEXT;
-		s_data.egl_display = EGL_NO_DISPLAY;
-		s_data.egl_surface = EGL_NO_SURFACE;
+		/* update state */
+		if (vc_tv_get_state(&l_tvstate) != 0) {
+			MMERROR("HDMI: Failed to query tv state after HDMI power on.");
+			return(false);
+		}
 
-		s_data.display = 0;
-		s_data.loaded = false;
-		s_data.screen = 0;
+		/* check connection type */
+		if ((l_tvstate.state & VC_HDMI_HDMI) == VC_HDMI_HDMI)
+			l_display = DISPMANX_ID_HDMI;
+		else if ((l_tvstate.state & VC_HDMI_DVI) == VC_HDMI_DVI)
+			l_display = DISPMANX_ID_MAIN_LCD;
 
-		/* power off */
-		vc_tv_power_off();
 	}
 
-	void
-	UpdateCamera(void)
-	{
-		/* calculate scaled viewport size */
-		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().width();
-		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().height();
-
-		/* calculate magnitude and pass it off as radius squared */
-		s_data.radius2 = powf(s_data.scaled_size[0] / 2.f, 2.f) +
-		                 powf(s_data.scaled_size[1] / 2.f, 2.f);
+	if (l_tvstate.width <= 0 || l_tvstate.height <= 0) {
+		MMERROR("VC: Invalid TV size returned.");
+		return(false);
 	}
-} // namespace
 
-/***************************************************************** Extensions */
+	did = l_display;
+	return(true);
+}
 
-PFNPROC
+} /****************************************************** Anonymous Namespace */
+
+namespace Graphics { /************************************ Graphics Namespace */
+
+OpenGL::PFNPROC
 OpenGL::glGetProcAddress(const char *f)
 {
 	return(eglGetProcAddress(f));
 }
 
-/******************************************************************************/
+/********************************************************* Graphics::Viewport */
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t depth, uint8_t refresh,
+                     bool, bool vsync)
 {
 	bcm_host_init();
 
-	InitializeViewport();
+	Camera::Reset();
 
-	if (!CreateSurface(w, h, d, r, f, v)) {
-		DestroySurface();
+	if (!CreateDisplay(w, h, depth, refresh, vsync)) {
+		DestroyDisplay();
 		return(false);
 	}
 
@@ -385,18 +411,20 @@ void
 Viewport::Finalize(void)
 {
 	Painter::Finalize();
-	DestroySurface();
+
+	DestroyDisplay();
 
 	bcm_host_deinit();
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t depth, uint8_t refresh,
+                    bool, bool vsync)
 {
-	DestroySurface();
+	DestroyDisplay();
 
-	if(!CreateSurface(w, h, d, r, f, v)) {
-		DestroySurface();
+	if (!CreateDisplay(w, h, depth, refresh, vsync)) {
+		DestroyDisplay();
 		return(false);
 	}
 	return(true);
@@ -411,33 +439,8 @@ Viewport::Tick(void)
 void
 Viewport::SwapBuffer(void)
 {
-	eglSwapBuffers(s_data.egl_display, s_data.egl_surface);
+	eglSwapBuffers(s_data.egl_dpy, s_data.egl_surface);
 	Painter::Reset();
-}
-
-const Graphics::Transform &
-Viewport::Camera(void)
-{
-	return(s_data.camera);
-}
-
-void
-Viewport::SetCamera(const Graphics::Transform &camera)
-{
-	s_data.camera = camera;
-	UpdateCamera();
-}
-
-float
-Viewport::Radius2(void)
-{
-	return(s_data.radius2);
-}
-
-const Math::Size2f &
-Viewport::ScaledSize(void)
-{
-	return(s_data.scaled_size);
 }
 
 const Math::Size2f &
@@ -458,4 +461,7 @@ Viewport::Type(void)
 	static const Core::Type s_type("VC");
 	return(s_type);
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

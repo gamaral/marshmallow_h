@@ -40,17 +40,14 @@
 #include <core/iserializable.h>
 
 #include <core/fd.h>
+
 #include <graphics/config.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { class Vector2; }
 
-namespace Math
-{
-	class Vector2;
-}
+namespace Graphics { /************************************ Graphics Namespace */
 
-namespace Graphics
-{
 	struct ITextureCoordinateData;
 	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
 
@@ -83,8 +80,8 @@ namespace Graphics
 	};
 	typedef Core::Shared<IMesh> SharedMesh;
 	typedef Core::Weak<IMesh> WeakMesh;
-}
 
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

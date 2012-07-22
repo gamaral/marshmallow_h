@@ -2,15 +2,11 @@
 <map version="1.0" orientation="orthogonal" width="80" height="20" tilewidth="32" tileheight="32">
  <properties>
   <property name="scale" value="1.0"/>
+  <property name="bgcolor" value="#55B4FF"/>
  </properties>
  <tileset firstgid="1" name="platformer" tilewidth="32" tileheight="32">
   <image source="assets/platformer_tiles.png" width="512" height="512"/>
  </tileset>
- <layer name="background" width="80" height="20">
-  <data encoding="base64" compression="zlib">
-   eJztwwEJAAAMBKEr+P3rrMdQcNVUVVVVVVUfPdw84VA=
-  </data>
- </layer>
  <layer name="clouds" width="80" height="20" opacity="0.75">
   <properties>
    <property name="scale" value="2"/>

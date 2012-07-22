@@ -50,8 +50,8 @@
 #  define TILE_ADJUSTMENT 0.f
 #endif
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
 struct TilesetBase::Private
 {
@@ -275,4 +275,7 @@ TilesetBase::reset(void)
 	for (int i = 0; i < l_item_count; ++i)
 		m_p->cache[i] = 0;
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

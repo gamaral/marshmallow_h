@@ -36,7 +36,7 @@
 
 #include <core/logger.h>
 
-#include <graphics/transform.h>
+#include <graphics/camera.h>
 #include <graphics/viewport.h>
 
 #include <game/animationcomponent.h>
@@ -113,8 +113,8 @@ PlayerEntity::update(float d)
 		Game::SharedPositionComponent l_pos_component =
 		    getComponentType(Game::PositionComponent::Type()).staticCast<Game::PositionComponent>();
 		if (l_pos_component) {
-			Graphics::Transform l_camera = Graphics::Viewport::Camera();
 			Math::Point2 l_pos = l_pos_component->position();
+			const Math::Size2f &l_zoom = Graphics::Camera::Zoom();
 
 			/* camara snap - calculate using map */
 
@@ -123,15 +123,14 @@ PlayerEntity::update(float d)
 			    Game::Engine::Instance()->sceneManager()->activeScene()->getLayer("platform").staticCast<Game::TilemapSceneLayer>();
 			const Math::Size2f &l_hrsize = l_platform_layer->virtualHalfSize();
 
-			l_limit = l_hrsize.width() - (Graphics::Viewport::Size().width() / (2.f * l_camera.scale().width()));
+			l_limit = l_hrsize.width() - (Graphics::Viewport::Size().width() / (2.f * l_zoom.width()));
 			if (l_pos.x() < -l_limit) l_pos[0] = -l_limit;
 			else if (l_pos.x() > l_limit) l_pos[0] = l_limit;
-			l_limit = l_hrsize.height() - (Graphics::Viewport::Size().height() / (2.f * l_camera.scale().height()));
+			l_limit = l_hrsize.height() - (Graphics::Viewport::Size().height() / (2.f * l_zoom.height()));
 			if (l_pos.y() < -l_limit) l_pos[1] = -l_limit;
 			else if (l_pos.y() > l_limit) l_pos[1] = l_limit;
 
-			l_camera.setTranslation(l_pos);
-			Graphics::Viewport::SetCamera(l_camera);
+			Graphics::Camera::SetPosition(l_pos);
 
 			/* translate background layers (parallax) */
 

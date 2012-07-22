@@ -40,12 +40,12 @@
 #include <core/iasset.h>
 
 #include <core/fd.h>
+
 #include <graphics/config.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
-namespace Graphics
-{
 	/*! @brief Graphics Vertex Data Interface */
 	struct IVertexData : public Core::IAsset
 	{
@@ -58,8 +58,8 @@ namespace Graphics
 	};
 	typedef Core::Shared<IVertexData> SharedVertexData;
 	typedef Core::Weak<IVertexData> WeakVertexData;
-}
 
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

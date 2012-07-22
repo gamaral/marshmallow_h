@@ -44,12 +44,8 @@
 #include "math/size2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
-
-namespace OpenGL
-{
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 	/*! @brief Graphic OpenGL Texture Data Class */
 	class TextureData : public ITextureData
@@ -91,10 +87,8 @@ namespace OpenGL
 	typedef Core::Shared<TextureData> SharedTextureData;
 	typedef Core::Weak<TextureData> WeakTextureData;
 
-}
-
-}
-
+} /*********************************************** Graphics::OpenGL Namespace */
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -31,8 +31,7 @@
 #include <event/eventmanager.h>
 #include <event/keyboardevent.h>
 
-#include <graphics/transform.h>
-#include <graphics/viewport.h>
+#include <graphics/camera.h>
 
 #include <game/collisionscenelayer.h>
 #include <game/enginebase.h>
@@ -68,9 +67,7 @@ public:
 		if (!EngineBase::initialize())
 			return(false);
 
-		Graphics::Transform l_camera = Graphics::Viewport::Camera();
-		l_camera.setScale(Math::Size2f(1.4f, 1.4f));
-		Graphics::Viewport::SetCamera(l_camera);
+		Graphics::Camera::SetZoom(1.4f);
 
 		eventManager()->connect(this, Event::KeyboardEvent::Type());
 

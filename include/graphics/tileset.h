@@ -40,12 +40,9 @@
 #include <graphics/tilesetbase.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
+namespace Graphics { /************************************ Graphics Namespace */
 	typedef TilesetBase Tileset;
-}
-
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

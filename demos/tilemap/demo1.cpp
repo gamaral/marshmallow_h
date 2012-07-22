@@ -31,8 +31,7 @@
 #include <event/eventmanager.h>
 #include <event/keyboardevent.h>
 
-#include <graphics/transform.h>
-#include <graphics/viewport.h>
+#include <graphics/camera.h>
 
 #include <game/collisionscenelayer.h>
 #include <game/enginebase.h>
@@ -43,8 +42,6 @@
 #include <extra/tmxloader.h>
 
 #include "customfactory.h"
-
-#include <cstdlib>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
@@ -84,9 +81,7 @@ public:
 
 		sceneManager()->pushScene(l_scene);
 
-		Graphics::Transform l_camera = Graphics::Viewport::Camera();
-		l_camera.setScale(Math::Size2f(2.f, 2.f));
-		Graphics::Viewport::SetCamera(l_camera);
+		Graphics::Camera::SetZoom(2.f);
 
 		return(true);
 	}

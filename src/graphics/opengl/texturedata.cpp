@@ -37,13 +37,14 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 
-#include "extensions.h"
+#include <cstring>
 
 #include <png.h>
 
-#include <cstdlib>
+#include "extensions.h"
 
-namespace {
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace { /******************************************** Anonymous Namespace */
 
 struct Texture
 {
@@ -132,11 +133,10 @@ UnloadTexture(Texture &data)
 	delete [] data.pixels, data.pixels = 0;
 }
 
-}
+} /****************************************************** Anonymous Namespace */
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics::OpenGL;
-using namespace Graphics;
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 TextureData::TextureData(void)
     : m_id(),
@@ -213,4 +213,8 @@ TextureData::Type(void)
 	static const Core::Type sType("Graphics::OpenGL::TextureData");
 	return(sType);
 }
+
+} /*********************************************** Graphics::OpenGL Namespace */
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

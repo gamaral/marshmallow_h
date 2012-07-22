@@ -36,9 +36,9 @@
 
 #include <cstring>
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics;
-using namespace Dummy;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
+namespace Dummy { /******************************** Graphics::Dummy Namespace */
 
 VertexData::VertexData(uint16_t c)
 #define AXES 2
@@ -77,4 +77,8 @@ VertexData::Type(void)
 	static const Core::Type sType("Graphics::Dummy::VertexData");
 	return(sType);
 }
+
+} /************************************************ Graphics::Dummy Namespace */
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

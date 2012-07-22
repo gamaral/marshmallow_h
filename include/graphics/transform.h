@@ -42,17 +42,15 @@
 #include <core/fd.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Math
-{
+namespace Math { /******************************************** Math Namespace */
 	class Matrix4;
 	class Point2;
 	template <typename T> class Size2;
 	typedef Size2<float> Size2f;
-}
+} /*********************************************************** Math Namespace */
 
-namespace Graphics
-{
+namespace Graphics { /************************************ Graphics Namespace */
+
 	/*! @brief Graphics Transform */
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	Transform
@@ -77,16 +75,18 @@ namespace Graphics
 
 		const Math::Size2f & scale(void) const;
 		void setScale(const Math::Size2f &value);
+		void setScale(float w, float h);
 
 		const Math::Point2 & translation(void) const;
 		void setTranslation(const Math::Point2 &value);
+		void setTranslation(float x, float y);
 
 		const Math::Matrix4 & matrix(MatrixType type = mtModel) const;
 	};
 	typedef Core::Shared<Transform> SharedTransform;
 	typedef Core::Weak<Transform> WeakTransform;
-}
 
+} /********************************************** Graphics::Painter Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

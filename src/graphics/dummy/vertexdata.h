@@ -42,13 +42,10 @@
 #include "core/global.h"
 #include "core/identifier.h"
 
+
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
-
-namespace Dummy
-{
+namespace Graphics {
+namespace Dummy {
 
 	/*! @brief Graphics Dummy Vertex Data Class */
 	class VertexData : public IVertexData
@@ -86,9 +83,8 @@ namespace Dummy
 	typedef Core::Shared<VertexData> SharedVertexData;
 	typedef Core::Weak<VertexData> WeakVertexData;
 
-}
-
-}
+} // Dummy
+} // Graphics
 
 MARSHMALLOW_NAMESPACE_END
 

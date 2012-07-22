@@ -40,196 +40,181 @@
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
 
+#include "graphics/camera.h"
 #include "graphics/painter.h"
-#include "graphics/transform.h"
+
+#include <SDL.h>
 
 #include "headers.h"
 #include "extensions.h"
 
-#include <SDL.h>
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace { /******************************************** Anonymous Namespace */
 
-#include <cmath>
-#include <list>
-
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics::OpenGL;
-using namespace Graphics;
-
-/******************************************************************************/
-
-namespace
+struct ViewportData
 {
-	struct ViewportData {
-		SDL_Surface  *display;
-		Math::Size2i  wsize;
-		int           screen;
-		Transform     camera;
-		float         radius2;
-		Math::Size2f  size;
-		Math::Size2f  scaled_size;
-		bool          fullscreen;
-		bool          loaded;
-	} s_data;
+	SDL_Surface        *display;
+	Math::Size2i        wsize;
+	int                 screen;
+	Math::Size2f        size;
+	bool                fullscreen;
+	bool                loaded;
+} s_data;
 
-	void UpdateCamera(void);
+void
+ResetViewportData(void)
+{
+	s_data.display = 0;
+	s_data.fullscreen = false;
+	s_data.size.zero();
+	s_data.wsize[0] = s_data.wsize[1] = 0;
 
-	void InitializeViewport(void)
-	{
-		s_data.camera.setRotation(.0f);
-		s_data.camera.setScale(Math::Size2f::Identity());
-		s_data.camera.setTranslation(Math::Point2::Zero());
+	s_data.loaded = false;
+}
 
-		s_data.display = 0;
-		s_data.fullscreen = false;
-		s_data.loaded = false;
-		s_data.size.zero();
-		s_data.wsize[0] = s_data.wsize[1] = 0;
-	}
+bool
+CreateWindow(int w, int h, int depth, bool fullscreen, bool vsync)
+{
+	using namespace Graphics;
 
-	bool
-	CreateWindow(int w, int h, int d, bool f, bool v)
-	{
-		s_data.loaded  = false;
+	ResetViewportData();
 
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); 
+	SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,  depth);
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE,     0);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,   0);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,    0);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,   0);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,   0);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 #if SDL_VERSION_ATLEAST(1,3,0)
-		if (!SDL_GL_SetSwapInterval(v ? 1 : 0))
-			MMERROR("SDL: Failed to set swap interval. SDLERROR=" << SDL_GetError());
+	if (!SDL_GL_SetSwapInterval(vsync ? 1 : 0))
+		MMERROR("SDL: Failed to set swap interval. "
+		        "SDLERROR=" << SDL_GetError());
 #else
-		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, (v ? 1 : 0));
+	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, (vsync ? 1 : 0));
 #endif
-		s_data.display = SDL_SetVideoMode(f ? 0 : w, f ? 0 : h, d,
-		                                  SDL_HWSURFACE |
-		                                  SDL_GL_DOUBLEBUFFER |
-		                                  SDL_OPENGL |
-		                                  (f? SDL_FULLSCREEN : 0));
+	
+	s_data.display =
+	    SDL_SetVideoMode(fullscreen ? 0 : w, fullscreen ? 0 : h, depth,
+	                     SDL_HWSURFACE |
+	                     SDL_GL_DOUBLEBUFFER |
+	                     SDL_OPENGL |
+	                     (fullscreen? SDL_FULLSCREEN : 0));
 
-		if (!s_data.display) {
-			MMERROR("Failed to create an SDL surface.");
-			return(false);
-		}
+	if (!s_data.display) {
+		MMERROR("Failed to create an SDL surface.");
+		return(false);
+	}
 
-		SDL_WM_SetCaption(MARSHMALLOW_BUILD_TITLE, MARSHMALLOW_BUILD_TITLE);
+	SDL_WM_SetCaption(MARSHMALLOW_BUILD_TITLE, MARSHMALLOW_BUILD_TITLE);
 
-		s_data.fullscreen = f;
-		s_data.wsize[0] = s_data.display->w;
-		s_data.wsize[1] = s_data.display->h;
+	s_data.fullscreen = fullscreen;
+	s_data.wsize[0] = s_data.display->w;
+	s_data.wsize[1] = s_data.display->h;
 
-		/* extensions */
+	/* extensions */
 
-		InitializeExtensions();
+	OpenGL::InitializeExtensions();
 
-		/* initialize context */
+	/* initialize context */
 
-		glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
+	glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
 
-		if(glGetError() != GL_NO_ERROR) {
-			MMERROR("GL failed during initialization.");
-			return(false);
-		}
+	if (glGetError() != GL_NO_ERROR) {
+		MMERROR("GL failed during initialization.");
+		return(false);
+	}
 
-		/* set viewport size */
+	/* set viewport size */
 
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-		s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
-		s_data.size[1] = static_cast<float>(s_data.wsize[1]) *
-		    (MARSHMALLOW_VIEWPORT_WIDTH / static_cast<float>(s_data.wsize[0]));
+	s_data.size[0] = MARSHMALLOW_VIEWPORT_WIDTH;
+	s_data.size[1] = static_cast<float>(s_data.wsize[1]) *
+	    (MARSHMALLOW_VIEWPORT_WIDTH / static_cast<float>(s_data.wsize[0]));
 #else
-		s_data.size[0] = static_cast<float>(s_data.wsize[0]) *
-		    (MARSHMALLOW_VIEWPORT_HEIGHT / static_cast<float>(s_data.wsize[1]));
-		s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
+	s_data.size[0] = static_cast<float>(s_data.wsize[0]) *
+	    (MARSHMALLOW_VIEWPORT_HEIGHT / static_cast<float>(s_data.wsize[1]));
+	s_data.size[1] = MARSHMALLOW_VIEWPORT_HEIGHT;
 #endif
 
-		Viewport::SetCamera(s_data.camera);
+	Camera::Update();
 
-		return(s_data.loaded = true);
-	}
+	return(s_data.loaded = true);
+}
 
-	void
-	DestroyWindow(void)
-	{
-		s_data.display = 0;
-		s_data.loaded  = false;
-	}
+void
+DestroyWindow(void)
+{
+	s_data.display = 0;
+	s_data.loaded  = false;
+}
 
-	void
-	UpdateCamera(void)
-	{
-		/* calculate scaled viewport size */
-		s_data.scaled_size[0] = s_data.size[0] / s_data.camera.scale().width();
-		s_data.scaled_size[1] = s_data.size[1] / s_data.camera.scale().height();
+void
+HandleKeyEvent(SDL_KeyboardEvent &key)
+{
+	typedef std::list<Event::KBKeys> KeyList;
+	static KeyList s_keys_pressed;
 
-		/* calculate magnitude and pass it off as radius squared */
-		s_data.radius2 = powf(s_data.scaled_size[0] / 2.f, 2.f) +
-		                 powf(s_data.scaled_size[1] / 2.f, 2.f);
-	}
+	Event::KBKeys l_key = Event::KEY_NONE;
+	Event::KBActions l_action =
+	    (key.state == SDL_PRESSED ? Event::KeyPressed : Event::KeyReleased);
 
-	void
-	HandleKeyEvent(SDL_KeyboardEvent &key)
-	{
-		typedef std::list<Event::KBKeys> KeyList;
-		static KeyList s_keys_pressed;
+	l_key = static_cast<Event::KBKeys>(key.keysym.sym);
 
-		Event::KBKeys l_key = Event::KEY_NONE;
-		Event::KBActions l_action =
-		    (key.state == SDL_PRESSED ? Event::KeyPressed : Event::KeyReleased);
-
-		l_key = static_cast<Event::KBKeys>(key.keysym.sym);
-
-		bool l_key_pressed = false;
-		KeyList::const_iterator l_pressed_key_i;
-		for (l_pressed_key_i = s_keys_pressed.begin();
-		     l_pressed_key_i != s_keys_pressed.end();
-		     ++l_pressed_key_i)
-			if (*l_pressed_key_i == l_key) {
-				l_key_pressed = true;
-				break;
-			}
-		
-		if (( l_key_pressed && l_action != Event::KeyPressed)
-		 || (!l_key_pressed && l_action == Event::KeyPressed)) {
-			Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
-			Event::EventManager::Instance()->queue(event);
-
-			if (l_key_pressed) s_keys_pressed.remove(l_key);
-			else s_keys_pressed.push_front(l_key);
+	bool l_key_pressed = false;
+	KeyList::const_iterator l_pressed_key_i;
+	for (l_pressed_key_i = s_keys_pressed.begin();
+	     l_pressed_key_i != s_keys_pressed.end();
+	     ++l_pressed_key_i)
+		if (*l_pressed_key_i == l_key) {
+			l_key_pressed = true;
+			break;
 		}
+	
+	if (( l_key_pressed && l_action != Event::KeyPressed)
+	 || (!l_key_pressed && l_action == Event::KeyPressed)) {
+		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
+		Event::EventManager::Instance()->queue(event);
+
+		if (l_key_pressed) s_keys_pressed.remove(l_key);
+		else s_keys_pressed.push_front(l_key);
 	}
-} // namespace
+}
 
-/***************************************************************** Extensions */
+} /****************************************************** Anonymous Namespace */
 
-PFNPROC
+namespace Graphics { /************************************ Graphics Namespace */
+
+OpenGL::PFNPROC
 OpenGL::glGetProcAddress(const char *f)
 {
 	union {
 		PFNPROC fptr;
-		void *ptr;
+		void    *ptr;
 	} conv;
 
 	conv.ptr = SDL_GL_GetProcAddress(f);
 	return(conv.fptr);
 }
 
-/******************************************************************************/
+/********************************************************* Graphics::Viewport */
 
 bool
-Viewport::Initialize(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
+Viewport::Initialize(uint16_t w, uint16_t h, uint8_t depth, uint8_t,
+                     bool fullscreen, bool vsync)
 {
-	MMUNUSED(r);
-
 	/* force video center */
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_CENTERED=1"));
 
-	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		MMERROR("SDL viewport initialization failed.");
 		return(false);
 	}
 
-	InitializeViewport();
+	Camera::Reset();
 
-	if (!CreateWindow(w, h, d, f, v)) {
+	if (!CreateWindow(w, h, depth, fullscreen, vsync)) {
 		DestroyWindow();
 		return(false);
 	}
@@ -242,24 +227,25 @@ void
 Viewport::Finalize(void)
 {
 	Painter::Finalize();
+
 	DestroyWindow();
+
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 bool
-Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t d, uint8_t r, bool f, bool v)
+Viewport::Redisplay(uint16_t w, uint16_t h, uint8_t depth, uint8_t,
+                    bool fullscreen, bool vsync)
 {
-	MMUNUSED(r);
-
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
-	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		MMERROR("SDL viewport initialization failed.");
 		return(false);
 	}
 
 	DestroyWindow();
 
-	if(!CreateWindow(w, h, d, f, v)) {
+	if (!CreateWindow(w, h, depth, fullscreen, vsync)) {
 		DestroyWindow();
 		return(false);
 	}
@@ -295,31 +281,6 @@ Viewport::SwapBuffer(void)
 	Painter::Reset();
 }
 
-const Graphics::Transform &
-Viewport::Camera(void)
-{
-	return(s_data.camera);
-}
-
-void
-Viewport::SetCamera(const Graphics::Transform &camera)
-{
-	s_data.camera = camera;
-	UpdateCamera();
-}
-
-float
-Viewport::Radius2(void)
-{
-	return(s_data.radius2);
-}
-
-const Math::Size2f &
-Viewport::ScaledSize(void)
-{
-	return(s_data.scaled_size);
-}
-
 const Math::Size2f &
 Viewport::Size(void)
 {
@@ -338,4 +299,7 @@ Viewport::Type(void)
 	static const Core::Type s_type("SDL");
 	return(s_type);
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

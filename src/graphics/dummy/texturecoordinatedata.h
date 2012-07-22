@@ -43,12 +43,8 @@
 #include "core/identifier.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
-
-namespace Dummy
-{
+namespace Graphics { /************************************ Graphics Namespace */
+namespace Dummy { /******************************** Graphics::Dummy Namespace */
 
 	/*! @brief Graphics Dummy Texture Coordinate Data Class */
 	class TextureCoordinateData : public ITextureCoordinateData
@@ -86,10 +82,8 @@ namespace Dummy
 	typedef Core::Shared<TextureCoordinateData> SharedTextureCoordinateData;
 	typedef Core::Weak<TextureCoordinateData> WeakTextureCoordinateData;
 
-}
-
-}
-
+} /************************************************ Graphics::Dummy Namespace */
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -60,6 +60,10 @@ namespace Game
 		SceneBase(const Core::Identifier &identifier);
 		virtual ~SceneBase(void);
 
+		bool isActive(void) const;
+
+		void setBackground(const Graphics::Color &color);
+
 	public: /* virtual */
 
 		VIRTUAL const Core::Identifier & id(void) const;
@@ -71,8 +75,10 @@ namespace Game
 		VIRTUAL SharedSceneLayer getLayerType(const Core::Type &type) const;
 		VIRTUAL const SceneLayerList & getLayers(void) const;
 
-		VIRTUAL void activate(void) {}
-		VIRTUAL void deactivate(void) {}
+		VIRTUAL const Graphics::Color & background(void) const;
+
+		VIRTUAL void activate(void);
+		VIRTUAL void deactivate(void);
 
 		VIRTUAL void render(void);
 		VIRTUAL void update(float delta);

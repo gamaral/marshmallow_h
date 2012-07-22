@@ -37,10 +37,11 @@
 #ifndef MARSHMALLOW_CORE_LOGGER_H
 #define MARSHMALLOW_CORE_LOGGER_H 1
 
-#include <iostream>
-
 #include <core/config.h>
 #include <core/environment.h>
+
+#include <cstdlib>
+#include <iostream>
 
 #define MMLOG(type, x) std::cerr << __FILE__ << ":" << __LINE__ << " ["type"]" << std::endl \
                                  << "\t" << MMFUNCTION << ": " << x << std::endl

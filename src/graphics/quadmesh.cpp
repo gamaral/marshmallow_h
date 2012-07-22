@@ -41,8 +41,8 @@
 #include "graphics/itexturedata.h"
 #include "graphics/ivertexdata.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
 QuadMesh::QuadMesh(const Math::Vector2 &tl,
                    const Math::Vector2 &bl,
@@ -141,4 +141,7 @@ QuadMesh::Type(void)
 	static const Core::Type s_type("Graphics::QuadMesh");
 	return(s_type);
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

@@ -39,8 +39,6 @@
 
 #include <gccore.h>
 
-#include <cstdlib>
-
 namespace {
 
 struct Texture

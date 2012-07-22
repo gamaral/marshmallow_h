@@ -44,12 +44,8 @@
 #include "math/size2.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
-
-namespace Dummy
-{
+namespace Graphics { /************************************ Graphics Namespace */
+namespace Dummy { /******************************** Graphics::Dummy Namespace */
 
 	/*! @brief Graphic Dummy Texture Data Class */
 	class TextureData : public ITextureData
@@ -89,10 +85,8 @@ namespace Dummy
 	typedef Core::Shared<TextureData> SharedTextureData;
 	typedef Core::Weak<TextureData> WeakTextureData;
 
-}
-
-}
-
+} /************************************************ Graphics::Dummy Namespace */
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

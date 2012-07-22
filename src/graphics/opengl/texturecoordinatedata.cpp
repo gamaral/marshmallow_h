@@ -34,15 +34,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cstring>
-
 #include "core/logger.h"
+
+#include <cstring>
 
 #include "extensions.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics::OpenGL;
-using namespace Graphics;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 TextureCoordinateData::TextureCoordinateData(uint16_t c)
 #define AXES 2
@@ -124,4 +124,8 @@ TextureCoordinateData::Type(void)
 	static const Core::Type sType("Graphics::OpenGL::TextureCoordinateData");
 	return(sType);
 }
+
+} /*********************************************** Graphics::OpenGL Namespace */
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

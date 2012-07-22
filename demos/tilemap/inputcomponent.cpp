@@ -51,11 +51,11 @@ const Core::Type InputComponent::Type("InputComponent");
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
     , m_linear_impulse(40.f)
+    , m_direction(ICDRight)
     , m_down(false)
     , m_left(false)
     , m_right(false)
     , m_up(false)
-    , m_direction(ICDRight)
 {
 	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
 }

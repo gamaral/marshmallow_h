@@ -36,6 +36,9 @@
 
 #include "core/logger.h"
 
+#include "graphics/color.h"
+#include "graphics/painter.h"
+
 #include "game/iscenelayer.h"
 #include "game/factorybase.h"
 
@@ -48,12 +51,16 @@ struct SceneBase::Private
 {
 	SceneLayerList layers;
 	Core::Identifier id;
+	Graphics::Color bgcolor;
+	bool active;
 };
 
 SceneBase::SceneBase(const Core::Identifier &i)
     : m_p(new Private)
 {
 	m_p->id = i;
+	m_p->bgcolor = Graphics::Color::Black();
+	m_p->active = false;
 }
 
 SceneBase::~SceneBase(void)
@@ -67,6 +74,12 @@ const Core::Identifier &
 SceneBase::id(void) const
 {
 	return(m_p->id);
+}
+
+bool
+SceneBase::isActive(void) const
+{
+	return(m_p->active);
 }
 
 void
@@ -130,6 +143,39 @@ const SceneLayerList &
 SceneBase::getLayers(void) const
 {
 	return(m_p->layers);
+}
+
+const Graphics::Color &
+SceneBase::background(void) const
+{
+	return(m_p->bgcolor);
+}
+
+void
+SceneBase::setBackground(const Graphics::Color &color)
+{
+	using namespace Graphics;
+
+	m_p->bgcolor = color;
+
+	if (isActive())
+		Painter::SetBackgroundColor(m_p->bgcolor);
+}
+
+void
+SceneBase::activate(void)
+{
+	using namespace Graphics;
+
+	Painter::SetBackgroundColor(m_p->bgcolor);
+
+	m_p->active = true;
+}
+
+void
+SceneBase::deactivate(void)
+{
+	m_p->active = false;
 }
 
 void

@@ -51,8 +51,6 @@
 
 #include <tinyxml2.h>
 
-#include <cstdlib>
-
 extern int iAllocations;
 extern int iDeallocations;
 

@@ -45,12 +45,8 @@
 #include "headers.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
-
-namespace OpenGL
-{
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 	/*! @brief Graphics OpenGL Vertex Data Class */
 	class VertexData : public IVertexData
@@ -100,10 +96,8 @@ namespace OpenGL
 	typedef Core::Shared<VertexData> SharedVertexData;
 	typedef Core::Weak<VertexData> WeakVertexData;
 
-}
-
-}
-
+} /*********************************************** Graphics::OpenGL Namespace */
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

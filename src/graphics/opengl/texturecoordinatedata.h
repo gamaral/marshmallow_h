@@ -45,12 +45,8 @@
 #include "headers.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
-
-namespace OpenGL
-{
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 	/*! @brief Graphics OpenGL Texture Coordinate Data Class */
 	class TextureCoordinateData : public ITextureCoordinateData
@@ -100,10 +96,8 @@ namespace OpenGL
 	typedef Core::Shared<TextureCoordinateData> SharedTextureCoordinateData;
 	typedef Core::Weak<TextureCoordinateData> WeakTextureCoordinateData;
 
-}
-
-}
-
+} /*********************************************** Graphics::OpenGL Namespace */
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

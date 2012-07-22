@@ -26,10 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include <cstdlib>
-
 #include "core/global.h"
-#include "core/logger.h"
 
 /*!
  * @file
@@ -39,37 +36,32 @@
 
 /********************************************************* memory allocation */
 
+#if 0 /* TODO: Replace with custom allocator */
+#include <cstdlib>
+#include <new>
+
 void *
 operator new(size_t size) throw (std::bad_alloc)
 {
-	/* TODO: Replace with custom allocator */
-	void *ptr = malloc(size);
-	MMVERBOSE("Requested allocation of " << size << " bytes - returning " << ptr << ".");
-	return(ptr);
+	return(calloc(size, 1));
 }
 
 void *
 operator new[](size_t size) throw (std::bad_alloc)
 {
-	/* TODO: Replace with custom allocator */
-	void *ptr = malloc(size);
-	MMVERBOSE("Requested array allocation of "<< size << " bytes - returning " << ptr << ".");
-	return(ptr);
+	return(calloc(size, 1));
 }
 
 void
 operator delete(void *ptr) throw ()
 {
-	/* TODO: Replace with memory manager */
-	MMVERBOSE("Requested deallocation of " << ptr << ".");
 	free(ptr);
 }
 
 void
 operator delete[](void *ptr) throw ()
 {
-	/* TODO: Replace with custom allocator */
-	MMVERBOSE("Requested array deallocation of " << ptr << ".");
 	free(ptr);
 }
+#endif
 

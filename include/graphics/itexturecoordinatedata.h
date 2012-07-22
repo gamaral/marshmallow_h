@@ -40,12 +40,12 @@
 #include <core/iasset.h>
 
 #include <core/fd.h>
+
 #include <graphics/config.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
-namespace Graphics
-{
 	/*! @brief Graphics Texture Coordinate Data Interface */
 	struct ITextureCoordinateData : public Core::IAsset
 	{
@@ -58,8 +58,8 @@ namespace Graphics
 	};
 	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
 	typedef Core::Weak<ITextureCoordinateData> WeakTextureCoordinateData;
-}
 
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

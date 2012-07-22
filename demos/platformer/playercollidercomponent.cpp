@@ -54,8 +54,11 @@ PlayerColliderComponent::update(float d)
 }
 
 bool
-PlayerColliderComponent::collision(ColliderComponent &c, float d, const Game::CollisionData &data)
+PlayerColliderComponent::collision(ColliderComponent &c, float d,
+                                   const Game::CollisionData &data)
 {
+	MMUNUSED(d);
+
 	if (!movement()) return(false);
 
 	Game::CollisionData l_data = data;

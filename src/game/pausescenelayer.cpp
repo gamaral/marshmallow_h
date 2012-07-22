@@ -76,7 +76,7 @@ PauseSceneLayer::render(void)
 	}
 
 	Graphics::Painter::PushMatrix();
-	Graphics::Painter::ProjectionMatrix();
+	Graphics::Painter::LoadProjection();
 	Graphics::Painter::Draw(*m_p->mesh, Math::Point2(0,0));
 	Graphics::Painter::PopMatrix();
 }

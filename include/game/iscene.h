@@ -46,6 +46,7 @@
 #include <core/fd.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { class Color; }
 
 namespace Game
 {
@@ -70,6 +71,8 @@ namespace Game
 		virtual SharedSceneLayer getLayer(const Core::Identifier &identifier) const = 0;
 		virtual SharedSceneLayer getLayerType(const Core::Type &type) const = 0;
 		virtual const SceneLayerList & getLayers(void) const = 0;
+
+		virtual const Graphics::Color & background(void) const = 0;
 
 		virtual void activate(void) = 0;
 		virtual void deactivate(void) = 0;

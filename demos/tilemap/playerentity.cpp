@@ -36,8 +36,7 @@
 
 #include <core/logger.h>
 
-#include <graphics/transform.h>
-#include <graphics/viewport.h>
+#include <graphics/camera.h>
 
 #include <game/animationcomponent.h>
 #include <game/collidercomponent.h>
@@ -111,13 +110,8 @@ PlayerEntity::update(float d)
 		/* make camera follow player */
 		Game::SharedPositionComponent l_pos_component =
 		    getComponentType(Game::PositionComponent::Type()).staticCast<Game::PositionComponent>();
-		if (l_pos_component) {
-			Graphics::Transform l_camera = Graphics::Viewport::Camera();
-			Math::Point2 l_pos = l_pos_component->position();
-
-			l_camera.setTranslation(l_pos);
-			Graphics::Viewport::SetCamera(l_camera);
-		}
+		if (l_pos_component)
+			Graphics::Camera::SetPosition(l_pos_component->position());
 
 		/* update animation */
 		switch(m_input_component->direction()) {

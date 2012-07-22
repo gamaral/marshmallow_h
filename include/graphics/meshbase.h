@@ -40,13 +40,14 @@
 #include <graphics/imesh.h>
 
 #include <core/shared.h>
-#include <graphics/color.h>
+
 #include <math/vector2.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#include <graphics/color.h>
 
-namespace Graphics
-{
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
+
 	/*! @brief Graphics Mesh Base Class */
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	MeshBase : public IMesh
@@ -101,8 +102,8 @@ namespace Graphics
 	};
 	typedef Core::Shared<MeshBase> SharedMeshBase;
 	typedef Core::Weak<MeshBase> WeakMeshBase;
-}
 
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

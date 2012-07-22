@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
 Color::Color(float r, float g, float b, float a)
 {
@@ -65,4 +65,7 @@ Color::operator=(const Color &rhs) {
 	m_rgba[3] = rhs.m_rgba[3];
 	return(*this);
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

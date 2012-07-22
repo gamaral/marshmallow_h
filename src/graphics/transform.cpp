@@ -40,8 +40,8 @@
 
 #include <cmath>
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Graphics;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 
 struct Transform::Private
 {
@@ -146,6 +146,14 @@ Transform::setScale(const Math::Size2f &value)
 	m_p->invalidated = true;
 }
 
+void
+Transform::setScale(float w, float h)
+{
+	m_p->scale[0] = w;
+	m_p->scale[1] = h;
+	m_p->invalidated = true;
+}
+
 const Math::Point2 &
 Transform::translation(void) const
 {
@@ -156,6 +164,14 @@ void
 Transform::setTranslation(const Math::Point2 &value)
 {
 	m_p->translation = value;
+	m_p->invalidated = true;
+}
+
+void
+Transform::setTranslation(float x, float y)
+{
+	m_p->translation[0] = x;
+	m_p->translation[1] = y;
 	m_p->invalidated = true;
 }
 
@@ -180,4 +196,7 @@ Transform::operator =(const Transform &rhs)
 	}
 	return(*this);
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

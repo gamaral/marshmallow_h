@@ -59,12 +59,13 @@ const Core::Type InputComponent::Type("InputComponent");
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
     , m_collider()
-    , m_linear_impulse(300.f)
-    , m_max_speed(200.f)
+    , m_linear_impulse(200.f)
+    , m_max_speed(140.f)
     , m_jump(false)
+    , m_boost_fuel(0.f)
+    , m_direction(ICDRight)
     , m_left(false)
     , m_right(false)
-    , m_direction(ICDRight)
 {
 	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
 }
@@ -150,15 +151,14 @@ InputComponent::update(float d)
 
 		/* jumping */
 		if (m_jump) {
-			if (m_boost_fuel > 0) {
+			if (m_boost_fuel > 0 && m_movement->velocity()[1] > 0) {
 				m_boost_fuel -= d;
 				m_movement->velocity()[1] += JUMP_MAX * (d / BOOST_MAX);
 			}
-			else if (m_collider->onPlatform() && m_movement->velocity()[1] < 1) {
-				m_movement->velocity()[1] = JUMP_MAX;
-				m_boost_fuel = BOOST_MAX;
-			}
+			else if (m_movement->velocity()[1] < 1)
+				m_jump = false;
 		}
+		else m_boost_fuel = 0;
 	}
 }
 
@@ -185,6 +185,14 @@ InputComponent::handleEvent(const Event::IEvent &e)
 	}
 	else if (l_kevent.key() == Event::KEY_SPACE ||
                  l_kevent.key() == Event::KEY_M) {
+
+		if (!m_jump &&
+		    l_kevent.action() == Event::KeyPressed &&
+		    m_collider->onPlatform()) {
+			m_movement->velocity()[1] = JUMP_MAX;
+			m_boost_fuel = BOOST_MAX;
+		}
+
 		m_jump = (l_kevent.action() == Event::KeyPressed ? true : false);
 	}
 	else if (l_kevent.key() == Event::KEY_SHIFT_L ||
