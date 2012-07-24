@@ -44,12 +44,6 @@
 
 #include <tinyxml2.h>
 
-#if MARSHMALLOW_VIEWPORT_OPENGL
-#  define TILE_ADJUSTMENT 0.001f
-#else
-#  define TILE_ADJUSTMENT 0.f
-#endif
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 
@@ -189,10 +183,10 @@ TilesetBase::getTextureCoordinateData(uint16_t i)
 		const int l_row = i / m_p->size.width();
 		const int l_col = i % m_p->size.width();
 
-		const float l_left   = m_p->offset_col[l_col] + TILE_ADJUSTMENT;
-		const float l_top    = m_p->offset_row[l_row] + TILE_ADJUSTMENT;
-		const float l_right  = m_p->offset_col[l_col + 1] - m_p->spacing_col - TILE_ADJUSTMENT;
-		const float l_bottom = m_p->offset_row[l_row + 1] - m_p->spacing_row - TILE_ADJUSTMENT;
+		const float l_left   = m_p->offset_col[l_col];
+		const float l_top    = m_p->offset_row[l_row];
+		const float l_right  = m_p->offset_col[l_col + 1] - m_p->spacing_col;
+		const float l_bottom = m_p->offset_row[l_row + 1] - m_p->spacing_row;
 
 		l_data->set(0, l_left,  l_top);
 		l_data->set(1, l_left,  l_bottom);

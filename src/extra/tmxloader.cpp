@@ -54,26 +54,23 @@
 #include "game/tilemapscenelayer.h"
 #include "game/tilesetcomponent.h"
 
-#include <tinyxml2.h>
-
 #include <map>
 
-#define TMXLAYER_DATA_NODE    "data"
-#define TMXLAYER_NODE         "layer"
-#define TMXTILESET_IMAGE_NODE "image"
-#define TMXTILESET_NODE       "tileset"
-#define TMXOBJECTGROUP_NODE   "objectgroup"
-#define TMXOBJECTGROUP_OBJECT_NODE "object"
+#include <tinyxml2.h>
 
-#define TMXPROPERTIES_NODE    "properties"
+#define TMXLAYER_DATA_NODE          "data"
+#define TMXLAYER_NODE               "layer"
+#define TMXTILESET_IMAGE_NODE       "image"
+#define TMXTILESET_NODE             "tileset"
+#define TMXOBJECTGROUP_NODE         "objectgroup"
+#define TMXOBJECTGROUP_OBJECT_NODE  "object"
+
+#define TMXPROPERTIES_NODE          "properties"
 #define TMXPROPERTIES_PROPERTY_NODE "property"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Extra;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace { /******************************************** Anonymous Namespace */
 
-/******************************************************************************/
-
-namespace {
 	typedef std::map<uint16_t, Graphics::SharedTileset> TilesetCollection;
 
 	Graphics::Color
@@ -83,9 +80,10 @@ namespace {
 		                       static_cast<float>(p[1]) / 255.f,
 		                       static_cast<float>(p[2]) / 255.f));
 	}
-} // namespace
 
-/******************************************************************************/
+} /****************************************************** Anonymous Namespace */
+
+namespace Extra { /****************************************** Extra Namespace */
 
 struct TMXLoader::Private
 {
@@ -172,26 +170,8 @@ TMXLoader::Private::processMap(XMLElement &m)
 		return(false);
 	}
 
-	/* calculate default scale */
-	const Math::Size2f &l_vsize = Graphics::Viewport::Size();
-	if (map_size.width() < map_size.height()) {
-		scale[0] = l_vsize.width()  / static_cast<float>(map_size.width()  * tile_size.width());
-		scale[1] = scale.width() * static_cast<float>(tile_size.height() / tile_size.width());
-		MMINFO("Calculated scale based off map size width.");
-	}
-	if (map_size.width() > map_size.height()) {
-		scale[1] = l_vsize.height() / static_cast<float>(map_size.height() * tile_size.height());
-		scale[0] = scale.height() * static_cast<float>(tile_size.width() / tile_size.height());
-		MMINFO("Calculated scale based off map size height.");
-	}
-	else scale[0] = scale[1] = l_vsize.height() / static_cast<float>(map_size.height() * tile_size.height());
-	MMINFO("Calculated map scale size (" << scale.width() << "x" << scale.height() << ")");
-
-	/* calculate half-relative map size (used to offset coordinates) */
-	hrmap_size[0] = scale.width()
-	    * static_cast<float>(map_size.width() * tile_size.width());
-	hrmap_size[1] = scale.height()
-	    * static_cast<float>(map_size.height() * tile_size.height());
+	/* default scale */
+	scale[0] = scale[1] = 1.f;
 
 	/* process properties */
 	XMLElement *l_properties = m.FirstChildElement(TMXPROPERTIES_NODE);
@@ -203,14 +183,15 @@ TMXLoader::Private::processMap(XMLElement &m)
 			continue;
 
 		/* scale property */
-		if (MMSTRCASECMP(l_pname, "scale") == 0) {
+		if (0 == MMSTRCASECMP(l_pname, "scale")) {
 			const char *l_value = l_property->Attribute("value");
 			if (!l_value) {
 				MMWARNING("Skipping incomplete scale property.");
 				continue;
 			}
 
-			if (MMSTRCASECMP(l_value, "screen") == 0) {
+			if (0 == MMSTRCASECMP(l_value, "screen")) {
+				const Math::Size2f &l_vsize = Graphics::Viewport::Size();
 				const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
 
 				/*
@@ -236,7 +217,7 @@ TMXLoader::Private::processMap(XMLElement &m)
 		/*
 		 * Parse scene background color
 		 */
-		else if (MMSTRCASECMP(l_pname, "bgcolor") == 0) {
+		else if (0 == MMSTRCASECMP(l_pname, "bgcolor")) {
 			const char *l_value = l_property->Attribute("value");
 			if (!l_value) {
 				MMWARNING("Skipping incomplete background color property.");
@@ -263,6 +244,14 @@ TMXLoader::Private::processMap(XMLElement &m)
 		}
 
 	} while ((l_property = l_property->NextSiblingElement(TMXPROPERTIES_PROPERTY_NODE)));
+
+	MMINFO("Map scale size (" << scale.width() << "x" << scale.height() << ")");
+
+	/* calculate half-relative map size (used to offset coordinates) */
+	hrmap_size[0] = scale.width()
+	    * static_cast<float>(map_size.width()  * tile_size.width());
+	hrmap_size[1] = scale.height()
+	    * static_cast<float>(map_size.height() * tile_size.height());
 
 	return(true);
 }
@@ -364,14 +353,14 @@ TMXLoader::Private::processLayer(XMLElement &e)
 			continue;
 
 		/* scale property */
-		if (strcmp(l_pname, "scale") == 0) {
+		if (0 == strcmp(l_pname, "scale")) {
 			if (!l_value) {
 				MMWARNING("Skipping incomplete scale property.");
 				continue;
 			}
 
 			Math::Size2f l_scale = l_layer->scale();
-			if (MMSTRCASECMP(l_value, "screen") == 0) {
+			if (0 == MMSTRCASECMP(l_value, "screen")) {
 				const Math::Size2f &l_vsize = Graphics::Viewport::Size();
 				const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
 
@@ -599,7 +588,7 @@ TMXLoader::Private::processTileset(XMLElement &e)
 	return(true);
 }
 
-/******************************************************************************/
+/****************************************************************** TMXLoader */
 
 TMXLoader::TMXLoader(Game::IScene &s)
     : m_p(new Private(s))
@@ -628,4 +617,7 @@ TMXLoader::load(const char *f)
 {
 	return(m_p->load(f));
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

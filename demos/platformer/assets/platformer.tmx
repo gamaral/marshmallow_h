@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="80" height="20" tilewidth="32" tileheight="32">
  <properties>
-  <property name="scale" value="1"/>
   <property name="bgcolor" value="#55B4FF"/>
+  <property name="scale" value="1"/>
  </properties>
  <tileset firstgid="1" name="platformer" tilewidth="32" tileheight="32">
   <image source="assets/platformer_tiles.png" width="512" height="512"/>
@@ -11,38 +11,38 @@
   <properties>
    <property name="scale" value="2"/>
   </properties>
-  <data encoding="base64" compression="zlib">
-   eJztV0kSwzAI43tt+oEu+f83wiUXz5CIWNjQVjPcXLFIuM4iIg/5DTw1XhpvjY/G2sF107gTuHaeRWJ1GJUHxa5FC2+dXk2vzoHpHQ+i5+GFxc/yF8qDnpulmxesOlGe7HPJdl9VQ6S+M7TJ7gdPfb3aWLmOasi+7xH1WfOwckXpUhWjPYPmY8yZ/c6ohLM5Iz1XfWe0vUXUE93zTE+2vVXEKE9+492BwNM3482C5GOdYf7OgsefDC8jHKwzV/P/URveHYm4O3s5M/3vnu1IxE71cmb8vtoAMlBm9A==
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+1XSRLDMAjje236gS75/zfCJRfPkIhY2NBWM9xcsUi4ziIiD/kNPDVeGm+Nj8bawXXTuBO4dp5FYnUYlQfFrkULb51eTa/OgekdD6Ln4YXFz/IXyoOem6WbF6w6UZ7sc8l2X1VDpL4ztMnuB099vdpYuY5qyL7vEfVZ87ByRelSFaM9g+ZjzJn9zqiEszkjPVd9Z7S9RdQT3fNMT7a9VcQoT37j3YHA0zfjzYLkY51h/s6Cx58MLyMcrDNX8/9RG94dibg7ezkz/e+e7UjETvVyZvy+2gAdkotoABkAAA==
   </data>
  </layer>
  <layer name="platform" width="80" height="20">
-  <data encoding="base64" compression="zlib">
-   eJztkskKwjAURePsRl04bJw+wGnhSl1Z7Reo//8r3kXFEHzSlwbSwD1wKC20HG5qDCGEEEIIIcRlAIdwFDskUZZwBdexQxJlB/fwEDskMa4wgzd4h7l1zSN21Z0GPMJ+cf+AT/hyruSLu5kN9/vNv81sfPebw0WVwBpSdjMb3/02cKsNDEio8/PZzEbar62wA7uwp+g4KRrP8OI8q3J+ZTaT+twOab+JwimcFV1N2DK6/UNpn6OEb5/0j4Tc78NY+X4o3Q4Jnz7p29J+b0JbHXk=
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2SyQrCMBRF4+xGXThsnD7AaeFKXVntF6j//yveRcUQfNKXBtLAPXAoLbQcbmoMIYQQQgghxGUAh3AUOyRRlnAF17FDEmUH9/AQOyQxrjCDN3iHuXXNI3bVnQY8wn5x/4BP+HKu5Iu7mQ33+82/zWx895vDRZXAGlJ2Mxvf/TZwqw0MSKjz89nMRtqvrbADu7Cn6DgpGs/w4jyrcn5lNpP63A5pv4nCKZwVXU3YMrr9Q2mfo4Rvn/SPhNzvw1j5fijdDgmfPunb0n5vscZOoQAZAAA=
   </data>
  </layer>
  <objectgroup name="logic" width="80" height="20">
-  <object name="platform" type="ColliderEntity" x="1" y="544" width="445" height="32"/>
-  <object name="platform" type="ColliderEntity" x="450" y="577" width="1083" height="32"/>
-  <object name="platform" type="ColliderEntity" x="1731" y="577" width="543" height="32"/>
-  <object name="platform" type="ColliderEntity" x="2337" y="353" width="269" height="32"/>
-  <object name="player" type="PlayerEntity" gid="103" x="7" y="544"/>
-  <object name="platform" type="ColliderEntity" x="1761" y="607" width="474" height="35"/>
-  <object name="platform" type="ColliderEntity" x="481" y="608" width="1020" height="33"/>
-  <object name="platform" type="ColliderEntity" x="0" y="565" width="410" height="74"/>
+  <object name="platform" type="ColliderEntity" x="0" y="544" width="448" height="32"/>
+  <object name="platform" type="ColliderEntity" x="448" y="576" width="1088" height="32"/>
+  <object name="platform" type="ColliderEntity" x="1728" y="576" width="544" height="32"/>
+  <object name="platform" type="ColliderEntity" x="2336" y="352" width="224" height="32"/>
+  <object name="platform" type="ColliderEntity" x="1760" y="608" width="480" height="32"/>
+  <object name="platform" type="ColliderEntity" x="480" y="608" width="1024" height="32"/>
+  <object name="platform" type="ColliderEntity" x="0" y="576" width="416" height="64"/>
   <object name="platform" type="ColliderEntity" x="2373" y="374" width="188" height="267"/>
-  <object name="platform" type="ColliderEntity" x="1793" y="546" width="29" height="30"/>
-  <object name="platform" type="ColliderEntity" x="1985" y="482" width="30" height="25"/>
-  <object name="platform" type="ColliderEntity" x="1890" y="512" width="30" height="25"/>
-  <object name="platform" type="ColliderEntity" x="2082" y="449" width="30" height="25"/>
-  <object name="platform" type="ColliderEntity" x="2176" y="417" width="30" height="25"/>
-  <object name="platform" type="ColliderEntity" x="2272" y="386" width="30" height="25"/>
+  <object name="platform" type="ColliderEntity" x="1792" y="544" width="32" height="32"/>
+  <object name="platform" type="ColliderEntity" x="1984" y="480" width="32" height="32"/>
+  <object name="platform" type="ColliderEntity" x="1888" y="512" width="32" height="32"/>
+  <object name="platform" type="ColliderEntity" x="2080" y="448" width="32" height="32"/>
+  <object name="platform" type="ColliderEntity" x="2176" y="416" width="32" height="32"/>
+  <object name="platform" type="ColliderEntity" x="2272" y="384" width="32" height="32"/>
   <object name="bounce" type="ColliderEntity" x="550" y="545" width="19" height="16"/>
   <object name="bounce" type="ColliderEntity" x="1157" y="545" width="20" height="17"/>
   <object name="bounce" type="ColliderEntity" x="2243" y="550" width="26" height="9"/>
+  <object name="player" type="PlayerEntity" gid="120" x="13" y="300"/>
  </objectgroup>
  <layer name="foreground" width="80" height="20">
-  <data encoding="base64" compression="zlib">
-   eJzt1jEOQEAURdHZAFaAmgS1WJ0g0eq0Osv0CgmFqMyMSe5JbhS/8DqMAQAAAAD8Xel7AAArIhWrxPeQQKUqU7nvIQFpzfVNqVStGlU8hO90Dt7x9K/Qn89BjWq63Wbri8K3vNxWZyvCtb3cdkcbDkdfB9U=
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3WMQ5EQACF4dFplhOwNQlqcTz2ANtpdY7pFRKKicrMGPm/5I/EFF43jAEAAAAAPF0degAAJz4qU3noIZEqVKm+oYdEpDfHndKoVnWqsoT7DB6+YftX+O/PUU3qdzqbnS96h9TyLvG+Ik7LxdnqacMGu4cPbwAZAAA=
   </data>
  </layer>
 </map>

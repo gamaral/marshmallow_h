@@ -75,19 +75,19 @@ PlayerEntity::update(float d)
 
 		m_animation_component =
 		    new Game::AnimationComponent("animation", *this);
-		m_animation_component->pushFrame("stand-left",  106, 12);
-		m_animation_component->pushFrame("stand-left",  107, 4);
-		m_animation_component->pushFrame("walk-left", 108, 1);
-		m_animation_component->pushFrame("walk-left", 109, 1);
+		m_animation_component->pushFrame("stand-left",  123, 12);
+		m_animation_component->pushFrame("stand-left",  124, 4);
+		m_animation_component->pushFrame("walk-left", 125, 1);
+		m_animation_component->pushFrame("walk-left", 126, 1);
 		m_animation_component->setFrameRate("walk-left", 16);
-		m_animation_component->pushFrame("jump-left", 108, 1);
+		m_animation_component->pushFrame("jump-left", 125, 1);
 		m_animation_component->setFrameRate("jump-left", 1);
-		m_animation_component->pushFrame("stand-right", 102, 12);
-		m_animation_component->pushFrame("stand-right", 103, 4);
-		m_animation_component->pushFrame("walk-right", 104, 1);
-		m_animation_component->pushFrame("walk-right", 105, 1);
+		m_animation_component->pushFrame("stand-right", 119, 12);
+		m_animation_component->pushFrame("stand-right", 120, 4);
+		m_animation_component->pushFrame("walk-right", 121, 1);
+		m_animation_component->pushFrame("walk-right", 122, 1);
 		m_animation_component->setFrameRate("walk-right", 16);
-		m_animation_component->pushFrame("jump-right", 105, 1);
+		m_animation_component->pushFrame("jump-right", 121, 1);
 		m_animation_component->setFrameRate("jump-right", 1);
 		pushComponent(m_animation_component.staticCast<Game::IComponent>());
 

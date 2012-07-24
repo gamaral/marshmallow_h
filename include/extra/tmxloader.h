@@ -46,20 +46,17 @@
 #include <list>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
+namespace Graphics { /************************************ Graphics Namespace */
 	struct ITileset;
 	typedef Core::Shared<ITileset> SharedTileset;
-}
+} /******************************************************* Graphics Namespace */
 
-namespace Game
-{
+namespace Game { /******************************************** Game Namespace */
 	typedef std::list<SharedSceneLayer> SharedSceneLayerList;
-}
+} /*********************************************************** Game Namespace */
 
-namespace Extra
-{
+namespace Extra { /****************************************** Extra Namespace */
+
 	/*! @brief Extra TMX Loader Class */
 	class MARSHMALLOW_EXTRA_EXPORT
 	TMXLoader
@@ -80,8 +77,8 @@ namespace Extra
 	};
 	typedef Core::Shared<TMXLoader> SharedTMXLoader;
 	typedef Core::Weak<TMXLoader> WeakTMXLoader;
-}
 
+} /********************************************************** Extra Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif
