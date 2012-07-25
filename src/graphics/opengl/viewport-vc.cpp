@@ -136,7 +136,8 @@ CreateDisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t refresh, b
 
 	/* viewport size */
 
-	if (fullscreen) {
+	if (s_data.wsize.width()  != width ||
+	    s_data.wsize.height() != height) {
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
 		s_data.size[0] = static_cast<float>(width);
 		s_data.size[1] = (s_data.size[0] * static_cast<float>(s_data.wsize[1])) /

@@ -195,7 +195,7 @@ TextureData::load(const Core::Identifier &_id, ScaleMode min, ScaleMode mag)
 	GLint l_min_scale;
 	switch(min) {
 	case smLinear:
-		l_min_scale = l_mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+		l_min_scale = l_mipmaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
 		break;
 
 	default:
@@ -216,6 +216,10 @@ TextureData::load(const Core::Identifier &_id, ScaleMode min, ScaleMode mag)
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+#ifndef MARSHMALLOW_OPENGL_ES2
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+#endif
 
 	glTexImage2D(GL_TEXTURE_2D, 0, l_format, tdata.width, tdata.height, 0,
 	             l_format, GL_UNSIGNED_BYTE, tdata.pixels);
