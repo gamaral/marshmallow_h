@@ -65,11 +65,23 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace { /******************************************** Anonymous Namespace */
 
+enum ViewportState
+{
+	vsIdle        = 0,
+	vsActive      = (1 << 0),
+	vsStandby     = (1 << 1),
+	vsHDMI        = (1 << 2),
+	vsTV          = (1 << 3),
+	vsActiveHDMI  = vsActive|vsHDMI,
+	vsActiveTV    = vsActive|vsTV,
+	vsStandbyHDMI = vsStandby|vsHDMI,
+	vsStandbyTV   = vsStandby|vsTV,
+	vsToggle      = vsActive|vsStandby, // for state toggling
+};
+
 struct ViewportData
 {
 	DISPMANX_DISPLAY_HANDLE_T dpy;
-	DISPMANX_ELEMENT_HANDLE_T dispman_element;
-	DISPMANX_UPDATE_HANDLE_T  dispman_update;
 	DISPLAY_INPUT_FORMAT_T    input_format;
 	Math::Size2i wsize;
 	int          screen;
@@ -80,8 +92,69 @@ struct ViewportData
 	EGLSurface  egl_surface;
 
 	Math::Size2f size;
-	bool         loaded;
+
+	/* used in case of redisplay */
+	uint16_t init_width;
+	uint16_t init_height;
+	uint8_t  init_depth;
+        uint8_t  init_refresh;
+        bool     init_vsync;
+
+	int state;
 } s_data;
+
+void
+TVServiceCallback(void *, uint32_t reason, uint32_t param1, uint32_t param2)
+{
+	using namespace Graphics;
+
+	switch(reason) {
+	case VC_SDTV_UNPLUGGED:
+		if ((s_data.state && vsActiveTV) != vsActiveTV)
+			break;
+
+		MMDEBUG("SDTV: Unplugged!");
+		s_data.state ^= vsToggle;
+		break;
+	case VC_SDTV_STANDBY:
+		MMDEBUG("SDTV: Now in Stand-by mode.");
+		break;
+	case VC_SDTV_NTSC:
+		if ((s_data.state && vsStandbyTV) != vsStandbyTV)
+			break;
+
+		MMDEBUG("SDTV: Now in NTSC mode.");
+		s_data.state ^= vsToggle;
+		break;
+	case VC_HDMI_UNPLUGGED:
+		if ((s_data.state && vsActiveHDMI) != vsActiveHDMI)
+			break;
+
+		MMDEBUG("HDMI: Unplugged!");
+		s_data.state ^= vsToggle;
+		break;
+	case VC_HDMI_STANDBY:
+		MMDEBUG("HDMI: Now in Stand-by mode.");
+		break;
+	case VC_HDMI_DVI:
+		if ((s_data.state && vsStandbyHDMI) == vsStandbyHDMI)
+			break;
+
+		MMDEBUG("HDMI: Now in DVI mode.");
+		s_data.state ^= vsToggle;
+		break;
+	case VC_HDMI_HDMI:
+		if ((s_data.state && vsStandbyHDMI) == vsStandbyHDMI)
+			break;
+
+		MMDEBUG("HDMI: Now in HDMI mode.");
+		s_data.state ^= vsToggle;
+		break;
+	default:
+		MMDEBUG("TVCB: Unknown!");
+		break;
+	}
+}
 
 void
 ResetViewportData(void)
@@ -90,19 +163,18 @@ ResetViewportData(void)
 	s_data.egl_dpy     = EGL_NO_DISPLAY;
 	s_data.egl_surface = EGL_NO_SURFACE;
 
+	memset(&s_data.window, 0, sizeof(s_data.window));
+
 	s_data.dpy = 0;
-	s_data.dispman_element = 0;
-	s_data.dispman_update = 0;
 	s_data.screen = 0;
 	s_data.size.zero();
 	s_data.wsize[0] = s_data.wsize[1] = 0;
-
-	s_data.loaded = false;
 }
 
 bool GLCreateSurface(uint8_t depth, bool vsync);
 bool VCCreateDisplay(uint16_t width, uint16_t height, uint8_t refresh);
 bool VCPowerOnDisplay(uint8_t refresh, uint16_t &display_id);
+
 
 bool
 CreateDisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t refresh, bool vsync)
@@ -110,6 +182,8 @@ CreateDisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t refresh, b
 	using namespace Graphics;
 
 	ResetViewportData();
+
+	s_data.state = vsIdle;
 
 	/* display */
 
@@ -155,7 +229,8 @@ CreateDisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t refresh, b
 
 	Camera::Update();
 
-	return(s_data.loaded = true);
+	s_data.state = vsActive;
+	return(true);
 }
 
 void
@@ -168,20 +243,19 @@ DestroyDisplay(void)
 		eglTerminate(s_data.egl_dpy);
 
 		if (s_data.dpy > 0) {
-			vc_dispmanx_element_remove(s_data.dispman_update, s_data.dispman_element);
+			DISPMANX_UPDATE_HANDLE_T l_dispman_update = vc_dispmanx_update_start(0);
+			if (l_dispman_update != DISPMANX_NO_HANDLE) {
+				vc_dispmanx_element_remove(l_dispman_update, s_data.window.element);
+				vc_dispmanx_update_submit_sync(l_dispman_update);
+			}
+
 			vc_dispmanx_display_close(s_data.dpy);
 		}
 	}
 
 	vc_tv_power_off();
 
-	s_data.egl_ctx     = EGL_NO_CONTEXT;
-	s_data.egl_dpy     = EGL_NO_DISPLAY;
-	s_data.egl_surface = EGL_NO_SURFACE;
-
-	s_data.dpy    = 0;
-	s_data.loaded = false;
-	s_data.screen = 0;
+	s_data.state  = vsIdle;
 }
 
 bool
@@ -306,9 +380,14 @@ VCCreateDisplay(uint16_t width, uint16_t height, uint8_t refresh)
 	l_src_rect.height = l_dst_rect.height << 16;
 	MMINFO("VC: Display size (" << s_data.wsize[0] << "x" << s_data.wsize[1] << ")");
 
-	s_data.dispman_update  = vc_dispmanx_update_start(0);
-	s_data.dispman_element = vc_dispmanx_element_add
-	    (s_data.dispman_update,
+	DISPMANX_UPDATE_HANDLE_T l_dispman_update = vc_dispmanx_update_start(0);
+	if (l_dispman_update == DISPMANX_NO_HANDLE) {
+		MMERROR("VC: Failed to get display update handle.");
+		return(false);
+	}
+
+	s_data.window.element = vc_dispmanx_element_add
+	    (l_dispman_update,
 	     s_data.dpy,
 	     0 /*layer*/,
 	    &l_dst_rect,
@@ -319,11 +398,11 @@ VCCreateDisplay(uint16_t width, uint16_t height, uint8_t refresh)
 	     0 /*clamp*/,
 	     DISPMANX_NO_ROTATE /*transform*/);
 
-	s_data.window.element = s_data.dispman_element;
+	vc_dispmanx_update_submit_sync(l_dispman_update);
+
 	s_data.window.width   = l_dst_rect.width;
 	s_data.window.height  = l_dst_rect.height;
 	s_data.input_format   = l_display_info.input_format;
-	vc_dispmanx_update_submit_sync(s_data.dispman_update);
 
 	return(true);
 }
@@ -341,26 +420,22 @@ VCPowerOnDisplay(uint8_t refresh, uint16_t &did)
 		return(false);
 	}
 
+	/* Get current TV state */
 	TV_GET_STATE_RESP_T l_tvstate;
 	if (vc_tv_get_state(&l_tvstate) != 0) {
 		MMERROR("HDMI: Failed to query initial tv state.");
 		return(false);
 	}
 
-	MMINFO("VC: state=" << l_tvstate.state);
+	MMDEBUG("VC: Got initial state=" << l_tvstate.state);
 
 	/*
 	 *  HDMI/DVI
 	 */
 	if ((l_tvstate.state & VC_HDMI_UNPLUGGED) == 0) {
 
-		/* switch to stand-by */
-		if ((l_tvstate.state & VC_HDMI_STANDBY) == 0)
-			vc_tv_power_off();
-
-		/* power on in correct mode */
-		if (vc_tv_hdmi_power_on_best(0, 0, refresh, HDMI_NONINTERLACED,
-		    HDMI_MODE_MATCH_FRAMERATE) != 0) {
+		/* power on in preferred mode */
+		if (vc_tv_hdmi_power_on_preferred() != 0) {
 			MMERROR("HDMI: Failed to power on.");
 			return(false);
 		}
@@ -377,12 +452,20 @@ VCPowerOnDisplay(uint8_t refresh, uint16_t &did)
 		else if ((l_tvstate.state & VC_HDMI_DVI) == VC_HDMI_DVI)
 			l_display = DISPMANX_ID_MAIN_LCD;
 
+		s_data.state |= vsHDMI;
+
 	}
+	else s_data.state |= vsTV;
 
 	if (l_tvstate.width <= 0 || l_tvstate.height <= 0) {
 		MMERROR("VC: Invalid TV size returned.");
 		return(false);
 	}
+
+	MMDEBUG("VC: Using #" << l_display << " display at ("
+	                     << l_tvstate.width << "x" << l_tvstate.height << ")" );
+
+	sleep(6);
 
 	did = l_display;
 	return(true);
@@ -406,6 +489,17 @@ Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth,
 {
 	bcm_host_init();
 
+	s_data.state = vsIdle;
+
+	/* save init specs */
+	s_data.init_width   = width;
+	s_data.init_height  = height;
+	s_data.init_depth   = depth;
+        s_data.init_refresh = refresh;
+        s_data.init_vsync   = vsync;
+
+	vc_tv_register_callback(TVServiceCallback, &s_data);
+
 	Camera::Reset();
 
 	if (!CreateDisplay(width, height, depth, refresh, vsync)) {
@@ -424,20 +518,16 @@ Viewport::Finalize(void)
 
 	DestroyDisplay();
 
+	vc_tv_unregister_callback(TVServiceCallback);
+
 	bcm_host_deinit();
 }
 
 bool
-Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t depth,
-                    uint8_t refresh, bool, bool vsync)
+Viewport::Redisplay(uint16_t, uint16_t, uint8_t, uint8_t, bool, bool)
 {
-	DestroyDisplay();
-
-	if (!CreateDisplay(width, height, depth, refresh, vsync)) {
-		DestroyDisplay();
-		return(false);
-	}
-	return(true);
+	MMERROR("VC doesn't seem to play well with redisplay. Sorry.");
+	return(false);
 }
 
 void
@@ -449,7 +539,9 @@ Viewport::Tick(void)
 void
 Viewport::SwapBuffer(void)
 {
-	eglSwapBuffers(s_data.egl_dpy, s_data.egl_surface);
+	if ((s_data.state & vsActive) == vsActive)
+		eglSwapBuffers(s_data.egl_dpy, s_data.egl_surface);
+
 	Painter::Reset();
 }
 
