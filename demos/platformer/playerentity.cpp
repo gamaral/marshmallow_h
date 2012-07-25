@@ -55,7 +55,7 @@ PlayerEntity::PlayerEntity(const Core::Identifier &i, Game::EntitySceneLayer &l)
     : Game::Entity(i, l)
     , m_init(false)
 {
-	m_moving_sky = 0;
+	m_moving_sky_bg = m_moving_sky = 0;
 }
 
 PlayerEntity::~PlayerEntity(void)
@@ -137,11 +137,21 @@ PlayerEntity::update(float d)
 			Game::SharedTilemapSceneLayer l_clouds =
 			    Game::Engine::Instance()->sceneManager()->activeScene()->
 			        getLayer("clouds").staticCast<Game::TilemapSceneLayer>();
-			if ((m_moving_sky += 8 * d) > l_clouds->virtualSize().area())
-				m_moving_sky = 8 * d;
+			if (l_clouds) {
+				if ((m_moving_sky += 8.f * d) > l_clouds->virtualSize().area())
+					m_moving_sky = 8.f * d;
+				l_clouds->setTranslation(Math::Vector2(m_moving_sky + (l_pos.x() * .15f), m_moving_sky));
+			}
 
-			if (l_clouds)
-				l_clouds->setTranslation(Math::Vector2(m_moving_sky + (l_pos.x() * 0.15f), m_moving_sky));
+			Game::SharedTilemapSceneLayer l_cloudbg =
+			    Game::Engine::Instance()->sceneManager()->activeScene()->
+			        getLayer("cloudbg").staticCast<Game::TilemapSceneLayer>();
+			if (l_cloudbg) {
+				if ((m_moving_sky_bg += 2.f * d) > l_cloudbg->virtualSize().area())
+					m_moving_sky_bg = 2.f * d;
+				l_cloudbg->setTranslation(Math::Vector2(m_moving_sky_bg + (l_pos.x() * .05f), m_moving_sky_bg));
+			}
+
 		}
 
 		/* update animation */

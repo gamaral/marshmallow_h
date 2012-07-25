@@ -63,6 +63,7 @@ class PlayerEntity : public Game::Entity
 
 	int m_direction;
 	float m_moving_sky;
+	double m_moving_sky_bg;
 	bool m_in_motion;
 	bool m_on_platform;
 	bool m_init;
