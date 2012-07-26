@@ -4,12 +4,12 @@
   <property name="bgcolor" value="#55B4FF"/>
   <property name="scale" value="1"/>
  </properties>
- <tileset firstgid="1" name="platformer" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="platformer_tiles" tilewidth="32" tileheight="32" spacing="2" margin="2">
   <image source="assets/platformer_tiles.png" width="512" height="512"/>
  </tileset>
- <layer name="cloudbg" width="80" height="20" opacity="0.50">
+ <layer name="cloudbg" width="80" height="20" opacity="0.5">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+1XSRLDMAjje236gS75/zfCJRfPkIhY2NBWM9xcsUi4ziIiD/kNPDVeGm+Nj8bawXXTuBO4dp5FYnUYlQfFrkULb51eTa/OgekdD6Ln4YXFz/IXyoOem6WbF6w6UZ7sc8l2X1VDpL4ztMnuB099vdpYuY5qyL7vEfVZ87ByRelSFaM9g+ZjzJn9zqiEszkjPVd9Z7S9RdQT3fNMT7a9VcQoT37j3YHA0zfjzYLkY51h/s6Cx58MLyMcrDNX8/9RG94dibg7ezkz/e+e7UjETvVyZvy+2gAdkotoABkAAA==
+   H4sIAAAAAAAAA+2XSxaAIAhFW2O/eb/9byEaNSgVBUE53HPeMJWHr2IYHA5G0ASaQQto1T1Od2ygHXSATtCV+TyX/1p91L4/VP+513nI8YRzXyu4J3EkM0fZq9Y5qetK3i/KXphnS7zwfL24F3ZJZUP73wWD5hlT2cBmJ1SDRG2UfLdyP0I15NYmXY+1d6vWjOB88V60g1bOvW9hMN6k+tbi7FeC1oxUe/b7o4bv1r7jMXqp9QbuNcwVABkAAA==
   </data>
  </layer>
  <layer name="clouds" width="80" height="20" opacity="0.75">
@@ -17,12 +17,12 @@
    <property name="scale" value="2"/>
   </properties>
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+1XSRLDMAjje236gS75/zfCJRfPkIhY2NBWM9xcsUi4ziIiD/kNPDVeGm+Nj8bawXXTuBO4dp5FYnUYlQfFrkULb51eTa/OgekdD6Ln4YXFz/IXyoOem6WbF6w6UZ7sc8l2X1VDpL4ztMnuB099vdpYuY5qyL7vEfVZ87ByRelSFaM9g+ZjzJn9zqiEszkjPVd9Z7S9RdQT3fNMT7a9VcQoT37j3YHA0zfjzYLkY51h/s6Cx58MLyMcrDNX8/9RG94dibg7ezkz/e+e7UjETvVyZvy+2gAdkotoABkAAA==
+   H4sIAAAAAAAAA+2Xyw3AIAxDmbG/e3/7r9AMUEFLguPQPsnHIMckSKQUl1W0iXbRITp97WQZRKNoEs2iBVTLhKYPzV1raq2z98rAC2vPETOIRM18ompQoHe0RU2ph5b597CjpR68emTeGyS1OfQwmxb8OfBiueNffC8sZ/vtWdq8We8L5Ut7d6zvGquvVrDOcRSQ89Lb/w0N6s/HSsRZYPL8dBYies6B7ufO8wXe1CcuABkAAA==
   </data>
  </layer>
  <layer name="platform" width="80" height="20">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+2SyQrCMBRF4+xGXThsnD7AaeFKXVntF6j//yveRcUQfNKXBtLAPXAoLbQcbmoMIYQQQgghxGUAh3AUOyRRlnAF17FDEmUH9/AQOyQxrjCDN3iHuXXNI3bVnQY8wn5x/4BP+HKu5Iu7mQ33+82/zWx895vDRZXAGlJ2Mxvf/TZwqw0MSKjz89nMRtqvrbADu7Cn6DgpGs/w4jyrcn5lNpP63A5pv4nCKZwVXU3YMrr9Q2mfo4Rvn/SPhNzvw1j5fijdDgmfPunb0n5vscZOoQAZAAA=
+   H4sIAAAAAAAAA+3VTQrCMBAF4Kj1Z231CMVtN/6cwN7/Rn1CpMMwSUyJLYH3wWOwhWF4LuocERERERHR/zyR19pHVKjzeSPDyrfUYoNskR3SIHs1yfbprUdO/vcZaZGLmjTRnUnszxbrTGJ/k187k3L6e/jZidRuTmdSqD/rmxKbB+So7rjPvMlScldOZ7fE+1B/1rPYvLr0N32Jaf2PX/q+ErtL9pfaucSUd4Tk3hfbHdo1Au7sbg4AGQAA
   </data>
  </layer>
  <objectgroup name="logic" width="80" height="20">
@@ -33,7 +33,7 @@
   <object name="platform" type="ColliderEntity" x="1760" y="608" width="480" height="32"/>
   <object name="platform" type="ColliderEntity" x="480" y="608" width="1024" height="32"/>
   <object name="platform" type="ColliderEntity" x="0" y="576" width="416" height="64"/>
-  <object name="platform" type="ColliderEntity" x="2373" y="374" width="188" height="267"/>
+  <object name="platform" type="ColliderEntity" x="2368" y="384" width="192" height="256"/>
   <object name="platform" type="ColliderEntity" x="1792" y="544" width="32" height="32"/>
   <object name="platform" type="ColliderEntity" x="1984" y="480" width="32" height="32"/>
   <object name="platform" type="ColliderEntity" x="1888" y="512" width="32" height="32"/>
@@ -43,11 +43,11 @@
   <object name="bounce" type="ColliderEntity" x="550" y="545" width="19" height="16"/>
   <object name="bounce" type="ColliderEntity" x="1157" y="545" width="20" height="17"/>
   <object name="bounce" type="ColliderEntity" x="2243" y="550" width="26" height="9"/>
-  <object name="player" type="PlayerEntity" gid="120" x="13" y="300"/>
+  <object name="player" type="PlayerEntity" gid="114" x="32" y="224"/>
  </objectgroup>
  <layer name="foreground" width="80" height="20">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3WMQ5EQACF4dFplhOwNQlqcTz2ANtpdY7pFRKKicrMGPm/5I/EFF43jAEAAAAAPF0degAAJz4qU3noIZEqVKm+oYdEpDfHndKoVnWqsoT7DB6+YftX+O/PUU3qdzqbnS96h9TyLvG+Ik7LxdnqacMGu4cPbwAZAAA=
+   H4sIAAAAAAAAA+3VQQqAIBCFYe9RLU2otgnVgdt1xmYRZGJKFFnwf/BAmEEHN6MUAAAAgJBCUkqq3IP8VCNpJV3uQX5Gbxkko2TKOw6AF7Bv7mHfXGecs7tvtBc8y6rj/9qTvjpxh8sEu3ZzpLZEaibwlq9P1IEvWAG1eM+PABkAAA==
   </data>
  </layer>
 </map>
