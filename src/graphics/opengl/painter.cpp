@@ -56,10 +56,14 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace { /******************************************** Anonymous Namespace */
 
 const char s_vertex_shader[] =
+  "#version 100\n"
+
   "attribute vec2 a_texCoord;\n"
   "attribute vec4 a_position;\n"
+
   "uniform mat4 u_matrix;\n"
   "uniform mat4 u_model;\n"
+
   "varying vec2 v_texCoord;\n"
 
   "void main() {"
@@ -68,21 +72,22 @@ const char s_vertex_shader[] =
   "}\n";
 
 const char s_fragment_shader[] =
+  "#version 100\n"
+
+  "precision mediump float;\n"
+  "precision mediump int;\n"
+
   "uniform bool u_usecolor;\n"
-#ifdef MARSHMALLOW_OPENGL_ES2
   "uniform lowp sampler2D s_texture;\n"
   "uniform lowp vec4 u_color;\n"
+
   "varying highp vec2 v_texCoord;\n"
-#else
-  "uniform sampler2D s_texture;\n"
-  "uniform vec4 u_color;\n"
-  "varying vec2 v_texCoord;\n"
-#endif
+
   "void main() {"
      "if (u_usecolor) "
-     "  gl_FragColor = u_color;"
+       "gl_FragColor = u_color;"
      "else "
-     "  gl_FragColor = texture2D(s_texture, v_texCoord) * u_color;"
+       "gl_FragColor = texture2D(s_texture, v_texCoord) * u_color;"
   "}\n";
 
 struct PainterData
