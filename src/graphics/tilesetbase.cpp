@@ -49,7 +49,7 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 struct TilesetBase::Private
 {
-	SharedTextureCoordinateData **cache;
+	SharedTextureCoordinateData *cache;
 
 	Core::Identifier  name;
 	Math::Size2i      size;
@@ -61,22 +61,18 @@ struct TilesetBase::Private
 
 	float *offset_col;
 	float *offset_row;
-	float  spacing_col;
-	float  spacing_row;
+	float  ptilesize[2]; // proportional tile-size
 };
 
 TilesetBase::TilesetBase()
     : m_p(new Private)
 {
 	m_p->cache = 0;
-	m_p->tile_size[0] = 16;
-	m_p->tile_size[1] = 16;
 	m_p->margin = 0;
 	m_p->spacing = 0;
-	m_p->offset_col = 0;
-	m_p->offset_row = 0;
-	m_p->spacing_col = 0;
-	m_p->spacing_row = 0;
+	m_p->tile_size[0] = m_p->tile_size[1] = 16;
+	m_p->offset_col   = m_p->offset_row   = 0;
+	m_p->ptilesize[0] = m_p->ptilesize[1] = 0;
 }
 
 TilesetBase::~TilesetBase(void)
@@ -171,8 +167,8 @@ TilesetBase::getTextureCoordinateData(uint16_t i)
 		return(SharedTextureCoordinateData());
 
 	assert(i < m_p->size.area() && "index was out of bounds.");
-	SharedTextureCoordinateData *l_cached = m_p->cache[i];
-	if (l_cached == 0) {
+	SharedTextureCoordinateData &l_cached = m_p->cache[i];
+	if (!l_cached) {
 		/* create new entry */
 #define TILECOORDINATES 4
 		SharedTextureCoordinateData l_data =
@@ -180,24 +176,20 @@ TilesetBase::getTextureCoordinateData(uint16_t i)
 
 		/* calculate row and column */
 
-		const int l_row = i / m_p->size.width();
-		const int l_col = i % m_p->size.width();
-
-		const float l_left   = m_p->offset_col[l_col];
-		const float l_top    = m_p->offset_row[l_row];
-		const float l_right  = m_p->offset_col[l_col + 1] - m_p->spacing_col;
-		const float l_bottom = m_p->offset_row[l_row + 1] - m_p->spacing_row;
+		const float l_left   = m_p->offset_col[i % m_p->size.width()];
+		const float l_top    = m_p->offset_row[i / m_p->size.width()];
+		const float l_right  = l_left + m_p->ptilesize[0];
+		const float l_bottom = l_top  + m_p->ptilesize[1];
 
 		l_data->set(0, l_left,  l_top);
 		l_data->set(1, l_left,  l_bottom);
 		l_data->set(2, l_right, l_top);
 		l_data->set(3, l_right, l_bottom);
 
-		m_p->cache[i] = new SharedTextureCoordinateData(l_data);
-		return(l_data);
+		return(m_p->cache[i] = l_data);
 	}
 
-	return(*m_p->cache[i]);
+	return(l_cached);
 }
 
 bool
@@ -221,15 +213,11 @@ TilesetBase::reset(void)
 {
 	/* clear current tile cache */
 
-	const int l_old_item_count = m_p->size.area();
-	for (int i = 0; i < l_old_item_count; ++i)
-		delete m_p->cache[i];
 	delete[] m_p->cache, m_p->cache = 0;
 	delete[] m_p->offset_col, m_p->offset_col  = 0;
 	delete[] m_p->offset_row, m_p->offset_row  = 0;
 
-	m_p->spacing_col = 0;
-	m_p->spacing_row = 0;
+	m_p->ptilesize[0] = m_p->ptilesize[1] = 0;
 	m_p->size.zero();
 
 	if (!m_p->texture_data)
@@ -237,6 +225,29 @@ TilesetBase::reset(void)
 
 	/* calculate size */
 
+	/*
+	 *  In order to get an accurate Tileset Size, we will first need to
+	 *  reduct the Margin from the Raw Texture Size in order to get the Real
+	 *  Texture Size.
+	 *
+	 *      i.e. REAL = RAW - MARGIN
+	 *
+	 *  We now need to add the Spacing to both the Real Texture Size and
+	 *  Tile Size, by adding the spacing to the Real Tile Size we allow
+	 *  tiles to reach the edge of the raw texture.
+	 *
+	 *  This is due to the fact that all tiles except the last one are
+	 *  required to have the spacing to their right. By artificially adding
+	 *  spacing to the Real Tile Size we can get an accurate Tile Count
+	 *  regardless of its presence.
+	 *
+	 *  REAL = REAL + SPACING
+	 *  TILE = TILE + SPACING
+	 *
+	 *  Finally we divide the Real Tile Size by the Tile Size, giving us the
+	 *  total Tile Count also known as Tileset Size.
+	 *
+	 */
 	const Math::Size2i &l_texture_size = m_p->texture_data->size();
 	m_p->size[0] = (l_texture_size.width() - m_p->margin + m_p->spacing)
 	          / (m_p->tile_size.width() + m_p->spacing);
@@ -244,30 +255,36 @@ TilesetBase::reset(void)
 	          / (m_p->tile_size.height() + m_p->spacing);
 
 	/*
-	 * we generate the tile offsets, the extra offset (+1) acts as the limit
-	 * for the last row/column.
+	 * Calculate proportional tile sizes
 	 */
 
-	m_p->offset_col = new float[m_p->size.width() + 1];
-	m_p->spacing_col = static_cast<float>(m_p->spacing)
+	m_p->ptilesize[0] = static_cast<float>(m_p->tile_size.width())
 	              / static_cast<float>(l_texture_size.width());
-	for (int i = m_p->size.width(); i >= 0; --i)
+	m_p->ptilesize[1] = static_cast<float>(m_p->tile_size.height())
+	              / static_cast<float>(l_texture_size.height());
+
+	/*
+	 * Calculate tile offsets
+	 */
+
+	int l_real_tile_size;
+
+	m_p->offset_col = new float[m_p->size.width()];
+	l_real_tile_size = m_p->tile_size.width() + m_p->spacing;
+	for (int i = 0; i < m_p->size.width(); ++i)
 		m_p->offset_col[i] =
-		    static_cast<float>(m_p->margin + (i * (m_p->tile_size.width() + m_p->spacing)))
+		    static_cast<float>(m_p->margin + (i * l_real_tile_size))
 		  / static_cast<float>(l_texture_size.width());
 
-	m_p->offset_row = new float[m_p->size.height() + 1];
-	m_p->spacing_row = static_cast<float>(m_p->spacing)
-	              / static_cast<float>(l_texture_size.height());
-	for (int i = m_p->size.height(); i >= 0; --i)
+	m_p->offset_row = new float[m_p->size.height()];
+	l_real_tile_size = m_p->tile_size.height() + m_p->spacing;
+	for (int i = 0; i < m_p->size.height(); ++i)
 		m_p->offset_row[i] =
-		    static_cast<float>(m_p->margin + (i * (m_p->tile_size.height() + m_p->spacing)))
+		    static_cast<float>(m_p->margin + (i * l_real_tile_size))
 		  / static_cast<float>(l_texture_size.height());
 
 	const int l_item_count = m_p->size.area();
-	m_p->cache = new SharedTextureCoordinateData*[l_item_count];
-	for (int i = 0; i < l_item_count; ++i)
-		m_p->cache[i] = 0;
+	m_p->cache = new SharedTextureCoordinateData[l_item_count];
 }
 
 } /******************************************************* Graphics Namespace */
