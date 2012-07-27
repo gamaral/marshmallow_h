@@ -61,7 +61,6 @@ PlayerColliderComponent::collision(ColliderComponent &c, float d,
 
 	if (!movement()) return(false);
 
-	Game::CollisionData l_data = data;
 	const Math::Vector2 norm = movement()->velocity().normalized();
 
 	if (c.id().str() == "platform") {

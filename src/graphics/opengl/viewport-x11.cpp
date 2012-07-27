@@ -109,13 +109,13 @@ ResetViewportData(void)
 #endif
 }
 
-bool GLCreateSurface(bool vsync);
+bool GLCreateSurface(uint8_t vsync);
 bool X11CreateWindow(uint16_t width, uint16_t height, uint8_t depth,
                      bool fullscreen);
 
 bool
 CreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen,
-             bool vsync)
+             uint8_t vsync)
 {
 	using namespace Graphics;
 
@@ -137,7 +137,7 @@ CreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen,
 
 	/* initialize context */
 
-	glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
+	glViewport(0, 0, static_cast<GLsizei>(s_data.wsize[0]), static_cast<GLsizei>(s_data.wsize[1]));
 
 	if (glGetError() != GL_NO_ERROR) {
 		MMERROR("GL: Failed during initialization.");
@@ -352,15 +352,14 @@ X11CreateWindow(uint16_t w, uint16_t h, uint8_t depth, bool fullscreen)
 		return(false);
 	}
 
+	s_data.vinfo.screen = XDefaultScreen(s_data.dpy);
 	Window l_rwindow = DefaultRootWindow(s_data.dpy);
 
 	/* select visual */
-	if (!XMatchVisualInfo(s_data.dpy, XDefaultScreen(s_data.dpy), depth, TrueColor, &s_data.vinfo)) {
+	if (!XMatchVisualInfo(s_data.dpy, s_data.vinfo.screen, depth, TrueColor, &s_data.vinfo)) {
 		MMERROR("X11: Failed to find an appropriate visual.");
 		return(false);
 	}
-
-	XSync(s_data.dpy, true);
 
 	/* window attributes */
 	XSetWindowAttributes l_swattr;
@@ -380,25 +379,28 @@ X11CreateWindow(uint16_t w, uint16_t h, uint8_t depth, bool fullscreen)
 	if (s_data.fullscreen) {
 
 		/* default window size to display size */
-		s_data.wsize[0] = DisplayWidth(s_data.dpy, s_data.vinfo.screen);
-		s_data.wsize[1] = DisplayHeight(s_data.dpy, s_data.vinfo.screen);
+		s_data.wsize[0] = XDisplayWidth(s_data.dpy,  s_data.vinfo.screen);
+		s_data.wsize[1] = XDisplayHeight(s_data.dpy, s_data.vinfo.screen);
 
 		/* create a fullscreen window */
 		l_swattr.override_redirect = true;
 		s_data.window = XCreateWindow
 		   (s_data.dpy,
 		    l_rwindow,
-		    0, 0, s_data.wsize[0], s_data.wsize[1],
-		    0, s_data.vinfo.depth,
+		    0, 0,
+		    static_cast<unsigned int>(s_data.wsize[0]),
+		    static_cast<unsigned int>(s_data.wsize[1]),
+		    1,
+		    s_data.vinfo.depth,
 		    InputOutput,
 		    s_data.vinfo.visual,
-		    CWColormap|CWEventMask|CWOverrideRedirect,
+		    CWColormap|CWEventMask,
 		    &l_swattr);
-		XMapRaised(s_data.dpy, s_data.window);
 
 		/* notify window manager */
-		Atom l_wm_state   = XInternAtom(s_data.dpy, "_NET_WM_STATE", false);
-		Atom l_fullscreen = XInternAtom(s_data.dpy, "_NET_WM_STATE_FULLSCREEN", false);
+		Atom l_wm_state = XInternAtom(s_data.dpy, "_NET_WM_STATE", False);
+		Atom l_wms_above = XInternAtom(s_data.dpy, "_NET_WM_STATE_ABOVE", False);
+		Atom l_wms_fullscreen = XInternAtom(s_data.dpy, "_NET_WM_STATE_FULLSCREEN", False);
 
 		XEvent l_event;
 		memset(&l_event, 0, sizeof(l_event));
@@ -407,9 +409,15 @@ X11CreateWindow(uint16_t w, uint16_t h, uint8_t depth, bool fullscreen)
 		l_event.xclient.window       = s_data.window;
 		l_event.xclient.message_type = l_wm_state;
 		l_event.xclient.format       = 32;
-		l_event.xclient.data.l[0]    = 1;
-		l_event.xclient.data.l[1]    = static_cast<long>(l_fullscreen);
-		XSendEvent(s_data.dpy, l_rwindow, false, SubstructureNotifyMask, &l_event );
+		l_event.xclient.data.l[0]    = 1; /* enable */
+		l_event.xclient.data.l[1]    = static_cast<long>(l_wms_fullscreen);
+		l_event.xclient.data.l[2]    = static_cast<long>(l_wms_above);
+		l_event.xclient.data.l[3]    = 1; /* source is window */
+		l_event.xclient.data.l[4]    = 0;
+
+		XMapRaised(s_data.dpy, s_data.window);
+		if (0 == XSendEvent(s_data.dpy, l_rwindow, False, SubstructureRedirectMask, &l_event))
+			MMERROR("Failed to send fullscreen event to window manager.");
 	}
 
 	/*
@@ -419,10 +427,12 @@ X11CreateWindow(uint16_t w, uint16_t h, uint8_t depth, bool fullscreen)
 		s_data.window = XCreateWindow
 		   (s_data.dpy,
 		    l_rwindow,
-		    (DisplayWidth(s_data.dpy, s_data.vinfo.screen) - s_data.wsize[0]) / 2,
-		    (DisplayHeight(s_data.dpy, s_data.vinfo.screen) - s_data.wsize[1]) / 2,
-		    s_data.wsize[0], s_data.wsize[1],
-		    1, s_data.vinfo.depth,
+		    (XDisplayWidth(s_data.dpy, s_data.vinfo.screen) - s_data.wsize[0]) / 2,
+		    (XDisplayHeight(s_data.dpy, s_data.vinfo.screen) - s_data.wsize[1]) / 2,
+		    static_cast<unsigned int>(s_data.wsize[0]),
+		    static_cast<unsigned int>(s_data.wsize[1]),
+		    1,
+		    s_data.vinfo.depth,
 		    InputOutput,
 		    s_data.vinfo.visual,
 		    CWColormap|CWEventMask,
@@ -474,7 +484,7 @@ X11CreateWindow(uint16_t w, uint16_t h, uint8_t depth, bool fullscreen)
 }
 
 bool
-GLCreateSurface(bool vsync)
+GLCreateSurface(uint8_t vsync)
 {
 	using namespace Graphics::OpenGL;
 
@@ -552,7 +562,7 @@ GLCreateSurface(bool vsync)
 
 	/* vsync */
 
-	if (eglSwapInterval(s_data.egl_dpy, vsync ? 1 : 0) != EGL_TRUE)
+	if (eglSwapInterval(s_data.egl_dpy, vsync) != EGL_TRUE)
 		MMWARNING("EGL: Ignored out vsync request!");
 
 	/* clear error state */
@@ -581,7 +591,7 @@ GLCreateSurface(bool vsync)
 	/* vsync */
 
 	if (Extensions::glxSwapInterval)
-		Extensions::glxSwapInterval(vsync ? 1 : 0);
+		Extensions::glxSwapInterval(vsync);
 #endif
 
 	return(true);
@@ -604,8 +614,8 @@ OpenGL::glGetProcAddress(const char *f)
 /********************************************************* Graphics::Viewport */
 
 bool
-Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth, uint8_t,
-                     bool fullscreen, bool vsync)
+Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth,
+                     bool fullscreen, uint8_t, uint8_t vsync)
 {
 	Camera::Reset();
 
@@ -627,8 +637,8 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t,
-                    bool fullscreen, bool vsync)
+Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t depth,
+                    bool fullscreen, uint8_t, uint8_t vsync)
 {
 	DestroyWindow();
 

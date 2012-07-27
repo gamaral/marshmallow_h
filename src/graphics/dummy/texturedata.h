@@ -77,6 +77,11 @@ namespace Dummy { /******************************** Graphics::Dummy Namespace */
 		VIRTUAL bool isLoaded(void) const
 		    { return(m_id != 0); }
 
+		VIRTUAL ScaleMode minificationMode(void) const
+		    { return(smNearest); }
+		VIRTUAL ScaleMode magnificationMode(void) const
+		    { return(smNearest); }
+
 		VIRTUAL const Math::Size2i & size(void) const
 		    { return(m_size); }
 

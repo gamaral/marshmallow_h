@@ -68,11 +68,11 @@ set(MARSHMALLOW_VIEWPORT_WIDTH   "720" CACHE STRING "Viewport native width")
 set(MARSHMALLOW_VIEWPORT_HEIGHT  "480" CACHE STRING "Viewport native height")
 set(MARSHMALLOW_VIEWPORT_DEPTH   "24"  CACHE STRING "Viewport default depth")
 set(MARSHMALLOW_VIEWPORT_REFRESH "60"  CACHE STRING "Viewport default refresh rate")
+set(MARSHMALLOW_VIEWPORT_VSYNC   "1"   CACHE STRING "Default swap interval (0 = OFF)")
 
 option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode"      OFF)
 option(MARSHMALLOW_VIEWPORT_GRAB_INPUT "Takeover viewport input devices"        ON)
 option(MARSHMALLOW_VIEWPORT_LOCK_WIDTH "Use width for aspect ratio resolution" OFF)
-option(MARSHMALLOW_VIEWPORT_VSYNC      "Viewport default vsync mode"            ON)
 
 option(MARSHMALLOW_VIEWPORT_DUMMY  "Use Dummy Viewport (testing)"    ON)
 option(MARSHMALLOW_VIEWPORT_GX     "Use GX Viewport (wii)"          OFF)

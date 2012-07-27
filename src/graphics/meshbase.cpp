@@ -220,6 +220,8 @@ MeshBase::serialize(XMLElement &n) const
 	if (m_p->tdata->isLoaded()) {
 		XMLElement *l_texture = n.GetDocument()->NewElement("texture");
 		l_texture->SetAttribute("id", m_p->tdata->id().str().c_str());
+		l_texture->SetAttribute("min", ScaleModeToString(m_p->tdata->minificationMode()));
+		l_texture->SetAttribute("mag", ScaleModeToString(m_p->tdata->magnificationMode()));
 		n.InsertEndChild(l_texture);
 	}
 

@@ -53,6 +53,8 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 		Core::Identifier m_id;
 		Math::Size2i m_size;
 		unsigned int m_texture_id;
+		ScaleMode m_min;
+		ScaleMode m_mag;
 
 		NO_ASSIGN_COPY(TextureData);
 	public:
@@ -77,6 +79,11 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 		VIRTUAL bool isLoaded(void) const
 		    { return(m_texture_id != 0); }
+
+		VIRTUAL ScaleMode minificationMode(void) const
+		    { return(m_min); }
+		VIRTUAL ScaleMode magnificationMode(void) const
+		    { return(m_mag); }
 
 		VIRTUAL const Math::Size2i & size(void) const
 		    { return(m_size); }

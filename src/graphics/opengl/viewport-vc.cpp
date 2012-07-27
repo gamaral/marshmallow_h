@@ -363,7 +363,7 @@ VCCreateDisplay(uint16_t width, uint16_t height, uint8_t refresh)
 	}
 
 	s_data.dpy = vc_dispmanx_display_open(l_display_type);
-	if (s_data.dpy == 0) {
+	if (0 == s_data.dpy) {
 		MMERROR("VC: Failed to open display.");
 		return(false);
 	}
@@ -432,10 +432,10 @@ VCPowerOnDisplay(uint8_t refresh, uint16_t &did)
 	/*
 	 *  HDMI/DVI
 	 */
-	if ((l_tvstate.state & VC_HDMI_UNPLUGGED) == 0) {
+	if (0 == (l_tvstate.state & VC_HDMI_UNPLUGGED)) {
 
 		/* power on in preferred mode */
-		if (vc_tv_hdmi_power_on_preferred() != 0) {
+		if (0 != vc_tv_hdmi_power_on_preferred()) {
 			MMERROR("HDMI: Failed to power on.");
 			return(false);
 		}
@@ -485,7 +485,7 @@ OpenGL::glGetProcAddress(const char *f)
 
 bool
 Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth,
-                     uint8_t refresh, bool, bool vsync)
+                     bool, uint8_t refresh, uint8_t vsync)
 {
 	bcm_host_init();
 
@@ -524,7 +524,7 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t, uint16_t, uint8_t, uint8_t, bool, bool)
+Viewport::Redisplay(uint16_t, uint16_t, uint8_t, bool, uint8_t, uint8_t)
 {
 	MMERROR("VC doesn't seem to play well with redisplay. Sorry.");
 	return(false);

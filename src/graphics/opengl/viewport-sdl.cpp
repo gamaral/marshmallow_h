@@ -209,8 +209,8 @@ OpenGL::glGetProcAddress(const char *f)
 /********************************************************* Graphics::Viewport */
 
 bool
-Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth, uint8_t,
-                     bool fullscreen, bool vsync)
+Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth,
+                     bool fullscreen, uint8_t, uint8_t vsync)
 {
 	/* force video center */
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_CENTERED=1"));
@@ -242,8 +242,8 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t,
-                    bool fullscreen, bool vsync)
+Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t depth,
+                    bool fullscreen, uint8_t, uint8_t vsync)
 {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {

@@ -100,7 +100,7 @@ namespace Painter { /**************************** Graphics::Painter Namespace */
 	 * Draw a single mesh in multiple origins
 	 */
 	MARSHMALLOW_GRAPHICS_EXPORT
-	void Draw(const IMesh &mesh, const Math::Point2 *origins, int count = 1);
+	void Draw(const IMesh &mesh, const Math::Point2 *origins, size_t count = 1);
 
 } /********************************************** Graphics::Painter Namespace */
 } /******************************************************* Graphics Namespace */

@@ -66,9 +66,9 @@ const char s_vertex_shader[] =
 
   "varying vec2 v_texCoord;\n"
 
-  "void main() {"
-     "gl_Position = u_matrix * u_model * a_position;"
-     "v_texCoord = a_texCoord;"
+  "void main() {\n"
+  "    gl_Position = u_matrix * u_model * a_position;\n"
+  "    v_texCoord = a_texCoord;\n"
   "}\n";
 
 const char s_fragment_shader[] =
@@ -83,12 +83,12 @@ const char s_fragment_shader[] =
 
   "varying highp vec2 v_texCoord;\n"
 
-  "void main() {"
-     "if (u_usecolor) "
-       "gl_FragColor = u_color;"
-     "else "
-       "gl_FragColor = texture2D(s_texture, v_texCoord) * u_color;"
-  "}\n";
+  "void main() {\n"
+  "    if (u_usecolor)\n"
+  "      gl_FragColor = u_color;\n"
+  "    else\n"
+  "      gl_FragColor = texture2D(s_texture, v_texCoord) * u_color;\n"
+ "}\n";
 
 struct PainterData
 {
@@ -120,7 +120,7 @@ LoadShader(GLenum type, const char *src)
 	GLuint l_shader;
 	GLint  l_compiled;
 
-	if ((l_shader = glCreateShader(type)) == 0)
+	if (0 == (l_shader = glCreateShader(type)))
 		return(0);
 
 	glShaderSource(l_shader, 1, &src, 0);
@@ -155,16 +155,15 @@ LoadProgram(void)
 	GLuint l_program_object;
 	GLint  l_linked;
 
-	if ((l_vertex_shader = LoadShader(GL_VERTEX_SHADER, s_vertex_shader)) == 0)
+	if (0 == (l_vertex_shader = LoadShader(GL_VERTEX_SHADER, s_vertex_shader)))
 		return(0);
 
-	if ((l_fragment_shader = LoadShader(GL_FRAGMENT_SHADER, s_fragment_shader)) == 0)
-	{
+	if (0 == (l_fragment_shader = LoadShader(GL_FRAGMENT_SHADER, s_fragment_shader))) {
 		glDeleteShader(l_vertex_shader);
 		return(0);
 	}
 
-	if ((l_program_object = glCreateProgram()) == 0)
+	if (0 == (l_program_object = glCreateProgram()))
 		return(0);
 
 	glAttachShader(l_program_object, l_vertex_shader);
@@ -285,16 +284,16 @@ Painter::Initialize(void)
 
 	s_data.location_matrix_invalidated = true;
 
-	if ((s_data.program_object = LoadProgram()) == 0)
+	if (0 == (s_data.program_object = LoadProgram()))
 		MMFATAL(s_error_msg);
 
 	GLint l_location;
 
-	if ((l_location = glGetAttribLocation(s_data.program_object, "a_position")) == -1)
+	if (-1 == (l_location = glGetAttribLocation(s_data.program_object, "a_position")))
 		MMFATAL(s_error_msg);
 	s_data.location_position = static_cast<GLuint>(l_location);
 
-	if ((l_location = glGetAttribLocation(s_data.program_object, "a_texCoord")) == -1)
+	if (-1 == (l_location = glGetAttribLocation(s_data.program_object, "a_texCoord")))
 		MMFATAL(s_error_msg);
 	s_data.location_texcoord = static_cast<GLuint>(l_location);
 
@@ -414,7 +413,7 @@ Painter::Draw(const IMesh &m, const Math::Point2 &o)
 }
 
 void
-Painter::Draw(const IMesh &m, const Math::Point2 *o, int c)
+Painter::Draw(const IMesh &m, const Math::Point2 *o, size_t c)
 {
 	using namespace Graphics::OpenGL;
 	using Graphics::OpenGL::SharedTextureData;
@@ -460,7 +459,7 @@ Painter::Draw(const IMesh &m, const Math::Point2 *o, int c)
 	else MMWARNING("Unknown mesh type");
 
 	/* draw mesh(es) */
-	for (int i = 0; i < c; ++i) {
+	for (size_t i = 0; i < c; ++i) {
 		/* update model matrix */
 		l_model.setTranslation(o[i]);
 		glUniformMatrix4fv(s_data.location_model, 1, GL_FALSE, l_model.matrix().data());

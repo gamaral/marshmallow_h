@@ -37,6 +37,7 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 
+#include <cassert>
 #include <cstring>
 
 #include <png.h>
@@ -98,6 +99,7 @@ LoadTexturePNG(const std::string &filename, Texture &data)
 	data.height = png_get_image_height(png_ptr, info_ptr);
 	data.depth  = png_get_bit_depth(png_ptr,    info_ptr);
 	png_byte color_type = png_get_color_type(png_ptr, info_ptr);
+	assert(data.height > 0 && data.width > 0 && "Invalid texture size encountered.");
 
 	if((color_type & PNG_COLOR_TYPE_RGBA) == PNG_COLOR_TYPE_RGBA)
 		data.components = 4;
@@ -165,6 +167,7 @@ TextureData::load(const Core::Identifier &_id, ScaleMode min, ScaleMode mag)
 		MMERROR("Failed to load texture: " << _id.str());
 		return(false);
 	}
+	assert(tdata.width < INT_MAX && tdata.height < INT_MAX && "Oversized texture encountered!");
 
 	GLint l_format;
 	switch (tdata.components) {
@@ -178,13 +181,14 @@ TextureData::load(const Core::Identifier &_id, ScaleMode min, ScaleMode mag)
 	/* update object details */
 
 	m_id   = _id;
-	m_size = Math::Size2i(tdata.width, tdata.height);
+	m_size = Math::Size2i(static_cast<int>(tdata.width), static_cast<int>(tdata.height));
 
 	/* calculate min/mag */
 
 	const bool l_mipmaps = (glGenerateMipmap != 0);
 
 	GLint l_mag_scale;
+	m_mag = mag;
 	switch(mag) {
 	case smLinear: l_mag_scale = GL_LINEAR; break;
 
@@ -193,6 +197,7 @@ TextureData::load(const Core::Identifier &_id, ScaleMode min, ScaleMode mag)
 	}
 
 	GLint l_min_scale;
+	m_min = min;
 	switch(min) {
 	case smLinear:
 		l_min_scale = l_mipmaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
@@ -221,8 +226,15 @@ TextureData::load(const Core::Identifier &_id, ScaleMode min, ScaleMode mag)
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 #endif
 
-	glTexImage2D(GL_TEXTURE_2D, 0, l_format, tdata.width, tdata.height, 0,
-	             l_format, GL_UNSIGNED_BYTE, tdata.pixels);
+	glTexImage2D(GL_TEXTURE_2D,
+	             0,
+	             l_format,
+	             static_cast<GLsizei>(tdata.width),
+	             static_cast<GLsizei>(tdata.height),
+	             0,
+	             static_cast<GLenum>(l_format),
+	             GL_UNSIGNED_BYTE,
+	             tdata.pixels);
 	if (l_mipmaps) glGenerateMipmap(GL_TEXTURE_2D);
 
 	/* unload local-copy */

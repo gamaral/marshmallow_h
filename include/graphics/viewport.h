@@ -56,23 +56,23 @@ namespace Viewport { /************************** Graphics::Viewport Namespace */
 	const Core::Type & Type(void);
 
 	MARSHMALLOW_GRAPHICS_EXPORT
-	bool Initialize( uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
-			 uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
-			 uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
-			 uint8_t refresh = MARSHMALLOW_VIEWPORT_REFRESH,
-			 bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
-			 bool      vsync = MARSHMALLOW_VIEWPORT_VSYNC);
+	bool Initialize(uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
+	                uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
+	                uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
+	                bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
+	                uint8_t refresh = MARSHMALLOW_VIEWPORT_REFRESH,
+	                uint8_t   vsync = MARSHMALLOW_VIEWPORT_VSYNC);
 
 	MARSHMALLOW_GRAPHICS_EXPORT
 	void Finalize(void);
 
 	MARSHMALLOW_GRAPHICS_EXPORT
-	bool Redisplay( uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
-			uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
-			uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
-			uint8_t refresh = MARSHMALLOW_VIEWPORT_REFRESH,
-			bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
-			bool      vsync = MARSHMALLOW_VIEWPORT_VSYNC);
+	bool Redisplay(uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
+	               uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
+	               uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
+	               bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
+	               uint8_t refresh = MARSHMALLOW_VIEWPORT_REFRESH,
+	               uint8_t   vsync = MARSHMALLOW_VIEWPORT_VSYNC);
 
 	MARSHMALLOW_GRAPHICS_EXPORT
 	void Tick(void);

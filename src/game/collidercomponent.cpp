@@ -206,7 +206,7 @@ ColliderComponent::update(float d)
 		ColliderList::const_iterator l_i;
 		ColliderList::const_iterator l_c = m_p->layer->colliders().end();
 
-		for (l_i = m_p->layer->colliders().begin(); l_i != m_p->layer->colliders().end(); ++l_i) {
+		for (l_i = m_p->layer->colliders().begin(); l_i != l_c; ++l_i) {
 			if (*l_i == this) continue;
 
 			ColliderComponent *l_collider = *l_i;

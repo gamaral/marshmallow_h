@@ -453,7 +453,7 @@ OpenGL::glGetProcAddress(const char *f)
 
 bool
 Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth,
-                     uint8_t refresh, bool fullscreen, bool vsync)
+                     bool fullscreen, uint8_t refresh, uint8_t vsync)
 {
 	Camera::Reset();
 
@@ -476,7 +476,7 @@ Viewport::Finalize(void)
 
 bool
 Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t depth,
-                    uint8_t refresh, bool fullscreen, bool vsync)
+                    bool fullscreen, uint8_t refresh, uint8_t vsync)
 {
 	DestroyDisplay();
 

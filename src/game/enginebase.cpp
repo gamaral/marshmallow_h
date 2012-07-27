@@ -119,12 +119,12 @@ EngineBase::initialize(void)
 
 	/* viewport defaults */
 
-	uint16_t l_width   = MARSHMALLOW_VIEWPORT_WIDTH;
-	uint16_t l_height  = MARSHMALLOW_VIEWPORT_HEIGHT;
-	uint8_t  l_depth   = MARSHMALLOW_VIEWPORT_DEPTH;
-	uint8_t  l_refresh = MARSHMALLOW_VIEWPORT_REFRESH;
-	bool l_fullscreen  = MARSHMALLOW_VIEWPORT_FULLSCREEN;
-	bool l_vsync = MARSHMALLOW_VIEWPORT_VSYNC;
+	uint16_t l_width      = MARSHMALLOW_VIEWPORT_WIDTH;
+	uint16_t l_height     = MARSHMALLOW_VIEWPORT_HEIGHT;
+	uint8_t  l_depth      = MARSHMALLOW_VIEWPORT_DEPTH;
+	bool     l_fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
+	uint8_t  l_refresh    = MARSHMALLOW_VIEWPORT_REFRESH;
+	uint8_t  l_vsync      = MARSHMALLOW_VIEWPORT_VSYNC;
 
 	/* viewport environment overrides */
 
@@ -144,21 +144,25 @@ EngineBase::initialize(void)
 		l_depth = static_cast<uint8_t>(l_tmp);
 	}
 
+	if ((l_env = getenv("MM_FULLSCREEN")))
+		l_fullscreen = (l_env[0] == '1');
+
 	if ((l_env = getenv("MM_REFRESH"))) {
 		uint16_t l_tmp = 0;
 		sscanf(l_env, "%hu", &l_tmp);
 		l_refresh = static_cast<uint8_t>(l_tmp);
 	}
 
-	if ((l_env = getenv("MM_FULLSCREEN")))
-		l_fullscreen = (l_env[0] == '1');
+	if ((l_env = getenv("MM_VSYNC"))) {
+		uint16_t l_tmp = 0;
+		sscanf(l_env, "%hu", &l_tmp);
+		l_vsync = static_cast<uint8_t>(l_tmp);
+	}
 
-	if ((l_env = getenv("MM_VSYNC")))
-		l_vsync = (l_env[0] == '1');
 
 	/* initialize viewport */
-	if (!Viewport::Initialize(l_width, l_height, l_depth, l_refresh,
-	                          l_fullscreen, l_vsync)) {
+	if (!Viewport::Initialize(l_width, l_height, l_depth, l_fullscreen,
+	                          l_refresh, l_vsync)) {
 		MMERROR("Failed to initialize engine!");
 		return(false);
 	}

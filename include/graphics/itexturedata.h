@@ -70,6 +70,9 @@ namespace Graphics { /************************************ Graphics Namespace */
 		virtual void unload(void) = 0;
 		virtual bool isLoaded(void) const = 0;
 
+		virtual ScaleMode minificationMode(void) const = 0;
+		virtual ScaleMode magnificationMode(void) const = 0;
+
 		virtual const Math::Size2i & size(void) const = 0;
 	};
 	typedef Core::Shared<ITextureData> SharedTextureData;

@@ -328,8 +328,8 @@ OpenGL::glGetProcAddress(const char *f)
 /********************************************************* Graphics::Viewport */
 
 bool
-Viewport::Initialize(uint16_t width, uint16_t height, uint8_t, uint8_t,
-                     bool fullscreen, bool vsync)
+Viewport::Initialize(uint16_t width, uint16_t height, uint8_t,
+                     bool fullscreen, uint8_t, uint8_t vsync)
 {
 	static int    argc = 0;
 	static char **argv = 0;
@@ -354,8 +354,8 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t, uint8_t,
-                    bool fullscreen, bool vsync)
+Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t,
+                    bool fullscreen, uint8_t, uint8_t vsync)
 {
 	DestroyWidget();
 
