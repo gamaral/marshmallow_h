@@ -38,9 +38,16 @@
 #define MARSHMALLOW_INPUT_KEYBOARD_H 1
 
 #include <core/environment.h>
+#include <core/identifier.h>
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace { /******************************************** Anonymous Namespace */
+
+const Core::Identifier s_qt4_input_source("QT4");
+
+} /****************************************************** Anonymous Namespace */
+
 namespace Input { /****************************************** Input Namespace */
 
 /**** IMPLEMENTATION NOTES *****************************************************

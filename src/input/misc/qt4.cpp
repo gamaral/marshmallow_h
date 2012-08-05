@@ -103,8 +103,7 @@ HandleQt4KeyEvent(const QKeyEvent &e, bool down)
 	case Qt::Key_BraceLeft:    l_key = Keyboard::KBK_BRACKET_LEFT; break;
 	case Qt::Key_BraceRight:   l_key = Keyboard::KBK_BRACKET_RIGHT; break;
 	case Qt::Key_Equal:        l_key = Keyboard::KBK_EQUAL; break;
-	case Qt::Key_Less:         l_key = Keyboard::KBK_LESS; break;
-	case Qt::Key_QuoteDbl:     l_key = Keyboard::KBK_DBLQUOTE; break;
+	case Qt::Key_Less:         l_key = Keyboard::KBK_MINUS; break;
 	case Qt::Key_Semicolon:    l_key = Keyboard::KBK_SEMICOLON; break;
 	case Qt::Key_Space:        l_key = Keyboard::KBK_SPACE; break;
 	case Qt::Key_F1:           l_key = Keyboard::KBK_F1; break;
@@ -130,7 +129,7 @@ HandleQt4KeyEvent(const QKeyEvent &e, bool down)
 	const Keyboard::Action l_prev_action = Keyboard::KeyState(l_key);
 	if (l_prev_action != l_action) {
 		Keyboard::SetKeyState(l_key, l_action);
-		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
+		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action, s_qt4_input_source));
 		Event::EventManager::Instance()->queue(event);
 	}
 
