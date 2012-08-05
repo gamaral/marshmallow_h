@@ -40,6 +40,8 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
 
+const StrHash StrHash::Null;
+
 struct StrHash::Private
 {
 	std::string str;

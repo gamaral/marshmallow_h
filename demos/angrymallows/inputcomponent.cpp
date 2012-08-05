@@ -44,6 +44,7 @@
 #include <graphics/viewport.h>
 
 #include <game/engine.h>
+#include <game/iengine.h>
 #include <game/ientity.h>
 
 #include <Box2D/Box2D.h>
@@ -55,7 +56,7 @@ const Core::Type InputComponent::Type("InputComponent");
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
     , m_linear_impulse(2.f)
-    , m_angular_impulse(0.008f)
+    , m_angular_impulse(0.8f)
     , m_state(ICJumping)
     , m_jump(false)
     , m_left(false)
@@ -113,18 +114,20 @@ InputComponent::update(float)
 bool
 InputComponent::handleEvent(const Event::IEvent &e)
 {
+	using namespace Input;
+
 	if (e.type() != Event::KeyboardEvent::Type())
 		return(false);
 
 	const Event::KeyboardEvent &l_kevent =
 	    static_cast<const Event::KeyboardEvent &>(e);
 
-	if (l_kevent.key() == Event::KEY_SPACE)
-		jump(l_kevent.action() == Event::KeyPressed);
-	else if (l_kevent.key() == Event::KEY_LEFT)
-		left(l_kevent.action() == Event::KeyPressed);
-	else if (l_kevent.key() == Event::KEY_RIGHT)
-		right(l_kevent.action() == Event::KeyPressed);
+	if (l_kevent.key() == Keyboard::KBK_SPACE)
+		jump(l_kevent.action() == Keyboard::KeyPressed);
+	else if (l_kevent.key() == Keyboard::KBK_LEFT)
+		left(l_kevent.action() == Keyboard::KeyPressed);
+	else if (l_kevent.key() == Keyboard::KBK_RIGHT)
+		right(l_kevent.action() == Keyboard::KeyPressed);
 
 	return(false);
 }

@@ -67,8 +67,8 @@ PositionComponent::serialize(XMLElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	n.SetAttribute("x", m_p->position.x());
-	n.SetAttribute("y", m_p->position.y());
+	n.SetAttribute("x", m_p->position.x);
+	n.SetAttribute("y", m_p->position.y);
 	return(true);
 }
 
@@ -78,8 +78,8 @@ PositionComponent::deserialize(XMLElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	n.QueryFloatAttribute("x", &m_p->position[0]);
-	n.QueryFloatAttribute("y", &m_p->position[1]);
+	n.QueryFloatAttribute("x", &m_p->position.x);
+	n.QueryFloatAttribute("y", &m_p->position.y);
 	return(true);
 }
 

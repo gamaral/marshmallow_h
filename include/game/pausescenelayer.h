@@ -75,7 +75,7 @@ namespace Game
 		    { return(Type()); }
 
 		VIRTUAL void render(void);
-		VIRTUAL void update(float) {};
+		VIRTUAL void update(float);
 
 	public: /* static */
 

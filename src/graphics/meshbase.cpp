@@ -176,7 +176,7 @@ Math::Vector2
 MeshBase::vertex(uint16_t i) const
 {
 	Math::Vector2 l_vector;
-	if (!m_p->vdata->get(i, l_vector[0], l_vector[1]))
+	if (!m_p->vdata->get(i, l_vector.x, l_vector.y))
 		MMWARNING("Failed to retrieve values for vertex " << i);
 	return(l_vector);
 }
@@ -184,8 +184,8 @@ MeshBase::vertex(uint16_t i) const
 void
 MeshBase::setVertex(uint16_t i, const Math::Vector2 &v)
 {
-	if (!m_p->vdata->set(i, v.x(), v.y()))
-		MMWARNING("Failed to assign values (" << v.x() << ", " << v.y() << ") to vertex " << i);
+	if (!m_p->vdata->set(i, v.x, v.y))
+		MMWARNING("Failed to assign values (" << v.x << ", " << v.y << ") to vertex " << i);
 }
 
 void

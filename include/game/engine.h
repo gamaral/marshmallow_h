@@ -37,15 +37,33 @@
 #ifndef MARSHMALLOW_GAME_ENGINE_H
 #define MARSHMALLOW_GAME_ENGINE_H 1
 
-#include <game/enginebase.h>
+#include <core/environment.h>
+#include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
-	typedef EngineBase Engine;
-}
+	struct IEngine;
 
+namespace Engine { /********************************** Game::Engine Namespace */
+
+	MARSHMALLOW_GAME_EXPORT
+	bool Pause(void);
+
+	MARSHMALLOW_GAME_EXPORT
+	void Suspend(void);
+
+	MARSHMALLOW_GAME_EXPORT
+	void Resume(void);
+
+	MARSHMALLOW_GAME_EXPORT
+	void Stop(int exit_code = 0);
+
+	MARSHMALLOW_GAME_EXPORT
+	IEngine * Instance(void);
+
+} /*************************************************** Game::Engine Namespace */
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

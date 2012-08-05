@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/painter.h"
+#include "graphics/opengl/painter_p.h"
 
 /*!
  * @file
@@ -43,9 +43,10 @@
 #include "graphics/camera.h"
 #include "graphics/quadmesh.h"
 #include "graphics/transform.h"
-#include "graphics/viewport.h"
+#include "graphics/viewport_p.h"
 
 #include <stack>
+#include <cstring>
 
 #include "extensions.h"
 #include "texturecoordinatedata.h"
@@ -53,7 +54,69 @@
 #include "vertexdata.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
 namespace { /******************************************** Anonymous Namespace */
+namespace GLPainter { /********************************** GLPainter Namespace */
+
+	inline void Initialize(void);
+	inline void Finalize(void);
+
+	inline void Reset(void);
+
+	inline GLuint LoadShader(GLenum type, const char *src);
+	inline void UnloadShader(GLuint &shader);
+
+	inline GLuint LoadProgram(void);
+	inline void UnloadProgram(GLuint &program);
+
+	inline void CommitMatrix(void);
+	inline void PopMatrix(void);
+	inline void PushMatrix(void);
+
+	inline void LoadIdentity(void);
+	inline void LoadProjection(void);
+	inline void LoadViewProjection(void);
+
+	inline void Draw(const Graphics::IMesh &mesh,
+	                 const Math::Point2 *origins,
+	                 size_t count);
+	inline void BeginDrawQuadMesh(const Graphics::QuadMesh &mesh, bool tcoords);
+	inline void DrawQuadMesh(void);
+	inline void EndDrawQuadMesh(bool tcoords);
+
+	enum StateFlag
+	{
+		sfUninitialized = 0,
+		sfInitialized   = (1 << 0),
+		sfInvalidMatrix = (1 << 1)
+	};
+
+	/* program */
+	GLuint program_object;
+
+	/* assets */
+	GLuint location_position;
+	GLuint location_texcoord;
+	Core::Identifier last_texture_id;
+
+	/* shader locations */
+	GLint location_color;
+	GLint location_matrix;
+	GLint location_model;
+	GLint location_sampler;
+	GLint location_usecolor;
+
+	/* matrix */
+	Math::Matrix4 matrix;
+	std::stack<Math::Matrix4> matrix_stack;
+
+	/* persistent */
+	Graphics::Color bgcolor;
+
+	unsigned int session_id = 0;
+	int flags;
+
+} /****************************************************** GLPainter Namespace */
 
 const char s_vertex_shader[] =
   "#version 100\n"
@@ -66,59 +129,146 @@ const char s_vertex_shader[] =
 
   "varying vec2 v_texCoord;\n"
 
-  "void main() {\n"
-  "    gl_Position = u_matrix * u_model * a_position;\n"
-  "    v_texCoord = a_texCoord;\n"
+  "void main() { "
+    "gl_Position = u_matrix * u_model * a_position; "
+    "v_texCoord = a_texCoord; "
   "}\n";
 
 const char s_fragment_shader[] =
   "#version 100\n"
 
+#if MARSHMALLOW_OPENGL_ES2
   "precision mediump float;\n"
   "precision mediump int;\n"
+#endif
 
   "uniform bool u_usecolor;\n"
-  "uniform lowp sampler2D s_texture;\n"
-  "uniform lowp vec4 u_color;\n"
+  "uniform sampler2D s_texture;\n"
+  "uniform vec4 u_color;\n"
 
-  "varying highp vec2 v_texCoord;\n"
+  "varying vec2 v_texCoord;\n"
 
-  "void main() {\n"
-  "    if (u_usecolor)\n"
-  "      gl_FragColor = u_color;\n"
-  "    else\n"
-  "      gl_FragColor = texture2D(s_texture, v_texCoord) * u_color;\n"
- "}\n";
+  "void main() { "
+    "if (u_usecolor) "
+      "gl_FragColor = u_color; "
+    "else "
+      "gl_FragColor = texture2D(s_texture, v_texCoord) * u_color; "
+  "}\n";
 
-struct PainterData
+void
+GLPainter::Initialize(void)
 {
-	GLuint location_position;
-	GLuint location_texcoord;
-	GLuint program_object;
+	using namespace Graphics::OpenGL;
+	using namespace Graphics;
 
-	GLint location_color;
-	GLint location_matrix;
-	GLint location_model;
-	GLint location_sampler;
-	GLint location_usecolor;
+	flags = sfUninitialized;
 
-	Core::Identifier last_texture_id;
+	if (0 == (program_object = LoadProgram()))
+		MMFATAL("Failed to load GLSL program object.");
 
-	Math::Matrix4 matrix_current;
-	std::stack<Math::Matrix4> matrix_stack;
+	/* populate locations */
+	GLint l_location_position =
+	    glGetAttribLocation(program_object, "a_position");
+	GLint l_location_texcoord =
+	    glGetAttribLocation(program_object, "a_texCoord");
+	location_sampler =
+	    glGetUniformLocation(program_object, "s_texture");
+	location_color =
+	    glGetUniformLocation(program_object, "u_color");
+	location_matrix =
+	    glGetUniformLocation(program_object, "u_matrix");
+	location_model =
+	    glGetUniformLocation(program_object, "u_model");
+	location_usecolor =
+	    glGetUniformLocation(program_object, "u_usecolor");
 
-	Graphics::Color bgcolor;
+	if (-1 == l_location_position
+	 || -1 == l_location_texcoord
+	 || -1 == location_color
+	 || -1 == location_matrix
+	 || -1 == location_model
+	 || -1 == location_sampler
+	 || -1 == location_usecolor)
+		MMFATAL("Failed to initialize GLSL painter.");
 
-	bool location_matrix_invalidated;
-} s_data;
+	location_position = static_cast<GLuint>(l_location_position);
+	location_texcoord = static_cast<GLuint>(l_location_texcoord);
+
+	glUseProgram(program_object);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+
+	glEnable(GL_TEXTURE_2D);
+
+	++session_id;
+	last_texture_id = Core::Identifier();
+
+	/*
+	 * Flag painter as initialized. IMPORTANT
+	 */
+	flags |= sfInitialized;
+
+	Reset();
+}
+
+void
+GLPainter::Finalize(void)
+{
+	using namespace Graphics::OpenGL;
+
+	/*
+	 * Mark painter as uninitialized. IMPORTANT
+	 */
+	flags &= ~(sfInitialized);
+
+	/* clear locations */
+	location_color = 0;
+	location_matrix = 0;
+	location_model = 0;
+	location_position = 0;
+	location_sampler = 0;
+	location_texcoord = 0;
+	location_usecolor = 0;
+
+	/* delete program */
+	UnloadProgram(program_object);
+
+	last_texture_id = Core::Identifier();
+	matrix_stack.empty();
+
+	/* clear all flags */
+	flags = sfUninitialized;
+}
+
+void
+GLPainter::Reset(void)
+{
+	using namespace Graphics;
+
+	glClearColor(bgcolor.red(),
+	             bgcolor.green(),
+	             bgcolor.blue(),
+	             bgcolor.alpha());
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	if (matrix_stack.size() > 0)
+		MMERROR("Matrix stack is not empty! COUNT=" << matrix_stack.size());
+	matrix_stack.empty();
+
+	Painter::LoadViewProjection();
+}
 
 GLuint
-LoadShader(GLenum type, const char *src)
+GLPainter::LoadShader(GLenum type, const char *src)
 {
 	using namespace Graphics::OpenGL;
 
 	GLuint l_shader;
-	GLint  l_compiled;
+	GLint  l_status = GL_FALSE;
 
 	if (0 == (l_shader = glCreateShader(type)))
 		return(0);
@@ -126,8 +276,8 @@ LoadShader(GLenum type, const char *src)
 	glShaderSource(l_shader, 1, &src, 0);
 	glCompileShader(l_shader);
 
-	glGetShaderiv(l_shader, GL_COMPILE_STATUS, &l_compiled);
-	if (!l_compiled) {
+	glGetShaderiv(l_shader, GL_COMPILE_STATUS, &l_status);
+	if (l_status == GL_FALSE) {
 		GLint l_length = 0;
 		glGetShaderiv(l_shader, GL_INFO_LOG_LENGTH, &l_length);
 
@@ -145,15 +295,22 @@ LoadShader(GLenum type, const char *src)
 	return(l_shader);
 }
 
+void
+GLPainter::UnloadShader(GLuint &shader)
+{
+	using namespace Graphics::OpenGL;
+	glDeleteShader(shader), shader = 0;
+}
+
 GLuint
-LoadProgram(void)
+GLPainter::LoadProgram(void)
 {
 	using namespace Graphics::OpenGL;
 
-	GLuint l_vertex_shader;
-	GLuint l_fragment_shader;
 	GLuint l_program_object;
-	GLint  l_linked;
+	GLuint l_fragment_shader;
+	GLuint l_vertex_shader;
+	GLint  l_status = GL_FALSE;
 
 	if (0 == (l_vertex_shader = LoadShader(GL_VERTEX_SHADER, s_vertex_shader)))
 		return(0);
@@ -163,17 +320,18 @@ LoadProgram(void)
 		return(0);
 	}
 
-	if (0 == (l_program_object = glCreateProgram()))
+	if (0 == (l_program_object = glCreateProgram())) {
+		glDeleteShader(l_vertex_shader);
+		glDeleteShader(l_fragment_shader);
 		return(0);
+	}
 
 	glAttachShader(l_program_object, l_vertex_shader);
 	glAttachShader(l_program_object, l_fragment_shader);
 
 	glLinkProgram(l_program_object);
-
-	glGetProgramiv(l_program_object, GL_LINK_STATUS, &l_linked);
-
-	if (!l_linked) {
+	glGetProgramiv(l_program_object, GL_LINK_STATUS, &l_status);
+	if (l_status == GL_FALSE) {
 		GLint l_length = 0;
 
 		glGetProgramiv(l_program_object, GL_INFO_LOG_LENGTH, &l_length);
@@ -184,31 +342,165 @@ LoadProgram(void)
 			delete[] l_log;
 		}
 
-		glDeleteProgram(l_program_object);
-		return(0);
+		glDeleteProgram(l_program_object), l_program_object = 0;
 	}
 
-	glDeleteShader(l_vertex_shader);
-	glDeleteShader(l_fragment_shader);
-
+	UnloadShader(l_vertex_shader);
+	UnloadShader(l_fragment_shader);
 	return(l_program_object);
 }
 
-inline void
-UpdateLocationMatrix(void)
+void
+GLPainter::UnloadProgram(GLuint &program)
 {
 	using namespace Graphics::OpenGL;
-
-	if (!s_data.location_matrix_invalidated)
-		return;
-
-	s_data.location_matrix_invalidated = false;
-	glUniformMatrix4fv(s_data.location_matrix, 1, GL_FALSE,
-			   s_data.matrix_current.data());
+	glDeleteProgram(program), program = 0;
 }
 
 void
-BeginDrawQuadMesh(const Graphics::QuadMesh &g, bool tcoords)
+GLPainter::CommitMatrix(void)
+{
+	using namespace Graphics::OpenGL;
+
+	if (0 == (flags & sfInvalidMatrix))
+		return;
+
+	flags ^= sfInvalidMatrix;
+
+	glUniformMatrix4fv(location_matrix, 1, GL_FALSE, matrix.data());
+}
+
+void
+GLPainter::PopMatrix(void)
+{
+	flags |= sfInvalidMatrix;
+
+	if (matrix_stack.size() <= 0) {
+		MMWARNING("Matrix stack is empty! Ignoring pop matrix.");
+		matrix = Math::Matrix4::Identity();
+		return;
+	}
+
+	matrix = matrix_stack.top();
+	matrix_stack.pop();
+}
+
+void
+GLPainter::PushMatrix(void)
+{
+	matrix_stack.push(matrix);
+}
+
+void
+GLPainter::LoadIdentity(void)
+{
+	matrix = Math::Matrix4::Identity();
+
+	flags |= sfInvalidMatrix;
+}
+
+void
+GLPainter::LoadProjection(void)
+{
+	using namespace Graphics;
+	using namespace Math;
+
+	matrix = Matrix4::Identity();
+	matrix[Matrix4::m11] =  2.f / Viewport::Size().width;
+	matrix[Matrix4::m22] =  2.f / Viewport::Size().height;
+	matrix[Matrix4::m33] = -1.f;
+
+	flags |= sfInvalidMatrix;
+}
+
+void
+GLPainter::LoadViewProjection(void)
+{
+	using namespace Graphics;
+
+	LoadProjection();
+	matrix *= Camera::Transform().matrix(Transform::mtView);
+}
+void
+GLPainter::Draw(const Graphics::IMesh &m, const Math::Point2 *o, size_t c)
+{
+	using Graphics::OpenGL::SharedTextureData;
+	using Graphics::OpenGL::TextureData;
+	using namespace Graphics::OpenGL;
+	using namespace Graphics;
+
+	if (0 == (flags & sfInitialized))
+		return;
+
+	GLPainter::CommitMatrix();
+
+	float l_scale[2];
+	m.scale(l_scale[0], l_scale[1]);
+
+	/* set blending */
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	/* color */
+	const Graphics::Color &l_color = m.color();
+	glUniform4f(location_color, l_color.red(), l_color.green(), l_color.blue(), l_color.alpha());
+
+	/* set texture */
+	glActiveTexture(GL_TEXTURE0);
+
+	SharedTextureData l_texture_data =
+	    m.textureData().staticCast<TextureData>();
+	if (last_texture_id != l_texture_data->id()) {
+		last_texture_id = l_texture_data->id();
+		if (l_texture_data->isLoaded()) {
+			/*
+			 * TODO(gamaral): Replace with an invalidate call to
+			 * asset manager (when we have one).
+			 */
+			if (l_texture_data->sessionId() != session_id)
+				l_texture_data->reload();
+
+			SharedTextureData l_data =
+			    l_texture_data.staticCast<TextureData>();
+			glBindTexture(GL_TEXTURE_2D, l_data->textureId());
+			glUniform1i(location_usecolor, 0);
+		}
+		else glUniform1i(location_usecolor, 1);
+	}
+
+	/* prepare model amatrix */
+	Graphics::Transform l_model;
+	l_model.setRotation(m.rotation());
+	l_model.setScale(Math::Size2f(l_scale[0], l_scale[1]));
+
+	/* check mesh for texture coordinates */
+	const bool l_tcoords = last_texture_id.uid() && m.textureCoordinateData();
+
+	/* prepare to draw mesh */
+	if (QuadMesh::Type() == m.type())
+		BeginDrawQuadMesh(static_cast<const QuadMesh &>(m), l_tcoords);
+	else MMWARNING("Unknown mesh type");
+
+	/* draw mesh(es) */
+	for (size_t i = 0; i < c; ++i) {
+		/* update model matrix */
+		l_model.setTranslation(o[i]);
+		glUniformMatrix4fv(location_model, 1, GL_FALSE, l_model.matrix().data());
+
+		/* actually draw graphic */
+		if (QuadMesh::Type() == m.type())
+			DrawQuadMesh();
+	}
+
+	/* cleanup */
+	if (QuadMesh::Type() == m.type())
+		EndDrawQuadMesh(l_tcoords);
+
+	glDisable(GL_BLEND);
+}
+
+inline void
+GLPainter::BeginDrawQuadMesh(const Graphics::QuadMesh &g, bool tcoords)
 {
 	using namespace Graphics::OpenGL;
 	using Graphics::OpenGL::Extensions::glBindBuffer;
@@ -228,22 +520,29 @@ BeginDrawQuadMesh(const Graphics::QuadMesh &g, bool tcoords)
 	/* ** vertex ** */
 
 	/* bind buffer */
-	if (l_vdata->isBuffered())
-		glBindBuffer(GL_ARRAY_BUFFER, l_vdata->bufferId());
+	if (l_vdata->isBuffered()) {
+		if (l_vdata->sessionId() != session_id)
+			l_vdata->rebuffer();
 
-	glVertexAttribPointer(s_data.location_position, 2, GL_FLOAT, GL_FALSE, 0,
+		glBindBuffer(GL_ARRAY_BUFFER, l_vdata->bufferId());
+	}
+
+	glVertexAttribPointer(location_position, 2, GL_FLOAT, GL_FALSE, 0,
 	    (l_vdata->isBuffered() ? 0 : l_vdata->data()));
 
 	/* ** texture coordinates ** */
 
 	if (tcoords) {
 		/* bind buffer */
-		if (l_tcdata->isBuffered())
+		if (l_tcdata->isBuffered()) {
+			if (l_tcdata->sessionId() != session_id)
+				l_tcdata->rebuffer();
+
 			glBindBuffer(GL_ARRAY_BUFFER, l_tcdata->bufferId());
-		else if (l_vdata->isBuffered())
+		} else if (l_vdata->isBuffered())
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		glVertexAttribPointer(s_data.location_texcoord, 2, GL_FLOAT, GL_FALSE, 0,
+		glVertexAttribPointer(location_texcoord, 2, GL_FLOAT, GL_FALSE, 0,
 		    (l_tcdata->isBuffered() ? 0 : l_tcdata->data()));
 
 		/* cleanup */
@@ -252,23 +551,23 @@ BeginDrawQuadMesh(const Graphics::QuadMesh &g, bool tcoords)
 	} else if (l_vdata->isBuffered())
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	glEnableVertexAttribArray(s_data.location_position);
-	if (tcoords) glEnableVertexAttribArray(s_data.location_texcoord);
+	glEnableVertexAttribArray(location_position);
+	if (tcoords) glEnableVertexAttribArray(location_texcoord);
 }
 
 inline void
-DrawQuadMesh(void)
+GLPainter::DrawQuadMesh(void)
 {
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, MARSHMALLOW_QUAD_VERTEXES);
 }
 
 inline void
-EndDrawQuadMesh(bool tcoords)
+GLPainter::EndDrawQuadMesh(bool tcoords)
 {
 	using namespace Graphics::OpenGL;
 
-	if (tcoords) glDisableVertexAttribArray(s_data.location_texcoord);
-	glDisableVertexAttribArray(s_data.location_position);
+	if (tcoords) glDisableVertexAttribArray(location_texcoord);
+	glDisableVertexAttribArray(location_position);
 }
 
 } /****************************************************** Anonymous Namespace */
@@ -278,202 +577,94 @@ namespace Graphics { /************************************ Graphics Namespace */
 void
 Painter::Initialize(void)
 {
-	using namespace Graphics::OpenGL;
-
-	static const char s_error_msg[] = "Failed to load primary shaders";
-
-	s_data.location_matrix_invalidated = true;
-
-	if (0 == (s_data.program_object = LoadProgram()))
-		MMFATAL(s_error_msg);
-
-	GLint l_location;
-
-	if (-1 == (l_location = glGetAttribLocation(s_data.program_object, "a_position")))
-		MMFATAL(s_error_msg);
-	s_data.location_position = static_cast<GLuint>(l_location);
-
-	if (-1 == (l_location = glGetAttribLocation(s_data.program_object, "a_texCoord")))
-		MMFATAL(s_error_msg);
-	s_data.location_texcoord = static_cast<GLuint>(l_location);
-
-	s_data.location_color = glGetUniformLocation(s_data.program_object, "u_color");
-	s_data.location_matrix = glGetUniformLocation(s_data.program_object, "u_matrix");
-	s_data.location_model = glGetUniformLocation(s_data.program_object, "u_model");
-	s_data.location_sampler = glGetUniformLocation(s_data.program_object, "s_data.texture");
-	s_data.location_usecolor = glGetUniformLocation(s_data.program_object, "u_usecolor");
-
-	s_data.bgcolor = Graphics::Color::Black();
-
-	glUseProgram(s_data.program_object);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
-
-	Reset();
-
-	Viewport::SwapBuffer();
+	GLPainter::Initialize();
 }
 
 void
 Painter::Finalize(void)
 {
+	GLPainter::Finalize();
 }
 
 void
 Painter::Render(void)
 {
-	UpdateLocationMatrix();
+	if (0 == (GLPainter::flags & GLPainter::sfInitialized))
+		return;
+
+	GLPainter::CommitMatrix();
 }
 
 void
 Painter::Reset(void)
 {
-	using namespace Math;
-
-	s_data.location_matrix_invalidated = true;
-
-	const Color &bgcolor = s_data.bgcolor;
-	glClearColor(bgcolor.red(),
-	             bgcolor.green(),
-	             bgcolor.blue(),
-	             bgcolor.alpha());
-	glClear(GL_COLOR_BUFFER_BIT);
-	LoadProjection();
-
-	s_data.matrix_current *= Camera::Transform().matrix(Transform::mtView);
+	GLPainter::Reset();
 }
 
 const Color &
 Painter::BackgroundColor(void)
 {
-	return(s_data.bgcolor);
+	return(GLPainter::bgcolor);
 }
 
 void
 Painter::SetBackgroundColor(const Color &color)
 {
-	s_data.bgcolor = color;
+	GLPainter::bgcolor = color;
 }
 
 Math::Matrix4 &
 Painter::Matrix(void)
 {
-	return(s_data.matrix_current);
+	return(GLPainter::matrix);
 }
 
 void
 Painter::LoadIdentity(void)
 {
-	s_data.location_matrix_invalidated = true;
-	s_data.matrix_current = Math::Matrix4::Identity();
+	GLPainter::LoadIdentity();
 }
 
 void
 Painter::LoadProjection(void)
 {
-	using namespace Math;
+	GLPainter::LoadProjection();
+}
 
-	s_data.location_matrix_invalidated = true;
-	s_data.matrix_current = Matrix4::Identity();
-	s_data.matrix_current[Matrix4::m11] =  2.f / Viewport::Size().width();
-	s_data.matrix_current[Matrix4::m22] =  2.f / Viewport::Size().height();
-	s_data.matrix_current[Matrix4::m33] = -1.f;
+void
+Painter::LoadViewProjection(void)
+{
+	GLPainter::LoadViewProjection();
 }
 
 void
 Painter::PushMatrix(void)
 {
-	s_data.matrix_stack.push(s_data.matrix_current);
+	GLPainter::PushMatrix();
 }
 
 void
 Painter::PopMatrix(void)
 {
-	s_data.location_matrix_invalidated = true;
-
-	if (s_data.matrix_stack.size() <= 0) {
-		MMWARNING("Matrix stack is empty! Ignoring pop matrix.");
-		s_data.matrix_current = Math::Matrix4::Identity();
-		return;
-	}
-
-	s_data.matrix_current = s_data.matrix_stack.top();
-	s_data.matrix_stack.pop();
+	GLPainter::PopMatrix();
 }
 
 void
-Painter::Draw(const IMesh &m, const Math::Point2 &o)
+Painter::Draw(const IMesh &mesh, const Math::Point2 &origin)
 {
-	Draw(m, &o, 1);
+	GLPainter::Draw(mesh, &origin, 1);
 }
 
 void
-Painter::Draw(const IMesh &m, const Math::Point2 *o, size_t c)
+Painter::Draw(const IMesh &mesh, const Math::Point2 *origins, size_t count)
 {
-	using namespace Graphics::OpenGL;
-	using Graphics::OpenGL::SharedTextureData;
-	using Graphics::OpenGL::TextureData;
+	GLPainter::Draw(mesh, origins, count);
+}
 
-	float l_scale[2];
-	m.scale(l_scale[0], l_scale[1]);
-
-	UpdateLocationMatrix();
-
-	/* set blending */
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	/* color */
-	const Graphics::Color &l_color = m.color();
-	glUniform4f(s_data.location_color, l_color.red(), l_color.green(), l_color.blue(), l_color.alpha());
-
-	/* set texture */
-	glActiveTexture(GL_TEXTURE0);
-	if (s_data.last_texture_id != m.textureData()->id()) {
-		s_data.last_texture_id = m.textureData()->id();
-		if (m.textureData()->isLoaded()) {
-			SharedTextureData l_data =
-			    m.textureData().staticCast<TextureData>();
-			glBindTexture(GL_TEXTURE_2D, l_data->textureId());
-			glUniform1i(s_data.location_usecolor, 0);
-		}
-		else glUniform1i(s_data.location_usecolor, 1);
-	}
-
-	/* prepare model amatrix */
-	Graphics::Transform l_model;
-	l_model.setRotation(m.rotation());
-	l_model.setScale(Math::Size2f(l_scale[0], l_scale[1]));
-
-	/* check mesh for texture coordinates */
-	const bool l_tcoords = s_data.last_texture_id.uid() && m.textureCoordinateData();
-
-	/* prepare to draw mesh */
-	if (QuadMesh::Type() == m.type())
-		BeginDrawQuadMesh(static_cast<const QuadMesh &>(m), l_tcoords);
-	else MMWARNING("Unknown mesh type");
-
-	/* draw mesh(es) */
-	for (size_t i = 0; i < c; ++i) {
-		/* update model matrix */
-		l_model.setTranslation(o[i]);
-		glUniformMatrix4fv(s_data.location_model, 1, GL_FALSE, l_model.matrix().data());
-
-		/* actually draw graphic */
-		if (QuadMesh::Type() == m.type())
-			DrawQuadMesh();
-	}
-
-	/* cleanup */
-	if (QuadMesh::Type() == m.type())
-		EndDrawQuadMesh(l_tcoords);
-
-	glDisable(GL_BLEND);
+unsigned int
+Painter::SessionId(void)
+{
+	return(GLPainter::session_id);
 }
 
 } /******************************************************* Graphics Namespace */

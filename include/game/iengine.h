@@ -81,6 +81,16 @@ namespace Game
 		virtual void stop(int exit_code = 0) = 0;
 
 		/*!
+		 * @brief Suspend Engine (pause)
+		 */
+		virtual void suspend(void) = 0;
+
+		/*!
+		 * @brief Resume Engine (unpause)
+		 */
+		virtual void resume(void) = 0;
+
+		/*!
 		 * @brief Event Manager
 		 */
 		virtual Event::SharedEventManager eventManager(void) const = 0;
@@ -99,12 +109,14 @@ namespace Game
 		virtual void finalize(void) = 0;
 
 		/*!
+		 * @brief Returns true if engine is suspended
+		 */
+		virtual bool isSuspended(void) const = 0;
+
+		/*!
 		 * @brief Returns true if engine is valid
 		 */
 		virtual bool isValid(void) const = 0;
-
-		virtual void second(void) = 0;
-		virtual void tick(void) = 0;
 	};
 }
 

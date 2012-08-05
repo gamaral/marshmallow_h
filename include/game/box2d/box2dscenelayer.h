@@ -43,7 +43,9 @@ class b2World;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Math { class Vector2; }
+namespace Math { struct Vector2; }
+
+namespace Graphics { class Transform; }
 
 namespace Game
 {
@@ -63,6 +65,9 @@ namespace Game
 
 		Math::Vector2 gravity(void) const;
 		void setGravity(const Math::Vector2 &gravity);
+
+		Graphics::Transform & transform(void) const;
+		void setTransform(const Graphics::Transform &transform);
 
 		b2World & world(void);
 

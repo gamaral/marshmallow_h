@@ -44,7 +44,7 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Math { /******************************************** Math Namespace */
-	template <typename T> class Size2;
+	template <typename T> struct Size2;
 	typedef Size2<int> Size2i;
 } /*********************************************************** Math Namespace */
 

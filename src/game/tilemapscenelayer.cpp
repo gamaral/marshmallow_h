@@ -142,8 +142,8 @@ TilemapSceneLayer::Private::render(void)
 
 	const Graphics::Transform &l_camera = Graphics::Camera::Transform();
 	const bool  l_camera_rotated = l_camera.rotation() != 0;
-	const float l_camera_x = l_camera.translation().x() + translate.x();
-	const float l_camera_y = l_camera.translation().y() + translate.y();
+	const float l_camera_x = l_camera.translation().x + translate.x;
+	const float l_camera_y = l_camera.translation().y + translate.y;
 
 	float col_start_cam;
 	float col_stop_cam;
@@ -160,47 +160,47 @@ TilemapSceneLayer::Private::render(void)
 	else {
 		Math::Size2f l_hviewport_size = Graphics::Camera::Visiblility() / 2.f;
 
-		col_start_cam = l_camera_x - l_hviewport_size.width()  - hrtile_size.width();
-		col_stop_cam  = l_camera_x + l_hviewport_size.width()  + hrtile_size.width();
-		row_start_cam = l_camera_y + l_hviewport_size.height() + hrtile_size.height();
-		row_stop_cam  = l_camera_y - l_hviewport_size.height() - hrtile_size.height();
+		col_start_cam = l_camera_x - l_hviewport_size.width  - hrtile_size.width;
+		col_stop_cam  = l_camera_x + l_hviewport_size.width  + hrtile_size.width;
+		row_start_cam = l_camera_y + l_hviewport_size.height + hrtile_size.height;
+		row_stop_cam  = l_camera_y - l_hviewport_size.height - hrtile_size.height;
 	}
 
-	int col_start = static_cast<int>(floorf(((col_start_cam + hrsize.width()) / rsize.width())
-	    * static_cast<float>(size.width())));
-	int col_stop  = static_cast<int>(ceilf(((col_stop_cam + hrsize.width()) / rsize.width())
-	    * static_cast<float>(size.width())));
-	int row_start = static_cast<int>(floorf(((row_start_cam - hrsize.height()) / rsize.height())
-	    * static_cast<float>(-size.height())));
-	int row_stop  = static_cast<int>(ceilf(((row_stop_cam - hrsize.height()) / rsize.height())
-	    * static_cast<float>(-size.height())));
+	int col_start = static_cast<int>(floorf(((col_start_cam + hrsize.width) / rsize.width)
+	    * static_cast<float>(size.width)));
+	int col_stop  = static_cast<int>(ceilf(((col_stop_cam + hrsize.width) / rsize.width)
+	    * static_cast<float>(size.width)));
+	int row_start = static_cast<int>(floorf(((row_start_cam - hrsize.height) / rsize.height)
+	    * static_cast<float>(-size.height)));
+	int row_stop  = static_cast<int>(ceilf(((row_stop_cam - hrsize.height) / rsize.height)
+	    * static_cast<float>(-size.height)));
 
 	/* calculate tile origins */
 
 	for (int l_r = row_start; l_r < row_stop; ++l_r) {
-		const int l_rindex = l_r % size.height();
-		const int l_roffset = ((l_rindex >= 0 ? 0 : size.height()) + l_rindex) * size.width();
+		const int l_rindex = l_r % size.height;
+		const int l_roffset = ((l_rindex >= 0 ? 0 : size.height) + l_rindex) * size.width;
 
 		for (int l_c = col_start; l_c < col_stop; ++l_c) {
-			const int l_cindex = l_c % size.width();
-			uint32_t l_tindex = data[l_roffset + (l_cindex >= 0 ? 0 : size.width()) + l_cindex];
+			const int l_cindex = l_c % size.width;
+			uint32_t l_tindex = data[l_roffset + (l_cindex >= 0 ? 0 : size.width) + l_cindex];
 			if (!l_tindex)
 				continue;
 
 			/* calculate tile position */
-			float l_x = static_cast<float>(l_c) * rtile_size.width();
-			float l_y = static_cast<float>(size.height() - l_r) * rtile_size.height();
+			float l_x = static_cast<float>(l_c) * rtile_size.width;
+			float l_y = static_cast<float>(size.height - l_r) * rtile_size.height;
 
 			/* offset to center of viewport */
-			l_x -= hrsize.width();
-			l_y -= hrsize.height();
+			l_x -= hrsize.width;
+			l_y -= hrsize.height;
 
 			/* translate */
-			l_x -= translate.x();
-			l_y -= translate.y();
+			l_x -= translate.x;
+			l_y -= translate.y;
 
 			/* offset to bottom of tile (we draw up) */
-			l_y -= rtile_size.height();
+			l_y -= rtile_size.height;
 
 			/* add to cache */
 
@@ -258,15 +258,13 @@ void
 TilemapSceneLayer::Private::recalculateRelativeTileSize()
 {
 	/* convert tile size to relative tile size */
-	rtile_size[0] =
-	    (static_cast<float>(tile_size.width())  * scale.width());
-	rtile_size[1] =
-	    (static_cast<float>(tile_size.height()) * scale.height());
+	rtile_size.set(static_cast<float>(tile_size.width) * scale.width,
+	               static_cast<float>(tile_size.height) * scale.height);
 	hrtile_size = rtile_size / 2.0f;
 
 	/* calculate relative map size */
-	rsize[0] = rtile_size.width()  * static_cast<float>(size.width());
-	rsize[1] = rtile_size.height() * static_cast<float>(size.height());
+	rsize.set(rtile_size.width * static_cast<float>(size.width),
+	          rtile_size.height * static_cast<float>(size.height));
 	hrsize = rsize / 2.f;
 }
 
@@ -280,11 +278,11 @@ TilemapSceneLayer::Private::recalculateVertexData(uint32_t o)
 	 * tileset tile size should be scale of the map tile size
 	 * tts (32x32) / mts (16x16) = 2x scale
 	 */
-	const int l_tswscale = tilesets[o]->tileSize().width() / tile_size.width();
-	const int l_tshscale = tilesets[o]->tileSize().height() / tile_size.height();
+	const int l_tswscale = tilesets[o]->tileSize().width / tile_size.width;
+	const int l_tshscale = tilesets[o]->tileSize().height / tile_size.height;
 
-	float l_vwidth  = (static_cast<float>(l_tswscale) * rtile_size.width());
-	float l_vheight = (static_cast<float>(l_tshscale) * rtile_size.height());
+	const float l_vwidth  = (static_cast<float>(l_tswscale) * rtile_size.width);
+	const float l_vheight = (static_cast<float>(l_tshscale) * rtile_size.height);
 
 	/* anchor to (0,0) */
 	vertexes[o]->set(0, 0,        l_vheight);

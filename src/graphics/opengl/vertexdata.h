@@ -54,7 +54,8 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 		Core::Identifier m_id;
 		GLfloat *m_data;
 		uint16_t m_count;
-		GLuint m_bufferId;
+		GLuint m_buffer_id;
+		unsigned int m_session_id;
 
 		NO_ASSIGN_COPY(VertexData);
 	public:
@@ -70,10 +71,15 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 		void unbuffer(void);
 
 		bool isBuffered(void) const
-		    { return(m_bufferId != 0); }
+		    { return(m_buffer_id != 0); }
 
 		GLuint bufferId(void) const
-		    { return(m_bufferId); }
+		    { return(m_buffer_id); }
+
+		unsigned int sessionId(void) const
+		    { return(m_session_id); };
+
+		void rebuffer(void);
 
 	public: /* virtual */
 

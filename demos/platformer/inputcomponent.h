@@ -93,6 +93,8 @@ public:
 
 	bool inMotion(void) const;
 
+	float linearRatio(void) const;
+
 public: /* virtual */
 
 	VIRTUAL const Core::Type & type(void) const

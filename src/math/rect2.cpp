@@ -57,18 +57,18 @@ Rect2::Rect2(float x, float y, float w, float h)
 
 Rect2::Rect2(const Size2f &s)
 {
-	m_side[Left]   = -s.width()  / 2.f;
-	m_side[Top]    = -s.height() / 2.f;
-	m_side[Right]  = m_side[Left] + s.width();
-	m_side[Bottom] = m_side[Top]  + s.height();
+	m_side[Left]   = -s.width  / 2.f;
+	m_side[Top]    = -s.height / 2.f;
+	m_side[Right]  = m_side[Left] + s.width;
+	m_side[Bottom] = m_side[Top]  + s.height;
 }
 
 Rect2::Rect2(const Vector2 &o, const Size2f &s)
 {
-	m_side[Left]   = o.x() - (s.width()  / 2.f);
-	m_side[Top]    = o.y() - (s.height() / 2.f);
-	m_side[Right]  = m_side[Left] + s.width();
-	m_side[Bottom] = m_side[Top]  + s.height();
+	m_side[Left]   = o.x - (s.width  / 2.f);
+	m_side[Top]    = o.y - (s.height / 2.f);
+	m_side[Right]  = m_side[Left] + s.width;
+	m_side[Bottom] = m_side[Top]  + s.height;
 }
 
 Rect2::Rect2(const Rect2 &c)

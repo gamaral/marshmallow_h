@@ -51,7 +51,13 @@ SignalHandler(int signal, siginfo_t *siginfo, void *context)
 	MMUNUSED(signal);
 	MMUNUSED(siginfo);
 	MMUNUSED(context);
-	MMWARNING("\n*** Unix system signal received. Queueing quit event message. ***\n");
+
+	if (!Event::EventManager::Instance()) {
+		MMERROR("\n*** Unix system signal received. But can't queueing quit event message yet... Ignoring. ***\n");
+		return;
+	}
+
+	MMDEBUG("\n*** Unix system signal received. Queueing quit event message. ***\n");
 	Event::SharedEvent l_event = new Event::QuitEvent;
 	Event::EventManager::Instance()->queue(l_event);
 }

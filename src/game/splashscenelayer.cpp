@@ -50,6 +50,7 @@
 #include "graphics/viewport.h"
 
 #include "game/engine.h"
+#include "game/iengine.h"
 #include "game/iscene.h"
 
 #include <tinyxml2.h>
@@ -138,11 +139,11 @@ SplashSceneLayer::Private::calculateQuadScale(void)
 	const Math::Size2i &l_window_size = Graphics::Viewport::WindowSize();
 
 	float l_pixel_scale_x =
-	    static_cast<float>(l_texture_size.width()) /
-	        static_cast<float>(l_window_size.width());
+	    static_cast<float>(l_texture_size.width) /
+	        static_cast<float>(l_window_size.width);
 	float l_pixel_scale_y =
-	    static_cast<float>(l_texture_size.height()) /
-	        static_cast<float>(l_window_size.height());
+	    static_cast<float>(l_texture_size.height) /
+	        static_cast<float>(l_window_size.height);
 
 	mesh->setScale(l_pixel_scale_x, l_pixel_scale_y);
 }

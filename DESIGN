@@ -6,7 +6,8 @@
 Engine
 ======
 
-    Main engine, may only have a single active scene at any one time.
+    The engine may only have a single active scene at any one time.
+
 
 Scenes
 ======

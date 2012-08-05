@@ -41,6 +41,7 @@
 
 #include <game/animationcomponent.h>
 #include <game/engine.h>
+#include <game/iengine.h>
 #include <game/iscene.h>
 #include <game/movementcomponent.h>
 #include <game/positioncomponent.h>
@@ -116,6 +117,13 @@ PlayerEntity::update(float d)
 			Math::Point2 l_pos = l_pos_component->position();
 			const Math::Size2f &l_zoom = Graphics::Camera::Zoom();
 
+			if (m_input_component->inMotion()) {
+				const float l_lratio = m_input_component->linearRatio();
+				m_animation_component->setPlaybackRatio(l_lratio < 0 ? -l_lratio : l_lratio);
+			}
+			else m_animation_component->setPlaybackRatio(1.f);
+
+			void setFrameRate(const Core::Identifier &animation, float fps);
 			/* camara snap - calculate using map */
 
 			float l_limit;
@@ -123,12 +131,12 @@ PlayerEntity::update(float d)
 			    Game::Engine::Instance()->sceneManager()->activeScene()->getLayer("platform").staticCast<Game::TilemapSceneLayer>();
 			const Math::Size2f &l_hrsize = l_platform_layer->virtualHalfSize();
 
-			l_limit = l_hrsize.width() - (Graphics::Viewport::Size().width() / (2.f * l_zoom.width()));
-			if (l_pos.x() < -l_limit) l_pos[0] = -l_limit;
-			else if (l_pos.x() > l_limit) l_pos[0] = l_limit;
-			l_limit = l_hrsize.height() - (Graphics::Viewport::Size().height() / (2.f * l_zoom.height()));
-			if (l_pos.y() < -l_limit) l_pos[1] = -l_limit;
-			else if (l_pos.y() > l_limit) l_pos[1] = l_limit;
+			l_limit = l_hrsize.width - (Graphics::Viewport::Size().width / (2.f * l_zoom.width));
+			if (l_pos.x < -l_limit) l_pos.x = -l_limit;
+			else if (l_pos.x > l_limit) l_pos.x = l_limit;
+			l_limit = l_hrsize.height - (Graphics::Viewport::Size().height / (2.f * l_zoom.height));
+			if (l_pos.y < -l_limit) l_pos.y = -l_limit;
+			else if (l_pos.y > l_limit) l_pos.y = l_limit;
 
 			Graphics::Camera::SetPosition(l_pos);
 
@@ -140,7 +148,7 @@ PlayerEntity::update(float d)
 			if (l_clouds) {
 				if ((m_moving_sky += 8.f * d) > l_clouds->virtualSize().area())
 					m_moving_sky = 8.f * d;
-				l_clouds->setTranslation(Math::Vector2(m_moving_sky + (l_pos.x() * .15f), m_moving_sky));
+				l_clouds->setTranslation(Math::Vector2(m_moving_sky + (l_pos.x * .15f), m_moving_sky));
 			}
 
 			Game::SharedTilemapSceneLayer l_cloudbg =
@@ -149,7 +157,7 @@ PlayerEntity::update(float d)
 			if (l_cloudbg) {
 				if ((m_moving_sky_bg += 2.f * d) > l_cloudbg->virtualSize().area())
 					m_moving_sky_bg = 2.f * d;
-				l_cloudbg->setTranslation(Math::Vector2(m_moving_sky_bg + (l_pos.x() * .05f), m_moving_sky_bg));
+				l_cloudbg->setTranslation(Math::Vector2(m_moving_sky_bg + (l_pos.x * .05f), m_moving_sky_bg));
 			}
 
 		}

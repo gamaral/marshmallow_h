@@ -39,35 +39,16 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Event;
 
-struct KeyboardEvent::Private
+KeyboardEvent::KeyboardEvent(Input::Keyboard::Key key,
+                             Input::Keyboard::Action action,
+                             Core::Identifier source,
+                             MMTIME t)
+    : InputEvent(itKeyboard, key, action, source, t)
 {
-	KBActions action;
-	KBKeys key;
-};
-
-KeyboardEvent::KeyboardEvent(KBKeys k, KBActions a, MMTIME t)
-    : EventBase(t, HighPriority)
-    , m_p(new Private)
-{
-	m_p->action = a;
-	m_p->key = k;
 }
 
 KeyboardEvent::~KeyboardEvent(void)
 {
-	delete m_p, m_p = 0;
-}
-
-KBActions
-KeyboardEvent::action(void) const
-{
-	return(m_p->action);
-}
-
-KBKeys
-KeyboardEvent::key(void) const
-{
-	return(m_p->key);
 }
 
 const Core::Type &

@@ -36,18 +36,21 @@
 
 #include "math/vector2.h"
 
+#include "graphics/transform.h"
+
 #include <Box2D/Box2D.h>
 
 #include <tinyxml2.h>
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 struct Box2DSceneLayer::Private
 {
 	Private()
 	    : world(b2Vec2(0.f, -10.f)) {}
 
+	Graphics::Transform transform;
 	b2World world;
 };
 
@@ -82,9 +85,22 @@ Box2DSceneLayer::gravity(void) const
 }
 
 void
-Box2DSceneLayer::setGravity(const Math::Vector2 &g)
+Box2DSceneLayer::setGravity(const Math::Vector2 &gravity_)
 {
-	m_p->world.SetGravity(g);
+	b2Vec2 l_gravity(gravity_.x, gravity_.y);
+	m_p->world.SetGravity(l_gravity);
+}
+
+Graphics::Transform &
+Box2DSceneLayer::transform(void) const
+{
+	return(m_p->transform);
+}
+
+void
+Box2DSceneLayer::setTransform(const Graphics::Transform &_transform)
+{
+	m_p->transform = _transform;
 }
 
 b2World &
@@ -131,4 +147,7 @@ Box2DSceneLayer::Type(void)
 	static const Core::Type s_type("Game::Box2DSceneLayer");
 	return(s_type);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

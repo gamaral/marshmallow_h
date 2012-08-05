@@ -52,6 +52,7 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 	{
 		Core::Identifier m_id;
 		Math::Size2i m_size;
+		unsigned int m_session_id;
 		unsigned int m_texture_id;
 		ScaleMode m_min;
 		ScaleMode m_mag;
@@ -62,8 +63,13 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 		TextureData(void);
 		virtual ~TextureData(void);
 
+		unsigned int sessionId(void) const
+		    { return(m_session_id); };
+
 		unsigned int textureId(void) const
 		    { return(m_texture_id); }
+
+		bool reload(void);
 
 	public: /* virtual */
 

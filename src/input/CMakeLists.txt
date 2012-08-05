@@ -1,0 +1,24 @@
+add_definitions(-DMARSHMALLOW_INPUT_LIBRARY)
+
+file(GLOB MARSHMALLOW_INPUT_SRCS *.cpp)
+set(MARSHMALLOW_INPUT_LIBS marshmallow_core marshmallow_event)
+
+if(MARSHMALLOW_INPUT_LINUX_EVDEV)
+	add_definitions(-DMARSHMALLOW_INPUT_LINUX_EVDEV)
+	set(MARSHMALLOW_INPUT_SRCS ${MARSHMALLOW_INPUT_SRCS} linux/evdev.cpp)
+endif()
+
+if(MARSHMALLOW_INPUT_UNIX_X11)
+	add_definitions(-DMARSHMALLOW_INPUT_UNIX_X11)
+	set(MARSHMALLOW_INPUT_SRCS ${MARSHMALLOW_INPUT_SRCS} unix/x11.cpp)
+endif()
+
+if(MARSHMALLOW_INPUT_MISC_QT4)
+	add_definitions(-DMARSHMALLOW_INPUT_MISC_QT4)
+	set(MARSHMALLOW_INPUT_SRCS ${MARSHMALLOW_INPUT_SRCS} misc/qt4.cpp)
+endif()
+
+add_library(marshmallow_input ${MARSHMALLOW_INPUT_SRCS})
+
+target_link_libraries(marshmallow_input ${MARSHMALLOW_INPUT_LIBS})
+

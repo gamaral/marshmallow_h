@@ -5,6 +5,7 @@ file(GLOB MARSHMALLOW_GAME_SRCS *.cpp)
 set(MARSHMALLOW_GAME_LIBS
 	marshmallow_core
 	marshmallow_event
+	marshmallow_input
 	marshmallow_graphics
 	marshmallow_math)
 

@@ -65,7 +65,6 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
-namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 	/*!
 	 * Must be implemented by viewport.
@@ -73,31 +72,33 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 	typedef void (*PFNPROC)(void);
 	PFNPROC glGetProcAddress(const char *func);
 
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
+
 	/*
 	 * Required, no checks needed.
 	 */
 #ifndef MMGL_VERSION_2_0
 	extern PFNGLATTACHSHADERPROC glAttachShader;
-	extern PFNGLCOMPILESHADERARBPROC glCompileShader;
-	extern PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgram;
-	extern PFNGLCREATESHADEROBJECTARBPROC glCreateShader;
+	extern PFNGLCOMPILESHADERPROC glCompileShader;
+	extern PFNGLCREATEPROGRAMPROC glCreateProgram;
+	extern PFNGLCREATESHADERPROC glCreateShader;
 	extern PFNGLDELETEPROGRAMPROC glDeleteProgram;
 	extern PFNGLDELETESHADERPROC glDeleteShader;
-	extern PFNGLDISABLEVERTEXATTRIBARRAYARBPROC glDisableVertexAttribArray;
-	extern PFNGLENABLEVERTEXATTRIBARRAYARBPROC glEnableVertexAttribArray;
-	extern PFNGLGETATTRIBLOCATIONARBPROC glGetAttribLocation;
-	extern PFNGLGETPROGRAMIVARBPROC glGetProgramiv;
+	extern PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray;
+	extern PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
+	extern PFNGLGETATTRIBLOCATIONPROC glGetAttribLocation;
+	extern PFNGLGETPROGRAMIVPROC glGetProgramiv;
 	extern PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
 	extern PFNGLGETSHADERIVPROC glGetShaderiv;
-	extern PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocation;
-	extern PFNGLLINKPROGRAMARBPROC glLinkProgram;
-	extern PFNGLSHADERSOURCEARBPROC glShaderSource;
-	extern PFNGLUNIFORM1IARBPROC glUniform1i;
-	extern PFNGLUNIFORM4FARBPROC glUniform4f;
-	extern PFNGLUNIFORMMATRIX4FVARBPROC glUniformMatrix4fv;
-	extern PFNGLUSEPROGRAMOBJECTARBPROC glUseProgram;
-	extern PFNGLVERTEXATTRIBPOINTERARBPROC glVertexAttribPointer;
-	extern PFNGLACTIVETEXTUREARBPROC glActiveTexture;
+	extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+	extern PFNGLLINKPROGRAMPROC glLinkProgram;
+	extern PFNGLSHADERSOURCEPROC glShaderSource;
+	extern PFNGLUNIFORM1IPROC glUniform1i;
+	extern PFNGLUNIFORM4FPROC glUniform4f;
+	extern PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
+	extern PFNGLUSEPROGRAMPROC glUseProgram;
+	extern PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
+	extern PFNGLACTIVETEXTUREPROC glActiveTexture;
 #endif
 
 namespace Extensions { /************** Graphics::OpenGL::Extensions Namespace */
@@ -106,21 +107,21 @@ namespace Extensions { /************** Graphics::OpenGL::Extensions Namespace */
 	 * The following are optional.
 	 */
 
-    /* GL_ARB_vertex_buffer_object */
+	/* GL_ARB_vertex_buffer_object */
 
 	typedef void (*PFNGLBINDBUFFERARBPROC) (GLenum target, GLuint buffer);
 	typedef void (*PFNGLBUFFERDATAARBPROC) (GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage);
 	typedef void (*PFNGLBUFFERSUBDATAARBPROC) (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
 	typedef void (*PFNGLDELETEBUFFERSARBPROC) (GLsizei n, const GLuint *buffers);
 	typedef void (*PFNGLGENBUFFERSARBPROC) (GLsizei n, GLuint *buffers);
-    
+
 	extern PFNGLBINDBUFFERARBPROC glBindBuffer;
 	extern PFNGLBUFFERDATAARBPROC glBufferData;
 	extern PFNGLBUFFERSUBDATAARBPROC glBufferSubData;
 	extern PFNGLDELETEBUFFERSARBPROC glDeleteBuffers;
 	extern PFNGLGENBUFFERSARBPROC glGenBuffers;
 
-    /* GL_ARB_framebuffer_object */
+	/* GL_ARB_framebuffer_object */
 
 	typedef void (*PFNGLGENERATEMIPMAPPROC) (GLenum target);
 
@@ -130,10 +131,18 @@ namespace Extensions { /************** Graphics::OpenGL::Extensions Namespace */
 	 * The following are optional-platform dependent
 	 */
 
+#if defined(GLX_MESA_swap_control)
+	extern PFNGLXSWAPINTERVALMESAPROC glXSwapIntervalMESA;
+	extern PFNGLXGETSWAPINTERVALMESAPROC glXGetSwapIntervalMESA;
+#endif
+
 #if defined(GLX_SGI_swap_control)
 	extern PFNGLXSWAPINTERVALSGIPROC glxSwapInterval;
-#elif defined(WGL_EXT_swap_control)
-	extern PFNWGLSWAPINTERVALEXTPROC wglSwapInterval;
+#endif
+
+#if defined(WGL_EXT_swap_control)
+	extern PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
+	extern PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT;
 #endif
 
 	/*!
@@ -141,6 +150,11 @@ namespace Extensions { /************** Graphics::OpenGL::Extensions Namespace */
 	 * @param extensions Viewport extensions string.
 	 */
 	void Initialize(const char *extensions = 0);
+
+	/*!
+	 * Must be called by the viewport after context destruction.
+	 */
+	void Finalize(void);
 
 	/*!
 	 * Returns true if extension is supported.

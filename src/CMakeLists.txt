@@ -24,10 +24,10 @@ include_directories(${PROJECT_BINARY_DIR}/src
 
 add_subdirectory(core)
 add_subdirectory(entrypoint)
-add_subdirectory(event)
-add_subdirectory(extra)
-add_subdirectory(game)
-add_subdirectory(graphics)
 add_subdirectory(math)
+add_subdirectory(event)
+add_subdirectory(input)
+add_subdirectory(graphics)
+add_subdirectory(game)
+add_subdirectory(extra)
 add_subdirectory(tests)
-

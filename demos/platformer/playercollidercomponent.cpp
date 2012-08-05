@@ -61,38 +61,40 @@ PlayerColliderComponent::collision(ColliderComponent &c, float d,
 
 	if (!movement()) return(false);
 
-	const Math::Vector2 norm = movement()->velocity().normalized();
+	const Math::Vector2 norm =
+	    movement()->velocity().
+	        normalized(movement()->velocity().magnitude());
 
 	if (c.id().str() == "platform") {
-		if (data.rect.left  < 1 && norm.x() > 0) {
-			position()->position()[0] =
-				c.position()->position()[0] -
-				    (c.size()->size().width() / 2.f + size()->size().width() / 2.f);
-			movement()->velocity()[0] *= -0.4f;
+		if (data.rect.left  < 1 && norm.x > 0) {
+			position()->position().x =
+				c.position()->position().x -
+				    (c.size()->size().width / 2.f + size()->size().width / 2.f);
+			movement()->velocity().x *= -0.4f;
 		}
-		else if (data.rect.right < 1 && norm.x() < 0) {
-			position()->position()[0] =
-				c.position()->position()[0] +
-				    (c.size()->size().width() / 2.f + size()->size().width() / 2.f);
-			movement()->velocity()[0] *= -0.4f;
+		else if (data.rect.right < 1 && norm.x < 0) {
+			position()->position().x =
+				c.position()->position().x +
+				    (c.size()->size().width / 2.f + size()->size().width / 2.f);
+			movement()->velocity().x *= -0.4f;
 		}
-		else if (data.rect.top < 1 && norm.y() < 0) {
-			position()->position()[1] =
-				c.position()->position()[1] +
-				    (c.size()->size().height() / 2.f + size()->size().height() / 2.f);
+		else if (data.rect.top < 1 && norm.y < 0) {
+			position()->position().y =
+				c.position()->position().y +
+				    (c.size()->size().height / 2.f + size()->size().height / 2.f);
 			m_platform = true;
-			movement()->velocity()[1] = 0;
+			movement()->velocity().y = 0;
 		}
-		else if (data.rect.bottom < 1 && norm.y() > 0) {
-			position()->position()[1] =
-				c.position()->position()[1] -
-				    (c.size()->size().height() / 2.f + size()->size().height() / 2.f);
-			movement()->velocity()[1] *= -0.4f;
+		else if (data.rect.bottom < 1 && norm.y > 0) {
+			position()->position().y =
+				c.position()->position().y -
+				    (c.size()->size().height / 2.f + size()->size().height / 2.f);
+			movement()->velocity().y *= -0.4f;
 		}
 	}
 	else if (c.id().str() == "bounce") {
-		if (data.rect.top < 1 && norm.y() < 0) {
-			movement()->velocity()[1] = 900.f;
+		if (data.rect.top < 1 && norm.y < 0) {
+			movement()->velocity().y = 900.f;
 		}
 	}
 	return(true);

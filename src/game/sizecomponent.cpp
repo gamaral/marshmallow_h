@@ -69,8 +69,8 @@ SizeComponent::serialize(XMLElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	n.SetAttribute("width", m_p->size.width());
-	n.SetAttribute("height", m_p->size.height());
+	n.SetAttribute("width", m_p->size.width);
+	n.SetAttribute("height", m_p->size.height);
 	return(true);
 }
 
@@ -80,8 +80,8 @@ SizeComponent::deserialize(XMLElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	n.QueryFloatAttribute("width",  &m_p->size[0]);
-	n.QueryFloatAttribute("height", &m_p->size[1]);
+	n.QueryFloatAttribute("width",  &m_p->size.width);
+	n.QueryFloatAttribute("height", &m_p->size.height);
 	return(true);
 }
 

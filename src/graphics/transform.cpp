@@ -74,20 +74,20 @@ Transform::Private::rebuildMatrix(MatrixType type)
 		l_rotate[Matrix4::m22] =  l_rotate[Matrix4::m11];
 	}
 
-	l_scale[Matrix4::m11] = scale.width();
-	l_scale[Matrix4::m22] = scale.height();
+	l_scale[Matrix4::m11] = scale.width;
+	l_scale[Matrix4::m22] = scale.height;
 
 	switch (type) {
 	case mtModel:
-		l_translate[Matrix4::m14] = translation.x();
-		l_translate[Matrix4::m24] = translation.y();
+		l_translate[Matrix4::m14] = translation.x;
+		l_translate[Matrix4::m24] = translation.y;
 
 		matrix = l_translate * l_scale * l_rotate;
 		break;
 
 	case mtView:
-		l_translate[Matrix4::m14] = -translation.x();
-		l_translate[Matrix4::m24] = -translation.y();
+		l_translate[Matrix4::m14] = -translation.x;
+		l_translate[Matrix4::m24] = -translation.y;
 
 		matrix = l_scale * l_rotate * l_translate;
 		break;
@@ -149,8 +149,7 @@ Transform::setScale(const Math::Size2f &value)
 void
 Transform::setScale(float w, float h)
 {
-	m_p->scale[0] = w;
-	m_p->scale[1] = h;
+	m_p->scale.set(w, h);
 	m_p->invalidated = true;
 }
 
@@ -170,8 +169,7 @@ Transform::setTranslation(const Math::Point2 &value)
 void
 Transform::setTranslation(float x, float y)
 {
-	m_p->translation[0] = x;
-	m_p->translation[1] = y;
+	m_p->translation.set(x, y);
 	m_p->invalidated = true;
 }
 

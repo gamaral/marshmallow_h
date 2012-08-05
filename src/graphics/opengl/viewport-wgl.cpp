@@ -88,7 +88,7 @@ bool WWCreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscr
 
 bool
 CreateDisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t refresh,
-              bool fullscreen, bool vsync)
+              bool fullscreen, uint8_t vsync)
 {
 	using namespace Graphics;
 
@@ -97,20 +97,20 @@ CreateDisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t refresh,
 	/* display */
 
 	if (!WWCreateWindow(width, height, depth, fullscreen)) {
-		MMERROR("VC: Failed to create display.");
+		MMERROR("W32: Failed to create display.");
 		return(false);
 	}
 
 	/* context */
 
 	if (!GLCreateSurface(vsync)) {
-		MMERROR("GL: Failed to create surface.");
+		MMERROR("WGL: Failed to create surface.");
 		return(false);
 	}
 
 	/* initialize context */
 
-	glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
+	glViewport(0, 0, s_data.wsize.width, s_data.wsize.height);
 
 	if (glGetError() != GL_NO_ERROR) {
 		MMERROR("WGL failed during initialization.");
@@ -121,19 +121,17 @@ CreateDisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t refresh,
 
 	if (fullscreen) {
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-		s_data.size[0] = static_cast<float>(width);
-		s_data.size[1] = (s_data.size[0] * static_cast<float>(s_data.wsize[1])) /
-		    static_cast<float>(s_data.wsize[0]);
+		s_data.size.width = static_cast<float>(width);
+		s_data.size.height = (s_data.size.width * static_cast<float>(s_data.wsize.height)) /
+		    static_cast<float>(s_data.wsize.width);
 #else
-		s_data.size[1] = static_cast<float>(height);
-		s_data.size[0] = (s_data.size[1] * static_cast<float>(s_data.wsize[0])) /
-		    static_cast<float>(s_data.wsize[1]);
+		s_data.size.height = static_cast<float>(height);
+		s_data.size.width = (s_data.size.height * static_cast<float>(s_data.wsize.width)) /
+		    static_cast<float>(s_data.wsize.height);
 #endif
 	}
-	else {
-		s_data.size[0] = static_cast<float>(width);
-		s_data.size[1] = static_cast<float>(height);
-	}
+	else s_data.size.set(static_cast<float>(width),
+	                     static_cast<float>(height));
 
 	Camera::Update();
 
@@ -294,8 +292,12 @@ GLCreateSurface(uint8_t vsync)
 
 	/* vsync */
 
-	if (Extensions::wglSwapInterval)
-		Extensions::wglSwapInterval(vsync ? 1 : 0);
+	if (Extensions::wglSwapIntervalEXT) {
+		Extensions::wglSwapIntervalEXT(vsync);
+		if (Extensions::wglGetSwapIntervalEXT
+		    && vsync != Extensions::wglGetSwapInterval())
+			MMERROR("WGL: Swap interval request was ignored!");
+	}
 
 	return(true);
 }
@@ -304,8 +306,7 @@ bool
 WWCreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen)
 {
 	s_data.fullscreen = fullscreen;
-	s_data.wsize[0]   = width;
-	s_data.wsize[1]   = height;
+	s_data.wsize.set(width, height);
 
 	WNDCLASS l_wc;
 	l_wc.style         = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -340,8 +341,7 @@ WWCreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen)
 	if (s_data.fullscreen) {
 		l_wstyle[0] |= WS_POPUP;
 		l_wstyle[1] |= WS_EX_TOPMOST;
-		s_data.wsize[0] = l_warea.right;
-		s_data.wsize[1] = l_warea.bottom;
+		s_data.wsize.set(l_warea.right, l_warea.bottom);
 		l_wrect = l_warea;
 		ShowCursor(false);
 	}

@@ -43,6 +43,7 @@
 #include <png.h>
 
 #include "extensions.h"
+#include "painter_p.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace { /******************************************** Anonymous Namespace */
@@ -61,24 +62,24 @@ bool
 LoadTexturePNG(const std::string &filename, Texture &data)
 {
 	FILE *png_file;
-	if ((png_file = fopen(filename.c_str(), "rb")) == 0)
+	if (0 == (png_file = fopen(filename.c_str(), "rb")))
 		return(false);
 
 	unsigned char header[8];
-	if (fread(header, 1, 8, png_file) != 8 ||
-	    png_sig_cmp(header, 0, 8) != 0) {
+	if (8 != fread(header, 1, 8, png_file)
+	    || png_sig_cmp(header, 0, 8) != 0) {
 		fclose(png_file);
 		return(false);
 	}
 
 	png_structp png_ptr;
-	if ((png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0)) == 0) {
+	if (0 == (png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0))) {
 		fclose(png_file);
 		return(false);
 	}
 
 	png_infop info_ptr;
-	if ((info_ptr = png_create_info_struct(png_ptr)) == 0) {
+	if (0 == (info_ptr = png_create_info_struct(png_ptr))) {
 		fclose(png_file);
 		png_destroy_read_struct(&png_ptr, 0, 0);
 		return(false);
@@ -141,15 +142,27 @@ namespace Graphics { /************************************ Graphics Namespace */
 namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 TextureData::TextureData(void)
-    : m_id(),
-      m_size(),
-      m_texture_id(0)
+    : m_id()
+    , m_size()
+    , m_session_id(0)
+    , m_texture_id(0)
 {
 }
 
 TextureData::~TextureData(void)
 {
 	unload();
+}
+
+bool
+TextureData::reload(void)
+{
+	if (!isLoaded())
+		return(false);
+
+	m_texture_id = 0;
+	m_session_id = 0;
+	return(load(m_id, m_min, m_mag));
 }
 
 bool
@@ -240,6 +253,8 @@ TextureData::load(const Core::Identifier &_id, ScaleMode min, ScaleMode mag)
 	/* unload local-copy */
 	UnloadTexture(tdata);
 
+	m_session_id = Painter::SessionId();
+
 	MMINFO("Texture loaded.");
 
 	return(true);
@@ -252,6 +267,7 @@ TextureData::unload(void)
 		glDeleteTextures(1, &m_texture_id);
 
 	m_size = Math::Size2i();
+	m_session_id = 0;
 	m_texture_id = 0;
 
 	MMINFO("Texture unloaded.");

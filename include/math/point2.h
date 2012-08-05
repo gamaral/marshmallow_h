@@ -40,69 +40,70 @@
 #include <core/environment.h>
 #include <core/namespace.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#include <math/vector2.h>
 
-namespace Math
-{
-	class Vector2;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { /******************************************** Math Namespace */
+
+	struct Vector2;
 
 	/*! @brief 2D Point */
-	class MARSHMALLOW_MATH_EXPORT
+	struct MARSHMALLOW_MATH_EXPORT
 	Point2
 	{
-		float m_value[2];
+		enum Position { X, Y, MAX };
+
+		/*
+		 * direct accessors
+		 */
+		float x, y;
 
 	public:
-		Point2(float x = 0.f, float y = 0.f);
+		inline Point2(float x = 0.f, float y = 0.f);
+		inline explicit Point2(float *data);
 
-		const float & x(void) const
-		    { return(m_value[0]); }
-		const float & y(void) const
-		    { return(m_value[1]); }
-
-		inline void set(float ax, float ay)
-		    { m_value[0] = ax, m_value[1] = ay; }
-
-		Vector2 difference(const Point2 &rhs) const;
+		inline Point2 & set(float x, float y);
+		inline Vector2 difference(const Point2 &rhs) const;
 
 	public: /* operators */
 
-		bool operator==(const Point2 &rhs) const;
+		inline bool operator==(const Point2 &rhs) const
+		    { return(x == rhs.x && y == rhs.y); }
 
-		float & operator[](int i)
-		    { return(m_value[i % 2]); }
+		inline float & operator[](int i)
+		    { return(i % MAX ? y : x); }
 
-		const float & operator[](int i) const
-		    { return(m_value[i % 2]); }
+		inline const float & operator[](int i) const
+		    { return(i % MAX ? y : x); }
 
-		operator bool(void) const
-		    { return(m_value[0] || m_value[1]); }
+		inline operator bool(void) const
+		    { return(x || y); }
 
-		operator Vector2(void) const;
+		inline operator Vector2(void) const;
 
-		Point2 & operator*=(float rhs);
-		Point2 & operator-=(float rhs);
-		Point2 & operator+=(float rhs);
+		inline Point2 & operator*=(float rhs);
+		inline Point2 & operator-=(float rhs);
+		inline Point2 & operator+=(float rhs);
 
-		Point2 & operator*=(const Point2 &rhs);
-		Point2 & operator+=(const Point2 &rhs);
-		Point2 & operator-=(const Point2 &rhs);
+		inline Point2 & operator*=(const Point2 &rhs);
+		inline Point2 & operator+=(const Point2 &rhs);
+		inline Point2 & operator-=(const Point2 &rhs);
 
-		Point2 & operator*=(const Vector2 &rhs);
-		Point2 & operator+=(const Vector2 &rhs);
-		Point2 & operator-=(const Vector2 &rhs);
+		inline Point2 & operator*=(const Vector2 &rhs);
+		inline Point2 & operator+=(const Vector2 &rhs);
+		inline Point2 & operator-=(const Vector2 &rhs);
 
-		Point2 operator*(float rhs) const;
-		Point2 operator+(float rhs) const;
-		Point2 operator-(float rhs) const;
+		inline Point2 operator*(float rhs) const;
+		inline Point2 operator+(float rhs) const;
+		inline Point2 operator-(float rhs) const;
 
-		Point2 operator*(const Point2 &rhs) const;
-		Point2 operator+(const Point2 &rhs) const;
-		Point2 operator-(const Point2 &rhs) const;
+		inline Point2 operator*(const Point2 &rhs) const;
+		inline Point2 operator+(const Point2 &rhs) const;
+		inline Point2 operator-(const Point2 &rhs) const;
 
-		Point2 operator*(const Vector2 &rhs) const;
-		Point2 operator+(const Vector2 &rhs) const;
-		Point2 operator-(const Vector2 &rhs) const;
+		inline Point2 operator*(const Vector2 &rhs) const;
+		inline Point2 operator+(const Vector2 &rhs) const;
+		inline Point2 operator-(const Vector2 &rhs) const;
 
 	public: /* static */
 
@@ -114,8 +115,149 @@ namespace Math
 		    { static Point2 s_one(1.f, 1.f);
 		      return(s_one); }
 	};
-}
 
+	Point2::Point2(float ax, float ay)
+	    : x(ax), y(ay) {}
+
+	Point2::Point2(float *data)
+	    : x(data[X]), y(data[Y]) {}
+
+	Point2 &
+	Point2::set(float x_, float y_)
+	{
+		x = x_, y = y_;
+		return(*this);
+	}
+
+	Vector2
+	Point2::difference(const Point2 &rhs) const
+	{
+		return(Vector2(rhs.x - x, rhs.y - y));
+	}
+
+	Point2 &
+	Point2::operator*=(float rhs)
+	{
+		x *= rhs, y *= rhs;
+		return(*this);
+	}
+
+	Point2 &
+	Point2::operator+=(float rhs)
+	{
+		x += rhs, y += rhs;
+		return(*this);
+	}
+
+	Point2 &
+	Point2::operator-=(float rhs)
+	{
+		x -= rhs, y -= rhs;
+		return(*this);
+	}
+
+	Point2 &
+	Point2::operator*=(const Point2 &rhs)
+	{
+		x *= rhs.x, y *= rhs.y;
+		return(*this);
+	}
+
+	Point2 &
+	Point2::operator+=(const Point2 &rhs)
+	{
+		x += rhs.x, y += rhs.y;
+		return(*this);
+	}
+
+	Point2 &
+	Point2::operator-=(const Point2 &rhs)
+	{
+		x -= rhs.x, y -= rhs.y;
+		return(*this);
+	}
+
+	Point2 &
+	Point2::operator*=(const Vector2 &rhs)
+	{
+		x *= rhs.x, y *= rhs.y;
+		return(*this);
+	}
+
+	Point2 &
+	Point2::operator+=(const Vector2 &rhs)
+	{
+		x += rhs.x, y += rhs.y;
+		return(*this);
+	}
+
+	Point2 &
+	Point2::operator-=(const Vector2 &rhs)
+	{
+		x -= rhs.x, y -= rhs.y;
+		return(*this);
+	}
+
+	Point2
+	Point2::operator*(float rhs) const
+	{
+		return(Point2(x * rhs, y * rhs));
+	}
+
+	Point2
+	Point2::operator+(float rhs) const
+	{
+		return(Point2(x + rhs, y + rhs));
+	}
+
+	Point2
+	Point2::operator-(float rhs) const
+	{
+		return(Point2(x - rhs, y - rhs));
+	}
+
+	Point2
+	Point2::operator*(const Point2 &rhs) const
+	{
+		return(Point2(x * rhs.x, y * rhs.y));
+	}
+
+	Point2
+	Point2::operator+(const Point2 &rhs) const
+	{
+		return(Point2(x + rhs.x, y + rhs.y));
+	}
+
+	Point2
+	Point2::operator-(const Point2 &rhs) const
+	{
+		return(Point2(x - rhs.x, y - rhs.y));
+	}
+
+	Point2
+	Point2::operator*(const Vector2 &rhs) const
+	{
+		return(Point2(x * rhs.x, y * rhs.y));
+	}
+
+	Point2
+	Point2::operator+(const Vector2 &rhs) const
+	{
+		return(Point2(x + rhs.x, y + rhs.y));
+	}
+
+	Point2
+	Point2::operator-(const Vector2 &rhs) const
+	{
+		return(Point2(x - rhs.x, y - rhs.y));
+	}
+
+	Point2::operator Vector2(void) const
+	{
+		return(Vector2(x, y));
+	}
+
+} /*********************************************************** Math Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

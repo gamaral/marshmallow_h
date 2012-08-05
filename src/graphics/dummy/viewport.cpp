@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/viewport.h"
+#include "graphics/viewport_p.h"
 
 /*!
  * @file
@@ -37,24 +37,47 @@
 #include "core/logger.h"
 
 #include "graphics/camera.h"
+#include "graphics/color.h"
+#include "graphics/display.h"
+#include "graphics/painter_p.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace { /******************************************** Anonymous Namespace */
+	Graphics::Display dpy;
+	bool active;
+} /****************************************************** Anonymous Namespace */
+
 namespace Graphics { /************************************ Graphics Namespace */
 
 bool
-Viewport::Initialize(uint16_t, uint16_t, uint8_t, uint8_t, bool, bool)
+Viewport::Active(void)
 {
+	return(active);
+}
+
+bool
+Viewport::Initialize(void)
+{
+	/* default display display */
+	dpy.depth      = MARSHMALLOW_VIEWPORT_DEPTH;
+	dpy.fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
+	dpy.height     = MARSHMALLOW_VIEWPORT_HEIGHT;
+	dpy.vsync      = MARSHMALLOW_VIEWPORT_VSYNC;
+	dpy.width      = MARSHMALLOW_VIEWPORT_WIDTH;
+
+	/*
+	 * Initial Camera Reset (IMPORTANT)
+	 */
 	Camera::Reset();
 
-	MMDEBUG("Dummy viewport initialized.");
+	/*
+	 * Initial Background Color (IMPORTANT)
+	 */
+	Painter::SetBackgroundColor(Color::Black());
 
-	Camera::Update();
+	active = false;
 
-#if MARSHMALLOW_DUMMY_FAIL
-	return(false);
-#else
 	return(true);
-#endif
 }
 
 void
@@ -64,16 +87,25 @@ Viewport::Finalize(void)
 }
 
 bool
-Viewport::Redisplay(uint16_t, uint16_t, uint8_t, uint8_t, bool, bool)
+Viewport::Setup(const Graphics::Display &display)
 {
-	MMDEBUG("Dummy viewport re-initialized.");
+	MMDEBUG("Dummy viewport setup.");
+
+	if (active) {
+		Painter::Finalize();
+		active = false;
+	}
+
+	dpy = display;
 
 	Camera::Update();
 
+	Painter::Initialize();
+
 #if MARSHMALLOW_DUMMY_FAIL
-	return(false);
+	return(active = false);
 #else
-	return(true);
+	return(active = true);
 #endif
 }
 
@@ -87,6 +119,12 @@ Viewport::SwapBuffer(void)
 {
 }
 
+const Graphics::Display &
+Viewport::Display(void)
+{
+	return(dpy);
+}
+
 const Math::Size2f &
 Viewport::Size(void)
 {
@@ -98,9 +136,9 @@ Viewport::Size(void)
 const Math::Size2i &
 Viewport::WindowSize(void)
 {
-	const static Math::Size2i s_wsize(MARSHMALLOW_VIEWPORT_WIDTH,
-	                                  MARSHMALLOW_VIEWPORT_HEIGHT);
-	return(s_wsize);
+	static Math::Size2i s_size;
+	s_size.set(dpy.width, dpy.height);
+	return(s_size);
 }
 
 const Core::Type &

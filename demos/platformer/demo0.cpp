@@ -29,9 +29,12 @@
 #include <core/logger.h>
 
 #include <event/eventmanager.h>
+#include <event/joystickbuttonevent.h>
 #include <event/keyboardevent.h>
 
 #include <graphics/camera.h>
+#include <graphics/display.h>
+#include <graphics/viewport.h>
 
 #include <game/collisionscenelayer.h>
 #include <game/enginebase.h>
@@ -54,9 +57,7 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(MARSHMALLOW_VIEWPORT_REFRESH,
-	             MARSHMALLOW_VIEWPORT_REFRESH,
-	             MARSHMALLOW_LITESLEEP)
+	: EngineBase()
 	{
 	}
 
@@ -69,6 +70,7 @@ public:
 
 		Graphics::Camera::SetZoom(2.f);
 
+		eventManager()->connect(this, Event::JoystickButtonEvent::Type());
 		eventManager()->connect(this, Event::KeyboardEvent::Type());
 
 		loadLevel();
@@ -78,42 +80,72 @@ public:
 
 	VIRTUAL void finalize(void)
 	{
-		if (isValid())
-			eventManager()->disconnect(this, Event::KeyboardEvent::Type());
+		eventManager()->disconnect(this, Event::KeyboardEvent::Type());
+		eventManager()->disconnect(this, Event::JoystickButtonEvent::Type());
 
 		EngineBase::finalize();
 	}
 
 	VIRTUAL bool handleEvent(const Event::IEvent &e)
 	{
+		using namespace Input;
+
 		if (EngineBase::handleEvent(e))
 			return(true);
 
-		if (e.type() != Event::KeyboardEvent::Type())
-			return(false);
+		if (e.type() == Event::KeyboardEvent::Type()) {
+			const Event::KeyboardEvent &l_kevent =
+			    static_cast<const Event::KeyboardEvent &>(e);
 
-		const Event::KeyboardEvent &l_kevent =
-		    static_cast<const Event::KeyboardEvent &>(e);
+			if (l_kevent.action() != Keyboard::KeyPressed)
+				return(false);
 
-		if (l_kevent.action() != Event::KeyPressed)
-			return(false);
+			if (l_kevent.key() == Keyboard::KBK_PAUSE ||
+			    l_kevent.key() == Keyboard::KBK_RETURN ||
+			    l_kevent.key() == Keyboard::KBK_Y) {
+				Game::SharedScene l_scene = sceneManager()->activeScene();
+				if (l_scene->getLayer("pause"))
+					l_scene->removeLayer("pause");
+				else
+					l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
+			} else if (l_kevent.key() == Keyboard::KBK_ESCAPE ||
+				   l_kevent.key() == Keyboard::KBK_P) {
+				stop();
+			} else if (l_kevent.key() == Keyboard::KBK_F11) {
+				Graphics::Display l_display = Graphics::Viewport::Display();
+				l_display.fullscreen = !l_display.fullscreen;
+				Graphics::Viewport::Setup(l_display);
+			} else if (l_kevent.key() == Keyboard::KBK_F1 ||
+				   l_kevent.key() == Keyboard::KBK_R) {
+				loadLevel();
+				return(true);
+			} else return(false);
+		}
+		else if (e.type() == Event::JoystickButtonEvent::Type()) {
+			const Event::JoystickButtonEvent &l_event =
+			    static_cast<const Event::JoystickButtonEvent &>(e);
+			if (l_event.button() == Joystick::JSB_MENU
+			    && l_event.action() == Joystick::ButtonPressed) {
+				Graphics::Display l_display = Graphics::Viewport::Display();
+				l_display.fullscreen = !l_display.fullscreen;
+				Graphics::Viewport::Setup(l_display);
+			}
+			else if (l_event.pressed(Joystick::JSB_START|Joystick::JSB_SELECT)
+			    && l_event.action() == Joystick::ButtonPressed) {
+				loadLevel();
+				return(true);
+			}
+			else if (l_event.button() == Joystick::JSB_START
+			    && l_event.action() == Joystick::ButtonPressed) {
+				Game::SharedScene l_scene = sceneManager()->activeScene();
+				if (l_scene->getLayer("pause"))
+					l_scene->removeLayer("pause");
+				else
+					l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
+			}
+		}
 
-		if (l_kevent.key() == Event::KEY_RETURN ||
-                    l_kevent.key() == Event::KEY_Y) {
-			Game::SharedScene l_scene = sceneManager()->activeScene();
-			if (l_scene->getLayer("pause"))
-				l_scene->removeLayer("pause");
-			else
-				l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
-		} else if (l_kevent.key() == Event::KEY_ESCAPE ||
-                           l_kevent.key() == Event::KEY_P) {
-			stop();
-		} else if (l_kevent.key() == Event::KEY_F1 ||
-                           l_kevent.key() == Event::KEY_R) {
-			loadLevel();
-		} else return(false);
-
-		return(true);
+		return(false);
 	}
 
 	void loadLevel()

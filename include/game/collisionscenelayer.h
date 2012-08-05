@@ -45,7 +45,7 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Math { class Vector2; }
+namespace Math { struct Vector2; }
 
 namespace Game
 {

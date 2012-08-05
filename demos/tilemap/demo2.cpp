@@ -109,10 +109,8 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(MARSHMALLOW_VIEWPORT_REFRESH,
-	             MARSHMALLOW_VIEWPORT_REFRESH / 4,
-	             MARSHMALLOW_LITESLEEP)
-	,  m_stop_timer(0)
+	: EngineBase()
+	, m_stop_timer(0)
 	{
 	}
 
@@ -131,8 +129,7 @@ public:
 
 	VIRTUAL void finalize(void)
 	{
-		if (isValid())
-			eventManager()->disconnect(this, Event::KeyboardEvent::Type());
+		eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 
 		EngineBase::finalize();
 	}
@@ -159,6 +156,8 @@ public:
 
 	VIRTUAL bool handleEvent(const Event::IEvent &e)
 	{
+		using namespace Input;
+
 		if (EngineBase::handleEvent(e))
 			return(true);
 
@@ -168,11 +167,11 @@ public:
 		const Event::KeyboardEvent &l_kevent =
 		    static_cast<const Event::KeyboardEvent &>(e);
 
-		if (l_kevent.action() != Event::KeyPressed)
+		if (l_kevent.action() != Keyboard::KeyPressed)
 			return(false);
 
-		if (l_kevent.key() == Event::KEY_ESCAPE ||
-                           l_kevent.key() == Event::KEY_P) {
+		if (l_kevent.key() == Keyboard::KBK_ESCAPE ||
+                    l_kevent.key() == Keyboard::KBK_P) {
 			stop();
 		} else return(false);
 

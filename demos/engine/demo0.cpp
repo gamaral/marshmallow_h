@@ -79,7 +79,7 @@ public:
 			    cast<Game::MovementComponent>();
 
 		if (m_position && m_movement) {
-			MMVERBOSE("Current position (" << m_position->position().x() << ", " << m_position->position().y() << ").");
+			MMVERBOSE("Current position (" << m_position->position().x << ", " << m_position->position().y << ").");
 
 			Math::Size2f l_vpsize = Graphics::Viewport::Size();
 
@@ -87,15 +87,15 @@ public:
 			Math::Vector2 &dir = m_movement->velocity();
 			Math::Vector2 &acc = m_movement->acceleration();
 
-			if ((pos.x() <= -l_vpsize.width() / 2 && dir.x() < 0)
-			 || (pos.x() >=  l_vpsize.width() / 2 && dir.x() > 0)) {
-				dir[0] *= -1;
-				acc[0] *= -1;
+			if ((pos.x <= -l_vpsize.width / 2 && dir.x < 0)
+			 || (pos.x >=  l_vpsize.width / 2 && dir.x > 0)) {
+				dir.x *= -1;
+				acc.x *= -1;
 			}
-			if ((pos.y() <= -l_vpsize.height() / 2 && dir.y() < 0)
-			 || (pos.y() >=  l_vpsize.height() / 2 && dir.y() > 0)) {
-				dir[1] *= -1;
-				acc[1] *= -1;
+			if ((pos.y <= -l_vpsize.height / 2 && dir.y < 0)
+			 || (pos.y >=  l_vpsize.height / 2 && dir.y > 0)) {
+				dir.y *= -1;
+				acc.y *= -1;
 			}
 		}
 	}
@@ -145,19 +145,19 @@ public:
 			Game::PositionComponent *l_pcomponent =
 			    new Game::PositionComponent("position", *l_entity);
 			l_pcomponent->position() = Math::Point2(
-			    (l_rand * Graphics::Viewport::Size().width()) -
-			        (Graphics::Viewport::Size().width() / 2.f),
-			    (l_rand * Graphics::Viewport::Size().height()) -
-			        (Graphics::Viewport::Size().height() / 2.f));
+			    (l_rand * Graphics::Viewport::Size().width) -
+			        (Graphics::Viewport::Size().width / 2.f),
+			    (l_rand * Graphics::Viewport::Size().height) -
+			        (Graphics::Viewport::Size().height / 2.f));
 			l_entity->pushComponent(l_pcomponent);
 
 			Game::MovementComponent *l_mcomponent =
 			    new Game::MovementComponent("movement", *l_entity);
 			l_mcomponent->velocity() = Math::Vector2(.1f, .1f);
 			if (rand() % 2)
-			    l_mcomponent->velocity()[0] *= -1;
+			    l_mcomponent->velocity().x *= -1;
 			if (rand() % 2)
-			    l_mcomponent->velocity()[1] *= -1;
+			    l_mcomponent->velocity().y *= -1;
 			l_mcomponent->acceleration() = l_mcomponent->velocity() * 200.f;
 			l_entity->pushComponent(l_mcomponent);
 
@@ -200,9 +200,7 @@ class Demo : public Game::EngineBase
 public:
 
 	Demo(void)
-	: EngineBase(MARSHMALLOW_VIEWPORT_REFRESH,
-	             MARSHMALLOW_VIEWPORT_REFRESH,
-	             MARSHMALLOW_LITESLEEP)
+	: EngineBase()
 	, m_debugListener(new Event::DebugEventListener("log.txt"))
 	{
 	}
@@ -227,16 +225,16 @@ public:
 
 	VIRTUAL void finalize(void)
 	{
-		if (isValid()) {
-			eventManager()->disconnect(&*m_debugListener, Event::KeyboardEvent::Type());
-			eventManager()->disconnect(this, Event::KeyboardEvent::Type());
-		}
+		eventManager()->disconnect(&*m_debugListener, Event::KeyboardEvent::Type());
+		eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 
 		EngineBase::finalize();
 	}
 
 	VIRTUAL bool handleEvent(const Event::IEvent &e)
 	{
+		using namespace Input;
+
 		if (EngineBase::handleEvent(e))
 			return(true);
 
@@ -246,18 +244,18 @@ public:
 		const Event::KeyboardEvent &l_kevent =
 		    static_cast<const Event::KeyboardEvent &>(e);
 
-		if (l_kevent.action() != Event::KeyPressed)
+		if (l_kevent.action() != Keyboard::KeyPressed)
 			return(false);
 
-		if (l_kevent.key() == Event::KEY_RETURN ||
-                    l_kevent.key() == Event::KEY_Y) {
+		if (l_kevent.key() == Keyboard::KBK_RETURN ||
+                    l_kevent.key() == Keyboard::KBK_Y) {
 			Game::SharedScene l_scene = sceneManager()->activeScene();
 			if (l_scene->getLayer("pause"))
 				l_scene->removeLayer("pause");
 			else
 				l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
-		} else if (l_kevent.key() == Event::KEY_ESCAPE ||
-                           l_kevent.key() == Event::KEY_P) {
+		} else if (l_kevent.key() == Keyboard::KBK_ESCAPE ||
+                           l_kevent.key() == Keyboard::KBK_P) {
 			stop();
 		} else return(false);
 

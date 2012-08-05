@@ -69,16 +69,24 @@ PauseSceneLayer::mesh(void) const
 void
 PauseSceneLayer::render(void)
 {
-	if (!m_p->mesh) {
-		Graphics::QuadMesh *l_mesh = new Graphics::QuadMesh(Graphics::Viewport::Size());
-		l_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.25f));
-		m_p->mesh = l_mesh;
-	}
+	if (!m_p->mesh)
+		return;
 
 	Graphics::Painter::PushMatrix();
-	Graphics::Painter::LoadProjection();
+	Graphics::Painter::LoadIdentity();
 	Graphics::Painter::Draw(*m_p->mesh, Math::Point2(0,0));
 	Graphics::Painter::PopMatrix();
+}
+
+void
+PauseSceneLayer::update(float)
+{
+	if (m_p->mesh)
+		return;
+
+	Graphics::QuadMesh *l_mesh = new Graphics::QuadMesh(8, 8);
+	l_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.25f));
+	m_p->mesh = l_mesh;
 }
 
 const Core::Type &

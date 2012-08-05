@@ -162,16 +162,16 @@ TMXLoader::Private::load(const char *f)
 bool
 TMXLoader::Private::processMap(XMLElement &m)
 {
-	if ((XML_SUCCESS != m.QueryIntAttribute("width", &map_size[0]))
-	 || (XML_SUCCESS != m.QueryIntAttribute("height", &map_size[1]))
-	 || (XML_SUCCESS != m.QueryIntAttribute("tilewidth", &tile_size[0]))
-	 || (XML_SUCCESS != m.QueryIntAttribute("tileheight", &tile_size[1]))) {
+	if ((XML_SUCCESS != m.QueryIntAttribute("width", &map_size.width))
+	 || (XML_SUCCESS != m.QueryIntAttribute("height", &map_size.height))
+	 || (XML_SUCCESS != m.QueryIntAttribute("tilewidth", &tile_size.width))
+	 || (XML_SUCCESS != m.QueryIntAttribute("tileheight", &tile_size.height))) {
 		MMWARNING("Map element is missing one or more required attributes.");
 		return(false);
 	}
 
 	/* default scale */
-	scale[0] = scale[1] = 1.f;
+	scale.set(1.f, 1.f);
 
 	/* process properties */
 	XMLElement *l_properties = m.FirstChildElement(TMXPROPERTIES_NODE);
@@ -198,15 +198,14 @@ TMXLoader::Private::processMap(XMLElement &m)
 				 * calculate pixels per viewport coordinate ratio
 				 * scale ratio = vSize (vcoord)) / wSize (pixels)
 				 */
-				scale[0] = l_vsize.width()  / static_cast<float>(l_wsize.width());
-				scale[1] = l_vsize.height() / static_cast<float>(l_wsize.height());
+				scale = l_vsize / l_wsize.cast<float>();
 
 				continue;
 			}
-			else if (sscanf(l_value, "%fx%f", &scale[0], &scale[1]) == 2)
+			else if (2 == sscanf(l_value, "%fx%f", &scale.width, &scale.height))
 				continue;
-			else if (sscanf(l_value, "%f", &scale[0]) == 1) {
-				scale[1] = scale[0];
+			else if (1 == sscanf(l_value, "%f", &scale.width)) {
+				scale.height = scale.width;
 				continue;
 			}
 
@@ -245,13 +244,13 @@ TMXLoader::Private::processMap(XMLElement &m)
 
 	} while ((l_property = l_property->NextSiblingElement(TMXPROPERTIES_PROPERTY_NODE)));
 
-	MMINFO("Map scale size (" << scale.width() << "x" << scale.height() << ")");
+	MMINFO("Map scale size (" << scale.width << "x" << scale.height << ")");
 
 	/* calculate half-relative map size (used to offset coordinates) */
-	hrmap_size[0] = scale.width()
-	    * static_cast<float>(map_size.width()  * tile_size.width());
-	hrmap_size[1] = scale.height()
-	    * static_cast<float>(map_size.height() * tile_size.height());
+	hrmap_size.width = scale.width
+	    * static_cast<float>(map_size.width  * tile_size.width);
+	hrmap_size.height = scale.height
+	    * static_cast<float>(map_size.height * tile_size.height);
 
 	return(true);
 }
@@ -310,14 +309,14 @@ TMXLoader::Private::processLayer(XMLElement &e)
 		if (0 == strcmp(l_data_compression, TMXDATA_COMPRESSION_ZLIB)) {
 			char *l_inflated_data;
 			if (0 < Core::Zlib::Inflate(l_decoded_data, l_decoded_data_size,
-			    static_cast<size_t>(map_size.width() * map_size.height() * 4), &l_inflated_data))
+			    static_cast<size_t>(map_size.width * map_size.height * 4), &l_inflated_data))
 				l_data_array = l_inflated_data;
 		}
 #define TMXDATA_COMPRESSION_GZIP "gzip"
 		else if (0 == strcmp(l_data_compression, TMXDATA_COMPRESSION_GZIP)) {
 			char *l_inflated_data;
 			if (0 < Core::Gzip::Inflate(l_decoded_data, l_decoded_data_size,
-			    static_cast<size_t>(map_size.width() * map_size.height() * 4), &l_inflated_data))
+			    static_cast<size_t>(map_size.width * map_size.height * 4), &l_inflated_data))
 				l_data_array = l_inflated_data;
 		}
 
@@ -368,17 +367,16 @@ TMXLoader::Private::processLayer(XMLElement &e)
 				 * calculate pixels per viewport coordinate ratio
 				 * scale ratio = vSize (vcoord)) / wSize (pixels)
 				 */
-				l_scale[0] = l_vsize.width()  / static_cast<float>(l_wsize.width());
-				l_scale[1] = l_vsize.height() / static_cast<float>(l_wsize.height());
+				l_scale = l_vsize / l_wsize.cast<float>();
 				l_layer->setScale(l_scale);
 
 				continue;
 			}
-			else if (sscanf(l_value, "%fx%f", &l_scale[0], &l_scale[1]) == 2) {
+			else if (2 == sscanf(l_value, "%fx%f", &l_scale.width, &l_scale.height)) {
 				l_layer->setScale(l_scale);
 				continue;
-			} else if (sscanf(l_value, "%f", &l_scale[0]) == 1) {
-				l_scale[1] = l_scale[0];
+			} else if (1 == sscanf(l_value, "%f", &l_scale.width)) {
+				l_scale.height = l_scale.width;
 				l_layer->setScale(l_scale);
 				continue;
 			}
@@ -419,8 +417,8 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 		int l_object_gid;
 		int l_object_x;
 		int l_object_y;
-		int l_object_width = tile_size.width();
-		int l_object_height = tile_size.height();
+		int l_object_width = tile_size.width;
+		int l_object_height = tile_size.height;
 
 		l_object_name = l_object->Attribute("name");
 		l_object_type = l_object->Attribute("type");
@@ -439,8 +437,8 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 		}
 
 		/* map offset position (0 in the middle) */
-		l_object_x -= (map_size.width()  * tile_size.width())  / 2;
-		l_object_y -= (map_size.height() * tile_size.height()) / 2;
+		l_object_x -= (map_size.width * tile_size.width) / 2;
+		l_object_y -= (map_size.height * tile_size.height) / 2;
 		l_object_y *= -1; /* invert top/bottom */
 
 		/* object size (later initialized) */
@@ -453,8 +451,8 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 			l_object->QueryIntAttribute("height", &l_object_height);
 
 			/* calculate object size */
-			l_object_rsize[0] = scale.width()  * static_cast<float>(l_object_width);
-			l_object_rsize[1] = scale.height() * static_cast<float>(l_object_height);
+			l_object_rsize.width = scale.width * static_cast<float>(l_object_width);
+			l_object_rsize.height = scale.height * static_cast<float>(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
 		/* tile object */
@@ -481,10 +479,10 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 			Graphics::SharedTileset l_tileset = tilesets[l_ts_firstgid];
 
 			/* calculate object size from tileset */
-			l_object_width  = l_tileset->tileSize().width();
-			l_object_height = l_tileset->tileSize().height();
-			l_object_rsize[0] = scale.width()  * static_cast<float>(l_object_width);
-			l_object_rsize[1] = scale.height() * static_cast<float>(l_object_height);
+			l_object_width  = l_tileset->tileSize().width;
+			l_object_height = l_tileset->tileSize().height;
+			l_object_rsize.width  = scale.width  * static_cast<float>(l_object_width);
+			l_object_rsize.height = scale.height * static_cast<float>(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
 			/* attach tileset used */
@@ -498,10 +496,10 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 			Game::RenderComponent *l_render = new Game::RenderComponent("render", *l_entity);
 
 			Graphics::SharedVertexData l_vdata = Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
-			l_vdata->set(0, -l_object_hrsize.width(),  l_object_hrsize.height());
-			l_vdata->set(1, -l_object_hrsize.width(), -l_object_hrsize.height());
-			l_vdata->set(2,  l_object_hrsize.width(),  l_object_hrsize.height());
-			l_vdata->set(3,  l_object_hrsize.width(), -l_object_hrsize.height());
+			l_vdata->set(0, -l_object_hrsize.width,  l_object_hrsize.height);
+			l_vdata->set(1, -l_object_hrsize.width, -l_object_hrsize.height);
+			l_vdata->set(2,  l_object_hrsize.width,  l_object_hrsize.height);
+			l_vdata->set(3,  l_object_hrsize.width, -l_object_hrsize.height);
 
 			Graphics::SharedTextureCoordinateData l_tdata =
 			    l_tileset->getTextureCoordinateData(static_cast<uint16_t>(l_object_gid - l_ts_firstgid));
@@ -514,12 +512,12 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 
 		/* create position component */
 		Game::PositionComponent *l_pos_component = new Game::PositionComponent("position", *l_entity);
-		l_pos_component->position()[0] = scale.width()  * static_cast<float>(l_object_x);
-		l_pos_component->position()[1] = scale.height() * static_cast<float>(l_object_y);
+		l_pos_component->position().x = scale.width  * static_cast<float>(l_object_x);
+		l_pos_component->position().y = scale.height * static_cast<float>(l_object_y);
 
 		/* change position to center of object (offset) */
-		l_pos_component->position()[0] += l_object_hrsize.width();
-		l_pos_component->position()[1] -= l_object_hrsize.height();
+		l_pos_component->position().x += l_object_hrsize.width;
+		l_pos_component->position().y -= l_object_hrsize.height;
 
 		l_entity->pushComponent(l_pos_component);
 

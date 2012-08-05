@@ -88,6 +88,9 @@ namespace Core
 		operator const char * (void) const;
 
 		StrHash & operator=(const StrHash &rhs);
+
+	public:
+		static const StrHash Null;
 	};
 }
 

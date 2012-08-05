@@ -70,8 +70,8 @@ TilesetBase::TilesetBase()
 	m_p->cache = 0;
 	m_p->margin = 0;
 	m_p->spacing = 0;
-	m_p->tile_size[0] = m_p->tile_size[1] = 16;
-	m_p->offset_col   = m_p->offset_row   = 0;
+	m_p->tile_size.set(16, 16);
+	m_p->offset_col = m_p->offset_row   = 0;
 	m_p->ptilesize[0] = m_p->ptilesize[1] = 0;
 }
 
@@ -176,8 +176,8 @@ TilesetBase::getTextureCoordinateData(uint16_t i)
 
 		/* calculate row and column */
 
-		const float l_left   = m_p->offset_col[i % m_p->size.width()];
-		const float l_top    = m_p->offset_row[i / m_p->size.width()];
+		const float l_left   = m_p->offset_col[i % m_p->size.width];
+		const float l_top    = m_p->offset_row[i / m_p->size.width];
 		const float l_right  = l_left + m_p->ptilesize[0];
 		const float l_bottom = l_top  + m_p->ptilesize[1];
 
@@ -249,19 +249,19 @@ TilesetBase::reset(void)
 	 *
 	 */
 	const Math::Size2i &l_texture_size = m_p->texture_data->size();
-	m_p->size[0] = (l_texture_size.width() - m_p->margin + m_p->spacing)
-	          / (m_p->tile_size.width() + m_p->spacing);
-	m_p->size[1] = (l_texture_size.height() - m_p->margin + m_p->spacing)
-	          / (m_p->tile_size.height() + m_p->spacing);
+	m_p->size.width = (l_texture_size.width - m_p->margin + m_p->spacing)
+	          / (m_p->tile_size.width + m_p->spacing);
+	m_p->size.height = (l_texture_size.height - m_p->margin + m_p->spacing)
+	          / (m_p->tile_size.height + m_p->spacing);
 
 	/*
 	 * Calculate proportional tile sizes
 	 */
 
-	m_p->ptilesize[0] = static_cast<float>(m_p->tile_size.width())
-	              / static_cast<float>(l_texture_size.width());
-	m_p->ptilesize[1] = static_cast<float>(m_p->tile_size.height())
-	              / static_cast<float>(l_texture_size.height());
+	m_p->ptilesize[0] = static_cast<float>(m_p->tile_size.width)
+	              / static_cast<float>(l_texture_size.width);
+	m_p->ptilesize[1] = static_cast<float>(m_p->tile_size.height)
+	              / static_cast<float>(l_texture_size.height);
 
 	/*
 	 * Calculate tile offsets
@@ -269,19 +269,19 @@ TilesetBase::reset(void)
 
 	int l_real_tile_size;
 
-	m_p->offset_col = new float[m_p->size.width()];
-	l_real_tile_size = m_p->tile_size.width() + m_p->spacing;
-	for (int i = 0; i < m_p->size.width(); ++i)
+	m_p->offset_col = new float[m_p->size.width];
+	l_real_tile_size = m_p->tile_size.width + m_p->spacing;
+	for (int i = 0; i < m_p->size.width; ++i)
 		m_p->offset_col[i] =
 		    static_cast<float>(m_p->margin + (i * l_real_tile_size))
-		  / static_cast<float>(l_texture_size.width());
+		  / static_cast<float>(l_texture_size.width);
 
-	m_p->offset_row = new float[m_p->size.height()];
-	l_real_tile_size = m_p->tile_size.height() + m_p->spacing;
-	for (int i = 0; i < m_p->size.height(); ++i)
+	m_p->offset_row = new float[m_p->size.height];
+	l_real_tile_size = m_p->tile_size.height + m_p->spacing;
+	for (int i = 0; i < m_p->size.height; ++i)
 		m_p->offset_row[i] =
 		    static_cast<float>(m_p->margin + (i * l_real_tile_size))
-		  / static_cast<float>(l_texture_size.height());
+		  / static_cast<float>(l_texture_size.height);
 
 	const int l_item_count = m_p->size.area();
 	m_p->cache = new SharedTextureCoordinateData[l_item_count];

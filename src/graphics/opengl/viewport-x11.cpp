@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/viewport.h"
+#include "graphics/viewport_p.h"
 
 /*!
  * @file
@@ -39,14 +39,19 @@
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
 #include "event/quitevent.h"
+#include "event/viewportevent.h"
+
+#ifdef MARSHMALLOW_INPUT_UNIX_X11
+#  include "input/unix/x11.h"
+#endif
 
 #include "graphics/camera.h"
-#include "graphics/painter.h"
+#include "graphics/color.h"
+#include "graphics/display.h"
+#include "graphics/painter_p.h"
 
 #include <X11/X.h>
-#include <X11/XKBlib.h>
 #include <X11/Xatom.h>
-#include <X11/Xutil.h>
 
 #include <cstring>
 
@@ -67,346 +72,387 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace { /******************************************** Anonymous Namespace */
+namespace X11Viewport { /****************************** X11Viewport Namespace */
 
-struct ViewportData
-{
-	Window              window;
-	XVisualInfo         vinfo;
-	Display            *dpy;
-	Math::Size2i        wsize;
+	inline bool Initialize(void);
+	inline void Finalize(void);
+
+	inline void Reset(int state);
+
+	inline bool Create(const Graphics::Display &display);
+	inline void Destroy(void);
+
+	inline bool Show(void);
+	inline void Hide(void);
+
+	inline void SwapBuffer(void);
+
+	inline bool CreateGLContext(void);
+	inline void DestroyGLContext(void);
+
 #ifdef MARSHMALLOW_OPENGL_EGL
-	EGLContext          egl_ctx;
+	inline bool CreateEGLContext(void);
+	inline void DestroyEGLContext(void);
+#else
+	inline bool CreateGLXContext(void);
+	inline void DestroyGLXContext(void);
+#endif
+
+	inline bool CreateX11Window(void);
+	inline void DestroyX11Window(void);
+	inline void ProcessX11Messages(void);
+
+	enum StateFlag
+	{
+		sfUninitialized = 0,
+		sfActive        = (1 << 0),
+		sfX11Display    = (1 << 1),
+		sfX11Window     = (1 << 2),
+		sfGLDisplay     = (1 << 3),
+		sfGLSurface     = (1 << 4),
+		sfGLContext     = (1 << 5),
+		sfGLCurrent     = (1 << 6),
+		sfExposed       = (1 << 7),
+		sfFocused       = (1 << 8),
+		sfTerminated    = (1 << 9),
+		sfX11Valid      = sfX11Display|sfX11Window,
+#ifdef MARSHMALLOW_OPENGL_EGL
+		sfGLValid       = sfGLDisplay|sfGLSurface|sfGLContext|sfGLCurrent,
+#else
+		sfGLValid       = sfGLContext|sfGLCurrent,
+#endif
+		sfValid         = sfX11Valid|sfGLValid,
+		sfActiveValid   = sfActive|sfExposed|sfFocused|sfValid
+	};
+
+	/******************* MARSHMALLOW */
+	Graphics::Display   dpy;
+	Math::Size2i        wsize;
+	Math::Size2f        vsize;
+	int                 flags;
+
+	/*************************** X11 */
+	Display            *xdpy;
+	Window              xroot;
+	Window              xwindow;
+	XVisualInfo         xvinfo;
+	Atom                xa_delete;
+
+#ifdef MARSHMALLOW_OPENGL_EGL
+	/*************************** EGL */
 	EGLDisplay          egl_dpy;
 	EGLSurface          egl_surface;
+	EGLContext          egl_ctx;
 #else
-	GLXContext          ctx;
+	/*************************** GLX */
+	GLXContext          glx_ctx;
 #endif
-	Atom                wm_delete;
-	Math::Size2f        size;
-	bool                fullscreen;
-	bool                loaded;
-} s_data;
 
-void
-ResetViewportData(void)
-{
-	s_data.loaded = false;
-
-	memset(&s_data.vinfo, 0, sizeof(s_data.vinfo));
-	s_data.dpy = 0;
-	s_data.fullscreen = false;
-	s_data.size.zero();
-	s_data.window = 0;
-	s_data.wm_delete = 0;
-	s_data.wsize[0] = s_data.wsize[1] = 0;
-
-#ifdef MARSHMALLOW_OPENGL_EGL
-	s_data.egl_ctx     = EGL_NO_CONTEXT;
-	s_data.egl_dpy     = EGL_NO_DISPLAY;
-	s_data.egl_surface = EGL_NO_SURFACE;
-#else
-	s_data.ctx = 0;
-#endif
-}
-
-bool GLCreateSurface(uint8_t vsync);
-bool X11CreateWindow(uint16_t width, uint16_t height, uint8_t depth,
-                     bool fullscreen);
+} /**************************************************** X11Viewport Namespace */
 
 bool
-CreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen,
-             uint8_t vsync)
+X11Viewport::Initialize(void)
 {
 	using namespace Graphics;
 
-	ResetViewportData();
+	/* default display display */
+	dpy.depth      = MARSHMALLOW_VIEWPORT_DEPTH;
+	dpy.fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
+	dpy.height     = MARSHMALLOW_VIEWPORT_HEIGHT;
+	dpy.vsync      = MARSHMALLOW_VIEWPORT_VSYNC;
+	dpy.width      = MARSHMALLOW_VIEWPORT_WIDTH;
 
-	/* display */
+	Reset(sfUninitialized);
 
-	if (!X11CreateWindow(width, height, depth, fullscreen)) {
+	/*
+	 * Open X11 Display
+	 */
+	const char *l_display = getenv("DISPLAY");
+	if (!(xdpy = XOpenDisplay(l_display))) {
+		MMERROR("X11: Unable to open display: " << l_display);
+		return(false);
+	}
+	flags |= sfX11Display;
+
+#ifdef MARSHMALLOW_INPUT_UNIX_X11
+	Input::Unix::X11::InitializeKeyboard(xdpy);
+#endif
+
+	xvinfo.screen = XDefaultScreen(xdpy);
+	xroot = XDefaultRootWindow(xdpy);
+	xa_delete = XInternAtom(xdpy, "WM_DELETE_WINDOW", False);
+
+#ifdef MARSHMALLOW_OPENGL_EGL
+	/*
+	 * Open EGL Display
+	 */
+	egl_dpy = eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(xdpy));
+	if (egl_dpy == EGL_NO_DISPLAY) {
+		MMERROR("EGL: No display was found.");
+		return(false);
+	}
+	if (eglInitialize(egl_dpy, 0, 0) == EGL_FALSE) {
+		MMERROR("EGL: Initialization failed.");
+		return(false);
+	}
+	flags |= sfGLDisplay;
+#endif
+	
+	/*
+	 * Initial Camera Reset (IMPORTANT)
+	 */
+	Camera::Reset();
+
+	/*
+	 * Initial Background Color (IMPORTANT)
+	 */
+	Painter::SetBackgroundColor(Color::Black());
+
+	return(true);
+}
+
+void
+X11Viewport::Finalize(void)
+{
+	/* set termination flag */
+	flags |= sfTerminated;
+
+	/*
+	 * Destroy viewport if valid
+	 */
+	if (sfValid == (flags & sfValid))
+		Destroy();
+
+#ifdef MARSHMALLOW_OPENGL_EGL
+	/*
+	 * Close EGL Display
+	 */
+	if (sfGLDisplay == (flags & sfGLDisplay)) {
+		eglTerminate(egl_dpy), egl_dpy = 0;
+		flags ^= sfGLDisplay;
+	}
+#endif
+
+	/*
+	 * Close X11 Display
+	 */
+	if (sfX11Display == (flags & sfX11Display)) {
+		XCloseDisplay(xdpy), xdpy = 0;
+		xroot = 0;
+		xvinfo.screen = 0;
+		flags ^= sfX11Display;
+	}
+
+	/* sanity check*/
+	assert(flags == sfTerminated && "We seem to have some stray flags!");
+
+	flags = sfUninitialized;
+}
+
+void
+X11Viewport::Reset(int state)
+{
+	flags = state;
+	vsize.zero();
+	wsize.zero();
+
+	if (state == sfUninitialized) {
+		xwindow = 0;
+		memset(&xvinfo, 0, sizeof(xvinfo));
+
+#ifdef MARSHMALLOW_OPENGL_EGL
+		egl_surface = EGL_NO_SURFACE;
+		egl_ctx     = EGL_NO_CONTEXT;
+#else
+		glx_ctx = 0;
+#endif
+	}
+
+	/* sanity check */
+	else {
+		assert(0 == xwindow
+		    && "Viewport didn't get destroyed cleanly!");
+#ifdef MARSHMALLOW_OPENGL_EGL
+		assert(EGL_NO_SURFACE == egl_surface && EGL_NO_CONTEXT == egl_ctx
+		    && "[EGL] Viewport didn't get destroyed cleanly!");
+#else
+		assert(0 == glx_ctx
+		    && "[GLX] Viewport didn't get destroyed cleanly!");
+#endif
+	}
+}
+
+bool
+X11Viewport::Create(const Graphics::Display &display)
+{
+	using namespace Graphics;
+
+	/* sanity checks */
+	assert(sfX11Display == (flags & sfX11Display)
+	    && "No valid X11 display!");
+#ifdef MARSHMALLOW_OPENGL_EGL
+	assert(sfGLDisplay == (flags & sfGLDisplay)
+	    && "No valid EGL display!");
+#endif
+
+	/*
+	 * Check if already valid (no no)
+	 */
+	if (sfValid == (flags & sfValid))
+		return(false);
+
+	/* assign new display display */
+	dpy = display;
+
+	/*
+	 * Create X11 Window
+	 */
+	if (!CreateX11Window()) {
 		MMERROR("X11: Failed to create window.");
 		return(false);
 	}
 
-	/* context */
-
-	if (!GLCreateSurface(vsync)) {
+	/*
+	 * Create GLX/EGL Context
+	 */
+	if (!CreateGLContext()) {
 		MMERROR("GL: Failed to create surface.");
+		DestroyX11Window();
 		return(false);
 	}
 
+	/* sanity check */
+	assert(sfValid == (flags & sfValid)
+	    && "Valid viewport was expected!");
+
 	/* initialize context */
 
-	glViewport(0, 0, static_cast<GLsizei>(s_data.wsize[0]), static_cast<GLsizei>(s_data.wsize[1]));
+	glViewport(0, 0, wsize.width, wsize.height);
 
 	if (glGetError() != GL_NO_ERROR) {
 		MMERROR("GL: Failed during initialization.");
+		DestroyGLContext();
+		DestroyX11Window();
 		return(false);
 	}
 
 	/* viewport size */
 
-	if (fullscreen) {
+	if (dpy.fullscreen) {
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-		s_data.size[0] = static_cast<float>(width);
-		s_data.size[1] = (s_data.size[0] * static_cast<float>(s_data.wsize[1])) /
-		    static_cast<float>(s_data.wsize[0]);
+		vsize.width = static_cast<float>(dpy.width);
+		vsize.height = (vsize.width * static_cast<float>(wsize.height)) /
+		    static_cast<float>(wsize.width);
 #else
-		s_data.size[1] = static_cast<float>(height);
-		s_data.size[0] = (s_data.size[1] * static_cast<float>(s_data.wsize[0])) /
-		    static_cast<float>(s_data.wsize[1]);
+		vsize.height = static_cast<float>(dpy.height);
+		vsize.width = (vsize.height * static_cast<float>(wsize.width)) /
+		    static_cast<float>(wsize.height);
 #endif
 	}
-	else {
-		s_data.size[0] = static_cast<float>(width);
-		s_data.size[1] = static_cast<float>(height);
-	}
+	else vsize.set(dpy.width, dpy.height);
+
+	/* sub-systems */
 
 	Camera::Update();
 
-	return(s_data.loaded = true);
+	Painter::Initialize();
+
+	/* activate */
+
+	flags |= sfActive;
+
+	/* broadcast */
+
+	Event::ViewportEvent l_event(Event::ViewportEvent::Created);
+	Event::EventManager::Instance()->dispatch(l_event);
+
+	return(true);
 }
 
 void
-DestroyWindow(void)
+X11Viewport::Destroy(void)
 {
-	if (s_data.dpy) {
-#ifdef MARSHMALLOW_OPENGL_EGL
-		eglMakeCurrent(s_data.egl_dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-		eglDestroyContext(s_data.egl_dpy, s_data.egl_ctx);
-		eglDestroySurface(s_data.egl_dpy, s_data.egl_surface);
-		eglTerminate(s_data.egl_dpy);
-#else
-		glXMakeCurrent(s_data.dpy, None, 0);
-		if (s_data.ctx)
-		    glXDestroyContext(s_data.dpy, s_data.ctx);
-#endif
-		if (s_data.window)
-		    XDestroyWindow(s_data.dpy, s_data.window);
+	using namespace Graphics;
 
-		XCloseDisplay(s_data.dpy);
+	/* check for valid state */
+	if (sfValid != (flags & sfValid))
+		return;
+
+	/* deactivate */
+
+	flags &= ~(sfActive);
+
+	/* hide viewport if exposed */
+	if (sfExposed == (flags & sfExposed))
+		Hide();
+
+	/* broadcast */
+
+	if (0 == (flags & sfTerminated)) {
+		Event::ViewportEvent l_event(Event::ViewportEvent::Destroyed);
+		Event::EventManager::Instance()->dispatch(l_event);
 	}
 
-#ifdef MARSHMALLOW_OPENGL_EGL
-	s_data.egl_ctx     = EGL_NO_CONTEXT;
-	s_data.egl_dpy     = EGL_NO_DISPLAY;
-	s_data.egl_surface = EGL_NO_SURFACE;
-#else
-	s_data.ctx = 0;
-#endif
-	s_data.dpy = 0;
-	s_data.loaded = false;
-	s_data.window = 0;
-	s_data.wm_delete = 0;
-}
+	Painter::Finalize();
 
-void
-HandleKeyEvent(XKeyEvent &key)
-{
-	typedef std::list<Event::KBKeys> KeyList;
-	static KeyList s_keys_pressed;
+	DestroyGLContext();
+	DestroyX11Window();
 
-	Event::KBKeys l_key = Event::KEY_NONE;
-	Event::KBActions l_action =
-	    (key.type == KeyPress ? Event::KeyPressed : Event::KeyReleased);
+	/* sanity check*/
+	assert(0 == (flags & ~(sfX11Display|sfGLDisplay|sfTerminated))
+	    && "We seem to have some stray flags!");
 
-	switch (XLookupKeysym(&key, 0)) {
-	case XK_0:            l_key = Event::KEY_0; break;
-	case XK_1:            l_key = Event::KEY_1; break;
-	case XK_2:            l_key = Event::KEY_2; break;
-	case XK_3:            l_key = Event::KEY_3; break;
-	case XK_4:            l_key = Event::KEY_4; break;
-	case XK_5:            l_key = Event::KEY_5; break;
-	case XK_6:            l_key = Event::KEY_6; break;
-	case XK_7:            l_key = Event::KEY_7; break;
-	case XK_8:            l_key = Event::KEY_8; break;
-	case XK_9:            l_key = Event::KEY_9; break;
-	case XK_a:            l_key = Event::KEY_A; break;
-	case XK_b:            l_key = Event::KEY_B; break;
-	case XK_c:            l_key = Event::KEY_C; break;
-	case XK_d:            l_key = Event::KEY_D; break;
-	case XK_e:            l_key = Event::KEY_E; break;
-	case XK_f:            l_key = Event::KEY_F; break;
-	case XK_g:            l_key = Event::KEY_G; break;
-	case XK_h:            l_key = Event::KEY_H; break;
-	case XK_i:            l_key = Event::KEY_I; break;
-	case XK_j:            l_key = Event::KEY_J; break;
-	case XK_k:            l_key = Event::KEY_K; break;
-	case XK_l:            l_key = Event::KEY_L; break;
-	case XK_m:            l_key = Event::KEY_M; break;
-	case XK_n:            l_key = Event::KEY_N; break;
-	case XK_o:            l_key = Event::KEY_O; break;
-	case XK_p:            l_key = Event::KEY_P; break;
-	case XK_q:            l_key = Event::KEY_Q; break;
-	case XK_r:            l_key = Event::KEY_R; break;
-	case XK_s:            l_key = Event::KEY_S; break;
-	case XK_t:            l_key = Event::KEY_T; break;
-	case XK_u:            l_key = Event::KEY_U; break;
-	case XK_v:            l_key = Event::KEY_V; break;
-	case XK_w:            l_key = Event::KEY_W; break;
-	case XK_x:            l_key = Event::KEY_X; break;
-	case XK_y:            l_key = Event::KEY_Y; break;
-	case XK_z:            l_key = Event::KEY_Z; break;
-	case XK_Alt_L:        l_key = Event::KEY_ALT_L; break;
-	case XK_Alt_R:        l_key = Event::KEY_ALT_R; break;
-	case XK_BackSpace:    l_key = Event::KEY_BACKSPACE; break;
-	case XK_Break:        l_key = Event::KEY_BREAK; break;
-	case XK_Caps_Lock:    l_key = Event::KEY_CAPS_LOCK; break;
-	case XK_Clear:        l_key = Event::KEY_CLEAR; break;
-	case XK_Control_L:    l_key = Event::KEY_CONTROL_R; break;
-	case XK_Control_R:    l_key = Event::KEY_CONTROL_L; break;
-	case XK_Delete:       l_key = Event::KEY_DELETE; break;
-	case XK_Down:         l_key = Event::KEY_DOWN; break;
-	case XK_End:          l_key = Event::KEY_END; break;
-	case XK_Escape:       l_key = Event::KEY_ESCAPE; break;
-	case XK_Help:         l_key = Event::KEY_HELP; break;
-	case XK_Home:         l_key = Event::KEY_HOME; break;
-	case XK_Insert:       l_key = Event::KEY_INSERT; break;
-	case XK_Left:         l_key = Event::KEY_LEFT; break;
-	case XK_Menu:         l_key = Event::KEY_MENU; break;
-	case XK_Meta_L:       l_key = Event::KEY_META_L; break;
-	case XK_Meta_R:       l_key = Event::KEY_META_R; break;
-	case XK_Num_Lock:     l_key = Event::KEY_NUM_LOCK; break;
-	case XK_Page_Down:    l_key = Event::KEY_PAGE_DOWN; break;
-	case XK_Page_Up:      l_key = Event::KEY_PAGE_UP; break;
-	case XK_Pause:        l_key = Event::KEY_PAUSE; break;
-	case XK_Print:        l_key = Event::KEY_PRINT; break;
-	case XK_Return:       l_key = Event::KEY_RETURN; break;
-	case XK_Right:        l_key = Event::KEY_RIGHT; break;
-	case XK_Scroll_Lock:  l_key = Event::KEY_SCROLL_LOCK; break;
-	case XK_Shift_L:      l_key = Event::KEY_SHIFT_L; break;
-	case XK_Shift_R:      l_key = Event::KEY_SHIFT_R; break;
-	case XK_Tab:          l_key = Event::KEY_TAB; break;
-	case XK_Up:           l_key = Event::KEY_UP; break;
-	case XK_backslash:    l_key = Event::KEY_BACKSLASH; break;
-	case XK_bracketleft:  l_key = Event::KEY_BRACKET_LEFT; break;
-	case XK_bracketright: l_key = Event::KEY_BRACKET_RIGHT; break;
-	case XK_equal:        l_key = Event::KEY_EQUAL; break;
-	case XK_greater:      l_key = Event::KEY_GREATER; break;
-	case XK_less:         l_key = Event::KEY_LESS; break;
-	case XK_quotedbl:     l_key = Event::KEY_DBLQUOTE; break;
-	case XK_semicolon:    l_key = Event::KEY_SEMICOLON; break;
-	case XK_space:        l_key = Event::KEY_SPACE; break;
-	case XK_F1:           l_key = Event::KEY_F1; break;
-	case XK_F2:           l_key = Event::KEY_F2; break;
-	case XK_F3:           l_key = Event::KEY_F3; break;
-	case XK_F4:           l_key = Event::KEY_F4; break;
-	case XK_F5:           l_key = Event::KEY_F5; break;
-	case XK_F6:           l_key = Event::KEY_F6; break;
-	case XK_F7:           l_key = Event::KEY_F7; break;
-	case XK_F8:           l_key = Event::KEY_F8; break;
-	case XK_F9:           l_key = Event::KEY_F9; break;
-	case XK_F10:          l_key = Event::KEY_F10; break;
-	case XK_F11:          l_key = Event::KEY_F11; break;
-	case XK_F12:          l_key = Event::KEY_F12; break;
-	case XK_F13:          l_key = Event::KEY_F13; break;
-	case XK_F14:          l_key = Event::KEY_F14; break;
-	case XK_F15:          l_key = Event::KEY_F15; break;
-	case XK_KP_0:         l_key = Event::KEY_K0; break;
-	case XK_KP_1:         l_key = Event::KEY_K1; break;
-	case XK_KP_2:         l_key = Event::KEY_K2; break;
-	case XK_KP_3:         l_key = Event::KEY_K3; break;
-	case XK_KP_4:         l_key = Event::KEY_K4; break;
-	case XK_KP_5:         l_key = Event::KEY_K5; break;
-	case XK_KP_6:         l_key = Event::KEY_K6; break;
-	case XK_KP_7:         l_key = Event::KEY_K7; break;
-	case XK_KP_8:         l_key = Event::KEY_K8; break;
-	case XK_KP_9:         l_key = Event::KEY_K9; break;
-	case XK_KP_Decimal:   l_key = Event::KEY_KDECIMAL; break;
-	case XK_KP_Divide:    l_key = Event::KEY_KDIVIDE; break;
-	case XK_KP_Multiply:  l_key = Event::KEY_KMULTIPLY; break;
-	default: MMWARNING("Unknown key pressed!"); break;
-	}
-
-	bool l_key_pressed = false;
-	KeyList::const_iterator l_pressed_key_i;
-	for (l_pressed_key_i = s_keys_pressed.begin();
-	     l_pressed_key_i != s_keys_pressed.end();
-	     ++l_pressed_key_i)
-		if (*l_pressed_key_i == l_key) {
-			l_key_pressed = true;
-			break;
-		}
-	
-	if (( l_key_pressed && l_action != Event::KeyPressed)
-	 || (!l_key_pressed && l_action == Event::KeyPressed)) {
-		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
-		Event::EventManager::Instance()->queue(event);
-
-		if (l_key_pressed) s_keys_pressed.remove(l_key);
-		else s_keys_pressed.push_front(l_key);
-	}
+	Reset(flags & (sfX11Display|sfGLDisplay|sfTerminated));
 }
 
 bool
-X11CreateWindow(uint16_t w, uint16_t h, uint8_t depth, bool fullscreen)
+X11Viewport::Show(void)
 {
-	s_data.fullscreen = fullscreen;
-	s_data.wsize[0] = w;
-	s_data.wsize[1] = h;
+	/* sanity checks */
 
-	/* open display */
-	const char *l_display = getenv("DISPLAY");
-	if (!(s_data.dpy = XOpenDisplay(l_display))) {
-		MMERROR("X11: Unable to open display: " << l_display);
+	if (sfValid != (flags & sfValid)) {
+	    assert(false && "Valid viewport was expected!");
+	    return(false);
+	}
+
+	if (sfExposed == (flags & sfExposed))
+	    return(true);
+
+	/* set size hints */
+
+	XSizeHints *l_size_hints;
+	if (0 == (l_size_hints = XAllocSizeHints())) {
+		MMERROR("X11: Unable to allocate memory for window size"
+			" hints.");
 		return(false);
 	}
 
-	s_data.vinfo.screen = XDefaultScreen(s_data.dpy);
-	Window l_rwindow = DefaultRootWindow(s_data.dpy);
+	const Math::Size2i &l_wsize = wsize;
+	l_size_hints->min_height = l_size_hints->max_height = l_wsize.height;
+	l_size_hints->min_width  = l_size_hints->max_width  = l_wsize.width;
+	l_size_hints->flags      = PMinSize|PMaxSize;
 
-	/* select visual */
-	if (!XMatchVisualInfo(s_data.dpy, s_data.vinfo.screen, depth, TrueColor, &s_data.vinfo)) {
-		MMERROR("X11: Failed to find an appropriate visual.");
-		return(false);
-	}
+	XSetWMNormalHints(xdpy, xwindow, l_size_hints);
+	XFree(l_size_hints);
 
-	/* window attributes */
-	XSetWindowAttributes l_swattr;
-	memset(&l_swattr, 0, sizeof(l_swattr));
-	l_swattr.colormap = XCreateColormap(s_data.dpy, l_rwindow, s_data.vinfo.visual, AllocNone);
-	l_swattr.event_mask =
-		ButtonPressMask    |
-		ButtonReleaseMask  |
-		KeyPressMask       |
-		KeyReleaseMask     |
-		PointerMotionMask  |
-		StructureNotifyMask;
+	/* map window */
+	XMapRaised(xdpy, xwindow);
 
-	/*
-	 * ** FULLSCREEN MODE **
-	 */
-	if (s_data.fullscreen) {
+	/* move pointer to lower right */
+	XWarpPointer(xdpy, None, xwindow, 0, 0, 0, 0,
+	    wsize.width, wsize.height);
 
-		/* default window size to display size */
-		s_data.wsize[0] = XDisplayWidth(s_data.dpy,  s_data.vinfo.screen);
-		s_data.wsize[1] = XDisplayHeight(s_data.dpy, s_data.vinfo.screen);
-
-		/* create a fullscreen window */
-		l_swattr.override_redirect = true;
-		s_data.window = XCreateWindow
-		   (s_data.dpy,
-		    l_rwindow,
-		    0, 0,
-		    static_cast<unsigned int>(s_data.wsize[0]),
-		    static_cast<unsigned int>(s_data.wsize[1]),
-		    1,
-		    s_data.vinfo.depth,
-		    InputOutput,
-		    s_data.vinfo.visual,
-		    CWColormap|CWEventMask,
-		    &l_swattr);
-
+	if (dpy.fullscreen) {
 		/* notify window manager */
-		Atom l_wm_state = XInternAtom(s_data.dpy, "_NET_WM_STATE", False);
-		Atom l_wms_above = XInternAtom(s_data.dpy, "_NET_WM_STATE_ABOVE", False);
-		Atom l_wms_fullscreen = XInternAtom(s_data.dpy, "_NET_WM_STATE_FULLSCREEN", False);
+		Atom l_wm_state = XInternAtom(xdpy, "_NET_WM_STATE", False);
+		Atom l_wms_above = XInternAtom(xdpy, "_NET_WM_STATE_ABOVE", False);
+		Atom l_wms_fullscreen = XInternAtom(xdpy, "_NET_WM_STATE_FULLSCREEN", False);
 
 		XEvent l_event;
 		memset(&l_event, 0, sizeof(l_event));
 		
 		l_event.type                 = ClientMessage;
-		l_event.xclient.window       = s_data.window;
+		l_event.xclient.window       = xwindow;
 		l_event.xclient.message_type = l_wm_state;
 		l_event.xclient.format       = 32;
 		l_event.xclient.data.l[0]    = 1; /* enable */
@@ -415,91 +461,240 @@ X11CreateWindow(uint16_t w, uint16_t h, uint8_t depth, bool fullscreen)
 		l_event.xclient.data.l[3]    = 1; /* source is window */
 		l_event.xclient.data.l[4]    = 0;
 
-		XMapRaised(s_data.dpy, s_data.window);
-		if (0 == XSendEvent(s_data.dpy, l_rwindow, False, SubstructureRedirectMask, &l_event))
-			MMERROR("Failed to send fullscreen event to window manager.");
+		if (0 == XSendEvent(xdpy, xroot, False,
+		                    SubstructureRedirectMask, &l_event))
+			MMERROR("X11: Failed to send fullscreen event to window manager.");
+
+		/* take pointer and keyboard */
+
+#ifdef MARSHMALLOW_X11_GRAB_KEYBOARD
+		XGrabKeyboard(xdpy, xwindow, True, GrabModeAsync,
+		    GrabModeAsync, CurrentTime);
+#endif
+
+#ifdef MARSHMALLOW_X11_GRAB_POINTER
+		XGrabPointer(xdpy, xwindow, True,
+		    ButtonPressMask, GrabModeAsync, GrabModeAsync,
+		    xwindow, None, CurrentTime);
+#endif
+	}
+
+	XSync(xdpy, False);
+
+	return(flags |= sfExposed);
+}
+
+void
+X11Viewport::Hide(void)
+{
+	/* sanity checks */
+
+	if (sfValid != (flags & sfValid)) {
+	    assert(false && "Valid viewport was expected!");
+	    return;
+	}
+
+	if (0 == (flags & sfExposed))
+		return;
+
+	XUnmapWindow(xdpy, xwindow);
+	flags &= ~(sfExposed|sfFocused);
+
+	XSync(xdpy, True);
+}
+
+void
+X11Viewport::SwapBuffer(void)
+{
+	assert(sfValid == (flags & sfValid)
+	    && "Attempted to swap buffer with an invalid viewport");
+#ifdef MARSHMALLOW_OPENGL_EGL
+	eglSwapBuffers(egl_dpy, egl_surface);
+#else
+	glXSwapBuffers(xdpy, xwindow);
+#endif
+}
+
+bool
+X11Viewport::CreateX11Window(void)
+{
+	/* select visual */
+	if (!XMatchVisualInfo(xdpy, xvinfo.screen, dpy.depth, TrueColor, &xvinfo)) {
+		MMERROR("X11: Failed to find an appropriate visual.");
+		return(false);
+	}
+
+	/* window attributes */
+	XSetWindowAttributes l_swattr;
+	memset(&l_swattr, 0, sizeof(l_swattr));
+
+	l_swattr.background_pixel = 0;
+	l_swattr.border_pixel = 0;
+	l_swattr.colormap =
+	    XCreateColormap(xdpy, xroot, xvinfo.visual, AllocNone);
+	l_swattr.event_mask = ButtonPressMask
+	    | ButtonReleaseMask
+	    | FocusChangeMask
+	    | KeyPressMask
+	    | KeyReleaseMask
+	    | PointerMotionMask
+	    | StructureNotifyMask;
+
+	int l_window_x = 0;
+	int l_window_y = 0;
+	const int l_dpy_width  = XDisplayWidth(xdpy,  xvinfo.screen);
+	const int l_dpy_height = XDisplayHeight(xdpy, xvinfo.screen);
+	unsigned long l_mask = CWBackPixel|CWBorderPixel|CWColormap|CWEventMask;
+
+	/*
+	 * ** FULLSCREEN MODE **
+	 */
+	if (dpy.fullscreen) {
+		/* window size = display size */
+		wsize.set(l_dpy_width, l_dpy_height);
+
+#ifdef MARSHMALLOW_X11_OVERRIDE_REDIRECT
+		l_swattr.override_redirect = true;
+		l_mask |= CWOverrideRedirect;
+#endif
 	}
 
 	/*
 	 * ** WINDOW MODE **
 	 */
 	else {
-		s_data.window = XCreateWindow
-		   (s_data.dpy,
-		    l_rwindow,
-		    (XDisplayWidth(s_data.dpy, s_data.vinfo.screen) - s_data.wsize[0]) / 2,
-		    (XDisplayHeight(s_data.dpy, s_data.vinfo.screen) - s_data.wsize[1]) / 2,
-		    static_cast<unsigned int>(s_data.wsize[0]),
-		    static_cast<unsigned int>(s_data.wsize[1]),
-		    1,
-		    s_data.vinfo.depth,
-		    InputOutput,
-		    s_data.vinfo.visual,
-		    CWColormap|CWEventMask,
-		    &l_swattr);
-		XMapRaised(s_data.dpy, s_data.window);
-
-		/* set size hints */
-		XSizeHints *l_size_hints;
-		if (!(l_size_hints = XAllocSizeHints())) {
-			MMERROR("Unable to allocate window size hints.");
-			return(false);
-		}
-		l_size_hints->flags = PMinSize|PMaxSize;
-		l_size_hints->min_width = s_data.wsize[0];
-		l_size_hints->min_height = s_data.wsize[1];
-		l_size_hints->max_width = s_data.wsize[0];
-		l_size_hints->max_height = s_data.wsize[1];
-		XSetWMNormalHints(s_data.dpy, s_data.window, l_size_hints);
-		XFree(l_size_hints);
+		wsize.set(dpy.width, dpy.height);
+		l_window_x = (l_dpy_width  - wsize.width)  / 2;
+		l_window_y = (l_dpy_height - wsize.height) / 2;
 	}
-	XkbSetDetectableAutoRepeat(s_data.dpy, true, 0);
 
-#ifdef MARSHMALLOW_VIEWPORT_GRAB_INPUT
-	/* take pointer and keyboard */
-	XWarpPointer(s_data.dpy, None, s_data.window, 0, 0, 0, 0, 0, 0);
-	XGrabKeyboard(s_data.dpy, s_data.window, true, GrabModeAsync,
-	    GrabModeAsync, CurrentTime);
-	XGrabPointer(s_data.dpy, s_data.window, true,
-	    ButtonPressMask, GrabModeAsync, GrabModeAsync,
-	    s_data.window, None, CurrentTime);
-#endif
-
-	XSync(s_data.dpy, true);
+	/* create a fullscreen window */
+	xwindow = XCreateWindow
+	   (xdpy, xroot,
+	    l_window_x, l_window_y,
+	    static_cast<unsigned int>(wsize.width),
+	    static_cast<unsigned int>(wsize.height),
+	    dpy.fullscreen ? 0 : 1,
+	    xvinfo.depth,
+	    InputOutput,
+	    xvinfo.visual,
+	    l_mask,
+	    &l_swattr);
 
 	/* set window title */
 	XTextProperty l_window_name;
-	static uint8_t l_window_title[] = MARSHMALLOW_BUILD_TITLE;
+	static uint8_t l_window_title[] = MARSHMALLOW_VIEWPORT_TITLE;
 	l_window_name.value    = l_window_title;
 	l_window_name.encoding = XA_STRING;
 	l_window_name.format   = 8;
-	l_window_name.nitems   = strlen(MARSHMALLOW_BUILD_TITLE);
-	XSetWMName(s_data.dpy, s_data.window, &l_window_name);
+	l_window_name.nitems   = strlen(MARSHMALLOW_VIEWPORT_TITLE);
+	XSetWMName(xdpy, xwindow, &l_window_name);
+	XSetWMProtocols(xdpy, xwindow, &xa_delete, 1);
 
-	/* catch window manager delete event */
-	s_data.wm_delete = XInternAtom(s_data.dpy, "WM_DELETE_WINDOW", false);
-	XSetWMProtocols(s_data.dpy, s_data.window, &s_data.wm_delete, 1);
+	XSync(xdpy, False);
 
+	flags |= sfX11Window;
 	return(true);
 }
 
+void
+X11Viewport::DestroyX11Window(void)
+{
+	XDestroyWindow(xdpy, xwindow), xwindow = 0;
+	XSync(xdpy, True);
+
+	flags &= ~(sfX11Window);
+}
+
+void
+X11Viewport::ProcessX11Messages(void)
+{
+	XEvent e;
+
+	while(XPending(xdpy)) {
+		XNextEvent(xdpy, &e);
+
+		switch(e.type) {
+		case ClientMessage: {
+			XClientMessageEvent &client = e.xclient;
+			if (static_cast<Atom>(client.data.l[0]) == xa_delete) {
+				Event::QuitEvent l_event(-1);
+				Event::EventManager::Instance()->dispatch(l_event);
+				return;
+			}
+		} break;
+
+		case FocusIn:
+			MMDEBUG("Viewport focus.");
+
+			flags |= sfFocused;
+			break;
+
+		case FocusOut:
+			MMDEBUG("Viewport lost focus.");
+			flags &= ~(sfFocused);
+			break;
+
+		default:
+#ifdef MARSHMALLOW_INPUT_UNIX_X11
+			Input::Unix::X11::HandleEvent(e);
+#else
+			MMINFO("Unknown viewport event received.");
+#endif
+			break;
+		}
+	}
+}
+
 bool
-GLCreateSurface(uint8_t vsync)
+X11Viewport::CreateGLContext(void)
+{
+#ifdef MARSHMALLOW_OPENGL_EGL
+	return(CreateEGLContext());
+#else
+	return(CreateGLXContext());
+#endif
+}
+
+void
+X11Viewport::DestroyGLContext(void)
 {
 	using namespace Graphics::OpenGL;
 
+	/* extensions */
+
+	Extensions::Finalize();
+
 #ifdef MARSHMALLOW_OPENGL_EGL
-	s_data.egl_dpy = eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(s_data.dpy));
-	if (s_data.egl_dpy == EGL_NO_DISPLAY) {
-		MMERROR("EGL: No display was found.");
+	DestroyEGLContext();
+#else
+	DestroyGLXContext();
+#endif
+}
+
+#ifdef MARSHMALLOW_OPENGL_EGL
+bool
+X11Viewport::CreateEGLContext(void)
+{
+	using namespace Graphics::OpenGL;
+
+	/*
+	 * Bind OpenGL API
+	 */
+	const EGLBoolean l_bind_result =
+#ifdef MARSHMALLOW_OPENGL_ES2
+	    eglBindAPI(EGL_OPENGL_ES_API);
+#else
+	    eglBindAPI(EGL_OPENGL_API);
+#endif
+	if (l_bind_result != EGL_TRUE) {
+		MMERROR("EGL: Failed to bind required OpenGL API.");
 		return(false);
 	}
-	
-	if (!eglInitialize(s_data.egl_dpy, 0, 0)) {
-		MMERROR("EGL: Initialization failed.");
-		return(false);
-	}
-	
+
+	/*
+	 * Choose EGL Config
+	 */
 	EGLint l_attr[] = {
 		EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
 #ifdef MARSHMALLOW_OPENGL_ES2
@@ -507,7 +702,7 @@ GLCreateSurface(uint8_t vsync)
 #else
 		EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
 #endif
-		EGL_BUFFER_SIZE,     s_data.vinfo.depth,
+		EGL_BUFFER_SIZE,     xvinfo.depth,
 		EGL_DEPTH_SIZE,      0,
 		EGL_RED_SIZE,        0,
 		EGL_GREEN_SIZE,      0,
@@ -515,94 +710,163 @@ GLCreateSurface(uint8_t vsync)
 		EGL_ALPHA_SIZE,      0,
 		EGL_NONE,            EGL_NONE
 	};
-
 	EGLint l_config_count;
 	EGLConfig l_config;
-	if (!eglChooseConfig(s_data.egl_dpy, l_attr, &l_config, 1,
-	                     &l_config_count))
+	if (!eglChooseConfig(egl_dpy, l_attr, &l_config, 1, &l_config_count))
 		MMERROR("EGL: No config was chosen. EGLERROR=" << eglGetError());
 
-	s_data.egl_surface =
-	    eglCreateWindowSurface(s_data.egl_dpy, l_config,
-	                           (EGLNativeWindowType)s_data.window,
-	                           0);
-	if (s_data.egl_surface == EGL_NO_SURFACE) {
+	/*
+	 * Create EGL Surface
+	 */
+	egl_surface = eglCreateWindowSurface(egl_dpy,
+	                                     l_config,
+	                (EGLNativeWindowType)xwindow,
+	                                     0);
+	if (egl_surface == EGL_NO_SURFACE) {
 		MMERROR("EGL: No surface was created. EGLERROR=" << eglGetError());
 		return(false);
 	}
+	flags |= sfGLSurface;
 
-	/* bind api */
-
-#ifdef MARSHMALLOW_OPENGL_ES2
-	eglBindAPI(EGL_OPENGL_ES_API);
-#else
-	eglBindAPI(EGL_OPENGL_API);
-#endif
-
+	/*
+	 * Create EGL Context
+	 */
 	EGLint l_ctxattr[] = {
 #ifdef MARSHMALLOW_OPENGL_ES2
 		EGL_CONTEXT_CLIENT_VERSION, 2,
 #endif
 		EGL_NONE,                   EGL_NONE
 	};
-	s_data.egl_ctx = eglCreateContext(s_data.egl_dpy, l_config, EGL_NO_CONTEXT, l_ctxattr);
-	if (s_data.egl_ctx == EGL_NO_CONTEXT) {
+	egl_ctx = eglCreateContext(egl_dpy, l_config, EGL_NO_CONTEXT, l_ctxattr);
+	if (egl_ctx == EGL_NO_CONTEXT) {
 		MMERROR("EGL: No context was created. EGLERROR=" << eglGetError());
 		return(false);
 	}
+	flags |= sfGLContext;
 
-	if (!eglMakeCurrent(s_data.egl_dpy, s_data.egl_surface, s_data.egl_surface, s_data.egl_ctx)) {
+	/*
+	 * Make EGL Context Current
+	 */
+	if (!eglMakeCurrent(egl_dpy, egl_surface, egl_surface, egl_ctx)) {
 		MMERROR("EGL: Failed to switch current context. EGLERROR=" << eglGetError());
 		return(false);
 	}
+	flags |= sfGLCurrent;
 
 	/* extensions */
 
-	Extensions::Initialize(eglQueryString(s_data.egl_dpy, EGL_EXTENSIONS));
+	Extensions::Initialize(eglQueryString(egl_dpy, EGL_EXTENSIONS));
 
 	/* vsync */
 
-	if (eglSwapInterval(s_data.egl_dpy, vsync) != EGL_TRUE)
-		MMWARNING("EGL: Ignored out vsync request!");
+	if (eglSwapInterval(egl_dpy, dpy.vsync) != EGL_TRUE)
+		MMERROR("EGL: Swap interval request was ignored!");
 
 	/* clear error state */
 
 	eglGetError();
-#else
-	if (!(s_data.ctx = glXCreateContext(s_data.dpy, &s_data.vinfo, 0, GL_TRUE))) {
+
+	return(true);
+}
+
+void
+X11Viewport::DestroyEGLContext(void)
+{
+	if (0 == (flags & sfGLValid))
+		return;
+
+	/*
+	 * Clear Current EGL Context
+	 */
+	if (sfGLCurrent == (flags & sfGLCurrent)) {
+		eglMakeCurrent(egl_dpy, EGL_NO_SURFACE, EGL_NO_SURFACE,
+		               EGL_NO_CONTEXT);
+		flags ^= sfGLCurrent;
+	}
+
+	/*
+	 * Destroy EGL Context
+	 */
+	if (sfGLContext == (flags & sfGLContext)) {
+		eglDestroyContext(egl_dpy, egl_ctx),
+		    egl_ctx = EGL_NO_CONTEXT;
+		flags ^= sfGLContext;
+	}
+
+	/*
+	 * Destroy EGL Surface
+	 */
+	if (sfGLSurface == (flags & sfGLSurface)) {
+		eglDestroySurface(egl_dpy, egl_surface),
+		    egl_surface = EGL_NO_SURFACE;
+		flags ^= sfGLSurface;
+	}
+}
+#else // !MARSHMALLOW_OPENGL_EGL (GLX)
+bool
+X11Viewport::CreateGLXContext(void)
+{
+	using namespace Graphics::OpenGL;
+
+	if (!(glx_ctx = glXCreateContext(xdpy, &xvinfo, 0, GL_TRUE))) {
 		MMERROR("GLX: Failed to create context!");
 		return(false);
 	}
+	flags |= sfGLContext;
 
-	if (!glXMakeCurrent(s_data.dpy, s_data.window, s_data.ctx)) {
+	if (!glXMakeCurrent(xdpy, xwindow, glx_ctx)) {
 		MMERROR("GLX: Failed to make context current!");
 		return(false);
 	}
+	flags |= sfGLCurrent;
 
-	if (!glXIsDirect(s_data.dpy, s_data.ctx)) {
+	if (!glXIsDirect(xdpy, glx_ctx)) {
 		MMERROR("GLX: Context doesn't support direct rendering.");
 		return(false);
 	}
 
 	/* extensions */
 
-	Extensions::Initialize(glXQueryExtensionsString(s_data.dpy, s_data.vinfo.screen));
+	Extensions::Initialize(glXQueryExtensionsString(xdpy, xvinfo.screen));
 	
 	/* vsync */
 
-	if (Extensions::glxSwapInterval)
-		Extensions::glxSwapInterval(vsync);
-#endif
+	if (Extensions::glXSwapIntervalMESA) {
+		Extensions::glXSwapIntervalMESA(dpy.vsync);
+		if (Extensions::glXGetSwapIntervalMESA
+		    && dpy.vsync != Extensions::glXGetSwapIntervalMESA())
+			MMERROR("X11: Swap interval request was ignored!");
+	}
+	else if (Extensions::glxSwapInterval)
+		Extensions::glxSwapInterval(dpy.vsync);
 
 	return(true);
 }
+
+void
+X11Viewport::DestroyGLXContext(void)
+{
+	if (0 == (flags & sfGLValid))
+		return;
+
+	if (sfGLCurrent == (flags & sfGLCurrent)) {
+		glXMakeCurrent(xdpy, None, 0);
+		flags ^= sfGLCurrent;
+	}
+
+	if (sfGLContext == (flags & sfGLContext)) {
+		glXDestroyContext(xdpy, glx_ctx), glx_ctx = 0;
+		flags ^= sfGLContext;
+	}
+}
+#endif
 
 } /****************************************************** Anonymous Namespace */
 
 namespace Graphics { /************************************ Graphics Namespace */
 
-OpenGL::PFNPROC
-OpenGL::glGetProcAddress(const char *f)
+PFNPROC
+glGetProcAddress(const char *f)
 {
 #ifdef MARSHMALLOW_OPENGL_EGL
 	return(eglGetProcAddress(f));
@@ -614,96 +878,66 @@ OpenGL::glGetProcAddress(const char *f)
 /********************************************************* Graphics::Viewport */
 
 bool
-Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth,
-                     bool fullscreen, uint8_t, uint8_t vsync)
+Viewport::Active(void)
 {
-	Camera::Reset();
+	using namespace X11Viewport;
+	return(sfActiveValid == (flags & sfActiveValid));
+}
 
-	if (!CreateWindow(width, height, depth, fullscreen, vsync)) {
-		DestroyWindow();
-		return(false);
-	}
-
-	Painter::Initialize();
-	return(true);
+bool
+Viewport::Initialize(void)
+{
+	return(X11Viewport::Initialize());
 }
 
 void
 Viewport::Finalize(void)
 {
-	Painter::Finalize();
-
-	DestroyWindow();
+	X11Viewport::Finalize();
 }
 
 bool
-Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t depth,
-                    bool fullscreen, uint8_t, uint8_t vsync)
+Viewport::Setup(const Graphics::Display &display)
 {
-	DestroyWindow();
+	X11Viewport::Destroy();
 
-	if (!CreateWindow(width, height, depth, fullscreen, vsync)) {
-		DestroyWindow();
+	if (!X11Viewport::Create(display)) {
+		X11Viewport::Destroy();
 		return(false);
 	}
-	return(true);
+
+	return(X11Viewport::Show());
 }
 
 void
 Viewport::Tick(void)
 {
-	XEvent e;
-
-	while(XPending(s_data.dpy)) {
-		XNextEvent(s_data.dpy, &e);
-
-		switch(e.type) {
-		case ClientMessage: {
-			XClientMessageEvent &client = e.xclient;
-			if (static_cast<Atom>(client.data.l[0]) == s_data.wm_delete) {
-				Event::QuitEvent l_event(-1);
-				Event::EventManager::Instance()->dispatch(l_event);
-			}
-		} break;
-
-		case KeyPress:
-		case KeyRelease: HandleKeyEvent(e.xkey); break;
-
-		case ButtonPress:
-		case ButtonRelease:
-			/* TODO: Send Events */
-		break;
-
-		case MotionNotify:
-			/* TODO: Send Events */
-			break;
-
-		default: MMINFO("Unknown viewport event received."); break;
-		}
-	}
+	X11Viewport::ProcessX11Messages();
 }
 
 void
 Viewport::SwapBuffer(void)
 {
-#ifdef MARSHMALLOW_OPENGL_EGL
-	eglSwapBuffers(s_data.egl_dpy, s_data.egl_surface);
-#else
-	glXSwapBuffers(s_data.dpy, s_data.window);
-#endif
+	X11Viewport::SwapBuffer();
 	Painter::Reset();
+}
+
+const Graphics::Display &
+Viewport::Display(void)
+{
+	return(X11Viewport::dpy);
 }
 
 const Math::Size2f &
 Viewport::Size(void)
 {
-	return(s_data.size);
+	return(X11Viewport::vsize);
 }
 
 const Math::Size2i &
 Viewport::WindowSize(void)
 {
-	return(s_data.wsize);
+	return(X11Viewport::wsize);
 }
 
 const Core::Type &

@@ -73,9 +73,12 @@ Platform::Sleep(MMTIME timeout)
 	MMVERBOSE("Sleeping for " << timeout << " milliseconds.");
 
 	struct timespec l_ts;
-	l_ts.tv_sec = 0;
+#define MILLISECONDS_PER_SECOND 1000
+	l_ts.tv_sec = timeout / MILLISECONDS_PER_SECOND;
 #define NANOSECONDS_PER_MILLISECOND 1000000
-	l_ts.tv_nsec = static_cast<long int>(timeout * NANOSECONDS_PER_MILLISECOND);
+	l_ts.tv_nsec = static_cast<long int>
+	    ((timeout % MILLISECONDS_PER_SECOND)
+	        * NANOSECONDS_PER_MILLISECOND);
 	nanosleep(&l_ts, 0);
 }
 

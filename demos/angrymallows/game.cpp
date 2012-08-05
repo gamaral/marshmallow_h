@@ -55,9 +55,7 @@ MARSHMALLOW_NAMESPACE_USE
 #define STATE_FILENAME "savedstate.xml"
 
 Demo::Demo(const char *f)
-    : EngineBase(MARSHMALLOW_VIEWPORT_REFRESH,
-                 MARSHMALLOW_VIEWPORT_REFRESH,
-                 MARSHMALLOW_LITESLEEP)
+    : EngineBase()
     , m_filename(MMSTRDUP(f))
 {
 }
@@ -78,7 +76,6 @@ Demo::initialize(void)
 
 	eventManager()->connect(this, Event::KeyboardEvent::Type());
 
-	Graphics::Camera::SetZoom(280.f);
 	Graphics::Camera::SetPosition(0.f, -0.2f);
 
 	return(reset());
@@ -87,8 +84,7 @@ Demo::initialize(void)
 void
 Demo::finalize(void)
 {
-	if (isValid())
-		eventManager()->disconnect(this, Event::KeyboardEvent::Type());
+	eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 
 	EngineBase::finalize();
 }
@@ -96,6 +92,8 @@ Demo::finalize(void)
 bool
 Demo::handleEvent(const Event::IEvent &e)
 {
+	using namespace Input;
+
 	if (EngineBase::handleEvent(e))
 		return(true);
 
@@ -105,22 +103,22 @@ Demo::handleEvent(const Event::IEvent &e)
 	const Event::KeyboardEvent &l_kevent =
 	    static_cast<const Event::KeyboardEvent &>(e);
 
-	if (l_kevent.action() != Event::KeyPressed)
+	if (l_kevent.action() != Keyboard::KeyPressed)
 		return(false);
 
-	if (l_kevent.key() == Event::KEY_RETURN) {
+	if (l_kevent.key() == Keyboard::KBK_RETURN) {
 		Game::SharedScene l_scene = sceneManager()->activeScene();
 		if (l_scene->getLayer("pause"))
 			l_scene->removeLayer("pause");
 		else
 			l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
-	} else if (l_kevent.key() == Event::KEY_ESCAPE) {
+	} else if (l_kevent.key() == Keyboard::KBK_ESCAPE) {
 		stop();
-	} else if (l_kevent.key() == Event::KEY_F1) {
+	} else if (l_kevent.key() == Keyboard::KBK_F1) {
 		reset();
-	} else if (l_kevent.key() == Event::KEY_F2) {
+	} else if (l_kevent.key() == Keyboard::KBK_F2) {
 		loadState();
-	} else if (l_kevent.key() == Event::KEY_F3) {
+	} else if (l_kevent.key() == Keyboard::KBK_F3) {
 		saveState();
 	} else return(false);
 

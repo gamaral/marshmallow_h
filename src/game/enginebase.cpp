@@ -43,16 +43,18 @@
 #include "event/renderevent.h"
 #include "event/updateevent.h"
 
-#include "graphics/painter.h"
-#include "graphics/viewport.h"
+#include "graphics/display.h"
+#include "graphics/painter_p.h"
+#include "graphics/viewport_p.h"
 
+#include "input/keyboard_p.h"
+#include "input/joystick_p.h"
+
+#include "game/engine_p.h"
 #include "game/factory.h"
 #include "game/scenemanager.h"
 
 #include <tinyxml2.h>
-
-extern int iAllocations;
-extern int iDeallocations;
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
@@ -60,54 +62,82 @@ using namespace Event;
 using namespace Graphics;
 using namespace Game;
 
-EngineBase *EngineBase::s_instance = 0;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace { /******************************************** Anonymous Namespace */
+
+void
+GetViewportOverrides(Graphics::Display &display)
+{
+	const char *l_env;
+	if ((l_env = getenv("MM_WIDTH")))
+		sscanf(l_env, "%hu", &display.width);
+
+	if ((l_env = getenv("MM_HEIGHT")))
+		sscanf(l_env, "%hu", &display.height);
+
+	if ((l_env = getenv("MM_SIZE")))
+		sscanf(l_env, "%hux%hu", &display.width, &display.height);
+
+	if ((l_env = getenv("MM_DEPTH"))) {
+		uint16_t l_tmp = 0;
+		sscanf(l_env, "%hu", &l_tmp);
+		display.depth = static_cast<uint8_t>(l_tmp);
+	}
+
+	if ((l_env = getenv("MM_FULLSCREEN")))
+		display.fullscreen = (l_env[0] == '1');
+
+	if ((l_env = getenv("MM_VSYNC"))) {
+		uint16_t l_tmp = 0;
+		sscanf(l_env, "%hu", &l_tmp);
+		display.vsync = static_cast<uint8_t>(l_tmp);
+	}
+}
+
+} /****************************************************** Anonymous Namespace */
+
+namespace Game { /******************************************** Game Namespace */
 
 struct EngineBase::Private
 {
 	Event::SharedEventManager  event_manager;
 	Game::SharedSceneManager   scene_manager;
 	Game::SharedFactory        factory;
-	int    fps;
-	int    ups;
-	MMTIME   delta_time;
+	MMTIME delta_time;
 	int    exit_code;
+	int    fps;
 	int    frame_rate;
-#if MARSHMALLOW_DEBUG
-	int    tick_rate;
-#endif
-	int    suspend_interval;
+	int    sleep;
 	bool   running;
+	bool   suspended;
 	bool   valid;
+
+	Private(int fps_, int sleep_)
+	    : delta_time(0)
+	    , exit_code(0)
+	    , fps(fps_)
+	    , frame_rate(0)
+	    , sleep(sleep_)
+	    , running(false)
+	    , suspended(false)
+	    , valid(false) {}
 };
 
-EngineBase::EngineBase(int f, int u, int s)
-    : m_p(new Private)
+EngineBase::EngineBase(int fps_, int sleep)
+    : m_p(new Private(fps_, sleep))
 {
-	MMINFO("Marshmallow Engine Version " << MARSHMALLOW_VERSION_MAJOR << "."
-	                                     << MARSHMALLOW_VERSION_MINOR << "."
-	                                     << MARSHMALLOW_VERSION_BUILD << "."
-	                                     << MARSHMALLOW_VERSION_REVISION);
+	MMINFO("Marshmallow Engine Version "
+	    << MARSHMALLOW_VERSION_MAJOR << "."
+	    << MARSHMALLOW_VERSION_MINOR << "."
+	    << MARSHMALLOW_VERSION_BUILD << "."
+	    << MARSHMALLOW_VERSION_REVISION);
 
-	m_p->fps = f;
-	m_p->ups = u;
-	m_p->delta_time = 0;
-	m_p->exit_code = 0;
-	m_p->frame_rate = 0;
-#if MARSHMALLOW_DEBUG
-	m_p->tick_rate = 0;
-#endif
-	m_p->suspend_interval = s;
-	m_p->running = false;
-	m_p->valid = false;
-
-	if (!s_instance) s_instance = this;
-	else
-		MMWARNING("Started a second engine!");
+	Engine::SetInstance(this);
 }
 
 EngineBase::~EngineBase(void)
 {
-	if (this == s_instance) s_instance = 0;
+	Engine::SetInstance(0);
 
 	delete m_p, m_p = 0;
 }
@@ -115,69 +145,45 @@ EngineBase::~EngineBase(void)
 bool
 EngineBase::initialize(void)
 {
+	using namespace Input;
+
+	/*
+	 * Initialize Subsystems
+	 */
+
 	Platform::Initialize();
 
-	/* viewport defaults */
+	if (!m_p->event_manager)
+		m_p->event_manager = new Event::EventManager("EngineBase.EventManager");
+	eventManager()->connect(this, Event::QuitEvent::Type());
 
-	uint16_t l_width      = MARSHMALLOW_VIEWPORT_WIDTH;
-	uint16_t l_height     = MARSHMALLOW_VIEWPORT_HEIGHT;
-	uint8_t  l_depth      = MARSHMALLOW_VIEWPORT_DEPTH;
-	bool     l_fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
-	uint8_t  l_refresh    = MARSHMALLOW_VIEWPORT_REFRESH;
-	uint8_t  l_vsync      = MARSHMALLOW_VIEWPORT_VSYNC;
+	Viewport::Initialize();
+	Keyboard::Initialize();
+	Joystick::Initialize();
 
-	/* viewport environment overrides */
+	if (!m_p->scene_manager)
+		m_p->scene_manager = new SceneManager();
 
-	const char *l_env;
-	if ((l_env = getenv("MM_WIDTH")))
-		sscanf(l_env, "%hu", &l_width);
+	if (!m_p->factory)
+		m_p->factory = new Factory();
 
-	if ((l_env = getenv("MM_HEIGHT")))
-		sscanf(l_env, "%hu", &l_height);
+	/*
+	 * Environment Overrides
+	 */
+	
+	Graphics::Display l_display = Viewport::Display();
+	GetViewportOverrides(l_display);
 
-	if ((l_env = getenv("MM_MODE")))
-		sscanf(l_env, "%hux%hu", &l_width, &l_height);
-
-	if ((l_env = getenv("MM_DEPTH"))) {
-		uint16_t l_tmp = 0;
-		sscanf(l_env, "%hu", &l_tmp);
-		l_depth = static_cast<uint8_t>(l_tmp);
-	}
-
-	if ((l_env = getenv("MM_FULLSCREEN")))
-		l_fullscreen = (l_env[0] == '1');
-
-	if ((l_env = getenv("MM_REFRESH"))) {
-		uint16_t l_tmp = 0;
-		sscanf(l_env, "%hu", &l_tmp);
-		l_refresh = static_cast<uint8_t>(l_tmp);
-	}
-
-	if ((l_env = getenv("MM_VSYNC"))) {
-		uint16_t l_tmp = 0;
-		sscanf(l_env, "%hu", &l_tmp);
-		l_vsync = static_cast<uint8_t>(l_tmp);
-	}
-
-
-	/* initialize viewport */
-	if (!Viewport::Initialize(l_width, l_height, l_depth, l_fullscreen,
-	                          l_refresh, l_vsync)) {
+	/*
+	 * Setup
+	 */
+	if (!Viewport::Setup(l_display)) {
 		MMERROR("Failed to initialize engine!");
 		return(false);
 	}
 
-	if (!m_p->event_manager)
-		m_p->event_manager = new Event::EventManager("EngineBase.EventManager");
-	if (!m_p->scene_manager)
-		m_p->scene_manager = new SceneManager();
-	if (!m_p->factory)
-		m_p->factory = new Factory();
-
 	/* validate */
 	m_p->valid = true;
-
-	eventManager()->connect(this, Event::QuitEvent::Type());
 
 	return(true);
 }
@@ -185,17 +191,30 @@ EngineBase::initialize(void)
 void
 EngineBase::finalize(void)
 {
+	using namespace Input;
+
 	if (isValid())
 		eventManager()->disconnect(this, Event::QuitEvent::Type());
 
+	m_p->factory.clear();
 	m_p->scene_manager.clear();
+
+	Joystick::Finalize();
+	Keyboard::Finalize();
+	Viewport::Finalize();
+
 	m_p->event_manager.clear();
 
-	Viewport::Finalize();
 	Platform::Finalize();
 
 	/* invalidate */
 	m_p->valid = false;
+}
+
+bool
+EngineBase::isSuspended(void) const
+{
+	return(m_p->suspended);
 }
 
 bool
@@ -229,12 +248,6 @@ EngineBase::fps(void) const
 	return(m_p->fps);
 }
 
-int
-EngineBase::ups(void) const
-{
-	return(m_p->ups);
-}
-
 MMTIME
 EngineBase::deltaTime(void) const
 {
@@ -257,33 +270,25 @@ EngineBase::run(void)
 	}
 
 #define MILLISECONDS_PER_SECOND 1000
-	MMTIME l_render = 0;
-	MMTIME l_render_target = MILLISECONDS_PER_SECOND / m_p->fps;
-
-	MMTIME l_update = 0;
-	MMTIME l_update_target = MILLISECONDS_PER_SECOND / m_p->ups;
-
+	const MMTIME l_tick_target = MILLISECONDS_PER_SECOND / m_p->fps;
+	const MMTIME l_tick_fast_target = (l_tick_target * 2) / 3;
 	MMTIME l_second = 0;
-	MMTIME l_second_target = MILLISECONDS_PER_SECOND;
-
+	MMTIME l_tock = 0;
 	MMTIME l_tick;
-	MMTIME l_tick_target = MMMIN(l_render_target, l_update_target);
 
-	bool l_wait;
-
-	/* startup */
-
-	m_p->valid = true;
+	/* start */
+	bool l_wait  = false;
+	m_p->valid   = true;
 	m_p->running = true;
 
 	tick();
-	update(static_cast<float>(l_update_target) / MILLISECONDS_PER_SECOND);
+	update(.0f);
 	l_tick = NOW() - l_tick_target;
 
-	/* main game loop */
-	do
-	{
-		m_p->delta_time = NOW() - l_tick;
+	/*
+	 * Game Loop
+	 */
+	while (m_p->running) {
 		l_tick = NOW();
 
 #if MARSHMALLOW_DEBUG
@@ -292,57 +297,69 @@ EngineBase::run(void)
 			MMWARNING("Abnormally long time between ticks, debugger breakpoint?");
 			m_p->delta_time = l_tick_target;
 		}
-
-		m_p->tick_rate++;
 #endif
 
-		l_render += m_p->delta_time;
-		l_update += m_p->delta_time;
+		/* update dt counters */
+		l_tock   += m_p->delta_time;
 		l_second += m_p->delta_time;
 
-		l_wait = true;
+		/* wait if no vsync or cpu/gpu too fast */
+		l_wait |= (m_p->delta_time <= l_tick_fast_target);
 
-		tick();
-
-		if (l_update >= l_update_target) {
-			update(static_cast<float>(l_update_target) / MILLISECONDS_PER_SECOND);
-			l_update -= l_update_target;
-			if (l_update >= l_update_target)
-				MMINFO("Skipping update frame. O=" << l_update - l_update_target), l_update %= l_update_target, l_wait = false;
-		}
-
-		if (l_second >= l_second_target) {
+		/*
+		 * Second
+		 */
+		if (l_second >= MILLISECONDS_PER_SECOND) {
 			second();
 
+			l_wait = (m_p->delta_time <= (l_tick_fast_target));
 			m_p->frame_rate = 0;
-#if MARSHMALLOW_DEBUG
-			m_p->tick_rate = 0;
-#endif
-			l_second -= l_second_target;
-			if (l_second >= l_second_target)
-				MMINFO("Skipping second frame. O=" << l_second - l_second_target), l_second %= l_second_target, l_wait = false;
-		}
 
-		if (l_render >= l_render_target) {
-			render();
-			m_p->frame_rate++;
-			l_render -= l_render_target;
-			if (l_render >= l_render_target)
-				MMINFO("Skipping render frame. O=" << l_render - l_render_target), l_render %= l_render_target, l_wait = false;
+			/* reset second */
+			l_second = 0;
 		}
 
 		/*
-		 * Suspended Wait
+		 * Tock
+		 */
+		if (l_tock >= l_tick_target || !l_wait) {
+			/*
+			 * Update
+			 */
+			update(static_cast<float>(l_tick_target) / MILLISECONDS_PER_SECOND);
+
+			/*
+			 * Render
+			 */
+			render();
+			m_p->frame_rate++;
+
+			/* reset tock */
+			l_tock= 0;
+		}
+
+		/*
+		 * Sleep
 		 *
 		 * Higher suspend interval values might cause minor choppiness
-		 * but it might be worth it for 20% CPU usage (very battery
+		 * but it might be worth it for sub 20% CPU usage (very battery
 		 * friendly).
 		 */
-		if (l_wait) Platform::Sleep(m_p->suspend_interval);
-	} while (m_p->running);
+		if (l_wait) Platform::Sleep(m_p->sleep);
+
+		/*
+		 * Tick
+		 */
+		tick();
+
+		m_p->delta_time = NOW() - l_tick;
+	}
+
+	/*
+	 * Exit
+	 */
 
 	finalize();
-
 	return(m_p->exit_code);
 }
 
@@ -352,6 +369,20 @@ EngineBase::stop(int ec)
 	MMINFO("EngineBase stopped.");
 	m_p->exit_code = ec;
 	m_p->running = false;
+}
+
+void
+EngineBase::suspend(void)
+{
+	MMINFO("EngineBase suspended.");
+	m_p->suspended = true;
+}
+
+void
+EngineBase::resume(void)
+{
+	MMINFO("EngineBase resumed.");
+	m_p->suspended = false;
 }
 
 SharedEventManager
@@ -375,7 +406,12 @@ EngineBase::factory(void) const
 void
 EngineBase::tick(void)
 {
+	using namespace Input;
+
 	Viewport::Tick();
+	Keyboard::Tick();
+	Joystick::Tick();
+
 	if (m_p->event_manager) m_p->event_manager->execute();
 	else MMWARNING("No event manager!");
 }
@@ -384,23 +420,31 @@ void
 EngineBase::second(void)
 {
 	MMDEBUG("FPS=" << m_p->frame_rate);
-	MMINFO("TPS=" << m_p->tick_rate);
 }
 
 void
 EngineBase::render(void)
 {
-	Graphics::Painter::Render();
+	using namespace Event;
+	using namespace Graphics;
 
-	Event::RenderEvent event;
+	if (!Viewport::Active() || m_p->suspended)
+		return;
+
+	Painter::Render();
+
+	RenderEvent event;
 	eventManager()->dispatch(event);
 
-	Graphics::Viewport::SwapBuffer();
+	Viewport::SwapBuffer();
 }
 
 void
 EngineBase::update(float d)
 {
+	if (!Viewport::Active() || m_p->suspended)
+		return;
+
 	Event::UpdateEvent event(d);
 	eventManager()->dispatch(event);
 }
@@ -409,8 +453,7 @@ bool
 EngineBase::serialize(XMLElement &n) const
 {
 	n.SetAttribute("fps", m_p->fps);
-	n.SetAttribute("ups", m_p->ups);
-	n.SetAttribute("si",  m_p->suspend_interval);
+	n.SetAttribute("sleep",  m_p->sleep);
 
 	if (m_p->scene_manager) {
 		XMLElement *l_element = n.GetDocument()->NewElement("scenes");
@@ -439,8 +482,7 @@ EngineBase::deserialize(XMLElement &n)
 	l_element = n.FirstChildElement("scenes");
 
 	n.QueryIntAttribute("fps", &m_p->fps);
-	n.QueryIntAttribute("ups", &m_p->ups);
-	n.QueryIntAttribute("si", &m_p->suspend_interval);
+	n.QueryIntAttribute("sleep",  &m_p->sleep);
 
 	if (l_element && m_p->scene_manager)
 		m_p->scene_manager->deserialize(*l_element);
@@ -461,9 +503,6 @@ EngineBase::handleEvent(const Event::IEvent &e)
 	return(false);
 }
 
-EngineBase *
-EngineBase::Instance(void)
-{
-	return(s_instance);
-}
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

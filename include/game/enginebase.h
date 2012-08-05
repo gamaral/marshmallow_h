@@ -41,11 +41,17 @@
 
 #include <core/shared.h>
 
+#include <game/config.h>
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
-#define MARSHMALLOW_BUSYWAIT   1
-#define MARSHMALLOW_LITESLEEP  4
-#define MARSHMALLOW_DEEPSLEEP  8
+/*
+ * Sleep Intervals
+ */
+#define MMSLEEP_DISABLED  0
+#define MMSLEEP_INSOMNIAC 2
+#define MMSLEEP_LITESLEEP 4
+#define MMSLEEP_DEEPSLEEP 6
 
 namespace Event
 {
@@ -80,10 +86,10 @@ namespace Game
 
 		/*!
 		 * @param fps Desired frame rate
-		 * @param ups Desired update rate
-		 * @param suspend_interval Allow engine to suspend during wait
+		 * @param sleep Sleep interval
 		 */
-		EngineBase(int fps, int ups, int suspend_interval);
+		EngineBase(int fps = MARSHMALLOW_ENGINE_FRAMERATE,
+		           int sleep = MMSLEEP_INSOMNIAC);
 		virtual ~EngineBase(void);
 
 		/*!
@@ -107,11 +113,6 @@ namespace Game
 		int fps(void) const;
 
 		/*!
-		 * @brief Target updates per second
-		 */
-		int ups(void) const;
-
-		/*!
 		 * @brief Time that has elapsed since last tick
 		 */
 		MMTIME deltaTime(void) const;
@@ -123,8 +124,14 @@ namespace Game
 
 	public: /* virtual */
 
+		virtual void second(void);
+		virtual void tick(void);
+
 		VIRTUAL int run(void);
 		VIRTUAL void stop(int exit_code = 0);
+
+		VIRTUAL void suspend(void);
+		VIRTUAL void resume(void);
 
 		VIRTUAL Event::SharedEventManager eventManager(void) const;
 		VIRTUAL SharedSceneManager sceneManager(void) const;
@@ -133,10 +140,8 @@ namespace Game
 		VIRTUAL bool initialize(void);
 		VIRTUAL void finalize(void);
 
+		VIRTUAL bool isSuspended(void) const;
 		VIRTUAL bool isValid(void) const;
-
-		VIRTUAL void second(void);
-		VIRTUAL void tick(void);
 
 		VIRTUAL void render(void);
 		VIRTUAL void update(float delta);
@@ -145,10 +150,6 @@ namespace Game
 		VIRTUAL bool deserialize(XMLElement &node);
 
 		VIRTUAL bool handleEvent(const Event::IEvent &event);
-
-	public: /* static */
-
-		static EngineBase * Instance(void);
 	};
 }
 

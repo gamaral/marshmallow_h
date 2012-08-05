@@ -39,12 +39,15 @@
 #include <math/size2.h>
 
 #include <event/eventmanager.h>
+#include "event/joystickaxisevent.h"
+#include "event/joystickbuttonevent.h"
 #include <event/keyboardevent.h>
 
 #include <graphics/viewport.h>
 
 #include <game/collidercomponent.h>
 #include <game/engine.h>
+#include <game/iengine.h>
 #include <game/ientity.h>
 #include <game/movementcomponent.h>
 #include <game/positioncomponent.h>
@@ -53,26 +56,31 @@
 
 const Core::Type InputComponent::Type("InputComponent");
 
-#define JUMP_MAX  200.f
-#define BOOST_MAX 0.1f
+#define LINEAR_MAX 300.f
+#define JUMP_MAX   200.f
+#define BOOST_MAX  .1f
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
     , m_collider()
-    , m_linear_impulse(200.f)
-    , m_max_speed(140.f)
+    , m_linear_impulse(LINEAR_MAX)
+    , m_max_speed(LINEAR_MAX / 2.f)
     , m_jump(false)
-    , m_boost_fuel(0.f)
+    , m_boost_fuel(.0f)
     , m_direction(ICDRight)
     , m_left(false)
     , m_right(false)
 {
+	Game::Engine::Instance()->eventManager()->connect(this, Event::JoystickAxisEvent::Type());
+	Game::Engine::Instance()->eventManager()->connect(this, Event::JoystickButtonEvent::Type());
 	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
 }
 
 InputComponent::~InputComponent(void)
 {
 	Game::Engine::Instance()->eventManager()->disconnect(this, Event::KeyboardEvent::Type());
+	Game::Engine::Instance()->eventManager()->disconnect(this, Event::JoystickButtonEvent::Type());
+	Game::Engine::Instance()->eventManager()->disconnect(this, Event::JoystickAxisEvent::Type());
 }
 
 bool
@@ -81,6 +89,12 @@ InputComponent::inMotion(void) const
 	Direction l_dir = direction();
 	return((l_dir == ICDLeft  && m_left) ||
 	       (l_dir == ICDRight && m_right));
+}
+
+float
+InputComponent::linearRatio(void) const
+{
+	return(m_linear_impulse / LINEAR_MAX);
 }
 
 void
@@ -99,7 +113,7 @@ InputComponent::update(float d)
 		    staticCast<Game::MovementComponent>();
 
 		if (m_movement) {
-			m_movement->acceleration()[1] = -1000.f;
+			m_movement->acceleration().y = -1000.f;
 			m_movement->limitY()[0] = 900.f;
 		}
 	}
@@ -109,22 +123,22 @@ InputComponent::update(float d)
 		if (inMotion()) {
 			switch (direction()) {
 			case  ICDLeft:
-				m_movement->acceleration()[0] = -m_linear_impulse;
+				m_movement->acceleration().x = m_linear_impulse;
 
 				/* sharp u turn */
-				if (m_collider->onPlatform() && m_movement->velocity().x() > 0)
-					m_movement->acceleration()[0] *= 3.f;
-				else if (m_movement->velocity().x() < -m_max_speed)
-					m_movement->acceleration()[0] *= -0.5f;
+				if (m_collider->onPlatform() && m_movement->velocity().x > 0)
+					m_movement->acceleration().x *= 3.f;
+				else if (m_movement->velocity().x < -m_max_speed)
+					m_movement->acceleration().x *= -0.5f;
 				break;
 			case ICDRight:
-				m_movement->acceleration()[0] = m_linear_impulse;
+				m_movement->acceleration().x = m_linear_impulse;
 
 				/* sharp u turn */
-				if (m_collider->onPlatform() && m_movement->velocity().x() < 0)
-					m_movement->acceleration()[0] *= 3.f;
-				else if (m_movement->velocity().x() > m_max_speed)
-					m_movement->acceleration()[0] *= -0.5f;
+				if (m_collider->onPlatform() && m_movement->velocity().x < 0)
+					m_movement->acceleration().x *= 3.f;
+				else if (m_movement->velocity().x > m_max_speed)
+					m_movement->acceleration().x *= -0.5f;
 				break;
 			default: break;
 			}
@@ -133,29 +147,29 @@ InputComponent::update(float d)
 		else if(m_collider->onPlatform()) {
 			switch (direction()) {
 			case  ICDLeft:
-				if (m_movement->velocity().x() > -1) {
-					m_movement->velocity()[0] = 0;
-					m_movement->acceleration()[0] = 0;
-				} else m_movement->acceleration()[0] = m_linear_impulse * 4.f;
+				if (m_movement->velocity().x > -1) {
+					m_movement->velocity().x = 0;
+					m_movement->acceleration().x = 0;
+				} else m_movement->acceleration().x = LINEAR_MAX * 4.f;
 				break;
 			case ICDRight:
-				if (m_movement->velocity().x() < 1) {
-					m_movement->velocity()[0] = 0;
-					m_movement->acceleration()[0] = 0;
-				} else m_movement->acceleration()[0] = -m_linear_impulse * 4.f;
+				if (m_movement->velocity().x < 1) {
+					m_movement->velocity().x = 0;
+					m_movement->acceleration().x = 0;
+				} else m_movement->acceleration().x = -LINEAR_MAX * 4.f;
 				break;
 			default: break;
 			}
 		}
-		else m_movement->acceleration()[0] = 0;
+		else m_movement->acceleration().x = 0;
 
 		/* jumping */
 		if (m_jump) {
-			if (m_boost_fuel > 0 && m_movement->velocity()[1] > 0) {
+			if (m_boost_fuel > 0 && m_movement->velocity().y > 0) {
 				m_boost_fuel -= d;
-				m_movement->velocity()[1] += JUMP_MAX * (d / BOOST_MAX);
+				m_movement->velocity().y += JUMP_MAX * (d / BOOST_MAX);
 			}
-			else if (m_movement->velocity()[1] < 1)
+			else if (m_movement->velocity().y < 1)
 				m_jump = false;
 		}
 		else m_boost_fuel = 0;
@@ -165,39 +179,89 @@ InputComponent::update(float d)
 bool
 InputComponent::handleEvent(const Event::IEvent &e)
 {
-	if (e.type() != Event::KeyboardEvent::Type())
-		return(false);
+	using namespace Input;
 
-	const Event::KeyboardEvent &l_kevent =
-	    static_cast<const Event::KeyboardEvent &>(e);
+	if (e.type() == Event::KeyboardEvent::Type()) {
+		const Event::KeyboardEvent &l_kevent =
+		    static_cast<const Event::KeyboardEvent &>(e);
 
-	if (l_kevent.key() == Event::KEY_LEFT ||
-            l_kevent.key() == Event::KEY_A) {
-		if ((m_left = (l_kevent.action() == Event::KeyPressed)))
-			m_direction_stack.push_front(ICDLeft);
-		else m_direction_stack.remove(ICDLeft);
-	}
-	else if (l_kevent.key() == Event::KEY_RIGHT ||
-                 l_kevent.key() == Event::KEY_D) {
-		if ((m_right = (l_kevent.action() == Event::KeyPressed)))
-			m_direction_stack.push_front(ICDRight);
-		else m_direction_stack.remove(ICDRight);
-	}
-	else if (l_kevent.key() == Event::KEY_SPACE ||
-                 l_kevent.key() == Event::KEY_M) {
-
-		if (!m_jump &&
-		    l_kevent.action() == Event::KeyPressed &&
-		    m_collider->onPlatform()) {
-			m_movement->velocity()[1] = JUMP_MAX;
-			m_boost_fuel = BOOST_MAX;
+		if (l_kevent.key() == Keyboard::KBK_LEFT ||
+		    l_kevent.key() == Keyboard::KBK_A) {
+			if ((m_left = (l_kevent.action() == Keyboard::KeyPressed))) {
+				m_direction_stack.push_front(ICDLeft);
+				m_linear_impulse = -LINEAR_MAX;
+			}
+			else m_direction_stack.remove(ICDLeft);
 		}
+		else if (l_kevent.key() == Keyboard::KBK_RIGHT ||
+			 l_kevent.key() == Keyboard::KBK_D) {
+			if ((m_right = (l_kevent.action() == Keyboard::KeyPressed))) {
+				m_direction_stack.push_front(ICDRight);
+				m_linear_impulse = LINEAR_MAX;
+			}
+			else m_direction_stack.remove(ICDRight);
+		}
+		else if (l_kevent.key() == Keyboard::KBK_SPACE ||
+			 l_kevent.key() == Keyboard::KBK_M) {
 
-		m_jump = (l_kevent.action() == Event::KeyPressed ? true : false);
+			if (!m_jump &&
+			    l_kevent.action() == Keyboard::KeyPressed &&
+			    m_collider->onPlatform()) {
+				m_movement->velocity().y = JUMP_MAX;
+				m_boost_fuel = BOOST_MAX;
+			}
+
+			m_jump = (l_kevent.action() == Keyboard::KeyPressed ? true : false);
+		}
+		else if (l_kevent.key() == Keyboard::KBK_SHIFT_L ||
+			 l_kevent.key() == Keyboard::KBK_J) {
+			m_max_speed += .60f * (l_kevent.action() == Keyboard::KeyPressed ? LINEAR_MAX : -LINEAR_MAX);
+		}
 	}
-	else if (l_kevent.key() == Event::KEY_SHIFT_L ||
-                 l_kevent.key() == Event::KEY_J) {
-		m_max_speed += l_kevent.action() == Event::KeyPressed ? 200 : -200;
+	else if (e.type() == Event::JoystickButtonEvent::Type()) {
+		const Event::JoystickButtonEvent &l_event =
+		    static_cast<const Event::JoystickButtonEvent &>(e);
+
+		/* TODO(gamaral) clean this stuff up, move into jump method or event  */
+		if (l_event.button() == Joystick::JSB_B) {
+			if (!m_jump &&
+			    l_event.action() == Joystick::ButtonPressed &&
+			    m_collider->onPlatform()) {
+				m_movement->velocity().y = JUMP_MAX;
+				m_boost_fuel = BOOST_MAX;
+			}
+
+			m_jump = (l_event.action() == Joystick::ButtonPressed ? true : false);
+		}
+		else if (l_event.button() == Joystick::JSB_Y) {
+			m_max_speed += .60f * (l_event.action() == Joystick::ButtonPressed ? LINEAR_MAX : -LINEAR_MAX);
+		}
+	}
+	else if (e.type() == Event::JoystickAxisEvent::Type()) {
+		const Event::JoystickAxisEvent &l_event =
+		    static_cast<const Event::JoystickAxisEvent &>(e);
+
+		if (l_event.axis() == Joystick::JSA_HX
+		    || l_event.axis() == Joystick::JSA_X) {
+			float l_range  = (l_event.max() - l_event.min()) / 2.f;
+			float l_middle = l_event.min() + l_range;
+			float l_value  = (l_event.value() - l_middle) / l_range;
+			float l_fuzz   = l_event.fuzz() / (l_range * 2.f);
+
+			m_left = ((l_value - l_fuzz) < -0.15);
+			if (m_left) {
+				m_direction_stack.push_front(ICDLeft);
+				m_linear_impulse = LINEAR_MAX * l_value;
+			}
+			else m_direction_stack.remove(ICDLeft);
+
+			m_right = ((l_value + l_fuzz) > 0.15);
+			if (m_right) {
+				m_direction_stack.push_front(ICDRight);
+				m_linear_impulse = LINEAR_MAX * l_value;
+			}
+			else m_direction_stack.remove(ICDRight);
+		}
 	}
 
 	if (m_direction_stack.size() > 0)

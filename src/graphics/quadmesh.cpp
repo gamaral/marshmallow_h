@@ -83,8 +83,8 @@ QuadMesh::QuadMesh(const Math::Size2f &s)
                Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES))
 {
 	/* half size */
-	const float l_hwidth  = s.width()  / 2.f;
-	const float l_hheight = s.height() / 2.f;
+	const float l_hwidth  = s.width  / 2.f;
+	const float l_hheight = s.height / 2.f;
 
 	setVertex(0, Math::Vector2(-l_hwidth,  l_hheight));
 	setTextureCoordinate(0, 0, 0);

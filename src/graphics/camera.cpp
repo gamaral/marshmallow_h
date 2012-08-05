@@ -55,8 +55,8 @@ void
 UpdateMagnitude2(void)
 {
 	s_data.magnitude2 =
-	    powf(s_data.visibility[0] / 2.f, 2.f) +
-	    powf(s_data.visibility[1] / 2.f, 2.f);
+	    powf(s_data.visibility.width  / 2.f, 2.f) +
+	    powf(s_data.visibility.height / 2.f, 2.f);
 }
 
 void
@@ -64,8 +64,7 @@ UpdateVisibility(void)
 {
 	using namespace Graphics;
 	const Math::Size2f &l_size = Viewport::Size();
-	s_data.visibility[0] = l_size[0] / s_data.transform.scale().width();
-	s_data.visibility[1] = l_size[1] / s_data.transform.scale().height();
+	s_data.visibility = l_size / s_data.transform.scale();
 }
 
 } /****************************************************** Anonymous Namespace */

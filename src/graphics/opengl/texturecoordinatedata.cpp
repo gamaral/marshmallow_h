@@ -39,6 +39,7 @@
 #include <cstring>
 
 #include "extensions.h"
+#include "painter_p.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
@@ -49,7 +50,8 @@ TextureCoordinateData::TextureCoordinateData(uint16_t c)
     : m_id()
     , m_data(new GLfloat[c * AXES]) // TODO: replace with custom allocator
     , m_count(c)
-    , m_bufferId(0)
+    , m_buffer_id(0)
+    , m_session_id(0)
 {
 	memset(m_data, 0, m_count * AXES);
 
@@ -71,13 +73,15 @@ TextureCoordinateData::buffer(void)
 	using Graphics::OpenGL::Extensions::glGenBuffers;
 
 	if (!isBuffered())
-		glGenBuffers(1, &m_bufferId);
+		glGenBuffers(1, &m_buffer_id);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_bufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, m_buffer_id);
 	glBufferData(GL_ARRAY_BUFFER, m_count * AXES * sizeof(GLfloat), m_data, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	MMVERBOSE("Buffered data. ID: " << m_bufferId << ".");
+	m_session_id = Painter::SessionId();
+
+	MMVERBOSE("Buffered data. ID: " << m_buffer_id << ".");
 }
 
 void
@@ -88,10 +92,21 @@ TextureCoordinateData::unbuffer(void)
 	if (!isBuffered())
 		return;
 
-	MMVERBOSE("Unbuffered data. ID: " << m_bufferId << ".");
+	MMVERBOSE("Unbuffered data. ID: " << m_buffer_id << ".");
 
-	glDeleteBuffers(1, &m_bufferId);
-	m_bufferId = 0;
+	glDeleteBuffers(1, &m_buffer_id);
+	m_buffer_id = 0;
+}
+
+void
+TextureCoordinateData::rebuffer(void)
+{
+	if (!isBuffered())
+		return;
+
+	m_buffer_id = 0;
+	m_session_id = 0;
+	buffer();
 }
 
 bool
@@ -115,7 +130,7 @@ TextureCoordinateData::set(uint16_t i, float u, float v)
 
 	/* update vbo object */
 	if (isBuffered()) {
-		glBindBuffer(GL_ARRAY_BUFFER, m_bufferId);
+		glBindBuffer(GL_ARRAY_BUFFER, m_buffer_id);
 		glBufferSubData(GL_ARRAY_BUFFER, l_offset * sizeof(GLfloat), AXES * sizeof(GLfloat), &m_data[l_offset]);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}

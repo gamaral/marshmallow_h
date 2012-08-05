@@ -67,7 +67,7 @@ ResetViewportData(void)
 	s_data.display = 0;
 	s_data.fullscreen = false;
 	s_data.size.zero();
-	s_data.wsize[0] = s_data.wsize[1] = 0;
+	s_data.wsize.zero();
 
 	s_data.loaded = false;
 }
@@ -89,7 +89,7 @@ CreateWindow(int width, int height, int depth, bool fullscreen, bool vsync)
 
 #if SDL_VERSION_ATLEAST(1,3,0)
 	if (!SDL_GL_SetSwapInterval(vsync ? 1 : 0))
-		MMERROR("SDL: Failed to set swap interval. "
+		MMERROR("SDL: Swap interval request was ignored! "
 		        "SDLERROR=" << SDL_GetError());
 #else
 	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, (vsync ? 1 : 0));
@@ -99,10 +99,10 @@ CreateWindow(int width, int height, int depth, bool fullscreen, bool vsync)
 	    SDL_SetVideoMode(fullscreen ? 0 : width,
 	                     fullscreen ? 0 : height,
 	                     depth,
-	                     SDL_HWSURFACE |
-	                         SDL_GL_DOUBLEBUFFER |
-	                         SDL_OPENGL |
-	                         (fullscreen? SDL_FULLSCREEN : 0));
+	                     SDL_HWSURFACE
+	                         | SDL_GL_DOUBLEBUFFER
+	                         | SDL_OPENGL
+	                         | (fullscreen ? SDL_FULLSCREEN : 0));
 
 	if (!s_data.display) {
 		MMERROR("Failed to create an SDL surface.");
@@ -112,8 +112,7 @@ CreateWindow(int width, int height, int depth, bool fullscreen, bool vsync)
 	SDL_WM_SetCaption(MARSHMALLOW_BUILD_TITLE, MARSHMALLOW_BUILD_TITLE);
 
 	s_data.fullscreen = fullscreen;
-	s_data.wsize[0] = s_data.display->w;
-	s_data.wsize[1] = s_data.display->h;
+	s_data.wsize.set(s_data.display->w, s_data.display->h);
 
 	/* extensions */
 
@@ -121,9 +120,9 @@ CreateWindow(int width, int height, int depth, bool fullscreen, bool vsync)
 
 	/* initialize context */
 
-	glViewport(0, 0, s_data.wsize[0], s_data.wsize[1]);
+	glViewport(0, 0, s_data.wsize.width, s_data.wsize.height);
 
-	if (glGetError() != GL_NO_ERROR) {
+	if (glGetError() != GLNO_ERROR) {
 		MMERROR("GL failed during initialization.");
 		return(false);
 	}
@@ -132,19 +131,17 @@ CreateWindow(int width, int height, int depth, bool fullscreen, bool vsync)
 
 	if (fullscreen) {
 #if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-		s_data.size[0] = static_cast<float>(width);
-		s_data.size[1] = (s_data.size[0] * static_cast<float>(s_data.wsize[1])) /
-		    static_cast<float>(s_data.wsize[0]);
+		s_data.size.width = static_cast<float>(width);
+		s_data.size.height = (s_data.size.width * static_cast<float>(s_data.wsize.height)) /
+		    static_cast<float>(s_data.wsize.width);
 #else
-		s_data.size[1] = static_cast<float>(height);
-		s_data.size[0] = (s_data.size[1] * static_cast<float>(s_data.wsize[0])) /
-		    static_cast<float>(s_data.wsize[1]);
+		s_data.size.height= static_cast<float>(height);
+		s_data.size.width = (s_data.size.height * static_cast<float>(s_data.wsize.width)) /
+		    static_cast<float>(s_data.wsize.height);
 #endif
 	}
-	else {
-		s_data.size[0] = static_cast<float>(width);
-		s_data.size[1] = static_cast<float>(height);
-	}
+	else s_data.size.set(static_cast<float>(width),
+	                     static_cast<float>(height));
 
 	Camera::Update();
 

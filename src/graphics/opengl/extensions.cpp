@@ -78,26 +78,26 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 #ifndef MMGL_VERSION_2_0
 /* required */
 PFNGLATTACHSHADERPROC glAttachShader = 0;
-PFNGLCOMPILESHADERARBPROC glCompileShader = 0;
-PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgram = 0;
-PFNGLCREATESHADEROBJECTARBPROC glCreateShader = 0;
+PFNGLCOMPILESHADERPROC glCompileShader = 0;
+PFNGLCREATEPROGRAMPROC glCreateProgram = 0;
+PFNGLCREATESHADERPROC glCreateShader = 0;
 PFNGLDELETEPROGRAMPROC glDeleteProgram = 0;
 PFNGLDELETESHADERPROC glDeleteShader = 0;
-PFNGLDISABLEVERTEXATTRIBARRAYARBPROC glDisableVertexAttribArray = 0;
-PFNGLENABLEVERTEXATTRIBARRAYARBPROC glEnableVertexAttribArray = 0;
-PFNGLGETATTRIBLOCATIONARBPROC glGetAttribLocation = 0;
-PFNGLGETPROGRAMIVARBPROC glGetProgramiv = 0;
+PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray = 0;
+PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray = 0;
+PFNGLGETATTRIBLOCATIONPROC glGetAttribLocation = 0;
+PFNGLGETPROGRAMIVPROC glGetProgramiv = 0;
 PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog = 0;
 PFNGLGETSHADERIVPROC glGetShaderiv = 0;
-PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocation = 0;
-PFNGLLINKPROGRAMARBPROC glLinkProgram = 0;
-PFNGLSHADERSOURCEARBPROC glShaderSource = 0;
-PFNGLUNIFORM1IARBPROC glUniform1i = 0;
-PFNGLUNIFORM4FARBPROC glUniform4f = 0;
-PFNGLUNIFORMMATRIX4FVARBPROC glUniformMatrix4fv = 0;
-PFNGLUSEPROGRAMOBJECTARBPROC glUseProgram = 0;
-PFNGLVERTEXATTRIBPOINTERARBPROC glVertexAttribPointer = 0;
-PFNGLACTIVETEXTUREARBPROC glActiveTexture = 0;
+PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation = 0;
+PFNGLLINKPROGRAMPROC glLinkProgram = 0;
+PFNGLSHADERSOURCEPROC glShaderSource = 0;
+PFNGLUNIFORM1IPROC glUniform1i = 0;
+PFNGLUNIFORM4FPROC glUniform4f = 0;
+PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv = 0;
+PFNGLUSEPROGRAMPROC glUseProgram = 0;
+PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer = 0;
+PFNGLACTIVETEXTUREPROC glActiveTexture = 0;
 #endif
 
 namespace Extensions { /********************** Graphics::Extensions Namespace */
@@ -113,10 +113,18 @@ PFNGLGENBUFFERSARBPROC glGenBuffers = 0;
 PFNGLGENERATEMIPMAPPROC glGenerateMipmap = 0;
 
 /* optional-platform dependent */
+#if defined(GLX_MESA_swap_control)
+	PFNGLXSWAPINTERVALMESAPROC glXSwapIntervalMESA = 0;
+	PFNGLXGETSWAPINTERVALMESAPROC glXGetSwapIntervalMESA = 0;
+#endif
+
 #if defined(GLX_SGI_swap_control)
 	PFNGLXSWAPINTERVALSGIPROC glxSwapInterval = 0;
-#elif defined(WGL_EXT_swap_control)
-	PFNWGLSWAPINTERVALEXTPROC wglSwapInterval = 0;
+#endif
+
+#if defined(WGL_EXT_swap_control)
+	PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = 0;
+	PFNWGLGETSWAPINTERVALEXTPROC wglGetSwapIntervalEXT = 0;
 #endif
 
 } /*********************************** Graphics::OpenGL::Extensions Namespace */
@@ -130,21 +138,29 @@ Extensions::Initialize(const char *extensions)
 	    (glGetString(GL_EXTENSIONS)));
 	ParseExtensionsString(extensions);
 
+	/* wgl extension strings */
+#if defined(WGL_EXT_extensions_string)
+	PFNWGLGETEXTENSIONSSTRINGEXTPROC wglGetExtensionsStringEXT =
+	    reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGEXTPROC>
+	        (glGetProcAddress("wglGetExtensionsStringEXT"));
+	if (wglGetExtensionsStringEXT) ParseExtensionsString(wglGetExtensionsStringEXT());
+#endif
+
 #ifndef MMGL_VERSION_2_0
 	glAttachShader = reinterpret_cast<PFNGLATTACHSHADERPROC>
 	    (glGetProcAddress("glAttachShader"));
 	assert(glAttachShader);
 
-	glCompileShader = reinterpret_cast<PFNGLCOMPILESHADERARBPROC>
-	    (glGetProcAddress("glCompileShaderARB"));
+	glCompileShader = reinterpret_cast<PFNGLCOMPILESHADERPROC>
+	    (glGetProcAddress("glCompileShader"));
 	assert(glCompileShader);
 
-	glCreateProgram = reinterpret_cast<PFNGLCREATEPROGRAMOBJECTARBPROC>
-	    (glGetProcAddress("glCreateProgramObjectARB"));
+	glCreateProgram = reinterpret_cast<PFNGLCREATEPROGRAMPROC>
+	    (glGetProcAddress("glCreateProgram"));
 	assert(glCreateProgram);
 
-	glCreateShader = reinterpret_cast<PFNGLCREATESHADEROBJECTARBPROC>
-	    (glGetProcAddress("glCreateShaderObjectARB"));
+	glCreateShader = reinterpret_cast<PFNGLCREATESHADERPROC>
+	    (glGetProcAddress("glCreateShader"));
 	assert(glCreateShader);
 
 	glDeleteProgram = reinterpret_cast<PFNGLDELETEPROGRAMPROC>
@@ -155,20 +171,20 @@ Extensions::Initialize(const char *extensions)
 	    (glGetProcAddress("glDeleteShader"));
 	assert(glDeleteShader);
 
-	glDisableVertexAttribArray = reinterpret_cast<PFNGLDISABLEVERTEXATTRIBARRAYARBPROC>
-	    (glGetProcAddress("glDisableVertexAttribArrayARB"));
+	glDisableVertexAttribArray = reinterpret_cast<PFNGLDISABLEVERTEXATTRIBARRAYPROC>
+	    (glGetProcAddress("glDisableVertexAttribArray"));
 	assert(glDisableVertexAttribArray);
 
-	glEnableVertexAttribArray = reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYARBPROC>
-	    (glGetProcAddress("glEnableVertexAttribArrayARB"));
+	glEnableVertexAttribArray = reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYPROC>
+	    (glGetProcAddress("glEnableVertexAttribArray"));
 	assert(glEnableVertexAttribArray);
 
-	glGetAttribLocation = reinterpret_cast<PFNGLGETATTRIBLOCATIONARBPROC>
-	    (glGetProcAddress("glGetAttribLocationARB"));
+	glGetAttribLocation = reinterpret_cast<PFNGLGETATTRIBLOCATIONPROC>
+	    (glGetProcAddress("glGetAttribLocation"));
 	assert(glGetAttribLocation);
 
-	glGetProgramiv = reinterpret_cast<PFNGLGETPROGRAMIVARBPROC>
-	    (glGetProcAddress("glGetProgramivARB"));
+	glGetProgramiv = reinterpret_cast<PFNGLGETPROGRAMIVPROC>
+	    (glGetProcAddress("glGetProgramiv"));
 	assert(glGetProgramiv);
 
 	glGetShaderInfoLog = reinterpret_cast<PFNGLGETSHADERINFOLOGPROC>
@@ -179,40 +195,40 @@ Extensions::Initialize(const char *extensions)
 	    (glGetProcAddress("glGetShaderiv"));
 	assert(glGetShaderiv);
 
-	glGetUniformLocation = reinterpret_cast<PFNGLGETUNIFORMLOCATIONARBPROC>
-	    (glGetProcAddress("glGetUniformLocationARB"));
+	glGetUniformLocation = reinterpret_cast<PFNGLGETUNIFORMLOCATIONPROC>
+	    (glGetProcAddress("glGetUniformLocation"));
 	assert(glGetUniformLocation);
 
-	glLinkProgram = reinterpret_cast<PFNGLLINKPROGRAMARBPROC>
-	    (glGetProcAddress("glLinkProgramARB"));
+	glLinkProgram = reinterpret_cast<PFNGLLINKPROGRAMPROC>
+	    (glGetProcAddress("glLinkProgram"));
 	assert(glLinkProgram);
 
-	glShaderSource = reinterpret_cast<PFNGLSHADERSOURCEARBPROC>
-	    (glGetProcAddress("glShaderSourceARB"));
+	glShaderSource = reinterpret_cast<PFNGLSHADERSOURCEPROC>
+	    (glGetProcAddress("glShaderSource"));
 	assert(glShaderSource);
 
-	glUniform1i = reinterpret_cast<PFNGLUNIFORM1IARBPROC>
-	    (glGetProcAddress("glUniform1iARB"));
+	glUniform1i = reinterpret_cast<PFNGLUNIFORM1IPROC>
+	    (glGetProcAddress("glUniform1i"));
 	assert(glUniform1i);
 
-	glUniform4f = reinterpret_cast<PFNGLUNIFORM4FARBPROC>
-	    (glGetProcAddress("glUniform4fARB"));
+	glUniform4f = reinterpret_cast<PFNGLUNIFORM4FPROC>
+	    (glGetProcAddress("glUniform4f"));
 	assert(glUniform4f);
 
-	glUniformMatrix4fv = reinterpret_cast<PFNGLUNIFORMMATRIX4FVARBPROC>
-	    (glGetProcAddress("glUniformMatrix4fvARB"));
+	glUniformMatrix4fv = reinterpret_cast<PFNGLUNIFORMMATRIX4FVPROC>
+	    (glGetProcAddress("glUniformMatrix4fv"));
 	assert(glUniformMatrix4fv);
 
-	glUseProgram = reinterpret_cast<PFNGLUSEPROGRAMOBJECTARBPROC>
-	    (glGetProcAddress("glUseProgramObjectARB"));
+	glUseProgram = reinterpret_cast<PFNGLUSEPROGRAMPROC>
+	    (glGetProcAddress("glUseProgram"));
 	assert(glUseProgram);
 
-	glVertexAttribPointer = reinterpret_cast<PFNGLVERTEXATTRIBPOINTERARBPROC>
-	    (glGetProcAddress("glVertexAttribPointerARB"));
+	glVertexAttribPointer = reinterpret_cast<PFNGLVERTEXATTRIBPOINTERPROC>
+	    (glGetProcAddress("glVertexAttribPointer"));
 	assert(glVertexAttribPointer);
 
-	glActiveTexture = reinterpret_cast<PFNGLACTIVETEXTUREARBPROC>
-	    (glGetProcAddress("glActiveTextureARB"));
+	glActiveTexture = reinterpret_cast<PFNGLACTIVETEXTUREPROC>
+	    (glGetProcAddress("glActiveTexture"));
 	assert(glActiveTexture);
 
 	if (Supported("GL_ARB_vertex_buffer_object")) {
@@ -250,17 +266,80 @@ Extensions::Initialize(const char *extensions)
 
 
 
+#if defined(GLX_MESA_swap_control)
+	glXSwapIntervalMESA = reinterpret_cast<PFNGLXSWAPINTERVALMESAPROC>
+	    (glGetProcAddress("glXSwapIntervalMESA"));
+	glXGetSwapIntervalMESA = reinterpret_cast<PFNGLXGETSWAPINTERVALMESAPROC>
+	    (glGetProcAddress("glXGetSwapIntervalMESA"));
+#endif
+
 #if defined(GLX_SGI_swap_control)
 	glxSwapInterval = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>
 	    (glGetProcAddress("glXSwapIntervalSGI"));
-#elif defined(WGL_EXT_swap_control)
-	PFNWGLGETEXTENSIONSSTRINGEXTPROC wglGetExtensionsStringEXT =
-	    reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGEXTPROC>
-	        (glGetProcAddress("wglGetExtensionsStringEXT"));
-	if (wglGetExtensionsStringEXT) ParseExtensionsString(wglGetExtensionsStringEXT());
+#endif
 
-	wglSwapInterval = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>
+#if defined(WGL_EXT_swap_control)
+	wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>
 	    (glGetProcAddress("wglSwapIntervalEXT"));
+	wglGetSwapIntervalEXT = reinterpret_cast<PFNWGLGETSWAPINTERVALEXTPROC>
+	    (glGetProcAddress("wglGetSwapIntervalEXT"));
+#endif
+}
+
+void
+Extensions::Finalize(void)
+{
+	/*
+	 * We don't keep the pointer values since we want to catch stray GL
+	 * calls.
+	 */
+#ifndef MMGL_VERSION_2_0
+	glAttachShader = 0;
+	glCompileShader = 0;
+	glCreateProgram = 0;
+	glCreateShader = 0;
+	glDeleteProgram = 0;
+	glDeleteShader = 0;
+	glDisableVertexAttribArray = 0;
+	glEnableVertexAttribArray = 0;
+	glGetAttribLocation = 0;
+	glGetProgramiv = 0;
+	glGetShaderInfoLog = 0;
+	glGetShaderiv = 0;
+	glGetUniformLocation = 0;
+	glLinkProgram = 0;
+	glShaderSource = 0;
+	glUniform1i = 0;
+	glUniform4f = 0;
+	glUniformMatrix4fv = 0;
+	glUseProgram = 0;
+	glVertexAttribPointer = 0;
+	glActiveTexture = 0;
+#endif
+
+	/* GL_ARB_vertex_buffer_object */
+	glBindBuffer = 0;
+	glBufferData = 0;
+	glBufferSubData = 0;
+	glDeleteBuffers = 0;
+	glGenBuffers = 0;
+
+	/* GL_ARB_framebuffer_object */
+	glGenerateMipmap = 0;
+
+	/* optional-platform dependent */
+#if defined(GLX_MESA_swap_control)
+	glXSwapIntervalMESA = 0;
+	glXGetSwapIntervalMESA = 0;
+#endif
+
+#if defined(GLX_SGI_swap_control)
+	glxSwapInterval = 0;
+#endif
+
+#if defined(WGL_EXT_swap_control)
+	wglSwapIntervalEXT = 0;
+	wglGetSwapIntervalEXT = 0;
 #endif
 }
 

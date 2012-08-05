@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/painter.h"
+#include "graphics/painter_p.h"
 
 /*!
  * @file
@@ -106,6 +106,11 @@ Painter::PushMatrix(void)
 }
 
 void
+Painter::LoadViewProjection(void)
+{
+}
+
+void
 Painter::PopMatrix(void)
 {
 }
@@ -117,14 +122,14 @@ Painter::Draw(const IMesh &m, const Math::Point2 &p)
 }
 
 void
-Painter::Draw(const IMesh &m, const Math::Point2 *p, int c)
+Painter::Draw(const IMesh &m, const Math::Point2 *p, size_t c)
 {
 	/* Unused if not in verbose debug mode */
 	MMUNUSED(m);
 	MMUNUSED(p);
 
-	for (int i = 0; i < c; ++i)
-		MMVERBOSE("Drawing " << m.type().str() << " at (" << p[i].x() << ", " << p[i].y() << ").");
+	for (size_t i = 0; i < c; ++i)
+		MMVERBOSE("Drawing " << m.type().str() << " at (" << p[i].x << ", " << p[i].y << ").");
 }
 
 } /******************************************************* Graphics Namespace */

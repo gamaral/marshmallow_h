@@ -162,8 +162,8 @@ EntitySceneLayer::render(void)
 			if (l_sizeComponent) {
 				const Math::Size2f &l_size =
 				    l_sizeComponent->size();
-				l_size2 = powf(l_size.width(),  2) +
-				          powf(l_size.height(), 2);
+				l_size2 = powf(l_size.width,  2) +
+				          powf(l_size.height, 2);
 			}
 
 			const Math::Point2 &l_position = l_positionComponent->position();

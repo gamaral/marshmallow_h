@@ -69,6 +69,8 @@ struct EventManager::Private
 	EventList queue[2];
 	Core::Identifier id;
 	uint8_t active_queue;
+	Core::Type dispatch_type;
+	bool dispatch_invalid;
 };
 
 EventManager * EventManager::s_instance(0);
@@ -78,6 +80,8 @@ EventManager::EventManager(const Core::Identifier &i)
 {
 	m_p->id = i;
 	m_p->active_queue = 0;
+	m_p->dispatch_type = Core::Type::Null;
+	m_p->dispatch_invalid = true;
 
 	if (!s_instance) s_instance = this;
 }
@@ -85,7 +89,6 @@ EventManager::EventManager(const Core::Identifier &i)
 EventManager::~EventManager(void)
 {
 	if (s_instance == this) s_instance = 0;
-
 	delete m_p, m_p = 0;
 }
 
@@ -121,6 +124,9 @@ EventManager::connect(IEventListener *handler, const Core::Type &t)
 
 	MMINFO("Connected! Current listener count is: " << l_listeners->size() << ".");
 
+	/* invalidate dispatch if needed */
+	m_p->dispatch_invalid |= (m_p->dispatch_type == t);
+
 	return(true);
 }
 
@@ -142,6 +148,9 @@ EventManager::disconnect(IEventListener *handler, const Core::Type &t)
 	l_listeners->remove(handler);
 	MMINFO("Disconnected! Current listener count is: " << l_listeners->size() << ".");
 
+	/* invalidate dispatch if needed */
+	m_p->dispatch_invalid |= (m_p->dispatch_type == t);
+
 	return(true);
 }
 
@@ -155,16 +164,25 @@ EventManager::dispatch(const IEvent &event)
 	if (l_elmapi == m_p->elmap.end())
 		return(false);
 
+	m_p->dispatch_invalid = false;
+	m_p->dispatch_type = event.type();
+
 	SharedEventListenerList l_listeners(l_elmapi->second);
 	EventListenerList::iterator l_listenersi;
 
 	for (l_listenersi = l_listeners->begin();
-	    !l_handled && (l_listenersi != l_listeners->end());) {
+	     !l_handled && !m_p->dispatch_invalid
+	       && (l_listenersi != l_listeners->end());) {
 		if (*l_listenersi)
 			l_handled = (*l_listenersi++)->handleEvent(event);
 		else
 			l_listeners->erase(l_listenersi++);
 	}
+
+	if (m_p->dispatch_invalid && !l_handled)
+		MMERROR("Dispatch listeners changed without current event being handled.");
+
+	m_p->dispatch_type = Core::Type::Null;
 
 	return(l_handled);
 }
@@ -211,7 +229,6 @@ EventManager::execute()
 	 *
 	 * stop only if:
 	 *     we ran out of messages
-	 *     we timed out
 	 *     event timestamp is in the future
 	 */
 	SharedEvent event;

@@ -47,60 +47,50 @@ namespace Math
 {
 	/*! @brief 2D Size */
 	template <typename T = float>
-	class Size2
+	struct Size2
 	{
-		T m_value[2];
+		/*
+		 * direct accessors
+		 */
+		T width, height;
 
 	public:
 		/*! @brief Size2 template constructor
 		 *  @param w Width
 		 *  @param h Height
 		 */
-		Size2(T w = 0, T h = 0)
-		    { m_value[0] = w;
-		      m_value[1] = h; }
+		inline Size2(T width_ = 0, T height_ = 0)
+		    : width(width_), height(height_) {}
 
-		Size2(const Size2 &copy)
-		    { m_value[0] = copy.m_value[0];
-		      m_value[1] = copy.m_value[1]; }
+		inline Size2 & set(T width, T height);
 
-		inline const T & width(void) const
-		    { return(m_value[0]); }
-		inline const T & height(void) const
-		    { return(m_value[1]); }
+		inline T area(void) const
+		    { return(width * height); }
 
-		T area(void) const
-		    { return(m_value[0] * m_value[1]); }
-
-		void zero(void)
-		    { m_value[0] = m_value[1] = 0; }
+		inline void zero(void)
+		    { width = height = 0; }
 
 		template <typename U>
-		Size2<U> cast(void) const
-		    { return(Size2<U>(static_cast<U>(m_value[0]), static_cast<U>(m_value[1]))); }
+		inline Size2<U> cast(void) const
+		    { return(Size2<U>(static_cast<U>(width),
+		                      static_cast<U>(height))); }
 
 	public: /* operators */
 
-		Size2<T> & operator=(const Size2<T> &rhs)
-		    { m_value[0] = rhs.m_value[0];
-		      m_value[1] = rhs.m_value[1];
-		      return(*this); }
+		inline Size2<T> & operator=(const Size2<T> &rhs);
 
-		bool operator==(const Size2<T> &rhs) const
-		    { return( m_value[0] == rhs.m_value[0]
-		           && m_value[1] == rhs.m_value[1]); }
+		inline bool operator==(const Size2<T> &rhs) const
+		    { return( width == rhs.width && height == rhs.height); }
 
-		inline T & operator[](int i)
-		    { return(m_value[i % 2]); }
+		inline Size2<T> operator*(const T &scalar) const;
+		inline Size2<T> operator/(const T &scalar) const;
 
-		inline const T & operator[](int i) const
-		    { return(m_value[i % 2]); }
+		inline Size2<T> operator*(const Size2<T> rhs) const;
+		inline Size2<T> operator/(const Size2<T> rhs) const;
 
-		Size2<T> operator*(const T &c) const
-		    { return(Size2<T>(m_value[0] * c, m_value[1] * c)); }
+		inline Size2<T> & operator*=(const Size2<T> rhs);
+		inline Size2<T> & operator/=(const Size2<T> rhs);
 
-		Size2<T> operator/(const T &c) const
-		    { return(Size2<T>(m_value[0] / c, m_value[1] / c)); }
 
 	public: /* static */
 
@@ -114,6 +104,66 @@ namespace Math
 	};
 	typedef Size2<float> Size2f;
 	typedef Size2<int>   Size2i;
+
+	template <typename T>
+	Size2<T> &
+	Size2<T>::set(T width_, T height_)
+	{
+		width = width_, height = height_;
+		return(*this);
+	}
+
+	template <typename T>
+	Size2<T> &
+	Size2<T>::operator=(const Size2<T> &rhs)
+	{
+		width  = rhs.width, height = rhs.height;
+		return(*this);
+	}
+
+	template <typename T>
+	Size2<T>
+	Size2<T>::operator*(const T &scalar) const
+	{
+		return(Size2<T>(width * scalar, height * scalar));
+	}
+
+	template <typename T>
+	Size2<T>
+	Size2<T>::operator/(const T &scalar) const
+	{
+		return(Size2<T>(width / scalar, height / scalar));
+	}
+
+	template <typename T>
+	Size2<T>
+	Size2<T>::operator*(const Size2<T> rhs) const
+	{
+		return(Size2<T>(width * rhs.width, height * rhs.height));
+	}
+
+	template <typename T>
+	Size2<T>
+	Size2<T>::operator/(const Size2<T> rhs) const
+	{
+		return(Size2<T>(width / rhs.width, height / rhs.height));
+	}
+
+	template <typename T>
+	Size2<T> &
+	Size2<T>::operator*=(const Size2<T> rhs)
+	{
+		width *= rhs.width, height *= rhs.height;
+		return(*this);
+	}
+
+	template <typename T>
+	Size2<T> &
+	Size2<T>::operator/=(const Size2<T> rhs)
+	{
+		width /= rhs.width, height /= rhs.height;
+		return(*this);
+	}
 }
 
 MARSHMALLOW_NAMESPACE_END

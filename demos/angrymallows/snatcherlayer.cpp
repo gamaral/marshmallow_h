@@ -40,6 +40,7 @@
 
 #include <game/engine.h>
 #include <game/entityscenelayer.h>
+#include <game/iengine.h>
 #include <game/iscene.h>
 
 #include "inputcomponent.h"
@@ -128,13 +129,15 @@ SnatcherLayer::update(float t)
 bool
 SnatcherLayer::handleEvent(const Event::IEvent &e)
 {
+	using namespace Input;
+
 	if (e.type() != Event::KeyboardEvent::Type())
 		return(false);
 
 	const Event::KeyboardEvent &l_kevent =
 	    static_cast<const Event::KeyboardEvent &>(e);
 
-	if (l_kevent.key() == Event::KEY_TAB && m_state == ssIdle)
+	if (l_kevent.key() == Keyboard::KBK_TAB && m_state == ssIdle)
 		m_state = ssNext;
 
 	return(false);

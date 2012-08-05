@@ -40,72 +40,71 @@
 #include <core/environment.h>
 #include <core/namespace.h>
 
-/* Box2D */
-#if MARSHMALLOW_WITH_BOX2D
-struct b2Vec2;
+#ifndef NDEBUG
+#  include <cassert>
 #endif
+#include <cmath>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { /******************************************** Math Namespace */
 
-namespace Math
-{
 	/*! @brief 2D Vector */
-	class MARSHMALLOW_MATH_EXPORT
+	struct MARSHMALLOW_MATH_EXPORT
 	Vector2
 	{
-		float m_value[2];
+		enum Position { X, Y, MAX };
+
+		/*
+		 * direct accessors
+		 */
+		float x, y;
+
 	public:
-		Vector2(float x = 0.f, float y = 0.f);
 
-		const float & x(void) const
-		    { return(m_value[0]); }
-		const float & y(void) const
-		    { return(m_value[1]); }
+		inline Vector2(float x, float y);
+		inline explicit Vector2(float *data);
+		inline explicit Vector2(float value = 0.f);
 
-		inline void set(float ax, float ay)
-		    { m_value[0] = ax, m_value[1] = ay; }
+		inline Vector2 & set(float x, float y);
 
-		Vector2 normalized(const float *magnitude = 0) const;
-		Vector2 & normalize(const float *magnitude = 0);
+		inline Vector2 normalized(float magnitude) const;
+		inline Vector2 & normalize(float magnitude);
 
-		float magnitude(void) const;
-		float magnitude2(void) const;
+		inline float magnitude(void) const;
+		inline float magnitude2(void) const;
 
-		float cross(const Vector2 &b) const;
-		float dot(const Vector2 &b) const;
+		inline float cross(const Vector2 &b) const;
+		inline float dot(const Vector2 &b) const;
 
 	public: /* operators */
 
-		bool operator==(const Vector2 &rhs) const;
+		inline bool operator==(const Vector2 &rhs) const
+		    { return(x == rhs.x && y == rhs.y); }
 
-		float & operator[](int i)
-		    { return(m_value[i % 2]); }
+		inline float & operator[](int i)
+		    { return(i % MAX ? y : x); }
 
-		const float & operator[](int i) const
-		    { return(m_value[i % 2]); }
+		inline const float & operator[](int i) const
+		    { return(i % MAX ? y : x); }
 
-		operator bool(void) const
-		    { return(m_value[0] || m_value[1]); }
+		inline operator bool(void) const
+		    { return(x || y); }
 
-		Vector2 & operator*=(float rhs);
-		Vector2 & operator-=(float rhs);
-		Vector2 & operator+=(float rhs);
+		inline Vector2 & operator*=(float rhs);
+		inline Vector2 & operator-=(float rhs);
+		inline Vector2 & operator+=(float rhs);
 
-		Vector2 & operator*=(const Vector2 &rhs);
-		Vector2 & operator+=(const Vector2 &rhs);
-		Vector2 & operator-=(const Vector2 &rhs);
+		inline Vector2 & operator*=(const Vector2 &rhs);
+		inline Vector2 & operator+=(const Vector2 &rhs);
+		inline Vector2 & operator-=(const Vector2 &rhs);
 
-		Vector2 operator*(float rhs) const;
-		Vector2 operator+(float rhs) const;
-		Vector2 operator-(float rhs) const;
+		inline Vector2 operator*(float rhs) const;
+		inline Vector2 operator+(float rhs) const;
+		inline Vector2 operator-(float rhs) const;
 
-		Vector2 operator*(const Vector2 &rhs) const;
-		Vector2 operator+(const Vector2 &rhs) const;
-		Vector2 operator-(const Vector2 &rhs) const;
-
-#if MARSHMALLOW_WITH_BOX2D
-		operator b2Vec2(void) const;
-#endif
+		inline Vector2 operator*(const Vector2 &rhs) const;
+		inline Vector2 operator+(const Vector2 &rhs) const;
+		inline Vector2 operator-(const Vector2 &rhs) const;
 
 	public: /* static */
 
@@ -117,8 +116,142 @@ namespace Math
 		    { static Vector2 s_identity(1.f, 1.f);
 		      return(s_identity); }
 	};
-}
 
+	Vector2::Vector2(float ax, float ay)
+	    : x(ax), y(ay) {}
+
+	Vector2::Vector2(float value)
+	    : x(value), y(value) {}
+
+	Vector2::Vector2(float *data)
+	    : x(data[X]), y(data[Y]) {}
+
+	Vector2 &
+	Vector2::set(float x_, float y_)
+	{
+		x = x_, y = y_;
+		return(*this);
+	}
+
+	Vector2
+	Vector2::normalized(float m) const
+	{
+		return(Vector2(m ? x / m : .0f,
+		               m ? y / m : .0f));
+	}
+
+	Vector2 &
+	Vector2::normalize(float m)
+	{
+		if (m != 0) x /= m, y /= m;
+		else x = y = .0f;
+
+		return(*this);
+	}
+
+	float
+	Vector2::magnitude(void) const
+	{
+		return(sqrtf(powf(x, 2) + powf(y, 2)));
+	}
+
+	float
+	Vector2::magnitude2(void) const
+	{
+		return(powf(x, 2) + powf(y, 2));
+	}
+
+	float
+	Vector2::cross(const Vector2 &b) const
+	{
+		return((x * b.y) - (y * b.x));
+	}
+
+	float
+	Vector2::dot(const Vector2 &b) const
+	{
+		return((x * b.x) + (y * b.y));
+	}
+
+	Vector2 &
+	Vector2::operator*=(float rhs)
+	{
+		x *= rhs, y *= rhs;
+		return(*this);
+	}
+
+	Vector2 &
+	Vector2::operator+=(float rhs)
+	{
+		x += rhs, y += rhs;
+		return(*this);
+	}
+
+	Vector2 &
+	Vector2::operator-=(float rhs)
+	{
+		x -= rhs, y -= rhs;
+		return(*this);
+	}
+
+	Vector2 &
+	Vector2::operator*=(const Vector2 &rhs)
+	{
+		x *= rhs.x, y *= rhs.y;
+		return(*this);
+	}
+
+	Vector2 &
+	Vector2::operator+=(const Vector2 &rhs)
+	{
+		x += rhs.x, y += rhs.y;
+		return(*this);
+	}
+
+	Vector2 &
+	Vector2::operator-=(const Vector2 &rhs)
+	{
+		x -= rhs.x, y -= rhs.y;
+		return(*this);
+	}
+
+	Vector2
+	Vector2::operator*(float rhs) const
+	{
+		return(Vector2(x * rhs, y * rhs));
+	}
+
+	Vector2
+	Vector2::operator+(float rhs) const
+	{
+		return(Vector2(x + rhs, y + rhs));
+	}
+
+	Vector2
+	Vector2::operator-(float rhs) const
+	{
+		return(Vector2(x - rhs, y - rhs));
+	}
+
+	Vector2
+	Vector2::operator*(const Vector2 &rhs) const
+	{
+		return(Vector2(x * rhs.x, y * rhs.y));
+	}
+
+	Vector2
+	Vector2::operator+(const Vector2 &rhs) const
+	{
+		return(Vector2(x + rhs.x, y + rhs.y));
+	}
+
+	Vector2
+	Vector2::operator-(const Vector2 &rhs) const
+	{
+		return(Vector2(x - rhs.x, y - rhs.y));
+	}
+
+} /*********************************************************** Math Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

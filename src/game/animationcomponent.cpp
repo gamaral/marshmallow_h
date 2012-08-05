@@ -173,8 +173,9 @@ AnimationComponent::Private::animate(float d)
 	if (playing) {
 		timestamp += d;
 
-		if (timestamp > current_framerate) {
-			timestamp -= current_framerate * playback_ratio;
+		const float l_framerate = current_framerate / playback_ratio;
+		if (timestamp > l_framerate) {
+			timestamp -= l_framerate;
 
 			if (--current_frame_duration > 0)
 				return;

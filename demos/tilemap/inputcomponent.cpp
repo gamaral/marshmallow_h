@@ -42,6 +42,7 @@
 #include <event/keyboardevent.h>
 
 #include <game/engine.h>
+#include <game/iengine.h>
 #include <game/ientity.h>
 
 #include <graphics/viewport.h>
@@ -97,24 +98,20 @@ InputComponent::update(float)
 		if (inMotion())
 		switch (direction()) {
 		case  ICDDown:
-			m_movement->acceleration()[1] = -m_linear_impulse;
-			m_movement->acceleration()[0] = 0;
-			m_movement->velocity()[0] = 0;
+			m_movement->acceleration().set(0, -m_linear_impulse);
+			m_movement->velocity().x = 0;
 			break;
 		case  ICDLeft:
-			m_movement->acceleration()[0] = -m_linear_impulse;
-			m_movement->acceleration()[1] = 0;
-			m_movement->velocity()[1] = 0;
+			m_movement->acceleration().set(-m_linear_impulse, 0);
+			m_movement->velocity().y = 0;
 			break;
 		case ICDRight:
-			m_movement->acceleration()[0] = m_linear_impulse;
-			m_movement->acceleration()[1] = 0;
-			m_movement->velocity()[1] = 0;
+			m_movement->acceleration().set(m_linear_impulse, 0);
+			m_movement->velocity().y = 0;
 			break;
 		case    ICDUp:
-			m_movement->acceleration()[1] = m_linear_impulse;
-			m_movement->acceleration()[0] = 0;
-			m_movement->velocity()[0] = 0;
+			m_movement->acceleration().set(0, m_linear_impulse);
+			m_movement->velocity().x = 0;
 			break;
 		}
 		else {
@@ -128,29 +125,31 @@ InputComponent::update(float)
 bool
 InputComponent::handleEvent(const Event::IEvent &e)
 {
+	using namespace Input;
+
 	if (e.type() != Event::KeyboardEvent::Type())
 		return(false);
 
 	const Event::KeyboardEvent &l_kevent =
 	    static_cast<const Event::KeyboardEvent &>(e);
 
-	if (l_kevent.key() == Event::KEY_DOWN) {
-		if ((m_down = (l_kevent.action() == Event::KeyPressed)))
+	if (l_kevent.key() == Keyboard::KBK_DOWN) {
+		if ((m_down = (l_kevent.action() == Keyboard::KeyPressed)))
 			m_direction_stack.push_front(ICDDown);
 		else m_direction_stack.remove(ICDDown);
 	}
-	else if (l_kevent.key() == Event::KEY_LEFT) {
-		if ((m_left = (l_kevent.action() == Event::KeyPressed)))
+	else if (l_kevent.key() == Keyboard::KBK_LEFT) {
+		if ((m_left = (l_kevent.action() == Keyboard::KeyPressed)))
 			m_direction_stack.push_front(ICDLeft);
 		else m_direction_stack.remove(ICDLeft);
 	}
-	else if (l_kevent.key() == Event::KEY_RIGHT) {
-		if ((m_right = (l_kevent.action() == Event::KeyPressed)))
+	else if (l_kevent.key() == Keyboard::KBK_RIGHT) {
+		if ((m_right = (l_kevent.action() == Keyboard::KeyPressed)))
 			m_direction_stack.push_front(ICDRight);
 		else m_direction_stack.remove(ICDRight);
 	}
-	else if (l_kevent.key() == Event::KEY_UP) {
-		if ((m_up = (l_kevent.action() == Event::KeyPressed)))
+	else if (l_kevent.key() == Keyboard::KBK_UP) {
+		if ((m_up = (l_kevent.action() == Keyboard::KeyPressed)))
 			m_direction_stack.push_front(ICDUp);
 		else m_direction_stack.remove(ICDUp);
 	}

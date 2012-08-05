@@ -112,8 +112,8 @@ ColliderComponent::radius2(void) const
 	float l_radius2 = 0;
 	if (m_p->size) {
 		const Math::Size2f &l_size = m_p->size->size();
-		l_radius2 = powf(l_size.width()  / 2.f, 2) +
-		            powf(l_size.height() / 2.f, 2);
+		l_radius2 = powf(l_size.width  / 2.f, 2) +
+		            powf(l_size.height / 2.f, 2);
 	}
 	else MMWARNING("Collider component found no size component!");
 	return(l_radius2);
@@ -143,13 +143,13 @@ ColliderComponent::isColliding(ColliderComponent &c, float d, CollisionData *dat
 			const Math::Size2f l_size_b = c.size()->size() / 2.f;
 
 			const float l =
-			    (l_pos_a.x() + l_size_a.width())  - (l_pos_b.x() - l_size_b.width());
+			    (l_pos_a.x + l_size_a.width)  - (l_pos_b.x - l_size_b.width);
 			const float r =
-			    (l_pos_b.x() + l_size_b.width())  - (l_pos_a.x() - l_size_a.width());
+			    (l_pos_b.x + l_size_b.width)  - (l_pos_a.x - l_size_a.width);
 			const float t =
-			    (l_pos_b.y() + l_size_b.height()) - (l_pos_a.y() - l_size_a.height());
+			    (l_pos_b.y + l_size_b.height) - (l_pos_a.y - l_size_a.height);
 			const float b =
-			    (l_pos_a.y() + l_size_a.height()) - (l_pos_b.y() - l_size_b.height());
+			    (l_pos_a.y + l_size_a.height) - (l_pos_b.y - l_size_b.height);
 
 			if (data) {
 				data->rect.left = l;
@@ -304,9 +304,9 @@ BounceColliderComponent::collision(ColliderComponent &c, float d, const Collisio
 
 	const Math::Vector2 &l_vel = movement()->velocity();
 	const float l_mag = l_vel.magnitude();
-	const Math::Vector2 l_normal = l_vel.normalized(&l_mag);
-	movement()->velocity() =
-	    (l_normal * (2.f * l_normal.dot(l_vel * -1.f)) + l_vel).normalize() * l_mag;
+	const Math::Vector2 l_normal = l_vel.normalized(l_mag);
+	Math::Vector2 l_pvel = (l_normal * (2.f * l_normal.dot(l_vel * -1.f)) + l_vel);
+	movement()->velocity() = l_pvel.normalize(l_pvel.magnitude()) * l_mag;
 
 	return(true);
 }

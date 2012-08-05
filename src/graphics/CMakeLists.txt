@@ -4,10 +4,11 @@ file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp *.h)
 
 set(MARSHMALLOW_GRAPHICS_LIBS marshmallow_core
 	                      marshmallow_event
+	                      marshmallow_input
 	                      marshmallow_math)
 
-if(MARSHMALLOW_VIEWPORT_GRAB_INPUT)
-	add_definitions(-DMARSHMALLOW_VIEWPORT_GRAB_INPUT)
+if(MARSHMALLOW_VIEWPORT_LOCK_WIDTH)
+	add_definitions(-DMARSHMALLOW_VIEWPORT_LOCK_WIDTH)
 endif()
 
 if(MARSHMALLOW_VIEWPORT_OPENGL)
@@ -49,6 +50,22 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${X11_X11_LIB})
 		add_definitions(-DMARSHMALLOW_OPENGL_X11)
+
+		if(MARSHMALLOW_INPUT_UNIX_X11)
+			add_definitions(-DMARSHMALLOW_INPUT_UNIX_X11)
+		endif()
+
+		if(MARSHMALLOW_X11_GRAB_KEYBOARD)
+			add_definitions(-DMARSHMALLOW_X11_GRAB_KEYBOARD)
+		endif()
+
+		if(MARSHMALLOW_X11_GRAB_POINTER)
+			add_definitions(-DMARSHMALLOW_X11_GRAB_POINTER)
+		endif()
+
+		if(MARSHMALLOW_X11_OVERRIDE_REDIRECT)
+			add_definitions(-DMARSHMALLOW_X11_OVERRIDE_REDIRECT)
+		endif()
 	elseif(MARSHMALLOW_OPENGL_WGL)
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-wgl.cpp)
@@ -67,6 +84,10 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${QT_LIBRARIES})
 		add_definitions(-DMARSHMALLOW_OPENGL_QT4)
+
+		if(MARSHMALLOW_INPUT_MISC_QT4)
+			add_definitions(-DMARSHMALLOW_INPUT_MISC_QT4)
+		endif()
 
 	#
 	# Broadcom VideoCore (Used in Raspberry Pi)

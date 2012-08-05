@@ -39,46 +39,29 @@
 
 #include <core/type.h>
 
-#include <math/point2.h>
 #include <math/size2.h>
-
-#include <graphics/config.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 
-	class Transform;
+	struct Display;
 
-/*! @brief Graphics Viewport Interface */
+/*! @brief Viewport Interface
+ *
+ *  The \b viewport is an integral part of the engine, in most cases it takes
+ *  care of both the display and native events.
+ *
+ */
 namespace Viewport { /************************** Graphics::Viewport Namespace */
 
 	MARSHMALLOW_GRAPHICS_EXPORT
 	const Core::Type & Type(void);
 
 	MARSHMALLOW_GRAPHICS_EXPORT
-	bool Initialize(uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
-	                uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
-	                uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
-	                bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
-	                uint8_t refresh = MARSHMALLOW_VIEWPORT_REFRESH,
-	                uint8_t   vsync = MARSHMALLOW_VIEWPORT_VSYNC);
+	bool Setup(const Graphics::Display &display);
 
 	MARSHMALLOW_GRAPHICS_EXPORT
-	void Finalize(void);
-
-	MARSHMALLOW_GRAPHICS_EXPORT
-	bool Redisplay(uint16_t  width = MARSHMALLOW_VIEWPORT_WIDTH,
-	               uint16_t height = MARSHMALLOW_VIEWPORT_HEIGHT,
-	               uint8_t   depth = MARSHMALLOW_VIEWPORT_DEPTH,
-	               bool fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN,
-	               uint8_t refresh = MARSHMALLOW_VIEWPORT_REFRESH,
-	               uint8_t   vsync = MARSHMALLOW_VIEWPORT_VSYNC);
-
-	MARSHMALLOW_GRAPHICS_EXPORT
-	void Tick(void);
-
-	MARSHMALLOW_GRAPHICS_EXPORT
-	void SwapBuffer(void);
+	const Graphics::Display & Display(void);
 
 	MARSHMALLOW_GRAPHICS_EXPORT
 	const Math::Size2f & Size(void);

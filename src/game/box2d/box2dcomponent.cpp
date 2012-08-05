@@ -143,14 +143,14 @@ Box2DComponent::update(float d)
 #define DEGREE_TO_RADIAN 0.0174532925f
 		if (m_p->render) bodyDef.angle = m_p->render->mesh()->rotation() * DEGREE_TO_RADIAN;
 		bodyDef.position.Set
-		    (m_p->position->position().x(),
-		     m_p->position->position().y());
+		    (m_p->position->position().x,
+		     m_p->position->position().y);
 		m_p->body = l_world.CreateBody(&bodyDef);
 
 		/* create shape */
 		b2PolygonShape l_dynamicBox;
-		l_dynamicBox.SetAsBox(m_p->size.width()  / 2.f,
-		                      m_p->size.height() / 2.f);
+		l_dynamicBox.SetAsBox(m_p->size.width  / 2.f,
+		                      m_p->size.height / 2.f);
 
 		/* create fixture */
 		b2FixtureDef l_fixtureDef;
@@ -170,8 +170,8 @@ Box2DComponent::update(float d)
 	float32 l_angle = m_p->body->GetAngle();
 
 	/* entity position */
-	m_p->position->position()[0] = l_position.x;
-	m_p->position->position()[1] = l_position.y;
+	m_p->position->position().x = l_position.x;
+	m_p->position->position().y = l_position.y;
 
 	/* render mesh rotation */
 	if (m_p->render) {
@@ -199,8 +199,8 @@ Box2DComponent::serialize(XMLElement &n) const
 	    break;
 	}
 
-	n.SetAttribute("width", m_p->size.width());
-	n.SetAttribute("height", m_p->size.height());
+	n.SetAttribute("width", m_p->size.width);
+	n.SetAttribute("height", m_p->size.height);
 
 	n.SetAttribute("density", m_p->density);
 	n.SetAttribute("friction", m_p->friction);
@@ -222,8 +222,8 @@ Box2DComponent::deserialize(XMLElement &n)
 	if (l_body && l_body[0] == 'd')
 	    m_p->body_type = b2_dynamicBody;
 
-	n.QueryFloatAttribute("width", &m_p->size[0]);
-	n.QueryFloatAttribute("height", &m_p->size[1]);
+	n.QueryFloatAttribute("width", &m_p->size.width);
+	n.QueryFloatAttribute("height", &m_p->size.height);
 
 	n.QueryFloatAttribute("density", &m_p->density);
 	n.QueryFloatAttribute("friction", &m_p->friction);

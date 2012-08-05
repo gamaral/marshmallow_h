@@ -46,7 +46,7 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Math { /******************************************** Math Namespace */
 	class Matrix4;
-	class Point2;
+	struct Point2;
 } /*********************************************************** Math Namespace */
 
 namespace Graphics { /************************************ Graphics Namespace */
@@ -57,47 +57,62 @@ namespace Graphics { /************************************ Graphics Namespace */
 /*! @brief Graphics Painter Interface */
 namespace Painter { /**************************** Graphics::Painter Namespace */
 
-	MARSHMALLOW_GRAPHICS_EXPORT
-	void Initialize(void);
-
-	MARSHMALLOW_GRAPHICS_EXPORT
-	void Finalize(void);
-
-	MARSHMALLOW_GRAPHICS_EXPORT
-	void Render(void);
-
-	MARSHMALLOW_GRAPHICS_EXPORT
-	void Reset(void);
-
+	/*!
+	 * Get current background color.
+	 */
 	MARSHMALLOW_GRAPHICS_EXPORT
 	const Color & BackgroundColor(void);
 
+	/*!
+	 * Change reset background color.
+	 */
 	MARSHMALLOW_GRAPHICS_EXPORT
 	void SetBackgroundColor(const Color &color);
 
+	/*!
+	 * Returns the current matrix.
+	 */
 	MARSHMALLOW_GRAPHICS_EXPORT
 	Math::Matrix4 & Matrix(void);
 
+	/*!
+	 * Replace current matrix with the Identity Matrix.
+	 */
 	MARSHMALLOW_GRAPHICS_EXPORT
 	void LoadIdentity(void);
 
+	/*!
+	 * Replace current matrix with the Projection Matrix (sans View Matrix).
+	 */
 	MARSHMALLOW_GRAPHICS_EXPORT
 	void LoadProjection(void);
 
+	/*!
+	 * Replace current matrix with the View Projection Matrix.
+	 */
+	MARSHMALLOW_GRAPHICS_EXPORT
+	void LoadViewProjection(void);
+
+	/*!
+	 * Push current matrix to the top of the matrix stack.
+	 */
 	MARSHMALLOW_GRAPHICS_EXPORT
 	void PushMatrix(void);
 
+	/*!
+	 * Replace current matrix with the one at the top of the matrix stack.
+	 */
 	MARSHMALLOW_GRAPHICS_EXPORT
 	void PopMatrix(void);
 
 	/*!
-	 * Draw a single mesh
+	 * Draw a single mesh.
 	 */
 	MARSHMALLOW_GRAPHICS_EXPORT
 	void Draw(const IMesh &mesh, const Math::Point2 &origin);
 
 	/*!
-	 * Draw a single mesh in multiple origins
+	 * Draw a single mesh at multiple origin points.
 	 */
 	MARSHMALLOW_GRAPHICS_EXPORT
 	void Draw(const IMesh &mesh, const Math::Point2 *origins, size_t count = 1);

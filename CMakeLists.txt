@@ -51,27 +51,26 @@ if(BUILD_UNIT_TESTS)
 	enable_testing()
 endif(BUILD_UNIT_TESTS)
 
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+if(CMAKE_COMPILER_IS_GNUXX)
 	set(CMAKE_CXX_FLAGS "-fno-rtti -fno-exceptions ${CMAKE_CXX_FLAGS}")
 endif()
 
 ############################################################### GLOBAL OPTIONS #
 
 set(MARSHMALLOW_NAMESPACE   "Marshmallow"        CACHE STRING "Marshmallow Namespace")
-set(MARSHMALLOW_BUILD_TITLE "Marshmallow Engine" CACHE STRING "Build Title")
 
 option(MARSHMALLOW_DEBUG "Marshmallow Debugging" OFF)
 set(MARSHMALLOW_DEBUG_VERBOSITY "0" CACHE STRING "Verbosity Level")
 
-set(MARSHMALLOW_VIEWPORT_WIDTH   "720" CACHE STRING "Viewport native width")
-set(MARSHMALLOW_VIEWPORT_HEIGHT  "480" CACHE STRING "Viewport native height")
-set(MARSHMALLOW_VIEWPORT_DEPTH   "24"  CACHE STRING "Viewport default depth")
-set(MARSHMALLOW_VIEWPORT_REFRESH "60"  CACHE STRING "Viewport default refresh rate")
-set(MARSHMALLOW_VIEWPORT_VSYNC   "1"   CACHE STRING "Default swap interval (0 = OFF)")
+set(MARSHMALLOW_ENGINE_FRAMERATE "60"  CACHE STRING "Default engine frame rate (FPS)")
+
+set(MARSHMALLOW_VIEWPORT_TITLE  "Marshmallow Engine" CACHE STRING "Build Title")
+set(MARSHMALLOW_VIEWPORT_WIDTH  "720" CACHE STRING "Native viewport width")
+set(MARSHMALLOW_VIEWPORT_HEIGHT "480" CACHE STRING "Native viewport height")
+set(MARSHMALLOW_VIEWPORT_DEPTH  "24"  CACHE STRING "Default viewport depth")
+set(MARSHMALLOW_VIEWPORT_VSYNC  "1"   CACHE STRING "Default swap interval (0 = OFF)")
 
 option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode"      OFF)
-option(MARSHMALLOW_VIEWPORT_GRAB_INPUT "Takeover viewport input devices"        ON)
 option(MARSHMALLOW_VIEWPORT_LOCK_WIDTH "Use width for aspect ratio resolution" OFF)
 
 option(MARSHMALLOW_VIEWPORT_DUMMY  "Use Dummy Viewport (testing)"    ON)
@@ -87,6 +86,10 @@ option(MARSHMALLOW_WITH_LUA   "Use Lua"   OFF)
 
 ########################################################### GLOBAL SUB-OPTIONS #
 
+if(UNIX)
+	option(MARSHMALLOW_INPUT_LINUX_EVDEV "Linux event device support"       OFF)
+endif()
+
 if(MARSHMALLOW_VIEWPORT_DUMMY)
 	option(MARSHMALLOW_DUMMY_FAIL "Make dummy viewport fail initialization" OFF)
 endif()
@@ -101,6 +104,17 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 	option(MARSHMALLOW_OPENGL_EGL "Use EGL context (x11/vc)"                 OFF)
 endif()
 
+if(MARSHMALLOW_OPENGL_X11)
+	option(MARSHMALLOW_INPUT_UNIX_X11        "X11 input event support"                ON)
+	option(MARSHMALLOW_X11_GRAB_KEYBOARD     "Grab keyboard while in fullscreen mode" ON)
+	option(MARSHMALLOW_X11_GRAB_POINTER      "Grab pointer while in fullscreen mode"  ON)
+	option(MARSHMALLOW_X11_OVERRIDE_REDIRECT "Override redirect in fullscreen mode"   ON)
+endif()
+
+if(MARSHMALLOW_OPENGL_QT4)
+	option(MARSHMALLOW_INPUT_MISC_QT4        "Qt4 input event support"                ON)
+endif()
+
 ####################################################################### CONFIG #
 
 configure_file(
@@ -110,6 +124,10 @@ configure_file(
 configure_file(
 	${PROJECT_SOURCE_DIR}/src/graphics/config.h.in
 	${PROJECT_BINARY_DIR}/include/graphics/config.h
+)
+configure_file(
+	${PROJECT_SOURCE_DIR}/src/game/config.h.in
+	${PROJECT_BINARY_DIR}/include/game/config.h
 )
 
 ##################################################################### PLATFORM #

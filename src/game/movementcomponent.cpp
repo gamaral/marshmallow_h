@@ -121,15 +121,15 @@ MovementComponent::update(float d)
 
 	/* check limit */
 
-	if (l_limit_x.first()  > -1 && l_velocity.x() < -l_limit_x.first())
-		l_velocity[0] = -l_limit_x.first();
-	if (l_limit_x.second() > -1 && l_velocity.x() >  l_limit_x.second())
-		l_velocity[0] =  l_limit_x.second();
+	if (l_limit_x.first()  > -1 && l_velocity.x < -l_limit_x.first())
+		l_velocity.x = -l_limit_x.first();
+	if (l_limit_x.second() > -1 && l_velocity.x >  l_limit_x.second())
+		l_velocity.x =  l_limit_x.second();
 
-	if (l_limit_y.first()  > -1 && l_velocity.y() < -l_limit_y.first())
-		l_velocity[1] = -l_limit_y.first();
-	if (l_limit_y.second() > -1 && l_velocity.y() >  l_limit_y.second())
-		l_velocity[1] =  l_limit_y.second();
+	if (l_limit_y.first()  > -1 && l_velocity.y < -l_limit_y.first())
+		l_velocity.y = -l_limit_y.first();
+	if (l_limit_y.second() > -1 && l_velocity.y >  l_limit_y.second())
+		l_velocity.y =  l_limit_y.second();
 
 	/* update position */
 
@@ -143,8 +143,8 @@ MovementComponent::serialize(XMLElement &n) const
 	    return(false);
 
 	XMLElement *l_acceleration = n.GetDocument()->NewElement("acceleration");
-	l_acceleration->SetAttribute("x", m_p->acceleration.x());
-	l_acceleration->SetAttribute("y", m_p->acceleration.y());
+	l_acceleration->SetAttribute("x", m_p->acceleration.x);
+	l_acceleration->SetAttribute("y", m_p->acceleration.y);
 	n.InsertEndChild(l_acceleration);
 
 	XMLElement *l_limit = n.GetDocument()->NewElement("limit");
@@ -155,8 +155,8 @@ MovementComponent::serialize(XMLElement &n) const
 	n.InsertEndChild(l_limit);
 
 	XMLElement *l_velocity = n.GetDocument()->NewElement("velocity");
-	l_velocity->SetAttribute("x", m_p->velocity.x());
-	l_velocity->SetAttribute("y", m_p->velocity.y());
+	l_velocity->SetAttribute("x", m_p->velocity.x);
+	l_velocity->SetAttribute("y", m_p->velocity.y);
 	n.InsertEndChild(l_velocity);
 
 	return(true);
@@ -170,8 +170,8 @@ MovementComponent::deserialize(XMLElement &n)
 
 	XMLElement *l_acceleration = n.FirstChildElement( "acceleration" );
 	if (l_acceleration) {
-		l_acceleration->QueryFloatAttribute("x", &m_p->acceleration[0]);
-		l_acceleration->QueryFloatAttribute("y", &m_p->acceleration[1]);
+		l_acceleration->QueryFloatAttribute("x", &m_p->acceleration.x);
+		l_acceleration->QueryFloatAttribute("y", &m_p->acceleration.y);
 	}
 
 	XMLElement *l_limit = n.FirstChildElement( "limit" );
@@ -184,8 +184,8 @@ MovementComponent::deserialize(XMLElement &n)
 
 	XMLElement *l_velocity = n.FirstChildElement( "velocity" );
 	if (l_velocity) {
-		l_velocity->QueryFloatAttribute("x", &m_p->velocity[0]);
-		l_velocity->QueryFloatAttribute("y", &m_p->velocity[1]);
+		l_velocity->QueryFloatAttribute("x", &m_p->velocity.x);
+		l_velocity->QueryFloatAttribute("y", &m_p->velocity.y);
 	}
 
 	return(true);
