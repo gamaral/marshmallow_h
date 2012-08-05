@@ -100,7 +100,7 @@ namespace X11Viewport { /****************************** X11Viewport Namespace */
 
 	inline bool CreateX11Window(void);
 	inline void DestroyX11Window(void);
-	inline void ProcessX11Messages(void);
+	inline void ProcessX11Events(void);
 
 	enum StateFlag
 	{
@@ -243,7 +243,7 @@ X11Viewport::Finalize(void)
 		flags ^= sfX11Display;
 	}
 
-	/* sanity check*/
+	/* sanity check */
 	assert(flags == sfTerminated && "We seem to have some stray flags!");
 
 	flags = sfUninitialized;
@@ -398,7 +398,7 @@ X11Viewport::Destroy(void)
 	DestroyGLContext();
 	DestroyX11Window();
 
-	/* sanity check*/
+	/* sanity check */
 	assert(0 == (flags & ~(sfX11Display|sfGLDisplay|sfTerminated))
 	    && "We seem to have some stray flags!");
 
@@ -607,7 +607,7 @@ X11Viewport::DestroyX11Window(void)
 }
 
 void
-X11Viewport::ProcessX11Messages(void)
+X11Viewport::ProcessX11Events(void)
 {
 	XEvent e;
 
@@ -912,7 +912,7 @@ Viewport::Setup(const Graphics::Display &display)
 void
 Viewport::Tick(void)
 {
-	X11Viewport::ProcessX11Messages();
+	X11Viewport::ProcessX11Events();
 }
 
 void

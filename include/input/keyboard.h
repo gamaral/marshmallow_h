@@ -66,12 +66,14 @@ namespace Keyboard { /***************************** Input::Keyboard Namespace */
 	enum Key
 	{
 		KBK_NONE          = 0,
-		KBK_NULL          = 0,
+		KBK_FIRST         = 0,
 
 		KBK_BACKSPACE     = 8,
 		KBK_TAB           = 9,
+		KBK_CLEAR         = 12,
 		KBK_RETURN        = 13,
 		KBK_ENTER         = KBK_RETURN,
+		KBK_PAUSE         = 19,
 		KBK_ESCAPE        = 27,
 
 		KBK_SPACE         = ' ',
@@ -97,33 +99,34 @@ namespace Keyboard { /***************************** Input::Keyboard Namespace */
 
 		KBK_SEMICOLON     = ';',
 		KBK_EQUAL         = '=',
+		KBK_EQUALS        = KBK_EQUAL,
 
-		KBK_A             = 'A',
-		KBK_B             = 'B',
-		KBK_C             = 'C',
-		KBK_D             = 'D',
-		KBK_E             = 'E',
-		KBK_F             = 'F',
-		KBK_G             = 'G',
-		KBK_H             = 'H',
-		KBK_I             = 'I',
-		KBK_J             = 'J',
-		KBK_K             = 'K',
-		KBK_L             = 'L',
-		KBK_M             = 'M',
-		KBK_N             = 'N',
-		KBK_O             = 'O',
-		KBK_P             = 'P',
-		KBK_Q             = 'Q',
-		KBK_R             = 'R',
-		KBK_S             = 'S',
-		KBK_T             = 'T',
-		KBK_U             = 'U',
-		KBK_V             = 'V',
-		KBK_W             = 'W',
-		KBK_X             = 'X',
-		KBK_Y             = 'Y',
-		KBK_Z             = 'Z',
+		KBK_A             = 'a',
+		KBK_B             = 'b',
+		KBK_C             = 'c',
+		KBK_D             = 'd',
+		KBK_E             = 'e',
+		KBK_F             = 'f',
+		KBK_G             = 'g',
+		KBK_H             = 'h',
+		KBK_I             = 'i',
+		KBK_J             = 'j',
+		KBK_K             = 'k',
+		KBK_L             = 'l',
+		KBK_M             = 'm',
+		KBK_N             = 'n',
+		KBK_O             = 'o',
+		KBK_P             = 'p',
+		KBK_Q             = 'q',
+		KBK_R             = 'r',
+		KBK_S             = 's',
+		KBK_T             = 't',
+		KBK_U             = 'u',
+		KBK_V             = 'v',
+		KBK_W             = 'w',
+		KBK_X             = 'x',
+		KBK_Y             = 'y',
+		KBK_Z             = 'z',
 
 		KBK_BRACKET_LEFT  = '[',
 		KBK_BACKSLASH     = '\\',
@@ -163,7 +166,6 @@ namespace Keyboard { /***************************** Input::Keyboard Namespace */
 
 		KBK_PRINT,
 		KBK_SCROLL_LOCK,
-		KBK_PAUSE,
 		KBK_BREAK,
 
 		KBK_INSERT,
@@ -203,12 +205,11 @@ namespace Keyboard { /***************************** Input::Keyboard Namespace */
 		KBK_KDOT          = KBK_KDECIMAL,
 		KBK_KENTER,
 
-		KBK_CLEAR,
 		KBK_CLOSE,
 		KBK_HELP,
 		KBK_MENU,
 
-		_KBK_LAST
+		KBK_LAST
 	};
 
 	MARSHMALLOW_INPUT_EXPORT

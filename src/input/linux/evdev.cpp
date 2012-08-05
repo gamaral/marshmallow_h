@@ -282,7 +282,9 @@ namespace { /******************************************** Anonymous Namespace */
 		switch (event.code) {
 		case KEY_BACKSPACE:   l_key = Keyboard::KBK_BACKSPACE; break;
 		case KEY_TAB:         l_key = Keyboard::KBK_TAB; break;
-		case KEY_ENTER:       l_key = Keyboard::KBK_RETURN; break;
+		case KEY_CLEAR:       l_key = Keyboard::KBK_CLEAR; break;
+		case KEY_ENTER:       l_key = Keyboard::KBK_ENTER; break;
+		case KEY_PAUSE:       l_key = Keyboard::KBK_PAUSE; break;
 		case KEY_ESC:         l_key = Keyboard::KBK_ESCAPE; break;
 
 		case KEY_SPACE:       l_key = Keyboard::KBK_SPACE; break;
@@ -368,7 +370,6 @@ namespace { /******************************************** Anonymous Namespace */
 
 		case KEY_PRINT:       l_key = Keyboard::KBK_PRINT; break;
 		case KEY_SCROLLLOCK:  l_key = Keyboard::KBK_SCROLL_LOCK; break;
-		case KEY_PAUSE:       l_key = Keyboard::KBK_PAUSE; break;
 		case KEY_BREAK:       l_key = Keyboard::KBK_BREAK; break;
 
 		case KEY_INSERT:      l_key = Keyboard::KBK_INSERT; break;
@@ -401,7 +402,6 @@ namespace { /******************************************** Anonymous Namespace */
 		case KEY_KPDOT:       l_key = Keyboard::KBK_KDOT; break;
 		case KEY_KPENTER:     l_key = Keyboard::KBK_KENTER; break;
 
-		case KEY_CLEAR:       l_key = Keyboard::KBK_CLEAR; break;
 		case KEY_CLOSE:       l_key = Keyboard::KBK_CLOSE; break;
 		case KEY_HELP:        l_key = Keyboard::KBK_HELP; break;
 		case KEY_MENU:        l_key = Keyboard::KBK_MENU; break;

@@ -112,7 +112,11 @@ if(MARSHMALLOW_OPENGL_X11)
 endif()
 
 if(MARSHMALLOW_OPENGL_QT4)
-	option(MARSHMALLOW_INPUT_MISC_QT4        "Qt4 input event support"                ON)
+	option(MARSHMALLOW_INPUT_MISC_QT4 "Qt4 input event support"  ON)
+endif()
+
+if(MARSHMALLOW_OPENGL_SDL)
+	option(MARSHMALLOW_INPUT_MISC_SDL "SDL input event support"  ON)
 endif()
 
 ####################################################################### CONFIG #
@@ -156,39 +160,6 @@ elseif(WIN32)
 
 	if(MSVC)
 	    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-	endif()
-endif()
-
-##################################################################### VIEWPORT #
-
-if(MARSHMALLOW_VIEWPORT_OPENGL)
-	if(MARSHMALLOW_OPENGL_EGL)
-		find_package(EGL)
-		include_directories(${EGL_INCLUDE_DIR})
-	endif()
-
-	if(MARSHMALLOW_OPENGL_ES2)
-		find_package(GLES2)
-		include_directories(${GLES2_INCLUDE_DIR})
-	else()
-		find_package(OpenGL)
-		include_directories(${OPENGL_INCLUDE_DIR})
-	endif()
-
-
-	if(MARSHMALLOW_OPENGL_X11)
-		find_package(X11)
-	elseif(MARSHMALLOW_OPENGL_SDL)
-		find_package(SDL)
-	elseif(MARSHMALLOW_OPENGL_QT4)
-		find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
-		include(${QT_USE_FILE})
-	elseif(MARSHMALLOW_OPENGL_VC)
-		find_package(BCM_HOST)
-	endif()
-
-	if(NOT OPENGL_FOUND)
-		message(FATAL_ERROR "OpenGL was not found and *is* very much a requirement for the viewport selected.")
 	endif()
 endif()
 

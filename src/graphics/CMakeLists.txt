@@ -12,6 +12,23 @@ if(MARSHMALLOW_VIEWPORT_LOCK_WIDTH)
 endif()
 
 if(MARSHMALLOW_VIEWPORT_OPENGL)
+	if(MARSHMALLOW_OPENGL_EGL)
+		find_package(EGL)
+		include_directories(${EGL_INCLUDE_DIR})
+	endif()
+
+	if(MARSHMALLOW_OPENGL_ES2)
+		find_package(GLES2)
+		include_directories(${GLES2_INCLUDE_DIR})
+	else()
+		find_package(OpenGL)
+		include_directories(${OPENGL_INCLUDE_DIR})
+	endif()
+
+	if(NOT OPENGL_FOUND)
+		message(FATAL_ERROR "OpenGL was not found and *is* very much a "
+		    "requirement for the viewport selected.")
+	endif()
 
 	include_directories(${ZLIB_INCLUDE_DIR})
 	include_directories(${PNG_PNG_INCLUDE_DIR})
@@ -43,6 +60,7 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 	endif()
 
 	if(MARSHMALLOW_OPENGL_X11)
+		find_package(X11)
 		include_directories(${X11_INCLUDE_DIR})
 
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
@@ -71,14 +89,22 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 		                              opengl/viewport-wgl.cpp)
 		add_definitions(-DMARSHMALLOW_OPENGL_WGL)
 	elseif(MARSHMALLOW_OPENGL_SDL)
+		find_package(SDL)
 		include_directories(${SDL_INCLUDE_DIR})
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-sdl.cpp)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${SDL_LIBRARY})
 		add_definitions(-DMARSHMALLOW_OPENGL_SDL)
+
+		if(MARSHMALLOW_INPUT_MISC_SDL)
+			add_definitions(-DMARSHMALLOW_INPUT_MISC_SDL)
+		endif()
 	elseif(MARSHMALLOW_OPENGL_QT4)
+		find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
+		include(${QT_USE_FILE})
 		include_directories(${QT_INCLUDE_DIR})
+
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-qt4.cpp)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
@@ -93,6 +119,7 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 	# Broadcom VideoCore (Used in Raspberry Pi)
 	#
 	elseif(MARSHMALLOW_OPENGL_VC)
+		find_package(BCM_HOST)
 		include_directories(${BCM_HOST_INCLUDE_DIRS})
 
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}

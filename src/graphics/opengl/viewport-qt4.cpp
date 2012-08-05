@@ -263,7 +263,7 @@ Qt4Viewport::Finalize(void)
 	delete application, application = 0;
 	flags &= ~(sfApplication);
 
-	/* sanity check*/
+	/* sanity check */
 	assert(flags == sfTerminated && "We seem to have some stray flags!");
 
 	flags = sfUninitialized;
@@ -345,6 +345,10 @@ Qt4Viewport::Create(const Graphics::Display &display)
 	}
 	window->setFocus();
 
+	/* move cursor */
+
+	QCursor::setPos(window->mapToGlobal(QPoint(wsize.width, wsize.height)));
+
 	/* validity check */
 	if (!window->isValid()) {
 		MMERROR("QT4: Failed to create a valid GL context.");
@@ -392,7 +396,7 @@ Qt4Viewport::Destroy(void)
 	delete window, window = 0;
 	flags ^= sfWidget;
 
-	/* sanity check*/
+	/* sanity check */
 	assert(0 == (flags & ~(sfApplication|sfTerminated))
 	    && "We seem to have some stray flags!");
 

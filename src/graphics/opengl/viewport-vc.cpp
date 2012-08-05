@@ -199,7 +199,7 @@ VCViewport::Finalize(void)
 		flags ^= sfVCInit;
 	}
 
-	/* sanity check*/
+	/* sanity check */
 	assert(flags == sfTerminated && "We seem to have some stray flags!");
 
 	flags = sfUninitialized;
@@ -317,7 +317,7 @@ VCViewport::Destroy(void)
 	DestroyGLContext();
 	DestroyVCWindow();
 
-	/* sanity check*/
+	/* sanity check */
 	assert(0 == (flags & ~(sfVCInit|sfTerminated))
 	    && "We seem to have some stray flags!");
 
