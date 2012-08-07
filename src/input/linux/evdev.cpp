@@ -110,8 +110,8 @@ namespace { /******************************************** Anonymous Namespace */
 
 	protected: /* virtual */
 
-		virtual inline bool handleEvent(struct input_event &event) = 0;
-		virtual inline void prepare(void) = 0;
+		virtual bool handleEvent(struct input_event &event) = 0;
+		virtual void prepare(void) = 0;
 
 	protected:
 

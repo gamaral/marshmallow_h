@@ -1,7 +1,7 @@
 [submodule "contrib/box2d/code"]
 	path = contrib/box2d/code
 	url = git://github.com/gamaral/Box2D.git
-	branch = master
+	branch = gamaral
 [submodule "contrib/tinyxml2/code"]
 	path = contrib/tinyxml2/code
 	url = git://github.com/gamaral/tinyxml2.git

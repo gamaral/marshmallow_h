@@ -39,11 +39,11 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Event;
 
-KeyboardEvent::KeyboardEvent(Input::Keyboard::Key key,
-                             Input::Keyboard::Action action,
-                             Core::Identifier source,
-                             MMTIME t)
-    : InputEvent(itKeyboard, key, action, source, t)
+KeyboardEvent::KeyboardEvent(Input::Keyboard::Key key_,
+                             Input::Keyboard::Action action_,
+                             Core::Identifier source_,
+                             MMTIME timestamp_)
+    : InputEvent(itKeyboard, key_, action_, source_, timestamp_)
 {
 }
 

@@ -75,8 +75,8 @@ JoystickButtonEvent::state(void) const
 }
 
 bool
-JoystickButtonEvent::pressed(int button) const
+JoystickButtonEvent::pressed(int button_) const
 {
-	return(button == (m_p->state & button));
+	return(button_ == (m_p->state & button_));
 }
 
