@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <cassert>
+#include <climits>
 #include <cstring>
 
 #include "core/logger.h"
@@ -53,6 +55,8 @@ struct BufferIO::Private
 BufferIO::BufferIO(char *b, size_t s)
     : m_p(new Private)
 {
+	assert(s <= LONG_MAX && "Buffer too large!");
+
 	m_p->buffer = b;
 	m_p->const_buffer = b;
 	m_p->mode = DIOReadWrite;
@@ -63,6 +67,8 @@ BufferIO::BufferIO(char *b, size_t s)
 BufferIO::BufferIO(const char *cb, size_t s)
     : m_p(new Private)
 {
+	assert(s <= LONG_MAX && "Buffer too large!");
+
 	m_p->buffer = 0;
 	m_p->const_buffer = cb;
 	m_p->mode = DIOReadOnly;
@@ -111,8 +117,9 @@ BufferIO::read(char *b, size_t bs)
 {
 	if (!m_p->const_buffer && m_p->cursor >= 0) return(0);
 
+	const size_t l_cursor = static_cast<size_t>(m_p->cursor);
 	size_t l_rcount =
-	    (m_p->cursor + bs < m_p->size ? bs : m_p->size - m_p->cursor);
+	    (l_cursor + bs < m_p->size ? bs : m_p->size - l_cursor);
 
 	memcpy(b, m_p->const_buffer + m_p->cursor, l_rcount);
 	m_p->cursor += l_rcount;
@@ -125,10 +132,11 @@ BufferIO::write(const char *b, size_t bs)
 {
 	if (!m_p->buffer && m_p->cursor >= 0) return(0);
 
+	const size_t l_cursor = static_cast<size_t>(m_p->cursor);
 	size_t l_rcount =
-	    (m_p->cursor + bs < m_p->size ? bs : m_p->size - m_p->cursor);
+	    (l_cursor + bs < m_p->size ? bs : m_p->size - l_cursor);
 
-	memcpy(m_p->buffer + m_p->cursor, b, l_rcount);
+	memcpy(m_p->buffer + l_cursor, b, l_rcount);
 	m_p->cursor += l_rcount;
 
 	return(l_rcount);
@@ -145,8 +153,8 @@ BufferIO::seek(long o, DIOSeek on)
 			l_cursor = o;
 		break;
 	case DIOEnd:
-		if (static_cast<long>(m_p->size + o) >= 0)
-			l_cursor = m_p->size + o;
+		if (static_cast<long>(m_p->size) + o >= 0)
+			l_cursor = static_cast<long>(m_p->size) + o;
 		break;
 	case DIOCurrent:
 		if ((m_p->cursor + o) >= 0 &&
