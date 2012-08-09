@@ -60,7 +60,7 @@ namespace Event { /****************************************** Event Namespace */
 		                  int max,
 		                  int fuzz,
 		                  int flat,
-		                  Core::Identifier source,
+		                  size_t source,
 		                  MMTIME timestamp = 0);
 		virtual ~JoystickAxisEvent(void);
 

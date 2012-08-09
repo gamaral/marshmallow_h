@@ -54,15 +54,15 @@ namespace Event { /****************************************** Event Namespace */
 
 		enum InputType
 		{
-			itUnknown  = 0,
-			itKeyboard = 1,
-			itJoystick = 2
+			UnknownType  = 0,
+			KeyboardType = 1,
+			JoystickType = 2
 		};
 
 	public:
 
 		InputEvent(InputType type, int code, int value,
-		           Core::Identifier source, MMTIME timestamp = 0);
+		           size_t source, MMTIME timestamp = 0);
 		virtual ~InputEvent(void);
 
 		InputType inputType(void) const;
@@ -71,7 +71,7 @@ namespace Event { /****************************************** Event Namespace */
 
 		int value(void) const;
 
-		Core::Identifier source(void) const;
+		size_t source(void) const;
 
 	public: /* virtual */
 

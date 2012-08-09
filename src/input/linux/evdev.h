@@ -49,10 +49,6 @@ namespace Input { /****************************************** Input Namespace */
 namespace Linux { /*********************************** Input::Linux Namespace */
 namespace EventDevice { /**************** Input::Linux::EventDevice Namespace */
 
-	bool Initialize(void);
-
-	void Finalize(void);
-
 	bool InitializeKeyboard(void);
 
 	void FinalizeKeyboard(void);

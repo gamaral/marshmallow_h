@@ -41,9 +41,9 @@ using namespace Event;
 
 KeyboardEvent::KeyboardEvent(Input::Keyboard::Key key_,
                              Input::Keyboard::Action action_,
-                             Core::Identifier source_,
+                             size_t source_,
                              MMTIME timestamp_)
-    : InputEvent(itKeyboard, key_, action_, source_, timestamp_)
+    : InputEvent(KeyboardType, key_, action_, source_, timestamp_)
 {
 }
 

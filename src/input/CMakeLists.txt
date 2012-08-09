@@ -5,7 +5,9 @@ set(MARSHMALLOW_INPUT_LIBS marshmallow_core marshmallow_event)
 
 if(MARSHMALLOW_INPUT_LINUX_EVDEV)
 	add_definitions(-DMARSHMALLOW_INPUT_LINUX_EVDEV)
-	set(MARSHMALLOW_INPUT_SRCS ${MARSHMALLOW_INPUT_SRCS} linux/evdev.cpp)
+	set(MARSHMALLOW_INPUT_SRCS ${MARSHMALLOW_INPUT_SRCS}
+	                           linux/evdev.cpp
+	                           linux/evdev_map.cpp)
 endif()
 
 if(MARSHMALLOW_INPUT_UNIX_X11 AND MARSHMALLOW_OPENGL_X11)

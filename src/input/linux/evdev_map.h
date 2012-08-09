@@ -34,54 +34,41 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_JOYSTICKBUTTONEVENT_H
-#define MARSHMALLOW_EVENT_JOYSTICKBUTTONEVENT_H 1
+#ifndef MARSHMALLOW_INPUT_LINUX_EVDEV_MAP_H
+#define MARSHMALLOW_INPUT_LINUX_EVDEV_MAP_H 1
 
-#include <event/inputevent.h>
+#include "core/environment.h"
+#include "core/namespace.h"
 
-#include <input/joystick.h>
+#include <linux/input.h>
+
+#include <map>
+
+#include "evdev_type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Event { /****************************************** Event Namespace */
+namespace Input { /****************************************** Input Namespace */
 
-	/*! @brief Joystick Button Event */
-	class MARSHMALLOW_EVENT_EXPORT
-	JoystickButtonEvent : public InputEvent
-	{
-		struct Private;
-		Private *m_p;
-		
-		NO_ASSIGN_COPY(JoystickButtonEvent);
-	public:
+/**** IMPLEMENTATION NOTES *****************************************************
+ *
+ */
+namespace Linux { /*********************************** Input::Linux Namespace */
+namespace EventDevice { /**************** Input::Linux::EventDevice Namespace */
+namespace Map { /******************* Input::Linux::EventDevice::Map Namespace */
 
-		JoystickButtonEvent(Input::Joystick::Button button,
-		              Input::Joystick::Action action,
-		              int state,
-		              size_t source,
-		              MMTIME timestamp = 0);
-		virtual ~JoystickButtonEvent(void);
+	typedef std::map<uint16_t, int> EventCodes;
 
-		Input::Joystick::Action action(void) const
-		    { return(static_cast<Input::Joystick::Action>(value())); }
+	bool Initialize(void);
 
-		Input::Joystick::Button button(void) const
-		    { return(static_cast<Input::Joystick::Button>(code())); }
+	void Finalize(void);
 
-		int state(void) const;
+	bool PopulateEventCodes(__u16 vendor, __u16 product, const char *name,
+	                        Type type, int event, EventCodes &codes);
 
-		bool pressed(int button) const;
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type()); }
-
-	public: /* static */
-
-		static const Core::Type & Type(void);
-	};
-
-} /********************************************************** Event Namespace */
+} /********************************* Input::Linux::EventDevice::Map Namespace */
+} /************************************** Input::Linux::EventDevice Namespace */
+} /*************************************************** Input::Linux Namespace */
+} /********************************************************** Input Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -53,7 +53,7 @@ namespace Event { /****************************************** Event Namespace */
 
 		KeyboardEvent(Input::Keyboard::Key key,
 		              Input::Keyboard::Action action,
-		              Core::Identifier source,
+		              size_t source,
 		              MMTIME timestamp = 0);
 		virtual ~KeyboardEvent(void);
 

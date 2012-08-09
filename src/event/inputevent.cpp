@@ -42,12 +42,12 @@ using namespace Event;
 struct InputEvent::Private
 {
 	InputType type;
-	int  code;
-	int  value;
-	Core::Identifier source;
+	int code;
+	int value;
+	size_t source;
 };
 
-InputEvent::InputEvent(InputType type_, int code_, int value_, Core::Identifier source_, MMTIME time_)
+InputEvent::InputEvent(InputType type_, int code_, int value_, size_t source_, MMTIME time_)
     : EventBase(time_, HighPriority)
     , m_p(new Private)
 {
@@ -80,7 +80,7 @@ InputEvent::value(void) const
 	return(m_p->value);
 }
 
-Core::Identifier
+size_t
 InputEvent::source(void) const
 {
 	return(m_p->source);

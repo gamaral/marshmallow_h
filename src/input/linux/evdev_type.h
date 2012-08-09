@@ -34,54 +34,34 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_JOYSTICKBUTTONEVENT_H
-#define MARSHMALLOW_EVENT_JOYSTICKBUTTONEVENT_H 1
+#ifndef MARSHMALLOW_INPUT_LINUX_EVDEV_TYPE_H
+#define MARSHMALLOW_INPUT_LINUX_EVDEV_TYPE_H 1
 
-#include <event/inputevent.h>
-
-#include <input/joystick.h>
+#include "core/environment.h"
+#include "core/namespace.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Event { /****************************************** Event Namespace */
+namespace Input { /****************************************** Input Namespace */
 
-	/*! @brief Joystick Button Event */
-	class MARSHMALLOW_EVENT_EXPORT
-	JoystickButtonEvent : public InputEvent
+/**** IMPLEMENTATION NOTES *****************************************************
+ *
+ */
+namespace Linux { /*********************************** Input::Linux Namespace */
+namespace EventDevice { /**************** Input::Linux::EventDevice Namespace */
+
+	enum Type
 	{
-		struct Private;
-		Private *m_p;
-		
-		NO_ASSIGN_COPY(JoystickButtonEvent);
-	public:
-
-		JoystickButtonEvent(Input::Joystick::Button button,
-		              Input::Joystick::Action action,
-		              int state,
-		              size_t source,
-		              MMTIME timestamp = 0);
-		virtual ~JoystickButtonEvent(void);
-
-		Input::Joystick::Action action(void) const
-		    { return(static_cast<Input::Joystick::Action>(value())); }
-
-		Input::Joystick::Button button(void) const
-		    { return(static_cast<Input::Joystick::Button>(code())); }
-
-		int state(void) const;
-
-		bool pressed(int button) const;
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type()); }
-
-	public: /* static */
-
-		static const Core::Type & Type(void);
+		UnknownType  = 0,
+		GamepadType  = (1 << 0),
+		JoystickType = (1 << 1),
+		KeyboardType = (1 << 2),
+		MouseType    = (1 << 3),
+		AnyType      = ~(1)
 	};
 
-} /********************************************************** Event Namespace */
+} /************************************** Input::Linux::EventDevice Namespace */
+} /*************************************************** Input::Linux Namespace */
+} /********************************************************** Input Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

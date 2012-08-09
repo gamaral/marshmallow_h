@@ -91,7 +91,12 @@ namespace Joystick { /***************************** Input::Joystick Namespace */
 		JSB_START   = (1 << 8),
 		JSB_SELECT  = (1 << 9),
 
-		JSB_MENU    = (1 << 10)
+		JSB_MENU    = (1 << 10),
+
+		JSB_DOWN    = (1 << 11),
+		JSB_LEFT    = (1 << 12),
+		JSB_RIGHT   = (1 << 13),
+		JSB_UP      = (1 << 14)
 	};
 
 } /************************************************ Input::Joystick Namespace */

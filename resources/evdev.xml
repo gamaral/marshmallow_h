@@ -1,0 +1,69 @@
+<evdev revision="0">
+
+	<joystick vendor="1133" product="49690">
+		<name>Logitech Logitech(R) Precision(TM) Gamepad</name>
+
+		<abs code="0"   sym="HX" />
+		<abs code="1"   sym="HY" />
+
+		<key code="289" sym="B" />
+		<key code="290" sym="A" />
+		<key code="288" sym="Y" />
+		<key code="291" sym="X" />
+		<key code="292" sym="L" />
+		<key code="293" sym="R" />
+		<key code="294" sym="THUMB_L" />
+		<key code="295" sym="THUMB_R" />
+		<key code="296" sym="SELECT" />
+		<key code="297" sym="START" />
+	</joystick>
+
+	<gamepad vendor="0" product="0">
+		<name>Xbox Gamepad (userspace driver)</name>
+
+		<abs code="0"   sym="X" />
+		<abs code="1"   sym="Y" />
+		<abs code="10"  sym="Z" />
+		<abs code="3"   sym="RX" />
+		<abs code="4"   sym="RY" />
+		<abs code="9"   sym="RZ" />
+		<abs code="16"  sym="HX" />
+		<abs code="17"  sym="HY" />
+
+		<key code="304" sym="B" />
+		<key code="305" sym="A" />
+		<key code="307" sym="Y" />
+		<key code="308" sym="X" />
+		<key code="310" sym="L" />
+		<key code="311" sym="R" />
+		<key code="317" sym="THUMB_L" />
+		<key code="318" sym="THUMB_R" />
+		<key code="314" sym="SELECT" />
+		<key code="315" sym="START" />
+		<key code="316" sym="MENU" />
+	</gamepad>
+
+	<gamepad vendor="0" product="0">
+		<name>iControlPad</name>
+
+		<abs code="0"   sym="X" />
+		<abs code="1"   sym="Y" />
+		<abs code="2"   sym="RX" />
+		<abs code="5"   sym="RY" />
+
+		<key code="316" sym="B" />
+		<key code="317" sym="A" />
+		<key code="315" sym="Y" />
+		<key code="314" sym="X" />
+		<key code="308" sym="L" />
+		<key code="318" sym="R" />
+		<key code="312" sym="SELECT" />
+		<key code="313" sym="START" />
+
+		<key code="307" sym="DOWN" />
+		<key code="306" sym="LEFT" />
+		<key code="305" sym="RIGHT" />
+		<key code="304" sym="UP" />
+	</gamepad>
+
+</evdev>

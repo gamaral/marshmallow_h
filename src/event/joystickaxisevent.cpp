@@ -54,9 +54,9 @@ JoystickAxisEvent::JoystickAxisEvent(
     int max_,
     int fuzz_,
     int flat_,
-    Core::Identifier source_,
+    size_t source_,
     MMTIME timestamp_)
-    : InputEvent(itJoystick, axis_, value_, source_, timestamp_)
+    : InputEvent(JoystickType, axis_, value_, source_, timestamp_)
     , m_p(new Private)
 {
 	m_p->min = min_;
