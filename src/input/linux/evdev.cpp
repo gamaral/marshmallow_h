@@ -460,8 +460,43 @@ LinuxJoystick::handleEvent(struct input_event &event)
 			l_action = Joystick::ButtonPressed;
 		}
 
+		Joystick::Button l_btn = static_cast<Joystick::Button>(l_entry->second);
+
+		/*
+		 *  HAT ABS Emulation
+		 *
+		 */
+		if (Joystick::JSB_LEFT == l_btn || Joystick::JSB_RIGHT == l_btn
+		    || Joystick::JSB_UP == l_btn || Joystick::JSB_DOWN == l_btn) {
+
+			Joystick::Axis l_axis = Joystick::JSA_NONE;
+			int l_value = event.value;
+
+			switch(l_btn) {
+			case Joystick::JSB_LEFT:
+				l_value = -l_value;
+				/* fallthrough */
+			case Joystick::JSB_RIGHT:
+				l_axis = Joystick::JSA_HX;
+				break;
+			case Joystick::JSB_UP:
+				l_value = -l_value;
+				/* fallthrough */
+			case Joystick::JSB_DOWN:
+				l_axis = Joystick::JSA_HY;
+				break;
+			default: break;
+			}
+
+			SharedEvent l_event(new JoystickAxisEvent(
+			    l_axis,
+			    l_value, -1, 1, 0, 0,
+			    id()));
+			EventManager::Instance()->queue(l_event);
+		}
+
 		SharedEvent l_event(new JoystickButtonEvent(
-		    static_cast<Joystick::Button>(l_entry->second),
+		    l_btn,
 		    l_action,
 		    m_btn_state,
 		    id()));
