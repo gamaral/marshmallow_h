@@ -145,7 +145,7 @@ HandleQt4KeyEvent(const QKeyEvent &e, bool down)
 	const Keyboard::Action l_prev_action = Keyboard::KeyState(l_key);
 	if (l_prev_action != l_action) {
 		Keyboard::SetKeyState(l_key, l_action);
-		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action, s_qt4_input_source));
+		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action, 0));
 		Event::EventManager::Instance()->queue(event);
 	}
 

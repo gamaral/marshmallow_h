@@ -52,8 +52,6 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace { /******************************************** Anonymous Namespace */
 
-const Core::Identifier s_x11_input_source("X11");
-
 inline bool HandleX11KeyEvent(XKeyEvent &key);
 inline bool HandleX11Messages(XEvent &e);
 
@@ -176,7 +174,7 @@ HandleX11KeyEvent(XKeyEvent &key)
 	const Keyboard::Action l_prev_action = Keyboard::KeyState(l_key);
 	if (l_prev_action != l_action) {
 		Keyboard::SetKeyState(l_key, l_action);
-		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action, s_x11_input_source));
+		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action, 0));
 		Event::EventManager::Instance()->queue(event);
 	}
 

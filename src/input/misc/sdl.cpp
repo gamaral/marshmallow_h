@@ -55,7 +55,6 @@ bool
 HandleSDLKeyboardEvent(const SDL_KeyboardEvent &e)
 {
 	using namespace Input;
-	static const Core::Identifier s_sdl_input_source("SDL");
 
 	Keyboard::Key l_key = Keyboard::KBK_NONE;
 	Keyboard::Action l_action =
@@ -159,7 +158,7 @@ HandleSDLKeyboardEvent(const SDL_KeyboardEvent &e)
 	const Keyboard::Action l_prev_action = Keyboard::KeyState(l_key);
 	if (l_prev_action != l_action) {
 		Keyboard::SetKeyState(l_key, l_action);
-		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action, s_sdl_input_source));
+		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action, 0));
 		Event::EventManager::Instance()->queue(event);
 	}
 
