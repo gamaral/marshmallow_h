@@ -44,12 +44,15 @@
 #include "graphics/imesh.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
-	Math::Matrix4   s_matrix_current;
-	Graphics::Color s_bgcolor;
-} /****************************************************** Anonymous Namespace */
-
 namespace Graphics { /************************************ Graphics Namespace */
+namespace Dummy { /******************************** Graphics::Dummy Namespace */
+namespace { /************************* Graphics::Dummy::<anonymous> Namespace */
+
+Math::Matrix4  s_matrix_current;
+Color          s_bgcolor;
+
+} /*********************************** Graphics::Dummy::<anonymous> Namespace */
+} /************************************************ Graphics::Dummy Namespace */
 
 void
 Painter::Initialize(void)
@@ -74,24 +77,28 @@ Painter::Reset(void)
 const Color &
 Painter::BackgroundColor(void)
 {
+	using namespace Dummy;
 	return(s_bgcolor);
 }
 
 void
 Painter::SetBackgroundColor(const Color &color)
 {
+	using namespace Dummy;
 	s_bgcolor = color;
 }
 
 Math::Matrix4 &
 Painter::Matrix(void)
 {
+	using namespace Dummy;
 	return(s_matrix_current);
 }
 
 void
 Painter::LoadIdentity(void)
 {
+	using namespace Dummy;
 	s_matrix_current = Math::Matrix4::Identity();
 }
 

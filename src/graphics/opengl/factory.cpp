@@ -46,19 +46,22 @@ namespace Graphics { /************************************ Graphics Namespace */
 SharedTextureCoordinateData
 Factory::CreateTextureCoordinateData(uint16_t c)
 {
-	return(new OpenGL::TextureCoordinateData(c));
+	using namespace OpenGL;
+	return(new TextureCoordinateData(c));
 }
 
 SharedTextureData
 Factory::CreateTextureData(void)
 {
-	return(new OpenGL::TextureData());
+	using namespace OpenGL;
+	return(new TextureData());
 }
 
 SharedVertexData
 Factory::CreateVertexData(uint16_t c)
 {
-	return(new OpenGL::VertexData(c));
+	using namespace OpenGL;
+	return(new VertexData(c));
 }
 
 } /******************************************************* Graphics Namespace */

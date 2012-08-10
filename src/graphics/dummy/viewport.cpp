@@ -42,28 +42,34 @@
 #include "graphics/painter_p.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
-	Graphics::Display dpy;
-	bool active;
-} /****************************************************** Anonymous Namespace */
-
 namespace Graphics { /************************************ Graphics Namespace */
+namespace Dummy { /******************************** Graphics::Dummy Namespace */
+namespace { /************************* Graphics::Dummy::<anonymous> Namespace */
+
+Graphics::Display s_dpy;
+bool              s_active;
+
+} /*********************************** Graphics::Dummy::<anonymous> Namespace */
+} /************************************************ Graphics::Dummy Namespace */
 
 bool
 Viewport::Active(void)
 {
-	return(active);
+	using namespace Dummy;
+	return(s_active);
 }
 
 bool
 Viewport::Initialize(void)
 {
+	using namespace Dummy;
+
 	/* default display display */
-	dpy.depth      = MARSHMALLOW_VIEWPORT_DEPTH;
-	dpy.fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
-	dpy.height     = MARSHMALLOW_VIEWPORT_HEIGHT;
-	dpy.vsync      = MARSHMALLOW_VIEWPORT_VSYNC;
-	dpy.width      = MARSHMALLOW_VIEWPORT_WIDTH;
+	s_dpy.depth      = MARSHMALLOW_VIEWPORT_DEPTH;
+	s_dpy.fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
+	s_dpy.height     = MARSHMALLOW_VIEWPORT_HEIGHT;
+	s_dpy.vsync      = MARSHMALLOW_VIEWPORT_VSYNC;
+	s_dpy.width      = MARSHMALLOW_VIEWPORT_WIDTH;
 
 	/*
 	 * Initial Camera Reset (IMPORTANT)
@@ -75,7 +81,7 @@ Viewport::Initialize(void)
 	 */
 	Painter::SetBackgroundColor(Color::Black());
 
-	active = false;
+	s_active = false;
 
 	return(true);
 }
@@ -89,23 +95,25 @@ Viewport::Finalize(void)
 bool
 Viewport::Setup(const Graphics::Display &display)
 {
+	using namespace Dummy;
+
 	MMDEBUG("Dummy viewport setup.");
 
-	if (active) {
+	if (s_active) {
 		Painter::Finalize();
-		active = false;
+		s_active = false;
 	}
 
-	dpy = display;
+	s_dpy = display;
 
 	Camera::Update();
 
 	Painter::Initialize();
 
 #if MARSHMALLOW_DUMMY_FAIL
-	return(active = false);
+	return(s_active = false);
 #else
-	return(active = true);
+	return(s_active = true);
 #endif
 }
 
@@ -122,12 +130,15 @@ Viewport::SwapBuffer(void)
 const Graphics::Display &
 Viewport::Display(void)
 {
-	return(dpy);
+	using namespace Dummy;
+	return(s_dpy);
 }
 
 const Math::Size2f &
 Viewport::Size(void)
 {
+	using namespace Dummy;
+
 	const static Math::Size2f s_size(MARSHMALLOW_VIEWPORT_WIDTH,
 	                                 MARSHMALLOW_VIEWPORT_HEIGHT);
 	return(s_size);
@@ -136,8 +147,10 @@ Viewport::Size(void)
 const Math::Size2i &
 Viewport::WindowSize(void)
 {
+	using namespace Dummy;
+
 	static Math::Size2i s_size;
-	s_size.set(dpy.width, dpy.height);
+	s_size.set(s_dpy.width, s_dpy.height);
 	return(s_size);
 }
 

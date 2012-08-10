@@ -40,7 +40,9 @@
 #include <cassert>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
+namespace { /************************ Graphics::OpenGL::<anonymous> Namespace */
 
 std::set<std::string> s_supported_extensions;
 
@@ -70,10 +72,7 @@ ParseExtensionsString(const char *e)
 		}
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Graphics { /************************************ Graphics Namespace */
-namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
+} /********************************** Graphics::OpenGL::<anonymous> Namespace */
 
 #ifndef MMGL_VERSION_2_0
 /* required */

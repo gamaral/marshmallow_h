@@ -65,14 +65,13 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 	/*!
 	 * Must be implemented by viewport.
 	 */
 	typedef void (*PFNPROC)(void);
 	PFNPROC glGetProcAddress(const char *func);
-
-namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 	/*
 	 * Required, no checks needed.

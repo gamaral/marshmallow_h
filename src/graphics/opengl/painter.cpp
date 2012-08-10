@@ -54,9 +54,11 @@
 #include "vertexdata.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
+namespace { /************************ Graphics::OpenGL::<anonymous> Namespace */
 
-namespace { /******************************************** Anonymous Namespace */
-namespace GLPainter { /********************************** GLPainter Namespace */
+namespace GLPainter {
 
 	inline void Initialize(void);
 	inline void Finalize(void);
@@ -116,7 +118,7 @@ namespace GLPainter { /********************************** GLPainter Namespace */
 	unsigned int session_id = 0;
 	int flags;
 
-} /****************************************************** GLPainter Namespace */
+}
 
 const char s_vertex_shader[] =
   "#version 100\n"
@@ -158,9 +160,6 @@ const char s_fragment_shader[] =
 void
 GLPainter::Initialize(void)
 {
-	using namespace Graphics::OpenGL;
-	using namespace Graphics;
-
 	flags = sfUninitialized;
 
 	if (0 == (program_object = LoadProgram()))
@@ -218,8 +217,6 @@ GLPainter::Initialize(void)
 void
 GLPainter::Finalize(void)
 {
-	using namespace Graphics::OpenGL;
-
 	/*
 	 * Mark painter as uninitialized. IMPORTANT
 	 */
@@ -247,8 +244,6 @@ GLPainter::Finalize(void)
 void
 GLPainter::Reset(void)
 {
-	using namespace Graphics;
-
 	glClearColor(bgcolor.red(),
 	             bgcolor.green(),
 	             bgcolor.blue(),
@@ -265,8 +260,6 @@ GLPainter::Reset(void)
 GLuint
 GLPainter::LoadShader(GLenum type, const char *src)
 {
-	using namespace Graphics::OpenGL;
-
 	GLuint l_shader;
 	GLint  l_status = GL_FALSE;
 
@@ -298,15 +291,12 @@ GLPainter::LoadShader(GLenum type, const char *src)
 void
 GLPainter::UnloadShader(GLuint &shader)
 {
-	using namespace Graphics::OpenGL;
 	glDeleteShader(shader), shader = 0;
 }
 
 GLuint
 GLPainter::LoadProgram(void)
 {
-	using namespace Graphics::OpenGL;
-
 	GLuint l_program_object;
 	GLuint l_fragment_shader;
 	GLuint l_vertex_shader;
@@ -353,15 +343,12 @@ GLPainter::LoadProgram(void)
 void
 GLPainter::UnloadProgram(GLuint &program)
 {
-	using namespace Graphics::OpenGL;
 	glDeleteProgram(program), program = 0;
 }
 
 void
 GLPainter::CommitMatrix(void)
 {
-	using namespace Graphics::OpenGL;
-
 	if (0 == (flags & sfInvalidMatrix))
 		return;
 
@@ -402,7 +389,6 @@ GLPainter::LoadIdentity(void)
 void
 GLPainter::LoadProjection(void)
 {
-	using namespace Graphics;
 	using namespace Math;
 
 	matrix = Matrix4::Identity();
@@ -416,18 +402,14 @@ GLPainter::LoadProjection(void)
 void
 GLPainter::LoadViewProjection(void)
 {
-	using namespace Graphics;
-
 	LoadProjection();
 	matrix *= Camera::Transform().matrix(Transform::mtView);
 }
 void
 GLPainter::Draw(const Graphics::IMesh &m, const Math::Point2 *o, size_t c)
 {
-	using Graphics::OpenGL::SharedTextureData;
-	using Graphics::OpenGL::TextureData;
-	using namespace Graphics::OpenGL;
-	using namespace Graphics;
+	using OpenGL::SharedTextureData;
+	using OpenGL::TextureData;
 
 	if (0 == (flags & sfInitialized))
 		return;
@@ -502,12 +484,11 @@ GLPainter::Draw(const Graphics::IMesh &m, const Math::Point2 *o, size_t c)
 inline void
 GLPainter::BeginDrawQuadMesh(const Graphics::QuadMesh &g, bool tcoords)
 {
-	using namespace Graphics::OpenGL;
-	using Graphics::OpenGL::Extensions::glBindBuffer;
-	using Graphics::OpenGL::SharedTextureCoordinateData;
-	using Graphics::OpenGL::SharedVertexData;
-	using Graphics::OpenGL::TextureCoordinateData;
-	using Graphics::OpenGL::VertexData;
+	using OpenGL::Extensions::glBindBuffer;
+	using OpenGL::SharedTextureCoordinateData;
+	using OpenGL::SharedVertexData;
+	using OpenGL::TextureCoordinateData;
+	using OpenGL::VertexData;
 
 	SharedVertexData l_vdata =
 	    g.vertexData().staticCast<VertexData>();
@@ -564,31 +545,31 @@ GLPainter::DrawQuadMesh(void)
 inline void
 GLPainter::EndDrawQuadMesh(bool tcoords)
 {
-	using namespace Graphics::OpenGL;
-
 	if (tcoords) glDisableVertexAttribArray(location_texcoord);
 	glDisableVertexAttribArray(location_position);
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Graphics { /************************************ Graphics Namespace */
+} /********************************** Graphics::OpenGL::<anonymous> Namespace */
+} /*********************************************** Graphics::OpenGL Namespace */
 
 void
 Painter::Initialize(void)
 {
+	using namespace OpenGL;
 	GLPainter::Initialize();
 }
 
 void
 Painter::Finalize(void)
 {
+	using namespace OpenGL;
 	GLPainter::Finalize();
 }
 
 void
 Painter::Render(void)
 {
+	using namespace OpenGL;
 	if (0 == (GLPainter::flags & GLPainter::sfInitialized))
 		return;
 
@@ -598,72 +579,84 @@ Painter::Render(void)
 void
 Painter::Reset(void)
 {
+	using namespace OpenGL;
 	GLPainter::Reset();
 }
 
 const Color &
 Painter::BackgroundColor(void)
 {
+	using namespace OpenGL;
 	return(GLPainter::bgcolor);
 }
 
 void
 Painter::SetBackgroundColor(const Color &color)
 {
+	using namespace OpenGL;
 	GLPainter::bgcolor = color;
 }
 
 Math::Matrix4 &
 Painter::Matrix(void)
 {
+	using namespace OpenGL;
 	return(GLPainter::matrix);
 }
 
 void
 Painter::LoadIdentity(void)
 {
+	using namespace OpenGL;
 	GLPainter::LoadIdentity();
 }
 
 void
 Painter::LoadProjection(void)
 {
+	using namespace OpenGL;
 	GLPainter::LoadProjection();
 }
 
 void
 Painter::LoadViewProjection(void)
 {
+	using namespace OpenGL;
 	GLPainter::LoadViewProjection();
 }
 
 void
 Painter::PushMatrix(void)
 {
+	using namespace OpenGL;
 	GLPainter::PushMatrix();
 }
 
 void
 Painter::PopMatrix(void)
 {
+	using namespace OpenGL;
 	GLPainter::PopMatrix();
 }
 
 void
 Painter::Draw(const IMesh &mesh, const Math::Point2 &origin)
 {
+	using namespace OpenGL;
 	GLPainter::Draw(mesh, &origin, 1);
 }
 
 void
 Painter::Draw(const IMesh &mesh, const Math::Point2 *origins, size_t count)
 {
+	using namespace OpenGL;
 	GLPainter::Draw(mesh, origins, count);
 }
 
 unsigned int
 Painter::SessionId(void)
 {
+	using namespace OpenGL;
 	return(GLPainter::session_id);
 }
 

@@ -44,7 +44,8 @@
 #include <tinyxml2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
+namespace Graphics { /************************************ Graphics Namespace */
+namespace { /******************************** Graphics::<anonymous> Namespace */
 
 static const char * s_scalemode_string[Graphics::ITextureData::smModes] =
     { "nearest", "linear" };
@@ -69,9 +70,7 @@ ScaleModeToString(Graphics::ITextureData::ScaleMode mode)
 	return(s_scalemode_string[mode]);
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Graphics { /************************************ Graphics Namespace */
+} /****************************************** Graphics::<anonymous> Namespace */
 
 struct MeshBase::Private
 {

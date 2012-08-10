@@ -56,8 +56,11 @@
 #include "extensions.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
-namespace SDLViewport { /****************************** SDLViewport Namespace */
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
+namespace { /************************ Graphics::OpenGL::<anonymous> Namespace */
+
+namespace SDLViewport {
 
 	class Widget;
 
@@ -67,7 +70,7 @@ namespace SDLViewport { /****************************** SDLViewport Namespace */
 	inline void Reset(int state);
 	inline void SwapBuffer(void);
 
-	inline bool Create(const Graphics::Display &display);
+	inline bool Create(const Display &display);
 	inline void Destroy(void);
 	inline void ProcessEvents(void);
 
@@ -90,7 +93,7 @@ namespace SDLViewport { /****************************** SDLViewport Namespace */
 		sfActiveValid   = sfActive|sfExposed|sfFocused|sfValid
 	};
 	/******************* MARSHMALLOW */
-	Graphics::Display dpy;
+	Display           dpy;
 	Math::Size2i      wsize;
 	Math::Size2f      vsize;
 	int               flags;
@@ -98,13 +101,11 @@ namespace SDLViewport { /****************************** SDLViewport Namespace */
 	/*************************** SDL */
 	SDL_Surface      *sdl_surface;
 
-} /**************************************************** SDLViewport Namespace */
+}
 
 bool
 SDLViewport::Initialize(void)
 {
-	using namespace Graphics;
-
 	/* default display display */
 	dpy.depth      = MARSHMALLOW_VIEWPORT_DEPTH;
 	dpy.fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
@@ -164,10 +165,8 @@ SDLViewport::Reset(int state)
 }
 
 bool
-SDLViewport::Create(const Graphics::Display &display)
+SDLViewport::Create(const Display &display)
 {
-	using namespace Graphics;
-
 	/*
 	 * Initialize SDL video subsystem
 	 */
@@ -286,8 +285,6 @@ SDLViewport::Create(const Graphics::Display &display)
 void
 SDLViewport::Destroy(void)
 {
-	using namespace Graphics;
-
 	/* check for valid state */
 	if (sfValid != (flags & sfValid))
 		return;
@@ -384,9 +381,7 @@ SDLViewport::ProcessEvents(void)
 	}
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Graphics { /************************************ Graphics Namespace */
+} /********************************** Graphics::OpenGL::<anonymous> Namespace */
 
 PFNPROC
 glGetProcAddress(const char *f)
@@ -400,30 +395,33 @@ glGetProcAddress(const char *f)
 	return(conv.fptr);
 }
 
-/********************************************************* Graphics::Viewport */
+} /*********************************************** Graphics::OpenGL Namespace */
 
 bool
 Viewport::Active(void)
 {
-	using namespace SDLViewport;
+	using namespace OpenGL::SDLViewport;
 	return(sfActiveValid == (flags & sfActiveValid));
 }
 
 bool
 Viewport::Initialize(void)
 {
+	using namespace OpenGL;
 	return(SDLViewport::Initialize());
 }
 
 void
 Viewport::Finalize(void)
 {
+	using namespace OpenGL;
 	SDLViewport::Finalize();
 }
 
 bool
 Viewport::Setup(const Graphics::Display &display)
 {
+	using namespace OpenGL;
 	SDLViewport::Destroy();
 
 	if (!SDLViewport::Create(display)) {
@@ -437,12 +435,14 @@ Viewport::Setup(const Graphics::Display &display)
 void
 Viewport::Tick(void)
 {
+	using namespace OpenGL;
 	SDLViewport::ProcessEvents();
 }
 
 void
 Viewport::SwapBuffer(void)
 {
+	using namespace OpenGL;
 	SDLViewport::SwapBuffer();
 	Painter::Reset();
 }
@@ -450,18 +450,21 @@ Viewport::SwapBuffer(void)
 const Graphics::Display &
 Viewport::Display(void)
 {
+	using namespace OpenGL;
 	return(SDLViewport::dpy);
 }
 
 const Math::Size2f &
 Viewport::Size(void)
 {
+	using namespace OpenGL;
 	return(SDLViewport::vsize);
 }
 
 const Math::Size2i &
 Viewport::WindowSize(void)
 {
+	using namespace OpenGL;
 	return(SDLViewport::wsize);
 }
 

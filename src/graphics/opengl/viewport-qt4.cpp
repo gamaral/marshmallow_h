@@ -68,8 +68,11 @@
  */
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
-namespace Qt4Viewport { /****************************** Qt4Viewport Namespace */
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
+namespace { /************************ Graphics::OpenGL::<anonymous> Namespace */
+
+namespace Qt4Viewport {
 
 	class Widget;
 
@@ -78,7 +81,7 @@ namespace Qt4Viewport { /****************************** Qt4Viewport Namespace */
 
 	inline void Reset(int state);
 
-	inline bool Create(const Graphics::Display &display);
+	inline bool Create(const Display &display);
 	inline void Destroy(void);
 
 	inline bool Show(void);
@@ -103,7 +106,7 @@ namespace Qt4Viewport { /****************************** Qt4Viewport Namespace */
 		sfActiveValid   = sfActive|sfExposed|sfFocused|sfValid
 	};
 	/******************* MARSHMALLOW */
-	Graphics::Display dpy;
+	Display           dpy;
 	Math::Size2i      wsize;
 	Math::Size2f      vsize;
 	int               flags;
@@ -112,7 +115,7 @@ namespace Qt4Viewport { /****************************** Qt4Viewport Namespace */
 	QApplication     *application(0);
 	Widget           *window(0);
 
-} /**************************************************** Qt4Viewport Namespace */
+}
 
 class Qt4Viewport::Widget : public QGLWidget
 {
@@ -130,8 +133,6 @@ protected: /* virtual */
 	VIRTUAL void
 	initializeGL()
 	{
-		using namespace Graphics::OpenGL;
-
 		/* extensions */
 
 		Extensions::Initialize();
@@ -213,8 +214,6 @@ protected: /* virtual */
 bool
 Qt4Viewport::Initialize(void)
 {
-	using namespace Graphics;
-
 	/* default display display */
 	dpy.depth      = MARSHMALLOW_VIEWPORT_DEPTH;
 	dpy.fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
@@ -281,10 +280,8 @@ Qt4Viewport::Reset(int state)
 }
 
 bool
-Qt4Viewport::Create(const Graphics::Display &display)
+Qt4Viewport::Create(const Display &display)
 {
-	using namespace Graphics;
-
 	const QRect &desktop = QApplication::desktop()->availableGeometry();
 
 	dpy = display;
@@ -379,8 +376,6 @@ Qt4Viewport::Create(const Graphics::Display &display)
 void
 Qt4Viewport::Destroy(void)
 {
-	using namespace Graphics;
-
 	/* check for valid state */
 	if (sfValid != (flags & sfValid))
 		return;
@@ -444,9 +439,7 @@ Qt4Viewport::Hide(void)
 	flags &= ~(sfExposed|sfFocused|sfKeyboardFocus|sfMouseFocus);
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Graphics { /************************************ Graphics Namespace */
+} /********************************** Graphics::OpenGL::<anonymous> Namespace */
 
 PFNPROC
 glGetProcAddress(const char *f)
@@ -464,30 +457,33 @@ glGetProcAddress(const char *f)
 	return(conv.fptr);
 }
 
-/********************************************************* Graphics::Viewport */
+} /*********************************************** Graphics::OpenGL Namespace */
 
 bool
 Viewport::Active(void)
 {
-	using namespace Qt4Viewport;
+	using namespace OpenGL::Qt4Viewport;
 	return(sfActiveValid == (flags & sfActiveValid));
 }
 
 bool
 Viewport::Initialize(void)
 {
+	using namespace OpenGL;
 	return(Qt4Viewport::Initialize());
 }
 
 void
 Viewport::Finalize(void)
 {
+	using namespace OpenGL;
 	Qt4Viewport::Finalize();
 }
 
 bool
 Viewport::Setup(const Graphics::Display &display)
 {
+	using namespace OpenGL;
 	Qt4Viewport::Destroy();
 
 	if (!Qt4Viewport::Create(display)) {
@@ -501,12 +497,14 @@ Viewport::Setup(const Graphics::Display &display)
 void
 Viewport::Tick(void)
 {
+	using namespace OpenGL;
 	Qt4Viewport::application->processEvents();
 }
 
 void
 Viewport::SwapBuffer(void)
 {
+	using namespace OpenGL;
 	Qt4Viewport::window->swapBuffers();
 	Painter::Reset();
 }
@@ -514,18 +512,21 @@ Viewport::SwapBuffer(void)
 const Graphics::Display &
 Viewport::Display(void)
 {
+	using namespace OpenGL;
 	return(Qt4Viewport::dpy);
 }
 
 const Math::Size2f &
 Viewport::Size(void)
 {
+	using namespace OpenGL;
 	return(Qt4Viewport::vsize);
 }
 
 const Math::Size2i &
 Viewport::WindowSize(void)
 {
+	using namespace OpenGL;
 	return(Qt4Viewport::wsize);
 }
 

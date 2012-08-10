@@ -73,16 +73,18 @@
  */
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
+namespace { /************************ Graphics::OpenGL::<anonymous> Namespace */
 
-namespace VCViewport { /******************************** VCViewport Namespace */
+namespace VCViewport {
 
 	bool Initialize(void);
 	void Finalize(void);
 
 	void Reset(int state);
 
-	bool Create(const Graphics::Display &display);
+	bool Create(const Display &display);
 	void Destroy(void);
 
 	void SwapBuffer(void);
@@ -128,7 +130,7 @@ namespace VCViewport { /******************************** VCViewport Namespace */
 	};
 
 	/************************* MARSHMALLOW */
-	Graphics::Display         dpy;
+	Display                   dpy;
 	Math::Size2i              wsize;
 	Math::Size2f              vsize;
 	int                       flags;
@@ -142,13 +144,11 @@ namespace VCViewport { /******************************** VCViewport Namespace */
 	EGLSurface                egl_surface;
 	EGLContext                egl_ctx;
 
-} /***************************************************** VCViewport Namespace */
+}
 
 bool
 VCViewport::Initialize(void)
 {
-	using namespace Graphics;
-
 	/* default display display */
 	dpy.depth      = MARSHMALLOW_VIEWPORT_DEPTH;
 	dpy.fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
@@ -221,10 +221,8 @@ VCViewport::Reset(int state)
 }
 
 bool
-VCViewport::Create(const Graphics::Display &display_)
+VCViewport::Create(const Display &display_)
 {
-	using namespace Graphics;
-
 	/*
 	 * Check if already valid (no no)
 	 */
@@ -295,8 +293,6 @@ VCViewport::Create(const Graphics::Display &display_)
 void
 VCViewport::Destroy(void)
 {
-	using namespace Graphics;
-
 	/* check for valid state */
 	if (sfValid != (flags & sfValid))
 		return;
@@ -336,8 +332,6 @@ VCViewport::SwapBuffer(void)
 bool
 VCViewport::CreateGLContext(void)
 {
-	using namespace Graphics::OpenGL;
-
 	/*
 	 * Bind OpenGL API
 	 */
@@ -434,8 +428,6 @@ VCViewport::CreateGLContext(void)
 void
 VCViewport::DestroyGLContext(void)
 {
-	using namespace Graphics::OpenGL;
-
 	if (0 == (flags & sfGLValid))
 		return;
 
@@ -673,8 +665,6 @@ VCViewport::PowerOffTVOutput(void)
 void
 VCViewport::HandleTVOutputCallback(void *, uint32_t reason, uint32_t, uint32_t)
 {
-	using namespace Graphics;
-
 	switch(reason) {
 
 	case VC_SDTV_UNPLUGGED:
@@ -737,9 +727,7 @@ VCViewport::HandleTVOutputCallback(void *, uint32_t reason, uint32_t, uint32_t)
 	}
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Graphics { /************************************ Graphics Namespace */
+} /********************************** Graphics::OpenGL::<anonymous> Namespace */
 
 PFNPROC
 glGetProcAddress(const char *f)
@@ -747,24 +735,26 @@ glGetProcAddress(const char *f)
 	return(eglGetProcAddress(f));
 }
 
-/********************************************************* Graphics::Viewport */
+} /*********************************************** Graphics::OpenGL Namespace */
 
 bool
 Viewport::Active(void)
 {
-	using namespace VCViewport;
+	using namespace OpenGL::VCViewport;
 	return(sfValid == (flags & sfValid));
 }
 
 bool
 Viewport::Initialize(void)
 {
+	using namespace OpenGL;
 	return(VCViewport::Initialize());
 }
 
 void
 Viewport::Finalize(void)
 {
+	using namespace OpenGL;
 	VCViewport::Finalize();
 }
 
@@ -772,6 +762,7 @@ bool
 Viewport::Setup(const Graphics::Display &display)
 {
 	using namespace Core;
+	using namespace OpenGL;
 
 	VCViewport::Destroy();
 
@@ -793,6 +784,7 @@ Viewport::Setup(const Graphics::Display &display)
 void
 Viewport::Tick(void)
 {
+	using namespace OpenGL;
 	if (VCViewport::sfReset == (VCViewport::flags & VCViewport::sfReset)) {
 		MMINFO("Viewport reset in progress!");
 		VCViewport::flags ^= VCViewport::sfReset;
@@ -803,6 +795,7 @@ Viewport::Tick(void)
 void
 Viewport::SwapBuffer(void)
 {
+	using namespace OpenGL;
 	VCViewport::SwapBuffer();
 	Painter::Reset();
 }
@@ -810,18 +803,21 @@ Viewport::SwapBuffer(void)
 const Graphics::Display &
 Viewport::Display(void)
 {
+	using namespace OpenGL;
 	return(VCViewport::dpy);
 }
 
 const Math::Size2f &
 Viewport::Size(void)
 {
+	using namespace OpenGL;
 	return(VCViewport::vsize);
 }
 
 const Math::Size2i &
 Viewport::WindowSize(void)
 {
+	using namespace OpenGL;
 	return(VCViewport::wsize);
 }
 

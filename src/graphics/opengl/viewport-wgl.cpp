@@ -272,7 +272,7 @@ HandleKeyEvent(int keycode, bool down)
 bool
 GLCreateSurface(uint8_t vsync)
 {
-	using namespace Graphics::OpenGL;
+	using namespace OpenGL;
 
 	/* create wiggle context */
 	if (!(s_data.ctx = wglCreateContext(s_data.dctx))) {

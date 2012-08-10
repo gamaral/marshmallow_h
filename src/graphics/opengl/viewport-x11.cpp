@@ -72,15 +72,18 @@
  */
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
-namespace X11Viewport { /****************************** X11Viewport Namespace */
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
+namespace { /************************ Graphics::OpenGL::<anonymous> Namespace */
+
+namespace X11Viewport {
 
 	inline bool Initialize(void);
 	inline void Finalize(void);
 
 	inline void Reset(int state);
 
-	inline bool Create(const Graphics::Display &display);
+	inline bool Create(const Display &display);
 	inline void Destroy(void);
 
 	inline bool Show(void);
@@ -127,13 +130,13 @@ namespace X11Viewport { /****************************** X11Viewport Namespace */
 	};
 
 	/******************* MARSHMALLOW */
-	Graphics::Display   dpy;
+	Display   dpy;
 	Math::Size2i        wsize;
 	Math::Size2f        vsize;
 	int                 flags;
 
 	/*************************** X11 */
-	Display            *xdpy;
+	::Display          *xdpy;
 	Window              xroot;
 	Window              xwindow;
 	XVisualInfo         xvinfo;
@@ -149,13 +152,11 @@ namespace X11Viewport { /****************************** X11Viewport Namespace */
 	GLXContext          glx_ctx;
 #endif
 
-} /**************************************************** X11Viewport Namespace */
+}
 
 bool
 X11Viewport::Initialize(void)
 {
-	using namespace Graphics;
-
 	/* default display display */
 	dpy.depth      = MARSHMALLOW_VIEWPORT_DEPTH;
 	dpy.fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
@@ -284,10 +285,8 @@ X11Viewport::Reset(int state)
 }
 
 bool
-X11Viewport::Create(const Graphics::Display &display)
+X11Viewport::Create(const Display &display)
 {
-	using namespace Graphics;
-
 	/* sanity checks */
 	assert(sfX11Display == (flags & sfX11Display)
 	    && "No valid X11 display!");
@@ -373,8 +372,6 @@ X11Viewport::Create(const Graphics::Display &display)
 void
 X11Viewport::Destroy(void)
 {
-	using namespace Graphics;
-
 	/* check for valid state */
 	if (sfValid != (flags & sfValid))
 		return;
@@ -660,8 +657,6 @@ X11Viewport::CreateGLContext(void)
 void
 X11Viewport::DestroyGLContext(void)
 {
-	using namespace Graphics::OpenGL;
-
 	/* extensions */
 
 	Extensions::Finalize();
@@ -677,8 +672,6 @@ X11Viewport::DestroyGLContext(void)
 bool
 X11Viewport::CreateEGLContext(void)
 {
-	using namespace Graphics::OpenGL;
-
 	/*
 	 * Bind OpenGL API
 	 */
@@ -807,8 +800,6 @@ X11Viewport::DestroyEGLContext(void)
 bool
 X11Viewport::CreateGLXContext(void)
 {
-	using namespace Graphics::OpenGL;
-
 	if (!(glx_ctx = glXCreateContext(xdpy, &xvinfo, 0, GL_TRUE))) {
 		MMERROR("GLX: Failed to create context!");
 		return(false);
@@ -862,9 +853,7 @@ X11Viewport::DestroyGLXContext(void)
 }
 #endif
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Graphics { /************************************ Graphics Namespace */
+} /********************************** Graphics::OpenGL::<anonymous> Namespace */
 
 PFNPROC
 glGetProcAddress(const char *f)
@@ -876,30 +865,34 @@ glGetProcAddress(const char *f)
 #endif
 }
 
-/********************************************************* Graphics::Viewport */
+} /*********************************************** Graphics::OpenGL Namespace */
 
 bool
 Viewport::Active(void)
 {
-	using namespace X11Viewport;
+	using namespace OpenGL::X11Viewport;
 	return(sfActiveValid == (flags & sfActiveValid));
 }
 
 bool
 Viewport::Initialize(void)
 {
+	using namespace OpenGL;
 	return(X11Viewport::Initialize());
 }
 
 void
 Viewport::Finalize(void)
 {
+	using namespace OpenGL;
 	X11Viewport::Finalize();
 }
 
 bool
 Viewport::Setup(const Graphics::Display &display)
 {
+	using namespace OpenGL;
+
 	X11Viewport::Destroy();
 
 	if (!X11Viewport::Create(display)) {
@@ -913,12 +906,14 @@ Viewport::Setup(const Graphics::Display &display)
 void
 Viewport::Tick(void)
 {
+	using namespace OpenGL;
 	X11Viewport::ProcessX11Events();
 }
 
 void
 Viewport::SwapBuffer(void)
 {
+	using namespace OpenGL;
 	X11Viewport::SwapBuffer();
 	Painter::Reset();
 }
@@ -926,18 +921,21 @@ Viewport::SwapBuffer(void)
 const Graphics::Display &
 Viewport::Display(void)
 {
+	using namespace OpenGL;
 	return(X11Viewport::dpy);
 }
 
 const Math::Size2f &
 Viewport::Size(void)
 {
+	using namespace OpenGL;
 	return(X11Viewport::vsize);
 }
 
 const Math::Size2i &
 Viewport::WindowSize(void)
 {
+	using namespace OpenGL;
 	return(X11Viewport::wsize);
 }
 

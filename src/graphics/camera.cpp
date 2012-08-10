@@ -42,7 +42,8 @@
 #include <cmath>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
+namespace Graphics { /************************************ Graphics Namespace */
+namespace { /******************************** Graphics::<anonymous> Namespace */
 
 struct CameraData
 {
@@ -67,9 +68,7 @@ UpdateVisibility(void)
 	s_data.visibility = l_size / s_data.transform.scale();
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Graphics { /************************************ Graphics Namespace */
+} /****************************************** Graphics::<anonymous> Namespace */
 
 void
 Camera::Reset(void)

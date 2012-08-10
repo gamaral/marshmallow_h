@@ -46,7 +46,9 @@
 #include "painter_p.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
+namespace { /************************ Graphics::OpenGL::<anonymous> Namespace */
 
 struct Texture
 {
@@ -136,10 +138,7 @@ UnloadTexture(Texture &data)
 	delete [] data.pixels, data.pixels = 0;
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Graphics { /************************************ Graphics Namespace */
-namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
+} /********************************** Graphics::OpenGL::<anonymous> Namespace */
 
 TextureData::TextureData(void)
     : m_id()
