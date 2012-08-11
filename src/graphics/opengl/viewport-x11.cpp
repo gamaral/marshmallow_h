@@ -37,7 +37,6 @@
 #include "core/logger.h"
 
 #include "event/eventmanager.h"
-#include "event/keyboardevent.h"
 #include "event/quitevent.h"
 #include "event/viewportevent.h"
 
@@ -67,8 +66,6 @@
 /*
  * X11 Viewport Notes
  *
- * Refresh rate is ignored since we don't switch between modes, we assume the
- * user has selected an appropriate mode.
  */
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -130,7 +127,7 @@ namespace X11Viewport {
 	};
 
 	/******************* MARSHMALLOW */
-	Display   dpy;
+	Display             dpy;
 	Math::Size2i        wsize;
 	Math::Size2f        vsize;
 	int                 flags;
@@ -479,7 +476,7 @@ X11Viewport::Show(void)
 
 	XSync(xdpy, False);
 
-	return(flags |= sfExposed);
+	return((flags |= sfExposed));
 }
 
 void
@@ -530,13 +527,15 @@ X11Viewport::CreateX11Window(void)
 	l_swattr.border_pixel = 0;
 	l_swattr.colormap =
 	    XCreateColormap(xdpy, xroot, xvinfo.visual, AllocNone);
-	l_swattr.event_mask = ButtonPressMask
+	l_swattr.event_mask = FocusChangeMask|StructureNotifyMask;
+
+#ifdef MARSHMALLOW_INPUT_UNIX_X11
+	l_swattr.event_mask |= ButtonPressMask
 	    | ButtonReleaseMask
-	    | FocusChangeMask
 	    | KeyPressMask
 	    | KeyReleaseMask
-	    | PointerMotionMask
-	    | StructureNotifyMask;
+	    | PointerMotionMask;
+#endif
 
 	int l_window_x = 0;
 	int l_window_y = 0;

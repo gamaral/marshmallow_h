@@ -55,6 +55,11 @@
 #include "headers.h"
 #include "extensions.h"
 
+/*
+ * SDL Viewport Notes
+ *
+ */
+
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 namespace OpenGL { /****************************** Graphics::OpenGL Namespace */

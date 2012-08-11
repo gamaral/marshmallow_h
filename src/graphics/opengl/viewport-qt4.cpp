@@ -63,8 +63,6 @@
 /*
  * Qt4 Viewport Notes
  *
- * Refresh rate is ignored since we don't switch between modes, depth is also
- * ignored. We assume the user has selected an appropriate mode.
  */
 
 MARSHMALLOW_NAMESPACE_BEGIN
