@@ -106,7 +106,7 @@ namespace X11Viewport {
 	enum StateFlag
 	{
 		sfUninitialized = 0,
-		sfActive        = (1 << 0),
+		sfReady         = (1 << 0),
 		sfX11Display    = (1 << 1),
 		sfX11Window     = (1 << 2),
 		sfGLDisplay     = (1 << 3),
@@ -123,7 +123,7 @@ namespace X11Viewport {
 		sfGLValid       = sfGLContext|sfGLCurrent,
 #endif
 		sfValid         = sfX11Valid|sfGLValid,
-		sfActiveValid   = sfActive|sfExposed|sfFocused|sfValid
+		sfActive        = sfReady|sfValid|sfExposed|sfFocused
 	};
 
 	/******************* MARSHMALLOW */
@@ -356,7 +356,7 @@ X11Viewport::Create(const Display &display)
 
 	/* activate */
 
-	flags |= sfActive;
+	flags |= sfReady;
 
 	/* broadcast */
 
@@ -375,7 +375,7 @@ X11Viewport::Destroy(void)
 
 	/* deactivate */
 
-	flags &= ~(sfActive);
+	flags &= ~(sfReady);
 
 	/* hide viewport if exposed */
 	if (sfExposed == (flags & sfExposed))
@@ -870,7 +870,7 @@ bool
 Viewport::Active(void)
 {
 	using namespace OpenGL::X11Viewport;
-	return(sfActiveValid == (flags & sfActiveValid));
+	return(sfActive == (flags & sfActive));
 }
 
 bool
@@ -903,7 +903,7 @@ Viewport::Setup(const Graphics::Display &display)
 }
 
 void
-Viewport::Tick(void)
+Viewport::Tick(float)
 {
 	using namespace OpenGL;
 	X11Viewport::ProcessX11Events();

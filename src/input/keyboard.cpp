@@ -78,7 +78,7 @@ Keyboard::Finalize(void)
 }
 
 void
-Keyboard::Tick(void)
+Keyboard::Tick(float)
 {
 #ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
 	Input::Linux::EventDevice::TickKeyboard();

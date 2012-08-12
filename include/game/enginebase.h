@@ -125,7 +125,7 @@ namespace Game
 	public: /* virtual */
 
 		virtual void second(void);
-		virtual void tick(void);
+		virtual void tick(float delta);
 
 		VIRTUAL int run(void);
 		VIRTUAL void stop(int exit_code = 0);

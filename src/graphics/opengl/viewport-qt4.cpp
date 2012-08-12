@@ -88,7 +88,7 @@ namespace Qt4Viewport {
 	enum StateFlag
 	{
 		sfUninitialized = 0,
-		sfActive        = (1 << 0),
+		sfReady         = (1 << 0),
 
 		sfApplication   = (1 << 1),
 		sfWidget        = (1 << 2),
@@ -101,7 +101,7 @@ namespace Qt4Viewport {
 
 		sfTerminated    = (1 << 7),
 		sfValid         = sfApplication|sfWidget,
-		sfActiveValid   = sfActive|sfExposed|sfFocused|sfValid
+		sfActive        = sfReady|sfValid|sfExposed|sfFocused
 	};
 	/******************* MARSHMALLOW */
 	Display           dpy;
@@ -361,7 +361,7 @@ Qt4Viewport::Create(const Display &display)
 
 	/* activate */
 
-	flags |= sfActive;
+	flags |= sfReady;
 
 	/* broadcast */
 
@@ -378,7 +378,7 @@ Qt4Viewport::Destroy(void)
 	if (sfValid != (flags & sfValid))
 		return;
 
-	flags &= ~(sfActive);
+	flags &= ~(sfReady);
 
 	/* hide viewport if exposed */
 	if (sfExposed == (flags & sfExposed))
@@ -461,7 +461,7 @@ bool
 Viewport::Active(void)
 {
 	using namespace OpenGL::Qt4Viewport;
-	return(sfActiveValid == (flags & sfActiveValid));
+	return(sfActive == (flags & sfActive));
 }
 
 bool
@@ -493,7 +493,7 @@ Viewport::Setup(const Graphics::Display &display)
 }
 
 void
-Viewport::Tick(void)
+Viewport::Tick(float)
 {
 	using namespace OpenGL;
 	Qt4Viewport::application->processEvents();

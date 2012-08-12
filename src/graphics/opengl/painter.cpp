@@ -201,8 +201,6 @@ GLPainter::Initialize(void)
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 
-	glEnable(GL_TEXTURE_2D);
-
 	++session_id;
 	last_texture_id = Core::Identifier();
 

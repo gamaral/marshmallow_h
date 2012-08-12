@@ -281,7 +281,7 @@ EngineBase::run(void)
 	m_p->valid   = true;
 	m_p->running = true;
 
-	tick();
+	tick(.0f);
 	update(.0f);
 	l_tick = NOW() - l_tick_target;
 
@@ -350,7 +350,7 @@ EngineBase::run(void)
 		/*
 		 * Tick
 		 */
-		tick();
+		tick(static_cast<float>(m_p->delta_time) / MILLISECONDS_PER_SECOND);
 
 		m_p->delta_time = NOW() - l_tick;
 	}
@@ -404,13 +404,13 @@ EngineBase::factory(void) const
 }
 
 void
-EngineBase::tick(void)
+EngineBase::tick(float delta)
 {
 	using namespace Input;
 
-	Viewport::Tick();
-	Keyboard::Tick();
-	Joystick::Tick();
+	Viewport::Tick(delta);
+	Keyboard::Tick(delta);
+	Joystick::Tick(delta);
 
 	if (m_p->event_manager) m_p->event_manager->execute();
 	else MMWARNING("No event manager!");

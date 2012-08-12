@@ -82,7 +82,7 @@ namespace SDLViewport {
 	enum StateFlag
 	{
 		sfUninitialized = 0,
-		sfActive        = (1 << 0),
+		sfReady         = (1 << 0),
 
 		sfSDLInit       = (1 << 1),
 		sfSDLSurface    = (1 << 2),
@@ -95,7 +95,7 @@ namespace SDLViewport {
 
 		sfTerminated    = (1 << 7),
 		sfValid         = sfSDLInit|sfSDLSurface,
-		sfActiveValid   = sfActive|sfExposed|sfFocused|sfValid
+		sfActive        = sfReady|sfValid|sfExposed|sfFocused
 	};
 	/******************* MARSHMALLOW */
 	Display           dpy;
@@ -277,7 +277,7 @@ SDLViewport::Create(const Display &display)
 
 	/* activate */
 
-	flags |= sfActive;
+	flags |= sfReady;
 
 	/* broadcast */
 
@@ -296,7 +296,7 @@ SDLViewport::Destroy(void)
 
 	/* deactivate */
 
-	flags &= ~(sfActive);
+	flags &= ~(sfReady);
 
 	/* broadcast */
 
@@ -406,7 +406,7 @@ bool
 Viewport::Active(void)
 {
 	using namespace OpenGL::SDLViewport;
-	return(sfActiveValid == (flags & sfActiveValid));
+	return(sfActive == (flags & sfActive));
 }
 
 bool
@@ -438,7 +438,7 @@ Viewport::Setup(const Graphics::Display &display)
 }
 
 void
-Viewport::Tick(void)
+Viewport::Tick(float)
 {
 	using namespace OpenGL;
 	SDLViewport::ProcessEvents();

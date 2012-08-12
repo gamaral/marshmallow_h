@@ -85,7 +85,7 @@ namespace Viewport { /************************** Graphics::Viewport Namespace */
 	 * viewport related messages.
 	 */
 	MARSHMALLOW_GRAPHICS_EXPORT
-	void Tick(void);
+	void Tick(float delta);
 
 	/*
 	 * Viewport::SwapBuffer is called after all rendering calls have

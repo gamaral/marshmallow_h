@@ -54,7 +54,7 @@ namespace Joystick { /***************************** Input::Joystick Namespace */
 	void Finalize(void);
 
 	MARSHMALLOW_INPUT_EXPORT
-	void Tick(void);
+	void Tick(float delta);
 
 } /************************************************ Input::Joystick Namespace */
 } /********************************************************** Input Namespace */

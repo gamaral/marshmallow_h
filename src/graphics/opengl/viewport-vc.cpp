@@ -63,7 +63,7 @@
 /*
  * This is used to give the display time to settle.
  */
-#define VC_DISPLAY_SETTLE_SECS 3
+#define VC_DISPLAY_SETTLE_SECS 3.f
 
 /*
  * VC Viewport Notes
@@ -79,54 +79,55 @@ namespace { /************************ Graphics::OpenGL::<anonymous> Namespace */
 
 namespace VCViewport {
 
-	bool Initialize(void);
-	void Finalize(void);
+	inline bool Initialize(void);
+	inline void Finalize(void);
 
-	void Reset(int state);
+	inline void Reset(int state);
+	inline void Tick(float delta);
 
-	bool Create(const Display &display);
-	void Destroy(void);
+	inline bool Create(const Display &display);
+	inline void Destroy(void);
 
-	void SwapBuffer(void);
+	inline void SwapBuffer(void);
 
-	bool CreateGLContext(void);
-	void DestroyGLContext(void);
+	inline bool CreateGLContext(void);
+	inline void DestroyGLContext(void);
 
-	bool CreateVCWindow(void);
-	void DestroyVCWindow(void);
+	inline bool CreateVCWindow(void);
+	inline void DestroyVCWindow(void);
 
-	bool PowerOnTVOutput(uint16_t &did);
-	void PowerOffTVOutput(void);
-	void HandleTVOutputCallback(void *, uint32_t, uint32_t, uint32_t);
-
-	void LinuxKBEvents(void);
+	inline bool PowerOnTVOutput(uint16_t &did);
+	inline void PowerOffTVOutput(void);
+	inline void HandleTVOutputCallback(void *, uint32_t, uint32_t, uint32_t);
 
 	enum StateFlag
 	{
 		sfUninitialized = 0,
 
-		sfActive        = (1 <<  0),
+		sfReady         = (1 <<  0),
 		sfVCInit        = (1 <<  1),
 		sfVCDisplay     = (1 <<  2),
 		sfVCWindow      = (1 <<  3),
 		sfVCTV          = (1 <<  4),
+		sfVCSettled     = (1 <<  5),
 
-		sfGLDisplay     = (1 <<  5),
-		sfGLSurface     = (1 <<  6),
-		sfGLContext     = (1 <<  7),
-		sfGLCurrent     = (1 <<  8),
+		sfGLDisplay     = (1 <<  6),
+		sfGLSurface     = (1 <<  7),
+		sfGLContext     = (1 <<  8),
+		sfGLCurrent     = (1 <<  9),
 
-		sfTVStandard    = (1 <<  9),
-		sfTVDVI         = (1 << 10),
-		sfTVHDMI        = (1 << 11),
+		sfTVStandard    = (1 << 10),
+		sfTVDVI         = (1 << 11),
+		sfTVHDMI        = (1 << 12),
 
-		sfReset         = (1 << 12),
-		sfTerminated    = (1 << 13),
+		sfReset         = (1 << 13),
+		sfTerminated    = (1 << 14),
 		sfVCValid       = sfVCInit|sfVCDisplay|sfVCWindow|sfVCTV,
 		sfGLValid       = sfGLDisplay|sfGLSurface|sfGLContext|sfGLCurrent,
 		sfTVStates      = sfTVStandard|sfTVDVI|sfTVHDMI,
 		sfValid         = sfVCValid|sfGLValid,
-		sfActiveValid   = sfActive|sfValid
+		sfReadyValid    = sfReady|sfValid,
+		sfActive        = sfReadyValid|sfVCSettled
 	};
 
 	/************************* MARSHMALLOW */
@@ -138,6 +139,7 @@ namespace VCViewport {
 	/*************************** VIDEOCORE */
 	DISPMANX_DISPLAY_HANDLE_T vc_dpy;
 	EGL_DISPMANX_WINDOW_T     vc_window;
+	float                     vc_stimer;
 
 	/********************************* EGL */
 	EGLDisplay                egl_dpy;
@@ -163,6 +165,7 @@ VCViewport::Initialize(void)
 	 */
 	bcm_host_init();
 	vc_tv_register_callback(VCViewport::HandleTVOutputCallback, 0);
+	vc_tv_power_off();
 	flags |= sfVCInit;
 
 	/*
@@ -214,10 +217,32 @@ VCViewport::Reset(int state)
 
 	vc_dpy = 0;
 	memset(&vc_window, 0, sizeof(vc_window));
+	vc_stimer = .0f;
 
 	egl_dpy     = EGL_NO_DISPLAY;
 	egl_surface = EGL_NO_SURFACE;
 	egl_ctx     = EGL_NO_CONTEXT;
+}
+
+void
+VCViewport::Tick(float delta)
+{
+	/* settle timer */
+	if (sfValid == (flags & (sfValid|sfVCSettled))) {
+		if ((vc_stimer += delta) >= VC_DISPLAY_SETTLE_SECS) {
+			vc_stimer = .0f;
+			flags |= sfVCSettled;
+			MMDEBUG("VC: Display should be settled now.");
+		}
+	}
+	else vc_stimer = .0f;
+
+	/* reset viewport */
+	if (sfReset == (flags & sfReset)) {
+		MMINFO("Viewport reset in progress!");
+		flags ^= sfReset;
+		Viewport::Setup(dpy);
+	}
 }
 
 bool
@@ -299,7 +324,7 @@ VCViewport::Destroy(void)
 
 	/* deactivate */
 
-	flags &= ~(sfActive);
+	flags &= ~(sfReady);
 
 	/* broadcast */
 
@@ -515,7 +540,7 @@ VCViewport::CreateVCWindow(void)
 	l_src_rect.width  = l_dst_rect.width  << 16;
 	l_src_rect.height = l_dst_rect.height << 16;
 
-	MMINFO("VC: Display size (" << s_data.wsize.width << "x" << s_data.wsize.height << ")");
+	MMINFO("VC: Display size (" << wsize.width << "x" << wsize.height << ")");
 
 	DISPMANX_UPDATE_HANDLE_T l_dispman_update = vc_dispmanx_update_start(0);
 	if (l_dispman_update == DISPMANX_NO_HANDLE) {
@@ -580,9 +605,6 @@ VCViewport::PowerOnTVOutput(uint16_t &display_id)
 {
 	uint16_t l_display;
 
-	/* turn off display */
-	vc_tv_power_off();
-
 	/* Get current TV state */
 	TV_GET_STATE_RESP_T l_tvstate;
 	if (vc_tv_get_state(&l_tvstate) != 0) {
@@ -601,7 +623,7 @@ VCViewport::PowerOnTVOutput(uint16_t &display_id)
 		if (0 != vc_tv_hdmi_power_on_preferred()) {
 			MMERROR("HDMI: Failed to power on.");
 			return(false);
-		}
+		} else MMINFO("VC: HDMI was powered on.");
 	}
 
 	/*
@@ -610,7 +632,7 @@ VCViewport::PowerOnTVOutput(uint16_t &display_id)
 	else if (0 != vc_tv_sdtv_power_on(SDTV_MODE_NTSC, 0)) {
 		MMERROR("SDTV: Failed to power on.");
 		return(false);
-	}
+	} else MMINFO("VC: SDTV was powered on.");
 
 	/* update state */
 	if (0 != vc_tv_get_state(&l_tvstate)) {
@@ -659,7 +681,7 @@ VCViewport::PowerOffTVOutput(void)
 	vc_tv_power_off();
 
 	/* clear all TV states */
-	flags &= ~(sfVCTV|sfTVStates);
+	flags &= ~(sfVCTV|sfTVStates|sfVCSettled);
 }
 
 void
@@ -669,22 +691,22 @@ VCViewport::HandleTVOutputCallback(void *, uint32_t reason, uint32_t, uint32_t)
 
 	case VC_SDTV_UNPLUGGED:
 		MMINFO("VC_SDTV_UNPLUGGED");
-		if ((sfActiveValid|sfTVStandard)
-		    != (flags & (sfActiveValid|sfTVStandard)))
+		if ((sfReadyValid|sfTVStandard)
+		    != (flags & (sfReadyValid|sfTVStandard)))
 			break;
 
 		MMINFO("Viewport deactivated!");
-		flags ^= sfActive;
+		flags ^= sfReady;
 		break;
 
 	case VC_HDMI_UNPLUGGED:
 		MMINFO("VC_HDMI_UNPLUGGED");
-		if ((sfActiveValid|sfTVDVI|sfTVHDMI)
-		    != (flags & (sfActiveValid|sfTVDVI|sfTVHDMI)))
+		if ((sfReadyValid|sfTVDVI|sfTVHDMI)
+		    != (flags & (sfReadyValid|sfTVDVI|sfTVHDMI)))
 			break;
 
 		MMINFO("Viewport deactivated!");
-		flags ^= sfActive;
+		flags ^= sfReady;
 
 		/* we fallback to StandardTV mode */
 		MMINFO("Viewport reset flagged!");
@@ -693,8 +715,8 @@ VCViewport::HandleTVOutputCallback(void *, uint32_t reason, uint32_t, uint32_t)
 
 	case VC_SDTV_STANDBY:
 	case VC_HDMI_STANDBY:
-		MMINFO(reason == VC_SDTV_STANDBY ?
-		    "VC_SDTV_STANDBY" : "VC_HDMI_STANDBY");
+		MMINFO((reason == VC_SDTV_STANDBY ?
+		    "VC_SDTV_STANDBY" : "VC_HDMI_STANDBY"));
 		if (0 == (flags & sfValid))
 			break;
 
@@ -709,18 +731,18 @@ VCViewport::HandleTVOutputCallback(void *, uint32_t reason, uint32_t, uint32_t)
 			break;
 
 		MMINFO("Viewport Activated");
-		flags |= sfActive;
+		flags |= sfReady;
 		break;
 
 	case VC_HDMI_DVI:
 	case VC_HDMI_HDMI:
-		MMINFO(reason == VC_HDMI_DVI ?
-		    "VC_HDMI_DVI" : "VC_HDMI_HDMI");
+		MMINFO((reason == VC_HDMI_DVI ?
+		    "VC_HDMI_DVI" : "VC_HDMI_HDMI"));
 		if (0 == (flags & sfValid))
 			break;
 
 		MMINFO("Viewport Activated");
-		flags |= sfActive;
+		flags |= sfReady;
 		break;
 
 	default: MMINFO("TVCB: Unknown!");
@@ -741,7 +763,7 @@ bool
 Viewport::Active(void)
 {
 	using namespace OpenGL::VCViewport;
-	return(sfValid == (flags & sfValid));
+	return(sfActive == (flags & sfActive));
 }
 
 bool
@@ -771,25 +793,14 @@ Viewport::Setup(const Graphics::Display &display)
 		return(false);
 	}
 
-	/* TV settle timer */
-	for (int i = VC_DISPLAY_SETTLE_SECS; i > 0; --i) {
-		MMINFO("VC: Allowing display to settle... " << i);
-		Platform::Sleep(1000);
-	}
-	MMINFO("VC: Display should be settled now.");
-
 	return(true);
 }
 
 void
-Viewport::Tick(void)
+Viewport::Tick(float delta)
 {
 	using namespace OpenGL;
-	if (VCViewport::sfReset == (VCViewport::flags & VCViewport::sfReset)) {
-		MMINFO("Viewport reset in progress!");
-		VCViewport::flags ^= VCViewport::sfReset;
-		Setup(VCViewport::dpy);
-	}
+	VCViewport::Tick(delta);
 }
 
 void

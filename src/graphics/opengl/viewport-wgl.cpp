@@ -90,7 +90,7 @@ namespace WGLViewport {
 	enum StateFlag
 	{
 		sfUninitialized = 0,
-		sfActive        = (1 << 0),
+		sfReady         = (1 << 0),
 		sfW32Class      = (1 << 1),
 		sfW32Window     = (1 << 2),
 		sfGLContext     = (1 << 3),
@@ -101,7 +101,7 @@ namespace WGLViewport {
 		sfW32Valid      = sfW32Class|sfW32Window,
 		sfGLValid       = sfGLContext|sfGLCurrent,
 		sfValid         = sfW32Valid|sfGLValid,
-		sfActiveValid   = sfActive|sfExposed|sfFocused|sfValid
+		sfActive        = sfReady|sfValid|sfExposed|sfFocused
 	};
 
 	/******************* MARSHMALLOW */
@@ -294,7 +294,7 @@ WGLViewport::Destroy(void)
 
 	/* deactivate */
 
-	flags &= ~(sfActive);
+	flags &= ~(sfReady);
 
 	/* hide viewport if exposed */
 	if (sfExposed == (flags & sfExposed))
@@ -539,9 +539,9 @@ WGLViewport::ProcessW32Events(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 	case WM_ACTIVATE:
 		if (wParam != WA_INACTIVE)
-			flags |= sfActive;
+			flags |= sfReady;
 		else
-			flags &= ~(sfActive);
+			flags &= ~(sfReady);
 	return(0);
 
 	case WM_SYSCOMMAND:
@@ -579,7 +579,7 @@ bool
 Viewport::Active(void)
 {
 	using namespace OpenGL::WGLViewport;
-	return(sfActiveValid == (flags & sfActiveValid));
+	return(sfActive == (flags & sfActive));
 }
 
 bool
@@ -612,7 +612,7 @@ Viewport::Setup(const Graphics::Display &display)
 }
 
 void
-Viewport::Tick(void)
+Viewport::Tick(float)
 {
 	MSG l_msg;
 	while (PeekMessage(&l_msg, 0, 0, 0, PM_NOREMOVE)) {

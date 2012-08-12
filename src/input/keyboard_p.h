@@ -54,7 +54,7 @@ namespace Keyboard { /***************************** Input::Keyboard Namespace */
 	void Finalize(void);
 
 	MARSHMALLOW_INPUT_EXPORT
-	void Tick(void);
+	void Tick(float delta);
 
 	MARSHMALLOW_INPUT_EXPORT
 	void SetKeyState(Key key, Action action);

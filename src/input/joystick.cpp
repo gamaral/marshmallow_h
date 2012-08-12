@@ -69,7 +69,7 @@ Joystick::Finalize(void)
 }
 
 void
-Joystick::Tick(void)
+Joystick::Tick(float)
 {
 #ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
 	Input::Linux::EventDevice::TickJoystick();
