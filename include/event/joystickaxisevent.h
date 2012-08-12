@@ -56,8 +56,8 @@ namespace Event { /****************************************** Event Namespace */
 
 		JoystickAxisEvent(Input::Joystick::Axis axis,
 		                  int value,
-		                  int min,
-		                  int max,
+		                  int minimum,
+		                  int maximum,
 		                  int fuzz,
 		                  int flat,
 		                  size_t source,
@@ -67,9 +67,9 @@ namespace Event { /****************************************** Event Namespace */
 		Input::Joystick::Axis axis(void) const
 		    { return(static_cast<Input::Joystick::Axis>(code())); }
 
-		int min(void) const;
+		int minimum(void) const;
 
-		int max(void) const;
+		int maximum(void) const;
 
 		int fuzz(void) const;
 

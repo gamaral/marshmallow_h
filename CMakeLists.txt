@@ -119,6 +119,11 @@ if(MARSHMALLOW_OPENGL_SDL)
 	option(MARSHMALLOW_INPUT_MISC_SDL "SDL input event support"  ON)
 endif()
 
+if(MARSHMALLOW_OPENGL_WGL)
+	option(MARSHMALLOW_INPUT_W32_SYSTEM "Windows input event support" ON)
+endif()
+
+
 ####################################################################### CONFIG #
 
 configure_file(

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "graphics/viewport.h"
+#include "graphics/viewport_p.h"
 
 /*!
  * @file
@@ -37,280 +37,106 @@
 #include "core/logger.h"
 
 #include "event/eventmanager.h"
-#include "event/keyboardevent.h"
 #include "event/quitevent.h"
+#include "event/viewportevent.h"
+
+#ifdef MARSHMALLOW_INPUT_W32_SYSTEM
+#  include "input/w32/system.h"
+#endif
 
 #include "graphics/camera.h"
-#include "graphics/painter.h"
-
-#include <list>
+#include "graphics/color.h"
+#include "graphics/display.h"
+#include "graphics/painter_p.h"
 
 #include "headers.h"
 #include "extensions.h"
 
+#define W32_CLASS_NAME "marshmallow_wgl"
+
 /*
  * WGL Viewport Notes
  *
- * Refresh rate is ignored since we don't switch between modes, we assume the
- * user has selected an appropriate mode.
  */
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
+namespace Graphics { /************************************ Graphics Namespace */
+namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
+namespace { /************************ Graphics::OpenGL::<anonymous> Namespace */
 
-struct ViewportData
-{
-	HDC          dctx;
-	HGLRC        ctx;
-	HWND         window;
-	Math::Size2i wsize;
-	Math::Size2f size;
-	bool         fullscreen;
-	bool         loaded;
-} s_data;
+namespace WGLViewport {
 
-void
-ResetViewportData(void)
-{
-	s_data.dctx = 0;
-	s_data.ctx = 0;
-	s_data.window = 0;
-	s_data.fullscreen = false;
-	s_data.size.zero();
+	inline bool Initialize(void);
+	inline void Finalize(void);
 
-	s_data.loaded = false;
+	inline void Reset(int state);
+
+	inline bool Create(const Display &display);
+	inline void Destroy(void);
+
+	inline bool Show(void);
+	inline void Hide(void);
+
+	inline void SwapBuffer(void);
+
+	inline bool CreateWGLContext(void);
+	inline void DestroyWGLContext(void);
+
+	inline bool CreateW32Window(void);
+	inline void DestroyW32Window(void);
+	LRESULT CALLBACK ProcessW32Events(HWND hwnd, UINT uMsg,
+	                                  WPARAM wParam, LPARAM lParam);
+
+	enum StateFlag
+	{
+		sfUninitialized = 0,
+		sfActive        = (1 << 0),
+		sfW32Class      = (1 << 1),
+		sfW32Window     = (1 << 2),
+		sfGLContext     = (1 << 3),
+		sfGLCurrent     = (1 << 4),
+		sfExposed       = (1 << 5),
+		sfFocused       = (1 << 6),
+		sfTerminated    = (1 << 7),
+		sfW32Valid      = sfW32Class|sfW32Window,
+		sfGLValid       = sfGLContext|sfGLCurrent,
+		sfValid         = sfW32Valid|sfGLValid,
+		sfActiveValid   = sfActive|sfExposed|sfFocused|sfValid
+	};
+
+	/******************* MARSHMALLOW */
+	Display             dpy;
+	Math::Size2i        wsize;
+	Math::Size2f        vsize;
+	int                 flags;
+
+	/*************************** W32 */
+	HDC                 w32_ctx;
+	HWND                w32_window;
+
+	/*************************** WGL */
+	HGLRC               wgl_ctx;
+
 }
-
-static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-bool GLCreateSurface(uint8_t vsync);
-bool WWCreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen);
 
 bool
-CreateDisplay(uint16_t width, uint16_t height, uint8_t depth, uint8_t refresh,
-              bool fullscreen, uint8_t vsync)
+WGLViewport::Initialize(void)
 {
-	using namespace Graphics;
+	/* default display display */
+	dpy.depth      = MARSHMALLOW_VIEWPORT_DEPTH;
+	dpy.fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
+	dpy.height     = MARSHMALLOW_VIEWPORT_HEIGHT;
+	dpy.vsync      = MARSHMALLOW_VIEWPORT_VSYNC;
+	dpy.width      = MARSHMALLOW_VIEWPORT_WIDTH;
 
-	ResetViewportData();
-
-	/* display */
-
-	if (!WWCreateWindow(width, height, depth, fullscreen)) {
-		MMERROR("W32: Failed to create display.");
-		return(false);
-	}
-
-	/* context */
-
-	if (!GLCreateSurface(vsync)) {
-		MMERROR("WGL: Failed to create surface.");
-		return(false);
-	}
-
-	/* initialize context */
-
-	glViewport(0, 0, s_data.wsize.width, s_data.wsize.height);
-
-	if (glGetError() != GL_NO_ERROR) {
-		MMERROR("WGL failed during initialization.");
-		return(false);
-	}
-
-	/* viewport size */
-
-	if (fullscreen) {
-#if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
-		s_data.size.width = static_cast<float>(width);
-		s_data.size.height = (s_data.size.width * static_cast<float>(s_data.wsize.height)) /
-		    static_cast<float>(s_data.wsize.width);
-#else
-		s_data.size.height = static_cast<float>(height);
-		s_data.size.width = (s_data.size.height * static_cast<float>(s_data.wsize.width)) /
-		    static_cast<float>(s_data.wsize.height);
-#endif
-	}
-	else s_data.size.set(static_cast<float>(width),
-	                     static_cast<float>(height));
-
-	Camera::Update();
-
-	return(s_data.loaded = true);
-}
-
-void
-DestroyDisplay(void)
-{
-	if (s_data.fullscreen)
-		ShowCursor(true);
-
-	if (s_data.ctx) {
-		if (!wglMakeCurrent(0, 0))
-			MMWARNING("WGL: Failed to unset current context");
-
-		if (!wglDeleteContext(s_data.ctx))
-			MMWARNING("WGL: Failed to delete context");
-
-		s_data.ctx = 0;
-	}
-
-	if (s_data.dctx && !ReleaseDC(s_data.window, s_data.dctx))
-		MMWARNING("Failed to release device context");
-	s_data.dctx = 0;
-
-	if (s_data.window && !DestroyWindow(s_data.window))
-		MMWARNING("Failed to destroy window");
-	s_data.window = 0;
-
-	if (!UnregisterClass("marshmallow_wgl", GetModuleHandle(0)))
-		MMWARNING("Failed to unregister window class");
-
-	s_data.ctx    = 0;
-	s_data.dctx   = 0;
-	s_data.loaded = false;
-	s_data.window = 0;
-}
-
-void
-HandleKeyEvent(int keycode, bool down)
-{
-	typedef std::list<Event::KBKeys> KeyList;
-	static KeyList s_keys_pressed;
-
-	Event::KBKeys l_key = Event::KEY_NONE;
-	Event::KBActions l_action =
-	    (down ? Event::KeyPressed : Event::KeyReleased);
+	Reset(sfUninitialized);
 
 	/*
-	 * Win32 virtual key codes for alphanumerical chars correspond
-	 * to character values themselfs
+	 * Register window class
 	 */
-	if (keycode >= '0' && keycode <= '9')
-		l_key = static_cast<Event::KBKeys>(keycode);
-	else if (keycode >= 'A' && keycode <= 'Z')
-		l_key = static_cast<Event::KBKeys>(Event::KEY_A + (keycode - 'A'));
-	else
-		switch (keycode) {
-		case VK_BACK:         l_key = Event::KEY_BACKSPACE; break;
-		case VK_CAPITAL:      l_key = Event::KEY_CAPS_LOCK; break;
-		case VK_CLEAR:        l_key = Event::KEY_CLEAR; break;
-		case VK_DECIMAL:      l_key = Event::KEY_KDECIMAL; break;
-		case VK_DELETE:       l_key = Event::KEY_DELETE; break;
-		case VK_DIVIDE:       l_key = Event::KEY_KDIVIDE; break;
-		case VK_DOWN:         l_key = Event::KEY_DOWN; break;
-		case VK_END:          l_key = Event::KEY_END; break;
-		case VK_ESCAPE:       l_key = Event::KEY_ESCAPE; break;
-		case VK_F10:          l_key = Event::KEY_F10; break;
-		case VK_F11:          l_key = Event::KEY_F11; break;
-		case VK_F12:          l_key = Event::KEY_F12; break;
-		case VK_F13:          l_key = Event::KEY_F13; break;
-		case VK_F14:          l_key = Event::KEY_F14; break;
-		case VK_F15:          l_key = Event::KEY_F15; break;
-		case VK_F1:           l_key = Event::KEY_F1; break;
-		case VK_F2:           l_key = Event::KEY_F2; break;
-		case VK_F3:           l_key = Event::KEY_F3; break;
-		case VK_F4:           l_key = Event::KEY_F4; break;
-		case VK_F5:           l_key = Event::KEY_F5; break;
-		case VK_F6:           l_key = Event::KEY_F6; break;
-		case VK_F7:           l_key = Event::KEY_F7; break;
-		case VK_F8:           l_key = Event::KEY_F8; break;
-		case VK_F9:           l_key = Event::KEY_F9; break;
-		case VK_HELP:         l_key = Event::KEY_HELP; break;
-		case VK_HOME:         l_key = Event::KEY_HOME; break;
-		case VK_INSERT:       l_key = Event::KEY_INSERT; break;
-		case VK_LCONTROL:     l_key = Event::KEY_CONTROL_R; break;
-		case VK_LEFT:         l_key = Event::KEY_LEFT; break;
-		case VK_SHIFT:        l_key = Event::KEY_SHIFT_L; break;
-		case VK_MENU:         l_key = Event::KEY_MENU; break;
-		case VK_MULTIPLY:     l_key = Event::KEY_KMULTIPLY; break;
-		case VK_NEXT:         l_key = Event::KEY_PAGE_DOWN; break;
-		case VK_NUMLOCK:      l_key = Event::KEY_NUM_LOCK; break;
-		case VK_NUMPAD0:      l_key = Event::KEY_K0; break;
-		case VK_NUMPAD1:      l_key = Event::KEY_K1; break;
-		case VK_NUMPAD2:      l_key = Event::KEY_K2; break;
-		case VK_NUMPAD3:      l_key = Event::KEY_K3; break;
-		case VK_NUMPAD4:      l_key = Event::KEY_K4; break;
-		case VK_NUMPAD5:      l_key = Event::KEY_K5; break;
-		case VK_NUMPAD6:      l_key = Event::KEY_K6; break;
-		case VK_NUMPAD7:      l_key = Event::KEY_K7; break;
-		case VK_NUMPAD8:      l_key = Event::KEY_K8; break;
-		case VK_NUMPAD9:      l_key = Event::KEY_K9; break;
-		case VK_PAUSE:        l_key = Event::KEY_PAUSE; break;
-		case VK_PRINT:        l_key = Event::KEY_PRINT; break;
-		case VK_PRIOR:        l_key = Event::KEY_PAGE_UP; break;
-		case VK_RCONTROL:     l_key = Event::KEY_CONTROL_L; break;
-		case VK_RETURN:       l_key = Event::KEY_RETURN; break;
-		case VK_RIGHT:        l_key = Event::KEY_RIGHT; break;
-		case VK_RSHIFT:       l_key = Event::KEY_SHIFT_R; break;
-		case VK_SCROLL:       l_key = Event::KEY_SCROLL_LOCK; break;
-		case VK_SPACE:        l_key = Event::KEY_SPACE; break;
-		case VK_TAB:          l_key = Event::KEY_TAB; break;
-		case VK_UP:           l_key = Event::KEY_UP; break;
-		default: MMWARNING("Unknown key pressed!");
-		}
-
-	bool l_key_pressed = false;
-	KeyList::const_iterator l_pressed_key_i;
-	for (l_pressed_key_i  = s_keys_pressed.begin();
-	     l_pressed_key_i != s_keys_pressed.end();
-	     ++l_pressed_key_i)
-		if (*l_pressed_key_i == l_key) {
-			l_key_pressed = true;
-			break;
-		}
-	
-	if (( l_key_pressed && l_action != Event::KeyPressed)
-	 || (!l_key_pressed && l_action == Event::KeyPressed)) {
-		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action));
-		Event::EventManager::Instance()->queue(event);
-
-		if (l_key_pressed) s_keys_pressed.remove(l_key);
-		else s_keys_pressed.push_front(l_key);
-	}
-}
-
-bool
-GLCreateSurface(uint8_t vsync)
-{
-	using namespace OpenGL;
-
-	/* create wiggle context */
-	if (!(s_data.ctx = wglCreateContext(s_data.dctx))) {
-		MMERROR("WGL: Failed to create context");
-		return(false);
-	}
-
-	/* make wgl context current */
-	if (!wglMakeCurrent(s_data.dctx, s_data.ctx)) {
-		MMERROR("WGL: Failed to set current context");
-		return(false);
-	}
-
-	/* extensions */
-
-	Extensions::Initialize();
-
-	/* vsync */
-
-	if (Extensions::wglSwapIntervalEXT) {
-		Extensions::wglSwapIntervalEXT(vsync);
-		if (Extensions::wglGetSwapIntervalEXT
-		    && vsync != Extensions::wglGetSwapInterval())
-			MMERROR("WGL: Swap interval request was ignored!");
-	}
-
-	return(true);
-}
-
-bool
-WWCreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen)
-{
-	s_data.fullscreen = fullscreen;
-	s_data.wsize.set(width, height);
-
 	WNDCLASS l_wc;
-	l_wc.style         = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-	l_wc.lpfnWndProc   = reinterpret_cast<WNDPROC>(WindowProc);
+	l_wc.style         = CS_HREDRAW|CS_VREDRAW|CS_OWNDC;
+	l_wc.lpfnWndProc   = ProcessW32Events;
 	l_wc.cbClsExtra    = 0;
 	l_wc.cbWndExtra    = 0;
 	l_wc.hInstance     = GetModuleHandle(0);
@@ -318,61 +144,339 @@ WWCreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen)
 	l_wc.hCursor       = LoadCursor(0, IDC_ARROW);
 	l_wc.hbrBackground = 0;
 	l_wc.lpszMenuName  = 0;
-	l_wc.lpszClassName = "marshmallow_wgl";
+	l_wc.lpszClassName = W32_CLASS_NAME;
 
 	if (!(RegisterClass(&l_wc))) {
 		MMERROR("Failed to register window class.");
-		return false;
+		return(false);
+	}
+	flags |= sfW32Class;
+
+	/*
+	 * Initial Camera Reset (IMPORTANT)
+	 */
+	Camera::Reset();
+
+	/*
+	 * Initial Background Color (IMPORTANT)
+	 */
+	Painter::SetBackgroundColor(Color::Black());
+
+	return(true);
+}
+
+void
+WGLViewport::Finalize(void)
+{
+	/* set termination flag */
+	flags |= sfTerminated;
+
+	/*
+	 * Destroy viewport if valid
+	 */
+	if (sfValid == (flags & sfValid))
+		Destroy();
+
+	/*
+	 * Unregister window class
+	 */
+	if (!UnregisterClass(W32_CLASS_NAME, GetModuleHandle(0)))
+		MMWARNING("Failed to unregister window class");
+	flags &= ~(sfW32Class);
+
+	/* sanity check */
+	assert(flags == sfTerminated && "We seem to have some stray flags!");
+
+	flags = sfUninitialized;
+}
+
+void
+WGLViewport::Reset(int state)
+{
+	flags = state;
+	vsize.zero();
+	wsize.zero();
+
+	if (state == sfUninitialized) {
+		w32_ctx = 0;
+		w32_window = 0;
+		wgl_ctx = 0;
 	}
 
-	RECT l_warea;
+	/* sanity check */
+	else {
+		assert(0 == w32_ctx && 0 == w32_window
+		    && "[W32] Viewport didn't get destroyed cleanly!");
+		assert(0 == wgl_ctx
+		    && "[WGL] Viewport didn't get destroyed cleanly!");
+	}
+}
+
+bool
+WGLViewport::Create(const Display &display)
+{
+	/*
+	 * Check if already valid (no no)
+	 */
+	if (sfValid == (flags & sfValid))
+		return(false);
+
+	/* assign new display display */
+	dpy = display;
+
+	/*
+	 * Create Window
+	 */
+	if (!CreateW32Window()) {
+		MMERROR("WGL: Failed to create window.");
+		return(false);
+	}
+
+	/*
+	 * Create WGL Context
+	 */
+	if (!CreateWGLContext()) {
+		MMERROR("WGL: Failed to create surface.");
+		DestroyW32Window();
+		return(false);
+	}
+
+	/* sanity check */
+	assert(sfValid == (flags & sfValid)
+	    && "Valid viewport was expected!");
+
+	/* initialize context */
+
+	glViewport(0, 0, wsize.width, wsize.height);
+
+	if (glGetError() != GL_NO_ERROR) {
+		MMERROR("WGL: Failed during initialization.");
+		DestroyWGLContext();
+		DestroyW32Window();
+		return(false);
+	}
+
+	/* viewport size */
+
+	if (dpy.fullscreen) {
+#if MARSHMALLOW_VIEWPORT_LOCK_WIDTH
+		vsize.width = static_cast<float>(dpy.width);
+		vsize.height = (vsize.width * static_cast<float>(wsize.height)) /
+		    static_cast<float>(wsize.width);
+#else
+		vsize.height = static_cast<float>(dpy.height);
+		vsize.width = (vsize.height * static_cast<float>(wsize.width)) /
+		    static_cast<float>(wsize.height);
+#endif
+	}
+	else vsize.set(dpy.width, dpy.height);
+
+	/* sub-systems */
+
+	Camera::Update();
+
+	Painter::Initialize();
+
+	/* broadcast */
+
+	Event::ViewportEvent l_event(Event::ViewportEvent::Created);
+	Event::EventManager::Instance()->dispatch(l_event);
+
+	return(true);
+}
+
+void
+WGLViewport::Destroy(void)
+{
+	/* check for valid state */
+	if (sfValid != (flags & sfValid))
+		return;
+
+	/* deactivate */
+
+	flags &= ~(sfActive);
+
+	/* hide viewport if exposed */
+	if (sfExposed == (flags & sfExposed))
+		Hide();
+
+	/* broadcast */
+
+	if (0 == (flags & sfTerminated)) {
+		Event::ViewportEvent l_event(Event::ViewportEvent::Destroyed);
+		Event::EventManager::Instance()->dispatch(l_event);
+	}
+
+	Painter::Finalize();
+
+	DestroyWGLContext();
+	DestroyW32Window();
+
+	/* sanity check */
+	assert(0 == (flags & ~(sfTerminated|sfW32Class))
+	    && "We seem to have some stray flags!");
+
+	Reset(flags & (sfTerminated|sfW32Class));
+}
+
+bool
+WGLViewport::Show(void)
+{
+	/* sanity checks */
+
+	if (sfValid != (flags & sfValid)) {
+	    assert(false && "Valid viewport was expected!");
+	    return(false);
+	}
+
+	if (sfExposed == (flags & sfExposed))
+	    return(true);
+
+	ShowWindow(w32_window, SW_SHOW);
+	SetForegroundWindow(w32_window);
+	SetActiveWindow(w32_window);
+	SetFocus(w32_window);
+	ShowCursor(!dpy.fullscreen);
+
+	flags |= sfExposed;
+	return(true);
+}
+
+void
+WGLViewport::Hide(void)
+{
+	/* sanity checks */
+
+	if (sfValid != (flags & sfValid)) {
+		assert(false && "Valid viewport was expected!");
+		return;
+	}
+
+	if (0 == (flags & sfExposed))
+		return;
+
+	ShowCursor(dpy.fullscreen);
+	ShowWindow(w32_window, SW_HIDE);
+
+	flags &= ~(sfExposed);
+}
+
+void
+WGLViewport::SwapBuffer(void)
+{
+	assert(sfValid == (flags & sfValid)
+	    && "Attempted to swap buffer with an invalid viewport");
+
+	SwapBuffers(w32_ctx);
+}
+
+bool
+WGLViewport::CreateWGLContext(void)
+{
+	if (!(wgl_ctx = wglCreateContext(w32_ctx))) {
+		MMERROR("WGL: Failed to create context!");
+		return(false);
+	}
+	flags |= sfGLContext;
+
+	if (!wglMakeCurrent(w32_ctx, wgl_ctx)) {
+		MMERROR("WGL: Failed to set current context");
+		return(false);
+	}
+	flags |= sfGLCurrent;
+
+	/* extensions */
+
+	Extensions::Initialize();
+	
+	/* vsync */
+
+	if (Extensions::wglSwapIntervalEXT) {
+		Extensions::wglSwapIntervalEXT(dpy.vsync);
+		if (Extensions::wglGetSwapIntervalEXT
+		    && dpy.vsync != Extensions::wglGetSwapIntervalEXT())
+			MMERROR("WGL: Swap interval request was ignored!");
+	}
+
+	return(true);
+}
+
+void
+WGLViewport::DestroyWGLContext(void)
+{
+	if (0 == (flags & sfGLValid))
+		return;
+
+	if (sfGLCurrent == (flags & sfGLCurrent)) {
+		wglMakeCurrent(0, 0);
+		flags ^= sfGLCurrent;
+	}
+
+	if (sfGLContext == (flags & sfGLContext)) {
+		wglDeleteContext(wgl_ctx), wgl_ctx = 0;
+		flags ^= sfGLContext;
+	}
+}
+
+bool
+WGLViewport::CreateW32Window(void)
+{
+	int l_warea[2];
 	RECT l_wrect;
 
 	/* get desktop size */
-	if (!SystemParametersInfo(SPI_GETWORKAREA, sizeof(RECT), &l_warea, 0)) {
-		l_warea.left   = l_warea.top = 0;
-		l_warea.right  = GetSystemMetrics(SM_CXSCREEN);
-		l_warea.bottom = GetSystemMetrics(SM_CYSCREEN);
-	}
+	l_warea[0] = GetSystemMetrics(SM_CXSCREEN);
+	l_warea[1] = GetSystemMetrics(SM_CYSCREEN);
 
 	DWORD l_wstyle[2];
-	l_wstyle[0] = WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+	l_wstyle[0] = WS_CLIPSIBLINGS|WS_CLIPCHILDREN;
 	l_wstyle[1] = WS_EX_APPWINDOW;
-	if (s_data.fullscreen) {
+
+	/*
+	 * ** FULLSCREEN MODE **
+	 */
+	if (dpy.fullscreen) {
 		l_wstyle[0] |= WS_POPUP;
 		l_wstyle[1] |= WS_EX_TOPMOST;
-		s_data.wsize.set(l_warea.right, l_warea.bottom);
-		l_wrect = l_warea;
-		ShowCursor(false);
+		wsize.set(l_warea[0], l_warea[1]);
+		l_wrect.left = l_wrect.top = 0;
+		l_wrect.right = l_warea[0];
+		l_wrect.bottom = l_warea[1];
 	}
+
+	/*
+	 * ** WINDOW MODE **
+	 */
 	else {
 		l_wstyle[0] |= WS_OVERLAPPEDWINDOW;
 		l_wstyle[1] |= WS_EX_WINDOWEDGE;
-		l_wrect.left   = ((l_warea.right - l_warea.left) - width) / 2;
-		l_wrect.right  = l_wrect.left + width;
-		l_wrect.top    = ((l_warea.bottom - l_warea.top) - height) / 2;
-		l_wrect.bottom = l_wrect.top  + height;
+		wsize.set(dpy.width, dpy.height);
+		l_wrect.left   = (l_warea[0] - dpy.width) / 2;
+		l_wrect.right  = l_wrect.left + dpy.width;
+		l_wrect.top    = (l_warea[1] - dpy.height) / 2;
+		l_wrect.bottom = l_wrect.top  + dpy.height;
 	}
+
 	AdjustWindowRectEx(&l_wrect, l_wstyle[0], false, l_wstyle[1]);
 
 	/* create actual window */
-	s_data.window =
-	    CreateWindowEx(l_wstyle[1], "marshmallow_wgl", MARSHMALLOW_BUILD_TITLE, l_wstyle[0],
+	w32_window =
+	    CreateWindowEx(l_wstyle[1], W32_CLASS_NAME,
+	                   MARSHMALLOW_VIEWPORT_TITLE,
+	                   l_wstyle[0],
 	                   l_wrect.left, l_wrect.top,
-	                   l_wrect.right - l_wrect.left,
+	                   l_wrect.right  - l_wrect.left,
 	                   l_wrect.bottom - l_wrect.top,
-	                   0, 0, l_wc.hInstance, 0);
-	if (!s_data.window) {
-		MMERROR("Failed to create window");
+	                   0, 0, GetModuleHandle(0), 0);
+	if (!w32_window) {
+		MMERROR("W32: Failed to create window");
 		return(false);
 	}
-	ShowWindow(s_data.window, SW_SHOW);
-	SetForegroundWindow(s_data.window);
-	SetFocus(s_data.window);
 
 	/* create device context */
-	if (!(s_data.dctx = GetDC(s_data.window))) {
-		MMERROR("Failed to create device context");
+	if (!(w32_ctx = GetDC(w32_window))) {
+		DestroyWindow(w32_window), w32_window = 0;
+		MMERROR("W32: Failed to create device context");
 		return(false);
 	}
 
@@ -381,9 +485,9 @@ WWCreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen)
 	memset(&l_pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
 	l_pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR);
 	l_pfd.nVersion   = 1;
-	l_pfd.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+	l_pfd.dwFlags    = PFD_DRAW_TO_WINDOW|PFD_SUPPORT_OPENGL|PFD_DOUBLEBUFFER;
 	l_pfd.iPixelType = PFD_TYPE_RGBA;
-	l_pfd.cColorBits = depth;
+	l_pfd.cColorBits = dpy.depth;
 	l_pfd.cRedBits   = 0;
 	l_pfd.cGreenBits = 0;
 	l_pfd.cBlueBits  = 0;
@@ -391,57 +495,77 @@ WWCreateWindow(uint16_t width, uint16_t height, uint8_t depth, bool fullscreen)
 	l_pfd.iLayerType = PFD_MAIN_PLANE;
 
 	unsigned int l_pfindex;
-	if (!(l_pfindex = ChoosePixelFormat(s_data.dctx, &l_pfd))) {
-		MMERROR("Failed to select a pixel format");
+	if (!(l_pfindex = ChoosePixelFormat(w32_ctx, &l_pfd))) {
+		ReleaseDC(w32_window, w32_ctx), w32_ctx = 0;
+		DestroyWindow(w32_window), w32_window = 0;
+		MMERROR("W32: Failed to select a pixel format");
 		return(false);
 	}
 
-	if (!SetPixelFormat(s_data.dctx, l_pfindex, &l_pfd)) {
-		MMERROR("Failed to bind pixel format to window context");
+	if (!SetPixelFormat(w32_ctx, l_pfindex, &l_pfd)) {
+		ReleaseDC(w32_window, w32_ctx), w32_ctx = 0;
+		DestroyWindow(w32_window), w32_window = 0;
+		MMERROR("W32: Failed to bind pixel format to window context");
 		return(false);
 	}
 
+	flags |= sfW32Window;
 	return(true);
 }
 
+void
+WGLViewport::DestroyW32Window(void)
+{
+	ReleaseDC(w32_window, w32_ctx), w32_ctx = 0;
+	DestroyWindow(w32_window), w32_window = 0;
+	flags &= ~(sfW32Window);
+}
+
 LRESULT CALLBACK
-WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+WGLViewport::ProcessW32Events(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg) {
-	case WM_CLOSE: {
-		Event::QuitEvent event(-1);
-		Event::EventManager::Instance()->dispatch(event);
-		return(0);
-	} break;
 
 	case WM_SIZE:
-		return(0);
-	break;
+	return(0);
+
+	case WM_SETFOCUS:
+		flags |= sfFocused;
+	return(0);
+
+	case WM_KILLFOCUS:
+		flags &= ~(sfFocused);
+	return(0);
+
+	case WM_ACTIVATE:
+		if (wParam != WA_INACTIVE)
+			flags |= sfActive;
+		else
+			flags &= ~(sfActive);
+	return(0);
 
 	case WM_SYSCOMMAND:
-		switch (wParam) {
-		case SC_MONITORPOWER:
-		case SC_SCREENSAVE:
-			if (s_data.fullscreen)
-				return(0);
-		break;
-		}
+		if (dpy.fullscreen
+		    && (SC_MONITORPOWER == wParam || SC_SCREENSAVE == wParam))
+			return(0);
 	break;
 
+	case WM_CLOSE:
+		PostQuitMessage(0);
+	return(0);
+
+#ifdef MARSHMALLOW_INPUT_W32_SYSTEM
 	case WM_KEYDOWN:
-		HandleKeyEvent(static_cast<int>(wParam), true);
-		break;
 	case WM_KEYUP:
-		HandleKeyEvent(static_cast<int>(wParam), false);
-		break;
+		if (Input::W32::System::HandleEvent(uMsg, wParam, lParam))
+			return(0);
+#endif
 	}
 
 	return(DefWindowProc(hwnd, uMsg, wParam, lParam));
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Graphics { /************************************ Graphics Namespace */
+} /********************************** Graphics::OpenGL::<anonymous> Namespace */
 
 OpenGL::PFNPROC
 OpenGL::glGetProcAddress(const char *f)
@@ -449,42 +573,42 @@ OpenGL::glGetProcAddress(const char *f)
 	return(reinterpret_cast<PFNPROC>(wglGetProcAddress(f)));
 }
 
-/********************************************************* Graphics::Viewport */
+} /*********************************************** Graphics::OpenGL Namespace */
 
 bool
-Viewport::Initialize(uint16_t width, uint16_t height, uint8_t depth,
-                     bool fullscreen, uint8_t refresh, uint8_t vsync)
+Viewport::Active(void)
 {
-	Camera::Reset();
+	using namespace OpenGL::WGLViewport;
+	return(sfActiveValid == (flags & sfActiveValid));
+}
 
-	if (!CreateDisplay(width, height, depth, refresh, fullscreen, vsync)) {
-		DestroyDisplay();
-		return(false);
-	}
-
-	Painter::Initialize();
-	return(true);
+bool
+Viewport::Initialize(void)
+{
+	using namespace OpenGL;
+	return(WGLViewport::Initialize());
 }
 
 void
 Viewport::Finalize(void)
 {
-	Painter::Finalize();
-
-	DestroyDisplay();
+	using namespace OpenGL;
+	WGLViewport::Finalize();
 }
 
 bool
-Viewport::Redisplay(uint16_t width, uint16_t height, uint8_t depth,
-                    bool fullscreen, uint8_t refresh, uint8_t vsync)
+Viewport::Setup(const Graphics::Display &display)
 {
-	DestroyDisplay();
+	using namespace OpenGL;
 
-	if (!CreateDisplay(width, height, depth, refresh, fullscreen, vsync)) {
-		DestroyDisplay();
+	WGLViewport::Destroy();
+
+	if (!WGLViewport::Create(display)) {
+		WGLViewport::Destroy();
 		return(false);
 	}
-	return(true);
+
+	return(WGLViewport::Show());
 }
 
 void
@@ -492,15 +616,12 @@ Viewport::Tick(void)
 {
 	MSG l_msg;
 	while (PeekMessage(&l_msg, 0, 0, 0, PM_NOREMOVE)) {
-		if (l_msg.message == WM_QUIT) {
-			Event::QuitEvent event(-1);
+		if (GetMessage(&l_msg, 0, 0, 0) > 0)
+			DispatchMessage(&l_msg);
+		else if (WM_QUIT == l_msg.message) {
+			Event::QuitEvent event(static_cast<int>(l_msg.wParam));
 			Event::EventManager::Instance()->dispatch(event);
 			break;
-		}
-
-		if (GetMessage(&l_msg, 0, 0, 0) > 0) {
-			TranslateMessage(&l_msg);
-			DispatchMessage(&l_msg);
 		}
 	}
 }
@@ -508,20 +629,30 @@ Viewport::Tick(void)
 void
 Viewport::SwapBuffer(void)
 {
-	SwapBuffers(s_data.dctx);
+	using namespace OpenGL;
+	WGLViewport::SwapBuffer();
 	Painter::Reset();
+}
+
+const Graphics::Display &
+Viewport::Display(void)
+{
+	using namespace OpenGL;
+	return(WGLViewport::dpy);
 }
 
 const Math::Size2f &
 Viewport::Size(void)
 {
-	return(s_data.size);
+	using namespace OpenGL;
+	return(WGLViewport::vsize);
 }
 
 const Math::Size2i &
 Viewport::WindowSize(void)
 {
-	return(s_data.wsize);
+	using namespace OpenGL;
+	return(WGLViewport::wsize);
 }
 
 const Core::Type &

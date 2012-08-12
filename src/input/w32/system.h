@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/joystickaxisevent.h"
+#pragma once
 
 /*!
  * @file
@@ -34,70 +34,27 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
+#ifndef MARSHMALLOW_INPUT_W32_SYSTEM_H
+#define MARSHMALLOW_INPUT_W32_SYSTEM_H 1
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Event;
+#include "core/environment.h"
+#include "core/namespace.h"
 
-struct JoystickAxisEvent::Private
-{
-	int minimum;
-	int maximum;
-	int fuzz;
-	int flat;
-};
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Input { /****************************************** Input Namespace */
 
-JoystickAxisEvent::JoystickAxisEvent(
-    Input::Joystick::Axis axis_,
-    int value_,
-    int minimum_,
-    int maximum_,
-    int fuzz_,
-    int flat_,
-    size_t source_,
-    MMTIME timestamp_)
-    : InputEvent(JoystickType, axis_, value_, source_, timestamp_)
-    , m_p(new Private)
-{
-	m_p->minimum = minimum_;
-	m_p->maximum = maximum_;
-	m_p->fuzz = fuzz_;
-	m_p->flat = flat_;
-}
+/**** IMPLEMENTATION NOTES *****************************************************
+ *
+ */
+namespace W32 { /*************************************** Input::W32 Namespace */
+namespace System { /**************************** Input::W32::System Namespace */
 
-JoystickAxisEvent::~JoystickAxisEvent(void)
-{
-	delete m_p, m_p = 0;
-}
+	MARSHMALLOW_INPUT_EXPORT
+	bool HandleEvent(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-int
-JoystickAxisEvent::minimum(void) const
-{
-	return(m_p->minimum);
-}
+} /********************************************* Input::W32::System Namespace */
+} /***************************************************** Input::W32 Namespace */
+} /********************************************************** Input Namespace */
+MARSHMALLOW_NAMESPACE_END
 
-int
-JoystickAxisEvent::maximum(void) const
-{
-	return(m_p->maximum);
-}
-
-int
-JoystickAxisEvent::flat(void) const
-{
-	return(m_p->flat);
-}
-
-int
-JoystickAxisEvent::fuzz(void) const
-{
-	return(m_p->fuzz);
-}
-
-const Core::Type &
-JoystickAxisEvent::Type(void)
-{
-	static const Core::Type s_type("Event::JoystickAxisEvent");
-	return(s_type);
-}
-
+#endif

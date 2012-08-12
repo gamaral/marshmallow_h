@@ -243,8 +243,8 @@ InputComponent::handleEvent(const Event::IEvent &e)
 
 		if (l_event.axis() == Joystick::JSA_HX
 		    || l_event.axis() == Joystick::JSA_X) {
-			float l_range  = (l_event.max() - l_event.min()) / 2.f;
-			float l_middle = l_event.min() + l_range;
+			float l_range  = (l_event.maximum() - l_event.minimum()) / 2.f;
+			float l_middle = l_event.minimum() + l_range;
 			float l_value  = (l_event.value() - l_middle) / l_range;
 			float l_fuzz   = l_event.fuzz() / (l_range * 2.f);
 

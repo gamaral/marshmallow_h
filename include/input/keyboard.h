@@ -100,6 +100,7 @@ namespace Keyboard { /***************************** Input::Keyboard Namespace */
 		KBK_SEMICOLON     = ';',
 		KBK_EQUAL         = '=',
 		KBK_EQUALS        = KBK_EQUAL,
+		KBK_QUOTE         = '\'',
 
 		KBK_A             = 'a',
 		KBK_B             = 'b',
@@ -128,9 +129,9 @@ namespace Keyboard { /***************************** Input::Keyboard Namespace */
 		KBK_Y             = 'y',
 		KBK_Z             = 'z',
 
-		KBK_BRACKET_LEFT  = '[',
+		KBK_BRACKET_L     = '[',
 		KBK_BACKSLASH     = '\\',
-		KBK_BRACKET_RIGHT = ']',
+		KBK_BRACKET_R     = ']',
 		KBK_GRAVE         = '`',
 
 		KBK_DELETE        = 127,

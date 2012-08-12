@@ -88,6 +88,10 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-wgl.cpp)
 		add_definitions(-DMARSHMALLOW_OPENGL_WGL)
+
+		if(MARSHMALLOW_INPUT_W32_SYSTEM)
+			add_definitions(-DMARSHMALLOW_INPUT_W32_SYSTEM)
+		endif()
 	elseif(MARSHMALLOW_OPENGL_SDL)
 		find_package(SDL)
 		include_directories(${SDL_INCLUDE_DIR})
