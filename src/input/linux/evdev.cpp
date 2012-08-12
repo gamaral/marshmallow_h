@@ -332,9 +332,9 @@ LinuxKeyboard::handleEvent(struct input_event &event)
 	case KEY_Y:           l_key = Keyboard::KBK_Y; break;
 	case KEY_Z:           l_key = Keyboard::KBK_Z; break;
 
-	case KEY_LEFTBRACE:   l_key = Keyboard::KBK_BRACKET_LEFT; break;
+	case KEY_LEFTBRACE:   l_key = Keyboard::KBK_BRACKET_L; break;
 	case KEY_BACKSLASH:   l_key = Keyboard::KBK_BACKSLASH; break;
-	case KEY_RIGHTBRACE:  l_key = Keyboard::KBK_BRACKET_RIGHT; break;
+	case KEY_RIGHTBRACE:  l_key = Keyboard::KBK_BRACKET_R; break;
 	case KEY_GRAVE:       l_key = Keyboard::KBK_GRAVE; break;
 
 	case KEY_LEFTSHIFT:   l_key = Keyboard::KBK_SHIFT_L; break;

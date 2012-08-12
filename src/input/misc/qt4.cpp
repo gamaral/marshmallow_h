@@ -68,8 +68,8 @@ HandleQt4KeyEvent(const QKeyEvent &e, bool down)
 	if (keycode >= 65 && keycode <= 90)
 		keycode += 32;
 
-	if ((keycode >= 'a' && keycode <= 'z') ||
-	    (keycode >= '0' && keycode <= '9') )
+	if ((keycode >= 'a' && keycode <= 'z')
+	    || (keycode >= '0' && keycode <= '9') )
 		l_key = static_cast<Keyboard::Key>(keycode);
 	switch (keycode) {
 	case Qt::Key_Backspace:    l_key = Keyboard::KBK_BACKSPACE; break;
@@ -87,10 +87,11 @@ HandleQt4KeyEvent(const QKeyEvent &e, bool down)
 
 	case Qt::Key_Semicolon:    l_key = Keyboard::KBK_SEMICOLON; break;
 	case Qt::Key_Equal:        l_key = Keyboard::KBK_EQUAL; break;
+	case Qt::Key_Apostrophe:   l_key = Keyboard::KBK_APOSTROPHE; break;
 
-	case Qt::Key_BraceLeft:    l_key = Keyboard::KBK_BRACKET_LEFT; break;
+	case Qt::Key_BraceLeft:    l_key = Keyboard::KBK_BRACKET_L; break;
 	case Qt::Key_Backslash:    l_key = Keyboard::KBK_BACKSLASH; break;
-	case Qt::Key_BraceRight:   l_key = Keyboard::KBK_BRACKET_RIGHT; break;
+	case Qt::Key_BraceRight:   l_key = Keyboard::KBK_BRACKET_R; break;
 	case Qt::Key_acute:        l_key = Keyboard::KBK_GRAVE; break;
 
 	case Qt::Key_Shift:        l_key = Keyboard::KBK_SHIFT_L; break;
@@ -101,6 +102,9 @@ HandleQt4KeyEvent(const QKeyEvent &e, bool down)
 	case Qt::Key_Control:      l_key = Keyboard::KBK_CONTROL_L; break;
 
 	case Qt::Key_Meta:         l_key = Keyboard::KBK_META_L; break;
+
+	case Qt::Key_Super_L:      l_key = Keyboard::KBK_SUPER_L; break;
+	case Qt::Key_Super_R:      l_key = Keyboard::KBK_SUPER_R; break;
 
 	case Qt::Key_F1:           l_key = Keyboard::KBK_F1; break;
 	case Qt::Key_F2:           l_key = Keyboard::KBK_F2; break;
@@ -158,7 +162,7 @@ namespace Input { /****************************************** Input Namespace */
 namespace Misc { /************************************* Input::Misc Namespace */
 
 bool
-Qt4::HandleKeyEvent(const QKeyEvent &e, bool down)
+Qt4::HandleKeyboardEvent(const QKeyEvent &e, bool down)
 {
 	return(HandleQt4KeyEvent(e, down));
 }

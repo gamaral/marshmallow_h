@@ -55,6 +55,7 @@ namespace EventDevice { /**************** Input::Linux::EventDevice Namespace */
 
 	void TickKeyboard(void);
 
+
 	bool InitializeJoystick(void);
 
 	void FinalizeJoystick(void);

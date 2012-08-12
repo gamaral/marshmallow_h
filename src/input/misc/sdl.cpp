@@ -79,10 +79,11 @@ HandleSDLKeyboardEvent(const SDL_KeyboardEvent &e)
 
 	case SDLK_SEMICOLON:   l_key = Keyboard::KBK_SEMICOLON; break;
 	case SDLK_EQUALS:      l_key = Keyboard::KBK_EQUALS; break;
+	case SDLK_QUOTE:       l_key = Keyboard::KBK_QUOTE; break;
 
-	case SDLK_LEFTBRACKET:  l_key = Keyboard::KBK_BRACKET_LEFT; break;
+	case SDLK_LEFTBRACKET:  l_key = Keyboard::KBK_BRACKET_L; break;
 	case SDLK_BACKSLASH:    l_key = Keyboard::KBK_BACKSLASH; break;
-	case SDLK_RIGHTBRACKET: l_key = Keyboard::KBK_BRACKET_RIGHT; break;
+	case SDLK_RIGHTBRACKET: l_key = Keyboard::KBK_BRACKET_R; break;
 	case SDLK_BACKQUOTE:    l_key = Keyboard::KBK_GRAVE; break;
 
 	case SDLK_LSHIFT:      l_key = Keyboard::KBK_SHIFT_L; break;
@@ -97,6 +98,9 @@ HandleSDLKeyboardEvent(const SDL_KeyboardEvent &e)
 
 	case SDLK_LMETA:       l_key = Keyboard::KBK_META_L; break;
 	case SDLK_RMETA:       l_key = Keyboard::KBK_META_R; break;
+
+	case SDLK_LSUPER:      l_key = Keyboard::KBK_SUPER_L; break;
+	case SDLK_RSUPER:      l_key = Keyboard::KBK_SUPER_R; break;
 
 	case SDLK_F1:          l_key = Keyboard::KBK_F1; break;
 	case SDLK_F2:          l_key = Keyboard::KBK_F2; break;

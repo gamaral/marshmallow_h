@@ -92,10 +92,11 @@ HandleX11KeyEvent(XKeyEvent &key)
 
 	case XK_semicolon:    l_key = Keyboard::KBK_SEMICOLON; break;
 	case XK_equal:        l_key = Keyboard::KBK_EQUAL; break;
+	case XK_apostrophe:   l_key = Keyboard::KBK_APOSTROPHE; break;
 
-	case XK_bracketleft:  l_key = Keyboard::KBK_BRACKET_LEFT; break;
+	case XK_bracketleft:  l_key = Keyboard::KBK_BRACKET_L; break;
 	case XK_backslash:    l_key = Keyboard::KBK_BACKSPACE; break;
-	case XK_bracketright: l_key = Keyboard::KBK_BRACKET_RIGHT; break;
+	case XK_bracketright: l_key = Keyboard::KBK_BRACKET_R; break;
 	case XK_grave:        l_key = Keyboard::KBK_GRAVE; break;
 
 	case XK_Shift_L:      l_key = Keyboard::KBK_SHIFT_L; break;

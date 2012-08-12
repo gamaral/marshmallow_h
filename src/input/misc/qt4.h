@@ -52,7 +52,7 @@ namespace Misc { /************************************* Input::Misc Namespace */
 namespace Qt4 { /********************************* Input::Misc::Qt4 Namespace */
 
 	MARSHMALLOW_INPUT_EXPORT
-	bool HandleKeyEvent(const QKeyEvent &e, bool down);
+	bool HandleKeyboardEvent(const QKeyEvent &e, bool down);
 
 } /*********************************************** Input::Unix::X11 Namespace */
 } /**************************************************** Input::Unix Namespace */

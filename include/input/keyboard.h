@@ -100,7 +100,8 @@ namespace Keyboard { /***************************** Input::Keyboard Namespace */
 		KBK_SEMICOLON     = ';',
 		KBK_EQUAL         = '=',
 		KBK_EQUALS        = KBK_EQUAL,
-		KBK_QUOTE         = '\'',
+		KBK_APOSTROPHE    = '\'',
+		KBK_QUOTE         = KBK_APOSTROPHE,
 
 		KBK_A             = 'a',
 		KBK_B             = 'b',
@@ -148,6 +149,9 @@ namespace Keyboard { /***************************** Input::Keyboard Namespace */
 
 		KBK_META_L,
 		KBK_META_R,
+
+		KBK_SUPER_L,
+		KBK_SUPER_R,
 
 		KBK_F1,
 		KBK_F2,
