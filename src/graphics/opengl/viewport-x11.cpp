@@ -49,6 +49,10 @@
 #include "graphics/display.h"
 #include "graphics/painter_p.h"
 
+#ifdef MARSHMALLOW_X11_XINERAMA
+#  include <X11/extensions/Xinerama.h>
+#endif
+
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -413,28 +417,11 @@ X11Viewport::Show(void)
 	if (sfExposed == (flags & sfExposed))
 	    return(true);
 
-	/* set size hints */
-
-	XSizeHints *l_size_hints;
-	if (0 == (l_size_hints = XAllocSizeHints())) {
-		MMERROR("X11: Unable to allocate memory for window size"
-			" hints.");
-		return(false);
-	}
-
-	const Math::Size2i &l_wsize = wsize;
-	l_size_hints->min_height = l_size_hints->max_height = l_wsize.height;
-	l_size_hints->min_width  = l_size_hints->max_width  = l_wsize.width;
-	l_size_hints->flags      = PMinSize|PMaxSize;
-
-	XSetWMNormalHints(xdpy, xwindow, l_size_hints);
-	XFree(l_size_hints);
-
 	/* map window */
 	XMapRaised(xdpy, xwindow);
 
 	/* move pointer to lower right */
-	XWarpPointer(xdpy, None, xwindow, 0, 0, 0, 0,
+	XWarpPointer(xdpy, xroot, xwindow, 0, 0, 0, 0,
 	    wsize.width, wsize.height);
 
 	if (dpy.fullscreen) {
@@ -539,9 +526,34 @@ X11Viewport::CreateX11Window(void)
 
 	int l_window_x = 0;
 	int l_window_y = 0;
-	const int l_dpy_width  = XDisplayWidth(xdpy,  xvinfo.screen);
-	const int l_dpy_height = XDisplayHeight(xdpy, xvinfo.screen);
+
+	int l_dpy_x = 0;
+	int l_dpy_y = 0;
+	int l_dpy_width  = XDisplayWidth(xdpy,  xvinfo.screen);
+	int l_dpy_height = XDisplayHeight(xdpy, xvinfo.screen);
+
 	unsigned long l_mask = CWBackPixel|CWBorderPixel|CWColormap|CWEventMask;
+
+#ifdef MARSHMALLOW_X11_XINERAMA
+	int l_mon_sel = 0;
+	int l_mon_c;
+	XineramaScreenInfo *l_mon;
+
+	l_mon = XineramaQueryScreens(xdpy, &l_mon_c);
+
+	if (l_mon_c > 0) {
+		char *l_mon_selstr = getenv("MM_XINERAMA_SCREEN");
+		if (l_mon_selstr)
+			l_mon_sel = atoi(l_mon_selstr) % l_mon_c;
+
+		if (l_mon_c > l_mon_sel) {
+			l_dpy_x = l_mon[l_mon_sel].x_org;
+			l_dpy_y = l_mon[l_mon_sel].y_org;
+			l_dpy_width  = l_mon[l_mon_sel].width;
+			l_dpy_height = l_mon[l_mon_sel].height;
+		}
+	}
+#endif
 
 	/*
 	 * ** FULLSCREEN MODE **
@@ -568,7 +580,7 @@ X11Viewport::CreateX11Window(void)
 	/* create a fullscreen window */
 	xwindow = XCreateWindow
 	   (xdpy, xroot,
-	    l_window_x, l_window_y,
+	    l_dpy_x + l_window_x, l_dpy_y + l_window_y,
 	    static_cast<unsigned int>(wsize.width),
 	    static_cast<unsigned int>(wsize.height),
 	    dpy.fullscreen ? 0 : 1,
@@ -577,6 +589,20 @@ X11Viewport::CreateX11Window(void)
 	    xvinfo.visual,
 	    l_mask,
 	    &l_swattr);
+
+	/* set size hints */
+
+	XSizeHints *l_size_hints;
+	if (0 == (l_size_hints = XAllocSizeHints())) {
+		MMERROR("X11: Unable to allocate memory for window size"
+			" hints.");
+		return(false);
+	}
+	l_size_hints->min_height = l_size_hints->max_height = wsize.height;
+	l_size_hints->min_width  = l_size_hints->max_width  = wsize.width;
+	l_size_hints->flags      = PMinSize|PMaxSize;
+	XSetWMNormalHints(xdpy, xwindow, l_size_hints);
+	XFree(l_size_hints);
 
 	/* set window title */
 	XTextProperty l_window_name;

@@ -61,13 +61,21 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 
 	if(MARSHMALLOW_OPENGL_X11)
 		find_package(X11)
-		include_directories(${X11_INCLUDE_DIR})
 
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 		                              opengl/viewport-x11.cpp)
+
+		include_directories(${X11_X11_INCLUDE_PATH})
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${X11_X11_LIB})
 		add_definitions(-DMARSHMALLOW_OPENGL_X11)
+
+		if(X11_Xinerama_FOUND)
+			include_directories(${X11_Xinerama_INCLUDE_PATH})
+			set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
+			                              ${X11_Xinerama_LIB})
+			add_definitions(-DMARSHMALLOW_X11_XINERAMA)
+		endif()
 
 		if(MARSHMALLOW_INPUT_UNIX_X11)
 			add_definitions(-DMARSHMALLOW_INPUT_UNIX_X11)

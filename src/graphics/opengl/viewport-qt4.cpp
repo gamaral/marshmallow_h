@@ -198,13 +198,13 @@ protected: /* virtual */
 	VIRTUAL void
 	keyPressEvent(QKeyEvent *e)
 	{
-		Input::Misc::Qt4::HandleKeyEvent(*e, true);
+		Input::Misc::Qt4::HandleKeyboardEvent(*e, true);
 	}
 
 	VIRTUAL void
 	keyReleaseEvent(QKeyEvent *e)
 	{
-		Input::Misc::Qt4::HandleKeyEvent(*e, false);
+		Input::Misc::Qt4::HandleKeyboardEvent(*e, false);
 	}
 #endif
 };
