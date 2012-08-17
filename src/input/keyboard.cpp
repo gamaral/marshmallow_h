@@ -34,8 +34,12 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
-#  include "input/linux/evdev.h"
+#ifdef MARSHMALLOW_EVDEV_KEYBOARD
+#  ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
+#    include "input/linux/evdev.h"
+#  else
+#    error You can't use EVDEV KEYBOARD without overall EVDEV support.
+#  endif
 #endif
 
 #include <map>
@@ -61,7 +65,7 @@ Keyboard::Initialize(void)
 {
 	bool l_status = true;
 
-#ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
+#ifdef MARSHMALLOW_EVDEV_KEYBOARD
 	l_status &= Input::Linux::EventDevice::InitializeKeyboard();
 #endif
 
@@ -71,7 +75,7 @@ Keyboard::Initialize(void)
 void
 Keyboard::Finalize(void)
 {
-#ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
+#ifdef MARSHMALLOW_EVDEV_KEYBOARD
 	Input::Linux::EventDevice::FinalizeKeyboard();
 #endif
 	s_key_state.clear();
@@ -80,7 +84,7 @@ Keyboard::Finalize(void)
 void
 Keyboard::Tick(float)
 {
-#ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
+#ifdef MARSHMALLOW_EVDEV_KEYBOARD
 	Input::Linux::EventDevice::TickKeyboard();
 #endif
 }

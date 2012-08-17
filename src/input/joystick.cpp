@@ -34,8 +34,12 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
-#  include "input/linux/evdev.h"
+#ifdef MARSHMALLOW_EVDEV_JOYSTICK
+#  ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
+#    include "input/linux/evdev.h"
+#  else
+#    error You can't use EVDEV JOYSTICK without overall EVDEV support.
+#  endif
 #endif
 
 #include <map>
@@ -53,7 +57,7 @@ Joystick::Initialize(void)
 {
 	bool l_status = true;
 
-#ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
+#ifdef MARSHMALLOW_EVDEV_JOYSTICK
 	l_status &= Input::Linux::EventDevice::InitializeJoystick();
 #endif
 
@@ -63,7 +67,7 @@ Joystick::Initialize(void)
 void
 Joystick::Finalize(void)
 {
-#ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
+#ifdef MARSHMALLOW_EVDEV_JOYSTICK
 	Input::Linux::EventDevice::FinalizeJoystick();
 #endif
 }
@@ -71,7 +75,7 @@ Joystick::Finalize(void)
 void
 Joystick::Tick(float)
 {
-#ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
+#ifdef MARSHMALLOW_EVDEV_JOYSTICK
 	Input::Linux::EventDevice::TickJoystick();
 #endif
 }

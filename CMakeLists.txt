@@ -88,6 +88,11 @@ option(MARSHMALLOW_WITH_LUA   "Use Lua"   OFF)
 
 if(UNIX)
 	option(MARSHMALLOW_INPUT_LINUX_EVDEV "Linux event device support"       OFF)
+
+	if (MARSHMALLOW_INPUT_LINUX_EVDEV)
+		option(MARSHMALLOW_EVDEV_KEYBOARD "Linux event device keyboard support" ON)
+		option(MARSHMALLOW_EVDEV_JOYSTICK "Linux event device joystick support" ON)
+	endif()
 endif()
 
 if(MARSHMALLOW_VIEWPORT_DUMMY)

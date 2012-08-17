@@ -69,18 +69,39 @@ namespace { /**************************** Input::Linux::<anonymous> Namespace */
 
 namespace ED = EventDevice;
 
-#define EVDEV_NAME_MAX   256
-#define EVDEV_NUMBER_MAX 20u
-#define EVDEV_ID_MAX     32u
+/*
+ * Game port source ids
+ *
+ * I used a single 32 bit integer to identify available/used game port slots.
+ *
+ * BIT  00000000 00000000 00000000 00000000
+ * SLOT 12345678 12345678 12345678 12345678
+ *      KEYBOARD JOYSTICK   MOUSE  RESERVED
+ */
+#define EVDEV_ID_MAX      8u /* 8 bits per device */
+#define EVDEV_ID_KB       EVDEV_ID_MAX * 0 /* first segment */
+#define EVDEV_ID_JS       EVDEV_ID_MAX * 1 /* second segment */
+#define EVDEV_ID_MS       EVDEV_ID_MAX * 2 /* third segment */
+#define EVDEV_ID_RESERVED EVDEV_ID_MAX * 3 /* forth segment */
 
-class LinuxEventDevice;
-typedef std::map<unsigned int, LinuxEventDevice *> LinuxEventDeviceMap;
+/*
+ * Event devices settings
+ *
+ * EVDEV_MAX is the maximum event device we will try to open (event0..eventN).
+ * EVDEV_NAME_MAX 
+ */
+#define EVDEV_MAX      16u
+#define EVDEV_NAME_MAX 256
 
 static const char s_evdev_template[] = "/dev/input/event%u";
-int s_initialized =  0;
-int s_inotify_fd  = -1;
-int s_watch_fd    = -1;
-LinuxEventDeviceMap s_ev_devices;
+
+int s_initialized  =  0;
+int s_inotify_fd   = -1;
+int s_watch_fd     = -1;
+int32_t s_evdev_id =  0;
+
+class LinuxEventDevice;
+LinuxEventDevice *s_evdev[EVDEV_MAX];
 
 class LinuxEventDevice
 {
@@ -91,7 +112,7 @@ class LinuxEventDevice
 
 	NO_ASSIGN_COPY(LinuxEventDevice);
 public:
-	LinuxEventDevice(int fd, ED::Type type, char *name);
+	LinuxEventDevice(int fd, ED::Type type);
 
 	virtual ~LinuxEventDevice(void)
 	    { close(); };
@@ -122,12 +143,10 @@ protected: /* virtual */
 
 class LinuxKeyboard : public LinuxEventDevice
 {
-	static int32_t s_ids;
-
 	NO_ASSIGN_COPY(LinuxKeyboard);
 public:
 
-	LinuxKeyboard(int fd, ED::Type type, struct input_id &id, char *name);
+	LinuxKeyboard(int fd, ED::Type type, struct input_id &id);
 	virtual ~LinuxKeyboard(void);
 
 protected: /* virtual */
@@ -137,15 +156,13 @@ protected: /* virtual */
 
 class LinuxJoystick : public LinuxEventDevice
 {
-	static int32_t s_ids;
-
 	ED::Map::EventCodes m_abs_map;
 	ED::Map::EventCodes m_key_map;
 	int m_btn_state;
 
 	NO_ASSIGN_COPY(LinuxJoystick);
 public:
-	LinuxJoystick(int fd, ED::Type type, struct input_id &id, char *name);
+	LinuxJoystick(int fd, ED::Type type, struct input_id &id);
 	virtual ~LinuxJoystick(void);
 
 protected: /* virtual */
@@ -153,11 +170,13 @@ protected: /* virtual */
 	VIRTUAL inline bool handleEvent(struct input_event &event);
 };
 
-LinuxEventDevice::LinuxEventDevice(int fd_, ED::Type type_, char *name_)
-    : m_fd(fd_)
+LinuxEventDevice::LinuxEventDevice(int fd_, ED::Type type_)
+    : m_id(0)
+    , m_fd(fd_)
     , m_type(type_)
 {
-	strcpy(m_name, name_);
+	/* get device name */
+	ioctl(m_fd, EVIOCGNAME(EVDEV_NAME_MAX), m_name);
 }
 
 LinuxEventDevice *
@@ -182,12 +201,10 @@ LinuxEventDevice::Open(unsigned int evdev_id, int mask)
 	unsigned long l_type_bits = 0;
 	unsigned long l_key_bits[KBITS_SIZE];
 
-	char l_name[EVDEV_NAME_MAX];
 	int l_fd;
 	ED::Type l_type;
 
 	l_fd = -1;
-	l_name[0] = '\0';
 	l_type = ED::UnknownType;
 
 	if (-1 == (l_fd = ::open(l_evdev_path, O_RDONLY|O_NONBLOCK)))
@@ -199,9 +216,6 @@ LinuxEventDevice::Open(unsigned int evdev_id, int mask)
 		MMWARNING(l_evdev_path << " doesn't support EV_KEY. IGNORING.");
 		return(0);
 	}
-
-	/* get device name */
-	ioctl(l_fd, EVIOCGNAME(sizeof(l_name)), l_name);
 
 	/* get key bits */
 	memset(&l_key_bits, 0, sizeof(l_key_bits));
@@ -223,29 +237,23 @@ LinuxEventDevice::Open(unsigned int evdev_id, int mask)
 	    && ED::JoystickType == (mask & ED::JoystickType))
 		l_type = ED::JoystickType;
 	else {
-		MMWARNING("Unknown device type. IGNORING.");
+		MMWARNING("Unknown event device type. IGNORING.");
 		return(0);
 	}
 
 	ioctl(l_fd, EVIOCGID, &l_id);
-	MMDEBUG("Successfully opened event device "
-		"\""    << l_name << "\" "
-		"VENDOR["  << l_id.vendor << "] "
-		"PRODUCT[" << l_id.product << "] "
-		"VERSION[" << l_id.version << "] "
-		"TYPE[ " << l_type << "]");
 
 	/*
 	 * Create device handlers
 	 */
 	switch (l_type) {
 	case ED::KeyboardType:
-		l_evdev = new LinuxKeyboard(l_fd, l_type, l_id, l_name);
+		l_evdev = new LinuxKeyboard(l_fd, l_type, l_id);
 		break;
 
 	case ED::GamepadType:
 	case ED::JoystickType:
-		l_evdev = new LinuxJoystick(l_fd, l_type, l_id, l_name);
+		l_evdev = new LinuxJoystick(l_fd, l_type, l_id);
 		break;
 
 	/*
@@ -253,14 +261,21 @@ LinuxEventDevice::Open(unsigned int evdev_id, int mask)
 	 */
 	case ED::MouseType:
 	default:
-		MMINFO("Event device " << evdev_id << " identified as \""
-		    << l_name << "\" was ignored.");
+	MMWARNING("Event device ignored: "
+		"VENDOR["  << l_id.vendor << "] "
+		"PRODUCT[" << l_id.product << "] "
+		"VERSION[" << l_id.version << "] "
+		"TYPE[ " << l_type << "]");
 		return(0);
 	}
 
-	s_ev_devices[evdev_id] = l_evdev;
-
-	return(l_evdev);
+	MMDEBUG("Event device opened:"
+		"\""    << l_evdev->name() << "\" "
+		"VENDOR["  << l_id.vendor << "] "
+		"PRODUCT[" << l_id.product << "] "
+		"VERSION[" << l_id.version << "] "
+		"TYPE[ " << l_type << "]");
+	return(s_evdev[evdev_id] = l_evdev);
 }
 
 void
@@ -305,26 +320,26 @@ LinuxEventDevice::processEvents(void)
 	}
 }
 
-int32_t LinuxKeyboard::s_ids(0);
-
-LinuxKeyboard::LinuxKeyboard(int fd_, ED::Type type_,
-                             struct input_id &, char *name_)
-    : LinuxEventDevice(fd_, type_, name_)
+LinuxKeyboard::LinuxKeyboard(int fd_, ED::Type type_, struct input_id &)
+    : LinuxEventDevice(fd_, type_)
 {
-	/* TODO(gamaral) handle override map */
+	/* TODO(gamaral) handle *optional* override map */
 
 	/* look for available id */
-	for (size_t i = 0; i < EVDEV_ID_MAX && id() == 0; ++i)
-		if (0 == (s_ids & (1 << i)))
+	const int16_t l_id = static_cast<int16_t>(s_evdev_id >> EVDEV_ID_KB);
+	for (size_t i = 0; i < EVDEV_ID_MAX; ++i)
+		if (0 == (l_id & (1 << i))) {
 			setId(i);
-	s_ids |= (1 << id());
+			break;
+		}
+	s_evdev_id |= (1 << EVDEV_ID_KB + id());
 
 	MMDEBUG("Keyboard slot id " << id() << " assigned.");
 }
 
 LinuxKeyboard::~LinuxKeyboard(void)
 {
-	s_ids ^= (1 << id());
+	s_evdev_id ^= (1 << EVDEV_ID_KB + id());
 }
 
 bool
@@ -487,18 +502,18 @@ LinuxKeyboard::handleEvent(struct input_event &event)
 	return(true);
 }
 
-int32_t LinuxJoystick::s_ids(0);
-
-LinuxJoystick::LinuxJoystick(int fd_, ED::Type type_,
-                             struct input_id &id_, char *name_)
-    : LinuxEventDevice(fd_, type_, name_)
+LinuxJoystick::LinuxJoystick(int fd_, ED::Type type_, struct input_id &id_)
+    : LinuxEventDevice(fd_, type_)
     , m_btn_state(0)
 {
 	/* look for available id */
-	for (size_t i = 0; i < EVDEV_ID_MAX && id() == 0; ++i)
-		if (0 == (s_ids & (1 << i)))
+	const int16_t l_id = static_cast<int16_t>(s_evdev_id >> EVDEV_ID_JS);
+	for (size_t i = 0; i < EVDEV_ID_MAX; ++i)
+		if (0 == (l_id & (1 << i))) {
 			setId(i);
-	s_ids |= (1 << id());
+			break;
+		}
+	s_evdev_id |= (1 << EVDEV_ID_JS + id());
 
 	MMDEBUG("Joystick slot id " << id() << " assigned.");
 
@@ -510,7 +525,7 @@ LinuxJoystick::LinuxJoystick(int fd_, ED::Type type_,
 
 LinuxJoystick::~LinuxJoystick(void)
 {
-	s_ids ^= (1 << id());
+	s_evdev_id ^= (1 << EVDEV_ID_JS + id());
 }
 
 bool
@@ -626,19 +641,14 @@ ProcessNotificationEvents(void)
 			 * Get event device id, everything else is ignored.
 			 * (usually js* change notifications)
 			 */
-			if (1 != sscanf(l_event->name, "event%ud", &l_evdev_id))
+			if (1 != sscanf(l_event->name, "event%ud", &l_evdev_id)
+			    && l_evdev_id < EVDEV_MAX)
 				continue;
 
 			if (IN_CREATE == (l_event->mask & IN_CREATE))
 				LinuxEventDevice::Open(l_evdev_id, s_initialized);
-			else if (IN_DELETE == (l_event->mask & IN_DELETE)) {
-				LinuxEventDeviceMap::iterator l_ei;
-				l_ei = s_ev_devices.find(l_evdev_id);
-				if (s_ev_devices.end() == l_ei)
-					continue;
-				delete l_ei->second;
-				s_ev_devices.erase(l_ei);
-			}
+			else if (IN_DELETE == (l_event->mask & IN_DELETE))
+				delete s_evdev[l_evdev_id], s_evdev[l_evdev_id] = 0;
 		}
 		while ((l_i += l_event_size + l_event->len) < l_c);
 	}
@@ -651,6 +661,8 @@ Initialize(int mask)
 	 *  Make sure we actually initialize once, and only once.
 	 */
 	if (0 == s_initialized) {
+		memset(s_evdev, 0, sizeof(s_evdev));
+
 		s_inotify_fd = inotify_init1(O_NONBLOCK);
 		s_watch_fd = inotify_add_watch(s_inotify_fd, "/dev/input",
 		                               IN_CREATE|IN_DELETE);
@@ -660,34 +672,28 @@ Initialize(int mask)
 		ED::Map::Initialize();
 	}
 
-	/* TODO(gamaral) process /proc/bus/input/devices */
-	for (unsigned int i = 0; i < EVDEV_NUMBER_MAX; ++i)
-		LinuxEventDevice::Open(i, mask);
+	int l_c  = 0;
+	for (unsigned int i = 0; i < EVDEV_MAX; ++i)
+		if (LinuxEventDevice::Open(i, mask)) ++l_c;
 
 	s_initialized |= mask;
 
-	return(s_ev_devices.size() > 0);
+	return(l_c > 0);
 }
 
 void
 Finalize(int mask)
 {
-	LinuxEventDeviceMap::reverse_iterator i;
-	LinuxEventDeviceMap::const_reverse_iterator c = s_ev_devices.rend();
-	for (i = s_ev_devices.rbegin(); i != c;) {
-		if (0 != (mask & i->second->type())) {
-			delete i->second;
-			s_ev_devices.erase((++i).base());
-		}
-		else ++i;
-	}
+	for (unsigned int i = 0; i < EVDEV_MAX; ++i)
+		if (s_evdev[i] && 0 != (mask & s_evdev[i]->type()))
+			delete s_evdev[i], s_evdev[i] = 0;
 
 	s_initialized &= ~(mask);
 
 	/* truly finalize if we closed all devices */
 	if (0 != s_initialized)
 		return;
-	assert(0 == s_ev_devices.size() && "We still have open devices!");
+	assert(0 == s_evdev_id && "We still have open devices!");
 
 	if (-1 == s_watch_fd)
 		inotify_rm_watch(s_inotify_fd, s_watch_fd);
@@ -701,11 +707,9 @@ Tick(int mask)
 {
 	ProcessNotificationEvents();
 
-	LinuxEventDeviceMap::iterator i;
-	LinuxEventDeviceMap::const_iterator c = s_ev_devices.end();
-	for (i = s_ev_devices.begin(); i != c; ++i)
-		if (0 != (mask & i->second->type()))
-			i->second->processEvents();
+	for (unsigned int i = 0; i < EVDEV_MAX; ++i)
+		if (s_evdev[i] && 0 != (mask & s_evdev[i]->type()))
+			s_evdev[i]->processEvents();
 }
 
 } /************************************** Input::Linux::<anonymous> Namespace */

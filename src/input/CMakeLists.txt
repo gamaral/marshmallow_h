@@ -8,6 +8,14 @@ if(MARSHMALLOW_INPUT_LINUX_EVDEV)
 	set(MARSHMALLOW_INPUT_SRCS ${MARSHMALLOW_INPUT_SRCS}
 	                           linux/evdev.cpp
 	                           linux/evdev_map.cpp)
+
+	if(MARSHMALLOW_EVDEV_KEYBOARD)
+		add_definitions(-DMARSHMALLOW_EVDEV_KEYBOARD)
+	endif()
+
+	if(MARSHMALLOW_EVDEV_JOYSTICK)
+		add_definitions(-DMARSHMALLOW_EVDEV_JOYSTICK)
+	endif()
 endif()
 
 if(MARSHMALLOW_INPUT_UNIX_X11 AND MARSHMALLOW_OPENGL_X11)
