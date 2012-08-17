@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "input/misc/sdl.h"
+#include "sdl.h"
 
 /*!
  * @file
@@ -47,15 +47,15 @@
  */
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
+namespace Input { /****************************************** Input Namespace */
+namespace Misc { /************************************* Input::Misc Namespace */
+namespace { /***************************** Input::Misc::<anonymous> Namespace */
 
 inline bool HandleSDLKeyboardEvent(const SDL_KeyboardEvent &e);
 
 bool
 HandleSDLKeyboardEvent(const SDL_KeyboardEvent &e)
 {
-	using namespace Input;
-
 	Keyboard::Key l_key = Keyboard::KBK_NONE;
 	Keyboard::Action l_action =
 	    (e.state == SDL_PRESSED ? Keyboard::KeyPressed : Keyboard::KeyReleased);
@@ -169,10 +169,7 @@ HandleSDLKeyboardEvent(const SDL_KeyboardEvent &e)
 	return(true);
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Input { /****************************************** Input Namespace */
-namespace Misc { /************************************* Input::Misc Namespace */
+} /*************************************** Input::Misc::<anonymous> Namespace */
 
 bool
 SDL::HandleKeyboardEvent(const SDL_KeyboardEvent &e)

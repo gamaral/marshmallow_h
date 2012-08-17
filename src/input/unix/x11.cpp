@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "input/unix/x11.h"
+#include "x11.h"
 
 /*!
  * @file
@@ -50,7 +50,9 @@
  */
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
+namespace Input { /****************************************** Input Namespace */
+namespace Unix { /************************************* Input::Unix Namespace */
+namespace { /***************************** Input::Unix::<anonymous> Namespace */
 
 inline bool HandleX11KeyEvent(XKeyEvent &key);
 inline bool HandleX11Messages(XEvent &e);
@@ -207,10 +209,7 @@ HandleX11Messages(XEvent &e)
 	return(false);
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Input { /****************************************** Input Namespace */
-namespace Unix { /************************************* Input::Unix Namespace */
+} /*************************************** Input::Unix::<anonymous> Namespace */
 
 void
 X11::InitializeKeyboard(Display *xdpy)

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "input/misc/qt4.h"
+#include "qt4.h"
 
 /*!
  * @file
@@ -49,15 +49,15 @@
  */
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
+namespace Input { /****************************************** Input Namespace */
+namespace Misc { /************************************* Input::Misc Namespace */
+namespace { /***************************** Input::Misc::<anonymous> Namespace */
 
 inline bool HandleQt4KeyEvent(const QKeyEvent &e, bool down);
 
 bool
 HandleQt4KeyEvent(const QKeyEvent &e, bool down)
 {
-	using namespace Input;
-
 	Keyboard::Key l_key = Keyboard::KBK_NONE;
 	Keyboard::Action l_action =
 	    (down ? Keyboard::KeyPressed : Keyboard::KeyReleased);
@@ -156,10 +156,7 @@ HandleQt4KeyEvent(const QKeyEvent &e, bool down)
 	return(true);
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Input { /****************************************** Input Namespace */
-namespace Misc { /************************************* Input::Misc Namespace */
+} /*************************************** Input::Misc::<anonymous> Namespace */
 
 bool
 Qt4::HandleKeyboardEvent(const QKeyEvent &e, bool down)

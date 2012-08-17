@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "input/linux/evdev_map.h"
+#include "evdev_map.h"
 
 /*!
  * @file
