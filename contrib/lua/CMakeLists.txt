@@ -31,7 +31,10 @@ include_directories(${LUA_INCLUDE_DIRS})
 file(GLOB LUA_SRCS ${LUA_BASE}/src/lapi.c
                    ${LUA_BASE}/src/lauxlib.c
                    ${LUA_BASE}/src/lbaselib.c
+                   ${LUA_BASE}/src/lbitlib.c
                    ${LUA_BASE}/src/lcode.c
+                   ${LUA_BASE}/src/lcorolib.c
+                   ${LUA_BASE}/src/lctype.c
                    ${LUA_BASE}/src/ldblib.c
                    ${LUA_BASE}/src/ldebug.c
                    ${LUA_BASE}/src/ldo.c
@@ -54,10 +57,10 @@ file(GLOB LUA_SRCS ${LUA_BASE}/src/lapi.c
                    ${LUA_BASE}/src/ltable.c
                    ${LUA_BASE}/src/ltablib.c
                    ${LUA_BASE}/src/ltm.c
+                   ${LUA_BASE}/src/lua.c
                    ${LUA_BASE}/src/lundump.c
                    ${LUA_BASE}/src/lvm.c
                    ${LUA_BASE}/src/lzio.c
-                   ${LUA_BASE}/src/print.c
 )
 
 
