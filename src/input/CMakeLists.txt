@@ -7,14 +7,19 @@ if(MARSHMALLOW_INPUT_LINUX_EVDEV)
 	add_definitions(-DMARSHMALLOW_INPUT_LINUX_EVDEV)
 	set(MARSHMALLOW_INPUT_SRCS ${MARSHMALLOW_INPUT_SRCS}
 	                           linux/evdev.cpp
-	                           linux/evdev_map.cpp)
+	                           linux/evdev_map.cpp
+	                           linux/evdev_eventdevice.cpp)
 
 	if(MARSHMALLOW_EVDEV_KEYBOARD)
 		add_definitions(-DMARSHMALLOW_EVDEV_KEYBOARD)
+		set(MARSHMALLOW_INPUT_SRCS ${MARSHMALLOW_INPUT_SRCS}
+		                           linux/evdev_keyboarddevice.cpp)
 	endif()
 
 	if(MARSHMALLOW_EVDEV_JOYSTICK)
 		add_definitions(-DMARSHMALLOW_EVDEV_JOYSTICK)
+		set(MARSHMALLOW_INPUT_SRCS ${MARSHMALLOW_INPUT_SRCS}
+		                           linux/evdev_joystickdevice.cpp)
 	endif()
 endif()
 

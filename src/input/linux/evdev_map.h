@@ -37,11 +37,6 @@
 #ifndef MARSHMALLOW_INPUT_LINUX_EVDEV_MAP_H
 #define MARSHMALLOW_INPUT_LINUX_EVDEV_MAP_H 1
 
-#include "core/environment.h"
-#include "core/namespace.h"
-
-#include <linux/input.h>
-
 #include <map>
 
 #include "evdev_type.h"
@@ -53,8 +48,8 @@ namespace Input { /****************************************** Input Namespace */
  *
  */
 namespace Linux { /*********************************** Input::Linux Namespace */
-namespace EventDevice { /**************** Input::Linux::EventDevice Namespace */
-namespace Map { /******************* Input::Linux::EventDevice::Map Namespace */
+namespace EVDEV { /**************************** Input::Linux::EVDEV Namespace */
+namespace Map { /************************* Input::Linux::EVDEV::Map Namespace */
 
 	typedef std::map<uint16_t, int> EventCodes;
 
@@ -62,11 +57,11 @@ namespace Map { /******************* Input::Linux::EventDevice::Map Namespace */
 
 	void Finalize(void);
 
-	bool PopulateEventCodes(__u16 vendor, __u16 product, const char *name,
-	                        Type type, int event, EventCodes &codes);
+	bool PopulateEventCodes(uint16_t vendor, uint16_t product,
+	    const char *name, Type type, int event, EventCodes &codes);
 
-} /********************************* Input::Linux::EventDevice::Map Namespace */
-} /************************************** Input::Linux::EventDevice Namespace */
+} /*************************************** Input::Linux::EVDEV::Map Namespace */
+} /******************************************** Input::Linux::EVDEV Namespace */
 } /*************************************************** Input::Linux Namespace */
 } /********************************************************** Input Namespace */
 MARSHMALLOW_NAMESPACE_END

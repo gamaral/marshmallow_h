@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "input/joystick_p.h"
+#include "joystick_p.h"
 
 /*!
  * @file
@@ -36,9 +36,9 @@
 
 #ifdef MARSHMALLOW_EVDEV_JOYSTICK
 #  ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
-#    include "input/linux/evdev.h"
+#    include "linux/evdev.h"
 #  else
-#    error You can't use EVDEV JOYSTICK without overall EVDEV support.
+#    error "You can't use EVDEV JOYSTICK without overall EVDEV support."
 #  endif
 #endif
 
@@ -58,7 +58,7 @@ Joystick::Initialize(void)
 	bool l_status = true;
 
 #ifdef MARSHMALLOW_EVDEV_JOYSTICK
-	l_status &= Input::Linux::EventDevice::InitializeJoystick();
+	l_status &= Input::Linux::EVDEV::InitializeJoystick();
 #endif
 
 	return(l_status);
@@ -68,7 +68,7 @@ void
 Joystick::Finalize(void)
 {
 #ifdef MARSHMALLOW_EVDEV_JOYSTICK
-	Input::Linux::EventDevice::FinalizeJoystick();
+	Input::Linux::EVDEV::FinalizeJoystick();
 #endif
 }
 
@@ -76,7 +76,7 @@ void
 Joystick::Tick(float)
 {
 #ifdef MARSHMALLOW_EVDEV_JOYSTICK
-	Input::Linux::EventDevice::TickJoystick();
+	Input::Linux::EVDEV::TickJoystick();
 #endif
 }
 

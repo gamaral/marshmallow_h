@@ -39,7 +39,7 @@
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
 
-#include "input/keyboard_p.h"
+#include "../keyboard_p.h"
 
 /*
  * SDL Notes

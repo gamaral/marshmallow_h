@@ -34,33 +34,31 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_INPUT_LINUX_EVDEV_H
-#define MARSHMALLOW_INPUT_LINUX_EVDEV_H 1
+#ifndef MARSHMALLOW_INPUT_LINUX_EVDEV_KEYBOARDDEVICE_H
+#define MARSHMALLOW_INPUT_LINUX_EVDEV_KEYBOARDDEVICE_H 1
 
-#include "core/environment.h"
-#include "core/namespace.h"
+#include "evdev_eventdevice.h"
+
+#include "evdev_map.h"
+#include "evdev_type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Input { /****************************************** Input Namespace */
 namespace Linux { /*********************************** Input::Linux Namespace */
 namespace EVDEV { /**************************** Input::Linux::EVDEV Namespace */
 
-#ifdef MARSHMALLOW_EVDEV_KEYBOARD
-	bool InitializeKeyboard(void);
+	class KeyboardDevice : public EventDevice
+	{
+		NO_ASSIGN_COPY(KeyboardDevice);
+	public:
 
-	void FinalizeKeyboard(void);
+		KeyboardDevice(int fd, Type type);
+		virtual ~KeyboardDevice(void) {};
 
-	void TickKeyboard(void);
-#endif
+	protected: /* virtual */
 
-
-#ifdef MARSHMALLOW_EVDEV_JOYSTICK
-	bool InitializeJoystick(void);
-
-	void FinalizeJoystick(void);
-
-	void TickJoystick(void);
-#endif
+		VIRTUAL bool handleEvent(struct input_event &event);
+	};
 
 } /******************************************** Input::Linux::EVDEV Namespace */
 } /*************************************************** Input::Linux Namespace */

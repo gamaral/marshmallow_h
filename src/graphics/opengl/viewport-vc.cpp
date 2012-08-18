@@ -239,7 +239,7 @@ VCViewport::Tick(float delta)
 
 	/* reset viewport */
 	if (sfReset == (flags & sfReset)) {
-		MMINFO("Viewport reset in progress!");
+		MMDEBUG("Viewport reset in progress!");
 		flags ^= sfReset;
 		Viewport::Setup(dpy);
 	}
@@ -302,13 +302,10 @@ VCViewport::Create(const Display &display_)
 #endif
 
 	/* sub-systems */
-
 	Camera::Update();
-
 	Painter::Initialize();
 
 	/* broadcast */
-
 	Event::ViewportEvent l_event(Event::ViewportEvent::Created);
 	Event::EventManager::Instance()->dispatch(l_event);
 
@@ -323,11 +320,9 @@ VCViewport::Destroy(void)
 		return;
 
 	/* deactivate */
-
 	flags &= ~(sfReady);
 
 	/* broadcast */
-
 	if (0 == (flags & sfTerminated)) {
 		Event::ViewportEvent l_event(Event::ViewportEvent::Destroyed);
 		Event::EventManager::Instance()->dispatch(l_event);
@@ -339,7 +334,7 @@ VCViewport::Destroy(void)
 	DestroyVCWindow();
 
 	/* sanity check */
-	assert(0 == (flags & ~(sfVCInit|sfTerminated))
+	assert(0 == (flags & ~(sfVCInit|sfReady|sfTerminated))
 	    && "We seem to have some stray flags!");
 
 	Reset(flags & (sfVCInit|sfTerminated));
@@ -540,7 +535,7 @@ VCViewport::CreateVCWindow(void)
 	l_src_rect.width  = l_dst_rect.width  << 16;
 	l_src_rect.height = l_dst_rect.height << 16;
 
-	MMINFO("VC: Display size (" << wsize.width << "x" << wsize.height << ")");
+	MMDEBUG("VC: Display size (" << wsize.width << "x" << wsize.height << ")");
 
 	DISPMANX_UPDATE_HANDLE_T l_dispman_update = vc_dispmanx_update_start(0);
 	if (l_dispman_update == DISPMANX_NO_HANDLE) {
@@ -612,7 +607,7 @@ VCViewport::PowerOnTVOutput(uint16_t &display_id)
 		return(false);
 	}
 
-	MMINFO("VC: Got initial state=" << l_tvstate.state);
+	MMDEBUG("VC: Got initial state=" << l_tvstate.state);
 
 	/*
 	 *  HDMI/DVI
@@ -623,7 +618,7 @@ VCViewport::PowerOnTVOutput(uint16_t &display_id)
 		if (0 != vc_tv_hdmi_power_on_preferred()) {
 			MMERROR("HDMI: Failed to power on.");
 			return(false);
-		} else MMINFO("VC: HDMI was powered on.");
+		} else MMDEBUG("VC: HDMI was powered on.");
 	}
 
 	/*
@@ -632,7 +627,7 @@ VCViewport::PowerOnTVOutput(uint16_t &display_id)
 	else if (0 != vc_tv_sdtv_power_on(SDTV_MODE_NTSC, 0)) {
 		MMERROR("SDTV: Failed to power on.");
 		return(false);
-	} else MMINFO("VC: SDTV was powered on.");
+	} else MMDEBUG("VC: SDTV was powered on.");
 
 	/* update state */
 	if (0 != vc_tv_get_state(&l_tvstate)) {
@@ -653,7 +648,7 @@ VCViewport::PowerOnTVOutput(uint16_t &display_id)
 		return(false);
 	}
 
-	MMINFO("VC: Using #" << l_display << " display at "
+	MMDEBUG("VC: Using #" << l_display << " display at "
 	    "(" << l_tvstate.width << "x" << l_tvstate.height << ")" );
 
 	/* set flags */
@@ -690,62 +685,63 @@ VCViewport::HandleTVOutputCallback(void *, uint32_t reason, uint32_t, uint32_t)
 	switch(reason) {
 
 	case VC_SDTV_UNPLUGGED:
-		MMINFO("VC_SDTV_UNPLUGGED");
+		MMDEBUG("VC_SDTV_UNPLUGGED");
 		if ((sfReadyValid|sfTVStandard)
 		    != (flags & (sfReadyValid|sfTVStandard)))
 			break;
 
-		MMINFO("Viewport deactivated!");
+		MMDEBUG("Viewport deactivated!");
 		flags ^= sfReady;
 		break;
 
 	case VC_HDMI_UNPLUGGED:
-		MMINFO("VC_HDMI_UNPLUGGED");
-		if ((sfReadyValid|sfTVDVI|sfTVHDMI)
-		    != (flags & (sfReadyValid|sfTVDVI|sfTVHDMI)))
+		MMDEBUG("VC_HDMI_UNPLUGGED");
+		if (0 == (flags & sfReadyValid)
+		    || (0 == (flags & (sfTVDVI|sfTVHDMI))))
 			break;
 
-		MMINFO("Viewport deactivated!");
+		MMDEBUG("Viewport deactivated!");
 		flags ^= sfReady;
 
 		/* we fallback to StandardTV mode */
-		MMINFO("Viewport reset flagged!");
+		MMDEBUG("Viewport reset flagged!");
 		flags |= sfReset;
 		break;
 
 	case VC_SDTV_STANDBY:
 	case VC_HDMI_STANDBY:
-		MMINFO((reason == VC_SDTV_STANDBY ?
+		MMDEBUG((reason == VC_SDTV_STANDBY ?
 		    "VC_SDTV_STANDBY" : "VC_HDMI_STANDBY"));
+		/* ignore if busy */
 		if (0 == (flags & sfValid))
 			break;
 
-		MMINFO("Viewport reset flagged!");
+		MMDEBUG("Viewport reset flagged!");
 		flags |= sfReset;
 		break;
 
 	case VC_SDTV_NTSC:
 	case VC_SDTV_PAL:
-		MMINFO("VC_SDTV_NTSC");
+		MMDEBUG("VC_SDTV_NTSC");
 		if (0 == (flags & sfValid))
 			break;
 
-		MMINFO("Viewport Activated");
+		MMDEBUG("Viewport Activated");
 		flags |= sfReady;
 		break;
 
 	case VC_HDMI_DVI:
 	case VC_HDMI_HDMI:
-		MMINFO((reason == VC_HDMI_DVI ?
+		MMDEBUG((reason == VC_HDMI_DVI ?
 		    "VC_HDMI_DVI" : "VC_HDMI_HDMI"));
 		if (0 == (flags & sfValid))
 			break;
 
-		MMINFO("Viewport Activated");
+		MMDEBUG("Viewport Activated");
 		flags |= sfReady;
 		break;
 
-	default: MMINFO("TVCB: Unknown!");
+	default: MMDEBUG("TVCB: Unknown!");
 	}
 }
 
@@ -786,13 +782,20 @@ Viewport::Setup(const Graphics::Display &display)
 	using namespace Core;
 	using namespace OpenGL;
 
+	static bool s_working = false;
+	if (s_working)
+		return(false);
+	s_working = true;
+
 	VCViewport::Destroy();
 
 	if (!VCViewport::Create(display)) {
 		VCViewport::Destroy();
+		s_working = false;
 		return(false);
 	}
 
+	s_working = false;
 	return(true);
 }
 

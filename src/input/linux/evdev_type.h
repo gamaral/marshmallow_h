@@ -47,7 +47,7 @@ namespace Input { /****************************************** Input Namespace */
  *
  */
 namespace Linux { /*********************************** Input::Linux Namespace */
-namespace EventDevice { /**************** Input::Linux::EventDevice Namespace */
+namespace EVDEV { /**************************** Input::Linux::EVDEV Namespace */
 
 	enum Type
 	{
@@ -56,10 +56,10 @@ namespace EventDevice { /**************** Input::Linux::EventDevice Namespace */
 		JoystickType = (1 << 1),
 		KeyboardType = (1 << 2),
 		MouseType    = (1 << 3),
-		AnyType      = ~(1)
+		AnyType      = ~(0)
 	};
 
-} /************************************** Input::Linux::EventDevice Namespace */
+} /******************************************** Input::Linux::EVDEV Namespace */
 } /*************************************************** Input::Linux Namespace */
 } /********************************************************** Input Namespace */
 MARSHMALLOW_NAMESPACE_END

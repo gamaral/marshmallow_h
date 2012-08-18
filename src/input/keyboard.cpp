@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "input/keyboard_p.h"
+#include "keyboard_p.h"
 
 /*!
  * @file
@@ -36,9 +36,9 @@
 
 #ifdef MARSHMALLOW_EVDEV_KEYBOARD
 #  ifdef MARSHMALLOW_INPUT_LINUX_EVDEV
-#    include "input/linux/evdev.h"
+#    include "linux/evdev.h"
 #  else
-#    error You can't use EVDEV KEYBOARD without overall EVDEV support.
+#    error "You can't use EVDEV KEYBOARD without overall EVDEV support."
 #  endif
 #endif
 
@@ -66,7 +66,7 @@ Keyboard::Initialize(void)
 	bool l_status = true;
 
 #ifdef MARSHMALLOW_EVDEV_KEYBOARD
-	l_status &= Input::Linux::EventDevice::InitializeKeyboard();
+	l_status &= Input::Linux::EVDEV::InitializeKeyboard();
 #endif
 
 	return(l_status);
@@ -76,7 +76,7 @@ void
 Keyboard::Finalize(void)
 {
 #ifdef MARSHMALLOW_EVDEV_KEYBOARD
-	Input::Linux::EventDevice::FinalizeKeyboard();
+	Input::Linux::EVDEV::FinalizeKeyboard();
 #endif
 	s_key_state.clear();
 }
@@ -85,7 +85,7 @@ void
 Keyboard::Tick(float)
 {
 #ifdef MARSHMALLOW_EVDEV_KEYBOARD
-	Input::Linux::EventDevice::TickKeyboard();
+	Input::Linux::EVDEV::TickKeyboard();
 #endif
 }
 

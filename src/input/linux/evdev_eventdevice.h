@@ -34,33 +34,60 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_INPUT_LINUX_EVDEV_H
-#define MARSHMALLOW_INPUT_LINUX_EVDEV_H 1
+#ifndef MARSHMALLOW_INPUT_LINUX_EVDEV_EVENTDEVICE_H
+#define MARSHMALLOW_INPUT_LINUX_EVDEV_EVENTDEVICE_H 1
 
-#include "core/environment.h"
-#include "core/namespace.h"
+#include "core/global.h"
+
+#include "evdev_type.h"
+
+struct input_event;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Input { /****************************************** Input Namespace */
 namespace Linux { /*********************************** Input::Linux Namespace */
 namespace EVDEV { /**************************** Input::Linux::EVDEV Namespace */
 
-#ifdef MARSHMALLOW_EVDEV_KEYBOARD
-	bool InitializeKeyboard(void);
+	class EventDevice
+	{
+#define EVDEV_NAME_MAX 256
+		char m_name[EVDEV_NAME_MAX];
+		size_t m_id;
+		int m_fd;
+		int m_type;
 
-	void FinalizeKeyboard(void);
+		NO_ASSIGN_COPY(EventDevice);
+	public:
+		virtual ~EventDevice(void);
 
-	void TickKeyboard(void);
-#endif
+		static EventDevice * Open(unsigned int evdev_id, int mask);
+		void close(void);
 
+		bool processEvents(void);
 
-#ifdef MARSHMALLOW_EVDEV_JOYSTICK
-	bool InitializeJoystick(void);
+		inline const char * name(void) const
+		    { return(m_name); }
 
-	void FinalizeJoystick(void);
+		inline size_t id(void) const
+		    { return(m_id); }
+		void setId(size_t id_)
+		    { m_id = id_; }
 
-	void TickJoystick(void);
-#endif
+		inline int fd(void) const
+		    { return(m_fd); }
+
+		bool isValid(void) const;
+
+		inline Type type(void) const
+		    { return(static_cast<Type>(m_type)); }
+
+	protected:
+		EventDevice(int fd, Type type);
+
+	protected: /* virtual */
+
+		virtual bool handleEvent(struct input_event &event) = 0;
+	};
 
 } /******************************************** Input::Linux::EVDEV Namespace */
 } /*************************************************** Input::Linux Namespace */

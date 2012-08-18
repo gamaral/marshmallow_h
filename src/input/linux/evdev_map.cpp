@@ -56,8 +56,8 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Input { /****************************************** Input Namespace */
 namespace Linux { /*********************************** Input::Linux Namespace */
-namespace EventDevice { /**************** Input::Linux::EventDevice Namespace */
-namespace { /*************** Input::Linux::EventDevice::<Anonymous> Namespace */
+namespace EVDEV { /**************************** Input::Linux::EVDEV Namespace */
+namespace { /********************* Input::Linux::EVDEV::<anonymous> Namespace */
 
 namespace TinyXML = tinyxml2;
 TinyXML::XMLDocument *s_map_document(0);
@@ -143,7 +143,7 @@ ParseMouseSym(const char * /*sym*/, int /* event */)
 	return(0);
 }
 
-} /************************* Input::Linux::EventDevice::<Anonymous> Namespace */
+} /************************* Input::Linux::EVDEV::<anonymous> Namespace */
 
 bool
 Map::Initialize(void)
@@ -166,7 +166,7 @@ Map::Finalize(void)
 }
 
 bool
-Map::PopulateEventCodes(__u16 vendor, __u16 product, const char *name,
+Map::PopulateEventCodes(uint16_t vendor, uint16_t product, const char *name,
                         Type type, int event, EventCodes &codes)
 {
 	using namespace TinyXML;
@@ -261,7 +261,7 @@ Map::PopulateEventCodes(__u16 vendor, __u16 product, const char *name,
 	return(true);
 }
 
-} /************************************** Input::Linux::EventDevice Namespace */
+} /******************************************** Input::Linux::EVDEV Namespace */
 } /*************************************************** Input::Linux Namespace */
 } /********************************************************** Input Namespace */
 MARSHMALLOW_NAMESPACE_END

@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "input/w32/system.h"
+#include "system.h"
 
 /*!
  * @file
