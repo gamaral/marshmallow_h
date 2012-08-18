@@ -60,6 +60,13 @@
 
 /*
  * EVDEV Notes
+ *
+ * + Hot-swapping: We currently use two methods to detect if an event device is
+ * attached or detached, inotify create/destroy and inotify attrib + fd validity
+ * checking.
+ *
+ * We need the second method due to the fact that some distributions don't
+ * cleanup event devices after they get unplugged. _raspbian_ for example.
  */
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -120,7 +127,7 @@ public:
 	static LinuxEventDevice * Open(unsigned int evdev_id, int mask);
 	void close(void);
 
-	inline void processEvents(void);
+	inline bool processEvents(void);
 
 	inline const char * name(void) const
 	    { return(m_name); }
@@ -132,6 +139,9 @@ public:
 
 	inline int fd(void) const
 	    { return(m_fd); }
+	
+	inline bool isValid(void) const
+	    { int l_v; return(-1 != ioctl(m_fd, EVIOCGVERSION, &l_v)); }
 
 	inline ED::Type type(void) const
 	    { return(static_cast<ED::Type>(m_type)); }
@@ -284,16 +294,21 @@ LinuxEventDevice::close(void)
 	if (-1 != m_fd)
 		::close(m_fd), m_fd = -1;
 
+	MMDEBUG("Event device closed:"
+		"\""    << m_name << "\" "
+		"ID[ " << m_id << "]"
+		"TYPE[ " << m_type << "]");
 	m_name[0] = '\0';
 	m_id = 0;
 	m_type = ED::UnknownType;
 }
 
-void
+bool
 LinuxEventDevice::processEvents(void)
 {
 	struct input_event l_event;
-	static const size_t l_event_size(sizeof(l_event));
+	static const ssize_t l_event_size(sizeof(l_event));
+	bool l_handled = false;
 
 	while (read(m_fd, &l_event, l_event_size) == l_event_size) {
 		switch (m_type) {
@@ -316,8 +331,10 @@ LinuxEventDevice::processEvents(void)
 		default: continue;
 		}
 
-		handleEvent(l_event);
+		l_handled |= handleEvent(l_event);
 	}
+
+	return(l_handled);
 }
 
 LinuxKeyboard::LinuxKeyboard(int fd_, ED::Type type_, struct input_id &)
@@ -332,14 +349,14 @@ LinuxKeyboard::LinuxKeyboard(int fd_, ED::Type type_, struct input_id &)
 			setId(i);
 			break;
 		}
-	s_evdev_id |= (1 << EVDEV_ID_KB + id());
+	s_evdev_id |= (1 << (EVDEV_ID_KB + id()));
 
 	MMDEBUG("Keyboard slot id " << id() << " assigned.");
 }
 
 LinuxKeyboard::~LinuxKeyboard(void)
 {
-	s_evdev_id ^= (1 << EVDEV_ID_KB + id());
+	s_evdev_id ^= (1 << (EVDEV_ID_KB + id()));
 }
 
 bool
@@ -513,7 +530,7 @@ LinuxJoystick::LinuxJoystick(int fd_, ED::Type type_, struct input_id &id_)
 			setId(i);
 			break;
 		}
-	s_evdev_id |= (1 << EVDEV_ID_JS + id());
+	s_evdev_id |= (1 << (EVDEV_ID_JS + id()));
 
 	MMDEBUG("Joystick slot id " << id() << " assigned.");
 
@@ -525,7 +542,7 @@ LinuxJoystick::LinuxJoystick(int fd_, ED::Type type_, struct input_id &id_)
 
 LinuxJoystick::~LinuxJoystick(void)
 {
-	s_evdev_id ^= (1 << EVDEV_ID_JS + id());
+	s_evdev_id ^= (1 << (EVDEV_ID_JS + id()));
 }
 
 bool
@@ -620,11 +637,15 @@ LinuxJoystick::handleEvent(struct input_event &event)
 void
 ProcessNotificationEvents(void)
 {
+	/* return on invalid handle */
+	if (-1 == s_inotify_fd)
+		return;
+
 	static const ssize_t l_event_size(sizeof(struct inotify_event));
 	char l_raw[l_event_size + NAME_MAX + 1];
 	struct inotify_event *l_event;
 	ssize_t l_c, l_i = 0;
-	unsigned int l_evdev_id;
+	unsigned int l_evdev_id = 0;
 
 	/*
 	 * Fetch notifications
@@ -642,13 +663,25 @@ ProcessNotificationEvents(void)
 			 * (usually js* change notifications)
 			 */
 			if (1 != sscanf(l_event->name, "event%ud", &l_evdev_id)
-			    && l_evdev_id < EVDEV_MAX)
+			    || l_evdev_id >= EVDEV_MAX)
 				continue;
 
 			if (IN_CREATE == (l_event->mask & IN_CREATE))
 				LinuxEventDevice::Open(l_evdev_id, s_initialized);
 			else if (IN_DELETE == (l_event->mask & IN_DELETE))
 				delete s_evdev[l_evdev_id], s_evdev[l_evdev_id] = 0;
+
+			/*
+			 * ATTRIB check is used to compensate for some faulty
+			 * setups that keep never clean up event devices after
+			 * creation.
+			 */
+			else if (IN_ATTRIB == (l_event->mask & IN_ATTRIB)) {
+				if (s_evdev[l_evdev_id] && s_evdev[l_evdev_id]->isValid())
+					continue;
+				delete s_evdev[l_evdev_id], s_evdev[l_evdev_id] = 0;
+				LinuxEventDevice::Open(l_evdev_id, s_initialized);
+			}
 		}
 		while ((l_i += l_event_size + l_event->len) < l_c);
 	}
@@ -664,11 +697,14 @@ Initialize(int mask)
 		memset(s_evdev, 0, sizeof(s_evdev));
 
 		s_inotify_fd = inotify_init1(O_NONBLOCK);
-		s_watch_fd = inotify_add_watch(s_inotify_fd, "/dev/input",
-		                               IN_CREATE|IN_DELETE);
-		if (-1 == s_watch_fd)
-			MMWARNING("INotify watch request failed.");
-
+		if (-1 == s_inotify_fd)
+			MMWARNING("INotify init failed.");
+		else {
+			s_watch_fd = inotify_add_watch(s_inotify_fd, "/dev/input",
+			                               IN_CREATE|IN_DELETE|IN_ATTRIB);
+			if (-1 == s_watch_fd)
+				MMWARNING("INotify watch request failed.");
+		}
 		ED::Map::Initialize();
 	}
 
@@ -695,9 +731,10 @@ Finalize(int mask)
 		return;
 	assert(0 == s_evdev_id && "We still have open devices!");
 
-	if (-1 == s_watch_fd)
+	if (-1 != s_watch_fd)
 		inotify_rm_watch(s_inotify_fd, s_watch_fd);
-	close(s_inotify_fd);
+	if (-1 != s_inotify_fd)
+		close(s_inotify_fd);
 
 	ED::Map::Finalize();
 }
@@ -707,9 +744,14 @@ Tick(int mask)
 {
 	ProcessNotificationEvents();
 
-	for (unsigned int i = 0; i < EVDEV_MAX; ++i)
-		if (s_evdev[i] && 0 != (mask & s_evdev[i]->type()))
-			s_evdev[i]->processEvents();
+	for (unsigned int i = 0; i < EVDEV_MAX; ++i) {
+		LinuxEventDevice *l_evdev = s_evdev[i];
+		if (!l_evdev || 0 == (mask & l_evdev->type()))
+			continue;
+
+		if (!l_evdev->processEvents() && !l_evdev->isValid())
+			delete l_evdev, s_evdev[i] = 0;
+	}
 }
 
 } /************************************** Input::Linux::<anonymous> Namespace */

@@ -118,7 +118,7 @@ Viewport::Setup(const Graphics::Display &display)
 }
 
 void
-Viewport::Tick(void)
+Viewport::Tick(float)
 {
 }
 
