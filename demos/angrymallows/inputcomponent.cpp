@@ -56,7 +56,7 @@ const Core::Type InputComponent::Type("InputComponent");
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
     , m_linear_impulse(2.f)
-    , m_angular_impulse(0.8f)
+    , m_angular_impulse(0.008f)
     , m_state(ICJumping)
     , m_jump(false)
     , m_left(false)

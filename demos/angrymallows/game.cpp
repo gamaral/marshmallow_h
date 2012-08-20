@@ -77,6 +77,7 @@ Demo::initialize(void)
 	eventManager()->connect(this, Event::KeyboardEvent::Type());
 
 	Graphics::Camera::SetPosition(0.f, -0.2f);
+	Graphics::Camera::SetZoom(300.f);
 
 	return(reset());
 }
