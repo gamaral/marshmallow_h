@@ -10,7 +10,6 @@
 
 find_path(BCM_HOST_INCLUDE_DIR bcm_host.h
 	HINTS $ENV{BCM_HOSTDIR}
-	PATH_SUFFIXES include
 	PATHS /usr/local
 	      /usr
 	      /opt/vc
@@ -32,7 +31,6 @@ list(APPEND BCM_HOST_INCLUDE_DIRS ${BCM_HOST_PTHREADS_INCLUDE_DIR})
 
 find_library(BCM_HOST_LIBRARY bcm_host
 	HINTS $ENV{BCM_HOSTDIR}
-	PATH_SUFFIXES lib
 	PATHS /usr/local
 	      /usr
 	      /opt/vc
@@ -43,7 +41,6 @@ list(APPEND BCM_HOST_LIBRARIES ${BCM_HOST_LIBRARY})
 
 find_library(BCM_HOST_vcos_LIBRARY vcos
 	HINTS $ENV{BCM_HOSTDIR}
-	PATH_SUFFIXES lib
 	PATHS /usr/local
 	      /usr
 	      /opt/vc
@@ -54,7 +51,6 @@ list(APPEND BCM_HOST_LIBRARIES ${BCM_HOST_vcos_LIBRARY})
 
 find_library(BCM_HOST_vchiq_arm_LIBRARY vchiq_arm
 	HINTS $ENV{BCM_HOSTDIR}
-	PATH_SUFFIXES lib
 	PATHS /usr/local
 	      /usr
 	      /opt/vc
