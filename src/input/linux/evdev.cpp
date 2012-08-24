@@ -116,7 +116,7 @@ ProcessNotificationEvents(void)
 
 			ED::EventDevice *&l_evdev = s_evdev[l_evdev_id];
 			if (IN_CREATE == (l_event->mask & IN_CREATE))
-				ED::EventDevice::Open(l_evdev_id, s_initialized);
+				l_evdev = ED::EventDevice::Open(l_evdev_id, s_initialized);
 			else if (IN_DELETE == (l_event->mask & IN_DELETE))
 				delete l_evdev, l_evdev = 0;
 			else if (IN_ATTRIB == (l_event->mask & IN_ATTRIB)) {
@@ -125,7 +125,7 @@ ProcessNotificationEvents(void)
 					continue;
 
 				delete l_evdev, l_evdev = 0;
-				ED::EventDevice::Open(l_evdev_id, s_initialized);
+				l_evdev = ED::EventDevice::Open(l_evdev_id, s_initialized);
 			}
 		}
 		while ((l_i += l_event_size + l_event->len) < l_c);
