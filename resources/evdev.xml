@@ -66,4 +66,30 @@
 		<key code="304" sym="UP" />
 	</gamepad>
 
+	<joystick vendor="2341" product="1000">
+		<name>Mayflash.,Ltd Mayflash Wii Classic Controller</name>
+
+		<abs code="0"   sym="X" />
+		<abs code="1"   sym="Y" />
+		<abs code="2"   sym="RX" />
+		<abs code="5"   sym="RY" />
+
+		<key code="289" sym="B" />
+		<key code="288" sym="A" />
+		<key code="291" sym="Y" />
+		<key code="290" sym="X" />
+		<key code="292" sym="L" />
+		<key code="293" sym="R" />
+		<key code="294" sym="THUMB_L" />
+		<key code="295" sym="THUMB_R" />
+		<key code="296" sym="SELECT" />
+		<key code="297" sym="START" />
+		<key code="298" sym="MENU" />
+
+		<key code="301" sym="DOWN" />
+		<key code="300" sym="LEFT" />
+		<key code="302" sym="RIGHT" />
+		<key code="299" sym="UP" />
+	</joystick>
+
 </evdev>
