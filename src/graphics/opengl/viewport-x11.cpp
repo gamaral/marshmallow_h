@@ -553,6 +553,7 @@ X11Viewport::CreateX11Window(void)
 			l_dpy_height = l_mon[l_mon_sel].height;
 		}
 	}
+	XFree(l_mon), l_mon = 0;
 #endif
 
 	/*
