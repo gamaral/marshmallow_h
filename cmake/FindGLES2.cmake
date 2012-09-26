@@ -17,6 +17,7 @@ find_path(GLES2_INCLUDE_DIR GLES2/gl2.h
 	      /usr
 	      /usr/X11R6
 	      /opt/local
+	      /opt/vc
 	      /opt
 )
 
@@ -30,6 +31,7 @@ find_library(GLES2_LIBRARY
 	      /usr
 	      /usr/X11R6
 	      /opt/local
+	      /opt/vc
 	      /opt
 )
 

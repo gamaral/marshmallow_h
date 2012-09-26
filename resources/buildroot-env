@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#
+# BuildRoot environment setup script
+#
+# Install:
+#
+#    cp buildroot-env <path-to-buildroot-base>/env
+#
+# Usage:
+#
+#    source <path-to-buildroot-base>/env
+#
+#  -or-
+#
+#    <path-to-buildroot-base>/env <program-requiring-environment>
+#
+
+# find buildroot base directory
+export BUILDROOT_DIR=`readlink -f \`dirname ${BASH_SOURCE}\``
+
+# helper environment variables
+export BUILDROOT_HOST_DIR="${BUILDROOT_DIR}/host"
+export BUILDROOT_STAGING_DIR="${BUILDROOT_DIR}/staging"
+export BUILDROOT_TARGET_DIR="${BUILDROOT_DIR}/target"
+
+# find target system processor
+export BUILDROOT_SYSTEM_PROCESSOR=`basename \`ls --color=never -1d ${BUILDROOT_HOST_DIR}/usr/bin/*-gcc\` -gcc`
+
+export CC="${BUILDROOT_HOST_DIR}/usr/bin/${BUILDROOT_SYSTEM_PROCESSOR}-gcc"
+export CXX="${BUILDROOT_HOST_DIR}/usr/bin/${BUILDROOT_SYSTEM_PROCESSOR}-g++"
+export LD="${BUILDROOT_HOST_DIR}/usr/bin/${BUILDROOT_SYSTEM_PROCESSOR}-ld"
+
+# execute
+[ "${0}" != "-bash" ]  && [ ${#*} -gt 0 ] && exec ${*:1}

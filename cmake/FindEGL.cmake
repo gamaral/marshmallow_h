@@ -13,10 +13,11 @@ find_path(EGL_INCLUDE_DIR EGL/egl.h
 	PATH_SUFFIXES include
 	PATHS ~/Library/Frameworks
 	      /Library/Frameworks
-	      /usr/local/include/EGL
-	      /usr/local/include
-	      /usr/include
+	      /usr/local
+	      /usr
+	      /usr/X11R6
 	      /opt/local
+	      /opt/vc
 	      /opt
 )
 
@@ -30,6 +31,7 @@ find_library(EGL_LIBRARY
 	      /usr
 	      /usr/X11R6
 	      /opt/local
+	      /opt/vc
 	      /opt
 )
 
