@@ -154,4 +154,5 @@ Finally, we build and do the usual crossing of fingers:
 
 	make
 
-[gamaral]: mailto:g@maral.me Guillermo A. Amaral B.
+[gamaral]: mailto:g@maral.me "Guillermo A. Amaral B."
+
