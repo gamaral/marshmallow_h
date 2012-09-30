@@ -156,3 +156,4 @@ Finally, we build and do the usual crossing of fingers:
 
 [gamaral]: mailto:g@maral.me "Guillermo A. Amaral B."
 
+vim:syn=markdown:
