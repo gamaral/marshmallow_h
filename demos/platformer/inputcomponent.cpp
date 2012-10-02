@@ -191,7 +191,10 @@ InputComponent::handleEvent(const Event::IEvent &e)
 				m_direction_stack.push_front(ICDLeft);
 				m_linear_impulse = -LINEAR_MAX;
 			}
-			else m_direction_stack.remove(ICDLeft);
+			else {
+				m_direction_stack.remove(ICDLeft);
+				m_linear_impulse = LINEAR_MAX;
+			}
 		}
 		else if (l_kevent.key() == Keyboard::KBK_RIGHT ||
 			 l_kevent.key() == Keyboard::KBK_D) {
@@ -199,7 +202,10 @@ InputComponent::handleEvent(const Event::IEvent &e)
 				m_direction_stack.push_front(ICDRight);
 				m_linear_impulse = LINEAR_MAX;
 			}
-			else m_direction_stack.remove(ICDRight);
+			else {
+				m_direction_stack.remove(ICDRight);
+				m_linear_impulse = -LINEAR_MAX;
+			}
 		}
 		else if (l_kevent.key() == Keyboard::KBK_SPACE ||
 			 l_kevent.key() == Keyboard::KBK_M) {
