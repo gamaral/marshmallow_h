@@ -37,6 +37,8 @@ Graphics
 
 * Add Qt 5 OpenGL support.
 
+* Add GL_IMG_texture_compression_pvrtc support
+
 Components
 ----------
 

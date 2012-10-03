@@ -41,11 +41,16 @@
 int
 MMain(int argc, char *argv[])
 {
+	MMUNUSED(argc);
+	MMUNUSED(argv);
+
+#ifdef DEMO_CWD
 	const char *l_cwd = getenv("MM_DEMO_CWD");
 	if (!l_cwd) l_cwd = DEMO_CWD;
 
 	if (-1 == MMCHDIR(l_cwd))
 		MMFATAL("Failed to change working directory \"" << l_cwd << "\". ABORT!");
+#endif
 
 	const char *l_filename("assets/default.xml");
 	if (argc > 1) l_filename = argv[1];

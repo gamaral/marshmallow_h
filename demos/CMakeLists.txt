@@ -1,3 +1,5 @@
+set(MARSHMALLOW_DEMO_CWD_OVERRIDE ON CACHE BOOL "Override Current Working Directory in demos")
+
 add_subdirectory(engine)
 add_subdirectory(tilemap)
 add_subdirectory(platformer)
