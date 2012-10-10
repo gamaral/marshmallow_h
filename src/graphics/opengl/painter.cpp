@@ -121,8 +121,6 @@ namespace GLPainter {
 }
 
 const char s_vertex_shader[] =
-  "#version 100\n"
-
   "attribute vec2 a_texCoord;\n"
   "attribute vec4 a_position;\n"
 
@@ -137,8 +135,6 @@ const char s_vertex_shader[] =
   "}\n";
 
 const char s_fragment_shader[] =
-  "#version 100\n"
-
 #if MARSHMALLOW_OPENGL_ES2
   "precision mediump float;\n"
   "precision mediump int;\n"

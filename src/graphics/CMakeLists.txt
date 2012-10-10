@@ -140,6 +140,21 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              ${BCM_HOST_LIBRARIES})
 		add_definitions(-DMARSHMALLOW_OPENGL_VC)
+
+	#
+	# QNX Screen (Used in Playbook)
+	#
+	elseif(MARSHMALLOW_OPENGL_QNX)
+		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
+		                              opengl/viewport-qnx.cpp)
+		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
+		                              "bps" "screen")
+		add_definitions(-DMARSHMALLOW_OPENGL_QNX)
+
+		if(MARSHMALLOW_INPUT_QNX_SCREEN)
+			add_definitions(-DMARSHMALLOW_INPUT_QNX_SCREEN)
+		endif()
+
 	else()
 		message(WARNING "No OpenGL viewport selected!")
 	endif()

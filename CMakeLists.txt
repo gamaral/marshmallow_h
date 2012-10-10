@@ -103,6 +103,7 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 	option(MARSHMALLOW_OPENGL_QT4 "Use OpenGL Qt4 Viewport (qt4)"            OFF)
 	option(MARSHMALLOW_OPENGL_SDL "Use OpenGL SDL Viewport (sdl)"            OFF)
 	option(MARSHMALLOW_OPENGL_VC  "Use OpenGL VideoCore Viewport (broadcom)" OFF)
+	option(MARSHMALLOW_OPENGL_QNX "Use OpenGL QNX Screen Viewport (qnx)"     OFF)
 	option(MARSHMALLOW_OPENGL_WGL "Use OpenGL WGL Viewport (windows)"        OFF)
 	option(MARSHMALLOW_OPENGL_X11 "Use OpenGL X11 & GLX/EGL Viewport (unix)" OFF)
 	option(MARSHMALLOW_OPENGL_ES2 "Use OpenGL ES 2.0 (x11/vc)"               OFF)
@@ -128,6 +129,9 @@ if(MARSHMALLOW_OPENGL_WGL)
 	option(MARSHMALLOW_INPUT_W32_SYSTEM "Windows input event support" ON)
 endif()
 
+if(MARSHMALLOW_OPENGL_QNX)
+	option(MARSHMALLOW_INPUT_QNX_SCREEN "QNX Screen input event support" ON)
+endif()
 
 ####################################################################### CONFIG #
 
