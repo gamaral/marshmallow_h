@@ -20,9 +20,9 @@ set(MARSHMALLOW_WITH_BOX2D          ON   CACHE BOOL   "")
 set(MARSHMALLOW_WITH_LUA            OFF  CACHE BOOL   "")
 
 # CMAKE
-set(CMAKE_C_FLAGS "-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"   CACHE STRING "")
+#set(CMAKE_C_FLAGS "-mfpu=vfp -mfloat-abi=hard"   CACHE STRING "")
 set(CMAKE_C_FLAGS_RELEASE "-fomit-frame-pointer"                    CACHE STRING "")
-set(CMAKE_CXX_FLAGS "-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard" CACHE STRING "")
+#set(CMAKE_CXX_FLAGS "-mfpu=vfp -mfloat-abi=hard" CACHE STRING "")
 set(CMAKE_CXX_FLAGS_RELEASE "-fomit-frame-pointer"                  CACHE STRING "")
 
 set(CMAKE_FIND_ROOT_PATH   "/opt/vc"           CACHE INTERNAL "")

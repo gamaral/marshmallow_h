@@ -90,7 +90,7 @@ contact me][gamaral].
 ### Raspberry Pi
 
 If you wish to test out marshmallow_h on the [Raspberry
-Pi](http://www.raspberrypi.com/), you have two ways of building.
+Pi](http://www.raspberrypi.com/), you have a few ways of building.
 
 #### Native
 
@@ -126,9 +126,20 @@ base directory and run the following commands:
 
 	cd build
 	cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-raspberrypi.cmake -C ../cmake/Cache-raspberrypi.cmake ..
+
+At this point you can configure manually using the following command **(optional)**:
+
+	make edit_cache
+
+Finally, we build and do the usual crossing of fingers:
+
 	make
 
 ### BuildRoot
+
+My custom Raspberry Pi buildroot distro can be found here:
+
+	https://github.com/gamaral/rpi-buildroot
 
 After you have configured and compiled buildroot to your liking, you will need
 to copy over the environment file supplied (or export the required environment
@@ -137,6 +148,12 @@ variables by hand).
 	cp resources/buildroot-env <buildroot-base>/env
 	source <buildroot-base>/env
 
+Alternatively, you could use the pre-compiled sdcard image and toolchain I made
+available for test driving the distro. It comes complete with the **env** file
+and can be downloaded here:
+
+	https://github.com/gamaral/rpi-buildroot/downloads
+
 Keep in mind you might need to *source* that same environment file again if you
 plan to reconfigure at a later time.
 
@@ -144,9 +161,9 @@ We are now ready to configure *marshmallow_h*, change into the marshmallow's
 base directory and run the following commands:
 
 	cd build
-	cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-buildroot.cmake ..
+	cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-buildroot.cmake -C ../cmake/Cache-raspberrypi.cmake ..
 
-At this point you can configure manually using the following command:
+At this point you can configure manually using the following command **(optional)**:
 
 	make edit_cache
 
