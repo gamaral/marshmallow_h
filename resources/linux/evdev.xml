@@ -92,4 +92,12 @@
 		<key code="299" sym="UP" />
 	</joystick>
 
+	<keyboard vendor="9025" product="32822">
+		<name>Arduino LLC Arduino Leonardo</name>
+
+		<!-- MakeyMakey -->
+
+		<key code="272" sym="SHIFT_L" />
+	</keyboard>
+
 </evdev>

@@ -37,6 +37,7 @@
 #include "core/logger.h"
 
 #include "input/joystick.h"
+#include "input/keyboard.h"
 
 #include <linux/input.h>
 
@@ -126,12 +127,290 @@ ParseJoystickSym(const char *sym, int event)
 }
 
 inline int
-ParseKeyboardSym(const char * /*sym*/, int /* event */)
+ParseKeyboardSym(const char *sym, int event)
 {
-	/*
-	 * TODO(gamaral) Parse keyboard syms
-	 */
-	return(0);
+	int l_mmcode = 0;
+
+	if (EV_KEY == event) {
+		l_mmcode = Keyboard::KBK_NONE;
+
+		if (0 == MMSTRCASECMP("BACKSPACE", sym))
+			l_mmcode = Keyboard::KBK_BACKSPACE;
+		else if (0 == MMSTRCASECMP("TAB", sym))
+			l_mmcode = Keyboard::KBK_TAB;
+		else if (0 == MMSTRCASECMP("CLEAR", sym))
+			l_mmcode = Keyboard::KBK_CLEAR;
+		else if (0 == MMSTRCASECMP("RETURN", sym))
+			l_mmcode = Keyboard::KBK_RETURN;
+		else if (0 == MMSTRCASECMP("ENTER", sym))
+			l_mmcode = Keyboard::KBK_ENTER;
+		else if (0 == MMSTRCASECMP("PAUSE", sym))
+			l_mmcode = Keyboard::KBK_PAUSE;
+		else if (0 == MMSTRCASECMP("ESCAPE", sym))
+			l_mmcode = Keyboard::KBK_ESCAPE;
+
+		else if (0 == MMSTRCASECMP("SPACE", sym))
+			l_mmcode = Keyboard::KBK_SPACE;
+		else if (0 == MMSTRCASECMP("COMMA", sym))
+			l_mmcode = Keyboard::KBK_COMMA;
+		else if (0 == MMSTRCASECMP("HYPHEN", sym))
+			l_mmcode = Keyboard::KBK_HYPHEN;
+		else if (0 == MMSTRCASECMP("DASH", sym))
+			l_mmcode = Keyboard::KBK_DASH;
+		else if (0 == MMSTRCASECMP("MINUS", sym))
+			l_mmcode = Keyboard::KBK_MINUS;
+		else if (0 == MMSTRCASECMP("PERIOD", sym))
+			l_mmcode = Keyboard::KBK_PERIOD;
+		else if (0 == MMSTRCASECMP("DECIMAL", sym))
+			l_mmcode = Keyboard::KBK_DECIMAL;
+		else if (0 == MMSTRCASECMP("DOT", sym))
+			l_mmcode = Keyboard::KBK_DOT;
+		else if (0 == MMSTRCASECMP("SLASH", sym))
+			l_mmcode = Keyboard::KBK_SLASH;
+
+		else if (0 == MMSTRCASECMP("0", sym))
+			l_mmcode = Keyboard::KBK_0;
+		else if (0 == MMSTRCASECMP("1", sym))
+			l_mmcode = Keyboard::KBK_1;
+		else if (0 == MMSTRCASECMP("2", sym))
+			l_mmcode = Keyboard::KBK_2;
+		else if (0 == MMSTRCASECMP("3", sym))
+			l_mmcode = Keyboard::KBK_3;
+		else if (0 == MMSTRCASECMP("4", sym))
+			l_mmcode = Keyboard::KBK_4;
+		else if (0 == MMSTRCASECMP("5", sym))
+			l_mmcode = Keyboard::KBK_5;
+		else if (0 == MMSTRCASECMP("6", sym))
+			l_mmcode = Keyboard::KBK_6;
+		else if (0 == MMSTRCASECMP("7", sym))
+			l_mmcode = Keyboard::KBK_7;
+		else if (0 == MMSTRCASECMP("8", sym))
+			l_mmcode = Keyboard::KBK_8;
+		else if (0 == MMSTRCASECMP("9", sym))
+			l_mmcode = Keyboard::KBK_9;
+
+		else if (0 == MMSTRCASECMP("SEMICOLON", sym))
+			l_mmcode = Keyboard::KBK_SEMICOLON;
+		else if (0 == MMSTRCASECMP("EQUAL", sym))
+			l_mmcode = Keyboard::KBK_EQUAL;
+		else if (0 == MMSTRCASECMP("EQUALS", sym))
+			l_mmcode = Keyboard::KBK_EQUALS;
+		else if (0 == MMSTRCASECMP("APOSTROPHE", sym))
+			l_mmcode = Keyboard::KBK_APOSTROPHE;
+		else if (0 == MMSTRCASECMP("QUOTE", sym))
+			l_mmcode = Keyboard::KBK_QUOTE;
+
+		else if (0 == MMSTRCASECMP("A", sym))
+			l_mmcode = Keyboard::KBK_A;
+		else if (0 == MMSTRCASECMP("B", sym))
+			l_mmcode = Keyboard::KBK_B;
+		else if (0 == MMSTRCASECMP("C", sym))
+			l_mmcode = Keyboard::KBK_C;
+		else if (0 == MMSTRCASECMP("D", sym))
+			l_mmcode = Keyboard::KBK_D;
+		else if (0 == MMSTRCASECMP("E", sym))
+			l_mmcode = Keyboard::KBK_E;
+		else if (0 == MMSTRCASECMP("F", sym))
+			l_mmcode = Keyboard::KBK_F;
+		else if (0 == MMSTRCASECMP("G", sym))
+			l_mmcode = Keyboard::KBK_G;
+		else if (0 == MMSTRCASECMP("H", sym))
+			l_mmcode = Keyboard::KBK_H;
+		else if (0 == MMSTRCASECMP("I", sym))
+			l_mmcode = Keyboard::KBK_I;
+		else if (0 == MMSTRCASECMP("J", sym))
+			l_mmcode = Keyboard::KBK_J;
+		else if (0 == MMSTRCASECMP("K", sym))
+			l_mmcode = Keyboard::KBK_K;
+		else if (0 == MMSTRCASECMP("L", sym))
+			l_mmcode = Keyboard::KBK_L;
+		else if (0 == MMSTRCASECMP("M", sym))
+			l_mmcode = Keyboard::KBK_M;
+		else if (0 == MMSTRCASECMP("N", sym))
+			l_mmcode = Keyboard::KBK_N;
+		else if (0 == MMSTRCASECMP("O", sym))
+			l_mmcode = Keyboard::KBK_O;
+		else if (0 == MMSTRCASECMP("P", sym))
+			l_mmcode = Keyboard::KBK_P;
+		else if (0 == MMSTRCASECMP("Q", sym))
+			l_mmcode = Keyboard::KBK_Q;
+		else if (0 == MMSTRCASECMP("R", sym))
+			l_mmcode = Keyboard::KBK_R;
+		else if (0 == MMSTRCASECMP("S", sym))
+			l_mmcode = Keyboard::KBK_S;
+		else if (0 == MMSTRCASECMP("T", sym))
+			l_mmcode = Keyboard::KBK_T;
+		else if (0 == MMSTRCASECMP("U", sym))
+			l_mmcode = Keyboard::KBK_U;
+		else if (0 == MMSTRCASECMP("V", sym))
+			l_mmcode = Keyboard::KBK_V;
+		else if (0 == MMSTRCASECMP("W", sym))
+			l_mmcode = Keyboard::KBK_W;
+		else if (0 == MMSTRCASECMP("X", sym))
+			l_mmcode = Keyboard::KBK_X;
+		else if (0 == MMSTRCASECMP("Y", sym))
+			l_mmcode = Keyboard::KBK_Y;
+		else if (0 == MMSTRCASECMP("Z", sym))
+			l_mmcode = Keyboard::KBK_Z;
+
+		else if (0 == MMSTRCASECMP("BRACKET_L", sym))
+			l_mmcode = Keyboard::KBK_BRACKET_L;
+		else if (0 == MMSTRCASECMP("BACKSLASH", sym))
+			l_mmcode = Keyboard::KBK_BACKSLASH;
+		else if (0 == MMSTRCASECMP("BRACKET_R", sym))
+			l_mmcode = Keyboard::KBK_BRACKET_R;
+		else if (0 == MMSTRCASECMP("GRAVE", sym))
+			l_mmcode = Keyboard::KBK_GRAVE;
+
+		else if (0 == MMSTRCASECMP("DELETE", sym))
+			l_mmcode = Keyboard::KBK_DELETE;
+
+		else if (0 == MMSTRCASECMP("SHIFT_L", sym))
+			l_mmcode = Keyboard::KBK_SHIFT_L;
+		else if (0 == MMSTRCASECMP("SHIFT_R", sym))
+			l_mmcode = Keyboard::KBK_SHIFT_R;
+		else if (0 == MMSTRCASECMP("CAPS_LOCK", sym))
+			l_mmcode = Keyboard::KBK_CAPS_LOCK;
+
+
+		else if (0 == MMSTRCASECMP("ALT_L", sym))
+			l_mmcode = Keyboard::KBK_ALT_L;
+		else if (0 == MMSTRCASECMP("ALT_R", sym))
+			l_mmcode = Keyboard::KBK_ALT_R;
+
+		else if (0 == MMSTRCASECMP("CONTROL_L", sym))
+			l_mmcode = Keyboard::KBK_CONTROL_L;
+		else if (0 == MMSTRCASECMP("CONTROL_R", sym))
+			l_mmcode = Keyboard::KBK_CONTROL_R;
+
+		else if (0 == MMSTRCASECMP("META_L", sym))
+			l_mmcode = Keyboard::KBK_META_L;
+		else if (0 == MMSTRCASECMP("META_R", sym))
+			l_mmcode = Keyboard::KBK_META_R;
+
+		else if (0 == MMSTRCASECMP("SUPER_L", sym))
+			l_mmcode = Keyboard::KBK_SUPER_L;
+		else if (0 == MMSTRCASECMP("SUPER_R", sym))
+			l_mmcode = Keyboard::KBK_SUPER_R;
+
+		else if (0 == MMSTRCASECMP("F1", sym))
+			l_mmcode = Keyboard::KBK_F1;
+		else if (0 == MMSTRCASECMP("F2", sym))
+			l_mmcode = Keyboard::KBK_F2;
+		else if (0 == MMSTRCASECMP("F3", sym))
+			l_mmcode = Keyboard::KBK_F3;
+		else if (0 == MMSTRCASECMP("F4", sym))
+			l_mmcode = Keyboard::KBK_F4;
+		else if (0 == MMSTRCASECMP("F5", sym))
+			l_mmcode = Keyboard::KBK_F5;
+		else if (0 == MMSTRCASECMP("F6", sym))
+			l_mmcode = Keyboard::KBK_F6;
+		else if (0 == MMSTRCASECMP("F7", sym))
+			l_mmcode = Keyboard::KBK_F7;
+		else if (0 == MMSTRCASECMP("F8", sym))
+			l_mmcode = Keyboard::KBK_F8;
+		else if (0 == MMSTRCASECMP("F9", sym))
+			l_mmcode = Keyboard::KBK_F9;
+		else if (0 == MMSTRCASECMP("F10", sym))
+			l_mmcode = Keyboard::KBK_F10;
+		else if (0 == MMSTRCASECMP("F11", sym))
+			l_mmcode = Keyboard::KBK_F11;
+		else if (0 == MMSTRCASECMP("F12", sym))
+			l_mmcode = Keyboard::KBK_F12;
+		else if (0 == MMSTRCASECMP("F13", sym))
+			l_mmcode = Keyboard::KBK_F13;
+		else if (0 == MMSTRCASECMP("F14", sym))
+			l_mmcode = Keyboard::KBK_F14;
+		else if (0 == MMSTRCASECMP("F15", sym))
+			l_mmcode = Keyboard::KBK_F15;
+
+		else if (0 == MMSTRCASECMP("PRINT", sym))
+			l_mmcode = Keyboard::KBK_PRINT;
+		else if (0 == MMSTRCASECMP("SCROLL_LOCK", sym))
+			l_mmcode = Keyboard::KBK_SCROLL_LOCK;
+		else if (0 == MMSTRCASECMP("BREAK", sym))
+			l_mmcode = Keyboard::KBK_BREAK;
+
+		else if (0 == MMSTRCASECMP("INSERT", sym))
+			l_mmcode = Keyboard::KBK_INSERT;
+		else if (0 == MMSTRCASECMP("HOME", sym))
+			l_mmcode = Keyboard::KBK_HOME;
+		else if (0 == MMSTRCASECMP("END", sym))
+			l_mmcode = Keyboard::KBK_END;
+		else if (0 == MMSTRCASECMP("PAGE_UP", sym))
+			l_mmcode = Keyboard::KBK_PAGE_UP;
+		else if (0 == MMSTRCASECMP("PAGE_DOWN", sym))
+			l_mmcode = Keyboard::KBK_PAGE_DOWN;
+
+		else if (0 == MMSTRCASECMP("UP", sym))
+			l_mmcode = Keyboard::KBK_UP;
+		else if (0 == MMSTRCASECMP("DOWN", sym))
+			l_mmcode = Keyboard::KBK_DOWN;
+		else if (0 == MMSTRCASECMP("LEFT", sym))
+			l_mmcode = Keyboard::KBK_LEFT;
+		else if (0 == MMSTRCASECMP("RIGHT", sym))
+			l_mmcode = Keyboard::KBK_RIGHT;
+
+		else if (0 == MMSTRCASECMP("NUM_LOCK", sym))
+			l_mmcode = Keyboard::KBK_NUM_LOCK;
+		else if (0 == MMSTRCASECMP("KDIVIDE", sym))
+			l_mmcode = Keyboard::KBK_KDIVIDE;
+		else if (0 == MMSTRCASECMP("KSLASH", sym))
+			l_mmcode = Keyboard::KBK_KSLASH;
+		else if (0 == MMSTRCASECMP("KMULTIPLY", sym))
+			l_mmcode = Keyboard::KBK_KMULTIPLY;
+		else if (0 == MMSTRCASECMP("KASTERISK", sym))
+			l_mmcode = Keyboard::KBK_KASTERISK;
+		else if (0 == MMSTRCASECMP("KSUBTRACT", sym))
+			l_mmcode = Keyboard::KBK_KSUBTRACT;
+		else if (0 == MMSTRCASECMP("KDASH", sym))
+			l_mmcode = Keyboard::KBK_KDASH;
+		else if (0 == MMSTRCASECMP("KHYPHEN", sym))
+			l_mmcode = Keyboard::KBK_KHYPHEN;
+		else if (0 == MMSTRCASECMP("KMINUS", sym))
+			l_mmcode = Keyboard::KBK_KMINUS;
+		else if (0 == MMSTRCASECMP("K7", sym))
+			l_mmcode = Keyboard::KBK_K7;
+		else if (0 == MMSTRCASECMP("K8", sym))
+			l_mmcode = Keyboard::KBK_K8;
+		else if (0 == MMSTRCASECMP("K9", sym))
+			l_mmcode = Keyboard::KBK_K9;
+		else if (0 == MMSTRCASECMP("K4", sym))
+			l_mmcode = Keyboard::KBK_K4;
+		else if (0 == MMSTRCASECMP("K5", sym))
+			l_mmcode = Keyboard::KBK_K5;
+		else if (0 == MMSTRCASECMP("K6", sym))
+			l_mmcode = Keyboard::KBK_K6;
+		else if (0 == MMSTRCASECMP("KADD", sym))
+			l_mmcode = Keyboard::KBK_KADD;
+		else if (0 == MMSTRCASECMP("KPLUS", sym))
+			l_mmcode = Keyboard::KBK_KPLUS;
+		else if (0 == MMSTRCASECMP("K1", sym))
+			l_mmcode = Keyboard::KBK_K1;
+		else if (0 == MMSTRCASECMP("K2", sym))
+			l_mmcode = Keyboard::KBK_K2;
+		else if (0 == MMSTRCASECMP("K3", sym))
+			l_mmcode = Keyboard::KBK_K3;
+		else if (0 == MMSTRCASECMP("K0", sym))
+			l_mmcode = Keyboard::KBK_K0;
+		else if (0 == MMSTRCASECMP("KDECIMAL", sym))
+			l_mmcode = Keyboard::KBK_KDECIMAL;
+		else if (0 == MMSTRCASECMP("KPERIOD", sym))
+			l_mmcode = Keyboard::KBK_KPERIOD;
+		else if (0 == MMSTRCASECMP("KDOT", sym))
+			l_mmcode = Keyboard::KBK_KDOT;
+		else if (0 == MMSTRCASECMP("KENTER", sym))
+			l_mmcode = Keyboard::KBK_KENTER;
+
+		else if (0 == MMSTRCASECMP("CLOSE", sym))
+			l_mmcode = Keyboard::KBK_CLOSE;
+		else if (0 == MMSTRCASECMP("HELP", sym))
+			l_mmcode = Keyboard::KBK_HELP;
+		else if (0 == MMSTRCASECMP("MENU", sym))
+			l_mmcode = Keyboard::KBK_MENU;
+	}
+
+	return(l_mmcode);
 }
 
 inline int
@@ -149,6 +428,7 @@ bool
 Map::Initialize(void)
 {
 	s_map_document = new TinyXML::XMLDocument;
+
 	if (TinyXML::XML_NO_ERROR != s_map_document->LoadFile("evdev.xml")) {
 		MMWARNING("Failed to load the evdev map file.");
 		delete s_map_document, s_map_document = 0;

@@ -201,7 +201,7 @@ EventDevice::Open(unsigned int evdev_id, int mask)
 #ifdef MARSHMALLOW_EVDEV_KEYBOARD
 	case KeyboardType:
 		l_evdev =
-		    new KeyboardDevice(l_fd, l_type);
+		    new KeyboardDevice(l_fd, l_type, l_id.vendor, l_id.product);
 		break;
 #endif
 

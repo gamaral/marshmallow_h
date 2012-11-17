@@ -141,6 +141,8 @@ Initialize(int mask)
 	if (0 == s_initialized) {
 		memset(s_evdev, 0, sizeof(s_evdev));
 
+		ED::Map::Initialize();
+
 		s_inotify_fd = inotify_init1(O_NONBLOCK);
 		if (-1 == s_inotify_fd)
 			MMWARNING("INotify init failed.");
@@ -150,7 +152,6 @@ Initialize(int mask)
 			if (-1 == s_watch_fd)
 				MMWARNING("INotify watch request failed.");
 		}
-		ED::Map::Initialize();
 	}
 
 	int l_c  = 0;

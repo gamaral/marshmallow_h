@@ -49,10 +49,13 @@ namespace EVDEV { /**************************** Input::Linux::EVDEV Namespace */
 
 	class KeyboardDevice : public EventDevice
 	{
+		Map::EventCodes m_key_map;
+
 		NO_ASSIGN_COPY(KeyboardDevice);
 	public:
 
-		KeyboardDevice(int fd, Type type);
+		KeyboardDevice(int fd, Type type, uint16_t vendor,
+		               uint16_t product);
 		virtual ~KeyboardDevice(void) {};
 
 	protected: /* virtual */
