@@ -18,3 +18,9 @@ endif()
 target_link_libraries(engine_demo0 marshmallow_entrypoint
                                    marshmallow_game)
 
+install(TARGETS engine_demo0
+        RUNTIME DESTINATION bin COMPONENT demos)
+
+install(DIRECTORY assets/
+        DESTINATION assets COMPONENT demos)
+

@@ -53,3 +53,7 @@ add_library(${BOX2D_LIBRARY} STATIC
 	${BOX2D_Rope_SRCS}
 )
 
+install(TARGETS ${BOX2D_LIBRARY}
+        LIBRARY DESTINATION lib COMPONENT runtime
+        ARCHIVE DESTINATION lib COMPONENT development)
+

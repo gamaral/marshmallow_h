@@ -7,3 +7,7 @@ add_library(marshmallow_event ${MARSHMALLOW_EVENT_SRCS})
 
 target_link_libraries(marshmallow_event ${MARSHMALLOW_EVENT_LIBS})
 
+install(TARGETS marshmallow_event
+        LIBRARY DESTINATION lib COMPONENT runtime
+        ARCHIVE DESTINATION lib COMPONENT development)
+

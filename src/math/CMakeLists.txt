@@ -12,3 +12,7 @@ add_library(marshmallow_math ${MARSHMALLOW_MATH_SRCS})
 
 target_link_libraries(marshmallow_math ${MARSHMALLOW_MATH_LIBS})
 
+install(TARGETS marshmallow_math
+        LIBRARY DESTINATION lib COMPONENT runtime
+        ARCHIVE DESTINATION lib COMPONENT development)
+

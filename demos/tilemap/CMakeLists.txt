@@ -45,3 +45,9 @@ target_link_libraries(tilemap_demo2 marshmallow_entrypoint
                                     marshmallow_game
 )
 
+install(TARGETS tilemap_demo0 tilemap_demo1 tilemap_demo2
+        RUNTIME DESTINATION bin COMPONENT demos)
+
+install(DIRECTORY assets/
+        DESTINATION assets COMPONENT demos)
+

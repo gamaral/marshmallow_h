@@ -22,3 +22,8 @@ add_library(marshmallow_game
 )
 
 target_link_libraries(marshmallow_game ${MARSHMALLOW_GAME_LIBS})
+
+install(TARGETS marshmallow_game
+        LIBRARY DESTINATION lib COMPONENT runtime
+        ARCHIVE DESTINATION lib COMPONENT development)
+

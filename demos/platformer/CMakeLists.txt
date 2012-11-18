@@ -26,3 +26,9 @@ target_link_libraries(platformer_demo0 marshmallow_entrypoint
                                        marshmallow_extra
 )
 
+install(TARGETS platformer_demo0
+        RUNTIME DESTINATION bin COMPONENT demos)
+
+install(DIRECTORY assets/
+        DESTINATION assets COMPONENT demos)
+

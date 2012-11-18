@@ -29,3 +29,7 @@ add_library(marshmallow_core ${MARSHMALLOW_CORE_SRCS})
 
 target_link_libraries(marshmallow_core ${MARSHMALLOW_CORE_LIBS})
 
+install(TARGETS marshmallow_core
+        LIBRARY DESTINATION lib COMPONENT runtime
+        ARCHIVE DESTINATION lib COMPONENT development)
+

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+RUN="${1}"
+
+# change directory to script location
+cd `dirname ${0}`
+
+export LD_LIBRARY_PATH=${PWD}/lib
+
+# default to first application
+if [ -z "${RUN}" ]; then
+	RUN=`ls -1 bin | head -1`
+fi
+
+exec bin/${RUN}

@@ -43,3 +43,7 @@ endif()
 
 add_library(marshmallow_tinyxml STATIC ${MARSHMALLOW_TINYXML_SRCS})
 
+install(TARGETS marshmallow_tinyxml
+        LIBRARY DESTINATION lib COMPONENT runtime
+        ARCHIVE DESTINATION lib COMPONENT development)
+

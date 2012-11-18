@@ -21,6 +21,12 @@ if(MARSHMALLOW_INPUT_LINUX_EVDEV)
 		set(MARSHMALLOW_INPUT_SRCS ${MARSHMALLOW_INPUT_SRCS}
 		                           linux/evdev_joystickdevice.cpp)
 	endif()
+
+	if(NOT MARSHMALLOW_LIBRARY_ONLY)
+		install(FILES ${PROJECT_SOURCE_DIR}/resources/linux/evdev.xml
+		        DESTINATION .
+		        COMPONENT deployment)
+	endif()
 endif()
 
 if(MARSHMALLOW_INPUT_UNIX_X11 AND MARSHMALLOW_OPENGL_X11)
@@ -68,4 +74,8 @@ endif()
 add_library(marshmallow_input ${MARSHMALLOW_INPUT_SRCS})
 
 target_link_libraries(marshmallow_input ${MARSHMALLOW_INPUT_LIBS})
+
+install(TARGETS marshmallow_input
+        LIBRARY DESTINATION lib COMPONENT runtime
+        ARCHIVE DESTINATION lib COMPONENT development)
 

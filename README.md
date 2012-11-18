@@ -171,6 +171,28 @@ Finally, we build and do the usual crossing of fingers:
 
 	make
 
+# Installation
+
+Components:
+
+	demos: Demos and assets
+	deployment: Files required for game deployment
+	development: Headers and static libraries
+	runtime: Shared libraries
+
+## Demo Package
+
+To create a demo package, you will need to run the following commands:
+
+	cd build
+	cmake -DCMAKE_INSTALL_PREFIX=marshmallow_demos -DCOMPONENT=runtime    -P cmake_install.cmake
+	cmake -DCMAKE_INSTALL_PREFIX=marshmallow_demos -DCOMPONENT=deployment -P cmake_install.cmake
+	cmake -DCMAKE_INSTALL_PREFIX=marshmallow_demos -DCOMPONENT=demos      -P cmake_install.cmake
+
+To test out the package, you can run the following command:
+
+	marshmallow_demos/run platformer_demo0
+
 [gamaral]: mailto:g@maral.me "Guillermo A. Amaral B."
 
 vim:syn=markdown:

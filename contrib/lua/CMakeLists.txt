@@ -73,3 +73,7 @@ endif()
 
 add_library(${LUA_LIBRARY} ${LUA_SRCS})
 
+install(TARGETS ${LUA_LIBRARY}
+        LIBRARY DESTINATION lib COMPONENT runtime
+        ARCHIVE DESTINATION lib COMPONENT development)
+

@@ -104,3 +104,7 @@ string(REGEX REPLACE ".*#define[ \t]+ZLIB_VERSION[ \t]+\"([0-9A-Za-z.]+)\".*"
 
 add_library(${ZLIB_LIBRARY} ${ZLIB_SRCS})
 
+install(TARGETS ${ZLIB_LIBRARY}
+        LIBRARY DESTINATION lib COMPONENT runtime
+        ARCHIVE DESTINATION lib COMPONENT development)
+

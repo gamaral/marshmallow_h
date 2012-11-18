@@ -52,3 +52,7 @@ add_definitions(-DLIBPNG_NO_STDIO)
 add_library(${PNG_LIBRARY} ${PNG_SRCS})
 target_link_libraries(${PNG_LIBRARY} ${ZLIB_LIBRARIES} ${M_LIBRARY})
 
+install(TARGETS ${PNG_LIBRARY}
+        LIBRARY DESTINATION lib COMPONENT runtime
+        ARCHIVE DESTINATION lib COMPONENT development)
+

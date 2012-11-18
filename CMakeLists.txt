@@ -57,7 +57,7 @@ endif()
 
 ############################################################### GLOBAL OPTIONS #
 
-set(MARSHMALLOW_NAMESPACE   "Marshmallow"        CACHE STRING "Marshmallow Namespace")
+set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Marshmallow Namespace")
 
 option(MARSHMALLOW_DEBUG "Marshmallow Debugging" OFF)
 set(MARSHMALLOW_DEBUG_VERBOSITY "0" CACHE STRING "Verbosity Level")
@@ -83,6 +83,8 @@ option(MARSHMALLOW_CONTRIB_ZLIB   "Use bundled ZLIB"   ON)
 
 option(MARSHMALLOW_WITH_BOX2D "Use Box2D" ON)
 option(MARSHMALLOW_WITH_LUA   "Use Lua"   OFF)
+
+option(MARSHMALLOW_DEMO "Build Marshmallow Demos" ON)
 
 ########################################################### GLOBAL SUB-OPTIONS #
 
@@ -187,16 +189,36 @@ include_directories(${PROJECT_BINARY_DIR}/include
                     ${PROJECT_SOURCE_DIR}/include
                     ${TINYXML_INCLUDE_DIR})
 
+####################################################################### TARGET #
+
+if(EXISTS ${PROJECT_SOURCE_DIR}/target/CMakeLists.txt)
+	add_subdirectory(target)
+elseif(MARSHMALLOW_DEMO)
+	add_subdirectory(demos)
+else()
+	set(MARSHMALLOW_LIBRARY_ONLY ON)
+endif()
+
 ############################################################## SUB DIRECTORIES #
 
 add_subdirectory(contrib)
 add_subdirectory(src)
 
-####################################################################### TARGET #
+###################################################################### INSTALL #
 
-if(EXISTS ${PROJECT_SOURCE_DIR}/target/CMakeLists.txt)
-	add_subdirectory(target)
-else()
-	add_subdirectory(demos)
+# marshmallow headers
+
+install(DIRECTORY include/
+        DESTINATION include/marshmallow_h
+        COMPONENT development)
+
+# deployment
+
+if(NOT MARSHMALLOW_LIBRARY_ONLY AND UNIX)
+	install(FILES resources/unix/run
+	        DESTINATION .
+	        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+	                    GROUP_READ GROUP_EXECUTE
+	                    WORLD_READ WORLD_EXECUTE
+	        COMPONENT deployment)
 endif()
-

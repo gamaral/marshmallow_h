@@ -208,3 +208,8 @@ set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 add_library(marshmallow_graphics ${MARSHMALLOW_GRAPHICS_SRCS})
 
 target_link_libraries(marshmallow_graphics ${MARSHMALLOW_GRAPHICS_LIBS})
+
+install(TARGETS marshmallow_graphics
+        LIBRARY DESTINATION lib COMPONENT runtime
+        ARCHIVE DESTINATION lib COMPONENT development)
+

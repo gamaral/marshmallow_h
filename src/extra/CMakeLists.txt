@@ -15,3 +15,8 @@ add_library(marshmallow_extra
 )
 
 target_link_libraries(marshmallow_extra ${MARSHMALLOW_EXTRA_LIBS})
+
+install(TARGETS marshmallow_extra
+        LIBRARY DESTINATION lib COMPONENT runtime
+        ARCHIVE DESTINATION lib COMPONENT development)
+
