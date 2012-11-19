@@ -9,8 +9,7 @@ export LD_LIBRARY_PATH="${BUILDROOT_BASE_DIR}/host/usr/lib:${LD_LIBRARY_PATH}"
 # exports
 export BUILDROOT_SYSTEM_PROCESSOR=arm
 export BUILDROOT_HOST_DIR="${BUILDROOT_BASE_DIR}/host"
-export BUILDROOT_STAGING_DIR="${BUILDROOT_BASE_DIR}/staging"
-export BUILDROOT_TARGET_DIR="${BUILDROOT_BASE_DIR}/target"
+export BUILDROOT_SYSROOT_DIR="${BUILDROOT_BASE_DIR}/staging"
 
 # overrides
 export CC="${BUILDROOT_HOST_DIR}/usr/bin/arm-linux-gcc"
