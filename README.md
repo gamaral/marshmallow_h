@@ -12,6 +12,29 @@ Marshmallow Entertainment System.
 
 <http://marshmallow.me/>
 
+Documentation
+--------------
+
+We currently have two documentation sources, they need some serious work, but
+what we have is better than nothing.
+
+### Doxygen (development)
+
+If you have [doxygen](http://www.doxygen.org/) installed, you can build the
+source documentation by running the following commands in the project root:
+
+	doxygen
+	xdg-open docs/html/classes.html # atempt to open in browser
+
+This will create a directory called *'docs'* containing the HTML version of the
+documentation, it will then try to open the class list in the browser.
+
+### Wiki
+
+Project wiki with a few pages!
+
+<https://github.com/gamaral/marshmallow_h/wiki>
+
 Source
 ------
 
