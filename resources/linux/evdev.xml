@@ -97,7 +97,15 @@
 
 		<!-- MakeyMakey -->
 
-		<key code="272" sym="SHIFT_L" />
+		<key code="17"  sym="UP" />
+		<key code="30"  sym="LEFT" />
+		<key code="31"  sym="DOWN" />
+		<key code="32"  sym="RIGHT" />
+		<key code="33"  sym="F1" />
+		<key code="34"  sym="RETURN" />
+		<key code="57"  sym="SHIFT_L" />
+		<key code="272" sym="SPACE" />
+		<key code="273" sym="SHIFT_L" />
 	</keyboard>
 
 </evdev>
