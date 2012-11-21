@@ -38,6 +38,7 @@
 #include <cmath>
 #include <cstdio>
 #include <ctime>
+#include <libgen.h>
 #include <unistd.h>
 
 #include "core/logger.h"
@@ -119,6 +120,17 @@ Platform::TimeStampToTimeData(MMTIME timestamp)
 		l_time.tm_sec);
 
 	return(l_ts);
+}
+
+std::string
+Platform::PathDirectory(const std::string &path)
+{
+	char l_path[PATH_MAX + 1];
+
+	l_path[PATH_MAX + 1] = 0;
+	path.copy(l_path, PATH_MAX);
+
+	return(dirname(l_path));
 }
 
 std::string

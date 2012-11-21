@@ -116,6 +116,15 @@ Platform::TimeStampToTimeData(MMTIME timestamp)
 }
 
 std::string
+Platform::PathDirectory(const std::string &path)
+{
+	/*
+	 * TODO(gamaral) Use split_path or something windows like
+	 */
+	return(".");
+}
+
+std::string
 Platform::TemporaryDirectory(void)
 {
 	static std::string sTempDirectory;

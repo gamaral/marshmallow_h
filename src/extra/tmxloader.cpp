@@ -37,6 +37,7 @@
 #include "core/base64.h"
 #include "core/gzip.h"
 #include "core/logger.h"
+#include "core/platform.h"
 #include "core/zlib.h"
 
 #include "graphics/factory.h"
@@ -89,11 +90,13 @@ struct TMXLoader::Private
 {
 	Private(Game::IScene &s)
 	    : scene(s)
-	    , is_loaded(false)
+	    , base_directory(".")
 	    , scale(1.f, 1.f)
 	    , hrmap_size(0, 0)
 	    , map_size(0, 0)
-	    , tile_size(0, 0) {}
+	    , tile_size(0, 0)
+	    , is_loaded(false)
+	{}
 
 	bool load(const char *file);
 	bool processLayer(XMLElement &element);
@@ -107,13 +110,16 @@ struct TMXLoader::Private
 
 	Game::SharedSceneLayerList layers;
 
-	bool is_loaded;
+	std::string base_directory;
 
 	Math::Size2f scale;
 	Math::Size2f hrmap_size;
 	Math::Size2i map_size;
 	Math::Size2i tile_size;
+
+	bool is_loaded;
 };
+
 
 bool
 TMXLoader::Private::load(const char *f)
@@ -125,6 +131,9 @@ TMXLoader::Private::load(const char *f)
 
 	if (l_tmx.LoadFile(f) != XML_NO_ERROR)
 	    return(false);
+
+	/* get parent directory */
+	base_directory = Core::Platform::PathDirectory(f);
 
 	/* parse general map data */
 	if (!(l_root = l_tmx.RootElement())
@@ -564,16 +573,24 @@ TMXLoader::Private::processTileset(XMLElement &e)
 		MMWARNING("Tileset element is missing an image element.");
 		return(false);
 	}
-	const char *l_source = l_image->Attribute("source");
+
+	/*
+	 * Texture sources are required to be relative to TMX file.
+	 *  - So say we all.
+	 */
+	const std::string l_source =
+	    base_directory + "/" + l_image->Attribute("source");
+
+#if 0   // TODO(gamaral) use transparent color.
 	const char *l_trans = l_image->Attribute("trans");
+	(void) l_trans;
+#endif
 
 	Graphics::SharedTextureData l_texture = Graphics::Factory::CreateTextureData();
 	if (!l_texture->load(l_source)) {
 		MMERROR("Failed to load tileset texture.");
 		return(false);
 	}
-	// TODO(gamaral) use transparent color.
-	(void) l_trans;
 
 	Graphics::Tileset *l_tileset = new Graphics::Tileset;
 	l_tileset->setName(l_name);

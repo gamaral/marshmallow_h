@@ -94,6 +94,9 @@ namespace Core
 		/*************************************************** location */
 
 		MARSHMALLOW_CORE_EXPORT
+		std::string PathDirectory(const std::string &path);
+
+		MARSHMALLOW_CORE_EXPORT
 		std::string TemporaryDirectory(void);
 	}
 }

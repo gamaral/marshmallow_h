@@ -5,7 +5,7 @@
   <property name="scale" value="1"/>
  </properties>
  <tileset firstgid="1" name="platformer_tiles" tilewidth="32" tileheight="32" spacing="2" margin="2">
-  <image source="assets/platformer_tiles.png" width="512" height="512"/>
+  <image source="platformer_tiles.png" width="512" height="512"/>
  </tileset>
  <layer name="cloudbg" width="80" height="20" opacity="0.5">
   <data encoding="base64" compression="gzip">
@@ -44,6 +44,8 @@
   <object name="bounce" type="ColliderEntity" x="1157" y="545" width="20" height="17"/>
   <object name="bounce" type="ColliderEntity" x="2243" y="550" width="26" height="9"/>
   <object name="player" type="PlayerEntity" gid="114" x="32" y="224"/>
+  <object name="platform" type="ColliderEntity" x="-32" y="0" width="32" height="640"/>
+  <object name="platform" type="ColliderEntity" x="2560" y="0" width="32" height="640"/>
  </objectgroup>
  <layer name="foreground" width="80" height="20">
   <data encoding="base64" compression="gzip">
