@@ -253,6 +253,12 @@ InputComponent::handleEvent(const Event::IEvent &e)
 		}
 		else if (l_event.button() == Joystick::JSB_Y) {
 			m_max_speed += .60f * (l_event.action() == Joystick::ButtonPressed ? LINEAR_MAX : -LINEAR_MAX);
+
+			/*
+			 * Ugly workaround for input bug
+			 */
+			if (m_max_speed < (LINEAR_MAX / 2.f))
+				m_max_speed = LINEAR_MAX / 2.f;
 		}
 	}
 	else if (e.type() == Event::JoystickAxisEvent::Type()) {
@@ -264,16 +270,15 @@ InputComponent::handleEvent(const Event::IEvent &e)
 			float l_range  = (l_event.maximum() - l_event.minimum()) / 2.f;
 			float l_middle = l_event.minimum() + l_range;
 			float l_value  = (l_event.value() - l_middle) / l_range;
-			float l_fuzz   = l_event.fuzz() / (l_range * 2.f);
 
-			m_left = ((l_value - l_fuzz) < -0.15);
+			m_left = (l_value < -0.15);
 			if (m_left) {
 				m_direction_stack.push_front(ICDLeft);
 				m_linear_impulse = LINEAR_MAX * l_value;
 			}
 			else m_direction_stack.remove(ICDLeft);
 
-			m_right = ((l_value + l_fuzz) > 0.15);
+			m_right = (l_value > 0.15);
 			if (m_right) {
 				m_direction_stack.push_front(ICDRight);
 				m_linear_impulse = LINEAR_MAX * l_value;
