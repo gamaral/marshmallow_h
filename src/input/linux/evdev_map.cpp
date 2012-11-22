@@ -447,7 +447,7 @@ Map::Finalize(void)
 
 bool
 Map::PopulateEventCodes(uint16_t vendor, uint16_t product, const char *name,
-                        Type type, int event, EventCodes &codes)
+                        Type type, int event, EventCodes &codes, EventAttribute *fuzz)
 {
 	using namespace TinyXML;
 
@@ -521,6 +521,12 @@ Map::PopulateEventCodes(uint16_t vendor, uint16_t product, const char *name,
 		if (l_sym
 		    && XML_NO_ERROR == l_element->QueryUnsignedAttribute("code", &l_code)
 		    && static_cast<unsigned short>(l_code) == l_code) {
+			/* get axis fuzz */
+			if (fuzz) {
+				(*fuzz)[static_cast<unsigned short>(l_code)] =
+				    l_element->IntAttribute( "fuzz" );
+			}
+
 			if (GamepadType == type)
 				codes[static_cast<unsigned short>(l_code)] =
 				    ParseJoystickSym(l_sym, event);

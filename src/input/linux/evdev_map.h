@@ -41,6 +41,9 @@
 
 #include "evdev_type.h"
 
+/* linux input */
+struct input_absinfo;
+
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Input { /****************************************** Input Namespace */
 
@@ -52,13 +55,16 @@ namespace EVDEV { /**************************** Input::Linux::EVDEV Namespace */
 namespace Map { /************************* Input::Linux::EVDEV::Map Namespace */
 
 	typedef std::map<uint16_t, int> EventCodes;
+	typedef std::map<uint16_t, int> EventAttribute;
+	typedef std::map<uint16_t, input_absinfo *> EventABSInfo;
 
 	bool Initialize(void);
 
 	void Finalize(void);
 
 	bool PopulateEventCodes(uint16_t vendor, uint16_t product,
-	    const char *name, Type type, int event, EventCodes &codes);
+	    const char *name, Type type, int event, EventCodes &codes,
+	    EventAttribute *fuzz = 0);
 
 } /*************************************** Input::Linux::EVDEV::Map Namespace */
 } /******************************************** Input::Linux::EVDEV Namespace */

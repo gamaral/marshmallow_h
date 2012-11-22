@@ -49,8 +49,8 @@ namespace EVDEV { /**************************** Input::Linux::EVDEV Namespace */
 
 	class JoystickDevice : public EventDevice
 	{
-		Map::EventCodes m_abs_map;
-		Map::EventCodes m_key_map;
+		Map::EventABSInfo m_abs_map;
+		Map::EventCodes   m_key_map;
 		int m_btn_state;
 
 		NO_ASSIGN_COPY(JoystickDevice);

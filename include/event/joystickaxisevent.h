@@ -58,8 +58,6 @@ namespace Event { /****************************************** Event Namespace */
 		                  int value,
 		                  int minimum,
 		                  int maximum,
-		                  int fuzz,
-		                  int flat,
 		                  size_t source,
 		                  MMTIME timestamp = 0);
 		virtual ~JoystickAxisEvent(void);
@@ -70,10 +68,6 @@ namespace Event { /****************************************** Event Namespace */
 		int minimum(void) const;
 
 		int maximum(void) const;
-
-		int fuzz(void) const;
-
-		int flat(void) const;
 
 	public: /* virtual */
 

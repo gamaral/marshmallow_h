@@ -43,8 +43,6 @@ struct JoystickAxisEvent::Private
 {
 	int minimum;
 	int maximum;
-	int fuzz;
-	int flat;
 };
 
 JoystickAxisEvent::JoystickAxisEvent(
@@ -52,8 +50,6 @@ JoystickAxisEvent::JoystickAxisEvent(
     int value_,
     int minimum_,
     int maximum_,
-    int fuzz_,
-    int flat_,
     size_t source_,
     MMTIME timestamp_)
     : InputEvent(JoystickType, axis_, value_, source_, timestamp_)
@@ -61,8 +57,6 @@ JoystickAxisEvent::JoystickAxisEvent(
 {
 	m_p->minimum = minimum_;
 	m_p->maximum = maximum_;
-	m_p->fuzz = fuzz_;
-	m_p->flat = flat_;
 }
 
 JoystickAxisEvent::~JoystickAxisEvent(void)
@@ -80,18 +74,6 @@ int
 JoystickAxisEvent::maximum(void) const
 {
 	return(m_p->maximum);
-}
-
-int
-JoystickAxisEvent::flat(void) const
-{
-	return(m_p->flat);
-}
-
-int
-JoystickAxisEvent::fuzz(void) const
-{
-	return(m_p->fuzz);
 }
 
 const Core::Type &

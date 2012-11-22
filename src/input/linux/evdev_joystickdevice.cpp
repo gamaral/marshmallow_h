@@ -63,9 +63,30 @@ JoystickDevice::JoystickDevice(int fd_, Type type_, uint16_t vendor,
 	MMDEBUG("Joystick slot id " << id() << " assigned.");
 
 	Map::PopulateEventCodes(vendor, product, name(),
-	    type(), EV_ABS, m_abs_map);
-	Map::PopulateEventCodes(vendor, product, name(),
 	    type(), EV_KEY, m_key_map);
+
+	Map::EventCodes l_abs_codes;
+	Map::EventAttribute l_abs_fuzz;
+	Map::PopulateEventCodes(vendor, product, name(),
+	    type(), EV_ABS, l_abs_codes, &l_abs_fuzz);
+
+	Map::EventCodes::iterator l_abs_code_it;
+	struct input_absinfo *l_absinfo;
+	for (l_abs_code_it = l_abs_codes.begin();
+	     l_abs_code_it != l_abs_codes.end();
+	     ++l_abs_code_it) {
+		l_absinfo = new input_absinfo;
+		memset(l_absinfo, 0, sizeof(l_absinfo));
+		ioctl(fd(), EVIOCGABS(l_abs_code_it->first), l_absinfo);
+
+		/* update fuzz */
+		MMDEBUG("SETTING: " << l_abs_code_it->first << " to " << l_abs_fuzz[l_abs_code_it->first]);
+		l_absinfo->fuzz = l_abs_fuzz[l_abs_code_it->first];
+		ioctl(fd(), EVIOCSABS(l_abs_code_it->first), l_absinfo);
+
+		l_absinfo->value = l_abs_code_it->second;
+		m_abs_map[l_abs_code_it->first] = l_absinfo;
+	}
 }
 
 bool
@@ -120,7 +141,7 @@ JoystickDevice::handleEvent(struct input_event &event)
 
 			SharedEvent l_event(new JoystickAxisEvent(
 			    l_axis,
-			    l_value, -1, 1, 0, 0,
+			    l_value, -1, 1,
 			    id()));
 			EventManager::Instance()->queue(l_event);
 		}
@@ -133,22 +154,18 @@ JoystickDevice::handleEvent(struct input_event &event)
 		EventManager::Instance()->queue(l_event);
 	}
 	else if (event.type == EV_ABS) {
-		Map::EventCodes::const_iterator l_entry =
+		Map::EventABSInfo::const_iterator l_entry =
 		    m_abs_map.find(event.code);
 		if (l_entry == m_abs_map.end())
 			return(false);
 
-		struct input_absinfo l_absinfo;
-		memset(&l_absinfo, 0, sizeof(l_absinfo));
-		ioctl(fd(), EVIOCGABS(event.code), &l_absinfo);
+		struct input_absinfo *l_absinfo = l_entry->second;
 
 		SharedEvent l_event(new JoystickAxisEvent(
-		    static_cast<Joystick::Axis>(l_entry->second),
-		    l_absinfo.value,
-		    l_absinfo.minimum,
-		    l_absinfo.maximum,
-		    l_absinfo.fuzz,
-		    l_absinfo.flat,
+		    static_cast<Joystick::Axis>(l_absinfo->value),
+		    event.value,
+		    l_absinfo->minimum,
+		    l_absinfo->maximum,
 		    id()));
 		EventManager::Instance()->queue(l_event);
 	}

@@ -18,6 +18,31 @@
 		<key code="297" sym="START" />
 	</joystick>
 
+	<gamepad vendor="3695" product="531">
+		<name>Generic X-Box pad</name>
+
+		<abs code="0"   sym="X"  fuzz="5000" />
+		<abs code="1"   sym="Y"  fuzz="5000" />
+		<abs code="2"   sym="Z" />
+		<abs code="3"   sym="RX" fuzz="5000" />
+		<abs code="4"   sym="RY" fuzz="5000" />
+		<abs code="5"   sym="RZ" />
+		<abs code="16"  sym="HX" />
+		<abs code="17"  sym="HY" />
+
+		<key code="304" sym="B" />
+		<key code="305" sym="A" />
+		<key code="307" sym="Y" />
+		<key code="308" sym="X" />
+		<key code="310" sym="L" />
+		<key code="311" sym="R" />
+		<key code="317" sym="THUMB_L" />
+		<key code="318" sym="THUMB_R" />
+		<key code="314" sym="SELECT" />
+		<key code="315" sym="START" />
+		<key code="316" sym="MENU" />
+	</gamepad>
+
 	<gamepad vendor="0" product="0">
 		<name>Xbox Gamepad (userspace driver)</name>
 
