@@ -49,6 +49,7 @@
 #include "game/entityscenelayer.h"
 #include "game/factory.h"
 #include "game/positioncomponent.h"
+#include "game/propertycomponent.h"
 #include "game/rendercomponent.h"
 #include "game/scenebase.h"
 #include "game/sizecomponent.h"
@@ -464,8 +465,10 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 			l_object_rsize.height = scale.height * static_cast<float>(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
+		}
+
 		/* tile object */
-		} else {
+		else {
 			bool l_found = false;
 			uint16_t l_ts_firstgid = 0;
 
@@ -535,7 +538,26 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 		l_size->size() = l_object_rsize;
 		l_entity->pushComponent(l_size);
 
+		/* object properties */
+		XMLElement *l_properties = l_object->FirstChildElement(TMXPROPERTIES_NODE);
+		XMLElement *l_property = l_properties ? l_properties->FirstChildElement(TMXPROPERTIES_PROPERTY_NODE) : 0;
+		if (l_property) {
+			Game::PropertyComponent *l_pcomponent = new Game::PropertyComponent("property", *l_entity);
 
+			do {
+				const char *l_pname = l_property->Attribute("name");
+				const char *l_value = l_property->Attribute("value");
+
+				if (!l_pname || !l_value)
+					continue;
+
+				l_pcomponent->set(l_pname, l_value);
+			} while ((l_property = l_property->NextSiblingElement(TMXPROPERTIES_PROPERTY_NODE)));
+
+			l_entity->pushComponent(l_pcomponent);
+		}
+
+		/* add entity to layer */
 		l_layer->addEntity(l_entity);
 
 		l_object = l_object->NextSiblingElement(TMXOBJECTGROUP_OBJECT_NODE);

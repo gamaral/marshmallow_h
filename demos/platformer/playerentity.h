@@ -34,16 +34,19 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef TILEMAP_PLAYERENTITY_H
-#define TILEMAP_PLAYERENTITY_H 1
+#ifndef DEMO_PLAYERENTITY_H
+#define DEMO_PLAYERENTITY_H 1
 
-#include <game/entity.h>
+#include "../common/actorentity.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {
 	class AnimationComponent;
 	typedef Core::Shared<AnimationComponent> SharedAnimationComponent;
+
+	class MovementComponent;
+	typedef Core::Shared<MovementComponent> SharedMovementComponent;
 }
 MARSHMALLOW_NAMESPACE_END
 
@@ -52,13 +55,14 @@ MARSHMALLOW_NAMESPACE_USE
 class InputComponent;
 typedef Core::Shared<InputComponent> SharedInputComponent;
 
-class PlayerColliderComponent;
-typedef Core::Shared<PlayerColliderComponent> SharedPlayerColliderComponent;
+class ActorColliderComponent;
+typedef Core::Shared<ActorColliderComponent> SharedActorColliderComponent;
 
-class PlayerEntity : public Game::Entity
+class PlayerEntity : public Common::ActorEntity
 {
 	Game::SharedAnimationComponent m_animation_component;
-	SharedPlayerColliderComponent m_collider_component;
+	Game::SharedMovementComponent m_movement_component;
+	SharedActorColliderComponent m_collider_component;
 	SharedInputComponent m_input_component;
 
 	int m_direction;
@@ -77,6 +81,7 @@ public:
 public: /* virtual */
 
 	VIRTUAL void update(float delta);
+	VIRTUAL bool handleEvent(const Event::IEvent &event);
 
 public: /* static */
 

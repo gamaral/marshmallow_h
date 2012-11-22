@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "colliderentity.h"
 
 /*!
  * @file
@@ -34,30 +34,39 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef DEMO_COLLIDERENTITY_H
-#define DEMO_COLLIDERENTITY_H 1
+#include <game/collidercomponent.h>
+#include <game/sizecomponent.h>
 
-#include <game/entity.h>
+using namespace Common;
 
-MARSHMALLOW_NAMESPACE_USE
-
-class ColliderEntity : public Game::Entity
+ColliderEntity::ColliderEntity(const Core::Identifier &i, Game::EntitySceneLayer &l)
+    : Game::Entity(i, l)
+    , m_init(false)
 {
-	bool m_init;
+}
 
-	NO_ASSIGN_COPY(ColliderEntity);
-public:
+ColliderEntity::~ColliderEntity(void)
+{
+}
 
-	ColliderEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);
-	virtual ~ColliderEntity(void);
+void
+ColliderEntity::update(float d)
+{
+	if (!m_init) {
+		Game::SharedColliderComponent l_collider_component =
+		    new Game::ColliderComponent(id(), *this);
+		l_collider_component->active() = false;
+		pushComponent(l_collider_component.staticCast<Game::IComponent>());
+		m_init = true;
+	}
 
-public: /* virtual */
+	Game::EntityBase::update(d);
+}
 
-	VIRTUAL void update(float delta);
+const Core::Type &
+ColliderEntity::Type(void)
+{
+	static const Core::Type s_type("ColliderEntity");
+	return(s_type);
+}
 
-public: /* static */
-
-	static const Core::Type & Type(void);
-};
-
-#endif

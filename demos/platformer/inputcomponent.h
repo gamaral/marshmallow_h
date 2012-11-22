@@ -57,13 +57,13 @@ MARSHMALLOW_NAMESPACE_END
 
 MARSHMALLOW_NAMESPACE_USE
 
-class PlayerColliderComponent;
-typedef Core::Weak<PlayerColliderComponent> WeakPlayerColliderComponent;
+class ActorColliderComponent;
+typedef Core::Weak<ActorColliderComponent> WeakActorColliderComponent;
 
 class InputComponent : public Game::ComponentBase
                      , public Event::IEventListener
 {
-	WeakPlayerColliderComponent m_collider;
+	WeakActorColliderComponent m_collider;
 	Game::WeakMovementComponent m_movement;
 	Game::WeakPositionComponent m_position;
 
@@ -75,6 +75,7 @@ class InputComponent : public Game::ComponentBase
 	int   m_direction;
 	bool  m_left;
 	bool  m_right;
+	bool  m_enabled;
 
 	NO_ASSIGN_COPY(InputComponent);
 public:
@@ -87,6 +88,13 @@ public:
 		ICDRight = 1,
 		ICDJump  = 2
 	};
+
+	inline void enable()
+	    { m_enabled = true; }
+	inline void disable()
+	    { m_enabled = false; }
+	inline bool isEnabled() const
+	    { return(m_enabled); }
 
 	inline Direction direction(void) const
 	    { return(static_cast<Direction>(m_direction)); }

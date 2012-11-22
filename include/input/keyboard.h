@@ -42,11 +42,6 @@
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
-
-const Core::Identifier s_qt4_input_source("QT4");
-
-} /****************************************************** Anonymous Namespace */
 
 namespace Input { /****************************************** Input Namespace */
 

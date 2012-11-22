@@ -1,8 +1,12 @@
 add_executable(platformer_demo0 "demo0.cpp"
-                                "colliderentity.cpp"
+                                "../common/actorentity.cpp"
+                                "../common/colliderentity.cpp"
+                                "../common/deathevent.cpp"
+                                "../common/doomevent.cpp"
+                                "../common/warpevent.cpp"
+                                "actorcollidercomponent.cpp"
                                 "customfactory.cpp"
                                 "inputcomponent.cpp"
-                                "playercollidercomponent.cpp"
                                 "playerentity.cpp"
 )
 

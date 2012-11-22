@@ -62,6 +62,8 @@ namespace Game
 		ComponentBase(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~ComponentBase(void);
 
+		IEntity & entity(void) const;
+
 	public: /* virtual */
 
 		VIRTUAL const Core::Identifier & id(void) const;
@@ -71,10 +73,6 @@ namespace Game
 
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);
-
-	protected:
-
-		IEntity & entity(void) const;
 	};
 }
 

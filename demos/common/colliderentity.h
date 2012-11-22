@@ -34,35 +34,34 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_IEVENTLISTENER_H
-#define MARSHMALLOW_EVENT_IEVENTLISTENER_H 1
+#ifndef COMMON_COLLIDERENTITY_H
+#define COMMON_COLLIDERENTITY_H 1
 
-#include <core/environment.h>
-#include <core/fd.h>
-#include <core/global.h>
+#include <game/entity.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+MARSHMALLOW_NAMESPACE_USE
 
-namespace Event
+namespace Common
 {
-	struct IEvent;
-
-	/*! @brief Event Listener Interface */
-	struct MARSHMALLOW_EVENT_EXPORT
-	IEventListener
+	/*! @brief Collider Entity Class */
+	class ColliderEntity : public Game::Entity
 	{
-		virtual ~IEventListener(void);
+		bool m_init;
 
-		/*!
-		 * @brief Event Handler
-		 * @param event Event
-		 */
-		virtual bool handleEvent(const Event::IEvent &event) = 0;
+		NO_ASSIGN_COPY(ColliderEntity);
+	public:
+
+		ColliderEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);
+		virtual ~ColliderEntity(void);
+
+	public: /* virtual */
+
+		VIRTUAL void update(float delta);
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<IEventListener> SharedEventListener;
-	typedef Core::Weak<IEventListener> WeakEventListener;
 }
-
-MARSHMALLOW_NAMESPACE_END
 
 #endif

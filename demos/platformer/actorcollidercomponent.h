@@ -34,35 +34,46 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_IEVENTLISTENER_H
-#define MARSHMALLOW_EVENT_IEVENTLISTENER_H 1
+#ifndef DEMO_ACTORCOLLIDERCOMPONENT_H
+#define DEMO_ACTORCOLLIDERCOMPONENT_H 1
 
-#include <core/environment.h>
-#include <core/fd.h>
-#include <core/global.h>
+#include <game/collidercomponent.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+MARSHMALLOW_NAMESPACE_USE
 
-namespace Event
+namespace Common { class ActorEntity; }
+
+/*! @brief Demo Collider Component Class */
+class ActorColliderComponent : public Game::ColliderComponent
 {
-	struct IEvent;
+	bool m_enabled;
+	bool m_platform;
 
-	/*! @brief Event Listener Interface */
-	struct MARSHMALLOW_EVENT_EXPORT
-	IEventListener
-	{
-		virtual ~IEventListener(void);
+	NO_ASSIGN_COPY(ActorColliderComponent);
+public:
 
-		/*!
-		 * @brief Event Handler
-		 * @param event Event
-		 */
-		virtual bool handleEvent(const Event::IEvent &event) = 0;
-	};
-	typedef Core::Shared<IEventListener> SharedEventListener;
-	typedef Core::Weak<IEventListener> WeakEventListener;
-}
+	ActorColliderComponent(const Core::Identifier &identifier, Common::ActorEntity &entity);
+	virtual ~ActorColliderComponent(void) {};
 
-MARSHMALLOW_NAMESPACE_END
+	bool onPlatform(void) const
+	    { return(m_platform); }
+
+	inline void enable()
+	    { m_enabled = true; }
+	inline void disable()
+	    { m_enabled = false; }
+	inline bool isEnabled() const
+	    { return(m_enabled); }
+
+public: /* virtual */
+
+	VIRTUAL void update(float delta);
+
+protected: /* virtual */
+
+	VIRTUAL bool collision(ColliderComponent &collider, float delta, const Game::CollisionData &data);
+};
+typedef Core::Shared<ActorColliderComponent> SharedActorColliderComponent;
+typedef Core::Weak<ActorColliderComponent> WeakActorColliderComponent;
 
 #endif

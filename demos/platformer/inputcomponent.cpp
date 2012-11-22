@@ -52,7 +52,7 @@
 #include <game/movementcomponent.h>
 #include <game/positioncomponent.h>
 
-#include "playercollidercomponent.h"
+#include "actorcollidercomponent.h"
 
 const Core::Type InputComponent::Type("InputComponent");
 
@@ -70,10 +70,12 @@ InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     , m_direction(ICDRight)
     , m_left(false)
     , m_right(false)
+    , m_enabled(false)
 {
 	Game::Engine::Instance()->eventManager()->connect(this, Event::JoystickAxisEvent::Type());
 	Game::Engine::Instance()->eventManager()->connect(this, Event::JoystickButtonEvent::Type());
 	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
+	enable();
 }
 
 InputComponent::~InputComponent(void)
@@ -100,9 +102,12 @@ InputComponent::linearRatio(void) const
 void
 InputComponent::update(float d)
 {
+	if (!m_enabled)
+		return;
+
 	if (!m_collider)
 		m_collider = entity().getComponentType(Game::ColliderComponent::Type()).
-		    staticCast<PlayerColliderComponent>();
+		    staticCast<ActorColliderComponent>();
 
 	if (!m_position)
 		m_position = entity().getComponentType(Game::PositionComponent::Type()).
@@ -143,6 +148,7 @@ InputComponent::update(float d)
 			default: break;
 			}
 		}
+
 		/* stop unless falling */
 		else if(m_collider->onPlatform()) {
 			switch (direction()) {
@@ -222,6 +228,12 @@ InputComponent::handleEvent(const Event::IEvent &e)
 		else if (l_kevent.key() == Keyboard::KBK_SHIFT_L ||
 			 l_kevent.key() == Keyboard::KBK_J) {
 			m_max_speed += .60f * (l_kevent.action() == Keyboard::KeyPressed ? LINEAR_MAX : -LINEAR_MAX);
+
+			/*
+			 * Ugly workaround for input bug
+			 */
+			if (m_max_speed < (LINEAR_MAX / 2.f))
+				m_max_speed = LINEAR_MAX / 2.f;
 		}
 	}
 	else if (e.type() == Event::JoystickButtonEvent::Type()) {

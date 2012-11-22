@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "actorentity.h"
 
 /*!
  * @file
@@ -34,35 +34,36 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_IEVENTLISTENER_H
-#define MARSHMALLOW_EVENT_IEVENTLISTENER_H 1
+#include <core/logger.h>
 
-#include <core/environment.h>
-#include <core/fd.h>
-#include <core/global.h>
+#include <graphics/camera.h>
+#include <graphics/viewport.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#include <game/animationcomponent.h>
+#include <game/engine.h>
+#include <game/iengine.h>
+#include <game/iscene.h>
+#include <game/movementcomponent.h>
+#include <game/positioncomponent.h>
+#include <game/scenemanager.h>
+#include <game/sizecomponent.h>
+#include <game/tilemapscenelayer.h>
 
-namespace Event
+using namespace Common;
+
+ActorEntity::ActorEntity(const Core::Identifier &i, Game::EntitySceneLayer &l)
+    : Game::Entity(i, l)
 {
-	struct IEvent;
-
-	/*! @brief Event Listener Interface */
-	struct MARSHMALLOW_EVENT_EXPORT
-	IEventListener
-	{
-		virtual ~IEventListener(void);
-
-		/*!
-		 * @brief Event Handler
-		 * @param event Event
-		 */
-		virtual bool handleEvent(const Event::IEvent &event) = 0;
-	};
-	typedef Core::Shared<IEventListener> SharedEventListener;
-	typedef Core::Weak<IEventListener> WeakEventListener;
 }
 
-MARSHMALLOW_NAMESPACE_END
+ActorEntity::~ActorEntity(void)
+{
+}
 
-#endif
+const Core::Type &
+ActorEntity::Type(void)
+{
+	static const Core::Type s_type("ActorEntity");
+	return(s_type);
+}
+

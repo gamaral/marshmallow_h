@@ -37,6 +37,7 @@
 #include <sys/time.h>
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 #include <ctime>
 #include <libgen.h>
 #include <unistd.h>
@@ -127,7 +128,7 @@ Platform::PathDirectory(const std::string &path)
 {
 	char l_path[PATH_MAX + 1];
 
-	l_path[PATH_MAX + 1] = 0;
+	memset(&l_path, 0, sizeof(l_path));
 	path.copy(l_path, PATH_MAX);
 
 	return(dirname(l_path));

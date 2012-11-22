@@ -34,33 +34,44 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_IEVENTLISTENER_H
-#define MARSHMALLOW_EVENT_IEVENTLISTENER_H 1
+#ifndef MARSHMALLOW_GAME_PROPERTYCOMPONENT_H
+#define MARSHMALLOW_GAME_PROPERTYCOMPONENT_H 1
 
-#include <core/environment.h>
-#include <core/fd.h>
-#include <core/global.h>
+#include <game/componentbase.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-namespace Event
+namespace Game
 {
-	struct IEvent;
-
-	/*! @brief Event Listener Interface */
-	struct MARSHMALLOW_EVENT_EXPORT
-	IEventListener
+	/*! @brief Game Property Component Class */
+	class MARSHMALLOW_GAME_EXPORT
+	PropertyComponent : public ComponentBase
 	{
-		virtual ~IEventListener(void);
+		struct Private;
+		Private *m_p;
 
-		/*!
-		 * @brief Event Handler
-		 * @param event Event
-		 */
-		virtual bool handleEvent(const Event::IEvent &event) = 0;
+		NO_ASSIGN_COPY(PropertyComponent);
+	public:
+		PropertyComponent(const Core::Identifier &i, IEntity &entity);
+		virtual ~PropertyComponent(void);
+
+		std::string get(const Core::Identifier &id) const;
+		void set(const Core::Identifier &id, const std::string &value);
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
+
+		VIRTUAL bool serialize(XMLElement &node) const;
+		VIRTUAL bool deserialize(XMLElement &node);
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<IEventListener> SharedEventListener;
-	typedef Core::Weak<IEventListener> WeakEventListener;
+	typedef Core::Shared<PropertyComponent> SharedPropertyComponent;
+	typedef Core::Weak<PropertyComponent> WeakPropertyComponent;
 }
 
 MARSHMALLOW_NAMESPACE_END

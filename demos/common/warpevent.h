@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -34,35 +34,39 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_IEVENTLISTENER_H
-#define MARSHMALLOW_EVENT_IEVENTLISTENER_H 1
+#ifndef COMMON_WARPEVENT_H
+#define COMMON_WARPEVENT_H 1
 
-#include <core/environment.h>
-#include <core/fd.h>
-#include <core/global.h>
+#include <event/eventbase.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#include <string>
 
-namespace Event
+MARSHMALLOW_NAMESPACE_USE
+
+namespace Common
 {
-	struct IEvent;
-
-	/*! @brief Event Listener Interface */
-	struct MARSHMALLOW_EVENT_EXPORT
-	IEventListener
+	/*! @brief Player Warp Event Class */
+	class MARSHMALLOW_EVENT_EXPORT
+	WarpEvent : public Event::EventBase
 	{
-		virtual ~IEventListener(void);
+		std::string m_destination;
+	public:
 
-		/*!
-		 * @brief Event Handler
-		 * @param event Event
-		 */
-		virtual bool handleEvent(const Event::IEvent &event) = 0;
+		WarpEvent(const std::string &destination, MMTIME timestamp = 0);
+		virtual ~WarpEvent(void);
+
+		const std::string &destination(void) const
+		    { return(m_destination); }
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<IEventListener> SharedEventListener;
-	typedef Core::Weak<IEventListener> WeakEventListener;
 }
-
-MARSHMALLOW_NAMESPACE_END
 
 #endif

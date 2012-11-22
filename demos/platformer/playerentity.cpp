@@ -35,6 +35,9 @@
  */
 
 #include <core/logger.h>
+#include <core/platform.h>
+
+#include <event/eventmanager.h>
 
 #include <graphics/camera.h>
 #include <graphics/viewport.h>
@@ -49,18 +52,25 @@
 #include <game/sizecomponent.h>
 #include <game/tilemapscenelayer.h>
 
+#include "../common/deathevent.h"
+#include "../common/doomevent.h"
+#include "../common/warpevent.h"
+#include "actorcollidercomponent.h"
 #include "inputcomponent.h"
-#include "playercollidercomponent.h"
 
 PlayerEntity::PlayerEntity(const Core::Identifier &i, Game::EntitySceneLayer &l)
-    : Game::Entity(i, l)
+    : Common::ActorEntity(i, l)
     , m_init(false)
 {
 	m_moving_sky_bg = m_moving_sky = 0;
+
+	Event::EventManager::Instance()->connect(this, Common::DoomEvent::Type());
+
 }
 
 PlayerEntity::~PlayerEntity(void)
 {
+	Event::EventManager::Instance()->disconnect(this, Common::DoomEvent::Type());
 }
 
 void
@@ -76,30 +86,37 @@ PlayerEntity::update(float d)
 
 		m_animation_component =
 		    new Game::AnimationComponent("animation", *this);
+
 		m_animation_component->pushFrame("stand-left",  115, 12);
 		m_animation_component->pushFrame("stand-left",  116, 4);
+		m_animation_component->pushFrame("stand-right", 111, 12);
+		m_animation_component->pushFrame("stand-right", 112, 4);
+
 		m_animation_component->pushFrame("walk-left", 117, 1);
 		m_animation_component->pushFrame("walk-left", 118, 1);
 		m_animation_component->setFrameRate("walk-left", 16);
-		m_animation_component->pushFrame("jump-left", 118, 1);
-		m_animation_component->setFrameRate("jump-left", 1);
-		m_animation_component->pushFrame("stand-right", 111, 12);
-		m_animation_component->pushFrame("stand-right", 112, 4);
 		m_animation_component->pushFrame("walk-right", 113, 1);
 		m_animation_component->pushFrame("walk-right", 114, 1);
 		m_animation_component->setFrameRate("walk-right", 16);
+
+		m_animation_component->pushFrame("jump-left", 118, 1);
+		m_animation_component->setFrameRate("jump-left", 1);
 		m_animation_component->pushFrame("jump-right", 113, 1);
 		m_animation_component->setFrameRate("jump-right", 1);
+
+		m_animation_component->pushFrame("dying", 126, 1);
+		m_animation_component->pushFrame("dying", 127, 1);
+
 		pushComponent(m_animation_component.staticCast<Game::IComponent>());
 
 		/* movement component */
-		Game::SharedMovementComponent l_movement_component =
+		m_movement_component =
 		    new Game::MovementComponent("movement", *this);
-		pushComponent(l_movement_component.staticCast<Game::IComponent>());
+		pushComponent(m_movement_component.staticCast<Game::IComponent>());
 
 		/* collider component */
 		m_collider_component =
-		    new PlayerColliderComponent("player", *this);
+		    new ActorColliderComponent("collider", *this);
 		pushComponent(m_collider_component.staticCast<Game::IComponent>());
 
 		/* input component */
@@ -109,7 +126,12 @@ PlayerEntity::update(float d)
 		m_direction = -1;
 
 		m_init = true;
-	} else {
+	}
+
+	/*
+	 * XXX(gamaral): Most of this needs to be moved elsewhere.
+	 */
+	else if (m_input_component->isEnabled()) {
 		/* make camera follow player */
 		Game::SharedPositionComponent l_pos_component =
 		    getComponentType(Game::PositionComponent::Type()).staticCast<Game::PositionComponent>();
@@ -164,6 +186,7 @@ PlayerEntity::update(float d)
 
 		/* update animation */
 		switch(m_input_component->direction()) {
+
 		case InputComponent::ICDLeft:
 			if (m_direction == InputComponent::ICDLeft
 			 && m_in_motion == m_input_component->inMotion()
@@ -181,6 +204,7 @@ PlayerEntity::update(float d)
 					m_animation_component->play("stand-left", true);
 			} else m_animation_component->play("jump-left", true);
 			break;
+
 		case InputComponent::ICDRight:
 			if (m_direction == InputComponent::ICDRight
 			 && m_in_motion == m_input_component->inMotion()
@@ -198,11 +222,52 @@ PlayerEntity::update(float d)
 					m_animation_component->play("stand-right", true);
 			} else m_animation_component->play("jump-right", true);
 			break;
+
 		default: break;
 		}
 	}
 
 	Game::EntityBase::update(d);
+}
+
+bool
+PlayerEntity::handleEvent(const Event::IEvent &e)
+{
+	if (e.type() == Common::DoomEvent::Type()) {
+		m_animation_component->play("dying", true);
+
+		m_collider_component->disable();
+		m_input_component->disable();
+
+		m_movement_component->velocity()[0] = 0;
+		m_movement_component->velocity()[1] = 500;
+		m_movement_component->acceleration()[0] = 0;
+		m_movement_component->acceleration()[1] = -1000;
+
+		/*
+		 * Reload in 1500 milliseconds
+		 */
+		Event::EventManager::Instance()->queue(new Common::DeathEvent(NOW() + 2000));
+
+		return(true);
+	}
+
+	else if (e.type() == Common::WarpEvent::Type()) {
+		m_collider_component->disable();
+		m_input_component->disable();
+
+		m_movement_component->velocity()[0] = 0;
+		m_movement_component->velocity()[1] = 0;
+		m_movement_component->acceleration()[0] = 0;
+		m_movement_component->acceleration()[1] = 0;
+
+		const Common::WarpEvent &l_warp_event =
+		    static_cast<const Common::WarpEvent &>(e);
+		Event::EventManager::Instance()->queue(new Common::WarpEvent(l_warp_event.destination()));
+		return(true);
+	}
+
+	return(false);
 }
 
 const Core::Type &

@@ -22,17 +22,17 @@
  </layer>
  <layer name="platform" width="80" height="20">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3VTQrCMBAF4Kj1Z231CMVtN/6cwN7/Rn1CpMMwSUyJLYH3wWOwhWF4LuocERERERHR/zyR19pHVKjzeSPDyrfUYoNskR3SIHs1yfbprUdO/vcZaZGLmjTRnUnszxbrTGJ/k187k3L6e/jZidRuTmdSqD/rmxKbB+So7rjPvMlScldOZ7fE+1B/1rPYvLr0N32Jaf2PX/q+ErtL9pfaucSUd4Tk3hfbHdo1Au7sbg4AGQAA
+   H4sIAAAAAAAAA+2WWQrCMBRFn7PfDksQf/2RugL9d1iA0/634BUCCaVNk5r4Kt4DhwctfVwuKa0IIYQQQgghhOSjgDvtED/IyriHB3NtBIdmjuEETlXSdZMe7MOB2J7cuYBzM5dKGbvIu7eN2LM0E9tT3fz3/sqdubC/anyducT2d4QneIaXtJHVCe3MJba/K7zBO3zA58epdWnTmUvO93fb8rncu2I6WzfcT9lf0zf9G9P3r1XOl2J3jvMXsjPXDMkam8+3u27XCxPp9E4AGQAA
   </data>
  </layer>
  <objectgroup name="logic" width="80" height="20">
-  <object name="platform" type="ColliderEntity" x="0" y="544" width="448" height="32"/>
+  <object name="platform" type="ColliderEntity" x="0" y="352" width="160" height="32"/>
   <object name="platform" type="ColliderEntity" x="448" y="576" width="1088" height="32"/>
   <object name="platform" type="ColliderEntity" x="1728" y="576" width="544" height="32"/>
   <object name="platform" type="ColliderEntity" x="2336" y="352" width="224" height="32"/>
   <object name="platform" type="ColliderEntity" x="1760" y="608" width="480" height="32"/>
   <object name="platform" type="ColliderEntity" x="480" y="608" width="1024" height="32"/>
-  <object name="platform" type="ColliderEntity" x="0" y="576" width="416" height="64"/>
+  <object name="platform" type="ColliderEntity" x="0" y="384" width="128" height="256"/>
   <object name="platform" type="ColliderEntity" x="2368" y="384" width="192" height="256"/>
   <object name="platform" type="ColliderEntity" x="1792" y="544" width="32" height="32"/>
   <object name="platform" type="ColliderEntity" x="1984" y="480" width="32" height="32"/>
@@ -43,13 +43,20 @@
   <object name="bounce" type="ColliderEntity" x="550" y="545" width="19" height="16"/>
   <object name="bounce" type="ColliderEntity" x="1157" y="545" width="20" height="17"/>
   <object name="bounce" type="ColliderEntity" x="2243" y="550" width="26" height="9"/>
-  <object name="player" type="PlayerEntity" gid="114" x="32" y="224"/>
+  <object name="player" type="PlayerEntity" gid="114" x="0" y="352"/>
   <object name="platform" type="ColliderEntity" x="-32" y="0" width="32" height="640"/>
-  <object name="platform" type="ColliderEntity" x="2560" y="0" width="32" height="640"/>
+  <object name="doom" type="ColliderEntity" x="0" y="704" width="2560" height="32"/>
+  <object name="warp" type="ColliderEntity" x="2560" y="0" width="32" height="384">
+   <properties>
+    <property name="level" value="second"/>
+   </properties>
+  </object>
+  <object name="bounce" type="ColliderEntity" x="224" y="480" width="64" height="32"/>
+  <object name="bounce" type="ColliderEntity" x="192" y="512" width="128" height="32"/>
  </objectgroup>
  <layer name="foreground" width="80" height="20">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3VQQqAIBCFYe9RLU2otgnVgdt1xmYRZGJKFFnwf/BAmEEHN6MUAAAAgJBCUkqq3IP8VCNpJV3uQX5Gbxkko2TKOw6AF7Bv7mHfXGecs7tvtBc8y6rj/9qTvjpxh8sEu3ZzpLZEaibwlq9P1IEvWAG1eM+PABkAAA==
+   H4sIAAAAAAAAA+3VMQqAMAxA0dxDHWtBXRXUA7t5RjMUFAnNItTCf/CHEmizVQQAAACApdFarSu9SKUGbdSm0otUJqRWbdP2susAAICPLHL/8yGdLb1zx1N03jwyszMzi8Zbb7MzB/7gAthfOFkAGQAA
   </data>
  </layer>
 </map>

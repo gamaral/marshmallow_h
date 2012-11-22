@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "playercollidercomponent.h"
+#include "actorcollidercomponent.h"
 
 /*!
  * @file
@@ -34,37 +34,48 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <core/logger.h>
+
 #include <game/movementcomponent.h>
 #include <game/positioncomponent.h>
+#include <game/propertycomponent.h>
 #include <game/sizecomponent.h>
 
-PlayerColliderComponent::PlayerColliderComponent(const Core::Identifier &i, Game::IEntity &e)
-    : ColliderComponent(i, e)
+#include "../common/actorentity.h"
+#include "../common/doomevent.h"
+#include "../common/warpevent.h"
+
+ActorColliderComponent::ActorColliderComponent(const Core::Identifier &i, Common::ActorEntity &e)
+    : Game::ColliderComponent(i, e)
+    , m_enabled(false)
     , m_platform(false)
 {
-	/* high velocity jumps may cause indentation */
 	bullet() = true;
+	enable();
 }
 
 void
-PlayerColliderComponent::update(float d)
+ActorColliderComponent::update(float d)
 {
 	m_platform = false;
-	ColliderComponent::update(d);
+	Game::ColliderComponent::update(d);
 }
 
 bool
-PlayerColliderComponent::collision(ColliderComponent &c, float d,
+ActorColliderComponent::collision(ColliderComponent &c, float d,
                                    const Game::CollisionData &data)
 {
 	MMUNUSED(d);
 
-	if (!movement()) return(false);
+	if (!m_enabled || !movement()) return(false);
 
 	const Math::Vector2 norm =
 	    movement()->velocity().
 	        normalized(movement()->velocity().magnitude());
 
+	/*
+	 * What happens when we collide with a platform goes here
+	 */
 	if (c.id().str() == "platform") {
 		if (data.rect.left  < 1 && norm.x > 0) {
 			position()->position().x =
@@ -92,11 +103,49 @@ PlayerColliderComponent::collision(ColliderComponent &c, float d,
 			movement()->velocity().y *= -0.4f;
 		}
 	}
+
+	/*
+	 * What happens when we collide with something bouncy
+	 */
 	else if (c.id().str() == "bounce") {
-		if (data.rect.top < 1 && norm.y < 0) {
+		if (data.rect.top < 1 && norm.y < 0)
 			movement()->velocity().y = 900.f;
-		}
 	}
+
+	/*
+	 * What happens when we collide with doom itself
+	 */
+	else if (c.id().str() == "doom") {
+		/*
+		 * Tell the parent entity to die! DIE! DIE!!!
+		 */
+		Common::DoomEvent event;
+		static_cast<Common::ActorEntity &>(entity()).handleEvent(event);
+	}
+
+	/*
+	 * What happens when we collide with warp
+	 */
+	else if (c.id().str() == "warp") {
+		/*
+		 * Tell the parent entity hit a warp
+		 */
+		Game::SharedComponent l_component =
+		    c.entity().getComponent("property");
+		if (l_component) {
+			Game::SharedPropertyComponent l_property_component =
+			    l_component.staticCast<Game::PropertyComponent>();
+
+			const std::string &l_dest = l_property_component->get("level");
+
+			MMDEBUG("Collision with warp pointing to " << l_dest << " level");
+
+			Common::WarpEvent event(l_dest);
+			static_cast<Common::ActorEntity &>(entity()).handleEvent(event);
+		}
+		else MMVERBOSE("Collision with warp going nowhere! IGNORING.");
+	}
+
 	return(true);
 }
 

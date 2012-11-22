@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "doomevent.h"
 
 /*!
  * @file
@@ -34,35 +34,23 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_IEVENTLISTENER_H
-#define MARSHMALLOW_EVENT_IEVENTLISTENER_H 1
+#include <core/platform.h>
 
-#include <core/environment.h>
-#include <core/fd.h>
-#include <core/global.h>
+using namespace Common;
 
-MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Event
+DoomEvent::DoomEvent(MMTIME t)
+    : EventBase(t, Event::HighPriority)
 {
-	struct IEvent;
-
-	/*! @brief Event Listener Interface */
-	struct MARSHMALLOW_EVENT_EXPORT
-	IEventListener
-	{
-		virtual ~IEventListener(void);
-
-		/*!
-		 * @brief Event Handler
-		 * @param event Event
-		 */
-		virtual bool handleEvent(const Event::IEvent &event) = 0;
-	};
-	typedef Core::Shared<IEventListener> SharedEventListener;
-	typedef Core::Weak<IEventListener> WeakEventListener;
 }
 
-MARSHMALLOW_NAMESPACE_END
+DoomEvent::~DoomEvent(void)
+{
+}
 
-#endif
+const Core::Type &
+DoomEvent::Type(void)
+{
+	static const Core::Type s_type("Common::DoomEvent");
+	return(s_type);
+}
+

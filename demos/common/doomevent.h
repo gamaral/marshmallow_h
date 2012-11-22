@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -34,36 +34,33 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef DEMO_PLAYERCOLLIDERCOMPONENT_H
-#define DEMO_PLAYERCOLLIDERCOMPONENT_H 1
+#ifndef COMMON_DOOMEVENT_H
+#define COMMON_DOOMEVENT_H 1
 
-#include <game/collidercomponent.h>
+#include <event/eventbase.h>
 
 MARSHMALLOW_NAMESPACE_USE
 
-/*! @brief Game Player Collider Component Class */
-class PlayerColliderComponent : public Game::ColliderComponent
+namespace Common
 {
-	bool m_platform;
+	/*! @brief Player Doom Event Class */
+	class MARSHMALLOW_EVENT_EXPORT
+	DoomEvent : public Event::EventBase
+	{
+	public:
 
-	NO_ASSIGN_COPY(PlayerColliderComponent);
-public:
+		DoomEvent(MMTIME timestamp = 0);
+		virtual ~DoomEvent(void);
 
-	PlayerColliderComponent(const Core::Identifier &identifier, Game::IEntity &entity);
-	virtual ~PlayerColliderComponent(void) {};
+	public: /* virtual */
 
-	bool onPlatform(void) const
-	    { return(m_platform); }
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
 
-public: /* virtual */
+	public: /* static */
 
-	VIRTUAL void update(float delta);
-
-protected: /* virtual */
-
-	VIRTUAL bool collision(ColliderComponent &collider, float delta, const Game::CollisionData &data);
-};
-typedef Core::Shared<PlayerColliderComponent> SharedPlayerColliderComponent;
-typedef Core::Weak<PlayerColliderComponent> WeakPlayerColliderComponent;
+		static const Core::Type & Type(void);
+	};
+}
 
 #endif

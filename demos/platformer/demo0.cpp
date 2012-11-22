@@ -44,21 +44,31 @@
 
 #include <extra/tmxloader.h>
 
+#include "../common/deathevent.h"
+#include "../common/doomevent.h"
+#include "../common/warpevent.h"
+
 #include "customfactory.h"
 
 #include <cstdlib>
+#include <cstring>
+#include <cstdio>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
 
 class Demo : public Game::EngineBase
 {
+	char m_current_level[PATH_MAX + 1];
+
 	NO_ASSIGN_COPY(Demo);
 public:
 
 	Demo(void)
-	: EngineBase()
+	    : EngineBase()
 	{
+		memset(m_current_level, 0, sizeof(m_current_level));
+		
 	}
 
 	VIRTUAL bool initialize(void)
@@ -70,18 +80,22 @@ public:
 
 		Graphics::Camera::SetZoom(2.f);
 
+		eventManager()->connect(this, Common::DeathEvent::Type());
+		eventManager()->connect(this, Common::WarpEvent::Type());
 		eventManager()->connect(this, Event::JoystickButtonEvent::Type());
 		eventManager()->connect(this, Event::KeyboardEvent::Type());
 
-		loadLevel();
+		loadLevel("start");
 
 		return(true);
 	}
 
 	VIRTUAL void finalize(void)
 	{
-		eventManager()->disconnect(this, Event::KeyboardEvent::Type());
+		eventManager()->disconnect(this, Common::DeathEvent::Type());
+		eventManager()->disconnect(this, Common::WarpEvent::Type());
 		eventManager()->disconnect(this, Event::JoystickButtonEvent::Type());
+		eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 
 		EngineBase::finalize();
 	}
@@ -93,6 +107,12 @@ public:
 		if (EngineBase::handleEvent(e))
 			return(true);
 
+		/*
+		 * What happens when we get keyboard events
+		 *
+		 * TODO(gamaral) Bad, we need to move all this into an input
+		 * translation layer.
+		 */
 		if (e.type() == Event::KeyboardEvent::Type()) {
 			const Event::KeyboardEvent &l_kevent =
 			    static_cast<const Event::KeyboardEvent &>(e);
@@ -115,12 +135,26 @@ public:
 				Graphics::Display l_display = Graphics::Viewport::Display();
 				l_display.fullscreen = !l_display.fullscreen;
 				Graphics::Viewport::Setup(l_display);
+
+			/* suicide */
 			} else if (l_kevent.key() == Keyboard::KBK_F1 ||
 				   l_kevent.key() == Keyboard::KBK_R) {
-				loadLevel();
+				eventManager()->queue(new Common::DoomEvent());
+				return(true);
+
+			/* restart */
+			} else if (l_kevent.key() == Keyboard::KBK_F2) {
+				loadLevel("start");
 				return(true);
 			} else return(false);
 		}
+
+		/*
+		 * What happens when we get joystick events
+		 *
+		 * TODO(gamaral) Bad, we need to move all this into an input
+		 * translation layer.
+		 */
 		else if (e.type() == Event::JoystickButtonEvent::Type()) {
 			const Event::JoystickButtonEvent &l_event =
 			    static_cast<const Event::JoystickButtonEvent &>(e);
@@ -130,11 +164,7 @@ public:
 				l_display.fullscreen = !l_display.fullscreen;
 				Graphics::Viewport::Setup(l_display);
 			}
-			else if (l_event.pressed(Joystick::JSB_START|Joystick::JSB_SELECT)
-			    && l_event.action() == Joystick::ButtonPressed) {
-				loadLevel();
-				return(true);
-			}
+
 			else if (l_event.button() == Joystick::JSB_START
 			    && l_event.action() == Joystick::ButtonPressed) {
 				Game::SharedScene l_scene = sceneManager()->activeScene();
@@ -143,13 +173,44 @@ public:
 				else
 					l_scene->pushLayer(new Game::PauseSceneLayer("pause", *l_scene));
 			}
+
+			/* suicide */
+			else if (l_event.pressed(Joystick::JSB_START|Joystick::JSB_SELECT)
+			    && l_event.action() == Joystick::ButtonPressed) {
+				eventManager()->queue(new Common::DoomEvent());
+				return(true);
+			}
+		}
+
+		/*
+		 * What happens when we get a death event
+		 */
+		else if (e.type() == Common::DeathEvent::Type()) {
+			loadLevel();
+			return(true);
+		}
+
+		/*
+		 * What happens when we get a warp event
+		 */
+		else if (e.type() == Common::WarpEvent::Type()) {
+			const Common::WarpEvent &l_warp_event =
+			    static_cast<const Common::WarpEvent &>(e);
+			loadLevel(l_warp_event.destination());
+			return(true);
 		}
 
 		return(false);
 	}
 
-	void loadLevel()
+	void loadLevel(const std::string &level = std::string())
 	{
+		if (!level.empty()) {
+			MMDEBUG("LOADING LEVEL: " << level);
+			sprintf(m_current_level, "assets/platformer_%s.tmx", level.c_str());
+		}
+		else MMDEBUG("RELOAD LEVEL");
+
 		sceneManager()->popScene();
 
 		Game::SharedScene l_scene(new Game::Scene("main"));
@@ -161,7 +222,8 @@ public:
 
 		/* load tmx tilemap */
 		Extra::TMXLoader m_tmxloader(*l_scene);
-		if (!m_tmxloader.load("assets/platformer.tmx"))
+
+		if (!m_tmxloader.load(m_current_level))
 			MMFATAL("Failed to load tilemap asset!");
 		sceneManager()->pushScene(l_scene);
 	}

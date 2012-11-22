@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Marshmallow Engine. All rights reserved.
+ * Copyright 2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "colliderentity.h"
+#pragma once
 
 /*!
  * @file
@@ -34,37 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <game/collidercomponent.h>
-#include <game/sizecomponent.h>
+#ifndef DEMO_ACTORENTITY_H
+#define DEMO_ACTORENTITY_H 1
 
-ColliderEntity::ColliderEntity(const Core::Identifier &i, Game::EntitySceneLayer &l)
-    : Game::Entity(i, l)
-    , m_init(false)
+#include <game/entity.h>
+
+#include <event/ieventlistener.h>
+
+MARSHMALLOW_NAMESPACE_USE
+
+namespace Common
 {
+
+class ActorEntity : public Game::Entity
+                  , public Event::IEventListener
+{
+	NO_ASSIGN_COPY(ActorEntity);
+public:
+
+	ActorEntity(const Core::Identifier &identifier, Game::EntitySceneLayer &layer);
+	virtual ~ActorEntity(void);
+
+public: /* static */
+
+	static const Core::Type & Type(void);
+};
+
 }
 
-ColliderEntity::~ColliderEntity(void)
-{
-}
-
-void
-ColliderEntity::update(float d)
-{
-	if (!m_init) {
-		Game::SharedColliderComponent l_collider_component =
-		    new Game::ColliderComponent(id(), *this);
-		l_collider_component->active() = false;
-		pushComponent(l_collider_component.staticCast<Game::IComponent>());
-		m_init = true;
-	}
-
-	Game::EntityBase::update(d);
-}
-
-const Core::Type &
-ColliderEntity::Type(void)
-{
-	static const Core::Type s_type("ColliderEntity");
-	return(s_type);
-}
-
+#endif

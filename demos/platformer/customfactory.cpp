@@ -34,15 +34,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "colliderentity.h"
+#include "../common/colliderentity.h"
 #include "playerentity.h"
 
 Game::SharedEntity
 CustomFactory::createEntity(const Core::Type &t, const Core::Identifier &i,
     Game::EntitySceneLayer &l) const
 {
-	if (ColliderEntity::Type() == t)
-		return(new ColliderEntity(i, l));
+	if (Common::ColliderEntity::Type() == t)
+		return(new Common::ColliderEntity(i, l));
 	else if (PlayerEntity::Type() == t)
 		return(new PlayerEntity(i, l));
 	else return(FactoryBase::createEntity(t, i, l));

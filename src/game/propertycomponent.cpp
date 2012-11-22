@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "game/propertycomponent.h"
 
 /*!
  * @file
@@ -34,35 +34,69 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_IEVENTLISTENER_H
-#define MARSHMALLOW_EVENT_IEVENTLISTENER_H 1
+#include <tinyxml2.h>
 
-#include <core/environment.h>
-#include <core/fd.h>
-#include <core/global.h>
+#include <map>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+MARSHMALLOW_NAMESPACE_USE
+using namespace Game;
 
-namespace Event
+struct PropertyComponent::Private
 {
-	struct IEvent;
+	std::map<Core::Identifier, std::string> data;
+};
 
-	/*! @brief Event Listener Interface */
-	struct MARSHMALLOW_EVENT_EXPORT
-	IEventListener
-	{
-		virtual ~IEventListener(void);
-
-		/*!
-		 * @brief Event Handler
-		 * @param event Event
-		 */
-		virtual bool handleEvent(const Event::IEvent &event) = 0;
-	};
-	typedef Core::Shared<IEventListener> SharedEventListener;
-	typedef Core::Weak<IEventListener> WeakEventListener;
+PropertyComponent::PropertyComponent(const Core::Identifier &i, IEntity &e)
+    : ComponentBase(i, e)
+    , m_p(new Private)
+{
 }
 
-MARSHMALLOW_NAMESPACE_END
+PropertyComponent::~PropertyComponent(void)
+{
+	delete m_p, m_p = 0;
+}
 
-#endif
+std::string
+PropertyComponent::get(const Core::Identifier &i) const
+{
+	std::map<Core::Identifier, std::string>::iterator l_it;
+	l_it = m_p->data.find(i);
+
+	if (l_it != m_p->data.end()) return(l_it->second);
+	else return(std::string());
+}
+
+void
+PropertyComponent::set(const Core::Identifier &i, const std::string &v)
+{
+	m_p->data[i] = v;
+}
+
+bool
+PropertyComponent::serialize(XMLElement &n) const
+{
+	if (!ComponentBase::serialize(n))
+	    return(false);
+
+	/* TODO(gamaral) fill in serialization code */
+	return(true);
+}
+
+bool
+PropertyComponent::deserialize(XMLElement &n)
+{
+	if (!ComponentBase::deserialize(n))
+	    return(false);
+
+	/* TODO(gamaral) fill in deserialization code */
+	return(true);
+}
+
+const Core::Type &
+PropertyComponent::Type(void)
+{
+	static const Core::Type s_type("Game::PropertyComponent");
+	return(s_type);
+}
+
