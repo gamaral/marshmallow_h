@@ -40,8 +40,8 @@
 
 #include <map>
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 struct PropertyComponent::Private
 {
@@ -101,4 +101,7 @@ PropertyComponent::Type(void)
 	static const Core::Type s_type("Game::PropertyComponent");
 	return(s_type);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

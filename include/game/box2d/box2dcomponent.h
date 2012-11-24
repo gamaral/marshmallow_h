@@ -42,6 +42,11 @@
 class b2Body;
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { /******************************************** Math Namespace */
+	template <typename T> struct Size2;
+	typedef Size2<float> Size2f;
+} /*********************************************************** Math Namespace */
+
 namespace Game { /******************************************** Game Namespace */
 
 	class Box2DSceneLayer;

@@ -34,8 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+#include "core/type.h"
+
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 Scene::Scene(const Core::Identifier &i)
     : SceneBase(i)
@@ -52,4 +54,7 @@ Scene::Type(void)
 	static const Core::Type s_type("Game::Scene");
 	return(s_type);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

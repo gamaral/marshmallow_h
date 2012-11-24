@@ -26,7 +26,9 @@
  * or implied, of Marshmallow Engine.
  */
 
+#include <core/identifier.h>
 #include <core/logger.h>
+#include <core/weak.h>
 
 #include <event/eventmanager.h>
 #include <event/keyboardevent.h>

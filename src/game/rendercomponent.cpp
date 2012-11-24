@@ -34,8 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/identifier.h"
 #include "core/logger.h"
+#include "core/type.h"
+#include "core/weak.h"
 
 #include "graphics/imesh.h"
 #include "graphics/painter.h"
@@ -45,6 +46,7 @@
 #include "game/positioncomponent.h"
 
 #include <tinyxml2.h>
+
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;

@@ -40,12 +40,9 @@
 #include <game/factorybase.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Game
-{
+namespace Game { /******************************************** Game Namespace */
 	typedef FactoryBase Factory;
-}
-
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

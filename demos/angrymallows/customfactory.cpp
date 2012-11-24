@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/type.h"
+
 #include "inputcomponent.h"
 #include "snatchcomponent.h"
 #include "snatcherlayer.h"

@@ -40,9 +40,8 @@
 #include <game/scenebase.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	/*! @brief Game No Frills Scene Class */
 	class MARSHMALLOW_GAME_EXPORT
 	Scene : public SceneBase
@@ -62,8 +61,8 @@ namespace Game
 
 		static const Core::Type & Type(void);
 	};
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

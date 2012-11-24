@@ -42,15 +42,12 @@
 #include <core/global.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	/*! @brief Game Factory Base Class */
 	class MARSHMALLOW_GAME_EXPORT
 	FactoryBase : public IFactory
 	{
-		static IFactory *s_instance;
-
 		NO_ASSIGN_COPY(FactoryBase);
 	public:
 
@@ -75,13 +72,12 @@ namespace Game
 
 	public: /* static */
 
-		static IFactory *Instance(void)
-		    { return(s_instance); }
+		static IFactory *Instance(void);
 	};
 	typedef Core::Shared<IFactory> SharedFactory;
 	typedef Core::Weak<IFactory> WeakFactory;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

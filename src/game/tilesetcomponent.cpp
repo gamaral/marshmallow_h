@@ -35,6 +35,7 @@
  */
 
 #include "core/identifier.h"
+#include "core/weak.h"
 
 #include "graphics/itileset.h"
 

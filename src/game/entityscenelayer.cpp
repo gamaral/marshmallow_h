@@ -34,10 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/identifier.h"
 #include "core/logger.h"
 #include "core/shared.h"
-
-#include "math/vector2.h"
 
 #include "graphics/camera.h"
 
@@ -48,10 +47,8 @@
 
 #include <tinyxml2.h>
 
-#include <cmath>
-
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 struct EntitySceneLayer::Private
 {
@@ -249,4 +246,7 @@ EntitySceneLayer::Type(void)
 	static const Core::Type s_type("Game::EntitySceneLayer");
 	return(s_type);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

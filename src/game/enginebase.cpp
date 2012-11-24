@@ -34,8 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/identifier.h"
 #include "core/logger.h"
 #include "core/platform.h"
+#include "core/shared.h"
 
 #include "event/eventmanager.h"
 #include "event/quitevent.h"
@@ -56,7 +58,8 @@
 #include <tinyxml2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
+namespace Game { /******************************************** Game Namespace */
+namespace { /************************************ Game::<anonymous> Namespace */
 
 void
 GetViewportOverrides(Graphics::Display &display)
@@ -87,9 +90,7 @@ GetViewportOverrides(Graphics::Display &display)
 	}
 }
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Game { /******************************************** Game Namespace */
+} /********************************************** Game::<anonymous> Namespace */
 
 struct EngineBase::Private
 {

@@ -34,7 +34,11 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/identifier.h"
 #include "core/logger.h"
+#include "core/weak.h"
+
+#include "math/size2.h"
 
 #include "graphics/meshbase.h"
 
@@ -49,8 +53,8 @@
 
 #include <tinyxml2.h>
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 struct Box2DComponent::Private
 {
@@ -237,4 +241,7 @@ Box2DComponent::Type(void)
 	static const Core::Type s_type("Game::Box2DComponent");
 	return(s_type);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

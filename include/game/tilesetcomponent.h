@@ -39,7 +39,7 @@
 
 #include <game/componentbase.h>
 
-#include <core/weak.h>
+#include <core/fd.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

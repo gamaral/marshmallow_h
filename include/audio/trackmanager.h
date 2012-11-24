@@ -37,7 +37,9 @@
 #ifndef MARSHMALLOW_AUDIO_TRACKMANAGER_H
 #define MARSHMALLOW_AUDIO_TRACKMANAGER_H 1
 
-#include <core/shared.h>
+#include <core/environment.h>
+#include <core/fd.h>
+#include <core/global.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

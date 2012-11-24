@@ -37,23 +37,19 @@
 #ifndef MARSHMALLOW_GAME_IENGINE_H
 #define MARSHMALLOW_GAME_IENGINE_H 1
 
-#include <core/fd.h>
 #include <core/irenderable.h>
 #include <core/iserializable.h>
 #include <core/iupdateable.h>
-
 #include <event/ieventlistener.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Event
-{
+namespace Event { /****************************************** Event Namespace */
 	class EventManager;
 	typedef Core::Shared<EventManager> SharedEventManager;
-}
+} /********************************************************** Event Namespace */
 
-namespace Game
-{
+namespace Game { /******************************************** Game Namespace */
+
 	class SceneManager;
 	typedef Core::Shared<SceneManager> SharedSceneManager;
 
@@ -118,8 +114,8 @@ namespace Game
 		 */
 		virtual bool isValid(void) const = 0;
 	};
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

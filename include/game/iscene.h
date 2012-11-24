@@ -46,10 +46,12 @@
 #include <core/fd.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Graphics { class Color; }
+namespace Graphics { /************************************ Graphics Namespace */
+	class Color;
+} /******************************************************* Graphics Namespace */
 
-namespace Game
-{
+namespace Game { /******************************************** Game Namespace */
+
 	struct ISceneLayer;
 	typedef Core::Shared<ISceneLayer> SharedSceneLayer;
 
@@ -80,8 +82,8 @@ namespace Game
 	};
 	typedef Core::Shared<IScene> SharedScene;
 	typedef Core::Weak<IScene> WeakScene;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

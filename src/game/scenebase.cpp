@@ -34,18 +34,20 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/identifier.h"
 #include "core/logger.h"
+#include "core/shared.h"
 
 #include "graphics/color.h"
 #include "graphics/painter.h"
 
-#include "game/iscenelayer.h"
 #include "game/factorybase.h"
+#include "game/iscenelayer.h"
 
 #include <tinyxml2.h>
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 struct SceneBase::Private
 {
@@ -274,4 +276,7 @@ SceneBase::deserialize(XMLElement &n)
 	
 	return(true);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

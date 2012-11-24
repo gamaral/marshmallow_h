@@ -34,6 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/type.h"
+#include "core/weak.h"
+
 #include "graphics/quadmesh.h"
 
 #include "game/entity.h"
@@ -50,10 +53,11 @@
 #   include "game/box2d/box2dscenelayer.h"
 #endif
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
-
-IFactory *FactoryBase::s_instance(0);
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
+namespace { /************************************ Game::<anonymous> Namespace */
+	Game::IFactory *s_instance(0);
+} /********************************************** Game::<anonymous> Namespace */
 
 FactoryBase::FactoryBase(void)
 {
@@ -113,4 +117,13 @@ FactoryBase::createMesh(const Core::Type &t) const
 	if (t == Graphics::QuadMesh::Type()) return(new Graphics::QuadMesh);
 	return(Graphics::SharedMesh());
 }
+
+IFactory *
+FactoryBase::Instance(void)
+{
+	return(s_instance);
+}
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

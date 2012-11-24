@@ -38,6 +38,7 @@
 #include <list>
 #include <map>
 
+#include "core/identifier.h"
 #include "core/logger.h"
 #include "core/platform.h"
 #include "core/shared.h"

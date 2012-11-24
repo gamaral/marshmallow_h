@@ -34,15 +34,17 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml2.h>
+
+#include "core/identifier.h"
 #include "core/logger.h"
+#include "core/shared.h"
 
 #include "math/size2.h"
 
 #include "graphics/factory.h"
 #include "graphics/itexturecoordinatedata.h"
 #include "graphics/itexturedata.h"
-
-#include <tinyxml2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */

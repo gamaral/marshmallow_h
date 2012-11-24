@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/identifier.h"
+
 #include <event/eventmanager.h>
 #include <event/ievent.h>
 #include <event/keyboardevent.h>

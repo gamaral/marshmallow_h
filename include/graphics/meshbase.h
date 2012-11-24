@@ -39,7 +39,7 @@
 
 #include <graphics/imesh.h>
 
-#include <core/shared.h>
+#include <core/fd.h>
 
 #include <math/vector2.h>
 

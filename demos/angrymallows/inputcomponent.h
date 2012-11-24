@@ -40,6 +40,8 @@
 #include <game/componentbase.h>
 #include <event/ieventlistener.h>
 
+#include <core/weak.h>
+
 #include <game/box2d/box2dcomponent.h>
 #include <game/positioncomponent.h>
 

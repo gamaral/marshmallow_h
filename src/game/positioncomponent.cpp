@@ -38,8 +38,8 @@
 
 #include <tinyxml2.h>
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 struct PositionComponent::Private
 {
@@ -91,4 +91,7 @@ PositionComponent::Type(void)
 	static const Core::Type s_type("Game::PositionComponent");
 	return(s_type);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

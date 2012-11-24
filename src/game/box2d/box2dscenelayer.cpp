@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/identifier.h"
+
 #include "math/vector2.h"
 
 #include "graphics/transform.h"

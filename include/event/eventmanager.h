@@ -37,9 +37,9 @@
 #ifndef MARSHMALLOW_EVENT_EVENTMANAGER_H
 #define MARSHMALLOW_EVENT_EVENTMANAGER_H 1
 
+#include <core/environment.h>
 #include <core/fd.h>
 #include <core/global.h>
-#include <core/identifier.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */

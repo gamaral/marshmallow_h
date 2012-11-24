@@ -39,20 +39,14 @@
 
 #include <game/scenelayerbase.h>
 
-#include <core/identifier.h>
-#include <core/shared.h>
-#include <core/type.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
+namespace Graphics { /************************************ Graphics Namespace */
 	struct IMesh;
 	typedef Core::Shared<IMesh> SharedMesh;
-}
+} /******************************************************* Graphics Namespace */
 
-namespace Game
-{
+namespace Game { /******************************************** Game Namespace */
+
 	/*! @brief Game Pause Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
 	PauseSceneLayer : public SceneLayerBase
@@ -83,8 +77,8 @@ namespace Game
 	};
 	typedef Core::Shared<PauseSceneLayer> SharedPauseSceneLayer;
 	typedef Core::Weak<PauseSceneLayer> WeakPauseSceneLayer;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

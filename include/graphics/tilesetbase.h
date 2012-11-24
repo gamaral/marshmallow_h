@@ -39,8 +39,7 @@
 
 #include <graphics/itileset.h>
 
-#include <core/identifier.h>
-#include <core/shared.h>
+#include <core/fd.h>
 
 #include <math/size2.h>
 

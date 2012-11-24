@@ -44,9 +44,8 @@
 #include <core/fd.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	struct IComponent;
 	typedef Core::Shared<IComponent> SharedComponent;
 
@@ -78,8 +77,8 @@ namespace Game
 	};
 	typedef Core::Shared<IEntity> SharedEntity;
 	typedef Core::Weak<IEntity> WeakEntity;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -39,16 +39,15 @@
 
 #include <game/componentbase.h>
 
-#include <core/weak.h>
+#include <core/fd.h>
 
 #include <math/pair.h>
 #include <math/point2.h>
 #include <math/vector2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	class PositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
@@ -88,8 +87,8 @@ namespace Game
 	};
 	typedef Core::Shared<MovementComponent> SharedMovementComponent;
 	typedef Core::Weak<MovementComponent> WeakMovementComponent;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

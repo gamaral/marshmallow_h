@@ -34,6 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/shared.h"
 #include "core/type.h"
 
 #include "graphics/factory.h"

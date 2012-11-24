@@ -161,7 +161,7 @@ include(cmake/contrib.cmake)
 
 ##################################################################### INCLUDES #
 
-include_directories(${PROJECT_BINARY_DIR}/include
+include_directories(${PROJECT_BINARY_DIR}/src
                     ${PROJECT_SOURCE_DIR}/include
                     ${TINYXML_INCLUDE_DIR})
 

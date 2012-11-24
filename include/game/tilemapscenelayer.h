@@ -39,16 +39,14 @@
 
 #include <game/scenelayerbase.h>
 
-#include <map>
-
-#include <core/identifier.h>
-#include <core/shared.h>
-#include <core/type.h>
+#include <core/fd.h>
 
 #include <math/vector2.h>
 
 #include <graphics/ivertexdata.h>
 #include <graphics/tileset.h>
+
+#include <string>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

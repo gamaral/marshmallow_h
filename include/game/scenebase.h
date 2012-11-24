@@ -39,14 +39,12 @@
 
 #include <game/iscene.h>
 
-#include <core/identifier.h>
-#include <core/shared.h>
-#include <core/type.h>
+#include <core/fd.h>
+#include <core/global.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	/*! @brief Game Scene Base Class */
 	class MARSHMALLOW_GAME_EXPORT
 	SceneBase : public IScene

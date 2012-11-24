@@ -39,8 +39,8 @@
 
 #include <game/ientity.h>
 
+#include <core/fd.h>
 #include <core/global.h>
-#include <core/identifier.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */

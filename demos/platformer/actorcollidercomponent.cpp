@@ -34,7 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <core/identifier.h>
 #include <core/logger.h>
+#include <core/weak.h>
 
 #include <game/movementcomponent.h>
 #include <game/positioncomponent.h>

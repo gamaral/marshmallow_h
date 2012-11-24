@@ -39,20 +39,14 @@
 
 #include <game/componentbase.h>
 
-#include <core/weak.h>
-
-#include <math/point2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
+namespace Graphics { /************************************ Graphics Namespace */
 	struct IMesh;
 	typedef Core::Shared<IMesh> SharedMesh;
-}
+} /******************************************************* Graphics Namespace */
 
-namespace Game
-{
+namespace Game { /******************************************** Game Namespace */
+
 	class PositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
@@ -87,8 +81,8 @@ namespace Game
 	};
 	typedef Core::Shared<RenderComponent> SharedRenderComponent;
 	typedef Core::Weak<RenderComponent> WeakRenderComponent;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -41,18 +41,16 @@
 #include <core/fd.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
+namespace Graphics { /************************************ Graphics Namespace */
 	struct ITexture;
 	typedef Core::Shared<ITexture> SharedTexture;
 
 	struct IMesh;
 	typedef Core::Shared<IMesh> SharedMesh;
-}
+} /******************************************************* Graphics Namespace */
 
-namespace Game
-{
+namespace Game { /******************************************** Game Namespace */
+
 	class EntitySceneLayer;
 
 	struct IComponent;
@@ -89,8 +87,8 @@ namespace Game
 	};
 	typedef Core::Shared<IFactory> SharedFactory;
 	typedef Core::Weak<IFactory> WeakFactory;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

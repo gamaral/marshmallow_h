@@ -28,6 +28,7 @@
 
 #include <core/identifier.h>
 #include <core/logger.h>
+#include <core/weak.h>
 
 #include <event/debugeventlistener.h>
 #include <event/eventmanager.h>

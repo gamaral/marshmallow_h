@@ -42,13 +42,16 @@
 class b2World;
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { /******************************************** Math Namespace */
+	struct Vector2;
+} /*********************************************************** Math Namespace */
 
-namespace Math { struct Vector2; }
+namespace Graphics { /************************************ Graphics Namespace */
+	class Transform;
+} /******************************************************* Graphics Namespace */
 
-namespace Graphics { class Transform; }
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	/*! @brief Game Box2D Powered Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
 	Box2DSceneLayer : public SceneLayerBase
@@ -88,8 +91,8 @@ namespace Game
 	};
 	typedef Core::Shared<Box2DSceneLayer> SharedBox2DSceneLayer;
 	typedef Core::Weak<Box2DSceneLayer> WeakBox2DSceneLayer;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

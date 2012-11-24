@@ -29,6 +29,7 @@
 #include <iostream>
 
 #include "core/identifier.h"
+#include "core/shared.h"
 
 #include "math/size2.h"
 

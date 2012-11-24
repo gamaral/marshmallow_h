@@ -37,7 +37,8 @@
 #ifndef MARSHMALLOW_CORE_IDATAIO_H
 #define MARSHMALLOW_CORE_IDATAIO_H 1
 
-#include <core/identifier.h>
+#include <core/environment.h>
+#include <core/fd.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

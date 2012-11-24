@@ -37,7 +37,7 @@
 #ifndef MARSHMALLOW_AUDIO_ITRACK_H
 #define MARSHMALLOW_AUDIO_ITRACK_H 1
 
-#include <core/shared.h>
+#include <core/fd.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

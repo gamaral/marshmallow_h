@@ -36,13 +36,12 @@
 
 #include "core/identifier.h"
 #include "core/logger.h"
+#include "core/weak.h"
 
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
 #include <tinyxml2.h>
-
-#include <cmath>
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Game;

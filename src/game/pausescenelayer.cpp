@@ -34,15 +34,16 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/shared.h"
+#include "core/type.h"
+
 #include "math/point2.h"
-#include "math/size2.h"
 
 #include "graphics/painter.h"
 #include "graphics/quadmesh.h"
-#include "graphics/viewport.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 struct PauseSceneLayer::Private
 {
@@ -95,4 +96,7 @@ PauseSceneLayer::Type(void)
 	static const Core::Type s_type("Game::PauseSceneLayer");
 	return(s_type);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

@@ -37,6 +37,8 @@
 MARSHMALLOW_NAMESPACE_USE
 
 #include <core/logger.h>
+#include <core/shared.h>
+#include <core/type.h>
 
 #include <event/keyboardevent.h>
 

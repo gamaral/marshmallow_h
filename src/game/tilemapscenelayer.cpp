@@ -34,9 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cassert>
-#include <cmath>
 #include <map>
+
+#include "core/identifier.h"
+#include "core/shared.h"
 
 #include "math/point2.h"
 #include "math/vector2.h"

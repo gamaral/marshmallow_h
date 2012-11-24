@@ -35,6 +35,7 @@
  */
 
 #include "core/logger.h"
+#include "core/type.h"
 
 #include "event/eventmanager.h"
 #include "event/quitevent.h"

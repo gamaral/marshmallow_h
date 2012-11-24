@@ -37,13 +37,15 @@
 #ifndef TILEMAP_INPUTCOMPONENT_H
 #define TILEMAP_INPUTCOMPONENT_H 1
 
-#include <list>
-
 #include <game/componentbase.h>
 #include <event/ieventlistener.h>
 
+#include <core/weak.h>
+
 #include <game/movementcomponent.h>
 #include <game/positioncomponent.h>
+
+#include <list>
 
 MARSHMALLOW_NAMESPACE_USE
 

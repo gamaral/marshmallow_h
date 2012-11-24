@@ -42,9 +42,8 @@
 #include <string>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	/*! @brief Game Property Component Class */
 	class MARSHMALLOW_GAME_EXPORT
 	PropertyComponent : public ComponentBase
@@ -74,8 +73,8 @@ namespace Game
 	};
 	typedef Core::Shared<PropertyComponent> SharedPropertyComponent;
 	typedef Core::Weak<PropertyComponent> WeakPropertyComponent;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

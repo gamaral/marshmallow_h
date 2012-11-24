@@ -42,9 +42,8 @@
 #include <math/point2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	/*! @brief Game Position Component Class */
 	class MARSHMALLOW_GAME_EXPORT
 	PositionComponent : public ComponentBase
@@ -73,8 +72,8 @@ namespace Game
 	};
 	typedef Core::Shared<PositionComponent> SharedPositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

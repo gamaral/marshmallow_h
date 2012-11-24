@@ -36,6 +36,7 @@
 
 #include <Box2D/Box2D.h>
 
+#include <core/identifier.h>
 #include <core/logger.h>
 
 #include <math/size2.h>

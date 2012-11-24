@@ -34,7 +34,11 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <cstring>
+#include <stack>
+
 #include "core/logger.h"
+#include "core/shared.h"
 #include "core/type.h"
 
 #include "math/matrix4.h"
@@ -44,9 +48,6 @@
 #include "graphics/quadmesh.h"
 #include "graphics/transform.h"
 #include "graphics/viewport_p.h"
-
-#include <stack>
-#include <cstring>
 
 #include "extensions.h"
 #include "texturecoordinatedata.h"

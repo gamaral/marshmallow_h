@@ -37,7 +37,7 @@
 #ifndef MARSHMALLOW_GRAPHICS_VIEWPORT_H
 #define MARSHMALLOW_GRAPHICS_VIEWPORT_H 1
 
-#include <core/type.h>
+#include <core/fd.h>
 
 #include <math/size2.h>
 
