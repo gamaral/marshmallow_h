@@ -13,7 +13,7 @@
  *
  * THIS SOFTWARE IS PROVIDED BY MARSHMALLOW ENGINE ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MARSHMALLOW ENGINE OR
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO AUDIO SHALL MARSHMALLOW ENGINE OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
@@ -34,37 +34,25 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_DEBUG_EVENTLISTENER_H
-#define MARSHMALLOW_EVENT_DEBUG_EVENTLISTENER_H 1
+#ifndef MARSHMALLOW_AUDIO_ITRACK_H
+#define MARSHMALLOW_AUDIO_ITRACK_H 1
 
-#include <event/ieventlistener.h>
-
-#include <core/global.h>
-
-#include <string>
+#include <core/shared.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Event { /****************************************** Event Namespace */
 
-	/*! @brief Event Debug Listener */
-	class MARSHMALLOW_EVENT_EXPORT
-	DebugEventListener : public IEventListener
+namespace Audio { /****************************************** Audio Namespace */
+
+	/*! @brief Audio Track Interface */
+	struct MARSHMALLOW_AUDIO_EXPORT
+	ITrack
 	{
-		struct Private;
-		Private *m_p;
-
-		NO_ASSIGN_COPY(DebugEventListener);
-	public:
-
-		DebugEventListener(const std::string &f);
-		virtual ~DebugEventListener(void);
-
-	public: /* virtual */
-
-		VIRTUAL bool handleEvent(const IEvent &event);
+		virtual ~ITrack(void);
 	};
+	typedef Core::Shared<ITrack> SharedTrack;
+	typedef Core::Weak<ITrack> WeakTrack;
 
-} /********************************************************** Event Namespace */
+} /********************************************************** Audio Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

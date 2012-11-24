@@ -41,7 +41,7 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace { /******************************************** Anonymous Namespace */
 
-	Game::IEngine *s_instance;
+	Game::IEngine *s_instance(0);
 
 } /****************************************************** Anonymous Namespace */
 

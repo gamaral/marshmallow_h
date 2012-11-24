@@ -13,7 +13,7 @@
  *
  * THIS SOFTWARE IS PROVIDED BY MARSHMALLOW ENGINE ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MARSHMALLOW ENGINE OR
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO AUDIO SHALL MARSHMALLOW ENGINE OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
@@ -34,37 +34,41 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_DEBUG_EVENTLISTENER_H
-#define MARSHMALLOW_EVENT_DEBUG_EVENTLISTENER_H 1
+#ifndef MARSHMALLOW_AUDIO_TRACKMANAGER_H
+#define MARSHMALLOW_AUDIO_TRACKMANAGER_H 1
 
-#include <event/ieventlistener.h>
-
-#include <core/global.h>
-
-#include <string>
+#include <core/shared.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Event { /****************************************** Event Namespace */
 
-	/*! @brief Event Debug Listener */
-	class MARSHMALLOW_EVENT_EXPORT
-	DebugEventListener : public IEventListener
+namespace Audio { /****************************************** Audio Namespace */
+
+	struct ITrack;
+	typedef Core::Shared<ITrack> SharedTrack;
+
+	/*! @brief Track Manager */
+	class MARSHMALLOW_AUDIO_EXPORT
+	TrackManager
 	{
 		struct Private;
 		Private *m_p;
 
-		NO_ASSIGN_COPY(DebugEventListener);
+		NO_ASSIGN_COPY(TrackManager);
 	public:
 
-		DebugEventListener(const std::string &f);
-		virtual ~DebugEventListener(void);
+		TrackManager(void);
+		virtual ~TrackManager(void);
 
 	public: /* virtual */
 
-		VIRTUAL bool handleEvent(const IEvent &event);
-	};
+	public: /* static */
 
-} /********************************************************** Event Namespace */
+		static TrackManager *Instance(void);
+	};
+	typedef Core::Shared<TrackManager> SharedTrackManager;
+	typedef Core::Weak<TrackManager> WeakTrackManager;
+
+} /********************************************************** Audio Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

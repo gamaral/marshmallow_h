@@ -40,9 +40,8 @@
 #include <event/eventbase.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
-namespace Event
-{
 	/*! @brief Event Render Class */
 	class MARSHMALLOW_EVENT_EXPORT
 	RenderEvent : public EventBase
@@ -62,8 +61,8 @@ namespace Event
 
 		static const Core::Type & Type(void);
 	};
-}
 
+} /********************************************************** Event Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

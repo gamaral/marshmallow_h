@@ -34,10 +34,11 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/identifier.h"
 #include "core/platform.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Event;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
 struct InputEvent::Private
 {
@@ -92,4 +93,7 @@ InputEvent::Type(void)
 	static const Core::Type s_type("Event::InputEvent");
 	return(s_type);
 }
+
+} /********************************************************** Event Namespace */
+MARSHMALLOW_NAMESPACE_END
 

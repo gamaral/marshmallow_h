@@ -34,15 +34,16 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <fstream>
+
 #include "core/logger.h"
 #include "core/platform.h"
 #include "core/type.h"
 
 #include "event/ievent.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Core;
-using namespace Event;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
 struct DebugEventListener::Private
 {
@@ -70,7 +71,7 @@ DebugEventListener::handleEvent(const IEvent &e)
 {
 	if (m_p->filestream.is_open())
 		m_p->filestream
-		    << Platform::TimeStampToTimeData(e.timeStamp()).string
+		    << Core::Platform::TimeStampToTimeData(e.timeStamp()).string
 		    << ": MS " << e.timeStamp()
 		    << ": Event " << static_cast<const void *>(&e)
 		    << ": Type (" << e.type().uid() << ")" << e.type().str().c_str()
@@ -78,4 +79,7 @@ DebugEventListener::handleEvent(const IEvent &e)
 
 	return false;
 }
+
+} /********************************************************** Event Namespace */
+MARSHMALLOW_NAMESPACE_END
 

@@ -37,20 +37,13 @@
 #ifndef MARSHMALLOW_EVENT_EVENTMANAGER_H
 #define MARSHMALLOW_EVENT_EVENTMANAGER_H 1
 
-#include <list>
-#include <map>
-
 #include <core/fd.h>
 #include <core/global.h>
 #include <core/identifier.h>
-#include <core/shared.h>
-
-#include <event/ieventlistener.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
-namespace Event
-{
 	struct IEventListener;
 	typedef Core::Weak<IEventListener> WeakEventListener;
 
@@ -61,8 +54,6 @@ namespace Event
 	class MARSHMALLOW_EVENT_EXPORT
 	EventManager
 	{
-		static EventManager *s_instance;
-
 		struct Private;
 		Private *m_p;
 
@@ -92,8 +83,8 @@ namespace Event
 	};
 	typedef Core::Shared<EventManager> SharedEventManager;
 	typedef Core::Weak<EventManager> WeakEventManager;
-}
 
+} /********************************************************** Event Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

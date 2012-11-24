@@ -34,7 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
+#include "core/identifier.h"
 
 MARSHMALLOW_NAMESPACE_USE
 using namespace Event;

@@ -13,7 +13,7 @@
  *
  * THIS SOFTWARE IS PROVIDED BY MARSHMALLOW ENGINE ``AS IS'' AND ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MARSHMALLOW ENGINE OR
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO AUDIO SHALL MARSHMALLOW ENGINE OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "audio/trackmanager.h"
 
 /*!
  * @file
@@ -34,37 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_DEBUG_EVENTLISTENER_H
-#define MARSHMALLOW_EVENT_DEBUG_EVENTLISTENER_H 1
-
-#include <event/ieventlistener.h>
-
-#include <core/global.h>
-
-#include <string>
-
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Event { /****************************************** Event Namespace */
+namespace { /******************************************** Anonymous Namespace */
 
-	/*! @brief Event Debug Listener */
-	class MARSHMALLOW_EVENT_EXPORT
-	DebugEventListener : public IEventListener
-	{
-		struct Private;
-		Private *m_p;
+	Audio::TrackManager *s_instance(0);
 
-		NO_ASSIGN_COPY(DebugEventListener);
-	public:
+} /****************************************************** Anonymous Namespace */
 
-		DebugEventListener(const std::string &f);
-		virtual ~DebugEventListener(void);
+namespace Audio { /****************************************** Audio Namespace */
 
-	public: /* virtual */
+TrackManager::TrackManager(void)
+{
+	if (!s_instance) s_instance = this;
+}
 
-		VIRTUAL bool handleEvent(const IEvent &event);
-	};
+TrackManager::~TrackManager(void)
+{
+	if (this == s_instance)
+		s_instance = 0;
+}
 
-} /********************************************************** Event Namespace */
+TrackManager *
+TrackManager::Instance(void)
+{
+	return(s_instance);
+}
+
+} /********************************************************** Audio Namespace */
 MARSHMALLOW_NAMESPACE_END
 
-#endif

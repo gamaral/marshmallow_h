@@ -40,9 +40,8 @@
 #include <event/ieventlistener.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
-namespace Event
-{
 	/*! @brief Event Proxy Listener Class */
 	class MARSHMALLOW_EVENT_EXPORT
 	ProxyEventListener : public IEventListener
@@ -64,6 +63,7 @@ namespace Event
 	};
 }
 
+} /********************************************************** Event Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -34,10 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/platform.h"
+#include "core/identifier.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Event;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
 struct QuitEvent::Private
 {
@@ -68,4 +68,7 @@ QuitEvent::Type(void)
 	static const Core::Type s_type("Event::QuitEvent");
 	return(s_type);
 }
+
+} /********************************************************** Event Namespace */
+MARSHMALLOW_NAMESPACE_END
 

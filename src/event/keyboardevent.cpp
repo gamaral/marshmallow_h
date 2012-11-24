@@ -36,8 +36,8 @@
 
 #include "core/platform.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Event;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
 KeyboardEvent::KeyboardEvent(Input::Keyboard::Key key_,
                              Input::Keyboard::Action action_,
@@ -57,4 +57,7 @@ KeyboardEvent::Type(void)
 	static const Core::Type s_type("Event::KeyboardEvent");
 	return(s_type);
 }
+
+} /********************************************************** Event Namespace */
+MARSHMALLOW_NAMESPACE_END
 

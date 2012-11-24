@@ -76,8 +76,6 @@ namespace Game
 	class MARSHMALLOW_GAME_EXPORT
 	EngineBase : public IEngine
 	{
-		static EngineBase *s_instance;
-
 		struct Private;
 		Private *m_p;
 

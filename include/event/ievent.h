@@ -39,12 +39,10 @@
 
 #include <core/environment.h>
 #include <core/fd.h>
-#include <core/global.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
-namespace Event
-{
 	/*! @brief Event Interface */
 	struct MARSHMALLOW_EVENT_EXPORT
 	IEvent
@@ -68,8 +66,8 @@ namespace Event
 	};
 	typedef Core::Shared<IEvent> SharedEvent;
 	typedef Core::Weak<IEvent> WeakEvent;
-}
 
+} /********************************************************** Event Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

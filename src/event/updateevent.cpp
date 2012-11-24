@@ -34,8 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Event;
+#include <core/identifier.h>
+
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
 struct UpdateEvent::Private
 {
@@ -66,4 +68,7 @@ UpdateEvent::Type(void)
 	static const Core::Type s_type("Event::UpdateEvent");
 	return(s_type);
 }
+
+} /********************************************************** Event Namespace */
+MARSHMALLOW_NAMESPACE_END
 

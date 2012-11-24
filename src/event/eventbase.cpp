@@ -36,8 +36,8 @@
 
 #include "core/platform.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Event;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
 struct EventBase::Private
 {
@@ -68,3 +68,7 @@ EventBase::timeStamp(void) const
 {
 	return(m_p->timestamp);
 }
+
+} /********************************************************** Event Namespace */
+MARSHMALLOW_NAMESPACE_END
+

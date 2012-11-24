@@ -35,20 +35,24 @@
  */
 
 #include <algorithm>
+#include <list>
+#include <map>
 
 #include "core/logger.h"
 #include "core/platform.h"
+#include "core/shared.h"
 #include "core/weak.h"
 
 #include "event/ievent.h"
 #include "event/ieventlistener.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Event;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace { /******************************************** Anonymous Namespace */
 
-/******************************************************************************/
+	using namespace Event;
 
-namespace {
+	EventManager *s_instance(0);
+
 	bool
 	SortSharedEvent(const SharedEvent& lhs, const SharedEvent& rhs) {
 		return(lhs->priority() > rhs->priority()
@@ -59,9 +63,10 @@ namespace {
 	typedef Core::Shared<EventListenerList> SharedEventListenerList;
 	typedef std::map<MMUID, SharedEventListenerList> EventListenerMap;
 	typedef std::list<SharedEvent> EventList;
-} // namespace
 
-/******************************************************************************/
+} /****************************************************** Anonymous Namespace */
+
+namespace Event { /****************************************** Event Namespace */
 
 struct EventManager::Private
 {
@@ -72,8 +77,6 @@ struct EventManager::Private
 	Core::Type dispatch_type;
 	bool dispatch_invalid;
 };
-
-EventManager * EventManager::s_instance(0);
 
 EventManager::EventManager(const Core::Identifier &i)
     : m_p(new Private)
@@ -250,4 +253,7 @@ EventManager::Instance(void)
 {
 	return(s_instance);
 }
+
+} /********************************************************** Event Namespace */
+MARSHMALLOW_NAMESPACE_END
 

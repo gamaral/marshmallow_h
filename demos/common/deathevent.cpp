@@ -34,6 +34,7 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <core/identifier.h>
 #include <core/platform.h>
 
 using namespace Common;

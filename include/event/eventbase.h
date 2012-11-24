@@ -39,12 +39,11 @@
 
 #include <event/ievent.h>
 
-#include <core/identifier.h>
+#include <core/global.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
-namespace Event
-{
 	/*! @brief Event Priority */
 	enum EventPriority
 	{
@@ -84,8 +83,8 @@ namespace Event
 
 		VIRTUAL MMTIME timeStamp(void) const;
 	};
-}
 
+} /********************************************************** Event Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif
