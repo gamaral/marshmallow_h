@@ -38,13 +38,13 @@
 #define MARSHMALLOW_MATH_RECT2_H 1
 
 #include <core/global.h>
+
 #include <math/size2.h>
 #include <math/vector2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { /******************************************** Math Namespace */
 
-namespace Math
-{
 	/*! @brief 2D Rect */
 	class MARSHMALLOW_MATH_EXPORT
 	Rect2
@@ -95,8 +95,8 @@ namespace Math
 		const float & operator[](int i) const
 		    { return(m_side[i % Sides]); }
 	};
-}
 
+} /*********************************************************** Math Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

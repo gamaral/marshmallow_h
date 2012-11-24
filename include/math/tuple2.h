@@ -42,9 +42,8 @@
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { /******************************************** Math Namespace */
 
-namespace Math
-{
 	/*! @brief 2D Tuple */
 	class MARSHMALLOW_MATH_EXPORT
 	Tuple2
@@ -102,8 +101,8 @@ namespace Math
 		      return(s_one); }
 	};
 	typedef Tuple2 Pair;
-}
 
+} /*********************************************************** Math Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

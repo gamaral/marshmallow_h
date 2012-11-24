@@ -34,6 +34,17 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#ifdef MARSHMALLOW_X11_XINERAMA
+#  include <X11/extensions/Xinerama.h>
+#endif
+
+#include <X11/Xatom.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
+#include <cassert>
+#include <cstring>
+
 #include "core/logger.h"
 #include "core/type.h"
 
@@ -50,15 +61,6 @@
 #include "graphics/display.h"
 #include "graphics/painter_p.h"
 
-#ifdef MARSHMALLOW_X11_XINERAMA
-#  include <X11/extensions/Xinerama.h>
-#endif
-
-#include <X11/Xatom.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-
-#include <cstring>
 
 #include "headers.h"
 #ifdef MARSHMALLOW_OPENGL_EGL
@@ -67,6 +69,7 @@
 #  include <GL/glx.h>
 #endif
 #include "extensions.h"
+
 
 /*
  * X11 Viewport Notes

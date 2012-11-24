@@ -34,15 +34,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml2.h>
+
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/weak.h"
 
 #include "math/point2.h"
-#include "math/size2.h"
 
 #include "event/eventmanager.h"
-#include "event/ievent.h"
 #include "event/keyboardevent.h"
 
 #include "graphics/itexturedata.h"
@@ -52,27 +52,21 @@
 
 #include "game/engine.h"
 #include "game/iengine.h"
-#include "game/iscene.h"
 
-#include <tinyxml2.h>
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
+namespace { /************************************ Game::<anonymous> Namespace */
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+enum SplashState
+{
+	ssInit     = 0,
+	ssFadeIn   = 1,
+	ssExposure = 2,
+	ssFadeOut  = 3,
+	ssFinished = 4
+};
 
-/******************************************************************************/
-
-namespace {
-	enum SplashState
-	{
-		ssInit     = 0,
-		ssFadeIn   = 1,
-		ssExposure = 2,
-		ssFadeOut  = 3,
-		ssFinished = 4
-	};
-} // namespace
-
-/******************************************************************************/
+} /********************************************** Game::<anonymous> Namespace */
 
 struct SplashSceneLayer::Private
 {
@@ -148,8 +142,6 @@ SplashSceneLayer::Private::calculateQuadScale(void)
 
 	mesh->setScale(l_pixel_scale_x, l_pixel_scale_y);
 }
-
-/******************************************************************************/
 
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock)
@@ -334,4 +326,7 @@ SplashSceneLayer::Type(void)
 	static const Core::Type s_type("Game::SplashSceneLayer");
 	return(s_type);
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

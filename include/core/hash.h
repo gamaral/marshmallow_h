@@ -41,9 +41,8 @@
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
 
-namespace Core
-{
 	/*!
 	 * As it's name suggests Core::Hash is used hash a random assortment of
 	 * data into a Unique Identifier (UID) that can later be used to do
@@ -104,8 +103,8 @@ namespace Core
 
 		void rehash(const char *d, size_t length, MMUID mask);
 	};
-}
 
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

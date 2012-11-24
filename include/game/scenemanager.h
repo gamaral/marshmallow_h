@@ -37,19 +37,18 @@
 #ifndef MARSHMALLOW_GAME_SCENEMANAGER_H
 #define MARSHMALLOW_GAME_SCENEMANAGER_H 1
 
-#include <core/irenderable.h>
-#include <core/iserializable.h>
-#include <core/iupdateable.h>
-#include <event/ieventlistener.h>
-
 #include <core/environment.h>
 #include <core/fd.h>
 #include <core/global.h>
+#include <core/irenderable.h>
+#include <core/iserializable.h>
+#include <core/iupdateable.h>
+
+#include <event/ieventlistener.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	struct IScene;
 	typedef Core::Shared<IScene> SharedScene;
 
@@ -85,8 +84,8 @@ namespace Game
 		VIRTUAL bool handleEvent(const Event::IEvent &event);
 	};
 	typedef Core::Shared<SceneManager> SharedSceneManager;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

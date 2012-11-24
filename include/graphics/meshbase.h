@@ -37,13 +37,12 @@
 #ifndef MARSHMALLOW_GRAPHICS_MESHBASE_H
 #define MARSHMALLOW_GRAPHICS_MESHBASE_H 1
 
-#include <graphics/imesh.h>
-
 #include <core/fd.h>
 
 #include <math/vector2.h>
 
 #include <graphics/color.h>
+#include <graphics/imesh.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */

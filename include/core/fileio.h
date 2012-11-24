@@ -44,9 +44,8 @@
 #include <core/global.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
 
-namespace Core
-{
 	template <class T> class Shared;
 	template <class T> class Weak;
 
@@ -109,8 +108,8 @@ namespace Core
 	};
 	typedef Shared<FileIO> SharedFileIO;
 	typedef Weak<FileIO> WeakFileIO;
-}
 
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

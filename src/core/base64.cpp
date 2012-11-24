@@ -36,13 +36,9 @@
 
 #include "core/logger.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Core;
-
-/******************************************************************************/
-
-namespace
-{
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+namespace { /************************************ Game::<anonymous> Namespace */
 
 	static const char s_encoder64[] =
 	    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -63,9 +59,7 @@ namespace
 	    49, 50, 51
 	};
 
-} // namespace
-
-/******************************************************************************/
+} /********************************************** Game::<anonymous> Namespace */
 
 size_t
 Base64::Decode(const char *in, size_t in_size, char **out)
@@ -142,4 +136,7 @@ Base64::Encode(const char *in, size_t in_size, char **out)
 
 	return(l_out_size);
 }
+
+} /*********************************************************** Core Namespace */
+MARSHMALLOW_NAMESPACE_END
 

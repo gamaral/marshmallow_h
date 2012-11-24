@@ -37,15 +37,14 @@
 #ifndef MARSHMALLOW_CORE_IDENTIFIER_H
 #define MARSHMALLOW_CORE_IDENTIFIER_H 1
 
-#include <core/strhash.h>
+#ifndef MARSHMALLOW_CORE_STRHASH_H
+#  include <core/strhash.h>
+#endif
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Core
-{
+namespace Core { /******************************************** Core Namespace */
 	typedef StrHash Identifier;
-}
-
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

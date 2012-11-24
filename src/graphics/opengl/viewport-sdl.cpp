@@ -34,6 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <cassert>
+
+#include <SDL.h>
+
 #include "core/logger.h"
 #include "core/type.h"
 
@@ -50,8 +54,6 @@
 #include "graphics/color.h"
 #include "graphics/display.h"
 #include "graphics/painter_p.h"
-
-#include <SDL.h>
 
 #include "headers.h"
 #include "extensions.h"

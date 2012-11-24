@@ -34,9 +34,9 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "game/iengine.h"
-
 #include <cassert>
+
+#include "game/iengine.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace { /******************************************** Anonymous Namespace */

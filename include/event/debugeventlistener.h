@@ -37,9 +37,9 @@
 #ifndef MARSHMALLOW_EVENT_DEBUG_EVENTLISTENER_H
 #define MARSHMALLOW_EVENT_DEBUG_EVENTLISTENER_H 1
 
-#include <event/ieventlistener.h>
-
 #include <core/global.h>
+
+#include <event/ieventlistener.h>
 
 #include <string>
 

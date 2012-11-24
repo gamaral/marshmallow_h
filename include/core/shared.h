@@ -37,16 +37,15 @@
 #ifndef MARSHMALLOW_CORE_SHARED_H
 #define MARSHMALLOW_CORE_SHARED_H 1
 
-#include <cassert>
-
 #include <core/environment.h>
 #include <core/global.h>
 #include <core/namespace.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#include <cassert>
 
-namespace Core
-{
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+
 	template <class T> class Weak;
 
 	struct MARSHMALLOW_CORE_EXPORT
@@ -172,8 +171,8 @@ namespace Core
                 }
 		m_data = 0;
 	}
-}
 
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -34,15 +34,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/identifier.h"
+#include <tinyxml2.h>
+
 #include "core/weak.h"
+#include "core/type.h"
 
 #include "graphics/itileset.h"
 
-#include <tinyxml2.h>
-
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 struct TilesetComponent::Private
 {
@@ -88,4 +88,7 @@ TilesetComponent::Type(void)
 	static const Core::Type s_type("Game::TilesetComponent");
 	return(s_type);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

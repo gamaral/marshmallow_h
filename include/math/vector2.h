@@ -40,9 +40,6 @@
 #include <core/environment.h>
 #include <core/namespace.h>
 
-#ifndef NDEBUG
-#  include <cassert>
-#endif
 #include <cmath>
 
 MARSHMALLOW_NAMESPACE_BEGIN

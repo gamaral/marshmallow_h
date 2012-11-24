@@ -37,24 +37,23 @@
 #ifndef MARSHMALLOW_GAME_SPLASHSCENELAYER_H
 #define MARSHMALLOW_GAME_SPLASHSCENELAYER_H 1
 
-#include <game/scenelayerbase.h>
-#include <event/ieventlistener.h>
-
 #include <core/fd.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#include <event/ieventlistener.h>
 
-namespace Graphics
-{
+#include <game/scenelayerbase.h>
+
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 	class QuadMesh;
 	typedef Core::Shared<QuadMesh> SharedQuadMesh;
-}
+} /******************************************************* Graphics Namespace */
 
-namespace Game
-{
+namespace Game { /******************************************** Game Namespace */
+
 	/*! @brief Game Splash Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
-	SplashSceneLayer : public SceneLayerBase
+	SplashSceneLayer : public Game::SceneLayerBase
 	                 , public Event::IEventListener
 	{
 		struct Private;
@@ -100,8 +99,8 @@ namespace Game
 	};
 	typedef Core::Shared<SplashSceneLayer> SharedSplashSceneLayer;
 	typedef Core::Weak<SplashSceneLayer> WeakSplashSceneLayer;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

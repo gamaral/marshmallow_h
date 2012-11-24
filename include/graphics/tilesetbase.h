@@ -37,14 +37,13 @@
 #ifndef MARSHMALLOW_GRAPHICS_TILESETBASE_H
 #define MARSHMALLOW_GRAPHICS_TILESETBASE_H 1
 
-#include <graphics/itileset.h>
-
 #include <core/fd.h>
 
 #include <math/size2.h>
 
-#include <graphics/itexturedata.h>
 #include <graphics/itexturecoordinatedata.h>
+#include <graphics/itexturedata.h>
+#include <graphics/itileset.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */

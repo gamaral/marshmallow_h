@@ -37,29 +37,25 @@
 #ifndef MARSHMALLOW_GAME_TEXTCOMPONENT_H
 #define MARSHMALLOW_GAME_TEXTCOMPONENT_H 1
 
-#include <game/componentbase.h>
-
 #include <core/fd.h>
 
-#include <math/size2.h>
-
-#include <graphics/color.h>
+#include <game/componentbase.h>
 
 #include <string>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
+namespace Graphics { /************************************ Graphics Namespace */
 	struct ITileset;
 	typedef Core::Shared<ITileset> SharedTileset;
 
 	struct IMesh;
 	typedef Core::Shared<IMesh> SharedMesh;
-}
 
-namespace Game
-{
+	class Color;
+} /******************************************************* Graphics Namespace */
+
+namespace Game { /******************************************** Game Namespace */
+
 	class PositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
@@ -107,8 +103,8 @@ namespace Game
 	};
 	typedef Core::Shared<TextComponent> SharedTextComponent;
 	typedef Core::Weak<TextComponent> WeakTextComponent;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -34,15 +34,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/identifier.h"
+#include <Box2D/Box2D.h>
+
+#include <tinyxml2.h>
+
+#include "core/type.h"
 
 #include "math/vector2.h"
 
 #include "graphics/transform.h"
-
-#include <Box2D/Box2D.h>
-
-#include <tinyxml2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */

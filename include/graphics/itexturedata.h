@@ -37,9 +37,9 @@
 #ifndef MARSHMALLOW_GRAPHICS_ITEXTUREDATA_H
 #define MARSHMALLOW_GRAPHICS_ITEXTUREDATA_H 1
 
+#include <core/fd.h>
 #include <core/iasset.h>
 
-#include <core/fd.h>
 #include <graphics/config.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN

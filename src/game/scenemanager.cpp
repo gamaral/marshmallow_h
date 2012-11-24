@@ -34,6 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <list>
+
+#include <tinyxml2.h>
+
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/weak.h"
@@ -45,21 +49,10 @@
 #include "game/factorybase.h"
 #include "game/iscene.h"
 
-#include <tinyxml2.h>
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-#include <list>
-
-MARSHMALLOW_NAMESPACE_USE
-using namespace Core;
-using namespace Game;
-
-/******************************************************************************/
-
-namespace {
-	typedef std::list<SharedScene> SceneStack;
-} // namespace
-
-/******************************************************************************/
+typedef std::list<SharedScene> SceneStack;
 
 struct SceneManager::Private
 {
@@ -198,4 +191,7 @@ SceneManager::handleEvent(const Event::IEvent &e)
 
 	return(false);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

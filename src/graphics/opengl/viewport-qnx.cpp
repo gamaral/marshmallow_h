@@ -34,6 +34,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <bps/bps.h>
+#include <bps/navigator.h>
+#include <bps/screen.h>
+
+#include <screen/screen.h>
+
+#include <cassert>
+#include <cstring>
+
 #include "core/logger.h"
 #include "core/platform.h"
 #include "core/type.h"
@@ -52,11 +61,6 @@
 #include "graphics/display.h"
 #include "graphics/painter_p.h"
 
-#include <bps/bps.h>
-#include <bps/navigator.h>
-#include <bps/screen.h>
-
-#include <screen/screen.h>
 
 #include "headers.h"
 #ifdef MARSHMALLOW_OPENGL_EGL
@@ -69,7 +73,6 @@
 #endif
 #include "extensions.h"
 
-#include <cstring>
 
 /*
  * QNX Viewport Notes

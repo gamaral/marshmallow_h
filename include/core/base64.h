@@ -41,46 +41,45 @@
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
 
-namespace Core
-{
+/*!
+ * @brief A collection of methods used to encode and decode data
+ */
+namespace Base64 { /********************************** Core::Base64 Namespace */
+
 	/*!
-	 * @brief A collection of methods used to encode and decode data
+	 * Decode a Base64 buffer, out buffer allocation is handled by
+	 * the function.
+	 *
+	 * Deallocation will be automatic by the double buffered
+	 * allocator. (not yet implemented)
+	 *
+	 * @param in In buffer
+	 * @param in_size In buffer size
+	 * @param out Out buffer pointer
+	 * @return Out buffer size
 	 */
-	namespace Base64
-	{
-		/*!
-		 * Decode a Base64 buffer, out buffer allocation is handled by
-		 * the function.
-		 *
-		 * Deallocation will be automatic by the double buffered
-		 * allocator. (not yet implemented)
-		 *
-		 * @param in In buffer
-		 * @param in_size In buffer size
-		 * @param out Out buffer pointer
-		 * @return Out buffer size
-		 */
-		MARSHMALLOW_CORE_EXPORT
-		size_t Decode(const char *in, size_t in_size, char **out);
+	MARSHMALLOW_CORE_EXPORT
+	size_t Decode(const char *in, size_t in_size, char **out);
 
-		/*!
-		 * Encode buffer as Base64, out buffer allocation is handled by
-		 * the function.
-		 *
-		 * Deallocation will be automatic by the double buffered
-		 * allocator. (not yet implemented)
-		 *
-		 * @param in In buffer
-		 * @param in_size In buffer size
-		 * @param out Out buffer pointer
-		 * @return Out buffer size
-		 */
-		MARSHMALLOW_CORE_EXPORT
-		size_t Encode(const char *in, size_t in_size, char **out);
-	}
-}
+	/*!
+	 * Encode buffer as Base64, out buffer allocation is handled by
+	 * the function.
+	 *
+	 * Deallocation will be automatic by the double buffered
+	 * allocator. (not yet implemented)
+	 *
+	 * @param in In buffer
+	 * @param in_size In buffer size
+	 * @param out Out buffer pointer
+	 * @return Out buffer size
+	 */
+	MARSHMALLOW_CORE_EXPORT
+	size_t Encode(const char *in, size_t in_size, char **out);
 
+} /*************************************************** Core::Base64 Namespace */
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

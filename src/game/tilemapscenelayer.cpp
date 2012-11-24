@@ -36,11 +36,8 @@
 
 #include <map>
 
-#include "core/identifier.h"
 #include "core/shared.h"
-
-#include "math/point2.h"
-#include "math/vector2.h"
+#include "core/type.h"
 
 #include "graphics/camera.h"
 #include "graphics/factory.h"
@@ -48,16 +45,13 @@
 #include "graphics/quadmesh.h"
 #include "graphics/transform.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
-
-/******************************************************************************/
-
-namespace {
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
+namespace { /************************************ Game::<anonymous> Namespace */
 	typedef std::map<uint32_t, Graphics::SharedTileset> TilesetCollection;
 	typedef std::map<uint32_t, Graphics::SharedVertexData> VertexDataCache;
 	typedef std::map<std::string, std::string> PropertyMap;
-} // namespace
+} /********************************************** Game::<anonymous> Namespace */
 
 /******************************************************************************/
 
@@ -462,4 +456,7 @@ TilemapSceneLayer::Type(void)
 	static const Core::Type s_type("Game::TilemapSceneLayer");
 	return(s_type);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

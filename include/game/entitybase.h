@@ -37,10 +37,10 @@
 #ifndef MARSHMALLOW_GAME_ENTITYBASE_H
 #define MARSHMALLOW_GAME_ENTITYBASE_H 1
 
-#include <game/ientity.h>
-
 #include <core/fd.h>
 #include <core/global.h>
+
+#include <game/ientity.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */

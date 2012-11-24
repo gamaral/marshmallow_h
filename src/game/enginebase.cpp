@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <tinyxml2.h>
+
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/platform.h"
@@ -54,8 +56,6 @@
 #include "game/engine_p.h"
 #include "game/factory.h"
 #include "game/scenemanager.h"
-
-#include <tinyxml2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */

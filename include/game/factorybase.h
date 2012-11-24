@@ -37,9 +37,9 @@
 #ifndef MARSHMALLOW_GAME_FACTORYBASE_H
 #define MARSHMALLOW_GAME_FACTORYBASE_H 1
 
-#include <game/ifactory.h>
-
 #include <core/global.h>
+
+#include <game/ifactory.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */

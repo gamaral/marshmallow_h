@@ -50,4 +50,12 @@
 #   define MARSHMALLOW_NAMESPACE_USE
 #endif
 
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+/*!<
+ * Core Package
+ */
+} /*********************************************************** Core Namespace */
+MARSHMALLOW_NAMESPACE_END
+
 #endif

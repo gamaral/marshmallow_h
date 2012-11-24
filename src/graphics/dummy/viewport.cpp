@@ -35,6 +35,7 @@
  */
 
 #include "core/logger.h"
+#include "core/type.h"
 
 #include "graphics/camera.h"
 #include "graphics/color.h"

@@ -37,20 +37,18 @@
 #ifndef MARSHMALLOW_GAME_TILESETCOMPONENT_H
 #define MARSHMALLOW_GAME_TILESETCOMPONENT_H 1
 
-#include <game/componentbase.h>
-
 #include <core/fd.h>
 
-MARSHMALLOW_NAMESPACE_BEGIN
+#include <game/componentbase.h>
 
-namespace Graphics
-{
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Graphics { /************************************ Graphics Namespace */
 	struct ITileset;
 	typedef Core::Shared<ITileset> SharedTileset;
-}
+} /******************************************************* Graphics Namespace */
 
-namespace Game
-{
+namespace Game { /******************************************** Game Namespace */
+
 	class PositionComponent;
 	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
@@ -83,8 +81,8 @@ namespace Game
 	};
 	typedef Core::Shared<TilesetComponent> SharedTilesetComponent;
 	typedef Core::Weak<TilesetComponent> WeakTilesetComponent;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -37,9 +37,8 @@
 #ifndef MARSHMALLOW_GAME_COLLISIONSCENELAYER_H
 #define MARSHMALLOW_GAME_COLLISIONSCENELAYER_H 1
 
-#include "game/scenelayerbase.h"
-
-#include "game/collidercomponent.h"
+#include <game/collidercomponent.h>
+#include <game/scenelayerbase.h>
 
 #include <list>
 

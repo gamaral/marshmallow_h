@@ -34,6 +34,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <cassert>
+
+#include <bcm_host.h>
+
 #include "core/logger.h"
 #include "core/platform.h"
 #include "core/type.h"
@@ -48,7 +52,6 @@
 #include "graphics/display.h"
 #include "graphics/painter_p.h"
 
-#include <bcm_host.h>
 
 #include "headers.h"
 #ifdef MARSHMALLOW_OPENGL_EGL
@@ -60,6 +63,7 @@
 #  error Building without OpenGL ES2 support!
 #endif
 #include "extensions.h"
+
 
 /*
  * This is used to give the display time to settle.

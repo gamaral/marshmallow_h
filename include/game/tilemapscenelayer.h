@@ -37,8 +37,6 @@
 #ifndef MARSHMALLOW_GAME_TILEMAPSCENELAYER_H
 #define MARSHMALLOW_GAME_TILEMAPSCENELAYER_H 1
 
-#include <game/scenelayerbase.h>
-
 #include <core/fd.h>
 
 #include <math/vector2.h>
@@ -46,12 +44,13 @@
 #include <graphics/ivertexdata.h>
 #include <graphics/tileset.h>
 
+#include <game/scenelayerbase.h>
+
 #include <string>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	/*! @brief Game Tilemap Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
 	TilemapSceneLayer : public SceneLayerBase
@@ -112,8 +111,8 @@ namespace Game
 	};
 	typedef Core::Shared<TilemapSceneLayer> SharedTilemapSceneLayer;
 	typedef Core::Weak<TilemapSceneLayer> WeakTilemapSceneLayer;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

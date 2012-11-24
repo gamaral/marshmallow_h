@@ -59,10 +59,8 @@
 #define MIN_CHAR 33
 #define MAX_CHAR 126
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
-
-/******************************************************************************/
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 struct TextComponent::Private
 {
@@ -295,4 +293,7 @@ TextComponent::Type(void)
 	static const Core::Type s_type("Game::TextComponent");
 	return(s_type);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

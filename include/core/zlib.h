@@ -41,57 +41,56 @@
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
 
-namespace Core
-{
-	/*!
-	 * @brief A collection of methods used to inflate and deflate data
-	 */
-	namespace Zlib
+/*!
+ * @brief A collection of methods used to inflate and deflate data
+ */
+namespace Zlib { /************************************** Core::Zlib Namespace */
+
+	enum CompressionLevel
 	{
-		enum CompressionLevel
-		{
-			     NoCompression = 0,
-			   FastCompression = 1,
-			   BestCompression = 9,
-			DefaultCompression = (-1)
-			
-		};
+		     NoCompression = 0,
+		   FastCompression = 1,
+		   BestCompression = 9,
+		DefaultCompression = (-1)
+		
+	};
 
-		/*!
-		 * Inflate a zlib compressed buffer, out buffer allocation is
-		 * handled by the function.
-		 *
-		 * Deallocation will be automatic by the double buffered
-		 * allocator. (not yet implemented)
-		 *
-		 * @param in In buffer
-		 * @param in_size In buffer size
-		 * @param out_size Out buffer max size estimate
-		 * @param out Out buffer pointer
-		 * @return Actual out buffer size
-		 */
-		MARSHMALLOW_CORE_EXPORT
-		size_t Inflate(const char *in, size_t in_size, size_t out_size, char **out);
+	/*!
+	 * Inflate a zlib compressed buffer, out buffer allocation is
+	 * handled by the function.
+	 *
+	 * Deallocation will be automatic by the double buffered
+	 * allocator. (not yet implemented)
+	 *
+	 * @param in In buffer
+	 * @param in_size In buffer size
+	 * @param out_size Out buffer max size estimate
+	 * @param out Out buffer pointer
+	 * @return Actual out buffer size
+	 */
+	MARSHMALLOW_CORE_EXPORT
+	size_t Inflate(const char *in, size_t in_size, size_t out_size, char **out);
 
-		/*!
-		 * Deflate a buffer using zlib compression, out buffer
-		 * allocation is handled by the function.
-		 *
-		 * Deallocation will be automatic by the double buffered
-		 * allocator. (not yet implemented)
-		 *
-		 * @param in In buffer
-		 * @param in_size In buffer size
-		 * @param out Out buffer pointer
-		 * @param level Compression level
-		 * @return Actual Out buffer size
-		 */
-		MARSHMALLOW_CORE_EXPORT
-		size_t Deflate(const char *in, size_t in_size, char **out, int level = DefaultCompression);
-	}
-}
+	/*!
+	 * Deflate a buffer using zlib compression, out buffer
+	 * allocation is handled by the function.
+	 *
+	 * Deallocation will be automatic by the double buffered
+	 * allocator. (not yet implemented)
+	 *
+	 * @param in In buffer
+	 * @param in_size In buffer size
+	 * @param out Out buffer pointer
+	 * @param level Compression level
+	 * @return Actual Out buffer size
+	 */
+	MARSHMALLOW_CORE_EXPORT
+	size_t Deflate(const char *in, size_t in_size, char **out, int level = DefaultCompression);
 
+} /***************************************************** Core::Zlib Namespace */
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

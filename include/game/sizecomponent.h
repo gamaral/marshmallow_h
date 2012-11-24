@@ -39,12 +39,14 @@
 
 #include <game/componentbase.h>
 
-#include <math/size2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { /******************************************** Math Namespace */
+	template <typename T> struct Size2;
+	typedef Size2<float> Size2f;
+} /*********************************************************** Math Namespace */
 
-namespace Game
-{
+namespace Game { /******************************************** Game Namespace */
+
 	/*! @brief Game Size Component Class */
 	class MARSHMALLOW_GAME_EXPORT
 	SizeComponent : public ComponentBase
@@ -73,8 +75,8 @@ namespace Game
 	};
 	typedef Core::Shared<SizeComponent> SharedSizeComponent;
 	typedef Core::Weak<SizeComponent> WeakSizeComponent;
-}
 
+} /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

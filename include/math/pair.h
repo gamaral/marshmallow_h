@@ -37,6 +37,8 @@
 #ifndef MARSHMALLOW_MATH_PAIR2_H
 #define MARSHMALLOW_MATH_PAIR2_H 1
 
-#include <math/tuple2.h>
+#ifndef MARSHMALLOW_MATH_TUPLE2_H
+#  include <math/tuple2.h>
+#endif
 
 #endif

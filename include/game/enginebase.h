@@ -37,11 +37,10 @@
 #ifndef MARSHMALLOW_GAME_ENGINEBASE_H
 #define MARSHMALLOW_GAME_ENGINEBASE_H 1
 
-#include <game/iengine.h>
-
 #include <core/global.h>
 
 #include <game/config.h>
+#include <game/iengine.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 

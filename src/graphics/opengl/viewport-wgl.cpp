@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <cassert>
+
 #include "core/logger.h"
 #include "core/type.h"
 

@@ -40,20 +40,14 @@
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
-/*!
- * Core Package
- */
-namespace Core
-{
+namespace Core { /******************************************** Core Namespace */
 	class StrHash;
 	typedef StrHash Identifier;
 	typedef StrHash Type;
 
 	template <class T> class Shared;
 	template <class T> class Weak;
-}
-
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

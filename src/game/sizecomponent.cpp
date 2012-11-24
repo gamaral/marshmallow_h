@@ -34,14 +34,14 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/identifier.h"
-
 #include <tinyxml2.h>
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+#include "core/type.h"
 
-/******************************************************************************/
+#include "math/size2.h"
+
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 struct SizeComponent::Private
 {
@@ -93,4 +93,7 @@ SizeComponent::Type(void)
 	static const Core::Type s_type("Game::SizeComponent");
 	return(s_type);
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

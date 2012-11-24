@@ -41,9 +41,8 @@
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { /******************************************** Math Namespace */
 
-namespace Math
-{
 	/*! @brief Math Matrix 4x4 */
 	class MARSHMALLOW_MATH_EXPORT
 	Matrix4
@@ -91,8 +90,8 @@ namespace Math
 		    { static Matrix4 s_identity;
 		      return(s_identity); }
 	};
-}
 
+} /*********************************************************** Math Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -37,14 +37,12 @@
 #ifndef MARSHMALLOW_CORE_BUFFERIO_H
 #define MARSHMALLOW_CORE_BUFFERIO_H 1
 
+#include <core/global.h>
 #include <core/idataio.h>
 
-#include <core/global.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
 
-namespace Core
-{
 	template <class T> class Shared;
 	template <class T> class Weak;
 
@@ -101,8 +99,8 @@ namespace Core
 	};
 	typedef Shared<BufferIO> SharedBufferIO;
 	typedef Weak<BufferIO> WeakBufferIO;
-}
 
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

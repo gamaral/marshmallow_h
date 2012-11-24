@@ -38,6 +38,8 @@
 #include <core/logger.h>
 #include <core/weak.h>
 
+#include <math/size2.h>
+
 #include <game/movementcomponent.h>
 #include <game/positioncomponent.h>
 #include <game/propertycomponent.h>

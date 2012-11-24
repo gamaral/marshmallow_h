@@ -37,9 +37,9 @@
 #ifndef MARSHMALLOW_GAME_COMPONENTBASE_H
 #define MARSHMALLOW_GAME_COMPONENTBASE_H 1
 
-#include <game/icomponent.h>
-
 #include <core/global.h>
+
+#include <game/icomponent.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */

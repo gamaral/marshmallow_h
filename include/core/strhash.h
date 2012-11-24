@@ -42,9 +42,8 @@
 #include <string>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
 
-namespace Core
-{
 	/*!
 	 * An extended Core:Hash that uses a string as the buffer to hash.
 	 */
@@ -92,8 +91,8 @@ namespace Core
 	public:
 		static const StrHash Null;
 	};
-}
 
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

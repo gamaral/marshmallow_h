@@ -37,11 +37,10 @@
 #ifndef MARSHMALLOW_GAME_ICOMPONENT_H
 #define MARSHMALLOW_GAME_ICOMPONENT_H 1
 
+#include <core/fd.h>
 #include <core/irenderable.h>
 #include <core/iserializable.h>
 #include <core/iupdateable.h>
-
-#include <core/fd.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */

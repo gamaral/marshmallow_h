@@ -42,7 +42,6 @@
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
 namespace Input { /****************************************** Input Namespace */
 
 /**** IMPLEMENTATION NOTES *****************************************************

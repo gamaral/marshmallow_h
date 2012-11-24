@@ -34,6 +34,11 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <map>
+#include <vector>
+
+#include <tinyxml2.h>
+
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/weak.h"
@@ -45,24 +50,13 @@
 #include "game/rendercomponent.h"
 #include "game/tilesetcomponent.h"
 
-#include <tinyxml2.h>
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-#include <map>
-#include <vector>
-
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
-
-/******************************************************************************/
-
-namespace {
-	typedef std::pair<uint16_t, int> FrameEntry;
-	typedef std::vector<FrameEntry> FrameList;
-	typedef std::map<Core::Identifier, FrameList> AnimationFrames;
-	typedef std::map<Core::Identifier, float> AnimationFramerates;
-} // namespace
-
-/******************************************************************************/
+typedef std::pair<uint16_t, int> FrameEntry;
+typedef std::vector<FrameEntry> FrameList;
+typedef std::map<Core::Identifier, FrameList> AnimationFrames;
+typedef std::map<Core::Identifier, float> AnimationFramerates;
 
 struct AnimationComponent::Private
 {
@@ -204,7 +198,7 @@ AnimationComponent::Private::animate(float d)
 	}
 }
 
-/******************************************************************************/
+/********************************************************* AnimationComponent */
 
 AnimationComponent::AnimationComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
@@ -306,4 +300,7 @@ AnimationComponent::Type(void)
 	static const Core::Type s_type("Game::AnimationComponent");
 	return(s_type);
 }
+
+} /******************************************************* Graphics Namespace */
+MARSHMALLOW_NAMESPACE_END
 

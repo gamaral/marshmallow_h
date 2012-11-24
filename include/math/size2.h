@@ -42,9 +42,8 @@
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { /******************************************** Math Namespace */
 
-namespace Math
-{
 	/*! @brief 2D Size */
 	template <typename T = float>
 	struct Size2
@@ -164,8 +163,8 @@ namespace Math
 		width /= rhs.width, height /= rhs.height;
 		return(*this);
 	}
-}
 
+} /*********************************************************** Math Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

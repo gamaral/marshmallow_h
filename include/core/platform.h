@@ -37,81 +37,81 @@
 #ifndef MARSHMALLOW_CORE_PLATFORM_H
 #define MARSHMALLOW_CORE_PLATFORM_H 1
 
-#include <string>
-
 #include <core/environment.h>
 #include <core/namespace.h>
+
+#include <string>
 
 #define NOW MARSHMALLOW_NAMESPACE::Core::Platform::TimeStamp
 
 MARSHMALLOW_NAMESPACE_BEGIN
 
-struct TimeData;
+namespace Core { /******************************************** Core Namespace */
 
-namespace Core
-{
-	/*!
+	struct TimeData;
+
+namespace Platform { /****************************** Core::Platform Namespace */
+	/*!<
 	 * @brief A collection of platform-specific methods
 	 */
-	namespace Platform
+
+	MARSHMALLOW_CORE_EXPORT
+	void Initialize(void);
+
+	MARSHMALLOW_CORE_EXPORT
+	void Finalize(void);
+
+	/****************************************************** time */
+
+	/*!
+	 * Call the platform specific sleep function
+	 *
+	 * @param timeout Timeout in milliseconds
+	 */
+	MARSHMALLOW_CORE_EXPORT
+	void Sleep(MMTIME timeout);
+
+	/*!
+	 * Returns the engine start system time
+	 */
+	MARSHMALLOW_CORE_EXPORT
+	time_t StartTime(void);
+
+	/*!
+	 * Returns Milliseconds since engine was started (StartTime())
+	 */
+	MARSHMALLOW_CORE_EXPORT
+	MMTIME TimeStamp(void);
+
+	/*!
+	 * Reinterprets an internal timestamp into TimeData
+	 *
+	 * @param timestamp Internal timestamp
+	 */
+	MARSHMALLOW_CORE_EXPORT
+	TimeData TimeStampToTimeData(MMTIME timestamp);
+
+	/*************************************************** location */
+
+	MARSHMALLOW_CORE_EXPORT
+	std::string PathDirectory(const std::string &path);
+
+	MARSHMALLOW_CORE_EXPORT
+	std::string TemporaryDirectory(void);
+} /************************************************* Core::Platform Namespace */
+
+	/*!
+	 * The TimeData structure contains a reinterpreted internal time stamp as both
+	 * system time and a string
+	 */
+	struct TimeData
 	{
-		MARSHMALLOW_CORE_EXPORT
-		void Initialize(void);
+	    char string[21];
+	    time_t system;
+	    MMTIME internal;
+	};
 
-		MARSHMALLOW_CORE_EXPORT
-		void Finalize(void);
-
-		/****************************************************** time */
-
-		/*!
-		 * Call the platform specific sleep function
-		 *
-		 * @param timeout Timeout in milliseconds
-		 */
-		MARSHMALLOW_CORE_EXPORT
-		void Sleep(MMTIME timeout);
-
-		/*!
-		 * Returns the engine start system time
-		 */
-		MARSHMALLOW_CORE_EXPORT
-		time_t StartTime(void);
-
-		/*!
-		 * Returns Milliseconds since engine was started (StartTime())
-		 */
-		MARSHMALLOW_CORE_EXPORT
-		MMTIME TimeStamp(void);
-
-		/*!
-		 * Reinterprets an internal timestamp into TimeData
-		 *
-		 * @param timestamp Internal timestamp
-		 */
-		MARSHMALLOW_CORE_EXPORT
-		TimeData TimeStampToTimeData(MMTIME timestamp);
-
-		/*************************************************** location */
-
-		MARSHMALLOW_CORE_EXPORT
-		std::string PathDirectory(const std::string &path);
-
-		MARSHMALLOW_CORE_EXPORT
-		std::string TemporaryDirectory(void);
-	}
-}
-
-/*!
- * The TimeData structure contains a reinterpreted internal time stamp as both
- * system time and a string
- */
-struct TimeData
-{
-    char string[21];
-    time_t system;
-    MMTIME internal;
-};
-
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

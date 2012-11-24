@@ -37,7 +37,7 @@
 #ifndef MARSHMALLOW_GAME_ANIMATIONCOMPONENT_H
 #define MARSHMALLOW_GAME_ANIMATIONCOMPONENT_H 1
 
-#include "game/componentbase.h"
+#include <game/componentbase.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */

@@ -37,10 +37,10 @@
 #ifndef MARSHMALLOW_GAME_SCENEBASE_H
 #define MARSHMALLOW_GAME_SCENEBASE_H 1
 
-#include <game/iscene.h>
-
 #include <core/fd.h>
 #include <core/global.h>
+
+#include <game/iscene.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */

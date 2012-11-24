@@ -37,13 +37,13 @@
 #ifndef MARSHMALLOW_GAME_MOVEMENTCOMPONENT_H
 #define MARSHMALLOW_GAME_MOVEMENTCOMPONENT_H 1
 
-#include <game/componentbase.h>
-
 #include <core/fd.h>
 
 #include <math/pair.h>
 #include <math/point2.h>
 #include <math/vector2.h>
+
+#include <game/componentbase.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */

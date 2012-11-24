@@ -37,9 +37,9 @@
 #ifndef MARSHMALLOW_GAME_SCENELAYERBASE_H
 #define MARSHMALLOW_GAME_SCENELAYERBASE_H 1
 
-#include <game/iscenelayer.h>
-
 #include <core/global.h>
+
+#include <game/iscenelayer.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */

@@ -37,10 +37,10 @@
 #ifndef MARSHMALLOW_GRAPHICS_QUADMESH_H
 #define MARSHMALLOW_GRAPHICS_QUADMESH_H 1
 
-#include <graphics/meshbase.h>
-
 #include <math/rect2.h>
 #include <math/size2.h>
+
+#include <graphics/meshbase.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */

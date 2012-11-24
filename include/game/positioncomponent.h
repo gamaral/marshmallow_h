@@ -37,9 +37,9 @@
 #ifndef MARSHMALLOW_GAME_POSITIONCOMPONENT_H
 #define MARSHMALLOW_GAME_POSITIONCOMPONENT_H 1
 
-#include <game/componentbase.h>
-
 #include <math/point2.h>
+
+#include <game/componentbase.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */

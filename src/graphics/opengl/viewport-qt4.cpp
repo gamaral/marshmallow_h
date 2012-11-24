@@ -34,6 +34,13 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <QtGui/QApplication>
+#include <QtGui/QDesktopWidget>
+#include <QtGui/QKeyEvent>
+
+#include <cassert>
+#include <list>
+
 #include "core/logger.h"
 #include "core/type.h"
 
@@ -51,15 +58,11 @@
 #include "graphics/display.h"
 #include "graphics/painter_p.h"
 
-#include <QtGui/QApplication>
-#include <QtGui/QDesktopWidget>
-#include <QtGui/QKeyEvent>
-
-#include <list>
 
 #include "extensions.h"
 #include <QtOpenGL/QGLFormat>
 #include <QtOpenGL/QGLWidget>
+
 
 /*
  * Qt4 Viewport Notes

@@ -40,6 +40,7 @@
 #include <core/irenderable.h>
 #include <core/iserializable.h>
 #include <core/iupdateable.h>
+
 #include <event/ieventlistener.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN

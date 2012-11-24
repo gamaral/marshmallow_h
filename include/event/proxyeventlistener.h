@@ -61,7 +61,6 @@ namespace Event { /****************************************** Event Namespace */
 		VIRTUAL bool handleEvent(const IEvent &event)
 		    { return(m_owner.handleEvent(event)); }
 	};
-}
 
 } /********************************************************** Event Namespace */
 MARSHMALLOW_NAMESPACE_END
