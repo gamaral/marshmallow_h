@@ -1,5 +1,7 @@
 add_definitions(-DMARSHMALLOW_GAME_LIBRARY)
 
+configure_file(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+
 file(GLOB MARSHMALLOW_GAME_SRCS *.cpp)
 
 set(MARSHMALLOW_GAME_LIBS
@@ -22,6 +24,10 @@ add_library(marshmallow_game
 )
 
 target_link_libraries(marshmallow_game ${MARSHMALLOW_GAME_LIBS})
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/config.h
+        DESTINATION include/marshmallow_h/game
+        COMPONENT development)
 
 install(TARGETS marshmallow_game
         LIBRARY DESTINATION lib COMPONENT runtime

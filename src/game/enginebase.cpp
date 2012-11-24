@@ -36,7 +36,6 @@
 
 #include "core/logger.h"
 #include "core/platform.h"
-#include "core/weak.h"
 
 #include "event/eventmanager.h"
 #include "event/quitevent.h"
@@ -47,20 +46,14 @@
 #include "graphics/painter_p.h"
 #include "graphics/viewport_p.h"
 
-#include "input/keyboard_p.h"
 #include "input/joystick_p.h"
+#include "input/keyboard_p.h"
 
 #include "game/engine_p.h"
 #include "game/factory.h"
 #include "game/scenemanager.h"
 
 #include <tinyxml2.h>
-
-MARSHMALLOW_NAMESPACE_USE
-using namespace Core;
-using namespace Event;
-using namespace Graphics;
-using namespace Game;
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace { /******************************************** Anonymous Namespace */
@@ -145,6 +138,8 @@ EngineBase::~EngineBase(void)
 bool
 EngineBase::initialize(void)
 {
+	using namespace Core;
+	using namespace Graphics;
 	using namespace Input;
 
 	/*
@@ -191,6 +186,8 @@ EngineBase::initialize(void)
 void
 EngineBase::finalize(void)
 {
+	using namespace Core;
+	using namespace Graphics;
 	using namespace Input;
 
 	if (isValid())
@@ -224,13 +221,13 @@ EngineBase::isValid(void) const
 }
 
 void
-EngineBase::setEventManager(const SharedEventManager &m)
+EngineBase::setEventManager(const Event::SharedEventManager &m)
 {
 	m_p->event_manager = m;
 }
 
 void
-EngineBase::setSceneManager(const SharedSceneManager &m)
+EngineBase::setSceneManager(const Game::SharedSceneManager &m)
 {
 	
 	m_p->scene_manager = m;
@@ -263,6 +260,8 @@ EngineBase::frameRate(void)
 int
 EngineBase::run(void)
 {
+	using namespace Core;
+
 	if (!initialize()) {
 		MMERROR("Engine initialization failed");
 		finalize();
@@ -385,13 +384,13 @@ EngineBase::resume(void)
 	m_p->suspended = false;
 }
 
-SharedEventManager
+Event::SharedEventManager
 EngineBase::eventManager(void) const
 {
 	return(m_p->event_manager);
 }
 
-SharedSceneManager
+Game::SharedSceneManager
 EngineBase::sceneManager(void) const
 {
 	return(m_p->scene_manager);
@@ -406,6 +405,7 @@ EngineBase::factory(void) const
 void
 EngineBase::tick(float delta)
 {
+	using namespace Graphics;
 	using namespace Input;
 
 	Viewport::Tick(delta);
@@ -442,6 +442,8 @@ EngineBase::render(void)
 void
 EngineBase::update(float d)
 {
+	using namespace Graphics;
+
 	if (!Viewport::Active() || m_p->suspended)
 		return;
 

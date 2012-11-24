@@ -39,15 +39,9 @@
 
 #include <game/componentbase.h>
 
-#include <core/weak.h>
-
-#include <math/size2.h>
-#include <math/vector2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	class CollisionSceneLayer;
 	typedef Core::Weak<CollisionSceneLayer> WeakCollisionSceneLayer;
 
@@ -83,7 +77,7 @@ namespace Game
 		ColliderComponent(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~ColliderComponent(void);
 
-		int  & body(void);
+		int & body(void);
 		bool & active(void);
 		bool & bullet(void);
 		int & bulletResolution(void);
@@ -158,8 +152,8 @@ namespace Game
 			float bottom;
 		} rect;
 	};
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

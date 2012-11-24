@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 Entity::Entity(const Core::Identifier &i, EntitySceneLayer &s)
     : EntityBase(i, s)
@@ -52,4 +52,7 @@ Entity::Type(void)
 	static const Core::Type s_type("Game::Entity");
 	return(s_type);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

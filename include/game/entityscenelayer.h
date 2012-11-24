@@ -39,15 +39,11 @@
 
 #include <game/scenelayerbase.h>
 
-#include <core/fd.h>
-#include <core/shared.h>
-
 #include <list>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	struct IEntity;
 	typedef Core::Shared<IEntity> SharedEntity;
 
@@ -93,8 +89,8 @@ namespace Game
 	};
 	typedef Core::Shared<EntitySceneLayer> SharedEntitySceneLayer;
 	typedef Core::Weak<EntitySceneLayer> WeakEntitySceneLayer;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

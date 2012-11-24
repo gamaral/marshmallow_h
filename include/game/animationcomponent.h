@@ -39,18 +39,14 @@
 
 #include "game/componentbase.h"
 
-#include "core/weak.h"
-
 MARSHMALLOW_NAMESPACE_BEGIN
-
-namespace Graphics
-{
+namespace Graphics { /************************************ Graphics Namespace */
 	struct ITextureCoordinateData;
 	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
-}
+} /******************************************************* Graphics Namespace */
 
-namespace Game
-{
+namespace Game { /******************************************** Game Namespace */
+
 	class RenderComponent;
 	typedef Core::Weak<RenderComponent> WeakRenderComponent;
 
@@ -100,8 +96,8 @@ namespace Game
 	};
 	typedef Core::Shared<AnimationComponent> SharedAnimationComponent;
 	typedef Core::Weak<AnimationComponent> WeakAnimationComponent;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

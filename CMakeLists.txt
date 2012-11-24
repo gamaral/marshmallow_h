@@ -135,29 +135,9 @@ if(MARSHMALLOW_OPENGL_QNX)
 	option(MARSHMALLOW_INPUT_QNX_SCREEN "QNX Screen input event support" ON)
 endif()
 
-####################################################################### CONFIG #
-
-configure_file(
-	${PROJECT_SOURCE_DIR}/src/core/config.h.in
-	${PROJECT_BINARY_DIR}/include/core/config.h
-)
-configure_file(
-	${PROJECT_SOURCE_DIR}/src/graphics/config.h.in
-	${PROJECT_BINARY_DIR}/include/graphics/config.h
-)
-configure_file(
-	${PROJECT_SOURCE_DIR}/src/game/config.h.in
-	${PROJECT_BINARY_DIR}/include/game/config.h
-)
-
 ##################################################################### PLATFORM #
 
 if(UNIX)
-	configure_file(
-	    ${PROJECT_SOURCE_DIR}/include/core/unix/environment.h
-	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
-	)
-
 	find_library(M_LIBRARY
 	    NAMES m
 	    PATHS /usr/lib /usr/local/lib
@@ -168,10 +148,6 @@ if(UNIX)
 
 	mark_as_advanced(M_LIBRARY)
 elseif(WIN32)
-	configure_file(
-	    ${PROJECT_SOURCE_DIR}/include/core/win32/environment.h
-	    ${PROJECT_BINARY_DIR}/include/core/environment.h COPYONLY
-	)
 	set(M_LIBRARY "")
 
 	if(MSVC)
@@ -212,14 +188,6 @@ install(DIRECTORY include/
         DESTINATION include/marshmallow_h
         COMPONENT development)
 
-install(FILES ${PROJECT_BINARY_DIR}/include/core/config.h
-        DESTINATION include/marshmallow_h/core
-        COMPONENT development)
-
-install(FILES ${PROJECT_BINARY_DIR}/include/graphics/config.h
-        DESTINATION include/marshmallow_h/graphics
-        COMPONENT development)
-
 install(FILES ${PROJECT_BINARY_DIR}/include/game/config.h
         DESTINATION include/marshmallow_h/game
         COMPONENT development)
@@ -234,3 +202,4 @@ if(NOT MARSHMALLOW_LIBRARY_ONLY AND UNIX)
 	                    WORLD_READ WORLD_EXECUTE
 	        COMPONENT deployment)
 endif()
+

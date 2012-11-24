@@ -39,6 +39,8 @@
 
 #include <game/componentbase.h>
 
+#include <string>
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Game

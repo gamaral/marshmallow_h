@@ -44,11 +44,12 @@
 #include <list>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { /******************************************** Math Namespace */
+	struct Vector2;
+} /*********************************************************** Math Namespace */
 
-namespace Math { struct Vector2; }
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	class ColliderComponent;
 	typedef std::list<ColliderComponent *> ColliderList;
 
@@ -88,8 +89,8 @@ namespace Game
 	};
 	typedef Core::Shared<CollisionSceneLayer> SharedCollisionSceneLayer;
 	typedef Core::Weak<CollisionSceneLayer> WeakCollisionSceneLayer;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -39,13 +39,11 @@
 
 #include <game/icomponent.h>
 
-#include <core/identifier.h>
-#include <core/shared.h>
+#include <core/global.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	struct IEntity;
 	typedef Core::Weak<IEntity> WeakEntity;
 
@@ -74,8 +72,8 @@ namespace Game
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);
 	};
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

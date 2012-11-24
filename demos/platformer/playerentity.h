@@ -39,6 +39,8 @@
 
 #include "../common/actorentity.h"
 
+#include <core/shared.h>
+
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game
 {

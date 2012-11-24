@@ -39,7 +39,7 @@
 
 #include <game/iengine.h>
 
-#include <core/shared.h>
+#include <core/global.h>
 
 #include <game/config.h>
 
@@ -53,17 +53,16 @@ MARSHMALLOW_NAMESPACE_BEGIN
 #define MMSLEEP_LITESLEEP 4
 #define MMSLEEP_DEEPSLEEP 6
 
-namespace Event
-{
+namespace Event { /****************************************** Event Namespace */
 	class EventManager;
 	typedef Core::Shared<EventManager> SharedEventManager;
 	
 	struct IEventListener;
 	typedef Core::Shared<IEventListener> SharedEventListener;
-}
+} /********************************************************** Event Namespace */
 
-namespace Game
-{
+namespace Game { /******************************************** Game Namespace */
+
 	class SceneManager;
 	typedef Core::Shared<SceneManager> SharedSceneManager;
 
@@ -149,8 +148,8 @@ namespace Game
 
 		VIRTUAL bool handleEvent(const Event::IEvent &event);
 	};
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

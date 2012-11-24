@@ -39,16 +39,11 @@
 
 #include <game/componentbase.h>
 
-#include <core/weak.h>
-
-#include <math/size2.h>
-
 class b2Body;
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	class Box2DSceneLayer;
 	typedef Core::Weak<Box2DSceneLayer> WeakBox2DSceneLayer;
 
@@ -93,8 +88,8 @@ namespace Game
 	};
 	typedef Core::Shared<Box2DComponent> SharedBox2DComponent;
 	typedef Core::Weak<Box2DComponent> WeakBox2DComponent;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

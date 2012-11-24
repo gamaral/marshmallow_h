@@ -1,5 +1,7 @@
 add_definitions(-DMARSHMALLOW_GRAPHICS_LIBRARY)
 
+configure_file(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+
 file(GLOB MARSHMALLOW_GRAPHICS_SRCS *.cpp *.h)
 
 set(MARSHMALLOW_GRAPHICS_LIBS marshmallow_core
@@ -208,6 +210,10 @@ set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 add_library(marshmallow_graphics ${MARSHMALLOW_GRAPHICS_SRCS})
 
 target_link_libraries(marshmallow_graphics ${MARSHMALLOW_GRAPHICS_LIBS})
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/config.h
+        DESTINATION include/marshmallow_h/graphics
+        COMPONENT development)
 
 install(TARGETS marshmallow_graphics
         LIBRARY DESTINATION lib COMPONENT runtime

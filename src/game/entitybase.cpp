@@ -35,6 +35,7 @@
  */
 
 #include "core/logger.h"
+#include "core/shared.h"
 
 #include "game/factorybase.h"
 #include "game/icomponent.h"
@@ -43,16 +44,10 @@
 
 #include <list>
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-/******************************************************************************/
-
-namespace {
-	typedef std::list<SharedComponent> ComponentList;
-} // namespace
-
-/******************************************************************************/
+typedef std::list<SharedComponent> ComponentList;
 
 struct EntityBase::Private
 {
@@ -231,4 +226,7 @@ EntityBase::deserialize(XMLElement &n)
 
 	return(true);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

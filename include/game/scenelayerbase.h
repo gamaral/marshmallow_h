@@ -39,14 +39,11 @@
 
 #include <game/iscenelayer.h>
 
-#include <core/fd.h>
 #include <core/global.h>
-#include <core/identifier.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	/*! @brief Game Scene Layer Base Class */
 	class MARSHMALLOW_GAME_EXPORT
 	SceneLayerBase : public ISceneLayer
@@ -77,8 +74,8 @@ namespace Game
 	};
 	typedef Core::Shared<SceneLayerBase> SharedSceneLayerBase;
 	typedef Core::Weak<SceneLayerBase> WeakSceneLayerBase;
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

@@ -45,6 +45,8 @@
 
 #include <graphics/color.h>
 
+#include <string>
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Graphics

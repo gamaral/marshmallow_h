@@ -37,9 +37,7 @@
 #ifndef MARSHMALLOW_EXTRA_TMXLOADER_H
 #define MARSHMALLOW_EXTRA_TMXLOADER_H 1
 
-#include <core/shared.h>
-
-#include <math/size2.h>
+#include <core/global.h>
 
 #include <game/iscenelayer.h>
 

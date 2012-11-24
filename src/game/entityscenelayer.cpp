@@ -35,6 +35,7 @@
  */
 
 #include "core/logger.h"
+#include "core/shared.h"
 
 #include "math/vector2.h"
 

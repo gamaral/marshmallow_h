@@ -34,9 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/identifier.h"
 #include "core/logger.h"
-
-#include "graphics/meshbase.h"
 
 #include "game/collisionscenelayer.h"
 #include "game/entityscenelayer.h"
@@ -48,10 +47,8 @@
 
 #include <tinyxml2.h>
 
-#include <cmath>
-
-MARSHMALLOW_NAMESPACE_USE
-using namespace Game;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
 #define DELTA_STEPS 32
 
@@ -317,4 +314,7 @@ BounceColliderComponent::Type(void)
 	static const Core::Type s_type("Game::BounceColliderComponent");
 	return(s_type);
 }
+
+} /*********************************************************** Game Namespace */
+MARSHMALLOW_NAMESPACE_END
 

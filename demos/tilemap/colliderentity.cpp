@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <core/shared.h>
+
 #include <game/collidercomponent.h>
 #include <game/sizecomponent.h>
 

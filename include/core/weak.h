@@ -43,6 +43,10 @@
 #include <core/global.h>
 #include <core/namespace.h>
 
+#ifndef MARSHMALLOW_CORE_SHARED_H
+#  include <core/shared.h>
+#endif
+
 MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Core

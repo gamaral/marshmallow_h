@@ -37,6 +37,8 @@
 #ifndef TILEMAP_PLAYERENTITY_H
 #define TILEMAP_PLAYERENTITY_H 1
 
+#include <core/shared.h>
+
 #include <game/entity.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN

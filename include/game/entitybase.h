@@ -39,13 +39,12 @@
 
 #include <game/ientity.h>
 
+#include <core/global.h>
 #include <core/identifier.h>
-#include <core/shared.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Game { /******************************************** Game Namespace */
 
-namespace Game
-{
 	class EntitySceneLayer;
 
 	/*! @brief Game Entity Base Class */
@@ -82,8 +81,8 @@ namespace Game
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);
 	};
-}
 
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif
