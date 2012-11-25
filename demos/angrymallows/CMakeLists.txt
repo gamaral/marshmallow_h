@@ -1,6 +1,10 @@
-file(GLOB ANGRYMALLOWS_DEMO_SRCS *.cpp)
+file(GLOB DEMO_SRCS *.cpp)
 
-add_executable(angrymallows_demo ${ANGRYMALLOWS_DEMO_SRCS})
+if(MARSHMALLOW_DEMO_LIBRARIES)
+	add_library(angrymallows_demo SHARED ${DEMO_SRCS})
+else()
+	add_executable(angrymallows_demo ${DEMO_SRCS})
+endif()
 
 # BOX2D
 include_directories(${BOX2D_INCLUDE_DIR})
@@ -25,7 +29,8 @@ target_link_libraries(angrymallows_demo marshmallow_entrypoint
                                         ${BOX2D_LIBRARIES})
 
 install(TARGETS angrymallows_demo
-        RUNTIME DESTINATION bin COMPONENT demos)
+        RUNTIME DESTINATION bin COMPONENT demos
+        LIBRARY DESTINATION bin COMPONENT demos)
 
 install(DIRECTORY assets/
         DESTINATION assets COMPONENT demos)

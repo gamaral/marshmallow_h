@@ -192,6 +192,8 @@ GLPainter::Initialize(void)
 
 	glUseProgram(program_object);
 
+	glUniform1i(location_usecolor, 1);
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -224,7 +226,7 @@ GLPainter::Finalize(void)
 	location_position = 0;
 	location_sampler = 0;
 	location_texcoord = 0;
-	location_usecolor = 0;
+	location_usecolor = 1;
 
 	/* delete program */
 	UnloadProgram(program_object);

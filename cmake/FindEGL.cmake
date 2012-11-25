@@ -19,6 +19,7 @@ find_path(EGL_INCLUDE_DIR EGL/egl.h
 	      /opt/local
 	      /opt/vc
 	      /opt
+	      /
 )
 
 find_library(EGL_LIBRARY
@@ -33,6 +34,7 @@ find_library(EGL_LIBRARY
 	      /opt/local
 	      /opt/vc
 	      /opt
+	      /
 )
 
 include(FindPackageHandleStandardArgs)

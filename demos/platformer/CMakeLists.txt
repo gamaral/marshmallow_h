@@ -1,14 +1,20 @@
-add_executable(platformer_demo0 "demo0.cpp"
-                                "../common/actorentity.cpp"
-                                "../common/colliderentity.cpp"
-                                "../common/deathevent.cpp"
-                                "../common/doomevent.cpp"
-                                "../common/warpevent.cpp"
-                                "actorcollidercomponent.cpp"
-                                "customfactory.cpp"
-                                "inputcomponent.cpp"
-                                "playerentity.cpp"
+set(DEMO_SRCS "demo0.cpp"
+              "../common/actorentity.cpp"
+              "../common/colliderentity.cpp"
+              "../common/deathevent.cpp"
+              "../common/doomevent.cpp"
+              "../common/warpevent.cpp"
+              "actorcollidercomponent.cpp"
+              "customfactory.cpp"
+              "inputcomponent.cpp"
+              "playerentity.cpp"
 )
+
+if(MARSHMALLOW_DEMO_LIBRARIES)
+	add_library(platformer_demo0 SHARED ${DEMO_SRCS})
+else()
+	add_executable(platformer_demo0 ${DEMO_SRCS})
+endif()
 
 if (MARSHMALLOW_DEMO_CWD_OVERRIDE)
 	if (APPLE)
@@ -31,7 +37,8 @@ target_link_libraries(platformer_demo0 marshmallow_entrypoint
 )
 
 install(TARGETS platformer_demo0
-        RUNTIME DESTINATION bin COMPONENT demos)
+        RUNTIME DESTINATION bin COMPONENT demos
+        LIBRARY DESTINATION bin COMPONENT demos)
 
 install(DIRECTORY assets/
         DESTINATION assets COMPONENT demos)

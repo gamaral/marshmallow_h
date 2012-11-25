@@ -7,7 +7,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${DEBUG_FLAGS}")
 
 ################################################################## DEFINITIONS #
 
-if(MARSHMALLOW_WII)
+if(MARSHMALLOW_ANDROID)
+	add_definitions(-DMARSHMALLOW_ANDROID)
+elseif(MARSHMALLOW_WII)
 	add_definitions(-DMARSHMALLOW_WII)
 endif()
 

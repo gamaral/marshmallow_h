@@ -173,7 +173,7 @@ public:
 			Game::RenderComponent *l_rcomponent =
 			    new Game::RenderComponent("render", *l_entity);
 			Graphics::SharedMeshBase l_mesh(new Graphics::QuadMesh(64.f, 64.f));
-			l_mesh->textureData()->load("assets/mallow.png");
+			l_mesh->setColor(Graphics::Color::White());
 			l_rcomponent->mesh() = l_mesh.staticCast<Graphics::IMesh>();
 			l_entity->pushComponent(l_rcomponent);
 
@@ -270,14 +270,6 @@ MMain(int argc, char *argv[])
 {
 	MMUNUSED(argc);
 	MMUNUSED(argv);
-
-#ifdef DEMO_CWD
-	const char *l_cwd = getenv("MM_DEMO_CWD");
-	if (!l_cwd) l_cwd = DEMO_CWD;
-
-	if (-1 == MMCHDIR(l_cwd))
-		MMFATAL("Failed to change working directory \"" << l_cwd << "\". ABORT!");
-#endif
 
 	return(Demo().run());
 }

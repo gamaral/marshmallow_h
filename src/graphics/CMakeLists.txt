@@ -157,6 +157,21 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 			add_definitions(-DMARSHMALLOW_INPUT_QNX_SCREEN)
 		endif()
 
+	#
+	# Android JNI
+	#
+	elseif(MARSHMALLOW_OPENGL_JNI)
+		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
+		                              opengl/viewport-jni.cpp
+		                              opengl/jni/android_native_app_glue.c)
+		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
+		                              "android" "log")
+		add_definitions(-DMARSHMALLOW_OPENGL_JNI)
+
+		if(MARSHMALLOW_INPUT_LINUX_JNI)
+			add_definitions(-DMARSHMALLOW_INPUT_LINUX_JNI)
+		endif()
+
 	else()
 		message(WARNING "No OpenGL viewport selected!")
 	endif()
