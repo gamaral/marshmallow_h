@@ -189,10 +189,6 @@ install(DIRECTORY include/
         DESTINATION include/marshmallow_h
         COMPONENT development)
 
-install(FILES ${PROJECT_BINARY_DIR}/include/game/config.h
-        DESTINATION include/marshmallow_h/game
-        COMPONENT development)
-
 # deployment
 
 if(NOT MARSHMALLOW_LIBRARY_ONLY AND UNIX)
