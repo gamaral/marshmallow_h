@@ -26,6 +26,8 @@
 # or implied, of Marshmallow Engine.
 #
 
+project(marshmallow_lua)
+
 include_directories(${LUA_INCLUDE_DIRS})
 
 file(GLOB LUA_SRCS ${LUA_BASE}/src/lapi.c
@@ -64,8 +66,8 @@ file(GLOB LUA_SRCS ${LUA_BASE}/src/lapi.c
 )
 
 
-if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
-	if (BUILD_SHARED_LIBS)
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
+	if(BUILD_SHARED_LIBS)
 		set(CMAKE_CXX_FLAGS "-fPIC ${CMAKE_CXX_FLAGS}")
 		set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
 	endif()

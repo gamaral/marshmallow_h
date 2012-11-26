@@ -5,11 +5,11 @@ include(CheckFunctionExists)
 include(CheckIncludeFile)
 include(CheckCSourceCompiles)
 
-if (BUILD_SHARED_LIBS)
-    add_definitions(-DZLIB_DLL)
+if(BUILD_SHARED_LIBS)
+	add_definitions(-DZLIB_DLL)
 endif()
 
-if (MARSHMALLOW_WII)
+if(MARSHMALLOW_WII)
 	include_directories(wii)
 endif()
 

@@ -25,46 +25,27 @@
 # authors and should not be interpreted as representing official policies, either expressed
 # or implied, of Marshmallow Engine.
 #
-###############################################################################
-# Find EGL
-###############################################################################
-#
-#  EGL_FOUND
-#  EGL_INCLUDE_DIR
-#  EGL_LIBRARY
-#
-###############################################################################
 
-find_path(EGL_INCLUDE_DIR EGL/egl.h
-	HINTS $ENV{EGLDIR}
-	PATH_SUFFIXES include
-	PATHS ~/Library/Frameworks
-	      /Library/Frameworks
-	      /usr/local
-	      /usr
-	      /usr/X11R6
-	      /opt/local
-	      /opt/vc
-	      /opt
-	      /
-)
+# CMAKE
+set(BUILD_SHARED_LIBS              OFF    CACHE BOOL     "")
+set(CMAKE_SKIP_BUILD_RPATH         TRUE   CACHE INTERNAL "")
 
-find_library(EGL_LIBRARY
-	EGL
-	HINTS $ENV{EGLDIR}
-	PATH_SUFFIXES lib64 lib
-	PATHS ~/Library/Frameworks
-	      /Library/Frameworks
-	      /usr/local
-	      /usr
-	      /usr/X11R6
-	      /opt/local
-	      /opt/vc
-	      /opt
-	      /
-)
+# ANDROID
+set(ANDROID_NATIVE_API_LEVEL       "9"    CACHE STRING "")
 
-include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(EGL DEFAULT_MSG EGL_LIBRARY)
+# MARSHMALLOW
+set(MARSHMALLOW_VIEWPORT_TITLE     "Marshmallow Android" CACHE STRING "")
+set(MARSHMALLOW_VIEWPORT_WIDTH     "1024" CACHE STRING "")
+set(MARSHMALLOW_VIEWPORT_HEIGHT    "600"  CACHE STRING "")
+set(MARSHMALLOW_VIEWPORT_DEPTH     "24"   CACHE STRING "")
+set(MARSHMALLOW_VIEWPORT_FULLSCREEN ON    CACHE BOOL   "")
 
-mark_as_advanced(EGL_LIBRARY EGL_INCLUDE_DIR)
+set(MARSHMALLOW_VIEWPORT_DUMMY      OFF   CACHE BOOL   "")
+set(MARSHMALLOW_VIEWPORT_OPENGL     ON    CACHE BOOL   "")
+
+set(MARSHMALLOW_OPENGL_EGL          ON    CACHE BOOL   "")
+set(MARSHMALLOW_OPENGL_ES2          ON    CACHE BOOL   "")
+set(MARSHMALLOW_OPENGL_JNI          ON    CACHE BOOL   "")
+
+set(MARSHMALLOW_DEMO_CWD_OVERRIDE  OFF     CACHE BOOL   "")
+

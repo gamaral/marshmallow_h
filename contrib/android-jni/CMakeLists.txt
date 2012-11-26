@@ -1,5 +1,5 @@
 # Copyright 2012 Marshmallow Engine. All rights reserved.
-# Copyright 2012 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
+# Copyright 2012 Guillermo A. Amaral B. (gamaral) <g@maral.me>
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -25,46 +25,27 @@
 # authors and should not be interpreted as representing official policies, either expressed
 # or implied, of Marshmallow Engine.
 #
-###############################################################################
-# Find EGL
-###############################################################################
-#
-#  EGL_FOUND
-#  EGL_INCLUDE_DIR
-#  EGL_LIBRARY
-#
-###############################################################################
 
-find_path(EGL_INCLUDE_DIR EGL/egl.h
-	HINTS $ENV{EGLDIR}
-	PATH_SUFFIXES include
-	PATHS ~/Library/Frameworks
-	      /Library/Frameworks
-	      /usr/local
-	      /usr
-	      /usr/X11R6
-	      /opt/local
-	      /opt/vc
-	      /opt
-	      /
-)
+project(marshmallow_android_jni)
 
-find_library(EGL_LIBRARY
-	EGL
-	HINTS $ENV{EGLDIR}
-	PATH_SUFFIXES lib64 lib
-	PATHS ~/Library/Frameworks
-	      /Library/Frameworks
-	      /usr/local
-	      /usr
-	      /usr/X11R6
-	      /opt/local
-	      /opt/vc
-	      /opt
-	      /
-)
+set(MARSHMALLOW_ANDROID_JNI_SRCS code/android_native_app_glue.c)
 
-include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(EGL DEFAULT_MSG EGL_LIBRARY)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code)
 
-mark_as_advanced(EGL_LIBRARY EGL_INCLUDE_DIR)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	add_definitions(-DDEBUG)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
+	if(BUILD_SHARED_LIBS)
+		set(CMAKE_CXX_FLAGS "-fPIC ${CMAKE_CXX_FLAGS}")
+		set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
+	endif()
+endif()
+
+add_library(marshmallow_android_jni STATIC ${MARSHMALLOW_ANDROID_JNI_SRCS})
+target_link_libraries(marshmallow_android_jni "android" "log")
+
+install(TARGETS marshmallow_android_jni
+        ARCHIVE DESTINATION lib COMPONENT development)
+

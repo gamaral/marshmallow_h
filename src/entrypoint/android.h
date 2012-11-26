@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Platform.
  */
 
-#include "android.h"
+#pragma once
 
 /*!
  * @file
@@ -34,35 +34,18 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-extern int MMain(int argc, char *argv[]);
+#ifndef MARSHMALLOW_ENTRYPOINT_ANDROID_H
+#define MARSHMALLOW_ENTRYPOINT_ANDROID_H 1
 
-extern "C" { /**************************************** Android JNI Entrypoint */
+#include "core/namespace.h"
 
-static struct android_app *s_jni_state(0);
-
-void
-android_main(struct android_app *state)
-{
-	app_dummy();
-
-	state->userData = 0;
-	s_jni_state = state;
-
-	char *l_argv[1] = {0};
-	MMain(0, l_argv);
-}
-
-} /*************************************************** Android JNI Entrypoint */
+#include "android_native_app_glue.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Entrypoint { /******************************** Entrypoint Namespace */
-
-struct android_app *
-android_jni_state(void)
-{
-	return(s_jni_state);
-}
-
+	struct android_app *android_jni_state(void);
 } /***************************************************** Entrypoint Namespace */
 MARSHMALLOW_NAMESPACE_END
+
+#endif
 

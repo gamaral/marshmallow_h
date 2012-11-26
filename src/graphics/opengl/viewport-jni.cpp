@@ -43,6 +43,8 @@
 #include "core/logger.h"
 #include "core/type.h"
 
+#include "entrypoint/android.h"
+
 #include "event/eventmanager.h"
 #include "event/quitevent.h"
 #include "event/viewportevent.h"
@@ -56,8 +58,6 @@
 #include "graphics/display.h"
 #include "graphics/painter_p.h"
 
-#include "jni/android_native_app_glue.h"
-
 #include "headers.h"
 #ifdef MARSHMALLOW_OPENGL_EGL
 #  include <EGL/egl.h>
@@ -69,15 +69,19 @@
 #endif
 #include "extensions.h"
 
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
-#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,  "native-activity", __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN,  "native-activity", __VA_ARGS__))
+#define LOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG, "native-activity", __VA_ARGS__))
 
 /*
  * JNI Viewport Notes
  *
+ * APP_CMD_INIT_WINDOW event. Context destruction works in much the same way,
+ * Since we have no control over window creation, initialization, finalization
+ * and setup calls are implemented differently than in other platforms. We won't
+ * except we do destroy the context on finalization regardless.
+ * report active until we are told to create the context by the JNI
  */
-
-extern int MMain(int argc, char *argv[]);
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
@@ -108,14 +112,15 @@ namespace JNIViewport {
 	{
 		sfUninitialized = 0,
 		sfReady         = (1 << 0),
-		sfGLDisplay     = (1 << 1),
-		sfGLSurface     = (1 << 2),
-		sfGLContext     = (1 << 3),
-		sfGLCurrent     = (1 << 4),
-		sfFocused       = (1 << 5),
-		sfTerminated    = (1 << 6),
+		sfJNIWindow     = (1 << 1),
+		sfGLDisplay     = (1 << 2),
+		sfGLSurface     = (1 << 3),
+		sfGLContext     = (1 << 4),
+		sfGLCurrent     = (1 << 5),
+		sfFocused       = (1 << 6),
+		sfTerminated    = (1 << 7),
 		sfGLValid       = sfGLDisplay|sfGLSurface|sfGLContext|sfGLCurrent,
-		sfValid         = sfGLValid,
+		sfValid         = sfJNIWindow|sfGLValid,
 		sfActive        = sfReady|sfValid|sfFocused
 	};
 
@@ -126,7 +131,7 @@ namespace JNIViewport {
 	int                 flags;
 
 	/*************************** JNI */
-	struct android_app *s_android_app;
+	struct android_app *jni_app;
 
 	/*************************** EGL */
 	EGLDisplay          egl_dpy;
@@ -137,6 +142,10 @@ namespace JNIViewport {
 bool
 JNIViewport::Initialize(void)
 {
+	/* android jni state */
+	jni_app = Entrypoint::android_jni_state();
+	jni_app->onAppCmd = HandleJNICommands;
+
 	/* default display display */
 	dpy.depth      = MARSHMALLOW_VIEWPORT_DEPTH;
 	dpy.fullscreen = MARSHMALLOW_VIEWPORT_FULLSCREEN;
@@ -281,10 +290,10 @@ JNIViewport::Destroy(void)
 	DestroyGLContext();
 
 	/* sanity check */
-	assert(0 == (flags & ~(sfTerminated))
+	assert(0 == (flags & ~(sfJNIWindow|sfTerminated))
 	    && "We seem to have some stray flags!");
 
-	Reset(flags & sfTerminated);
+	Reset(flags & (sfJNIWindow|sfTerminated));
 }
 
 void
@@ -343,14 +352,14 @@ JNIViewport::CreateGLContext(void)
 
 	EGLint l_format;
 	eglGetConfigAttrib(egl_dpy, l_config, EGL_NATIVE_VISUAL_ID, &l_format);
-	ANativeWindow_setBuffersGeometry(s_android_app->window, 0, 0, l_format);
+	ANativeWindow_setBuffersGeometry(jni_app->window, 0, 0, l_format);
 
 	/*
 	 * Create EGL Surface
 	 */
 	egl_surface = eglCreateWindowSurface(egl_dpy,
 	                                     l_config,
-	                (EGLNativeWindowType)s_android_app->window,
+	                (EGLNativeWindowType)jni_app->window,
 	                                     0);
 	if (egl_surface == EGL_NO_SURFACE) {
 		MMERROR("EGL: No surface was created. EGLERROR=" << eglGetError());
@@ -452,18 +461,16 @@ JNIViewport::DestroyGLContext(void)
 void
 JNIViewport::ProcessJNIEvents(void)
 {
-	LOGW("TICK!!!");
-
 	int l_ident;
 	int l_events;
 	struct android_poll_source *l_source;
 
-	while ((l_ident = ALooper_pollAll(-1, NULL, &l_events, (void**)&l_source)) >= 0) {
+	while ((l_ident = ALooper_pollAll(0, NULL, &l_events, (void**)&l_source)) >= 0) {
 		if (l_source != NULL)
-			l_source->process(s_android_app, l_source);
+			l_source->process(jni_app, l_source);
 
 		/* check if we are exiting */
-		if (s_android_app->destroyRequested != 0) {
+		if (jni_app->destroyRequested != 0) {
 			Event::QuitEvent l_mmevent(-1);
 			Event::EventManager::Instance()->dispatch(l_mmevent);
 			break;
@@ -472,49 +479,39 @@ JNIViewport::ProcessJNIEvents(void)
 }
 
 void
-JNIViewport::HandleJNICommands(struct android_app *app, int32_t cmd)
+JNIViewport::HandleJNICommands(struct android_app *state, int32_t cmd)
 {
+	if (jni_app != state) {
+		LOGW("Command from unknown android app received!");
+		return;
+	}
+
 	switch (cmd) {
 	case APP_CMD_SAVE_STATE:
 		// TODO
 		break;
+
 	case APP_CMD_INIT_WINDOW:
-		if (s_android_app->window != NULL)
+		if (jni_app->window != NULL) {
+			flags |= sfJNIWindow;
 			Create(dpy);
+		}
 		break;
+
 	case APP_CMD_TERM_WINDOW:
 			Destroy();
+			flags &= ~(sfJNIWindow);
 		break;
+
 	case APP_CMD_GAINED_FOCUS:
 		flags |= sfFocused;
 		break;
+
 	case APP_CMD_LOST_FOCUS:
-		flags ^= sfFocused;
+		flags &= ~(sfFocused);
 		break;
 	}
 }
-
-int32_t
-JNIViewport::HandleJNIInputEvents(struct android_app *app, AInputEvent *event)
-{
-    return(0);
-}
-
-extern "C" {
-void
-android_main(struct android_app* state)
-{
-    app_dummy();
-
-    state->userData = &JNIViewport::dpy;
-    state->onAppCmd = JNIViewport::HandleJNICommands;
-    state->onInputEvent = JNIViewport::HandleJNIInputEvents;
-
-    JNIViewport::s_android_app = state;
-
-    char *l_argv[1] = {0};
-    MMain(0, l_argv);
-}}
 
 } /********************************** Graphics::OpenGL::<anonymous> Namespace */
 
@@ -536,6 +533,7 @@ Viewport::Active(void)
 bool
 Viewport::Initialize(void)
 {
+	LOGD("Initialize!");
 	using namespace OpenGL;
 	return(JNIViewport::Initialize());
 }
@@ -543,6 +541,7 @@ Viewport::Initialize(void)
 void
 Viewport::Finalize(void)
 {
+	LOGD("Finalize!");
 	using namespace OpenGL;
 	JNIViewport::Finalize();
 }
@@ -551,7 +550,28 @@ bool
 Viewport::Setup(const Graphics::Display &display)
 {
 	using namespace OpenGL;
-	JNIViewport::dpy = display;
+
+	/*
+	 * If native window is available, rebuild context.
+	 */
+	if (JNIViewport::flags & JNIViewport::sfJNIWindow) {
+		LOGI("Viewport::Setup called, rebuilding context.");
+		JNIViewport::Destroy();
+		JNIViewport::Create(display);
+	}
+
+	/*
+	 * Native window not ready, update display struct and wait.
+	 */
+	else {
+		LOGW("Viewport::Setup called before a valid native window existed.");
+		JNIViewport::dpy = display;
+		JNIViewport::wsize.width  = display.width;
+		JNIViewport::wsize.height = display.height;
+		JNIViewport::vsize.width  = display.width;
+		JNIViewport::vsize.height = display.height;
+	}
+
 	return(true);
 }
 

@@ -161,11 +161,12 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 	# Android JNI
 	#
 	elseif(MARSHMALLOW_OPENGL_JNI)
+		include_directories(${ANDROID_JNI_INCLUDE_DIR})
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-		                              opengl/viewport-jni.cpp
-		                              opengl/jni/android_native_app_glue.c)
+		                              opengl/viewport-jni.cpp)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
-		                              "android" "log")
+		                              ${ANDROID_JNI_LIBRARY}
+		                              marshmallow_entrypoint)
 		add_definitions(-DMARSHMALLOW_OPENGL_JNI)
 
 		if(MARSHMALLOW_INPUT_LINUX_JNI)

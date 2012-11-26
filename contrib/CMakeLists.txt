@@ -1,5 +1,5 @@
-# Copyright 2011 Marshmallow Engine. All rights reserved.
-# Copyright 2011 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
+# Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+# Copyright 2011-2012 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -30,18 +30,23 @@
 add_subdirectory(tinyxml2)
 
 # Box2D
-if (MARSHMALLOW_WITH_BOX2D)
+if(MARSHMALLOW_WITH_BOX2D)
 	add_subdirectory(box2d)
 endif()
 
 # Lua
-if (MARSHMALLOW_WITH_LUA AND MARSHMALLOW_CONTRIB_LUA)
+if(MARSHMALLOW_WITH_LUA AND MARSHMALLOW_CONTRIB_LUA)
 	add_subdirectory(lua)
 endif()
 
 # Zlib
-if (MARSHMALLOW_CONTRIB_ZLIB)
+if(MARSHMALLOW_CONTRIB_ZLIB)
 	add_subdirectory(zlib)
+endif()
+
+# Android JNI
+if(MARSHMALLOW_ANDROID)
+	add_subdirectory(android-jni)
 endif()
 
 if(MARSHMALLOW_VIEWPORT_OPENGL)

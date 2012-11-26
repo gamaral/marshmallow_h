@@ -31,7 +31,7 @@ set(TINYXML_LIBRARIES marshmallow_tinyxml)
 set(TINYXML_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/contrib/tinyxml2/code")
 
 # Box2D
-if (MARSHMALLOW_WITH_BOX2D)
+if(MARSHMALLOW_WITH_BOX2D)
 	set(BOX2D_BASE "${PROJECT_SOURCE_DIR}/contrib/box2d/code/Box2D" CACHE STRING "")
 	set(BOX2D_INCLUDE_DIR ${BOX2D_BASE} CACHE STRING "")
 	set(BOX2D_LIBRARY marshmallow_box2d CACHE STRING "")
@@ -44,7 +44,7 @@ if (MARSHMALLOW_WITH_BOX2D)
 endif()
 
 # Lua
-if (MARSHMALLOW_WITH_LUA)
+if(MARSHMALLOW_WITH_LUA)
 	if (MARSHMALLOW_CONTRIB_LUA)
 		set(LUA_BASE "${PROJECT_SOURCE_DIR}/contrib/lua/code")
 		set(LUA_INCLUDE_DIR ${LUA_BASE}/src
@@ -58,7 +58,7 @@ if (MARSHMALLOW_WITH_LUA)
 endif()
 
 # Zlib
-if (MARSHMALLOW_CONTRIB_ZLIB)
+if(MARSHMALLOW_CONTRIB_ZLIB)
 	set(ZLIB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/zlib/code
 	                     ${PROJECT_BINARY_DIR}/contrib/zlib/code)
 	set(ZLIB_LIBRARY marshmallow_zlib)
@@ -67,6 +67,15 @@ if (MARSHMALLOW_CONTRIB_ZLIB)
 else()
 	message(STATUS "Building with system Zlib")
 	find_package(ZLIB REQUIRED)
+endif()
+
+# Android
+if(MARSHMALLOW_ANDROID)
+	set(ANDROID_JNI_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/android-jni/code
+	                     ${PROJECT_BINARY_DIR}/contrib/android-jni/code)
+	set(ANDROID_JNI_LIBRARY marshmallow_android_jni)
+	set(ANDROID_JNI_LIBRARIES ${ANDROID_JNI_LIBRARY})
+	message(STATUS "Building with bundled Android JNI glue")
 endif()
 
 if(MARSHMALLOW_VIEWPORT_OPENGL)
