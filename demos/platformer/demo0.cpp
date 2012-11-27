@@ -61,7 +61,7 @@ using namespace Core;
 
 class Demo : public Game::EngineBase
 {
-	char m_current_level[PATH_MAX + 1];
+	char m_current_level[FILENAME_MAX + 1];
 
 	NO_ASSIGN_COPY(Demo);
 public:
