@@ -137,19 +137,12 @@ PlayerEntity::update(float d)
 		Game::SharedPositionComponent l_pos_component =
 		    getComponentType(Game::PositionComponent::Type()).staticCast<Game::PositionComponent>();
 		if (l_pos_component) {
-			Math::Point2 l_pos = l_pos_component->position();
-			const Math::Size2f &l_zoom = Graphics::Camera::Zoom();
-
-			if (m_input_component->inMotion()) {
-				const float l_lratio = m_input_component->linearRatio();
-				m_animation_component->setPlaybackRatio(l_lratio < 0 ? -l_lratio : l_lratio);
-			}
-			else m_animation_component->setPlaybackRatio(1.f);
-
-			void setFrameRate(const Core::Identifier &animation, float fps);
 			/* camara snap - calculate using map */
 
 			float l_limit;
+			Math::Point2 l_pos = l_pos_component->position();
+			const Math::Size2f &l_zoom = Graphics::Camera::Zoom();
+
 			Game::SharedTilemapSceneLayer l_platform_layer =
 			    Game::Engine::Instance()->sceneManager()->activeScene()->getLayer("platform").staticCast<Game::TilemapSceneLayer>();
 			const Math::Size2f &l_hrsize = l_platform_layer->virtualHalfSize();
@@ -157,11 +150,20 @@ PlayerEntity::update(float d)
 			l_limit = l_hrsize.width - (Graphics::Viewport::Size().width / (2.f * l_zoom.width));
 			if (l_pos.x < -l_limit) l_pos.x = -l_limit;
 			else if (l_pos.x > l_limit) l_pos.x = l_limit;
+
 			l_limit = l_hrsize.height - (Graphics::Viewport::Size().height / (2.f * l_zoom.height));
 			if (l_pos.y < -l_limit) l_pos.y = -l_limit;
 			else if (l_pos.y > l_limit) l_pos.y = l_limit;
 
 			Graphics::Camera::SetPosition(l_pos);
+
+			/* animation playback ratio */
+
+			if (m_input_component->inMotion()) {
+				const float l_lratio = m_input_component->linearRatio();
+				m_animation_component->setPlaybackRatio(l_lratio < 0 ? -l_lratio : l_lratio);
+			}
+			else m_animation_component->setPlaybackRatio(1.f);
 
 			/* translate background layers (parallax) */
 
