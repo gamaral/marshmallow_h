@@ -73,12 +73,18 @@
 #endif
 #include "extensions.h"
 
+#if (BPS_VERSION > 3001000)
+#  define BBNDK10
+#endif
 
 /*
  * QNX Viewport Notes
  *
  * The fullscreen flag in the Display parameters is ignored since we will always
  * be in fullscreen.
+ *
+ * Rotating the window manually via SCREEN_PROPERTY_ROTATION is required for
+ * playbook, or it messes up the window when the orientation changes.
  */
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -103,6 +109,8 @@ namespace QNXViewport {
 	inline void DestroyGLContext(void);
 
 	inline bool CreateScreenWindow(void);
+	inline bool SetupScreenWindow(void);
+	inline void TeardownScreenWindow(void);
 	inline void DestroyScreenWindow(void);
 
 	enum StateFlag
@@ -114,18 +122,17 @@ namespace QNXViewport {
 
 		sfScreenContext = (1 <<  2),
 		sfScreenWindow  = (1 <<  3),
-		sfScreenDisplay = (1 <<  4),
 
-		sfGLDisplay     = (1 <<  5),
-		sfGLSurface     = (1 <<  6),
-		sfGLContext     = (1 <<  7),
-		sfGLCurrent     = (1 <<  8),
+		sfGLDisplay     = (1 <<  4),
+		sfGLSurface     = (1 <<  5),
+		sfGLContext     = (1 <<  6),
+		sfGLCurrent     = (1 <<  7),
 
-		sfActive        = (1 <<  9),
-		sfReset         = (1 << 10),
-		sfTerminated    = (1 << 11),
+		sfActive        = (1 <<  8),
+		sfReset         = (1 <<  9),
+		sfTerminated    = (1 << 10),
 
-		sfScreenValid   = sfScreenContext|sfScreenWindow|sfScreenDisplay,
+		sfScreenValid   = sfScreenContext|sfScreenWindow,
 		sfGLValid       = sfGLDisplay|sfGLSurface|sfGLContext|sfGLCurrent,
 		sfValid         = sfBPS|sfScreenValid|sfGLValid,
 		sfReadyValid    = sfReady|sfValid,
@@ -140,8 +147,8 @@ namespace QNXViewport {
 
 	/************************** QNX Screen */
 	screen_context_t          scrn_ctx;
-	screen_display_t          scrn_dpy;
 	screen_window_t           scrn_window;
+	int                       scrn_angle;
 
 	/********************************* EGL */
 	EGLDisplay                egl_dpy;
@@ -179,6 +186,14 @@ QNXViewport::Initialize(void)
 	 */
 	Painter::SetBackgroundColor(Color::Black());
 
+	/*
+	 * Create QNX Screen Window
+	 */
+	if (!CreateScreenWindow()) {
+		MMERROR("QNX: Failed to create window.");
+		return(false);
+	}
+
 	return(true);
 }
 
@@ -193,6 +208,11 @@ QNXViewport::Finalize(void)
 	 */
 	if (sfValid == (flags & sfValid))
 		Destroy();
+
+	/*
+	 * Destroy QNX Screen Window
+	 */
+	DestroyScreenWindow();
 
 	/*
 	 * BlackBerry Platform Services (BPS)
@@ -214,10 +234,6 @@ QNXViewport::Reset(int state)
 	flags = state;
 	vsize.zero();
 	wsize.zero();
-
-	scrn_dpy = 0;
-	scrn_window = 0;
-	scrn_ctx = 0;
 
 	egl_dpy     = EGL_NO_DISPLAY;
 	egl_surface = EGL_NO_SURFACE;
@@ -250,10 +266,28 @@ QNXViewport::Tick(float delta)
 			case NAVIGATOR_WINDOW_FULLSCREEN:
 				flags |= sfActive;
 				break;
-
 			case NAVIGATOR_WINDOW_INACTIVE:
 				flags &= ~(sfActive);
 				break;
+
+			case NAVIGATOR_ORIENTATION_CHECK:
+				navigator_orientation_check_response(l_event, true);
+				break;
+			case NAVIGATOR_ORIENTATION: {
+				const int l_angle =
+				    navigator_event_get_orientation_angle(l_event);
+
+				/* rotate window */
+				if (screen_set_window_property_iv(scrn_window,
+				    SCREEN_PROPERTY_ROTATION, &l_angle))
+					perror("screen_set_window_property_iv(SCREEN_PROPERTY_ROTATION)");
+
+				if ((scrn_angle % 180) != (l_angle % 180))
+					l_redisplay = true;
+				scrn_angle = l_angle;
+
+				navigator_done_orientation(l_event);
+				} break;
 			}
 		}
 
@@ -304,10 +338,10 @@ QNXViewport::Create(const Display &display_)
 	dpy = display_;
 
 	/*
-	 * Create QNX Screen Window
+	 * Setup QNX Screen Window
 	 */
-	if (!CreateScreenWindow()) {
-		MMERROR("QNX: Failed to create window.");
+	if (!SetupScreenWindow()) {
+		MMERROR("QNX: Failed to setup window.");
 		return(false);
 	}
 
@@ -316,7 +350,6 @@ QNXViewport::Create(const Display &display_)
 	 */
 	if (!CreateGLContext()) {
 		MMERROR("GL: Failed to create surface.");
-		DestroyScreenWindow();
 		return(false);
 	}
 
@@ -331,7 +364,6 @@ QNXViewport::Create(const Display &display_)
 	if (glGetError() != GL_NO_ERROR) {
 		MMERROR("GL: Failed during initialization.");
 		DestroyGLContext();
-		DestroyScreenWindow();
 		return(false);
 	}
 
@@ -380,13 +412,13 @@ QNXViewport::Destroy(void)
 	Painter::Finalize();
 
 	DestroyGLContext();
-	DestroyScreenWindow();
+	TeardownScreenWindow();
 
 	/* sanity check */
-	assert(0 == (flags & ~(sfBPS|sfReady|sfTerminated))
+	assert(0 == (flags & ~(sfScreenContext|sfScreenWindow|sfBPS|sfReady|sfTerminated))
 	    && "We seem to have some stray flags!");
 
-	Reset(flags & (sfBPS|sfTerminated));
+	Reset(flags & (sfScreenContext|sfScreenWindow|sfBPS|sfTerminated));
 }
 
 void
@@ -557,11 +589,19 @@ QNXViewport::CreateScreenWindow(void)
 	/*
 	 * QNX Screen Window
 	 */
-	if (screen_create_window(&scrn_window, scrn_ctx)) {
-		perror("screen_create_window");
+	if (screen_create_window_type(&scrn_window, scrn_ctx, SCREEN_APPLICATION_WINDOW)) {
+		perror("screen_create_window_type");
 		return(false);
 	}
 	flags |= sfScreenWindow;
+
+	/* keep window awake - it's a game after all */
+	const int l_keep_awake = SCREEN_IDLE_MODE_KEEP_AWAKE;
+	if (screen_set_window_property_iv(scrn_window,
+	    SCREEN_PROPERTY_IDLE_MODE, &l_keep_awake)) {
+		perror("screen_set_window_property_iv(SCREEN_PROPERTY_IDLE_MODE)");
+		return(false);
+	}
 
 	const int l_format = SCREEN_FORMAT_RGBX8888;
 	if (screen_set_window_property_iv(scrn_window,
@@ -570,7 +610,7 @@ QNXViewport::CreateScreenWindow(void)
 		return(false);
 	}
 
-	const int l_usage = SCREEN_USAGE_OPENGL_ES2;
+	const int l_usage = SCREEN_USAGE_OPENGL_ES2|SCREEN_USAGE_ROTATION;
 	if (screen_set_window_property_iv(scrn_window,
 	    SCREEN_PROPERTY_USAGE, &l_usage)) {
 		perror("screen_set_window_property_iv(SCREEN_PROPERTY_USAGE)");
@@ -584,56 +624,108 @@ QNXViewport::CreateScreenWindow(void)
 		return(false);
 	}
 
+	/* get display angle */
+	scrn_angle = atoi(getenv("ORIENTATION"));
+
+	return(true);
+}
+
+bool
+QNXViewport::SetupScreenWindow(void)
+{
+	/*
+	 * Get display information
+	 */
+	screen_display_t l_screen_display;
 	if (screen_get_window_property_pv(scrn_window,
-	    SCREEN_PROPERTY_DISPLAY, reinterpret_cast<void **>(&scrn_dpy))) {
-		perror("screen_get_window_property_pv");
+	    SCREEN_PROPERTY_DISPLAY, reinterpret_cast<void **>(&l_screen_display))) {
+		perror("screen_get_window_property_pv(SCREEN_PROPERTY_DISPLAY)");
+		return(false);
+	}
+	screen_display_mode_t l_screen_mode;
+	if (screen_get_display_property_pv(l_screen_display,
+	    SCREEN_PROPERTY_MODE, reinterpret_cast<void**>(&l_screen_mode))) {
+		perror("screen_get_display_property_pv(SCREEN_PROPERTY_MODE)");
+		return(false);
+	}
+
+	/*
+	 * Figure out window/buffer size (IMPORTANT)
+	 */
+	if (scrn_angle == 90 || scrn_angle == 270)
+		wsize.set(l_screen_mode.height, l_screen_mode.width);
+	else wsize.set(l_screen_mode.width, l_screen_mode.height);
+
+	/*
+	 * Rotate window
+	 */
+	if (screen_set_window_property_iv(scrn_window,
+	    SCREEN_PROPERTY_ROTATION, &scrn_angle)) {
+		perror("screen_set_window_property_iv(SCREEN_PROPERTY_ROTATION)");
+		return(false);
+	}
+
+	/*
+	 * Resize window
+	 */
+	const int l_size[2] = { wsize.width, wsize.height };
+	if (screen_set_window_property_iv(scrn_window,
+	    SCREEN_PROPERTY_SIZE, l_size)) {
+		perror("screen_set_window_property_iv(SCREEN_PROPERTY_SIZE)");
+		return(false);
+	}
+	if (screen_set_window_property_iv(scrn_window,
+	    SCREEN_PROPERTY_SOURCE_SIZE, l_size)) {
+		perror("screen_set_window_property_iv(SCREEN_PROPERTY_SOURCE_SIZE)");
 		return(false);
 	}
 
 	/*
 	 * Create window buffers (IMPORTANT)
 	 */
+	if (screen_set_window_property_iv(scrn_window,
+	    SCREEN_PROPERTY_BUFFER_SIZE, l_size)) {
+		perror("screen_set_window_property_iv(SCREEN_PROPERTY_BUFFER_SIZE)");
+		return(false);
+	}
 	if (screen_create_window_buffers(scrn_window, 2)) {
 		perror("screen_create_window_buffers");
 		return(false);
 	}
 
-	screen_display_mode_t l_screen_mode;
-	if (screen_get_display_property_pv(scrn_dpy,
-	    SCREEN_PROPERTY_MODE, reinterpret_cast<void**>(&l_screen_mode))) {
-		perror("screen_get_display_property_pv");
-		return(false);
-	}
-	flags |= sfScreenDisplay;
-
-	wsize.set(l_screen_mode.width, l_screen_mode.height);
-
-	MMDEBUG("QNX: Display size (" << wsize.width << "x" << wsize.height << ") ...");
+	MMDEBUG("QNX: Window size (" << wsize.width << "x" << wsize.height << ") ...");
 
 	return(true);
 }
 
 void
+QNXViewport::TeardownScreenWindow(void)
+{
+	/* destroy screen window buffers */
+	if (screen_destroy_window_buffers(scrn_window) != 0) {
+		perror("screen_destroy_window_buffers");
+		MMERROR("QNX: Failed to destroy screen window buffers. IGNORING.");
+	}
+}
+
+void
 QNXViewport::DestroyScreenWindow(void)
 {
-	/* clear screen display */
-	scrn_dpy = 0;
-	flags &= ~(sfScreenDisplay);
-
 	/* destroy screen window */
 	if (sfScreenWindow == (flags & sfScreenWindow)) {
-		if (screen_destroy_window(scrn_window) != 0)
+		if (screen_destroy_window(scrn_window) != 0) {
+			perror("screen_destroy_window");
 			MMERROR("QNX: Failed to destroy screen window. IGNORING.");
+		}
 		scrn_window = 0;
 		flags ^= sfScreenWindow;
 	}
 
 	/* destroy screen context */
 	if (sfScreenContext == (flags & sfScreenContext)) {
+		screen_stop_events(scrn_ctx);
 		if (screen_destroy_context(scrn_ctx) != 0)
 			MMERROR("QNX: Failed to destroy screen context. IGNORING.");
-
-		screen_stop_events(scrn_ctx);
 		scrn_ctx = 0;
 		flags ^= sfScreenContext;
 	}

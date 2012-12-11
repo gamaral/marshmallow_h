@@ -24,7 +24,7 @@
     <category>core.games</category>
     <asset path="../demos/platformer/assets">assets</asset>
     <asset path="../resources/qnx/icon.png">icon.png</asset>
-    <asset path="/home/gamaral/development/marshmallow_h/resources/qnx/splash.png">splash.png</asset>
+    <asset path="../resources/qnx/splash.png">splash.png</asset>
     <configuration id="com.qnx.qcc.toolChain.983835590" name="Default">
        <platformArchitecture>armle-v7</platformArchitecture>
        <asset path="bin/platformer_demo0" entry="true" type="Qnx/Elf">platformer_demo0</asset>
