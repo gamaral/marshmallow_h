@@ -34,58 +34,27 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_INPUTEVENT_H
-#define MARSHMALLOW_EVENT_INPUTEVENT_H 1
+#ifndef MARSHMALLOW_INPUT_TOUCH_H
+#define MARSHMALLOW_INPUT_TOUCH_H 1
 
-#include <event/eventbase.h>
+#include <core/environment.h>
+#include <core/fd.h>
+#include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Event { /****************************************** Event Namespace */
+namespace Input { /****************************************** Input Namespace */
+namespace Touch { /*********************************** Input::Touch Namespace */
 
-	/*! @brief Generic Input Class */
-	class MARSHMALLOW_EVENT_EXPORT
-	InputEvent : public EventBase
+	/*! @brief Touch Actions */
+	enum Action
 	{
-		struct Private;
-		Private *m_p;
-
-		NO_ASSIGN_COPY(InputEvent);
-	public:
-
-		enum InputType
-		{
-			UnknownType  = 0,
-			KeyboardType = 1,
-			JoystickType = 2,
-			GamepadType  = 2,
-			TouchType    = 3
-		};
-
-	public:
-
-		InputEvent(InputType type, int code, int value,
-		           size_t source, MMTIME timestamp = 0);
-		virtual ~InputEvent(void);
-
-		InputType inputType(void) const;
-
-		int code(void) const;
-
-		int value(void) const;
-
-		size_t source(void) const;
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type()); }
-
-	public: /* static */
-
-		static const Core::Type & Type(void);
+		Press   = 0,
+		Move    = 1,
+		Release = 2
 	};
 
-} /********************************************************** Event Namespace */
+} /*************************************************** Input::Touch Namespace */
+} /********************************************************** Input Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

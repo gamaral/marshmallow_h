@@ -37,6 +37,9 @@
 #include <bps/bps.h>
 #include <bps/navigator.h>
 #include <bps/screen.h>
+#ifdef MARSHMALLOW_INPUT_QNX_SENSOR
+#  include <bps/sensor.h>
+#endif
 
 #include <screen/screen.h>
 
@@ -194,6 +197,20 @@ QNXViewport::Initialize(void)
 		return(false);
 	}
 
+#ifdef MARSHMALLOW_INPUT_QNX_SENSOR
+	/*
+	 * Sensors
+	 */
+#ifdef MARSHMALLOW_INPUT_QNX_ACCELEROMETER
+	if (sensor_is_supported(SENSOR_TYPE_ACCELEROMETER)) {
+#define SENSOR_ACCELEROMETER_RATE 25000
+		sensor_set_rate(SENSOR_TYPE_ACCELEROMETER, SENSOR_ACCELEROMETER_RATE);
+		sensor_set_skip_duplicates(SENSOR_TYPE_ACCELEROMETER, true);
+		sensor_request_events(SENSOR_TYPE_ACCELEROMETER);
+	}
+#endif // MARSHMALLOW_INPUT_QNX_ACCELEROMETER
+#endif // MARSHMALLOW_INPUT_QNX_SENSOR
+
 	return(true);
 }
 
@@ -311,11 +328,35 @@ QNXViewport::Tick(float delta)
 #ifdef MARSHMALLOW_INPUT_QNX_SCREEN
 			case SCREEN_EVENT_KEYBOARD:
 			case SCREEN_EVENT_POINTER:
+			case SCREEN_EVENT_MTOUCH_TOUCH:
+			case SCREEN_EVENT_MTOUCH_MOVE:
+			case SCREEN_EVENT_MTOUCH_RELEASE:
 				Input::QNX::Screen::HandleEvent(l_type, l_screen_event);
 				break;
 			}
-#endif
+#endif // MARSHMALLOW_INPUT_QNX_SCREEN
 		}
+
+#ifdef MARSHMALLOW_INPUT_QNX_SENSOR
+		/*
+		 * Sensor Events
+		 */
+		else if (l_domain == sensor_get_domain()) {
+			switch (l_evcode) {
+#ifdef MARSHMALLOW_INPUT_QNX_ACCELEROMETER
+			case SENSOR_ACCELEROMETER_READING:
+				float force_x, force_y, force_z;
+				sensor_event_get_xyz(l_event, &force_x, &force_y, &force_z);
+				MMINFO("SENSOR_ACCELEROMETER_READING ("
+				    << force_x << ", "
+				    << force_y << ", "
+				    << force_z << ")");
+				break;
+#endif // MARSHMALLOW_INPUT_QNX_ACCELEROMETER
+			default: break;
+			}
+		}
+#endif // MARSHMALLOW_INPUT_QNX_SENSOR
 	}
 
 	/*
@@ -571,6 +612,7 @@ QNXViewport::DestroyGLContext(void)
 		eglTerminate(egl_dpy), egl_dpy = EGL_NO_DISPLAY;
 		flags ^= sfGLDisplay;
 	}
+	eglReleaseThread();
 }
 
 bool
@@ -693,7 +735,7 @@ QNXViewport::SetupScreenWindow(void)
 		return(false);
 	}
 
-	MMDEBUG("QNX: Window size (" << wsize.width << "x" << wsize.height << ") ...");
+	MMDEBUG("QNX: Window size (" << wsize.width << "x" << wsize.height << ")");
 
 	return(true);
 }

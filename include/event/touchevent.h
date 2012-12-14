@@ -34,46 +34,38 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_INPUTEVENT_H
-#define MARSHMALLOW_EVENT_INPUTEVENT_H 1
+#ifndef MARSHMALLOW_EVENT_TOUCHEVENT_H
+#define MARSHMALLOW_EVENT_TOUCHEVENT_H 1
 
-#include <event/eventbase.h>
+#include <event/inputevent.h>
+
+#include <input/touch.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
 
-	/*! @brief Generic Input Class */
+	/*! @brief Event Touch Class */
 	class MARSHMALLOW_EVENT_EXPORT
-	InputEvent : public EventBase
+	TouchEvent : public InputEvent
 	{
 		struct Private;
 		Private *m_p;
-
-		NO_ASSIGN_COPY(InputEvent);
+		
+		NO_ASSIGN_COPY(TouchEvent);
 	public:
 
-		enum InputType
-		{
-			UnknownType  = 0,
-			KeyboardType = 1,
-			JoystickType = 2,
-			GamepadType  = 2,
-			TouchType    = 3
-		};
+		TouchEvent(Input::Touch::Action action,
+		           int x,
+		           int y,
+                           size_t source,
+		           MMTIME timestamp = 0);
+		virtual ~TouchEvent(void);
 
-	public:
+		Input::Touch::Action action(void) const
+		    { return(static_cast<Input::Touch::Action>(code())); }
 
-		InputEvent(InputType type, int code, int value,
-		           size_t source, MMTIME timestamp = 0);
-		virtual ~InputEvent(void);
-
-		InputType inputType(void) const;
-
-		int code(void) const;
-
-		int value(void) const;
-
-		size_t source(void) const;
+		int x() const;
+		int y() const;
 
 	public: /* virtual */
 

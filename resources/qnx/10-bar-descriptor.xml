@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<qnx xmlns="http://www.qnx.com/schemas/application/1.0">
+    <id>com.marshmallow.demo</id>
+    <versionNumber>0.0.1</versionNumber>
+
+    <name>Marshmallow</name>
+    <description>Marshmallow Platformer Demo</description>
+    <icon>
+       <image>icon.png</image>
+    </icon>
+
+    <buildId>1</buildId>
+
+    <initialWindow>
+        <autoOrients>true</autoOrients>
+        <systemChrome>none</systemChrome>
+        <transparent>false</transparent>
+    </initialWindow>
+
+    <category>core.games</category>
+
+    <splashScreens>
+       <image>splash.png</image>
+    </splashScreens>
+
+    <asset path="lib/libmarshmallow_audio.so" type="Qnx/Elf">lib/libmarshmallow_audio.so</asset>
+    <asset path="lib/libmarshmallow_core.so" type="Qnx/Elf">lib/libmarshmallow_core.so</asset>
+    <asset path="lib/libmarshmallow_event.so" type="Qnx/Elf">lib/libmarshmallow_event.so</asset>
+    <asset path="lib/libmarshmallow_game.so" type="Qnx/Elf">lib/libmarshmallow_game.so</asset>
+    <asset path="lib/libmarshmallow_graphics.so" type="Qnx/Elf">lib/libmarshmallow_graphics.so</asset>
+    <asset path="lib/libmarshmallow_input.so" type="Qnx/Elf">lib/libmarshmallow_input.so</asset>
+    <asset path="lib/libmarshmallow_math.so" type="Qnx/Elf">lib/libmarshmallow_math.so</asset>
+
+    <asset path="../demos/platformer/assets">assets</asset>
+    <asset path="../resources/qnx/icon.png">icon.png</asset>
+    <asset path="../resources/qnx/splash.png">splash.png</asset>
+
+    <configuration name="Default">
+       <platformArchitecture>armle-v7</platformArchitecture>
+       <asset path="lib/libmarshmallow_extra.so" type="Qnx/Elf">lib/libmarshmallow_extra.so</asset>
+       <asset path="bin/platformer_demo0" entry="true" type="Qnx/Elf">platformer_demo0</asset>
+    </configuration>
+
+    <permission system="true">run_native</permission>
+
+    <env var="LD_LIBRARY_PATH" value="app/native/lib"/>
+    <env var="MM_DEMO_CWD" value="app/native"/>
+</qnx>

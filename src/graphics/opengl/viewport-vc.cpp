@@ -494,6 +494,7 @@ VCViewport::DestroyGLContext(void)
 		eglTerminate(egl_dpy), egl_dpy = EGL_NO_DISPLAY;
 		flags ^= sfGLDisplay;
 	}
+	eglReleaseThread();
 }
 
 bool

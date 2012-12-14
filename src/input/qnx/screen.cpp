@@ -39,6 +39,7 @@
 
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
+#include "event/touchevent.h"
 
 #include "input/keyboard_p.h"
 
@@ -58,6 +59,7 @@ namespace QNX { /************************************* Input::QNX Namespace */
 namespace { /***************************** Input::QNX::<anonymous> Namespace */
 
 inline bool HandleScreenKeyEvent(screen_event_t &e);
+inline bool HandleScreenTouchEvent(int type, screen_event_t &e);
 inline bool HandleScreenEvents(int type, screen_event_t &e);
 
 bool
@@ -161,9 +163,30 @@ HandleScreenKeyEvent(screen_event_t &e)
 	const Keyboard::Action l_prev_action = Keyboard::KeyState(l_key);
 	if (l_prev_action != l_action) {
 		Keyboard::SetKeyState(l_key, l_action);
-		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action, 0));
-		Event::EventManager::Instance()->queue(event);
+		Event::EventManager::Instance()->
+		    queue(new Event::KeyboardEvent(l_key, l_action, 0));
 	}
+
+	return(true);
+}
+
+bool
+HandleScreenTouchEvent(int type, screen_event_t &e)
+{
+	Touch::Action l_action;
+
+	switch(type) {
+	case SCREEN_EVENT_MTOUCH_TOUCH:   l_action = Touch::Press; break;
+	case SCREEN_EVENT_MTOUCH_MOVE:    l_action = Touch::Move; break;
+	case SCREEN_EVENT_MTOUCH_RELEASE: l_action = Touch::Release; break;
+	default: return(false);
+	}
+
+	int l_pos[2];
+        screen_get_event_property_iv(e, SCREEN_PROPERTY_SOURCE_POSITION, l_pos);
+
+	Event::EventManager::Instance()->
+	    queue(new Event::TouchEvent(l_action, l_pos[0], l_pos[1], 0));
 
 	return(true);
 }
@@ -174,7 +197,11 @@ HandleScreenEvents(int type, screen_event_t &e)
 	switch(type) {
 	case SCREEN_EVENT_KEYBOARD:
 		return(HandleScreenKeyEvent(e));
-		break;
+
+	case SCREEN_EVENT_MTOUCH_TOUCH:
+	case SCREEN_EVENT_MTOUCH_MOVE:
+	case SCREEN_EVENT_MTOUCH_RELEASE:
+		return(HandleScreenTouchEvent(type, e));
 
 	default:
 		MMWARNING("Unknown input event!");

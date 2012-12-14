@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#pragma once
+#include "event/touchevent.h"
 
 /*!
  * @file
@@ -34,58 +34,55 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_INPUTEVENT_H
-#define MARSHMALLOW_EVENT_INPUTEVENT_H 1
-
-#include <event/eventbase.h>
+#include "core/identifier.h"
+#include "core/platform.h"
+#include "core/logger.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
 
-	/*! @brief Generic Input Class */
-	class MARSHMALLOW_EVENT_EXPORT
-	InputEvent : public EventBase
-	{
-		struct Private;
-		Private *m_p;
+struct TouchEvent::Private
+{
+	int x;
+	int y;
+};
 
-		NO_ASSIGN_COPY(InputEvent);
-	public:
+TouchEvent::TouchEvent(Input::Touch::Action action_,
+                       int x_,
+                       int y_,
+                       size_t source_,
+                       MMTIME timestamp_)
+    : InputEvent(TouchType, action_, 0, source_, timestamp_)
+    , m_p(new Private)
+{
+	m_p->x = x_;
+	m_p->y = y_;
+}
 
-		enum InputType
-		{
-			UnknownType  = 0,
-			KeyboardType = 1,
-			JoystickType = 2,
-			GamepadType  = 2,
-			TouchType    = 3
-		};
+TouchEvent::~TouchEvent(void)
+{
+	delete m_p, m_p = 0;
+}
 
-	public:
+int
+TouchEvent::x() const
+{
+	return(m_p->x);
+}
 
-		InputEvent(InputType type, int code, int value,
-		           size_t source, MMTIME timestamp = 0);
-		virtual ~InputEvent(void);
+int
+TouchEvent::y() const
+{
+	return(m_p->y);
+}
 
-		InputType inputType(void) const;
-
-		int code(void) const;
-
-		int value(void) const;
-
-		size_t source(void) const;
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Type & type(void) const
-		    { return(Type()); }
-
-	public: /* static */
-
-		static const Core::Type & Type(void);
-	};
+const Core::Type &
+TouchEvent::Type(void)
+{
+	static const Core::Type s_type("Event::TouchEvent");
+	return(s_type);
+}
 
 } /********************************************************** Event Namespace */
 MARSHMALLOW_NAMESPACE_END
 
-#endif

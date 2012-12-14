@@ -40,9 +40,10 @@
 #include <math/size2.h>
 
 #include <event/eventmanager.h>
-#include "event/joystickaxisevent.h"
-#include "event/joystickbuttonevent.h"
+#include <event/joystickaxisevent.h>
+#include <event/joystickbuttonevent.h>
 #include <event/keyboardevent.h>
+#include <event/touchevent.h>
 
 #include <graphics/viewport.h>
 
@@ -60,6 +61,7 @@ const Core::Type InputComponent::Type("InputComponent");
 #define LINEAR_MAX 300.f
 #define JUMP_MAX   200.f
 #define BOOST_MAX  .1f
+#define TOUCH_AREA 200
 
 InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
     : ComponentBase(i, e)
@@ -76,11 +78,13 @@ InputComponent::InputComponent(const Core::Identifier &i, Game::IEntity &e)
 	Game::Engine::Instance()->eventManager()->connect(this, Event::JoystickAxisEvent::Type());
 	Game::Engine::Instance()->eventManager()->connect(this, Event::JoystickButtonEvent::Type());
 	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
+	Game::Engine::Instance()->eventManager()->connect(this, Event::TouchEvent::Type());
 	enable();
 }
 
 InputComponent::~InputComponent(void)
 {
+	Game::Engine::Instance()->eventManager()->disconnect(this, Event::TouchEvent::Type());
 	Game::Engine::Instance()->eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 	Game::Engine::Instance()->eventManager()->disconnect(this, Event::JoystickButtonEvent::Type());
 	Game::Engine::Instance()->eventManager()->disconnect(this, Event::JoystickAxisEvent::Type());
@@ -285,6 +289,75 @@ InputComponent::handleEvent(const Event::IEvent &e)
 				m_linear_impulse = LINEAR_MAX * l_value;
 			}
 			else m_direction_stack.remove(ICDRight);
+		}
+	}
+	else if (e.type() == Event::TouchEvent::Type()) {
+		const Event::TouchEvent &l_event =
+		    static_cast<const Event::TouchEvent &>(e);
+#if 0
+		if (!m_jump && l_event.action() == Input::Touch::Press) {
+			if (m_collider->onPlatform()) {
+				m_movement->velocity().y = JUMP_MAX;
+				m_boost_fuel = BOOST_MAX;
+			}
+			m_jump = true;
+		}
+		else if (m_jump && (l_event.action() == Input::Touch::Release))
+			m_jump = false;
+#endif
+
+		if (l_event.action() == Input::Touch::Press) {
+			if (!m_left && !m_right) {
+				if (l_event.x() < TOUCH_AREA) {
+					m_left = true;
+					m_direction_stack.push_front(ICDLeft);
+					m_linear_impulse = -LINEAR_MAX;
+				}
+				else if (l_event.x() > (Graphics::Viewport::WindowSize().width - TOUCH_AREA)) {
+					m_right = true;
+					m_direction_stack.push_front(ICDRight);
+					m_linear_impulse = LINEAR_MAX;
+				}
+			}
+			else {
+				if (!m_jump && m_collider->onPlatform()) {
+					m_movement->velocity().y = JUMP_MAX;
+					m_boost_fuel = BOOST_MAX;
+				}
+				m_jump = true;
+
+				/*
+				 * Ugly workaround for input bug
+				 */
+				m_max_speed += .60f * LINEAR_MAX;
+				if (m_max_speed < (LINEAR_MAX / 2.f))
+					m_max_speed = LINEAR_MAX / 2.f;
+			}
+
+		}
+		else if (l_event.action() == Input::Touch::Release) {
+			if (m_left && (l_event.x() < TOUCH_AREA)) {
+				m_left = false;
+				m_direction_stack.remove(ICDLeft);
+			}
+			else if (m_right && (l_event.x() > (Graphics::Viewport::WindowSize().width - TOUCH_AREA))) {
+				m_right = false;
+				m_direction_stack.remove(ICDRight);
+			}
+			else {
+				if (!m_jump && m_collider->onPlatform()) {
+					m_movement->velocity().y = JUMP_MAX;
+					m_boost_fuel = BOOST_MAX;
+				}
+				m_jump = true;
+
+				/*
+				 * Ugly workaround for input bug
+				 */
+				m_max_speed += .60f * -LINEAR_MAX;
+				if (m_max_speed < (LINEAR_MAX / 2.f))
+					m_max_speed = LINEAR_MAX / 2.f;
+			}
 		}
 	}
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <qnx xmlns="http://www.qnx.com/schemas/application/1.0">
-
     <id>com.marshmallow.demo</id>
     <versionNumber>0.0.1</versionNumber>
     
@@ -22,18 +21,27 @@
     </initialWindow>
 
     <category>core.games</category>
+
+    <asset path="lib/libmarshmallow_audio.so" type="Qnx/Elf">lib/libmarshmallow_audio.so</asset>
+    <asset path="lib/libmarshmallow_core.so" type="Qnx/Elf">lib/libmarshmallow_core.so</asset>
+    <asset path="lib/libmarshmallow_event.so" type="Qnx/Elf">lib/libmarshmallow_event.so</asset>
+    <asset path="lib/libmarshmallow_game.so" type="Qnx/Elf">lib/libmarshmallow_game.so</asset>
+    <asset path="lib/libmarshmallow_graphics.so" type="Qnx/Elf">lib/libmarshmallow_graphics.so</asset>
+    <asset path="lib/libmarshmallow_input.so" type="Qnx/Elf">lib/libmarshmallow_input.so</asset>
+    <asset path="lib/libmarshmallow_math.so" type="Qnx/Elf">lib/libmarshmallow_math.so</asset>
+
     <asset path="../demos/platformer/assets">assets</asset>
     <asset path="../resources/qnx/icon.png">icon.png</asset>
     <asset path="../resources/qnx/splash.png">splash.png</asset>
+
     <configuration id="com.qnx.qcc.toolChain.983835590" name="Default">
        <platformArchitecture>armle-v7</platformArchitecture>
+       <asset path="lib/libmarshmallow_extra.so" type="Qnx/Elf">lib/libmarshmallow_extra.so</asset>
        <asset path="bin/platformer_demo0" entry="true" type="Qnx/Elf">platformer_demo0</asset>
     </configuration>
-
 
     <action system="true">run_native</action>
 
     <env var="LD_LIBRARY_PATH" value="app/native/lib"/>
     <env var="MM_DEMO_CWD" value="app/native"/>
-
 </qnx>

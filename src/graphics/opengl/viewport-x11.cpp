@@ -238,6 +238,7 @@ X11Viewport::Finalize(void)
 		eglTerminate(egl_dpy), egl_dpy = 0;
 		flags ^= sfGLDisplay;
 	}
+	eglReleaseThread();
 #endif
 
 	/*

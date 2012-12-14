@@ -157,6 +157,15 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 			add_definitions(-DMARSHMALLOW_INPUT_QNX_SCREEN)
 		endif()
 
+		if(MARSHMALLOW_INPUT_QNX_SENSOR)
+			add_definitions(-DMARSHMALLOW_INPUT_QNX_SENSOR)
+
+			if(MARSHMALLOW_INPUT_QNX_ACCELEROMETER)
+				add_definitions(-DMARSHMALLOW_INPUT_QNX_ACCELEROMETER)
+			endif()
+		endif()
+
+
 	#
 	# Android JNI
 	#
