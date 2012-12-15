@@ -47,10 +47,10 @@ namespace Game { /******************************************** Game Namespace */
 
 	struct IScene;
 
-	enum SceneLayerFlags {
-		       slfNone = 0,
-		slfUpdateBlock = 1,
-		slfRenderBlock = 2
+	enum SceneLayerFlag {
+		slfNone = 0,
+		slfUpdateBlock,
+		slfRenderBlock
 	};
 
 	/*! @brief Game Scene Interface */

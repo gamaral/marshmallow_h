@@ -54,11 +54,13 @@ namespace Event { /****************************************** Event Namespace */
 
 		enum InputType
 		{
-			UnknownType  = 0,
-			KeyboardType = 1,
-			JoystickType = 2,
-			GamepadType  = 2,
-			TouchType    = 3
+			itUnknown = 0,                    /*!< Unknown Sensor */
+			itKeyboard,
+			itJoystick,
+			itGamepad,
+			itTouch,
+			itSensor,
+			InputTypes                      /*!< Input Type Count */
 		};
 
 	public:

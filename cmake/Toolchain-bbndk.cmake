@@ -58,8 +58,7 @@ endif()
 
 set(CMAKE_FIND_ROOT_PATH ${QNX_HOST}
                          ${QNX_TARGET}
-                         ${QNX_TARGET}/${CMAKE_SYSTEM_PROCESSOR}
-                         ${QNX_TARGET}/${CMAKE_SYSTEM_PROCESSOR}/usr/lib/qt4)
+                         ${QNX_TARGET}/${CMAKE_SYSTEM_PROCESSOR})
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)

@@ -19,9 +19,7 @@
 
     <category>core.games</category>
 
-    <splashScreens>
-       <image>splash.png</image>
-    </splashScreens>
+    <splashscreen>splash.png</splashscreen>
 
     <asset path="lib/libmarshmallow_audio.so" type="Qnx/Elf">lib/libmarshmallow_audio.so</asset>
     <asset path="lib/libmarshmallow_core.so" type="Qnx/Elf">lib/libmarshmallow_core.so</asset>
@@ -32,8 +30,8 @@
     <asset path="lib/libmarshmallow_math.so" type="Qnx/Elf">lib/libmarshmallow_math.so</asset>
 
     <asset path="../demos/platformer/assets">assets</asset>
-    <asset path="../resources/qnx/icon.png">icon.png</asset>
-    <asset path="../resources/qnx/splash.png">splash.png</asset>
+    <asset path="../resources/blackberry/icon.png">icon.png</asset>
+    <asset path="../resources/blackberry/splash.png">splash.png</asset>
 
     <configuration name="Default">
        <platformArchitecture>armle-v7</platformArchitecture>
@@ -41,7 +39,7 @@
        <asset path="bin/platformer_demo0" entry="true" type="Qnx/Elf">platformer_demo0</asset>
     </configuration>
 
-    <permission system="true">run_native</permission>
+    <action system="true">run_native</action>
 
     <env var="LD_LIBRARY_PATH" value="app/native/lib"/>
     <env var="MM_DEMO_CWD" value="app/native"/>

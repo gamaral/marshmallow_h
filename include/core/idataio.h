@@ -50,10 +50,10 @@ namespace Core
 	enum DIOMode
 	{
 		DIOInvalid   = 0,
-		DIOReadOnly  = 1,
-		DIOWriteOnly = 2,
-		DIOReadWrite = DIOReadOnly | DIOWriteOnly,
-		DIOBinary    = 4
+		DIOReadOnly  = (1 << 0),
+		DIOWriteOnly = (1 << 1),
+		DIOBinary    = (1 << 2),
+		DIOReadWrite = DIOReadOnly|DIOWriteOnly
 	};
 
 	enum DIOSeek

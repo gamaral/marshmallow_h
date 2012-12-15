@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/keyboardevent.h"
+#include "event/sensorevent.h"
 
 /*!
  * @file
@@ -36,26 +36,57 @@
 
 #include "core/identifier.h"
 #include "core/platform.h"
+#include "core/logger.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
 
-KeyboardEvent::KeyboardEvent(Input::Keyboard::Key key_,
-                             Input::Keyboard::Action action_,
-                             size_t source_,
-                             MMTIME timestamp_)
-    : InputEvent(itKeyboard, key_, action_, source_, timestamp_)
+struct SensorEvent::Private
 {
+	float x;
+	float y;
+	float z;
+};
+
+SensorEvent::SensorEvent(Input::Sensor::Type type_,
+                       float x_, float y_, float z_,
+                       size_t source_,
+                       MMTIME timestamp_)
+    : InputEvent(itSensor, type_, 0, source_, timestamp_)
+    , m_p(new Private)
+{
+	m_p->x = x_;
+	m_p->y = y_;
+	m_p->z = z_;
 }
 
-KeyboardEvent::~KeyboardEvent(void)
+SensorEvent::~SensorEvent(void)
 {
+	delete m_p, m_p = 0;
+}
+
+float
+SensorEvent::x() const
+{
+	return(m_p->x);
+}
+
+float
+SensorEvent::y() const
+{
+	return(m_p->y);
+}
+
+float
+SensorEvent::z() const
+{
+	return(m_p->z);
 }
 
 const Core::Type &
-KeyboardEvent::Type(void)
+SensorEvent::Type(void)
 {
-	static const Core::Type s_type("Event::KeyboardEvent");
+	static const Core::Type s_type("Event::SensorEvent");
 	return(s_type);
 }
 

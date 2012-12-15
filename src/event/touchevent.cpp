@@ -52,7 +52,7 @@ TouchEvent::TouchEvent(Input::Touch::Action action_,
                        int y_,
                        size_t source_,
                        MMTIME timestamp_)
-    : InputEvent(TouchType, action_, 0, source_, timestamp_)
+    : InputEvent(itTouch, action_, 0, source_, timestamp_)
     , m_p(new Private)
 {
 	m_p->x = x_;

@@ -55,8 +55,7 @@ namespace Event { /****************************************** Event Namespace */
 	public:
 
 		TouchEvent(Input::Touch::Action action,
-		           int x,
-		           int y,
+		           int x, int y,
                            size_t source,
 		           MMTIME timestamp = 0);
 		virtual ~TouchEvent(void);

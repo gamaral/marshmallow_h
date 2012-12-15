@@ -144,25 +144,21 @@ if(MARSHMALLOW_VIEWPORT_OPENGL)
 		add_definitions(-DMARSHMALLOW_OPENGL_VC)
 
 	#
-	# QNX Screen (Used in Playbook)
+	# BlackBerry Screen (QNX)
 	#
-	elseif(MARSHMALLOW_OPENGL_QNX)
+	elseif(MARSHMALLOW_OPENGL_BB)
 		set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
-		                              opengl/viewport-qnx.cpp)
+		                              opengl/viewport-bb.cpp)
 		set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
 		                              "bps" "screen")
-		add_definitions(-DMARSHMALLOW_OPENGL_QNX)
+		add_definitions(-DMARSHMALLOW_OPENGL_BB)
 
-		if(MARSHMALLOW_INPUT_QNX_SCREEN)
-			add_definitions(-DMARSHMALLOW_INPUT_QNX_SCREEN)
+		if(MARSHMALLOW_INPUT_BB_SCREEN)
+			add_definitions(-DMARSHMALLOW_INPUT_BB_SCREEN)
 		endif()
 
-		if(MARSHMALLOW_INPUT_QNX_SENSOR)
-			add_definitions(-DMARSHMALLOW_INPUT_QNX_SENSOR)
-
-			if(MARSHMALLOW_INPUT_QNX_ACCELEROMETER)
-				add_definitions(-DMARSHMALLOW_INPUT_QNX_ACCELEROMETER)
-			endif()
+		if(MARSHMALLOW_INPUT_BB_SENSOR)
+			add_definitions(-DMARSHMALLOW_INPUT_BB_SENSOR)
 		endif()
 
 

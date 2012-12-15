@@ -67,9 +67,9 @@ namespace Game { /******************************************** Game Namespace */
 	public:
 
 		enum BodyType {
-			SphereType,
-			BoxType,
-			CapsuleType
+			btBox,
+			btCapsule,
+			btSphere
 		};
 
 	public:

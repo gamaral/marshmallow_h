@@ -37,9 +37,6 @@
 #include <bps/bps.h>
 #include <bps/navigator.h>
 #include <bps/screen.h>
-#ifdef MARSHMALLOW_INPUT_QNX_SENSOR
-#  include <bps/sensor.h>
-#endif
 
 #include <screen/screen.h>
 
@@ -55,8 +52,12 @@
 #include "event/quitevent.h"
 #include "event/viewportevent.h"
 
-#ifdef MARSHMALLOW_INPUT_QNX_SCREEN
-#  include "input/qnx/screen.h"
+/* input */
+#ifdef MARSHMALLOW_INPUT_BB_SCREEN
+#  include "input/bb/screen.h"
+#endif
+#ifdef MARSHMALLOW_INPUT_BB_SENSOR
+#  include "input/bb/sensor.h"
 #endif
 
 #include "graphics/camera.h"
@@ -81,7 +82,7 @@
 #endif
 
 /*
- * QNX Viewport Notes
+ * BlackBerry Viewport Notes
  *
  * The fullscreen flag in the Display parameters is ignored since we will always
  * be in fullscreen.
@@ -95,7 +96,7 @@ namespace Graphics { /************************************ Graphics Namespace */
 namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 namespace { /************************ Graphics::OpenGL::<anonymous> Namespace */
 
-namespace QNXViewport {
+namespace BBViewport {
 
 	inline bool Initialize(void);
 	inline void Finalize(void);
@@ -108,8 +109,10 @@ namespace QNXViewport {
 
 	inline void SwapBuffer(void);
 
+	inline bool InitializeGL(void);
 	inline bool CreateGLContext(void);
 	inline void DestroyGLContext(void);
+	inline void FinalizeGL(void);
 
 	inline bool CreateScreenWindow(void);
 	inline bool SetupScreenWindow(void);
@@ -148,7 +151,7 @@ namespace QNXViewport {
 	Math::Size2f              vsize;
 	int                       flags;
 
-	/************************** QNX Screen */
+	/************************** BB Screen */
 	screen_context_t          scrn_ctx;
 	screen_window_t           scrn_window;
 	int                       scrn_angle;
@@ -161,7 +164,7 @@ namespace QNXViewport {
 }
 
 bool
-QNXViewport::Initialize(void)
+BBViewport::Initialize(void)
 {
 	/* default display display */
 	dpy.depth      = MARSHMALLOW_VIEWPORT_DEPTH;
@@ -190,32 +193,33 @@ QNXViewport::Initialize(void)
 	Painter::SetBackgroundColor(Color::Black());
 
 	/*
-	 * Create QNX Screen Window
+	 * Create BB Screen Window
 	 */
 	if (!CreateScreenWindow()) {
-		MMERROR("QNX: Failed to create window.");
+		MMERROR("BB: Failed to create window.");
 		return(false);
 	}
 
-#ifdef MARSHMALLOW_INPUT_QNX_SENSOR
+	/*
+	 * Initialize EGL
+	 */
+	if (!InitializeGL()) {
+		MMERROR("BB: Failed to initialize EGL.");
+		return(false);
+	}
+
 	/*
 	 * Sensors
 	 */
-#ifdef MARSHMALLOW_INPUT_QNX_ACCELEROMETER
-	if (sensor_is_supported(SENSOR_TYPE_ACCELEROMETER)) {
-#define SENSOR_ACCELEROMETER_RATE 25000
-		sensor_set_rate(SENSOR_TYPE_ACCELEROMETER, SENSOR_ACCELEROMETER_RATE);
-		sensor_set_skip_duplicates(SENSOR_TYPE_ACCELEROMETER, true);
-		sensor_request_events(SENSOR_TYPE_ACCELEROMETER);
-	}
-#endif // MARSHMALLOW_INPUT_QNX_ACCELEROMETER
-#endif // MARSHMALLOW_INPUT_QNX_SENSOR
+#ifdef MARSHMALLOW_INPUT_BB_SENSOR
+	Input::BB::Sensor::Initialize();
+#endif // MARSHMALLOW_INPUT_BB_SENSOR
 
 	return(true);
 }
 
 void
-QNXViewport::Finalize(void)
+BBViewport::Finalize(void)
 {
 	/* set termination flag */
 	flags |= sfTerminated;
@@ -227,9 +231,14 @@ QNXViewport::Finalize(void)
 		Destroy();
 
 	/*
-	 * Destroy QNX Screen Window
+	 * Destroy BB Screen Window
 	 */
 	DestroyScreenWindow();
+
+	/*
+	 * Finalize EGL
+	 */
+	FinalizeGL();
 
 	/*
 	 * BlackBerry Platform Services (BPS)
@@ -246,19 +255,18 @@ QNXViewport::Finalize(void)
 }
 
 void
-QNXViewport::Reset(int state)
+BBViewport::Reset(int state)
 {
 	flags = state;
 	vsize.zero();
 	wsize.zero();
 
-	egl_dpy     = EGL_NO_DISPLAY;
 	egl_surface = EGL_NO_SURFACE;
 	egl_ctx     = EGL_NO_CONTEXT;
 }
 
 void
-QNXViewport::Tick(float delta)
+BBViewport::Tick(float delta)
 {
 	MMUNUSED(delta);
 
@@ -325,38 +333,25 @@ QNXViewport::Tick(float delta)
 				l_redisplay = true;
 				break;
 
-#ifdef MARSHMALLOW_INPUT_QNX_SCREEN
+#ifdef MARSHMALLOW_INPUT_BB_SCREEN
 			case SCREEN_EVENT_KEYBOARD:
 			case SCREEN_EVENT_POINTER:
 			case SCREEN_EVENT_MTOUCH_TOUCH:
 			case SCREEN_EVENT_MTOUCH_MOVE:
 			case SCREEN_EVENT_MTOUCH_RELEASE:
-				Input::QNX::Screen::HandleEvent(l_type, l_screen_event);
+				Input::BB::Screen::HandleEvent(l_type, l_screen_event);
 				break;
 			}
-#endif // MARSHMALLOW_INPUT_QNX_SCREEN
+#endif // MARSHMALLOW_INPUT_BB_SCREEN
 		}
 
-#ifdef MARSHMALLOW_INPUT_QNX_SENSOR
+#ifdef MARSHMALLOW_INPUT_BB_SENSOR
 		/*
 		 * Sensor Events
 		 */
-		else if (l_domain == sensor_get_domain()) {
-			switch (l_evcode) {
-#ifdef MARSHMALLOW_INPUT_QNX_ACCELEROMETER
-			case SENSOR_ACCELEROMETER_READING:
-				float force_x, force_y, force_z;
-				sensor_event_get_xyz(l_event, &force_x, &force_y, &force_z);
-				MMINFO("SENSOR_ACCELEROMETER_READING ("
-				    << force_x << ", "
-				    << force_y << ", "
-				    << force_z << ")");
-				break;
-#endif // MARSHMALLOW_INPUT_QNX_ACCELEROMETER
-			default: break;
-			}
-		}
-#endif // MARSHMALLOW_INPUT_QNX_SENSOR
+		else if (l_domain == sensor_get_domain())
+			Input::BB::Sensor::HandleEvent(l_evcode, l_event);
+#endif // MARSHMALLOW_INPUT_BB_SENSOR
 	}
 
 	/*
@@ -367,7 +362,7 @@ QNXViewport::Tick(float delta)
 }
 
 bool
-QNXViewport::Create(const Display &display_)
+BBViewport::Create(const Display &display_)
 {
 	/*
 	 * Check if already valid (no no)
@@ -379,10 +374,10 @@ QNXViewport::Create(const Display &display_)
 	dpy = display_;
 
 	/*
-	 * Setup QNX Screen Window
+	 * Setup BB Screen Window
 	 */
 	if (!SetupScreenWindow()) {
-		MMERROR("QNX: Failed to setup window.");
+		MMERROR("BB: Failed to setup window.");
 		return(false);
 	}
 
@@ -435,7 +430,7 @@ QNXViewport::Create(const Display &display_)
 }
 
 void
-QNXViewport::Destroy(void)
+BBViewport::Destroy(void)
 {
 	/* check for valid state */
 	if (sfValid != (flags & sfValid))
@@ -456,14 +451,14 @@ QNXViewport::Destroy(void)
 	TeardownScreenWindow();
 
 	/* sanity check */
-	assert(0 == (flags & ~(sfScreenContext|sfScreenWindow|sfBPS|sfReady|sfTerminated))
+	assert(0 == (flags & ~(sfGLDisplay|sfScreenContext|sfScreenWindow|sfBPS|sfReady|sfTerminated))
 	    && "We seem to have some stray flags!");
 
-	Reset(flags & (sfScreenContext|sfScreenWindow|sfBPS|sfTerminated));
+	Reset(flags & (sfGLDisplay|sfScreenContext|sfScreenWindow|sfBPS|sfTerminated));
 }
 
 void
-QNXViewport::SwapBuffer(void)
+BBViewport::SwapBuffer(void)
 {
 	if (sfValid != (flags & sfValid))
 		return;
@@ -472,8 +467,10 @@ QNXViewport::SwapBuffer(void)
 }
 
 bool
-QNXViewport::CreateGLContext(void)
+BBViewport::InitializeGL(void)
 {
+	egl_dpy = EGL_NO_DISPLAY;
+
 	/*
 	 * Open EGL Display
 	 */
@@ -497,6 +494,12 @@ QNXViewport::CreateGLContext(void)
 		return(false);
 	}
 
+	return(true);
+}
+
+bool
+BBViewport::CreateGLContext(void)
+{
 	/*
 	 * Choose EGL Config
 	 */
@@ -569,7 +572,7 @@ QNXViewport::CreateGLContext(void)
 }
 
 void
-QNXViewport::DestroyGLContext(void)
+BBViewport::DestroyGLContext(void)
 {
 	if (0 == (flags & sfGLValid))
 		return;
@@ -604,7 +607,11 @@ QNXViewport::DestroyGLContext(void)
 		    egl_surface = EGL_NO_SURFACE;
 		flags ^= sfGLSurface;
 	}
+}
 
+void
+BBViewport::FinalizeGL(void)
+{
 	/*
 	 * Close EGL Display
 	 */
@@ -616,10 +623,10 @@ QNXViewport::DestroyGLContext(void)
 }
 
 bool
-QNXViewport::CreateScreenWindow(void)
+BBViewport::CreateScreenWindow(void)
 {
 	/*
-	 * QNX Screen App Context
+	 * BB Screen App Context
 	 */
 	if (screen_create_context(&scrn_ctx, SCREEN_APPLICATION_CONTEXT) != 0) {
 		perror("screen_create_context");
@@ -629,7 +636,7 @@ QNXViewport::CreateScreenWindow(void)
 	flags |= sfScreenContext;
 
 	/*
-	 * QNX Screen Window
+	 * BB Screen Window
 	 */
 	if (screen_create_window_type(&scrn_window, scrn_ctx, SCREEN_APPLICATION_WINDOW)) {
 		perror("screen_create_window_type");
@@ -673,7 +680,7 @@ QNXViewport::CreateScreenWindow(void)
 }
 
 bool
-QNXViewport::SetupScreenWindow(void)
+BBViewport::SetupScreenWindow(void)
 {
 	/*
 	 * Get display information
@@ -735,29 +742,29 @@ QNXViewport::SetupScreenWindow(void)
 		return(false);
 	}
 
-	MMDEBUG("QNX: Window size (" << wsize.width << "x" << wsize.height << ")");
+	MMDEBUG("BB: Window size (" << wsize.width << "x" << wsize.height << ")");
 
 	return(true);
 }
 
 void
-QNXViewport::TeardownScreenWindow(void)
+BBViewport::TeardownScreenWindow(void)
 {
 	/* destroy screen window buffers */
 	if (screen_destroy_window_buffers(scrn_window) != 0) {
 		perror("screen_destroy_window_buffers");
-		MMERROR("QNX: Failed to destroy screen window buffers. IGNORING.");
+		MMERROR("BB: Failed to destroy screen window buffers. IGNORING.");
 	}
 }
 
 void
-QNXViewport::DestroyScreenWindow(void)
+BBViewport::DestroyScreenWindow(void)
 {
 	/* destroy screen window */
 	if (sfScreenWindow == (flags & sfScreenWindow)) {
 		if (screen_destroy_window(scrn_window) != 0) {
 			perror("screen_destroy_window");
-			MMERROR("QNX: Failed to destroy screen window. IGNORING.");
+			MMERROR("BB: Failed to destroy screen window. IGNORING.");
 		}
 		scrn_window = 0;
 		flags ^= sfScreenWindow;
@@ -767,7 +774,7 @@ QNXViewport::DestroyScreenWindow(void)
 	if (sfScreenContext == (flags & sfScreenContext)) {
 		screen_stop_events(scrn_ctx);
 		if (screen_destroy_context(scrn_ctx) != 0)
-			MMERROR("QNX: Failed to destroy screen context. IGNORING.");
+			MMERROR("BB: Failed to destroy screen context. IGNORING.");
 		scrn_ctx = 0;
 		flags ^= sfScreenContext;
 	}
@@ -786,7 +793,7 @@ glGetProcAddress(const char *f)
 bool
 Viewport::Active(void)
 {
-	using namespace OpenGL::QNXViewport;
+	using namespace OpenGL::BBViewport;
 	return(sfActiveReadyValid == (flags & sfActiveReadyValid));
 }
 
@@ -794,14 +801,14 @@ bool
 Viewport::Initialize(void)
 {
 	using namespace OpenGL;
-	return(QNXViewport::Initialize());
+	return(BBViewport::Initialize());
 }
 
 void
 Viewport::Finalize(void)
 {
 	using namespace OpenGL;
-	QNXViewport::Finalize();
+	BBViewport::Finalize();
 }
 
 bool
@@ -815,10 +822,10 @@ Viewport::Setup(const Graphics::Display &display)
 		return(false);
 	s_working = true;
 
-	QNXViewport::Destroy();
+	BBViewport::Destroy();
 
-	if (!QNXViewport::Create(display)) {
-		QNXViewport::Destroy();
+	if (!BBViewport::Create(display)) {
+		BBViewport::Destroy();
 		s_working = false;
 		return(false);
 	}
@@ -831,14 +838,14 @@ void
 Viewport::Tick(float delta)
 {
 	using namespace OpenGL;
-	QNXViewport::Tick(delta);
+	BBViewport::Tick(delta);
 }
 
 void
 Viewport::SwapBuffer(void)
 {
 	using namespace OpenGL;
-	QNXViewport::SwapBuffer();
+	BBViewport::SwapBuffer();
 	Painter::Reset();
 }
 
@@ -846,27 +853,27 @@ const Graphics::Display &
 Viewport::Display(void)
 {
 	using namespace OpenGL;
-	return(QNXViewport::dpy);
+	return(BBViewport::dpy);
 }
 
 const Math::Size2f &
 Viewport::Size(void)
 {
 	using namespace OpenGL;
-	return(QNXViewport::vsize);
+	return(BBViewport::vsize);
 }
 
 const Math::Size2i &
 Viewport::WindowSize(void)
 {
 	using namespace OpenGL;
-	return(QNXViewport::wsize);
+	return(BBViewport::wsize);
 }
 
 const Core::Type &
 Viewport::Type(void)
 {
-	static const Core::Type s_type("QNX");
+	static const Core::Type s_type("BB");
 	return(s_type);
 }
 

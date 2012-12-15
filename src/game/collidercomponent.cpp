@@ -72,7 +72,7 @@ ColliderComponent::ColliderComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
     , m_p(new Private)
 {
-	m_p->body = BoxType;
+	m_p->body = btBox;
 	m_p->active = true;
 	m_p->bullet = false;
 	m_p->bullet_resolution = DELTA_STEPS;
@@ -127,7 +127,7 @@ ColliderComponent::isColliding(ColliderComponent &c, float d, CollisionData *dat
 		const Math::Point2 &l_pos_b = c.position()->position();
 
 		switch(m_p->body) {
-		case SphereType: {
+		case btSphere: {
 			float l_distance2 = l_pos_b.difference(l_pos_a).magnitude2();
 			l_distance2 -= c.radius2() + radius2();
 
@@ -138,7 +138,7 @@ ColliderComponent::isColliding(ColliderComponent &c, float d, CollisionData *dat
 			}
 			} break;
 
-		case BoxType: {
+		case btBox: {
 			const Math::Size2f l_size_a = m_p->size->size() / 2.f;
 			const Math::Size2f l_size_b = c.size()->size() / 2.f;
 
@@ -162,7 +162,7 @@ ColliderComponent::isColliding(ColliderComponent &c, float d, CollisionData *dat
 				return(true);
 			} break;
 
-		case CapsuleType:
+		case btCapsule:
 		default: return(false);
 		}
 	}

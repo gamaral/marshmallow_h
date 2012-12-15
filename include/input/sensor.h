@@ -34,28 +34,37 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_INPUT_QNX_SCREEN_H
-#define MARSHMALLOW_INPUT_QNX_SCREEN_H 1
+#ifndef MARSHMALLOW_INPUT_SENSOR_H
+#define MARSHMALLOW_INPUT_SENSOR_H 1
 
-#include "core/environment.h"
-#include "core/namespace.h"
-
-#include <bps/screen.h>
+#include <core/environment.h>
+#include <core/fd.h>
+#include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Input { /****************************************** Input Namespace */
+namespace Sensor { /********************************* Input::Sensor Namespace */
 
-/**** IMPLEMENTATION NOTES *****************************************************
- *
- */
-namespace QNX { /*************************************** Input::QNX Namespace */
-namespace Screen { /**************************** Input::QNX::Screen Namespace */
+	/*! @brief Sensor Types */
+	enum Type
+	{
+		Unknown = 0,                              /*!< Unknown Sensor */
+		Accelerometer,
+		Altimeter,
+		Gravity,
+		Gyroscope,
+		Humidity,
+		Light,
+		LinearAcceleration,
+		Magnetometer,
+		Pressure,
+		Proximity,
+		RotationVector,
+		Temperature,
+		Types                                       /*!< Sensor Count */
+	};
 
-	MARSHMALLOW_INPUT_EXPORT
-	bool HandleEvent(int type, screen_event_t &event);
-
-} /********************************************* Input::QNX::Screen Namespace */
-} /***************************************************** Input::QNX Namespace */
+} /************************************************** Input::Sensor Namespace */
 } /********************************************************** Input Namespace */
 MARSHMALLOW_NAMESPACE_END
 

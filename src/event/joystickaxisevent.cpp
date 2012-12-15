@@ -52,7 +52,7 @@ JoystickAxisEvent::JoystickAxisEvent(
     int maximum_,
     size_t source_,
     MMTIME timestamp_)
-    : InputEvent(JoystickType, axis_, value_, source_, timestamp_)
+    : InputEvent(itJoystick, axis_, value_, source_, timestamp_)
     , m_p(new Private)
 {
 	m_p->minimum = minimum_;

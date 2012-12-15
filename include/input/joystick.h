@@ -51,9 +51,11 @@ namespace Joystick { /***************************** Input::Joystick Namespace */
 	/*! @brief Joystick Actions */
 	enum Action
 	{
-		ButtonReleased = 0,
-		ButtonPressed  = 1,
-		AxisChanged    = 2
+		Unknown = 0,                              /*!< Unknown Action */
+		ButtonReleased,
+		ButtonPressed,
+		AxisChanged,
+		Actions                                     /*!< Action Count */
 	};
 
 	/*! @brief Joystick Axes */

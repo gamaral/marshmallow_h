@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/keyboardevent.h"
+#pragma once
 
 /*!
  * @file
@@ -34,31 +34,32 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/identifier.h"
-#include "core/platform.h"
+#ifndef MARSHMALLOW_INPUT_BB_SENSOR_H
+#define MARSHMALLOW_INPUT_BB_SENSOR_H 1
+
+#include "core/environment.h"
+#include "core/namespace.h"
+
+#include <bps/sensor.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Event { /****************************************** Event Namespace */
+namespace Input { /****************************************** Input Namespace */
 
-KeyboardEvent::KeyboardEvent(Input::Keyboard::Key key_,
-                             Input::Keyboard::Action action_,
-                             size_t source_,
-                             MMTIME timestamp_)
-    : InputEvent(itKeyboard, key_, action_, source_, timestamp_)
-{
-}
+/**** IMPLEMENTATION NOTES *****************************************************
+ *
+ */
+namespace BB { /***************************************** Input::BB Namespace */
+namespace Sensor { /***************************** Input::BB::Sensor Namespace */
 
-KeyboardEvent::~KeyboardEvent(void)
-{
-}
+	MARSHMALLOW_INPUT_EXPORT
+	bool Initialize(void);
 
-const Core::Type &
-KeyboardEvent::Type(void)
-{
-	static const Core::Type s_type("Event::KeyboardEvent");
-	return(s_type);
-}
+	MARSHMALLOW_INPUT_EXPORT
+	bool HandleEvent(int type, bps_event_t *event);
 
-} /********************************************************** Event Namespace */
+} /********************************************** Input::BB::Sensor Namespace */
+} /****************************************************** Input::BB Namespace */
+} /********************************************************** Input Namespace */
 MARSHMALLOW_NAMESPACE_END
 
+#endif

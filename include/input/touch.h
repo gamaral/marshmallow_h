@@ -48,9 +48,11 @@ namespace Touch { /*********************************** Input::Touch Namespace */
 	/*! @brief Touch Actions */
 	enum Action
 	{
-		Press   = 0,
-		Move    = 1,
-		Release = 2
+		Unknown = 0,                              /*!< Unknown Action */
+		Press,
+		Move,
+		Release,
+		Actions                                     /*!< Action Count */
 	};
 
 } /*************************************************** Input::Touch Namespace */

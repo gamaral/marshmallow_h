@@ -50,7 +50,7 @@ JoystickButtonEvent::JoystickButtonEvent(
     int state_,
     size_t source_,
     MMTIME timestamp_)
-    : InputEvent(JoystickType, button_, action_, source_, timestamp_)
+    : InputEvent(itJoystick, button_, action_, source_, timestamp_)
     , m_p(new Private)
 {
 	m_p->state = state_;

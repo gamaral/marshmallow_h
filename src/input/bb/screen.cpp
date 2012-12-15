@@ -43,7 +43,6 @@
 
 #include "input/keyboard_p.h"
 
-#include <bps/screen.h>
 #include <screen/screen.h>
 
 #include <sys/keycodes.h>
@@ -55,8 +54,8 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Input { /****************************************** Input Namespace */
-namespace QNX { /************************************* Input::QNX Namespace */
-namespace { /***************************** Input::QNX::<anonymous> Namespace */
+namespace BB { /***************************************** Input::BB Namespace */
+namespace { /******************************* Input::BB::<anonymous> Namespace */
 
 inline bool HandleScreenKeyEvent(screen_event_t &e);
 inline bool HandleScreenTouchEvent(int type, screen_event_t &e);
@@ -210,7 +209,7 @@ HandleScreenEvents(int type, screen_event_t &e)
 	return(false);
 }
 
-} /*************************************** Input::QNX::<anonymous> Namespace */
+} /***************************************** Input::BB::<anonymous> Namespace */
 
 bool
 Screen::HandleEvent(int type, screen_event_t &e)
@@ -218,7 +217,7 @@ Screen::HandleEvent(int type, screen_event_t &e)
 	return(HandleScreenEvents(type, e));
 }
 
-} /**************************************************** Input::QNX Namespace */
+} /****************************************************** Input::BB Namespace */
 } /********************************************************** Input Namespace */
 MARSHMALLOW_NAMESPACE_END
 

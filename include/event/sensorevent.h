@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,7 +26,7 @@
  * or implied, of Marshmallow Engine.
  */
 
-#include "event/keyboardevent.h"
+#pragma once
 
 /*!
  * @file
@@ -34,31 +34,50 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/identifier.h"
-#include "core/platform.h"
+#ifndef MARSHMALLOW_EVENT_SENSOREVENT_H
+#define MARSHMALLOW_EVENT_SENSOREVENT_H 1
+
+#include <event/inputevent.h>
+
+#include <input/sensor.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
 
-KeyboardEvent::KeyboardEvent(Input::Keyboard::Key key_,
-                             Input::Keyboard::Action action_,
-                             size_t source_,
-                             MMTIME timestamp_)
-    : InputEvent(itKeyboard, key_, action_, source_, timestamp_)
-{
-}
+	/*! @brief Event Sensor Class */
+	class MARSHMALLOW_EVENT_EXPORT
+	SensorEvent : public InputEvent
+	{
+		struct Private;
+		Private *m_p;
+		
+		NO_ASSIGN_COPY(SensorEvent);
+	public:
 
-KeyboardEvent::~KeyboardEvent(void)
-{
-}
+		SensorEvent(Input::Sensor::Type type,
+		           float x, float y, float z,
+                           size_t source,
+		           MMTIME timestamp = 0);
+		virtual ~SensorEvent(void);
 
-const Core::Type &
-KeyboardEvent::Type(void)
-{
-	static const Core::Type s_type("Event::KeyboardEvent");
-	return(s_type);
-}
+		Input::Sensor::Type sensor(void) const
+		    { return(static_cast<Input::Sensor::Type>(code())); }
+
+		float x() const;
+		float y() const;
+		float z() const;
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
+	};
 
 } /********************************************************** Event Namespace */
 MARSHMALLOW_NAMESPACE_END
 
+#endif

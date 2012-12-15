@@ -52,8 +52,10 @@ namespace Keyboard { /***************************** Input::Keyboard Namespace */
 	/*! @brief Keyboard Key Actions */
 	enum Action
 	{
-		KeyReleased     = 0,
-		KeyPressed      = 1
+		Unknown = 0,                              /*!< Unknown Action */
+		KeyReleased,
+		KeyPressed,
+		Actions                                     /*!< Action Count */
 	};
 
 	/*! @brief Keyboard Keys */
