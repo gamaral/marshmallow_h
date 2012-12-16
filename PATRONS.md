@@ -11,8 +11,9 @@ Thanks for your support!
 	Romain Pokrzywka
 	Ingolf Schäfer
 
-### Groups
+### Organizations
 
 	Adafruit Industries
 	The Raspberry Pi Foundation
+	Research in Motion
 
