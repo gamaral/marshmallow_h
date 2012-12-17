@@ -43,8 +43,9 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 	endif()
 endif()
 
-add_library(marshmallow_tinyxml STATIC ${MARSHMALLOW_TINYXML_SRCS})
+add_library(marshmallow_tinyxml ${MARSHMALLOW_TINYXML_SRCS})
 
 install(TARGETS marshmallow_tinyxml
+        LIBRARY DESTINATION lib COMPONENT runtime
         ARCHIVE DESTINATION lib COMPONENT development)
 
