@@ -27,8 +27,22 @@
 #
 
 # TinyXML
+set(TINYXML_LIBRARY marshmallow_tinyxml)
 set(TINYXML_LIBRARIES marshmallow_tinyxml)
 set(TINYXML_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/contrib/tinyxml2/code")
+mark_as_advanced(TINYXML_LIBRARIES TINYXML_LIBRARY TINYXML_INCLUDE_DIR)
+
+# SQLite3
+if(MARSHMALLOW_CONTRIB_SQLITE)
+	set(SQLITE_LIBRARIES marshmallow_sqlite3)
+	set(SQLITE_LIBRARY marshmallow_sqlite3)
+	set(SQLITE_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/contrib/sqlite3/code")
+	mark_as_advanced(SQLITE_LIBRARIES SQLITE_LIBRARY SQLITE_INCLUDE_DIR)
+	message(STATUS "Building with bundled SQLite3")
+else()
+	message(STATUS "Building with system SQLite3")
+	find_package(SQLite3 REQUIRED)
+endif()
 
 # Box2D
 if(MARSHMALLOW_WITH_BOX2D)
@@ -40,7 +54,7 @@ if(MARSHMALLOW_WITH_BOX2D)
 	set(BOX2D_LIBRARIES ${BOX2D_LIBRARY} CACHE STRING "")
 
 	mark_as_advanced(BOX2D_BASE BOX2D_INCLUDE_DIR BOX2D_LIBRARY BOX2D_INCLUDE_DIRS BOX2D_LIBRARIES)
-	message(STATUS "Builing with Box2D")
+	message(STATUS "Building with Box2D")
 endif()
 
 # Lua

@@ -29,6 +29,9 @@
 # TinyXML
 add_subdirectory(tinyxml2)
 
+# SQLite3
+add_subdirectory(sqlite3)
+
 # Box2D
 if(MARSHMALLOW_WITH_BOX2D)
 	add_subdirectory(box2d)
