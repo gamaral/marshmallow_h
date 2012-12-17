@@ -77,7 +77,7 @@ JoystickDevice::JoystickDevice(int fd_, Type type_, uint16_t vendor,
 	     l_abs_code_it != l_abs_codes.end();
 	     ++l_abs_code_it) {
 		l_absinfo = new input_absinfo;
-		memset(l_absinfo, 0, sizeof(l_absinfo));
+		memset(l_absinfo, 0, sizeof(struct input_absinfo));
 		ioctl(fd(), EVIOCGABS(l_abs_code_it->first), l_absinfo);
 
 		/* update fuzz */
