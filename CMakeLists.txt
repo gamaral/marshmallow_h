@@ -77,14 +77,13 @@ option(MARSHMALLOW_VIEWPORT_DUMMY  "Use Dummy Viewport (testing)"    ON)
 option(MARSHMALLOW_VIEWPORT_GX     "Use GX Viewport (wii)"          OFF)
 option(MARSHMALLOW_VIEWPORT_OPENGL "Use OpenGL Viewport (multiple)" OFF)
 
-option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG" ON)
-option(MARSHMALLOW_CONTRIB_LUA    "Use bundled LUA"    ON)
-option(MARSHMALLOW_CONTRIB_ZLIB   "Use bundled ZLIB"   ON)
+option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG"  ON)
+option(MARSHMALLOW_CONTRIB_LUA    "Use bundled LUA"     ON)
+option(MARSHMALLOW_CONTRIB_SQLITE "Use bundled SQLite3" ON)
+option(MARSHMALLOW_CONTRIB_ZLIB   "Use bundled ZLIB"    ON)
 
 option(MARSHMALLOW_WITH_BOX2D "Use Box2D" ON)
 option(MARSHMALLOW_WITH_LUA   "Use Lua"   OFF)
-
-option(MARSHMALLOW_DEMO "Build Marshmallow Demos" ON)
 
 ########################################################### GLOBAL SUB-OPTIONS #
 
@@ -179,7 +178,7 @@ include_directories(${PROJECT_BINARY_DIR}/src
 
 if(EXISTS ${PROJECT_SOURCE_DIR}/target/CMakeLists.txt)
 	add_subdirectory(target)
-elseif(MARSHMALLOW_DEMO)
+elseif(EXISTS ${PROJECT_SOURCE_DIR}/demos/CMakeLists.txt)
 	add_subdirectory(demos)
 else()
 	set(MARSHMALLOW_LIBRARY_ONLY ON)
