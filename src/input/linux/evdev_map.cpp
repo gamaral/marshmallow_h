@@ -455,12 +455,12 @@ Map::PopulateEventCodes(uint16_t vendor, uint16_t product, const char *name,
 	if (!s_map_document) return(false);
 
 	/* device type */
-	const char *l_device_type = 0;
+	const char *l_entry_type = 0;
 	switch (type) {
-	case GamepadType:  l_device_type = "gamepad"; break;
-	case JoystickType: l_device_type = "joystick"; break;
-	case KeyboardType: l_device_type = "keyboard"; break;
-	case MouseType:    l_device_type = "mouse"; break;
+	case GamepadType:  l_entry_type = "gamepad"; break;
+	case JoystickType: l_entry_type = "joystick"; break;
+	case KeyboardType: l_entry_type = "keyboard"; break;
+	case MouseType:    l_entry_type = "mouse"; break;
 
 	case AnyType:
 	case UnknownType: return(false);
@@ -482,38 +482,51 @@ Map::PopulateEventCodes(uint16_t vendor, uint16_t product, const char *name,
 	 *
 	 */
 	XMLElement *l_root = s_map_document->RootElement();
-	XMLElement *l_device = l_root->FirstChildElement(l_device_type);
-	while (l_device) {
-		if (0 == vendor && 0 == product) {
-			XMLElement *l_name = l_device->FirstChildElement("name");
-			const char *l_devname = l_name ? l_name->GetText() : 0;
-			if (l_devname && 0 == strncmp(name, l_devname, strlen(l_devname)))
-				break;
-		}
-		else {
-			unsigned int l_vendor;
-			unsigned int l_product;
-
-			if (XML_NO_ERROR ==
-			        l_device->QueryUnsignedAttribute("vendor", &l_vendor)
-			    && l_vendor == vendor
-			    && XML_NO_ERROR ==
-			        l_device->QueryUnsignedAttribute("product", &l_product)
-			    && l_product == product)
-				break;
-		}
-
-		l_device = l_device->NextSiblingElement(l_device_type);
+#define EVDEV_MAP_REVISION 1
+	if (l_root->UnsignedAttribute("revision") != EVDEV_MAP_REVISION) {
+		MMERROR("Invalid evdev map file revision: Expecting revision " << EVDEV_MAP_REVISION);
+		return(false);
 	}
 
-	/* check to see if we found the device */
-	if (!l_device) return(false);
+	XMLElement *l_entry = l_root->FirstChildElement(l_entry_type);
+	while (l_entry) {
+		XMLElement *l_device = l_entry->FirstChildElement("device");
+		while (l_device) {
+			if (0 == vendor && 0 == product) {
+				const char *l_devname = l_device->GetText();
+				if (l_devname && 0 == strncmp(name, l_devname, strlen(l_devname)))
+					break;
+			}
+			else {
+				unsigned int l_vendor = 0;
+				unsigned int l_product = 0;
+
+				if (XML_NO_ERROR ==
+					l_device->QueryUnsignedAttribute("vendor", &l_vendor)
+				    && l_vendor == vendor
+				    && XML_NO_ERROR ==
+					l_device->QueryUnsignedAttribute("product", &l_product)
+				    && l_product == product)
+					break;
+			}
+
+			l_device = l_device->NextSiblingElement("device");
+		}
+
+		/* check to see if we found the device */
+		if (l_device) break;
+
+		l_entry = l_entry->NextSiblingElement(l_entry_type);
+	}
+
+	/* exit if we didn't an entry for the device */
+	if (!l_entry) return(false);
 
 	/*
 	 *  process device entry
 	 *
 	 */
-	XMLElement *l_element = l_device->FirstChildElement(l_event);
+	XMLElement *l_element = l_entry->FirstChildElement(l_event);
 	while(l_element) {
 		unsigned int l_code;
 		const char *l_sym = l_element->Attribute("sym");

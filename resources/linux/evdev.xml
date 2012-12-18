@@ -1,7 +1,7 @@
-<evdev revision="0">
+<evdev revision="1">
 
-	<joystick vendor="1133" product="49690">
-		<name>Logitech Logitech(R) Precision(TM) Gamepad</name>
+	<joystick>
+		<device vendor="1133" product="49690">Logitech Logitech(R) Precision(TM) Gamepad</device>
 
 		<abs code="0"   sym="HX" />
 		<abs code="1"   sym="HY" />
@@ -18,8 +18,13 @@
 		<key code="297" sym="START" />
 	</joystick>
 
-	<gamepad vendor="3695" product="531">
-		<name>Generic X-Box pad</name>
+	<gamepad>
+		<device vendor="1118" product="654">Microsoft X-Box 360 pad</device>
+		<device vendor="3695" product="531">Afterglow Gamepad for Xbox 360</device>
+		<device vendor="7085" product="61462">Mad Catz Xbox 360 Controller</device>
+		<device vendor="7085" product="63745">Gamestop Xbox 360 Controller</device>
+		<device vendor="7085" product="63747">Tron Xbox 360 controller</device>
+		<device vendor="9414" product="21248">PowerA MINI PROEX Controller</device>
 
 		<abs code="0"   sym="X"  fuzz="5000" />
 		<abs code="1"   sym="Y"  fuzz="5000" />
@@ -43,8 +48,8 @@
 		<key code="316" sym="MENU" />
 	</gamepad>
 
-	<gamepad vendor="0" product="0">
-		<name>Xbox Gamepad (userspace driver)</name>
+	<gamepad>
+		<device vendor="0" product="0">Xbox Gamepad (userspace driver)</device>
 
 		<abs code="0"   sym="X" />
 		<abs code="1"   sym="Y" />
@@ -68,8 +73,8 @@
 		<key code="316" sym="MENU" />
 	</gamepad>
 
-	<gamepad vendor="0" product="0">
-		<name>iControlPad</name>
+	<gamepad>
+		<device vendor="0" product="0">iControlPad</device>
 
 		<abs code="0"   sym="X" />
 		<abs code="1"   sym="Y" />
@@ -91,8 +96,8 @@
 		<key code="304" sym="UP" />
 	</gamepad>
 
-	<joystick vendor="2341" product="1000">
-		<name>Mayflash.,Ltd Mayflash Wii Classic Controller</name>
+	<joystick>
+		<device vendor="2341" product="1000">Mayflash.,Ltd Mayflash Wii Classic Controller</device>
 
 		<abs code="0"   sym="X" />
 		<abs code="1"   sym="Y" />
@@ -117,10 +122,10 @@
 		<key code="299" sym="UP" />
 	</joystick>
 
-	<keyboard vendor="9025" product="32822">
-		<name>Arduino LLC Arduino Leonardo</name>
-
+	<keyboard>
 		<!-- MakeyMakey -->
+
+		<device vendor="9025" product="32822">Arduino LLC Arduino Leonardo</device>
 
 		<key code="17"  sym="UP" />
 		<key code="30"  sym="LEFT" />
