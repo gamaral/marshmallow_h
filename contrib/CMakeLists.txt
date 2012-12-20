@@ -30,7 +30,9 @@
 add_subdirectory(tinyxml2)
 
 # SQLite3
-add_subdirectory(sqlite3)
+if(MARSHMALLOW_CONTRIB_SQLITE)
+	add_subdirectory(sqlite3)
+endif()
 
 # Box2D
 if(MARSHMALLOW_WITH_BOX2D)
@@ -52,10 +54,7 @@ if(MARSHMALLOW_ANDROID)
 	add_subdirectory(android-jni)
 endif()
 
-if(MARSHMALLOW_VIEWPORT_OPENGL)
-	# LibPNG
-	if(MARSHMALLOW_CONTRIB_LIBPNG)
-		add_subdirectory(libpng)
-	endif()
+if(MARSHMALLOW_CONTRIB_LIBPNG)
+	add_subdirectory(libpng)
 endif()
 

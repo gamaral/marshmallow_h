@@ -62,21 +62,6 @@ set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Marshmallow Namespace")
 option(MARSHMALLOW_DEBUG "Marshmallow Debugging" OFF)
 set(MARSHMALLOW_DEBUG_VERBOSITY "0" CACHE STRING "Verbosity Level")
 
-set(MARSHMALLOW_ENGINE_FRAMERATE "60"  CACHE STRING "Default engine frame rate (FPS)")
-
-set(MARSHMALLOW_VIEWPORT_TITLE  "Marshmallow Engine" CACHE STRING "Build Title")
-set(MARSHMALLOW_VIEWPORT_WIDTH  "720" CACHE STRING "Native viewport width")
-set(MARSHMALLOW_VIEWPORT_HEIGHT "480" CACHE STRING "Native viewport height")
-set(MARSHMALLOW_VIEWPORT_DEPTH  "24"  CACHE STRING "Default viewport depth")
-set(MARSHMALLOW_VIEWPORT_VSYNC  "1"   CACHE STRING "Default swap interval (0 = OFF)")
-
-option(MARSHMALLOW_VIEWPORT_FULLSCREEN "Viewport default fullscreen mode"      OFF)
-option(MARSHMALLOW_VIEWPORT_LOCK_WIDTH "Use width for aspect ratio resolution" OFF)
-
-option(MARSHMALLOW_VIEWPORT_DUMMY  "Use Dummy Viewport (testing)"    ON)
-option(MARSHMALLOW_VIEWPORT_GX     "Use GX Viewport (wii)"          OFF)
-option(MARSHMALLOW_VIEWPORT_OPENGL "Use OpenGL Viewport (multiple)" OFF)
-
 option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG"  ON)
 option(MARSHMALLOW_CONTRIB_LUA    "Use bundled LUA"     ON)
 option(MARSHMALLOW_CONTRIB_SQLITE "Use bundled SQLite3" ON)
@@ -84,85 +69,6 @@ option(MARSHMALLOW_CONTRIB_ZLIB   "Use bundled ZLIB"    ON)
 
 option(MARSHMALLOW_WITH_BOX2D "Use Box2D" ON)
 option(MARSHMALLOW_WITH_LUA   "Use Lua"   OFF)
-
-########################################################### GLOBAL SUB-OPTIONS #
-
-if(UNIX)
-	option(MARSHMALLOW_INPUT_LINUX_EVDEV "Linux event device support"       OFF)
-
-	if (MARSHMALLOW_INPUT_LINUX_EVDEV)
-		option(MARSHMALLOW_EVDEV_KEYBOARD "Linux event device keyboard support" ON)
-		option(MARSHMALLOW_EVDEV_JOYSTICK "Linux event device joystick support" ON)
-	endif()
-endif()
-
-if(MARSHMALLOW_VIEWPORT_DUMMY)
-	option(MARSHMALLOW_DUMMY_FAIL "Make dummy viewport fail initialization" OFF)
-endif()
-
-if(MARSHMALLOW_VIEWPORT_OPENGL)
-	option(MARSHMALLOW_OPENGL_EGL "Use EGL context (x11/vc)"                 OFF)
-	option(MARSHMALLOW_OPENGL_ES2 "Use OpenGL ES 2.0 (x11/vc)"               OFF)
-	option(MARSHMALLOW_OPENGL_JNI "Use OpenGL JNI Android Viewport (jni)"    OFF)
-	option(MARSHMALLOW_OPENGL_BB  "Use OpenGL BlackBerry Screen Viewport (bb)" OFF)
-	option(MARSHMALLOW_OPENGL_QT4 "Use OpenGL Qt4 Viewport (qt4)"            OFF)
-	option(MARSHMALLOW_OPENGL_SDL "Use OpenGL SDL Viewport (sdl)"            OFF)
-	option(MARSHMALLOW_OPENGL_VC  "Use OpenGL VideoCore Viewport (broadcom)" OFF)
-	option(MARSHMALLOW_OPENGL_WGL "Use OpenGL WGL Viewport (windows)"        OFF)
-	option(MARSHMALLOW_OPENGL_X11 "Use OpenGL X11 & GLX/EGL Viewport (unix)" OFF)
-
-	if(MARSHMALLOW_OPENGL_X11)
-		option(MARSHMALLOW_INPUT_UNIX_X11        "X11 input event support"                ON)
-		option(MARSHMALLOW_X11_GRAB_KEYBOARD     "Grab keyboard while in fullscreen mode" ON)
-		option(MARSHMALLOW_X11_GRAB_POINTER      "Grab pointer while in fullscreen mode"  ON)
-		option(MARSHMALLOW_X11_OVERRIDE_REDIRECT "Override redirect in fullscreen mode"   ON)
-	endif()
-
-	if(MARSHMALLOW_OPENGL_QT4)
-		option(MARSHMALLOW_INPUT_MISC_QT4 "Qt4 input event support"  ON)
-	endif()
-
-	if(MARSHMALLOW_OPENGL_SDL)
-		option(MARSHMALLOW_INPUT_MISC_SDL "SDL input event support"  ON)
-	endif()
-
-	if(MARSHMALLOW_OPENGL_WGL)
-		option(MARSHMALLOW_INPUT_W32_SYSTEM "Windows input event support" ON)
-	endif()
-
-	if(MARSHMALLOW_OPENGL_BB)
-		option(MARSHMALLOW_INPUT_BB_SCREEN "BlackBerry screen input event support" ON)
-		option(MARSHMALLOW_INPUT_BB_SENSOR "BlackBerry sensor input event support" ON)
-
-		if(MARSHMALLOW_INPUT_BB_SENSOR)
-			option(MARSHMALLOW_INPUT_BB_ACCELEROMETER "BlackBerry accelerometer support"        OFF)
-			option(MARSHMALLOW_INPUT_BB_GRAVITY       "BlackBerry gravity sensor support"       OFF)
-			option(MARSHMALLOW_INPUT_BB_GYROSCOPE     "BlackBerry gyroscope support"            OFF)
-			option(MARSHMALLOW_INPUT_BB_LINEAR_ACCEL  "BlackBerry linear accelerometer support" OFF)
-			option(MARSHMALLOW_INPUT_BB_MAGNETOMETER  "BlackBerry magnetometer support"         OFF)
-		endif()
-	endif()
-endif()
-
-##################################################################### PLATFORM #
-
-if(UNIX)
-	find_library(M_LIBRARY
-	    NAMES m
-	    PATHS /usr/lib /usr/local/lib
-	)
-	if(NOT M_LIBRARY)
-		message(FATAL_ERROR "No math library found.")
-	endif()
-
-	mark_as_advanced(M_LIBRARY)
-elseif(WIN32)
-	set(M_LIBRARY "")
-
-	if(MSVC)
-	    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-	endif()
-endif()
 
 ###################################################################### CONTRIB #
 

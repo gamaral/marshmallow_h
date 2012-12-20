@@ -42,10 +42,10 @@
 #include "core/weak.h"
 #include "core/zlib.h"
 
+#include "graphics/backend.h"
 #include "graphics/factory.h"
 #include "graphics/quadmesh.h"
 #include "graphics/tileset.h"
-#include "graphics/viewport.h"
 
 #include "game/entity.h"
 #include "game/entityscenelayer.h"
@@ -203,8 +203,8 @@ TMXLoader::Private::processMap(XMLElement &m)
 			}
 
 			if (0 == MMSTRCASECMP(l_value, "screen")) {
-				const Math::Size2f &l_vsize = Graphics::Viewport::Size();
-				const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
+				const Math::Size2f &l_vsize = Graphics::Backend::Size();
+				const Math::Size2i &l_wsize = Graphics::Backend::WindowSize();
 
 				/*
 				 * calculate pixels per viewport coordinate ratio
@@ -372,8 +372,8 @@ TMXLoader::Private::processLayer(XMLElement &e)
 
 			Math::Size2f l_scale = l_layer->scale();
 			if (0 == MMSTRCASECMP(l_value, "screen")) {
-				const Math::Size2f &l_vsize = Graphics::Viewport::Size();
-				const Math::Size2i &l_wsize = Graphics::Viewport::WindowSize();
+				const Math::Size2f &l_vsize = Graphics::Backend::Size();
+				const Math::Size2i &l_wsize = Graphics::Backend::WindowSize();
 
 				/*
 				 * calculate pixels per viewport coordinate ratio

@@ -42,7 +42,6 @@
 #include <core/global.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-
 namespace Audio { /****************************************** Audio Namespace */
 
 	struct ITrack;

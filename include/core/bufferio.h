@@ -75,6 +75,16 @@ namespace Core { /******************************************** Core Namespace */
 		 * @param size Data buffer size
 		 */
 		explicit BufferIO(const char *buffer, size_t size);
+
+		/*!
+		 * Device is opened automatically
+		 *
+		 * @brief Construct read-only device from buffer
+		 * @param buffer Data buffer
+		 * @param size Data buffer size
+		 */
+		explicit BufferIO(const unsigned char *buffer, size_t size);
+
 		virtual ~BufferIO(void);
 
 	public: /* virtual */

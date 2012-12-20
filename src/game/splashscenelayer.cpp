@@ -45,10 +45,10 @@
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
 
+#include "graphics/backend.h"
 #include "graphics/itexturedata.h"
 #include "graphics/painter.h"
 #include "graphics/quadmesh.h"
-#include "graphics/viewport.h"
 
 #include "game/engine.h"
 #include "game/iengine.h"
@@ -131,7 +131,7 @@ SplashSceneLayer::Private::calculateQuadScale(void)
 		return;
 
 	const Math::Size2i &l_texture_size = mesh->textureData()->size();
-	const Math::Size2i &l_window_size = Graphics::Viewport::WindowSize();
+	const Math::Size2i &l_window_size = Graphics::Backend::WindowSize();
 
 	float l_pixel_scale_x =
 	    static_cast<float>(l_texture_size.width) /

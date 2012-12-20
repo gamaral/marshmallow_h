@@ -44,10 +44,10 @@
 #include "math/matrix4.h"
 #include "math/point2.h"
 
+#include "graphics/backend_p.h"
 #include "graphics/camera.h"
 #include "graphics/quadmesh.h"
 #include "graphics/transform.h"
-#include "graphics/viewport_p.h"
 
 #include "extensions.h"
 #include "texturecoordinatedata.h"
@@ -389,8 +389,8 @@ GLPainter::LoadProjection(void)
 	using namespace Math;
 
 	matrix = Matrix4::Identity();
-	matrix[Matrix4::m11] =  2.f / Viewport::Size().width;
-	matrix[Matrix4::m22] =  2.f / Viewport::Size().height;
+	matrix[Matrix4::m11] =  2.f / Backend::Size().width;
+	matrix[Matrix4::m22] =  2.f / Backend::Size().height;
 	matrix[Matrix4::m33] = -1.f;
 
 	flags |= sfInvalidMatrix;

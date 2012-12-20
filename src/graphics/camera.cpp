@@ -36,8 +36,8 @@
 
 #include "core/logger.h"
 
+#include "graphics/backend.h"
 #include "graphics/transform.h"
-#include "graphics/viewport.h"
 
 #include <cmath>
 
@@ -64,7 +64,7 @@ void
 UpdateVisibility(void)
 {
 	using namespace Graphics;
-	const Math::Size2f &l_size = Viewport::Size();
+	const Math::Size2f &l_size = Backend::Size();
 	s_data.visibility = l_size / s_data.transform.scale();
 }
 
@@ -76,7 +76,7 @@ Camera::Reset(void)
 	s_data.transform.setRotation(.0f);
 	s_data.transform.setScale(Math::Size2f::Identity());
 	s_data.transform.setTranslation(Math::Point2::Zero());
-	s_data.visibility = Viewport::Size();
+	s_data.visibility = Backend::Size();
 	UpdateMagnitude2();
 }
 

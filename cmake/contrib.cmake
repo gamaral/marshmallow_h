@@ -26,6 +26,25 @@
 # or implied, of Marshmallow Engine.
 #
 
+# Math
+if(UNIX)
+	find_library(M_LIBRARY
+	    NAMES m
+	    PATHS /usr/lib /usr/local/lib
+	)
+	if(NOT M_LIBRARY)
+		message(FATAL_ERROR "No math library found.")
+	endif()
+
+	mark_as_advanced(M_LIBRARY)
+elseif(WIN32)
+	set(M_LIBRARY "")
+
+	if(MSVC)
+	    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+	endif()
+endif()
+
 # TinyXML
 set(TINYXML_LIBRARY marshmallow_tinyxml)
 set(TINYXML_LIBRARIES marshmallow_tinyxml)
@@ -92,21 +111,19 @@ if(MARSHMALLOW_ANDROID)
 	message(STATUS "Building with bundled Android JNI glue")
 endif()
 
-if(MARSHMALLOW_VIEWPORT_OPENGL)
-	# LibPNG
-	if(MARSHMALLOW_CONTRIB_LIBPNG)
-		set(PNG_PNG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/libpng/code
-		                        ${PROJECT_BINARY_DIR}/contrib/libpng/code)
-		if(BUILD_SHARED_LIBS)
-			set(PNG_DEFINITIONS -DPNG_STATIC)
-		endif()
-		set(PNG_LIBRARY marshmallow_libpng)
-		set(PNG_LIBRARIES ${PNG_LIBRARY})
-		message(STATUS "Building with bundled LibPNG")
-	else()
-		message(STATUS "Building with system LibPNG")
-		find_package(PNG REQUIRED)
+# LibPNG
+if(MARSHMALLOW_CONTRIB_LIBPNG)
+	set(PNG_PNG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/libpng/code
+				${PROJECT_BINARY_DIR}/contrib/libpng/code)
+	if(BUILD_SHARED_LIBS)
+		set(PNG_DEFINITIONS -DPNG_STATIC)
 	endif()
-	set(PNG_INCLUDE_DIR ${PNG_PNG_INCLUDE_DIR})
+	set(PNG_LIBRARY marshmallow_libpng)
+	set(PNG_LIBRARIES ${PNG_LIBRARY})
+	message(STATUS "Building with bundled LibPNG")
+else()
+	message(STATUS "Building with system LibPNG")
+	find_package(PNG REQUIRED)
 endif()
+set(PNG_INCLUDE_DIR ${PNG_PNG_INCLUDE_DIR})
 

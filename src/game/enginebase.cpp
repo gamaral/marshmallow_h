@@ -46,9 +46,11 @@
 #include "event/renderevent.h"
 #include "event/updateevent.h"
 
+#include "audio/backend_p.h"
+
+#include "graphics/backend_p.h"
 #include "graphics/display.h"
 #include "graphics/painter_p.h"
-#include "graphics/viewport_p.h"
 
 #include "input/joystick_p.h"
 #include "input/keyboard_p.h"
@@ -62,7 +64,7 @@ namespace Game { /******************************************** Game Namespace */
 namespace { /************************************ Game::<anonymous> Namespace */
 
 void
-GetViewportOverrides(Graphics::Display &display)
+GetBackendOverrides(Graphics::Display &display)
 {
 	const char *l_env;
 	if ((l_env = getenv("MM_WIDTH")))
@@ -144,7 +146,7 @@ EngineBase::initialize(void)
 	using namespace Input;
 
 	/*
-	 * Initialize Subsystems
+	 * Initialize Backends
 	 */
 
 	Platform::Initialize();
@@ -153,9 +155,10 @@ EngineBase::initialize(void)
 		m_p->event_manager = new Event::EventManager("EngineBase.EventManager");
 	eventManager()->connect(this, Event::QuitEvent::Type());
 
-	Viewport::Initialize();
-	Keyboard::Initialize();
-	Joystick::Initialize();
+	Audio::Backend::Initialize();
+	Graphics::Backend::Initialize();
+	Input::Joystick::Initialize();
+	Input::Keyboard::Initialize();
 
 	if (!m_p->scene_manager)
 		m_p->scene_manager = new SceneManager();
@@ -167,13 +170,13 @@ EngineBase::initialize(void)
 	 * Environment Overrides
 	 */
 	
-	Graphics::Display l_display = Viewport::Display();
-	GetViewportOverrides(l_display);
+	Graphics::Display l_display = Graphics::Backend::Display();
+	GetBackendOverrides(l_display);
 
 	/*
 	 * Setup
 	 */
-	if (!Viewport::Setup(l_display)) {
+	if (!Graphics::Backend::Setup(l_display)) {
 		MMERROR("Failed to initialize engine!");
 		return(false);
 	}
@@ -199,7 +202,8 @@ EngineBase::finalize(void)
 
 	Joystick::Finalize();
 	Keyboard::Finalize();
-	Viewport::Finalize();
+	Graphics::Backend::Finalize();
+	Audio::Backend::Finalize();
 
 	m_p->event_manager.clear();
 
@@ -406,10 +410,10 @@ EngineBase::factory(void) const
 void
 EngineBase::tick(float delta)
 {
-	using namespace Graphics;
 	using namespace Input;
 
-	Viewport::Tick(delta);
+	Audio::Backend::Tick(delta);
+	Graphics::Backend::Tick(delta);
 	Keyboard::Tick(delta);
 	Joystick::Tick(delta);
 
@@ -427,25 +431,22 @@ void
 EngineBase::render(void)
 {
 	using namespace Event;
-	using namespace Graphics;
 
-	if (!Viewport::Active() || m_p->suspended)
+	if (!Graphics::Backend::Active() || m_p->suspended)
 		return;
 
-	Painter::Render();
+	Graphics::Painter::Render();
 
 	RenderEvent event;
 	eventManager()->dispatch(event);
 
-	Viewport::SwapBuffer();
+	Graphics::Backend::Finish();
 }
 
 void
 EngineBase::update(float d)
 {
-	using namespace Graphics;
-
-	if (!Viewport::Active() || m_p->suspended)
+	if (!Graphics::Backend::Active() || m_p->suspended)
 		return;
 
 	Event::UpdateEvent event(d);

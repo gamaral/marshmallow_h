@@ -1,9 +1,38 @@
 add_definitions(-DMARSHMALLOW_INPUT_LIBRARY)
 
+if(UNIX)
+	option(MARSHMALLOW_INPUT_LINUX_EVDEV "Linux event device support"       OFF)
+endif()
+
+if(MARSHMALLOW_OPENGL_BB)
+	option(MARSHMALLOW_INPUT_BB_SCREEN "BlackBerry screen input event support" ON)
+	option(MARSHMALLOW_INPUT_BB_SENSOR "BlackBerry sensor input event support" ON)
+
+	if(MARSHMALLOW_INPUT_BB_SENSOR)
+		option(MARSHMALLOW_INPUT_BB_ACCELEROMETER "BlackBerry accelerometer support"        OFF)
+		option(MARSHMALLOW_INPUT_BB_GRAVITY       "BlackBerry gravity sensor support"       OFF)
+		option(MARSHMALLOW_INPUT_BB_GYROSCOPE     "BlackBerry gyroscope support"            OFF)
+		option(MARSHMALLOW_INPUT_BB_LINEAR_ACCEL  "BlackBerry linear accelerometer support" OFF)
+		option(MARSHMALLOW_INPUT_BB_MAGNETOMETER  "BlackBerry magnetometer support"         OFF)
+	endif()
+elseif(MARSHMALLOW_OPENGL_QT4)
+	option(MARSHMALLOW_INPUT_MISC_QT4   "Qt4 input event support"     ON)
+elseif(MARSHMALLOW_OPENGL_SDL)
+	option(MARSHMALLOW_INPUT_MISC_SDL   "SDL input event support"     ON)
+elseif(MARSHMALLOW_OPENGL_WGL)
+	option(MARSHMALLOW_INPUT_W32_SYSTEM "Windows input event support" ON)
+elseif(MARSHMALLOW_OPENGL_X11)
+	option(MARSHMALLOW_INPUT_UNIX_X11   "X11 input event support"     ON)
+endif()
+
+
 file(GLOB MARSHMALLOW_INPUT_SRCS *.cpp)
 set(MARSHMALLOW_INPUT_LIBS marshmallow_core marshmallow_event)
 
 if(MARSHMALLOW_INPUT_LINUX_EVDEV)
+	option(MARSHMALLOW_EVDEV_KEYBOARD "Linux event device keyboard support" ON)
+	option(MARSHMALLOW_EVDEV_JOYSTICK "Linux event device joystick support" ON)
+
 	add_definitions(-DMARSHMALLOW_INPUT_LINUX_EVDEV)
 	set(MARSHMALLOW_INPUT_SRCS ${MARSHMALLOW_INPUT_SRCS}
 	                           linux/evdev.cpp
