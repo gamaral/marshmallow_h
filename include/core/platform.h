@@ -98,6 +98,7 @@ namespace Platform { /****************************** Core::Platform Namespace */
 
 	MARSHMALLOW_CORE_EXPORT
 	std::string TemporaryDirectory(void);
+
 } /************************************************* Core::Platform Namespace */
 
 	/*!

@@ -158,16 +158,15 @@ PCM::Write(Handle *pcm_handle)
 {
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 
-	int l_rc;
-	if ((l_rc = snd_pcm_writei(pcm_handle->device, pcm_handle->buffer, pcm_handle->frames) < 0)) {
-		switch(l_rc) {
-		case -EPIPE:
-			MMERROR("Underflow occurred!");
-			snd_pcm_prepare(pcm_handle->device);
-			break;
-		}
+	/*
+	 * Reset PCM if it reached underrun (due to pause or system slow down)
+	 */
+	if (SND_PCM_STATE_XRUN == snd_pcm_state(pcm_handle->device))
+		snd_pcm_recover(pcm_handle->device, -EPIPE, 0);
+
+	if (snd_pcm_writei(pcm_handle->device, pcm_handle->buffer, pcm_handle->frames) < 0)
 		return(false);
-	}
+
 	return(true);
 }
 
