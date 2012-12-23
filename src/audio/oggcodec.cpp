@@ -137,7 +137,7 @@ struct OggCodec::Private
 	OggVorbis_File handle;
 
 	uint32_t rate;
-	uint16_t channels;
+	uint8_t  channels;
 	bool opened;
 };
 
@@ -189,8 +189,8 @@ OggCodec::Private::open(const Core::SharedDataIO &_dio)
 
 	/* get track info */
 	vorbis_info *l_info = ov_info(&handle, -1);
-	channels = static_cast<uint16_t>(l_info->channels);
 	rate = static_cast<uint32_t>(l_info->rate);
+	channels = static_cast<uint8_t>(l_info->channels);
 
 	return(opened = true);
 }
@@ -273,16 +273,16 @@ OggCodec::rate(void) const
 	return(m_p->rate);
 }
 
-uint16_t
-OggCodec::channels(void) const
-{
-	return(m_p->channels);
-}
-
-uint16_t
+uint8_t
 OggCodec::depth(void) const
 {
 	return(16);
+}
+
+uint8_t
+OggCodec::channels(void) const
+{
+	return(m_p->channels);
 }
 
 size_t

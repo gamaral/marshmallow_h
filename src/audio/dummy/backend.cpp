@@ -34,6 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <cassert>
+
 #include "core/global.h"
 #include "core/identifier.h"
 #include "core/logger.h"
@@ -67,6 +69,65 @@ Backend::Implementation(void)
 	return(s_implementation);
 }
 
+namespace Backend { /******************************* Audio::Backend Namespace */
+
+struct PCM::Handle
+{
+	char  *buffer;
+	size_t buffer_size;
+};
+
+PCM::Handle *
+PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
+{
+	MMUNUSED(sample_rate);
+
+	PCM::Handle *l_handle(new Handle);
+
+#define DUMMY_FRAMES 512
+	l_handle->buffer_size = (bit_depth/8) * channels * DUMMY_FRAMES;
+	l_handle->buffer = new char[l_handle->buffer_size];
+
+	MMDEBUG("Dummy PCM device opened.");
+
+	return(l_handle);
+}
+
+void
+PCM::Close(Handle *pcm_handle)
+{
+	assert(pcm_handle && "Tried to use invalid PCM device!");
+
+	delete[] pcm_handle->buffer, pcm_handle->buffer = 0;
+	delete pcm_handle;
+
+	MMDEBUG("Dummy PCM device closed.");
+}
+
+bool
+PCM::Write(Handle *pcm_handle)
+{
+	assert(pcm_handle && "Tried to use invalid PCM device!");
+	return(pcm_handle);
+}
+
+bool
+PCM::Pause(Handle *pcm_handle, bool state)
+{
+	assert(pcm_handle && "Tried to use invalid PCM device!");
+	MMUNUSED(state);
+	return(pcm_handle);
+}
+
+void
+PCM::Buffer(Handle *pcm_handle, char *&buffer, size_t &bsize)
+{
+	assert(pcm_handle && "Tried to use invalid PCM device!");
+	buffer = pcm_handle->buffer;
+	bsize  = pcm_handle->buffer_size;
+}
+
+} /************************************************* Audio::Backend Namespace */
 } /********************************************************** Audio Namespace */
 MARSHMALLOW_NAMESPACE_END
 

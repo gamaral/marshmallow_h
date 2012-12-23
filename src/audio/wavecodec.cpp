@@ -48,8 +48,8 @@ struct WaveCodec::Private
 	    : cursor(0)
 	    , start(0)
 	    , rate(0)
-	    , channels(0)
 	    , depth(0)
+	    , channels(0)
 	    , opened(false)
 	{}
 
@@ -62,8 +62,8 @@ struct WaveCodec::Private
 	long cursor;
 	long start;
 	uint32_t rate;
-	uint16_t channels;
-	uint16_t depth;
+	uint8_t  depth;
+	uint8_t  channels;
 	bool opened;
 };
 
@@ -129,12 +129,12 @@ WaveCodec::Private::open(const Core::SharedDataIO &_dio)
 	}
 
 	/* update sound parameters */
-	channels = l_fmt_subchunk.channels;
 	rate = l_fmt_subchunk.sample_rate;
-	depth = l_fmt_subchunk.bps;
-	MMDEBUG("WAVE Channels: " << channels);
+	depth = static_cast<uint8_t>(l_fmt_subchunk.bps);
+	channels = static_cast<uint8_t>(l_fmt_subchunk.channels);
 	MMDEBUG("WAVE Rate: " << rate);
 	MMDEBUG("WAVE Depth: " << depth);
+	MMDEBUG("WAVE Channels: " << channels);
 
 	/*
 	 * DATA SUBCHUNK
@@ -222,16 +222,16 @@ WaveCodec::rate(void) const
 	return(m_p->rate);
 }
 
-uint16_t
-WaveCodec::channels(void) const
-{
-	return(m_p->channels);
-}
-
-uint16_t
+uint8_t
 WaveCodec::depth(void) const
 {
 	return(m_p->depth);
+}
+
+uint8_t
+WaveCodec::channels(void) const
+{
+	return(m_p->channels);
 }
 
 size_t

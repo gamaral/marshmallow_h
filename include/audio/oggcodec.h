@@ -67,8 +67,8 @@ namespace Audio { /****************************************** Audio Namespace */
 		VIRTUAL bool isOpen(void) const;
 
 		VIRTUAL uint32_t rate(void) const;
-		VIRTUAL uint16_t channels(void) const;
-		VIRTUAL uint16_t depth(void) const;
+		VIRTUAL uint8_t  depth(void) const;
+		VIRTUAL uint8_t  channels(void) const;
 
 		VIRTUAL size_t read(void *buffer, size_t bsize);
 

@@ -34,13 +34,14 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#define ALSA_PCM_NEW_HW_PARAMS_API
-#include <alsa/asoundlib.h>
+#include <cstring>
 
 #include "core/logger.h"
 #include "core/shared.h"
 
 #include "audio/icodec.h"
+
+#include "backend_p.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
@@ -49,146 +50,93 @@ struct Track::Private
 {
 	Private(const SharedCodec &_codec)
 	    : codec(_codec)
-	    , frames(0)
-	    , size(0)
+	    , bsize(0)
 	    , buffer(0)
-	    , params(0)
 	    , handle(0)
 	    , iterations(0)
 	    , skip_decode(false)
 	{
-		open();
 	}
 
 	~Private(void)
 	{
-		close();
+		stop();
 	}
 
-	bool open(void);
-	void close(void);
-
 	bool play(int iterations);
-	void stop(bool _force);
+	void stop(void);
 
-	void update(float delta);
+	void update(void);
 
 	SharedCodec codec;
-	snd_pcm_uframes_t frames;
-	size_t size;
+	size_t bsize;
 	char *buffer;
-	snd_pcm_hw_params_t *params;
-	snd_pcm_t *handle;
+	Backend::PCM::Handle *handle;
 	int iterations;
 	bool skip_decode;
 };
 
 bool
-Track::Private::open(void)
+Track::Private::play(int _iterations)
 {
-	int l_rc;
-
-	if (!codec || !codec->isOpen()) {
-		MMERROR("Invalid codec assigned to audio player.");
+	/* sanity checks */
+	if (handle) {
+		MMERROR("Track already playing!");
 		return(false);
 	}
+	else if (_iterations == 0) return(false);
 
-	if ((l_rc = snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK))) {
-		MMERROR("Unable to open device: " << snd_strerror(l_rc));
-		return(false);
-	}
-
-	int l_dir = 0;
-	unsigned int l_rate = codec->rate();
-
-	snd_pcm_hw_params_alloca(&params);
-	snd_pcm_hw_params_any(handle, params);
-	snd_pcm_hw_params_set_access(handle, params, SND_PCM_ACCESS_RW_INTERLEAVED);
-
-	if (codec->depth() == 8) {
-		snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_S8);
-		size = codec->channels();
-	}
-	else if (codec->depth() == 16) {
-		snd_pcm_hw_params_set_format(handle, params, SND_PCM_FORMAT_S16_LE);
-		size = 2 * codec->channels();
-	}
-
-	snd_pcm_hw_params_set_channels(handle, params, codec->channels());
-	snd_pcm_hw_params_set_rate_near(handle, params, &l_rate, &l_dir);
-
-	if ((l_rc = snd_pcm_hw_params(handle, params))) {
-		MMERROR("Unable to set hw parameters: " << snd_strerror(l_rc));
-		return(false);
-	}
-
-	snd_pcm_hw_params_get_period_size_max(params, &frames, &l_dir);
-
-	size *= frames;
-	buffer = new char[size];
-
+	iterations = _iterations;
 	skip_decode = false;
+	codec->reset();
+
+	handle = Backend::PCM::Open(codec->rate(), codec->depth(), codec->channels());
+	Backend::PCM::Buffer(handle, buffer, bsize);
+
+	update();
 
 	return(true);
 }
 
 void
-Track::Private::close(void)
+Track::Private::stop(void)
 {
-	snd_pcm_drain(handle);
-	snd_pcm_hw_free(handle);
-	snd_pcm_close(handle);
-	delete [] buffer, buffer = 0;
-}
+	/* sanity check */
+	if (!handle) return;
 
-bool
-Track::Private::play(int _iterations)
-{
-	iterations = _iterations;
-	codec->reset();
-	snd_pcm_prepare(handle);
-	update(0);
-
-	return(iterations != 0);
+	Backend::PCM::Close(handle), handle = 0;
+	bsize = 0;
+	buffer = 0;
+	iterations = 0;
 }
 
 void
-Track::Private::stop(bool _force)
+Track::Private::update(void)
 {
-	iterations = _force ? 0 : 1;
-}
+	/* sanity check */
+	if (!handle) return;
 
-void
-Track::Private::update(float)
-{
-	if (!iterations) return;
+	/* stop check */
+	if (!iterations) {
+		stop();
+		return;
+	}
 
 	if (!skip_decode) {
-		memset(buffer, 0, size);
-		size_t l_read = codec->read(buffer, size);
+		memset(buffer, 0, bsize);
+		size_t l_read = codec->read(buffer, bsize);
 
 		/*
-		 * Reached the end (loop)
+		 * Reaching the end, check if we need to loop
 		 */
-		if (l_read < size) {
-			if (iterations == -1 || --iterations) {
-				codec->reset();
-				l_read += codec->read(buffer + l_read, size - l_read);
-			}
+		if (l_read < bsize && (iterations == -1 || --iterations)) {
+			codec->reset();
+			l_read += codec->read(buffer + l_read, bsize - l_read);
 		}
 	}
 	else skip_decode = false;
 
-	int l_rc;
-	if ((l_rc = snd_pcm_writei(handle, buffer, frames) < 0)) {
-		switch(l_rc) {
-		case -EPIPE:
-			MMERROR("Underflow occured!");
-			snd_pcm_prepare(handle);
-			break;
-		}
-		skip_decode = true;
-	}
+	skip_decode = !Backend::PCM::Write(handle);
 }
 
 /********************************************************************* Track */
@@ -210,9 +158,9 @@ Track::play(int _iterations)
 }
 
 void
-Track::stop(bool _force)
+Track::stop(void)
 {
-	m_p->stop(_force);
+	m_p->stop();
 }
 
 bool
@@ -222,9 +170,9 @@ Track::isPlaying(void) const
 }
 
 void
-Track::tick(float delta)
+Track::tick(float)
 {
-	m_p->update(delta);
+	m_p->update();
 }
 
 bool

@@ -56,8 +56,6 @@ namespace Audio { /****************************************** Audio Namespace */
 
 	/*!
 	 * @brief Audio Track
-	 *
-	 * This class must be implemented by the backend.
 	 */
 	class MARSHMALLOW_AUDIO_EXPORT
 	Track
@@ -71,7 +69,7 @@ namespace Audio { /****************************************** Audio Namespace */
 		~Track(void);
 
 		bool play(int iterations = 1);
-		void stop(bool force = false);
+		void stop(void);
 		bool isPlaying(void) const;
 
 		void tick(float delta);

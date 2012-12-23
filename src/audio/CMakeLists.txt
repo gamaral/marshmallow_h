@@ -8,7 +8,8 @@ option(MARSHMALLOW_AUDIO_OPENAL "Use OpenAL Audio Backend" OFF)
 
 add_definitions(-DMARSHMALLOW_AUDIO_LIBRARY)
 
-set(MARSHMALLOW_AUDIO_SRCS oggcodec.cpp
+set(MARSHMALLOW_AUDIO_SRCS track.cpp
+                           oggcodec.cpp
                            wavecodec.cpp
 )
 

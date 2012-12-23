@@ -56,6 +56,42 @@ namespace Backend { /******************************* Audio::Backend Namespace */
 	MARSHMALLOW_AUDIO_EXPORT
 	void Tick(float delta);
 
+/*! @brief Audio Backend PCM Interface
+ *
+ */
+namespace PCM { /****************************** Audio::Backend::PCM Namespace */
+
+	/*!
+	 * Implementation-dependant class containing backend PCM information.
+	 */
+	struct Handle;
+
+	/*!
+	 * Open PCM device
+	 */
+	Handle * Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels);
+
+	/*!
+	 * Close PCM device
+	 */
+	void Close(Handle *pcm_handle);
+
+	/*!
+	 * Write to PCM device
+	 */
+	bool Write(Handle *pcm_handle);
+
+	/*!
+	 * Pause PCM device playback
+	 */
+	bool Pause(Handle *pcm_handle, bool state = true);
+
+	/*!
+	 * Get PCM buffer info
+	 */
+	void Buffer(Handle *pcm_handle, char *&buffer, size_t &bsize);
+
+} /******************************************** Audio::Backend::PCM Namespace */
 } /************************************************* Audio::Backend Namespace */
 } /********************************************************** Audio Namespace */
 MARSHMALLOW_NAMESPACE_END
