@@ -1,6 +1,7 @@
 ################################################################################
 
-set(MARSHMALLOW_AUDIO_ALSA_SRCS backend.cpp)
+set(MARSHMALLOW_AUDIO_ALSA_SRCS backend.cpp
+                                track.cpp)
 
 find_package(ALSA)
 set(MARSHMALLOW_AUDIO_ALSA_LIBS ${ALSA_LIBRARY})

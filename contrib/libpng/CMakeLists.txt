@@ -1,5 +1,9 @@
 project(marshmallow_libpng)
 
+if(NOT ZLIB_FOUND)
+	message(FATAL_ERROR "LibPNG requires Zlib, and it was not found!")
+endif()
+
 include_directories(${ZLIB_INCLUDE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/code)
@@ -50,7 +54,7 @@ add_definitions(-DLIBPNG_NO_CONSOLE_IO)
 add_definitions(-DLIBPNG_NO_STDIO)
 
 add_library(${PNG_LIBRARY} ${PNG_SRCS})
-target_link_libraries(${PNG_LIBRARY} ${ZLIB_LIBRARIES} ${M_LIBRARY})
+target_link_libraries(${PNG_LIBRARY} ${ZLIB_LIBRARY} ${M_LIBRARY})
 
 install(TARGETS ${PNG_LIBRARY}
         LIBRARY DESTINATION lib COMPONENT runtime

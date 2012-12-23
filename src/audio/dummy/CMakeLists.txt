@@ -1,6 +1,7 @@
 ################################################################################
 
-set(MARSHMALLOW_AUDIO_DUMMY_SRCS backend.cpp)
+set(MARSHMALLOW_AUDIO_DUMMY_SRCS backend.cpp
+                                 track.cpp)
 
 ################################################################################
 

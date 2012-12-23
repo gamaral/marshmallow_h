@@ -103,6 +103,29 @@ buffer_write_test(void)
 	TEST("BUFFER WRITE WRITE 10 COMPARE", 0 == strcmp(l_scratch, s_content));
 }
 
+void
+buffer_clone_test(void)
+{
+	char l_scratch[16];
+
+	Core::BufferIO l_buffer_orig(s_content, sizeof(s_content));
+
+	Core::BufferIO l_buffer_copy(l_buffer_orig);
+	TEST("BUFFER COPY ISOPEN", l_buffer_copy.isOpen());
+
+	memset(l_scratch, 0, sizeof(l_scratch));
+	l_buffer_copy.read(l_scratch, 15);
+	TEST("BUFFER COPY CONTENT OK", 0 == strcmp(l_scratch, s_content));
+
+
+	Core::BufferIO l_buffer_clone(&l_buffer_orig);
+	TEST("BUFFER CLONE ISOPEN", l_buffer_clone.isOpen());
+
+	memset(l_scratch, 0, sizeof(l_scratch));
+	l_buffer_clone.read(l_scratch, 15);
+	TEST("BUFFER CLONE CONTENT OK", 0 == strcmp(l_scratch, s_content));
+}
+
 int
 MMain(int argc, char *argv[])
 {
@@ -111,6 +134,7 @@ MMain(int argc, char *argv[])
 
 	buffer_readonly_test();
 	buffer_write_test();
+	buffer_clone_test();
 
 	return(TEST_EXITCODE);
 }

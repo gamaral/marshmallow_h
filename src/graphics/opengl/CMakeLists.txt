@@ -13,16 +13,20 @@ option(MARSHMALLOW_OPENGL_X11 "Use OpenGL X11 & GLX/EGL Backend (unix)"   OFF)
 
 ################################################################################
 
-set(MARSHMALLOW_GRAPHICS_OPENGL_SRCS ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
-	                             extensions.cpp
-	                             factory.cpp
-	                             painter.cpp
-	                             texturecoordinatedata.cpp
-	                             texturedata.cpp
-	                             vertexdata.cpp)
+set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS}
+	                              extensions.cpp
+	                              factory.cpp
+	                              painter.cpp
+	                              texturecoordinatedata.cpp
+	                              texturedata.cpp
+	                              vertexdata.cpp)
 
-set(MARSHMALLOW_GRAPHICS_OPENGL_LIBS ${MARSHMALLOW_GRAPHICS_OPENGL_LIBS}
-	                             ${PNG_LIBRARIES})
+set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+	                              marshmallow_core
+	                              marshmallow_event
+	                              marshmallow_input
+	                              marshmallow_math
+	                              ${PNG_LIBRARY})
 
 include_directories(${PNG_PNG_INCLUDE_DIR})
 include_directories(${ZLIB_INCLUDE_DIR})
@@ -30,8 +34,8 @@ include_directories(${ZLIB_INCLUDE_DIR})
 if(MARSHMALLOW_OPENGL_EGL)
 	find_package(EGL)
 
-	set(MARSHMALLOW_GRAPHICS_OPENGL_LIBS ${MARSHMALLOW_GRAPHICS_OPENGL_LIBS}
-	                                     ${EGL_LIBRARY})
+	set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+	                                      ${EGL_LIBRARY})
 
 	include_directories(${EGL_INCLUDE_DIR})
 
@@ -41,8 +45,8 @@ endif()
 if(MARSHMALLOW_OPENGL_ES2)
 	find_package(GLES2)
 
-	set(MARSHMALLOW_GRAPHICS_OPENGL_LIBS ${MARSHMALLOW_GRAPHICS_OPENGL_LIBS}
-	                                     ${GLES2_LIBRARY})
+	set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+	                                      ${GLES2_LIBRARY})
 
 	include_directories(${GLES2_INCLUDE_DIR})
 
@@ -51,8 +55,8 @@ if(MARSHMALLOW_OPENGL_ES2)
 else()
 	find_package(OpenGL)
 
-	set(MARSHMALLOW_GRAPHICS_OPENGL_LIBS ${MARSHMALLOW_GRAPHICS_OPENGL_LIBS}
-	                                     ${OPENGL_gl_LIBRARY})
+	set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+	                                      ${OPENGL_gl_LIBRARY})
 
 	include_directories(${OPENGL_INCLUDE_DIR})
 endif()
@@ -67,21 +71,21 @@ if(MARSHMALLOW_OPENGL_X11)
 	option(MARSHMALLOW_X11_GRAB_POINTER      "Grab pointer while in fullscreen mode"  ON)
 	option(MARSHMALLOW_X11_OVERRIDE_REDIRECT "Override redirect in fullscreen mode"   ON)
 
-	set(MARSHMALLOW_GRAPHICS_OPENGL_SRCS ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
-	                                     backend-x11.cpp)
+	set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS}
+	                                      backend-x11.cpp)
 
 	find_package(X11)
 
-	set(MARSHMALLOW_GRAPHICS_OPENGL_LIBS ${MARSHMALLOW_GRAPHICS_OPENGL_LIBS}
-	                                     ${X11_X11_LIB})
+	set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+	                                      ${X11_X11_LIB})
 
 	include_directories(${X11_X11_INCLUDE_PATH})
 
 	add_definitions(-DMARSHMALLOW_OPENGL_X11)
 
 	if(X11_Xinerama_FOUND)
-		set(MARSHMALLOW_GRAPHICS_OPENGL_LIBS ${MARSHMALLOW_GRAPHICS_OPENGL_LIBS}
-		                                     ${X11_Xinerama_LIB})
+		set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+		                                      ${X11_Xinerama_LIB})
 
 		include_directories(${X11_Xinerama_INCLUDE_PATH})
 		add_definitions(-DMARSHMALLOW_X11_XINERAMA)
@@ -103,8 +107,8 @@ if(MARSHMALLOW_OPENGL_X11)
 		add_definitions(-DMARSHMALLOW_X11_OVERRIDE_REDIRECT)
 	endif()
 elseif(MARSHMALLOW_OPENGL_WGL)
-	set(MARSHMALLOW_GRAPHICS_OPENGL_SRCS ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
-	                                     backend-wgl.cpp)
+	set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS}
+	                                      backend-wgl.cpp)
 
 
 	add_definitions(-DMARSHMALLOW_OPENGL_WGL)
@@ -113,13 +117,13 @@ elseif(MARSHMALLOW_OPENGL_WGL)
 		add_definitions(-DMARSHMALLOW_INPUT_W32_SYSTEM)
 	endif()
 elseif(MARSHMALLOW_OPENGL_SDL)
-	set(MARSHMALLOW_GRAPHICS_OPENGL_SRCS ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
-	                                     backend-sdl.cpp)
+	set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS}
+	                                      backend-sdl.cpp)
 
 	find_package(SDL)
 
-	set(MARSHMALLOW_GRAPHICS_OPENGL_LIBS ${MARSHMALLOW_GRAPHICS_OPENGL_LIBS}
-	                                     ${SDL_LIBRARY})
+	set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+	                                      ${SDL_LIBRARY})
 
 	include_directories(${SDL_INCLUDE_DIR})
 
@@ -129,14 +133,14 @@ elseif(MARSHMALLOW_OPENGL_SDL)
 		add_definitions(-DMARSHMALLOW_INPUT_MISC_SDL)
 	endif()
 elseif(MARSHMALLOW_OPENGL_QT4)
-	set(MARSHMALLOW_GRAPHICS_OPENGL_SRCS ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
-	                                     backend-qt4.cpp)
+	set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS}
+	                                      backend-qt4.cpp)
 
 	find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL)
 	include(${QT_USE_FILE})
 
-	set(MARSHMALLOW_GRAPHICS_OPENGL_LIBS ${MARSHMALLOW_GRAPHICS_OPENGL_LIBS}
-	                                     ${QT_LIBRARIES})
+	set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+	                                      ${QT_LIBRARIES})
 
 	include_directories(${QT_INCLUDE_DIR})
 
@@ -150,13 +154,13 @@ elseif(MARSHMALLOW_OPENGL_QT4)
 # Broadcom VideoCore (Used in Raspberry Pi)
 #
 elseif(MARSHMALLOW_OPENGL_VC)
-	set(MARSHMALLOW_GRAPHICS_OPENGL_SRCS ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
-	                                     backend-vc.cpp)
+	set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS}
+	                                      backend-vc.cpp)
 
 	find_package(BCM_HOST)
 
-	set(MARSHMALLOW_GRAPHICS_OPENGL_LIBS ${MARSHMALLOW_GRAPHICS_OPENGL_LIBS}
-	                                     ${BCM_HOST_LIBRARIES})
+	set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+	                                      ${BCM_HOST_LIBRARIES})
 
 	include_directories(${BCM_HOST_INCLUDE_DIRS})
 
@@ -166,11 +170,11 @@ elseif(MARSHMALLOW_OPENGL_VC)
 # BlackBerry Screen (QNX)
 #
 elseif(MARSHMALLOW_OPENGL_BB)
-	set(MARSHMALLOW_GRAPHICS_OPENGL_SRCS ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
-	                                     backend-bb.cpp)
-	set(MARSHMALLOW_GRAPHICS_OPENGL_LIBS ${MARSHMALLOW_GRAPHICS_OPENGL_LIBS}
-	                                     bps
-	                                     screen)
+	set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS}
+	                                      backend-bb.cpp)
+	set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+	                                      bps
+	                                      screen)
 
 	add_definitions(-DMARSHMALLOW_OPENGL_BB)
 
@@ -187,11 +191,11 @@ elseif(MARSHMALLOW_OPENGL_BB)
 # Android JNI
 #
 elseif(MARSHMALLOW_OPENGL_JNI)
-	set(MARSHMALLOW_GRAPHICS_OPENGL_SRCS ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS}
-	                                     backend-jni.cpp)
-	set(MARSHMALLOW_GRAPHICS_OPENGL_LIBS ${MARSHMALLOW_GRAPHICS_OPENGL_LIBS}
-	                                     ${ANDROID_JNI_LIBRARY}
-	                                     marshmallow_entrypoint)
+	set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS}
+	                                      backend-jni.cpp)
+	set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+	                                      ${ANDROID_JNI_LIBRARY}
+	                                      marshmallow_entrypoint)
 
 	include_directories(${ANDROID_JNI_INCLUDE_DIR})
 
@@ -205,9 +209,16 @@ else()
 	message(WARNING "No OpenGL subsystem variant selected!")
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
+	if(BUILD_SHARED_LIBS)
+		set(CMAKE_CXX_FLAGS "-fPIC -DPIC ${CMAKE_CXX_FLAGS}")
+		set(CMAKE_C_FLAGS "-fPIC -DPIC ${CMAKE_C_FLAGS}")
+	endif()
+endif()
+
 add_definitions(-DMARSHMALLOW_GRAPHICS_OPENGL)
 
-add_library(marshmallow_graphics_opengl ${MARSHMALLOW_GRAPHICS_OPENGL_SRCS})
+add_library(marshmallow_graphics_backend STATIC ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS})
 
-target_link_libraries(marshmallow_graphics_opengl ${MARSHMALLOW_GRAPHICS_OPENGL_LIBS})
+target_link_libraries(marshmallow_graphics_backend ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS})
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -40,37 +40,43 @@
 #include <core/iasset.h>
 
 #include <core/global.h>
-#include <core/idataio.h>
+#include <core/fd.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	struct IDataIO;
+	typedef Core::Shared<IDataIO> SharedDataIO;
+} /*********************************************************** Core Namespace */
+
 namespace Audio { /****************************************** Audio Namespace */
 
+	struct ICodec;
+	typedef Core::Shared<ICodec> SharedCodec;
+
+
 	/*!
-	 * @brief Audio Asset
+	 * @brief Audio Track
+	 *
+	 * This class must be implemented by the backend.
 	 */
-	class Track : public Core::IAsset
+	class MARSHMALLOW_AUDIO_EXPORT
+	Track
 	{
 		struct Private;
 		Private *m_p;
 
 	public:
 
-		Track(const Core::Identifier &id, const Core::SharedDataIO &dio);
-		virtual ~Track(void);
+		Track(const Audio::SharedCodec &codec);
+		~Track(void);
 
-		unsigned int channels(void) const;
-		unsigned int depth(void) const;
-		unsigned int rate(void) const;
+		bool play(int iterations = 1);
+		void stop(bool force = false);
+		bool isPlaying(void) const;
 
-		bool load(void);
-		void unload(void);
+		void tick(float delta);
 
-		bool isLoaded(void) const;
-
-	public: /* virtual */
-
-		VIRTUAL const Core::Identifier & id(void) const;
-		VIRTUAL const Core::Type & type(void) const;
+		bool isValid(void) const;
 	};
 	typedef Core::Shared<Track> SharedTrack;
 	typedef Core::Weak<Track> WeakTrack;

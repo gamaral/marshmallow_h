@@ -131,15 +131,15 @@ FileIO::isOpen(void) const
 }
 
 size_t
-FileIO::read(char *b, size_t bs)
+FileIO::read(void *b, size_t bs)
 {
-	return(fread(b, bs, 1, m_p->handle));
+	return(fread(b, 1, bs, m_p->handle));
 }
 
 size_t
-FileIO::write(const char *b, size_t bs)
+FileIO::write(const void *b, size_t bs)
 {
-	return(fwrite(b, bs, 1, m_p->handle));
+	return(fwrite(b, 1, bs, m_p->handle));
 }
 
 bool

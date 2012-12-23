@@ -54,7 +54,17 @@ if(MARSHMALLOW_ANDROID)
 	add_subdirectory(android-jni)
 endif()
 
+# PNG
 if(MARSHMALLOW_CONTRIB_LIBPNG)
 	add_subdirectory(libpng)
+endif()
+
+# OGG
+if(MARSHMALLOW_CONTRIB_OGG)
+	add_subdirectory(ogg)
+endif()
+
+if(MARSHMALLOW_CONTRIB_VORBIS)
+	add_subdirectory(vorbis)
 endif()
 

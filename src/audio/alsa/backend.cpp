@@ -37,6 +37,9 @@
 #include "core/global.h"
 #include "core/identifier.h"
 
+#define ALSA_PCM_NEW_HW_PARAMS_API
+#include <alsa/asoundlib.h>
+
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
 

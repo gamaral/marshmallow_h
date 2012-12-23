@@ -60,11 +60,12 @@ namespace Core
 	{
 		DIOStart,
 		DIOCurrent,
-		DIOEnd
+		DIOEnd,
+		DIOSet = DIOStart
 	};
 
 	/*!
-	 * @brief DataIO Device Interface
+	 * @brief DataIO Interface
 	 */
 	struct MARSHMALLOW_CORE_EXPORT
 	IDataIO
@@ -72,7 +73,7 @@ namespace Core
 		virtual ~IDataIO(void);
 
 		/*!
-		 * Opens DIO device
+		 * Open DIO
 		 *
 		 * @param mode Open mode
 		 * @return true on success
@@ -80,12 +81,12 @@ namespace Core
 		virtual bool open(DIOMode mode = DIOReadOnly) = 0;
 
 		/*!
-		 * Closes DIO device
+		 * Close DIO
 		 */
 		virtual void close(void) = 0;
 
 		/*!
-		 * Return current open mode, DIOInvalid is returned when device
+		 * Return current open mode, DIOInvalid is returned when DIO
 		 * is closed
 		 *
 		 * @return current open mode
@@ -93,18 +94,16 @@ namespace Core
 		virtual DIOMode mode(void) const = 0;
 
 		/*!
-		 * Check the device's open state
-		 * @return true if device is open
+		 * Check for DIO open state
+		 * @return true if DIO is open
 		 */
 		virtual bool isOpen(void) const = 0;
 
-		virtual size_t read(char *buffer, size_t bsize) = 0;
-		virtual size_t write(const char *buffer, size_t bsize) = 0;
+		virtual size_t read(void *buffer, size_t bsize) = 0;
+		virtual size_t write(const void *buffer, size_t bsize) = 0;
 
 		virtual bool seek(long offset, DIOSeek origin) = 0;
 		virtual long tell(void) const = 0;
-
-		virtual size_t size(void) const = 0;
 	};
 	typedef Shared<IDataIO> SharedDataIO;
 	typedef Weak<IDataIO> WeakDataIO;

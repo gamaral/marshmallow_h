@@ -32,6 +32,7 @@ if(UNIX)
 	    NAMES m
 	    PATHS /usr/lib /usr/local/lib
 	)
+
 	if(NOT M_LIBRARY)
 		message(FATAL_ERROR "No math library found.")
 	endif()
@@ -47,16 +48,27 @@ endif()
 
 # TinyXML
 set(TINYXML_LIBRARY marshmallow_tinyxml)
-set(TINYXML_LIBRARIES marshmallow_tinyxml)
 set(TINYXML_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/contrib/tinyxml2/code")
-mark_as_advanced(TINYXML_LIBRARIES TINYXML_LIBRARY TINYXML_INCLUDE_DIR)
+set(TINYXML_FOUND TRUE)
+
+mark_as_advanced(TINYXML_LIBRARY
+                 TINYXML_INCLUDE_DIR
+                 TINYXML_FOUND
+)
 
 # SQLite3
 if(MARSHMALLOW_CONTRIB_SQLITE)
-	set(SQLITE_LIBRARIES marshmallow_sqlite3)
-	set(SQLITE_LIBRARY marshmallow_sqlite3)
 	set(SQLITE_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/contrib/sqlite3/code")
-	mark_as_advanced(SQLITE_LIBRARIES SQLITE_LIBRARY SQLITE_INCLUDE_DIR)
+
+	set(SQLITE_LIBRARY   marshmallow_sqlite3)
+
+	set(SQLITE_FOUND TRUE)
+
+	mark_as_advanced(SQLITE_LIBRARY
+	                 SQLITE_INCLUDE_DIR
+	                 SQLITE_FOUND
+	)
+
 	message(STATUS "Building with bundled SQLite3")
 else()
 	message(STATUS "Building with system SQLite3")
@@ -66,13 +78,19 @@ endif()
 # Box2D
 if(MARSHMALLOW_WITH_BOX2D)
 	set(BOX2D_BASE "${PROJECT_SOURCE_DIR}/contrib/box2d/code/Box2D" CACHE STRING "")
-	set(BOX2D_INCLUDE_DIR ${BOX2D_BASE} CACHE STRING "")
-	set(BOX2D_LIBRARY marshmallow_box2d CACHE STRING "")
 
-	set(BOX2D_INCLUDE_DIRS ${BOX2D_INCLUDE_DIR} CACHE STRING "")
-	set(BOX2D_LIBRARIES ${BOX2D_LIBRARY} CACHE STRING "")
+	set(BOX2D_INCLUDE_DIR  ${BOX2D_BASE}        CACHE STRING "")
 
-	mark_as_advanced(BOX2D_BASE BOX2D_INCLUDE_DIR BOX2D_LIBRARY BOX2D_INCLUDE_DIRS BOX2D_LIBRARIES)
+	set(BOX2D_LIBRARY   marshmallow_box2d CACHE STRING "")
+
+	set(BOX2D_FOUND TRUE)
+
+	mark_as_advanced(BOX2D_BASE
+	                 BOX2D_INCLUDE_DIR
+	                 BOX2D_LIBRARY
+	                 BOX2D_FOUND
+	)
+
 	message(STATUS "Building with Box2D")
 endif()
 
@@ -80,9 +98,20 @@ endif()
 if(MARSHMALLOW_WITH_LUA)
 	if (MARSHMALLOW_CONTRIB_LUA)
 		set(LUA_BASE "${PROJECT_SOURCE_DIR}/contrib/lua/code")
+
 		set(LUA_INCLUDE_DIR ${LUA_BASE}/src
 		                    ${LUA_BASE}/extra)
+
 		set(LUA_LIBRARY marshmallow_lua)
+
+		set(LUA_FOUND TRUE)
+
+		mark_as_advanced(LUA_BASE
+		                 LUA_INCLUDE_DIR
+		                 LUA_LIBRARY
+		                 LUA_FOUND
+		)
+
 		message(STATUS "Builing with bundled Lua")
 	else()
 		message(STATUS "Building with system Lua")
@@ -94,8 +123,16 @@ endif()
 if(MARSHMALLOW_CONTRIB_ZLIB)
 	set(ZLIB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/zlib/code
 	                     ${PROJECT_BINARY_DIR}/contrib/zlib/code)
+
 	set(ZLIB_LIBRARY marshmallow_zlib)
-	set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
+
+	set(ZLIB_FOUND TRUE)
+
+	mark_as_advanced(ZLIB_INCLUDE_DIR
+	                 ZLIB_LIBRARY
+	                 ZLIB_FOUND
+	)
+
 	message(STATUS "Building with bundled Zlib")
 else()
 	message(STATUS "Building with system Zlib")
@@ -105,25 +142,87 @@ endif()
 # Android
 if(MARSHMALLOW_ANDROID)
 	set(ANDROID_JNI_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/android-jni/code
-	                     ${PROJECT_BINARY_DIR}/contrib/android-jni/code)
-	set(ANDROID_JNI_LIBRARY marshmallow_android_jni)
-	set(ANDROID_JNI_LIBRARIES ${ANDROID_JNI_LIBRARY})
+	                            ${PROJECT_BINARY_DIR}/contrib/android-jni/code
+	)
+
+	set(ANDROID_JNI_LIBRARY   marshmallow_android_jni)
+
+	set(ANDROID_JNI_FOUND TRUE)
+
+	mark_as_advanced(ANDROID_JNI_INCLUDE_DIR
+	                 ANDROID_JNI_LIBRARY
+	                 ANDROID_JNI_FOUND
+	)
+
 	message(STATUS "Building with bundled Android JNI glue")
 endif()
 
 # LibPNG
 if(MARSHMALLOW_CONTRIB_LIBPNG)
-	set(PNG_PNG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/libpng/code
-				${PROJECT_BINARY_DIR}/contrib/libpng/code)
-	if(BUILD_SHARED_LIBS)
+	if(NOT BUILD_SHARED_LIBS)
 		set(PNG_DEFINITIONS -DPNG_STATIC)
 	endif()
+
+	set(PNG_PNG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/libpng/code
+	                        ${PROJECT_BINARY_DIR}/contrib/libpng/code)
+
 	set(PNG_LIBRARY marshmallow_libpng)
-	set(PNG_LIBRARIES ${PNG_LIBRARY})
+
+	set(PNG_FOUND TRUE)
+
+	mark_as_advanced(PNG_PNG_INCLUDE_DIR
+	                 PNG_LIBRARY
+	                 PNG_FOUND
+	)
+
 	message(STATUS "Building with bundled LibPNG")
 else()
 	message(STATUS "Building with system LibPNG")
 	find_package(PNG REQUIRED)
 endif()
-set(PNG_INCLUDE_DIR ${PNG_PNG_INCLUDE_DIR})
+
+# Ogg
+if(MARSHMALLOW_CONTRIB_OGG)
+	set(OGG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/ogg/code/include)
+
+	set(OGG_LIBRARY marshmallow_ogg)
+
+	set(OGG_FOUND TRUE)
+
+	message(STATUS "Building with bundled Ogg")
+else()
+	message(STATUS "Building with system Ogg")
+	find_package(Ogg REQUIRED)
+endif()
+
+# Ogg
+if(MARSHMALLOW_CONTRIB_VORBIS)
+	set(VORBIS_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/contrib/vorbis/code/include)
+	set(VORBIS_FILE_INCLUDE_DIR ${VORBIS_INCLUDE_DIRS})
+	set(VORBIS_VORBIS_INCLUDE_DIR ${VORBIS_INCLUDE_DIRS})
+
+	set(VORBIS_VORBIS_LIBRARY marshmallow_vorbis)
+	set(VORBIS_FILE_LIBRARY   marshmallow_vorbisfile)
+	set(VORBIS_LIBRARIES      ${VORBIS_VORBIS_LIBRARY}
+	                          ${VORBIS_FILE_LIBRARY}
+	)
+
+	set(VORBIS_VORBIS_FOUND TRUE)
+	set(VORBIS_FILE_FOUND   TRUE)
+
+	mark_as_advanced(VORBIS_LIBRARIES
+	                 VORBIS_INCLUDE_DIRS
+	                 VORBIS_VORBIS_LIBRARY
+	                 VORBIS_VORBIS_INCLUDE_DIR
+	                 VORBIS_FILE_LIBRARY
+	                 VORBIS_FILE_INCLUDE_DIR
+	                 VORBIS_VORBIS_FOUND
+	                 VORBIS_FILE_FOUND
+	)
+
+	message(STATUS "Building with bundled Vorbis")
+else()
+	message(STATUS "Building with system Vorbis")
+	find_package(Ogg REQUIRED)
+endif()
 

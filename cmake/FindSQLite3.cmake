@@ -53,9 +53,10 @@ find_library(SQLITE_LIBRARY
 	      /usr/local
 	      /usr
 )
-set(SQLITE_LIBRARIES ${SQLITE_LIBRARY} CACHE PATH "")
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(SQLITE DEFAULT_MSG SQLITE_LIBRARY)
 
-mark_as_advanced(SQLITE_LIBRARIES SQLITE_LIBRARY SQLITE_INCLUDE_DIR)
+mark_as_advanced(SQLITE_LIBRARIES SQLITE_LIBRARY
+                                  SQLITE_INCLUDE_DIR
+)

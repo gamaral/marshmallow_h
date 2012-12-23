@@ -45,35 +45,96 @@ using namespace Core;
 
 struct BufferIO::Private
 {
-	char       *buffer;
-	const char *const_buffer;
-	DIOMode     mode;
-	long        cursor;
-	size_t      size;
+	uint8_t       *buffer;
+	const uint8_t *const_buffer;
+	DIOMode        mode;
+	long           cursor;
+	long           size;
 };
 
-BufferIO::BufferIO(char *b, size_t s)
+BufferIO::BufferIO(void *b, size_t s)
     : m_p(new Private)
 {
 	assert(s <= LONG_MAX && "Buffer too large!");
 
-	m_p->buffer = b;
-	m_p->const_buffer = b;
+	m_p->buffer = reinterpret_cast<uint8_t *>(b);
+	m_p->const_buffer = reinterpret_cast<uint8_t *>(b);
 	m_p->mode = DIOReadWrite;
 	m_p->cursor = 0;
 	m_p->size = s;
 }
 
-BufferIO::BufferIO(const char *cb, size_t s)
+BufferIO::BufferIO(const void *cb, size_t s)
     : m_p(new Private)
 {
 	assert(s <= LONG_MAX && "Buffer too large!");
 
 	m_p->buffer = 0;
-	m_p->const_buffer = cb;
+	m_p->const_buffer = reinterpret_cast<const uint8_t *>(cb);
 	m_p->mode = DIOReadOnly;
 	m_p->cursor = 0;
 	m_p->size = s;
+}
+
+BufferIO::BufferIO(IDataIO *source)
+    : m_p(new Private)
+{
+	if (!source->isOpen()) {
+		MMERROR("Source DIO is closed!");
+		return;
+	}
+
+	const long l_cursor = source->tell();
+	if (l_cursor == -1) {
+		MMERROR("Failed to get current position for source DIO.");
+		return;
+	}
+
+	if (!source->seek(0, DIOEnd)) {
+		MMERROR("Failed to seek to end.");
+		return;
+	}
+
+	const long l_size = source->tell();
+
+	if (l_size <= 0) {
+		MMERROR("Source DIO has invalid size.");
+		return;
+	}
+
+	if (!source->seek(0, DIOStart)) {
+		MMERROR("Failed to seek back to beginning.");
+		return;
+	}
+
+	uint8_t *l_buffer = new uint8_t[l_size];
+
+	if (l_size != long(source->read(l_buffer, l_size))) {
+		MMERROR("Failed to read data from source DIO.");
+		return;
+	}
+
+	m_p->buffer = l_buffer;
+	m_p->const_buffer = l_buffer;
+	m_p->mode = DIOReadWrite;
+	m_p->cursor = 0;
+	m_p->size = l_size;
+
+	if (!source->seek(l_cursor, DIOSet))
+		MMERROR("Failed to return source DIO to original position.");
+}
+
+BufferIO::BufferIO(const BufferIO &source)
+    : m_p(new Private)
+{
+	uint8_t *l_buffer = new uint8_t[source.m_p->size];
+	memcpy(l_buffer, source.m_p->const_buffer, source.m_p->size);
+
+	m_p->buffer = l_buffer;
+	m_p->const_buffer = l_buffer;
+	m_p->mode = DIOReadWrite;
+	m_p->cursor = 0;
+	m_p->size = source.m_p->size;
 }
 
 BufferIO::~BufferIO(void)
@@ -81,6 +142,12 @@ BufferIO::~BufferIO(void)
 	close();
 
 	delete m_p, m_p = 0;
+}
+
+size_t
+BufferIO::size(void) const
+{
+	return(m_p->size);
 }
 
 bool
@@ -113,13 +180,13 @@ BufferIO::isOpen(void) const
 }
 
 size_t
-BufferIO::read(char *b, size_t bs)
+BufferIO::read(void *b, size_t bs)
 {
-	if (!m_p->const_buffer && m_p->cursor >= 0) return(0);
+	if (!m_p->const_buffer &&
+	    (m_p->cursor >= 0 || m_p->cursor >= m_p->size)) return(0);
 
-	const size_t l_cursor = static_cast<size_t>(m_p->cursor);
 	size_t l_rcount =
-	    (l_cursor + bs < m_p->size ? bs : m_p->size - l_cursor);
+	    (m_p->cursor + long(bs) < m_p->size ?  bs : m_p->size - m_p->cursor);
 
 	memcpy(b, m_p->const_buffer + m_p->cursor, l_rcount);
 	m_p->cursor += l_rcount;
@@ -128,15 +195,14 @@ BufferIO::read(char *b, size_t bs)
 }
 
 size_t
-BufferIO::write(const char *b, size_t bs)
+BufferIO::write(const void *b, size_t bs)
 {
 	if (!m_p->buffer && m_p->cursor >= 0) return(0);
 
-	const size_t l_cursor = static_cast<size_t>(m_p->cursor);
 	size_t l_rcount =
-	    (l_cursor + bs < m_p->size ? bs : m_p->size - l_cursor);
+	    (m_p->cursor + long(bs) < m_p->size ? bs : m_p->size - m_p->cursor);
 
-	memcpy(m_p->buffer + l_cursor, b, l_rcount);
+	memcpy(m_p->buffer + m_p->cursor, b, l_rcount);
 	m_p->cursor += l_rcount;
 
 	return(l_rcount);
@@ -149,7 +215,7 @@ BufferIO::seek(long o, DIOSeek on)
 
 	switch (on) {
 	case DIOStart:
-		if (o >= 0 && static_cast<size_t>(o) < m_p->size)
+		if (o >= 0 && static_cast<size_t>(o) <= m_p->size)
 			l_cursor = o;
 		break;
 	case DIOEnd:
@@ -175,11 +241,5 @@ long
 BufferIO::tell(void) const
 {
 	return(m_p->cursor);
-}
-
-size_t
-BufferIO::size(void) const
-{
-	return(m_p->size);
 }
 

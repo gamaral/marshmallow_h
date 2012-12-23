@@ -1,9 +1,9 @@
 
 SET(MASHMALLOW_TEST_AUDIO_LIBS marshmallow_entrypoint marshmallow_core marshmallow_audio)
 
-add_executable(marshmallow_test_audio_audioasset audioasset.cpp)
+add_executable(marshmallow_test_audio_track track.cpp)
 
-target_link_libraries(marshmallow_test_audio_audioasset ${MASHMALLOW_TEST_AUDIO_LIBS})
+target_link_libraries(marshmallow_test_audio_track ${MASHMALLOW_TEST_AUDIO_LIBS})
 
-add_test(NAME marshmallow_test_audio_audioasset COMMAND marshmallow_test_audio_audioasset)
+add_test(NAME marshmallow_test_audio_track COMMAND marshmallow_test_audio_track)
 

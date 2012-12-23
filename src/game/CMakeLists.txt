@@ -23,7 +23,7 @@ if (MARSHMALLOW_WITH_BOX2D)
 	file(GLOB MARSHMALLOW_GAME_BOX2D_SRCS box2d/*.cpp)
 
 	set(MARSHMALLOW_GAME_LIBS ${MARSHMALLOW_GAME_LIBS}
-	                          ${BOX2D_LIBRARIES})
+	                          ${BOX2D_LIBRARY})
 
 	include_directories(${BOX2D_INCLUDE_DIR})
 endif()

@@ -40,19 +40,19 @@ file(GLOB BOX2D_Rope_SRCS ${BOX2D_BASE}/Box2D/Rope/*.cpp)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 	if(BUILD_SHARED_LIBS)
-		set(CMAKE_CXX_FLAGS "-fPIC ${CMAKE_CXX_FLAGS}")
-		set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
+		set(CMAKE_CXX_FLAGS "-fPIC -DPIC ${CMAKE_CXX_FLAGS}")
+		set(CMAKE_C_FLAGS "-fPIC -DPIC ${CMAKE_C_FLAGS}")
 	endif()
 endif()
 
 add_library(${BOX2D_LIBRARY} STATIC
-	${BOX2D_Joints_SRCS}
-	${BOX2D_Contacts_SRCS}
-	${BOX2D_Dynamics_SRCS}
-	${BOX2D_Common_SRCS}
-	${BOX2D_Shapes_SRCS}
-	${BOX2D_Collision_SRCS}
-	${BOX2D_Rope_SRCS}
+            ${BOX2D_Joints_SRCS}
+            ${BOX2D_Contacts_SRCS}
+            ${BOX2D_Dynamics_SRCS}
+            ${BOX2D_Common_SRCS}
+            ${BOX2D_Shapes_SRCS}
+            ${BOX2D_Collision_SRCS}
+            ${BOX2D_Rope_SRCS}
 )
 
 install(TARGETS ${BOX2D_LIBRARY}

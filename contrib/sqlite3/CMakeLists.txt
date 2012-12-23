@@ -36,12 +36,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DDEBUG)
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCC)
-	if(BUILD_SHARED_LIBS)
-		set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
-	endif()
-endif()
-
 add_library(marshmallow_sqlite3 ${MARSHMALLOW_SQLITE_SRCS})
 
 install(TARGETS marshmallow_sqlite3

@@ -55,35 +55,47 @@ namespace Core { /******************************************** Core Namespace */
 		struct Private;
 		Private *m_p;
 
-		NO_ASSIGN_COPY(BufferIO);
+		NO_ASSIGN(BufferIO);
 	public:
 
 		/*!
-		 * Device is opened automatically
+		 * Buffer is opened automatically
 		 *
-		 * @brief Construct read-write device from buffer
+		 * @brief Construct read-write buffer from raw memory buffer
 		 * @param buffer Data buffer
 		 * @param size Data buffer size
 		 */
-		explicit BufferIO(char *buffer, size_t size);
+		BufferIO(void *buffer, size_t size);
 
 		/*!
-		 * Device is opened automatically
+		 * Buffer is opened automatically
 		 *
-		 * @brief Construct read-only device from buffer
+		 * @brief Construct read-only buffer from raw memory buffer
 		 * @param buffer Data buffer
 		 * @param size Data buffer size
 		 */
-		explicit BufferIO(const char *buffer, size_t size);
+		BufferIO(const void *buffer, size_t size);
 
 		/*!
-		 * Device is opened automatically
+		 * Buffer is opened automatically
 		 *
-		 * @brief Construct read-only device from buffer
-		 * @param buffer Data buffer
-		 * @param size Data buffer size
+		 * @brief Construct read-write buffer from another DataIO
+		 * @param dio DataIO
 		 */
-		explicit BufferIO(const unsigned char *buffer, size_t size);
+		BufferIO(IDataIO *source);
+
+		/*!
+		 * Buffer is opened automatically
+		 *
+		 * @brief Construct read-write buffer from another BufferIO
+		 * @param dio DataIO
+		 */
+		BufferIO(const BufferIO &source);
+
+		/*!
+		 * Returns buffer size
+		 */
+		size_t size(void) const;
 
 		virtual ~BufferIO(void);
 
@@ -99,13 +111,11 @@ namespace Core { /******************************************** Core Namespace */
 		VIRTUAL DIOMode mode(void) const;
 		VIRTUAL bool isOpen(void) const;
 
-		VIRTUAL size_t read(char *buffer, size_t bsize);
-		VIRTUAL size_t write(const char *buffer, size_t bsize);
+		VIRTUAL size_t read(void *buffer, size_t bsize);
+		VIRTUAL size_t write(const void *buffer, size_t bsize);
 
 		VIRTUAL bool seek(long offset, DIOSeek origin);
 		VIRTUAL long tell(void) const;
-
-		VIRTUAL size_t size(void) const;
 	};
 	typedef Shared<BufferIO> SharedBufferIO;
 	typedef Weak<BufferIO> WeakBufferIO;

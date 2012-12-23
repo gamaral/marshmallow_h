@@ -36,13 +36,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DDEBUG)
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
-	if(BUILD_SHARED_LIBS)
-		set(CMAKE_CXX_FLAGS "-fPIC ${CMAKE_CXX_FLAGS}")
-		set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
-	endif()
-endif()
-
 add_library(marshmallow_tinyxml ${MARSHMALLOW_TINYXML_SRCS})
 
 install(TARGETS marshmallow_tinyxml

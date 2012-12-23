@@ -66,6 +66,8 @@ option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG"  ON)
 option(MARSHMALLOW_CONTRIB_LUA    "Use bundled LUA"     ON)
 option(MARSHMALLOW_CONTRIB_SQLITE "Use bundled SQLite3" ON)
 option(MARSHMALLOW_CONTRIB_ZLIB   "Use bundled ZLIB"    ON)
+option(MARSHMALLOW_CONTRIB_OGG    "Use bundled Ogg"     ON)
+option(MARSHMALLOW_CONTRIB_VORBIS "Use bundled Vorbis"  ON)
 
 option(MARSHMALLOW_WITH_BOX2D "Use Box2D" ON)
 option(MARSHMALLOW_WITH_LUA   "Use Lua"   OFF)

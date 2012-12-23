@@ -65,14 +65,6 @@ file(GLOB LUA_SRCS ${LUA_BASE}/src/lapi.c
                    ${LUA_BASE}/src/lzio.c
 )
 
-
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
-	if(BUILD_SHARED_LIBS)
-		set(CMAKE_CXX_FLAGS "-fPIC ${CMAKE_CXX_FLAGS}")
-		set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
-	endif()
-endif()
-
 add_library(${LUA_LIBRARY} ${LUA_SRCS})
 
 install(TARGETS ${LUA_LIBRARY}

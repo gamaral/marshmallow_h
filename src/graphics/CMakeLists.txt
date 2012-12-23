@@ -28,10 +28,7 @@ set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                      dummy/texturedata.cpp
 	                      dummy/vertexdata.cpp)
 
-set(MARSHMALLOW_GRAPHICS_LIBS marshmallow_core
-	                      marshmallow_event
-	                      marshmallow_input
-	                      marshmallow_math)
+set(MARSHMALLOW_GRAPHICS_LIBS marshmallow_graphics_backend)
 
 configure_file(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
@@ -45,12 +42,8 @@ endif()
 
 if(MARSHMALLOW_GRAPHICS_OPENGL)
 	add_subdirectory(opengl)
-	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
-	                              marshmallow_graphics_opengl)
 elseif(MARSHMALLOW_GRAPHICS_DUMMY)
 	add_subdirectory(dummy)
-	set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS}
-	                              marshmallow_graphics_dummy)
 endif()
 
 ################################################################################
