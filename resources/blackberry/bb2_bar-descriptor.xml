@@ -28,6 +28,10 @@
     <asset path="lib/libmarshmallow_graphics.so" type="Qnx/Elf">lib/libmarshmallow_graphics.so</asset>
     <asset path="lib/libmarshmallow_input.so" type="Qnx/Elf">lib/libmarshmallow_input.so</asset>
     <asset path="lib/libmarshmallow_math.so" type="Qnx/Elf">lib/libmarshmallow_math.so</asset>
+    <asset path="lib/libmarshmallow_ogg.so" type="Qnx/Elf">lib/libmarshmallow_ogg.so</asset>
+    <asset path="lib/libmarshmallow_tinyxml.so" type="Qnx/Elf">lib/libmarshmallow_tinyxml.so</asset>
+    <asset path="lib/libmarshmallow_vorbis.so" type="Qnx/Elf">lib/libmarshmallow_vorbis.so</asset>
+    <asset path="lib/libmarshmallow_vorbisfile.so" type="Qnx/Elf">lib/libmarshmallow_vorbisfile.so</asset>
 
     <asset path="../demos/platformer/assets">assets</asset>
     <asset path="../resources/blackberry/icon.png">icon.png</asset>

@@ -31,7 +31,11 @@ project(marshmallow_ogg)
 set(MARSHMALLOW_OGG_SRCS code/src/bitwise.c
                          code/src/framing.c)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code/src)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config_types.h
+               ${CMAKE_CURRENT_BINARY_DIR}/code/include/ogg/config_types.h @ONLY)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code/include
+                    ${CMAKE_CURRENT_BINARY_DIR}/code/include)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DDEBUG)

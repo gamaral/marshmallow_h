@@ -183,7 +183,8 @@ endif()
 
 # Ogg
 if(MARSHMALLOW_CONTRIB_OGG)
-	set(OGG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/ogg/code/include)
+	set(OGG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/ogg/code/include
+	                    ${PROJECT_BINARY_DIR}/contrib/ogg/code/include)
 
 	set(OGG_LIBRARY marshmallow_ogg)
 

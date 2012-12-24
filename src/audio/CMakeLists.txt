@@ -19,6 +19,8 @@ set(MARSHMALLOW_AUDIO_LIBS marshmallow_core
                            ${VORBIS_LIBRARIES}
 )
 
+include_directories(${OGG_INCLUDE_DIR} ${VORBIS_INCLUDE_DIRS})
+
 if(MARSHMALLOW_AUDIO_ALSA)
 	add_subdirectory(alsa)
 elseif(MARSHMALLOW_AUDIO_OPENAL)

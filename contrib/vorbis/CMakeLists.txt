@@ -56,7 +56,8 @@ set(MARSHMALLOW_VORBIS_SRCS code/lib/analysis.c
 
 set(MARSHMALLOW_VORBISFILE_SRCS code/lib/vorbisfile.c)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code/lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code/include
+                    ${OGG_INCLUDE_DIR})
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DDEBUG)
