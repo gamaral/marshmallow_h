@@ -1,16 +1,16 @@
 ################################################################################
 
-find_package(ALSA)
+find_package(OpenAL)
 
-if(NOT ALSA_FOUND)
-	message(FATAL_ERROR "ALSA was not found!")
+if(NOT OPENAL_FOUND)
+	message(FATAL_ERROR "OpenAL was not found!")
 endif()
 
 set(MARSHMALLOW_AUDIO_BACKEND_SRCS backend.cpp)
 
-set(MARSHMALLOW_AUDIO_BACKEND_LIBS ${ALSA_LIBRARY})
+set(MARSHMALLOW_AUDIO_BACKEND_LIBS ${OPENAL_LIBRARY})
 
-include_directories(${ALSA_INCLUDE_DIR})
+include_directories(${OPENAL_INCLUDE_DIR})
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 	if(BUILD_SHARED_LIBS)

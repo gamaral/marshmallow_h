@@ -51,6 +51,7 @@ struct Track::Private
 	Private(const SharedCodec &_codec)
 	    : codec(_codec)
 	    , bsize(0)
+	    , bdecoded(0)
 	    , buffer(0)
 	    , handle(0)
 	    , iterations(0)
@@ -70,6 +71,7 @@ struct Track::Private
 
 	SharedCodec codec;
 	size_t bsize;
+	size_t bdecoded;
 	char *buffer;
 	Backend::PCM::Handle *handle;
 	int iterations;
@@ -133,10 +135,11 @@ Track::Private::update(void)
 			codec->reset();
 			l_read += codec->read(buffer + l_read, bsize - l_read);
 		}
+		bdecoded = l_read;
 	}
 	else skip_decode = false;
 
-	skip_decode = !Backend::PCM::Write(handle);
+	skip_decode = !Backend::PCM::Write(handle, bdecoded);
 }
 
 /********************************************************************* Track */

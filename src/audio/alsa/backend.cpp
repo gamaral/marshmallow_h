@@ -51,7 +51,7 @@ namespace Audio { /****************************************** Audio Namespace */
 bool
 Backend::Initialize(void)
 {
-	return(false);
+	return(true);
 }
 
 void
@@ -154,7 +154,7 @@ PCM::Close(Handle *pcm_handle)
 }
 
 bool
-PCM::Write(Handle *pcm_handle)
+PCM::Write(Handle *pcm_handle, size_t)
 {
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 

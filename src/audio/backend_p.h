@@ -79,7 +79,7 @@ namespace PCM { /****************************** Audio::Backend::PCM Namespace */
 	/*!
 	 * Write to PCM device
 	 */
-	bool Write(Handle *pcm_handle);
+	bool Write(Handle *pcm_handle, size_t bsize);
 
 	/*!
 	 * Pause PCM device playback

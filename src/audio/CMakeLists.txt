@@ -14,20 +14,17 @@ set(MARSHMALLOW_AUDIO_SRCS track.cpp
 )
 
 set(MARSHMALLOW_AUDIO_LIBS marshmallow_core
+                           marshmallow_audio_backend
                            ${OGG_LIBRARY}
                            ${VORBIS_LIBRARIES}
 )
 
 if(MARSHMALLOW_AUDIO_ALSA)
 	add_subdirectory(alsa)
-	set(MARSHMALLOW_AUDIO_LIBS ${MARSHMALLOW_AUDIO_LIBS}
-	                           marshmallow_audio_alsa
-	)
+elseif(MARSHMALLOW_AUDIO_OPENAL)
+	add_subdirectory(openal)
 elseif(MARSHMALLOW_AUDIO_DUMMY)
 	add_subdirectory(dummy)
-	set(MARSHMALLOW_AUDIO_LIBS ${MARSHMALLOW_AUDIO_LIBS}
-	                           marshmallow_audio_dummy
-	)
 endif()
 
 ################################################################################

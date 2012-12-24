@@ -105,7 +105,7 @@ PCM::Close(Handle *pcm_handle)
 }
 
 bool
-PCM::Write(Handle *pcm_handle)
+PCM::Write(Handle *pcm_handle, size_t)
 {
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 	return(pcm_handle);
