@@ -138,6 +138,8 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 	l_handle->buffer_size = (bit_depth/8) * channels * l_handle->frames;
 	l_handle->buffer = new char[l_handle->buffer_size];
 
+	MMDEBUG("ALSA PCM device opened. " << bool(l_handle));
+
 	return(l_handle);
 }
 
@@ -145,12 +147,16 @@ void
 PCM::Close(Handle *pcm_handle)
 {
 	assert(pcm_handle && "Tried to use invalid PCM device!");
+	assert(pcm_handle->device && "Device missing from PCM handle!");
+	assert(pcm_handle->buffer && "Buffer missing from PCM handle!");
 
 	snd_pcm_drain(pcm_handle->device);
 	snd_pcm_hw_free(pcm_handle->device);
 	snd_pcm_close(pcm_handle->device);
 	delete[] pcm_handle->buffer, pcm_handle->buffer = 0;
 	delete pcm_handle;
+
+	MMDEBUG("OpenAL PCM device closed.");
 }
 
 bool
@@ -166,24 +172,6 @@ PCM::Write(Handle *pcm_handle, size_t)
 
 	if (snd_pcm_writei(pcm_handle->device, pcm_handle->buffer, pcm_handle->frames) < 0)
 		return(false);
-
-	return(true);
-}
-
-bool
-PCM::Pause(Handle *pcm_handle, bool state)
-{
-	assert(pcm_handle && "Tried to use invalid PCM device!");
-
-	if (!snd_pcm_hw_params_can_pause(pcm_handle->params)) {
-		MMERROR("Hardware doesn't support PCM pause.");
-		return(false);
-	}
-	
-	if (snd_pcm_pause(pcm_handle->device, state ? 1 : 0)) {
-		MMERROR("Failed to change PCM pause state.");
-		return(false);
-	}
 
 	return(true);
 }

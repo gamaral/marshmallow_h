@@ -82,11 +82,6 @@ namespace PCM { /****************************** Audio::Backend::PCM Namespace */
 	bool Write(Handle *pcm_handle, size_t bsize);
 
 	/*!
-	 * Pause PCM device playback
-	 */
-	bool Pause(Handle *pcm_handle, bool state = true);
-
-	/*!
 	 * Get PCM buffer info
 	 */
 	void Buffer(Handle *pcm_handle, char *&buffer, size_t &bsize);

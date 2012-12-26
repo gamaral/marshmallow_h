@@ -156,6 +156,8 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 
 	alGetError();
 
+	MMDEBUG("OpenAL PCM device opened. " << bool(l_handle));
+
 	return(l_handle);
 }
 
@@ -170,6 +172,8 @@ PCM::Close(Handle *pcm_handle)
 
 	delete[] pcm_handle->buffer, pcm_handle->buffer = 0;
 	delete pcm_handle;
+
+	MMDEBUG("OpenAL PCM device closed.");
 }
 
 bool
@@ -208,23 +212,6 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 
 	if (l_state != AL_PLAYING)
 		alSourcePlay(pcm_handle->source);
-
-	return(true);
-}
-
-bool
-PCM::Pause(Handle *pcm_handle, bool state)
-{
-	assert(pcm_handle && "Tried to use invalid PCM device!");
-
-	int l_source_state = 0;
-	alGetSourcei(pcm_handle->source, AL_SOURCE_STATE, &l_source_state);
-
-	if (state && l_source_state == AL_PLAYING)
-		alSourcePause(pcm_handle->source);
-	else if (!state && l_source_state == AL_PAUSED)
-		alSourcePlay(pcm_handle->source);
-	else return(false);
 
 	return(true);
 }

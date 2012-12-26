@@ -55,16 +55,22 @@ struct Track::Private
 	    , buffer(0)
 	    , handle(0)
 	    , iterations(0)
+	    , persistent(false)
 	    , skip_decode(false)
 	{
 	}
 
 	~Private(void)
 	{
+		/* make sure we clsoe the PCM device */
+		persistent = false;
 		stop();
 	}
 
-	bool play(int iterations);
+	void PCM_open(void);
+	void PCM_close(void);
+
+	bool play(int iterations, bool persistent);
 	void stop(void);
 
 	void update(void);
@@ -75,25 +81,46 @@ struct Track::Private
 	char *buffer;
 	Backend::PCM::Handle *handle;
 	int iterations;
+	bool persistent;
 	bool skip_decode;
 };
 
+void
+Track::Private::PCM_open(void)
+{
+	handle = Backend::PCM::Open(codec->rate(), codec->depth(), codec->channels());
+	Backend::PCM::Buffer(handle, buffer, bsize);
+}
+
+void
+Track::Private::PCM_close(void)
+{
+	Backend::PCM::Close(handle), handle = 0;
+	bsize = 0;
+	buffer = 0;
+}
+
 bool
-Track::Private::play(int _iterations)
+Track::Private::play(int _iterations, bool _persistent)
 {
 	/* sanity checks */
-	if (handle) {
+	if (_iterations == 0) {
+		MMDEBUG("Trying to play track with no iterations");
+		if (iterations) stop();
+		return(false);
+	}
+	else if (iterations) {
 		MMERROR("Track already playing!");
 		return(false);
 	}
-	else if (_iterations == 0) return(false);
 
 	iterations = _iterations;
+	persistent = _persistent;
 	skip_decode = false;
 	codec->reset();
 
-	handle = Backend::PCM::Open(codec->rate(), codec->depth(), codec->channels());
-	Backend::PCM::Buffer(handle, buffer, bsize);
+	/* open PCM device */
+	if (!handle) PCM_open();
 
 	update();
 
@@ -106,10 +133,10 @@ Track::Private::stop(void)
 	/* sanity check */
 	if (!handle) return;
 
-	Backend::PCM::Close(handle), handle = 0;
-	bsize = 0;
-	buffer = 0;
 	iterations = 0;
+
+	/* close PCM device */
+	if (!persistent) PCM_close();
 }
 
 void
@@ -155,9 +182,9 @@ Track::~Track(void)
 }
 
 bool
-Track::play(int _iterations)
+Track::play(int _iterations, bool _persistent)
 {
-	return(m_p->play(_iterations));
+	return(m_p->play(_iterations, _persistent));
 }
 
 void

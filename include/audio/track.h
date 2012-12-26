@@ -68,7 +68,7 @@ namespace Audio { /****************************************** Audio Namespace */
 		Track(const Audio::SharedCodec &codec);
 		~Track(void);
 
-		bool play(int iterations = 1);
+		bool play(int iterations = 1, bool persistent = true);
 		void stop(void);
 		bool isPlaying(void) const;
 
