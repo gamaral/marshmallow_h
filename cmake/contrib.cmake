@@ -196,11 +196,11 @@ else()
 	find_package(Ogg REQUIRED)
 endif()
 
-# Ogg
+# Vorbis
 if(MARSHMALLOW_CONTRIB_VORBIS)
 	set(VORBIS_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/contrib/vorbis/code/include)
-	set(VORBIS_FILE_INCLUDE_DIR ${VORBIS_INCLUDE_DIRS})
 	set(VORBIS_VORBIS_INCLUDE_DIR ${VORBIS_INCLUDE_DIRS})
+	set(VORBIS_FILE_INCLUDE_DIR ${VORBIS_INCLUDE_DIRS})
 
 	set(VORBIS_VORBIS_LIBRARY marshmallow_vorbis)
 	set(VORBIS_FILE_LIBRARY   marshmallow_vorbisfile)
@@ -224,6 +224,6 @@ if(MARSHMALLOW_CONTRIB_VORBIS)
 	message(STATUS "Building with bundled Vorbis")
 else()
 	message(STATUS "Building with system Vorbis")
-	find_package(Ogg REQUIRED)
+	find_package(Vorbis REQUIRED)
 endif()
 
