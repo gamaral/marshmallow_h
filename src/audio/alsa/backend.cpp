@@ -43,6 +43,8 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 
+#include "game/config.h"
+
 #define ALSA_DEFAULT_DEVICE "default"
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -76,7 +78,6 @@ namespace Backend { /******************************* Audio::Backend Namespace */
 
 struct PCM::Handle
 {
-	snd_pcm_hw_params_t *params;
 	snd_pcm_t           *device;
 	snd_pcm_uframes_t    frames;
 
@@ -87,7 +88,8 @@ struct PCM::Handle
 PCM::Handle *
 PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 {
-	PCM::Handle *l_handle(0);
+	PCM::Handle l_handle;
+	snd_pcm_hw_params_t *l_params(0);
 
 	/*
 	 * PCM format translation
@@ -105,42 +107,51 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 	}
 
 	/*
-	 * Create handle
-	 */
-	l_handle = new Handle;
-
-	/*
 	 * Open device
 	 */
 	int l_rc;
-	if ((l_rc = snd_pcm_open(&l_handle->device, ALSA_DEFAULT_DEVICE, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK))) {
+	if ((l_rc = snd_pcm_open(&l_handle.device, ALSA_DEFAULT_DEVICE, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK))) {
 		MMERROR("Unable to open device: " << snd_strerror(l_rc));
-		return(false);
+		return(0);
 	}
 
-	snd_pcm_hw_params_alloca(&l_handle->params);
-	snd_pcm_hw_params_any(l_handle->device, l_handle->params);
-	snd_pcm_hw_params_set_access(l_handle->device, l_handle->params, SND_PCM_ACCESS_RW_INTERLEAVED);
-	snd_pcm_hw_params_set_format(l_handle->device, l_handle->params, l_format);
-	snd_pcm_hw_params_set_channels(l_handle->device, l_handle->params, channels);
+	snd_pcm_hw_params_malloc(&l_params);
+	snd_pcm_hw_params_any(l_handle.device, l_params);
+	snd_pcm_hw_params_set_access(l_handle.device, l_params, SND_PCM_ACCESS_RW_INTERLEAVED);
+	snd_pcm_hw_params_set_channels(l_handle.device, l_params, channels);
+	snd_pcm_hw_params_set_format(l_handle.device, l_params, l_format);
+	snd_pcm_hw_params_set_rate_resample(l_handle.device, l_params, 1);
 
-	int l_dir = 0;
+	unsigned int l_periods = MARSHMALLOW_ENGINE_FRAMERATE/10;
+	snd_pcm_hw_params_set_periods_near(l_handle.device, l_params, &l_periods, 0);
+
 	unsigned int l_rate = sample_rate;
-	snd_pcm_hw_params_set_rate_near(l_handle->device, l_handle->params, &l_rate, &l_dir);
-
-	if ((l_rc = snd_pcm_hw_params(l_handle->device, l_handle->params))) {
-		MMERROR("Unable to set hw parameters: " << snd_strerror(l_rc));
-		return(false);
+	snd_pcm_hw_params_set_rate_near(l_handle.device, l_params, &l_rate, 0);
+	if (l_rate != sample_rate) {
+		MMERROR("Sample rate mismatch! Asked for " << sample_rate << " and got " << l_rate);
+		return(0);
 	}
 
-	snd_pcm_hw_params_get_period_size_max(l_handle->params, &l_handle->frames, &l_dir);
+	if ((l_rc = snd_pcm_hw_params(l_handle.device, l_params))) {
+		MMERROR("Unable to set hw parameters: " << snd_strerror(l_rc));
+		snd_pcm_hw_params_free(l_params);
+		return(0);
+	}
 
-	l_handle->buffer_size = (bit_depth/8) * channels * l_handle->frames;
-	l_handle->buffer = new char[l_handle->buffer_size];
+	snd_pcm_hw_params_get_period_size(l_params, &l_handle.frames, 0);
+	snd_pcm_hw_params_free(l_params);
+	l_params = 0;
 
-	MMDEBUG("ALSA PCM device opened. " << bool(l_handle));
+	l_handle.buffer_size = snd_pcm_frames_to_bytes(l_handle.device, l_handle.frames);
+	l_handle.buffer = new char[l_handle.buffer_size];
 
-	return(l_handle);
+	snd_config_update_free_global();
+
+	MMDEBUG("ALSA PCM device opened.");
+
+        snd_pcm_start(l_handle.device);
+
+	return(new Handle(l_handle));
 }
 
 void
@@ -160,18 +171,52 @@ PCM::Close(Handle *pcm_handle)
 }
 
 bool
-PCM::Write(Handle *pcm_handle, size_t)
+PCM::Write(Handle *pcm_handle, size_t bsize)
 {
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 
-	/*
-	 * Reset PCM if it reached underrun (due to pause or system slow down)
-	 */
-	if (SND_PCM_STATE_XRUN == snd_pcm_state(pcm_handle->device))
-		snd_pcm_recover(pcm_handle->device, -EPIPE, 0);
+	snd_pcm_sframes_t l_available;
+	snd_pcm_sframes_t l_written;
+        snd_pcm_sframes_t l_frames;
 
-	if (snd_pcm_writei(pcm_handle->device, pcm_handle->buffer, pcm_handle->frames) < 0)
+        l_available = snd_pcm_avail_update(pcm_handle->device);
+        if (l_available < 0) {
+		MMERROR("Failed to get available samples. " << snd_strerror(l_available));
+                snd_pcm_prepare(pcm_handle->device);
 		return(false);
+        }
+
+        l_frames = snd_pcm_bytes_to_frames(pcm_handle->device, bsize);
+        if (l_frames < 0) {
+		MMERROR("Failed to translate frames to bytes.");
+		return(false);
+        }
+
+	/*
+	 * Skip if there isn't enough space in buffer for data.
+	 */
+        if (l_available < l_frames)
+		return(false);
+
+        while (l_frames > 0) {
+		l_written = snd_pcm_writei(pcm_handle->device, pcm_handle->buffer, l_frames);
+		switch (l_written) {
+		case -EAGAIN: continue;
+
+		case -ESTRPIPE:
+		case -EPIPE:
+		case -EINTR:
+			if (snd_pcm_recover(pcm_handle->device, int(l_written), 1))
+				return(false);
+		break;
+
+		default:
+			if (l_written >= 0) l_frames -= l_written;
+			else { snd_pcm_prepare(pcm_handle->device);
+				return(false);
+			}
+		}
+	}
 
 	return(true);
 }
