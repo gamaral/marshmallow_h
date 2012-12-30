@@ -50,7 +50,7 @@
 
 #include "game/config.h"
 
-#define OPENAL_BUFFERS_MAX 2
+#define OPENAL_BUFFERS_MAX 3
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
@@ -102,10 +102,10 @@ struct PCM::Handle
 {
 	ALuint source;
 
-	int     current_buffer;
 	ALenum  format;
 	ALsizei rate;
 	ALuint  buffers[OPENAL_BUFFERS_MAX];
+	uint8_t available;
 
 	char  *buffer;
 	size_t buffer_size;
@@ -144,13 +144,13 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 
 	l_handle = new PCM::Handle;
 
-	l_handle->current_buffer = 0;
 	l_handle->source = l_source;
 	l_handle->format = l_format;
 	l_handle->rate = sample_rate;
-	l_handle->buffer_size = (sample_rate/MARSHMALLOW_ENGINE_FRAMERATE) * (bit_depth/8) * channels;
-	l_handle->buffer_size *= 2; /* just in case, let's buffer twice the minimum. */
+	l_handle->buffer_size =
+	    ((sample_rate * OPENAL_BUFFERS_MAX)/MARSHMALLOW_ENGINE_FRAMERATE) * (bit_depth/8) * channels;
 	l_handle->buffer = new char[l_handle->buffer_size];
+	l_handle->available = ~0;
 
 	alGenBuffers(OPENAL_BUFFERS_MAX, l_handle->buffers);
 
@@ -181,36 +181,66 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 {
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 
-	ALint l_state = 0;
-	alGetSourcei(pcm_handle->source, AL_SOURCE_STATE, &l_state);
-	if (l_state == AL_PAUSED)
-		return(false);
-
-	ALuint l_buffer(0);
-	alSourceUnqueueBuffers(pcm_handle->source, 1, &l_buffer);
+	int l_buffer(-1);
+	ALint l_state(0);
 
 	alGetError();
 
-	ALint l_queued = 0;
-	alGetSourcei(pcm_handle->source, AL_BUFFERS_QUEUED, &l_queued);
-	if (alGetError() == AL_NO_ERROR && l_queued == OPENAL_BUFFERS_MAX)
+	alGetSourcei(pcm_handle->source, AL_SOURCE_STATE, &l_state);
+	if (alGetError() != AL_NO_ERROR) {
+		MMERROR("alGetSourcei(AL_SOURCE_STATE) failed!");
 		return(false);
+	}
 
-	alBufferData(pcm_handle->buffers[pcm_handle->current_buffer],
+	while (l_state != AL_INITIAL) {
+		ALuint l_processed(0);
+		alSourceUnqueueBuffers(pcm_handle->source, 1, &l_processed);
+		if (alGetError() == AL_NO_ERROR) {
+			for (int i = 0; i < OPENAL_BUFFERS_MAX; ++i)
+				if (pcm_handle->buffers[i] == l_processed) {
+					pcm_handle->available |= (1 << i);
+					l_buffer = i;
+					break;
+				}
+		}
+		else break;
+	}
+
+	if (-1 == l_buffer) {
+		for (int i = 0; i < OPENAL_BUFFERS_MAX; ++i) {
+			if (pcm_handle->available & (1 << i)) {
+				l_buffer = i;
+				break;
+			}
+		}
+
+		if (-1 == l_buffer) {
+			if (l_state == AL_INITIAL)
+				alSourcePlay(pcm_handle->source);
+			return(false);
+		}
+	}
+
+	alBufferData(pcm_handle->buffers[l_buffer],
 	             pcm_handle->format,
 	             pcm_handle->buffer,
 	             static_cast<ALsizei>(bsize),
 	             pcm_handle->rate);
-	if (alGetError() != AL_NO_ERROR)
+	if (alGetError() != AL_NO_ERROR) {
+		MMERROR("alBufferData failed! " << l_buffer);
 		return(false);
+	}
 
-	alSourceQueueBuffers(pcm_handle->source, 1, &pcm_handle->buffers[pcm_handle->current_buffer++]);
-	if (alGetError() != AL_NO_ERROR)
+	alSourceQueueBuffers(pcm_handle->source, 1, &pcm_handle->buffers[l_buffer]);
+	if (alGetError() != AL_NO_ERROR) {
+		MMERROR("alSourceQueueBuffers failed!");
 		return(false);
+	}
 
-	pcm_handle->current_buffer %= OPENAL_BUFFERS_MAX;
+	pcm_handle->available &= ~(1 << l_buffer);
 
-	if (l_state != AL_PLAYING)
+	if (l_state == AL_STOPPED ||
+	   (l_state == AL_INITIAL && bsize < pcm_handle->buffer_size))
 		alSourcePlay(pcm_handle->source);
 
 	return(true);
