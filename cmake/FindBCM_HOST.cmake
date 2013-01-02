@@ -46,6 +46,17 @@ find_path(BCM_HOST_INCLUDE_DIR bcm_host.h
 )
 list(APPEND BCM_HOST_INCLUDE_DIRS ${BCM_HOST_INCLUDE_DIR})
 
+find_path(BCM_HOST_CONFIG_INCLUDE_DIR vchost_config.h
+	HINTS $ENV{BCM_HOSTDIR}
+	PATH_SUFFIXES include/interface/vmcs_host/linux
+	PATHS /usr/local
+	      /usr
+	      /opt/vc
+	      /opt/local
+	      /opt
+)
+list(APPEND BCM_HOST_INCLUDE_DIRS ${BCM_HOST_CONFIG_INCLUDE_DIR})
+
 find_path(BCM_HOST_PTHREADS_INCLUDE_DIR vcos_platform_types.h
 	HINTS $ENV{BCM_HOSTDIR}
 	PATH_SUFFIXES include/interface/vcos/pthreads
