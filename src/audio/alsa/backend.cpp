@@ -149,7 +149,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 
 	MMDEBUG("ALSA PCM device opened.");
 
-        snd_pcm_start(l_handle.device);
+	snd_pcm_start(l_handle.device);
 
 	return(new Handle(l_handle));
 }
@@ -177,28 +177,28 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 
 	snd_pcm_sframes_t l_available;
 	snd_pcm_sframes_t l_written;
-        snd_pcm_sframes_t l_frames;
+	snd_pcm_sframes_t l_frames;
 
-        l_available = snd_pcm_avail_update(pcm_handle->device);
-        if (l_available < 0) {
-		MMERROR("Failed to get available samples. " << snd_strerror(l_available));
-                snd_pcm_prepare(pcm_handle->device);
+	l_available = snd_pcm_avail_update(pcm_handle->device);
+	if (l_available < 0) {
+		MMERROR("Failed to get available samples. " << snd_strerror(int(l_available)));
+		snd_pcm_prepare(pcm_handle->device);
 		return(false);
-        }
+	}
 
-        l_frames = snd_pcm_bytes_to_frames(pcm_handle->device, bsize);
-        if (l_frames < 0) {
+	l_frames = snd_pcm_bytes_to_frames(pcm_handle->device, bsize);
+	if (l_frames < 0) {
 		MMERROR("Failed to translate frames to bytes.");
 		return(false);
-        }
+	}
 
 	/*
 	 * Skip if there isn't enough space in buffer for data.
 	 */
-        if (l_available < l_frames)
+	if (l_available < l_frames)
 		return(false);
 
-        while (l_frames > 0) {
+	while (l_frames > 0) {
 		l_written = snd_pcm_writei(pcm_handle->device, pcm_handle->buffer, l_frames);
 		switch (l_written) {
 		case -EAGAIN: continue;

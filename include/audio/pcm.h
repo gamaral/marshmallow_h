@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_AUDIO_TRACK_H
-#define MARSHMALLOW_AUDIO_TRACK_H 1
+#ifndef MARSHMALLOW_AUDIO_PCM_H
+#define MARSHMALLOW_AUDIO_PCM_H 1
 
 #include <core/iasset.h>
 
@@ -50,44 +50,42 @@ namespace Core { /******************************************** Core Namespace */
 
 namespace Audio { /****************************************** Audio Namespace */
 
-	class PCM;
-	typedef Core::Shared<PCM> SharedPCM;
-
 	struct ICodec;
 	typedef Core::Shared<ICodec> SharedCodec;
 
 
 	/*!
-	 * @brief Audio Track
+	 * @brief Audio PCM
 	 */
 	class MARSHMALLOW_AUDIO_EXPORT
-	Track
+	PCM
 	{
 		struct Private;
 		Private *m_p;
 
 	public:
+		PCM(void);
+		PCM(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels);
+		~PCM(void);
 
-		Track(void);
-		Track(const Audio::SharedPCM &pcm, const Audio::SharedCodec &codec);
-		~Track(void);
+		bool open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels);
+		void close(void);
+		bool isOpen(void) const;
 
-		const Audio::SharedPCM & pcm(void) const;
-		void setPCM(const Audio::SharedPCM &pcm);
+		bool mix(char *buffer, size_t bsize);
+		bool override(char *buffer, size_t bsize);
 
-		const Audio::SharedCodec & codec(void) const;
-		void setCodec(const Audio::SharedCodec &codec);
+		uint32_t rate(void) const;
+		uint8_t depth(void) const;
+		uint8_t channels(void) const;
 
-		bool play(int iterations = 1);
-		void stop(void);
-		bool isPlaying(void) const;
+		uint8_t frameSize(void) const;
+		size_t bufferSize(void) const;
 
 		void tick(float delta);
-
-		bool isValid(void) const;
 	};
-	typedef Core::Shared<Track> SharedTrack;
-	typedef Core::Weak<Track> WeakTrack;
+	typedef Core::Shared<PCM> SharedPCM;
+	typedef Core::Weak<PCM> WeakPCM;
 
 } /********************************************************** Audio Namespace */
 MARSHMALLOW_NAMESPACE_END

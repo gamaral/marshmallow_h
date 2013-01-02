@@ -198,7 +198,7 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 		if (alGetError() == AL_NO_ERROR) {
 			for (int i = 0; i < OPENAL_BUFFERS_MAX; ++i)
 				if (pcm_handle->buffers[i] == l_processed) {
-					pcm_handle->available |= (1 << i);
+					pcm_handle->available |= static_cast<uint8_t>(1 << i);
 					l_buffer = i;
 					break;
 				}
@@ -237,7 +237,7 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 		return(false);
 	}
 
-	pcm_handle->available &= ~(1 << l_buffer);
+	pcm_handle->available &= static_cast<uint8_t>(~(1 << l_buffer));
 
 	if (l_state == AL_STOPPED ||
 	   (l_state == AL_INITIAL && bsize < pcm_handle->buffer_size))

@@ -40,6 +40,7 @@
 #include "core/shared.h"
 
 #include "audio/icodec.h"
+#include "audio/pcm.h"
 
 #include "backend_p.h"
 
@@ -48,14 +49,11 @@ namespace Audio { /****************************************** Audio Namespace */
 
 struct Track::Private
 {
-	Private(const SharedCodec &_codec)
-	    : codec(_codec)
-	    , bsize(0)
+	Private(void)
+	    : bsize(0)
 	    , bdecoded(0)
 	    , buffer(0)
-	    , handle(0)
 	    , iterations(0)
-	    , persistent(false)
 	    , skip_decode(false)
 	{
 	}
@@ -63,45 +61,25 @@ struct Track::Private
 	~Private(void)
 	{
 		/* make sure we clsoe the PCM device */
-		persistent = false;
 		stop();
 	}
 
-	void PCM_open(void);
-	void PCM_close(void);
-
-	bool play(int iterations, bool persistent);
+	bool play(int iterations);
 	void stop(void);
 
 	void update(void);
 
+	SharedPCM pcm;
 	SharedCodec codec;
 	size_t bsize;
 	size_t bdecoded;
 	char *buffer;
-	Backend::PCM::Handle *handle;
 	int iterations;
-	bool persistent;
 	bool skip_decode;
 };
 
-void
-Track::Private::PCM_open(void)
-{
-	handle = Backend::PCM::Open(codec->rate(), codec->depth(), codec->channels());
-	Backend::PCM::Buffer(handle, buffer, bsize);
-}
-
-void
-Track::Private::PCM_close(void)
-{
-	Backend::PCM::Close(handle), handle = 0;
-	bsize = 0;
-	buffer = 0;
-}
-
 bool
-Track::Private::play(int _iterations, bool _persistent)
+Track::Private::play(int _iterations)
 {
 	/* sanity checks */
 	if (_iterations == 0) {
@@ -115,12 +93,12 @@ Track::Private::play(int _iterations, bool _persistent)
 	}
 
 	iterations = _iterations;
-	persistent = _persistent;
 	skip_decode = false;
 	codec->reset();
 
-	/* open PCM device */
-	if (!handle) PCM_open();
+	bsize = pcm->bufferSize();
+	buffer = new char[bsize];
+	memset(buffer, 0, bsize);
 
 	update();
 
@@ -130,20 +108,18 @@ Track::Private::play(int _iterations, bool _persistent)
 void
 Track::Private::stop(void)
 {
-	/* sanity check */
-	if (!handle) return;
-
+	delete buffer, buffer = 0;
+	bsize = 0;
 	iterations = 0;
-
-	/* close PCM device */
-	if (!persistent) PCM_close();
 }
 
 void
 Track::Private::update(void)
 {
+	if (!buffer) return;
+	
 	/* sanity check */
-	if (!handle) return;
+	assert(pcm->isOpen() && "PCM is closed!");
 
 	/* stop check */
 	if (!iterations) {
@@ -166,14 +142,21 @@ Track::Private::update(void)
 	}
 	else skip_decode = false;
 
-	skip_decode = !Backend::PCM::Write(handle, bdecoded);
+	skip_decode = !pcm->mix(buffer, bdecoded);
 }
 
 /********************************************************************* Track */
 
-Track::Track(const Audio::SharedCodec &_codec)
-    : m_p(new Private(_codec))
+Track::Track(void)
+    : m_p(new Private)
 {
+}
+
+Track::Track(const Audio::SharedPCM &_pcm, const Audio::SharedCodec &_codec)
+    : m_p(new Private)
+{
+	setPCM(_pcm);
+	setCodec(_codec);
 }
 
 Track::~Track(void)
@@ -181,15 +164,57 @@ Track::~Track(void)
 	delete m_p, m_p = 0;
 }
 
-bool
-Track::play(int _iterations, bool _persistent)
+const Audio::SharedPCM &
+Track::pcm(void) const
 {
-	return(m_p->play(_iterations, _persistent));
+	return(m_p->pcm);
+}
+
+void
+Track::setPCM(const Audio::SharedPCM &_pcm)
+{
+	if (isPlaying()) {
+		MMERROR("Tried to replace PCM of a playing track!");
+		return;
+	}
+
+	m_p->pcm = _pcm;
+}
+
+const Audio::SharedCodec &
+Track::codec(void) const
+{
+	return(m_p->codec);
+}
+
+void
+Track::setCodec(const Audio::SharedCodec &_codec)
+{
+	if (isPlaying()) {
+		MMERROR("Tried to replace codec of a playing track!");
+		return;
+	}
+
+	m_p->codec = _codec;
+}
+
+bool
+Track::play(int _iterations)
+{
+	if (!isValid()) {
+		MMWARNING("Tried to play invalid track!");
+		return(false);
+	}
+	return(m_p->play(_iterations));
 }
 
 void
 Track::stop(void)
 {
+	if (!isValid()) {
+		MMWARNING("Tried to stop an invalid track!");
+		return;
+	}
 	m_p->stop();
 }
 
@@ -208,7 +233,7 @@ Track::tick(float)
 bool
 Track::isValid(void) const
 {
-	return(m_p->codec && m_p->codec->isOpen());
+	return(m_p->pcm && m_p->codec && m_p->pcm->isOpen() && m_p->codec->isOpen());
 }
 
 } /********************************************************** Audio Namespace */
