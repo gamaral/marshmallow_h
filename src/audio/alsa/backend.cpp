@@ -138,7 +138,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 		return(0);
 	}
 
-	snd_pcm_hw_params_get_period_size(l_params, &l_handle.frames, 0);
+	snd_pcm_hw_params_get_period_size_max(l_params, &l_handle.frames, 0);
 	snd_pcm_hw_params_free(l_params);
 	l_params = 0;
 
@@ -167,7 +167,7 @@ PCM::Close(Handle *pcm_handle)
 	delete[] pcm_handle->buffer, pcm_handle->buffer = 0;
 	delete pcm_handle;
 
-	MMDEBUG("OpenAL PCM device closed.");
+	MMDEBUG("ALSA PCM device closed.");
 }
 
 bool
@@ -182,7 +182,7 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 	l_available = snd_pcm_avail_update(pcm_handle->device);
 	if (l_available < 0) {
 		MMERROR("Failed to get available samples. " << snd_strerror(int(l_available)));
-		snd_pcm_prepare(pcm_handle->device);
+		snd_pcm_recover(pcm_handle->device, -ESTRPIPE, 1);
 		return(false);
 	}
 
