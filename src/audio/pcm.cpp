@@ -145,6 +145,7 @@ PCM::Private::mix(char *_buffer, size_t _bsize)
 	if (!flushed)
 		return(false);
 
+	/* stretch buffer, if needed */
 	if (_bsize > bsize)
 		bsize = _bsize;
 
@@ -155,12 +156,12 @@ PCM::Private::mix(char *_buffer, size_t _bsize)
 			l_mixed = static_cast<int16_t>(buffer[i] + _buffer[i]);
 
 			/* CLIPPING */
-#define MM_CHAR_MIN (-128)
-			if (l_mixed < MM_CHAR_MIN)
-				l_mixed = MM_CHAR_MIN;
 #define MM_CHAR_MAX 127
-			else if (l_mixed > MM_CHAR_MAX)
+			if (l_mixed > MM_CHAR_MAX)
 				l_mixed = MM_CHAR_MAX;
+#define MM_CHAR_MIN (-128)
+			else if (l_mixed < MM_CHAR_MIN)
+				l_mixed = MM_CHAR_MIN;
 
 			buffer[i] = static_cast<char>(l_mixed);
 		}
@@ -175,32 +176,38 @@ PCM::Private::mix(char *_buffer, size_t _bsize)
 			l_mixed = static_cast<int32_t>(l_buffer[i] + l_sbuffer[i]);
 
 			/* CLIPPING */
-#define MM_INT16_MIN (-32768)
-			if (l_mixed < MM_INT16_MIN)
-				l_mixed = MM_INT16_MIN;
 #define MM_INT16_MAX 32767
-			else if (l_mixed > MM_INT16_MAX)
+			if (l_mixed > MM_INT16_MAX)
 				l_mixed = MM_INT16_MAX;
+#define MM_INT16_MIN (-32768)
+			else if (l_mixed < MM_INT16_MIN)
+				l_mixed = MM_INT16_MIN;
+
 			l_buffer[i] = static_cast<int16_t>(l_mixed);
 		}
+	}
+	else if (24 == bit_depth) {
+		MMERROR("Unsupported bit depth encountered!");
+		return(false);
 	}
 	else if (32 == bit_depth) {
 		int64_t l_mixed;
 		int32_t *l_buffer  = reinterpret_cast<int32_t *>(buffer);
 		int32_t *l_sbuffer = reinterpret_cast<int32_t *>(_buffer);
 
-		const size_t c = _bsize / 2;
+		const size_t c = _bsize / 4;
 		for (unsigned int i = 0; i < c; ++i) {
 			l_mixed = static_cast<int64_t>(l_buffer[i] + l_sbuffer[i]);
 
 			/* CLIPPING */
-#define MM_INT32_MIN (-2147483648)
-			if (l_mixed < MM_INT32_MIN)
-				l_mixed = MM_INT32_MIN;
 #define MM_INT32_MAX 2147483647
-			else if (l_mixed > MM_INT32_MAX)
+			if (l_mixed > MM_INT32_MAX)
 				l_mixed = MM_INT32_MAX;
-			l_buffer[i] = static_cast<int16_t>(l_mixed);
+#define MM_INT32_MIN (-MM_INT32_MAX-1)
+			else if (l_mixed < MM_INT32_MIN)
+				l_mixed = MM_INT32_MIN;
+
+			l_buffer[i] = static_cast<int32_t>(l_mixed);
 		}
 	}
 

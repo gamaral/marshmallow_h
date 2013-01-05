@@ -51,7 +51,7 @@ namespace Core { /******************************************** Core Namespace */
 namespace Audio { /****************************************** Audio Namespace */
 
 	class PCM;
-	typedef Core::Shared<PCM> SharedPCM;
+	typedef Core::Weak<PCM> WeakPCM;
 
 	struct ICodec;
 	typedef Core::Shared<ICodec> SharedCodec;
@@ -69,11 +69,11 @@ namespace Audio { /****************************************** Audio Namespace */
 	public:
 
 		Track(void);
-		Track(const Audio::SharedPCM &pcm, const Audio::SharedCodec &codec);
+		Track(const Audio::WeakPCM &pcm, const Audio::SharedCodec &codec);
 		~Track(void);
 
-		const Audio::SharedPCM & pcm(void) const;
-		void setPCM(const Audio::SharedPCM &pcm);
+		const Audio::WeakPCM & pcm(void) const;
+		void setPCM(const Audio::WeakPCM &pcm);
 
 		const Audio::SharedCodec & codec(void) const;
 		void setCodec(const Audio::SharedCodec &codec);

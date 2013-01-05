@@ -37,7 +37,7 @@
 #include <cstring>
 
 #include "core/logger.h"
-#include "core/shared.h"
+#include "core/weak.h"
 
 #include "audio/icodec.h"
 #include "audio/pcm.h"
@@ -69,7 +69,7 @@ struct Track::Private
 
 	void update(void);
 
-	SharedPCM pcm;
+	WeakPCM pcm;
 	SharedCodec codec;
 	size_t bsize;
 	size_t bdecoded;
@@ -98,7 +98,6 @@ Track::Private::play(int _iterations)
 
 	bsize = pcm->bufferSize();
 	buffer = new char[bsize];
-	memset(buffer, 0, bsize);
 
 	update();
 
@@ -117,17 +116,30 @@ void
 Track::Private::update(void)
 {
 	if (!buffer) return;
-	
-	/* sanity check */
-	assert(pcm->isOpen() && "PCM is closed!");
 
-	/* stop check */
-	if (!iterations) {
+	/* sanity checks */
+
+	if (!pcm) {
+		MMDEBUG("Trying to play on an invalid PCM, stopping!");
 		stop();
 		return;
 	}
 
+	if (!pcm->isOpen()) {
+		MMDEBUG("Trying to play on a closed PCM, stopping!");
+		stop();
+		return;
+	}
+
+	/* stop check */
+
 	if (!skip_decode) {
+
+		if (!iterations) {
+			stop();
+			return;
+		}
+
 		memset(buffer, 0, bsize);
 		size_t l_read = codec->read(buffer, bsize);
 
@@ -152,7 +164,7 @@ Track::Track(void)
 {
 }
 
-Track::Track(const Audio::SharedPCM &_pcm, const Audio::SharedCodec &_codec)
+Track::Track(const Audio::WeakPCM &_pcm, const Audio::SharedCodec &_codec)
     : m_p(new Private)
 {
 	setPCM(_pcm);
@@ -164,14 +176,14 @@ Track::~Track(void)
 	delete m_p, m_p = 0;
 }
 
-const Audio::SharedPCM &
+const Audio::WeakPCM &
 Track::pcm(void) const
 {
 	return(m_p->pcm);
 }
 
 void
-Track::setPCM(const Audio::SharedPCM &_pcm)
+Track::setPCM(const Audio::WeakPCM &_pcm)
 {
 	if (isPlaying()) {
 		MMERROR("Tried to replace PCM of a playing track!");
