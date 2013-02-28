@@ -64,17 +64,21 @@
 #endif
 
 /* 
- * TODO(gamaral) Check if these typedefs are still required.
+ * Typedef required to map GLES2 calls (MMGL_VERSION_2_0)
  */
+extern "C" 
+{
 #ifndef GL_ARB_vertex_buffer_object
-extern "C" {
 	typedef void (*PFNGLBINDBUFFERARBPROC) (GLenum target, GLuint buffer);
 	typedef void (*PFNGLBUFFERDATAARBPROC) (GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage);
 	typedef void (*PFNGLBUFFERSUBDATAARBPROC) (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
 	typedef void (*PFNGLDELETEBUFFERSARBPROC) (GLsizei n, const GLuint *buffers);
 	typedef void (*PFNGLGENBUFFERSARBPROC) (GLsizei n, GLuint *buffers);
-}
 #endif
+#ifndef GL_ARB_framebuffer_object
+	typedef void (*PFNGLGENERATEMIPMAPPROC) (GLenum target);
+#endif
+}
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
@@ -128,8 +132,6 @@ namespace Extensions { /************** Graphics::OpenGL::Extensions Namespace */
 	extern PFNGLGENBUFFERSARBPROC glGenBuffers;
 
 	/* GL_ARB_framebuffer_object */
-
-	typedef void (*PFNGLGENERATEMIPMAPPROC) (GLenum target);
 
 	extern PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
 
