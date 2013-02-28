@@ -97,11 +97,11 @@ FileIO::open(DIOMode m)
 	char l_mode[4] = {0, 0, 0, 0};
 	unsigned char l_mode_c = 0;
 
-	if (m && DIOReadOnly)
+	if (m & DIOReadOnly)
 		l_mode[l_mode_c++] = 'r';
-	if (m && DIOWriteOnly)
+	if (m & DIOWriteOnly)
 		l_mode[l_mode_c++] = 'w';
-	if (m && DIOBinary)
+	if (m & DIOBinary)
 		l_mode[l_mode_c++] = 'b';
 	
 	m_p->handle = fopen(m_p->filename, l_mode);

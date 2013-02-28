@@ -63,6 +63,19 @@
 #  endif
 #endif
 
+/* 
+ * TODO(gamaral) Check if these typedefs are still required.
+ */
+#ifndef GL_ARB_vertex_buffer_object
+extern "C" {
+	typedef void (*PFNGLBINDBUFFERARBPROC) (GLenum target, GLuint buffer);
+	typedef void (*PFNGLBUFFERDATAARBPROC) (GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage);
+	typedef void (*PFNGLBUFFERSUBDATAARBPROC) (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
+	typedef void (*PFNGLDELETEBUFFERSARBPROC) (GLsizei n, const GLuint *buffers);
+	typedef void (*PFNGLGENBUFFERSARBPROC) (GLsizei n, GLuint *buffers);
+}
+#endif
+
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
@@ -107,12 +120,6 @@ namespace Extensions { /************** Graphics::OpenGL::Extensions Namespace */
 	 */
 
 	/* GL_ARB_vertex_buffer_object */
-
-	typedef void (*PFNGLBINDBUFFERARBPROC) (GLenum target, GLuint buffer);
-	typedef void (*PFNGLBUFFERDATAARBPROC) (GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage);
-	typedef void (*PFNGLBUFFERSUBDATAARBPROC) (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
-	typedef void (*PFNGLDELETEBUFFERSARBPROC) (GLsizei n, const GLuint *buffers);
-	typedef void (*PFNGLGENBUFFERSARBPROC) (GLsizei n, GLuint *buffers);
 
 	extern PFNGLBINDBUFFERARBPROC glBindBuffer;
 	extern PFNGLBUFFERDATAARBPROC glBufferData;

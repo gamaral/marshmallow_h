@@ -119,9 +119,9 @@ std::string
 Platform::PathDirectory(const std::string &path)
 {
 	/*
-	 * TODO(gamaral) Use split_path or something windows like
+	 * TODO(gamaral) Use split_path or something more windows like
 	 */
-	return(".");
+	return(path.substr(0, path.find_last_of("/\\")));
 }
 
 std::string
