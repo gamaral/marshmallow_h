@@ -56,6 +56,15 @@ set(MARSHMALLOW_VORBIS_SRCS code/lib/analysis.c
 
 set(MARSHMALLOW_VORBISFILE_SRCS code/lib/vorbisfile.c)
 
+# Windows Module-Definition Files
+if (BUILD_SHARED_LIBS AND WIN32)
+	set(MARSHMALLOW_VORBIS_SRCS ${MARSHMALLOW_VORBIS_SRCS}
+	                            code/lib/vorbisenc.c
+	                            code/win32/vorbis.def)
+	set(MARSHMALLOW_VORBISFILE_SRCS ${MARSHMALLOW_VORBISFILE_SRCS}
+	                                code/win32/vorbisfile.def)
+endif()
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code/include
                     ${OGG_INCLUDE_DIR})
 

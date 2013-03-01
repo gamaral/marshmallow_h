@@ -41,6 +41,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DDEBUG)
 endif()
 
+# Windows Module-Definition File
+if (BUILD_SHARED_LIBS AND WIN32)
+	set(MARSHMALLOW_OGG_SRCS ${MARSHMALLOW_OGG_SRCS}
+	                         code/win32/ogg.def)
+endif()
+
 add_library(marshmallow_ogg ${MARSHMALLOW_OGG_SRCS})
 
 install(TARGETS marshmallow_ogg
