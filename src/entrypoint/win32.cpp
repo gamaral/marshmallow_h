@@ -40,7 +40,7 @@ extern int MMain(int argc, char *argv[]);
 
 #if MARSHMALLOW_DEBUG
 int
-__stdcall main(int argc, char *argv[])
+main(int argc, char *argv[])
 {
 	return(MMain(argc, argv));
 }
