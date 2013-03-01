@@ -36,7 +36,14 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DDEBUG)
 endif()
 
-add_library(marshmallow_tinyxml ${MARSHMALLOW_TINYXML_SRCS})
+set(MARSHMALLOW_TINYXML_LIBTYPE "")
+# TinyXML2 only works as static on Windows since it doesn't generate an import
+# library (.lib)
+if(BUILD_SHARED_LIBS AND WIN32)
+	set(MARSHMALLOW_TINYXML_LIBTYPE "STATIC")
+endif()
+
+add_library(marshmallow_tinyxml ${MARSHMALLOW_TINYXML_LIBTYPE} ${MARSHMALLOW_TINYXML_SRCS})
 
 install(TARGETS marshmallow_tinyxml
         LIBRARY DESTINATION lib COMPONENT runtime
