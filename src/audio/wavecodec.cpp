@@ -133,8 +133,8 @@ WaveCodec::Private::open(const Core::SharedDataIO &_dio)
 	depth = static_cast<uint8_t>(l_fmt_subchunk.bps);
 	channels = static_cast<uint8_t>(l_fmt_subchunk.channels);
 	MMDEBUG("WAVE Rate: " << rate);
-	MMDEBUG("WAVE Depth: " << depth);
-	MMDEBUG("WAVE Channels: " << channels);
+	MMDEBUG("WAVE Depth: " << int(depth));
+	MMDEBUG("WAVE Channels: " << int(channels));
 
 	/*
 	 * DATA SUBCHUNK
