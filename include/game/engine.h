@@ -47,18 +47,36 @@ namespace Game { /******************************************** Game Namespace */
 
 namespace Engine { /********************************** Game::Engine Namespace */
 
+	/*!
+	 * @brief Toggle engine between suspend and resume
+	 * @return true when suspended
+	 */
 	MARSHMALLOW_GAME_EXPORT
 	bool Pause(void);
 
+	/*!
+	 * @brief Suspend game engine
+	 */
 	MARSHMALLOW_GAME_EXPORT
 	void Suspend(void);
 
+	/*!
+	 * @brief Resume game engine
+	 */
 	MARSHMALLOW_GAME_EXPORT
 	void Resume(void);
 
+	/*!
+	 * @brief Stop game engine
+	 * @param exit_code Exit code returned by game binary
+	 */
 	MARSHMALLOW_GAME_EXPORT
 	void Stop(int exit_code = 0);
 
+	/*!
+	 * @brief Game engine singleton
+	 * @return Pointer to game engine instance
+	 */
 	MARSHMALLOW_GAME_EXPORT
 	IEngine * Instance(void);
 
