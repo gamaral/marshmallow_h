@@ -20,3 +20,6 @@
 [submodule "contrib/vorbis/code"]
 	path = contrib/vorbis/code
 	url = git://github.com/gamaral/libvorbis.git
+[submodule "contrib/ogg/code"]
+	path = contrib/ogg/code
+	url = git://github.com/gamaral/libogg.git
