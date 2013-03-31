@@ -17,3 +17,6 @@
 [submodule "contrib/lua/code"]
 	path = contrib/lua/code
 	url = git://github.com/gamaral/lua.git
+[submodule "contrib/vorbis/code"]
+	path = contrib/vorbis/code
+	url = git://github.com/gamaral/libvorbis.git
