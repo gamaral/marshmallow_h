@@ -68,4 +68,10 @@ Demos and Presentations
 
 * Slide system.
 
+Android
+-------
+
+* Work around asset issue.
+* Implement an OpenSL ES audio backend.
+
 vim:syn=markdown:
