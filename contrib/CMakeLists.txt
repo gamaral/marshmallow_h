@@ -49,11 +49,6 @@ if(MARSHMALLOW_CONTRIB_ZLIB)
 	add_subdirectory(zlib)
 endif()
 
-# Android JNI
-if(MARSHMALLOW_ANDROID)
-	add_subdirectory(android-jni)
-endif()
-
 # PNG
 if(MARSHMALLOW_CONTRIB_LIBPNG)
 	add_subdirectory(libpng)

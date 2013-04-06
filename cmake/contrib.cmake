@@ -139,24 +139,6 @@ else()
 	find_package(ZLIB REQUIRED)
 endif()
 
-# Android
-if(MARSHMALLOW_ANDROID)
-	set(ANDROID_JNI_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/android-jni/code
-	                            ${PROJECT_BINARY_DIR}/contrib/android-jni/code
-	)
-
-	set(ANDROID_JNI_LIBRARY   marshmallow_android_jni)
-
-	set(ANDROID_JNI_FOUND TRUE)
-
-	mark_as_advanced(ANDROID_JNI_INCLUDE_DIR
-	                 ANDROID_JNI_LIBRARY
-	                 ANDROID_JNI_FOUND
-	)
-
-	message(STATUS "Building with bundled Android JNI glue")
-endif()
-
 # LibPNG
 if(MARSHMALLOW_CONTRIB_LIBPNG)
 	if(NOT BUILD_SHARED_LIBS)

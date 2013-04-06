@@ -197,7 +197,8 @@ elseif(MARSHMALLOW_OPENGL_JNI)
 	                                      ${ANDROID_JNI_LIBRARY}
 	                                      marshmallow_entrypoint)
 
-	include_directories(${ANDROID_JNI_INCLUDE_DIR})
+	set(ANDROID_JNI_GLUE_DIR "${ANDROID_NDK}/sources/android/native_app_glue")
+	include_directories(${ANDROID_JNI_GLUE_DIR})
 
 	add_definitions(-DMARSHMALLOW_OPENGL_JNI)
 
