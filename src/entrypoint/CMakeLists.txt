@@ -10,8 +10,6 @@ if(MARSHMALLOW_ANDROID)
 	                                "${ANDROID_JNI_GLUE_DIR}/android_native_app_glue.c"
 	                                "android.cpp")
 	set(MARSHMALLOW_ENTRYPOINT_LIBS ${MARSHMALLOW_ENTRYPOINT_LIBS} "android" "log")
-elseif(MARSHMALLOW_WII)
-	set(MARSHMALLOW_ENTRYPOINT_SRCS ${MARSHMALLOW_ENTRYPOINT_SRCS} "wii.cpp")
 elseif(UNIX)
 	set(MARSHMALLOW_ENTRYPOINT_SRCS ${MARSHMALLOW_ENTRYPOINT_SRCS} "unix.cpp")
 elseif(WIN32)

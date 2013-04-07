@@ -13,14 +13,7 @@ include_directories(${ZLIB_INCLUDE_DIR})
 set(MARSHMALLOW_CORE_LIBS ${MARSHMALLOW_CORE_LIBS} ${ZLIB_LIBRARY})
 
 # platform specific implementations
-if(MARSHMALLOW_WII)
-	find_library(OGC_LIBRARY
-	    NAMES ogc
-	    PATHS ${DEVKITPRO}/libogc/lib/wii
-	)
-	set(MARSHMALLOW_CORE_SRCS ${MARSHMALLOW_CORE_SRCS} wii/platform.cpp)
-	set(MARSHMALLOW_CORE_LIBS ${MARSHMALLOW_CORE_LIBS} ${OGC_LIBRARY})
-elseif(UNIX)
+if(UNIX)
 	configure_file(
 	    ${CMAKE_CURRENT_SOURCE_DIR}/unix/environment.h
 	    ${CMAKE_CURRENT_BINARY_DIR}/environment.h COPYONLY
