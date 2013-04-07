@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -36,8 +36,8 @@
 
 #include <cstring>
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Math;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { /******************************************** Math Namespace */
 
 Matrix4::Matrix4(const float *v)
 {
@@ -109,4 +109,7 @@ Matrix4::operator*=(const Matrix4 &rhs)
 	*this = *this * rhs;
 	return(*this);
 }
+
+} /*********************************************************** Math Namespace */
+MARSHMALLOW_NAMESPACE_END
 

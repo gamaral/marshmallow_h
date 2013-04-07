@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -186,6 +186,7 @@ WaveCodec::Private::reset(void)
 	cursor = start;
 }
 
+/****************************************************************** WaveCode */
 
 WaveCodec::WaveCodec(void)
     : m_p(new Private)

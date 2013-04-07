@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -45,9 +45,8 @@ namespace TinyXML = tinyxml2;
 using namespace TinyXML;
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
 
-namespace Core
-{
 	template <class T> class Shared;
 	template <class T> class Weak;
 
@@ -73,8 +72,8 @@ namespace Core
 	};
 	typedef Shared<ISerializable> SharedSerializable;
 	typedef Weak<ISerializable> WeakSerializable;
-}
 
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

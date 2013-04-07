@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -50,15 +50,14 @@
  */
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
+namespace Input { /****************************************** Input Namespace */
+namespace { /*********************************** Input::<anonymous> Namespace */
 
 	typedef std::map<Input::Keyboard::Key,
 	                 Input::Keyboard::Action> KeyState;
 	KeyState s_key_state;
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Input { /****************************************** Input Namespace */
+} /********************************************* Input::<anonymous> Namespace */
 
 bool
 Keyboard::Initialize(void)

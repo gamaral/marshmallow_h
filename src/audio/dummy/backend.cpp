@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -86,7 +86,8 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 
 	PCM::Handle *l_handle(new Handle);
 
-	l_handle->buffer_size = (sample_rate/MARSHMALLOW_ENGINE_FRAMERATE) * (bit_depth/8) * channels;
+	l_handle->buffer_size = (sample_rate/MARSHMALLOW_ENGINE_FRAMERATE)
+	                        * (bit_depth/8) * channels;
 	l_handle->buffer = new char[l_handle->buffer_size];
 
 	MMDEBUG("Dummy PCM device opened.");

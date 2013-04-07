@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -37,8 +37,8 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Core;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
 
 struct FileIO::Private
 {
@@ -189,4 +189,7 @@ FileIO::size(void) const
 
 	return(l_result > 0 ? static_cast<size_t>(l_result) : 0);
 }
+
+} /*********************************************************** Core Namespace */
+MARSHMALLOW_NAMESPACE_END
 

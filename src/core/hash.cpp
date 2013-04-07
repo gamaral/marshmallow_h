@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Core;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
 
 struct Hash::Private
 {
@@ -128,4 +128,7 @@ Hash::rehash(const char *d, size_t length, MMUID mask)
 {
 	m_p->result = Algorithm(d, length, mask);
 }
+
+} /*********************************************************** Core Namespace */
+MARSHMALLOW_NAMESPACE_END
 

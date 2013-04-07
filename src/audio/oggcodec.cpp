@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2012-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -237,6 +237,7 @@ OggCodec::Private::reset(void)
 		MMERROR("Failed to reset codec.");
 }
 
+/****************************************************************** OggCodec */
 
 OggCodec::OggCodec(void)
     : m_p(new Private)

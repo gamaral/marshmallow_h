@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -39,13 +39,10 @@
 #include "game/iengine.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
-
-	Game::IEngine *s_instance(0);
-
-} /****************************************************** Anonymous Namespace */
-
 namespace Game { /******************************************** Game Namespace */
+namespace { /************************************ Game::<anonymous> Namespace */
+	Game::IEngine *s_instance(0);
+} /********************************************** Game::<anonymous> Namespace */
 
 bool
 Engine::Pause(void)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -38,10 +38,11 @@
 
 #include <zlib.h>
 
-MARSHMALLOW_NAMESPACE_USE
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
 
 size_t
-Core::Gzip::Inflate(const char *in, size_t in_size, size_t out_size, char **out)
+Gzip::Inflate(const char *in, size_t in_size, size_t out_size, char **out)
 {
 	z_stream l_stream;
 	*out = new char[out_size];
@@ -73,7 +74,7 @@ Core::Gzip::Inflate(const char *in, size_t in_size, size_t out_size, char **out)
 }
 
 size_t
-Core::Gzip::Deflate(const char *in, size_t in_size, char **out, int l)
+Gzip::Deflate(const char *in, size_t in_size, char **out, int l)
 {
 	z_stream l_stream;
 	uLongf l_out_size = compressBound(in_size);
@@ -106,4 +107,7 @@ Core::Gzip::Deflate(const char *in, size_t in_size, char **out, int l)
 
 	return(l_out_size);
 }
+
+} /*********************************************************** Core Namespace */
+MARSHMALLOW_NAMESPACE_END
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -34,8 +34,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Math;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Math { /******************************************** Math Namespace */
 
 Tuple2::Tuple2(float ax, float ay)
 {
@@ -135,4 +135,7 @@ Tuple2::operator-(const Tuple2 &rhs) const
 	return(Tuple2(m_value[0] - rhs.m_value[0],
 	              m_value[1] - rhs.m_value[1]));
 }
+
+} /*********************************************************** Math Namespace */
+MARSHMALLOW_NAMESPACE_END
 

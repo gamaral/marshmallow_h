@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -73,7 +73,8 @@
 #define TMXPROPERTIES_PROPERTY_NODE "property"
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace { /******************************************** Anonymous Namespace */
+namespace Extra { /****************************************** Extra Namespace */
+namespace { /*********************************** Extra::<anonymous> Namespace */
 
 	typedef std::map<uint16_t, Graphics::SharedTileset> TilesetCollection;
 
@@ -85,9 +86,7 @@ namespace { /******************************************** Anonymous Namespace */
 		                       static_cast<float>(p[2]) / 255.f));
 	}
 
-} /****************************************************** Anonymous Namespace */
-
-namespace Extra { /****************************************** Extra Namespace */
+} /********************************************* Extra::<anonymous> Namespace */
 
 struct TMXLoader::Private
 {
@@ -122,7 +121,6 @@ struct TMXLoader::Private
 
 	bool is_loaded;
 };
-
 
 bool
 TMXLoader::Private::load(const char *f)

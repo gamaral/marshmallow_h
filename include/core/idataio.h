@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -41,9 +41,8 @@
 #include <core/fd.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
 
-namespace Core
-{
 	template <class T> class Shared;
 	template <class T> class Weak;
 
@@ -107,8 +106,8 @@ namespace Core
 	};
 	typedef Shared<IDataIO> SharedDataIO;
 	typedef Weak<IDataIO> WeakDataIO;
-}
 
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif
