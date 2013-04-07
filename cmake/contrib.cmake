@@ -1,5 +1,5 @@
-# Copyright 2011-2012 Marshmallow Engine. All rights reserved.
-# Copyright 2011-2012 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
+# Copyright 2011-2013 Marshmallow Engine. All rights reserved.
+# Copyright 2011-2013 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -119,7 +119,7 @@ if(MARSHMALLOW_WITH_LUA)
 	endif()
 endif()
 
-# Zlib
+# zlib
 if(MARSHMALLOW_CONTRIB_ZLIB)
 	set(ZLIB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/zlib/code
 	                     ${PROJECT_BINARY_DIR}/contrib/zlib/code)
@@ -133,13 +133,13 @@ if(MARSHMALLOW_CONTRIB_ZLIB)
 	                 ZLIB_FOUND
 	)
 
-	message(STATUS "Building with bundled Zlib")
+	message(STATUS "Building with bundled zlib")
 else()
-	message(STATUS "Building with system Zlib")
+	message(STATUS "Building with system zlib")
 	find_package(ZLIB REQUIRED)
 endif()
 
-# LibPNG
+# libpng
 if(MARSHMALLOW_CONTRIB_LIBPNG)
 	if(NOT BUILD_SHARED_LIBS)
 		set(PNG_DEFINITIONS -DPNG_STATIC)
@@ -157,18 +157,18 @@ if(MARSHMALLOW_CONTRIB_LIBPNG)
 	                 PNG_FOUND
 	)
 
-	message(STATUS "Building with bundled LibPNG")
+	message(STATUS "Building with bundled libpng")
 else()
-	message(STATUS "Building with system LibPNG")
+	message(STATUS "Building with system libpng")
 	find_package(PNG REQUIRED)
 endif()
 
-# Ogg
-if(MARSHMALLOW_CONTRIB_OGG)
+# libogg
+if(MARSHMALLOW_CONTRIB_LIBOGG)
 	set(OGG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/ogg/code/include
 	                    ${PROJECT_BINARY_DIR}/contrib/ogg/code/include)
 
-	set(OGG_LIBRARY marshmallow_ogg)
+	set(OGG_LIBRARY marshmallow_libogg)
 
 	set(OGG_FOUND TRUE)
 
@@ -178,14 +178,14 @@ else()
 	find_package(Ogg REQUIRED)
 endif()
 
-# Vorbis
-if(MARSHMALLOW_CONTRIB_VORBIS)
+# libvorbis
+if(MARSHMALLOW_CONTRIB_LIBVORBIS)
 	set(VORBIS_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/contrib/vorbis/code/include)
 	set(VORBIS_VORBIS_INCLUDE_DIR ${VORBIS_INCLUDE_DIRS})
 	set(VORBIS_FILE_INCLUDE_DIR ${VORBIS_INCLUDE_DIRS})
 
-	set(VORBIS_VORBIS_LIBRARY marshmallow_vorbis)
-	set(VORBIS_FILE_LIBRARY   marshmallow_vorbisfile)
+	set(VORBIS_VORBIS_LIBRARY marshmallow_libvorbis)
+	set(VORBIS_FILE_LIBRARY   marshmallow_libvorbisfile)
 	set(VORBIS_LIBRARIES      ${VORBIS_VORBIS_LIBRARY}
 	                          ${VORBIS_FILE_LIBRARY}
 	)
@@ -203,9 +203,9 @@ if(MARSHMALLOW_CONTRIB_VORBIS)
 	                 VORBIS_FILE_FOUND
 	)
 
-	message(STATUS "Building with bundled Vorbis")
+	message(STATUS "Building with bundled libvorbis")
 else()
-	message(STATUS "Building with system Vorbis")
+	message(STATUS "Building with system libvorbis")
 	find_package(Vorbis REQUIRED)
 endif()
 

@@ -1,5 +1,5 @@
-# Copyright 2011 Marshmallow Engine. All rights reserved.
-# Copyright 2011 Guillermo A. Amaral B. (gamaral) <g@maral.me>
+# Copyright 2011-2013 Marshmallow Engine. All rights reserved.
+# Copyright 2011-2013 Guillermo A. Amaral B. (gamaral) <g@maral.me>
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -62,12 +62,12 @@ set(MARSHMALLOW_NAMESPACE "Marshmallow" CACHE STRING "Marshmallow Namespace")
 option(MARSHMALLOW_DEBUG "Marshmallow Debugging" OFF)
 set(MARSHMALLOW_DEBUG_VERBOSITY "0" CACHE STRING "Verbosity Level")
 
-option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled LibPNG"  ON)
-option(MARSHMALLOW_CONTRIB_LUA    "Use bundled LUA"     ON)
-option(MARSHMALLOW_CONTRIB_SQLITE "Use bundled SQLite3" ON)
-option(MARSHMALLOW_CONTRIB_ZLIB   "Use bundled ZLIB"    ON)
-option(MARSHMALLOW_CONTRIB_OGG    "Use bundled Ogg"     ON)
-option(MARSHMALLOW_CONTRIB_VORBIS "Use bundled Vorbis"  ON)
+option(MARSHMALLOW_CONTRIB_LIBOGG    "Use bundled libogg"    ON)
+option(MARSHMALLOW_CONTRIB_LIBPNG    "Use bundled libpng"    ON)
+option(MARSHMALLOW_CONTRIB_LIBVORBIS "Use bundled libvorbis" ON)
+option(MARSHMALLOW_CONTRIB_LUA       "Use bundled Lua"       ON)
+option(MARSHMALLOW_CONTRIB_SQLITE    "Use bundled SQLite3"   ON)
+option(MARSHMALLOW_CONTRIB_ZLIB      "Use bundled zlib"      ON)
 
 option(MARSHMALLOW_WITH_BOX2D "Use Box2D" ON)
 option(MARSHMALLOW_WITH_LUA   "Use Lua"   OFF)

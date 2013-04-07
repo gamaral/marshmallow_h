@@ -1,5 +1,5 @@
-# Copyright 2012 Marshmallow Engine. All rights reserved.
-# Copyright 2012 Guillermo A. Amaral B. (gamaral) <g@maral.me>
+# Copyright 2012-2013 Marshmallow Engine. All rights reserved.
+# Copyright 2012-2013 Guillermo A. Amaral B. (gamaral) <g@maral.me>
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -26,7 +26,7 @@
 # or implied, of Marshmallow Engine.
 #
 
-project(marshmallow_ogg)
+project(marshmallow_libogg)
 
 set(MARSHMALLOW_OGG_SRCS code/src/bitwise.c
                          code/src/framing.c)
@@ -47,9 +47,9 @@ if (BUILD_SHARED_LIBS AND WIN32)
 	                         code/win32/ogg.def)
 endif()
 
-add_library(marshmallow_ogg ${MARSHMALLOW_OGG_SRCS})
+add_library(${OGG_LIBRARY} ${MARSHMALLOW_OGG_SRCS})
 
-install(TARGETS marshmallow_ogg
+install(TARGETS ${OGG_LIBRARY}
         LIBRARY DESTINATION lib COMPONENT runtime
         ARCHIVE DESTINATION lib COMPONENT development)
 

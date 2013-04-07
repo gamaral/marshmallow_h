@@ -1,5 +1,5 @@
-# Copyright 2012 Marshmallow Engine. All rights reserved.
-# Copyright 2012 Guillermo A. Amaral B. (gamaral) <g@maral.me>
+# Copyright 2012-2013 Marshmallow Engine. All rights reserved.
+# Copyright 2012-2013 Guillermo A. Amaral B. (gamaral) <g@maral.me>
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -26,11 +26,11 @@
 # or implied, of Marshmallow Engine.
 #
 
-project(marshmallow_vorbis)
+project(marshmallow_libvorbis)
 
 # sanity check
 if(NOT OGG_FOUND)
-	message(FATAL_ERROR "Vorbis requires the Ogg library, and it was not found!")
+	message(FATAL_ERROR "libvorbis requires the libogg library, and it wasn't found!")
 endif()
 
 set(MARSHMALLOW_VORBIS_SRCS code/lib/analysis.c
@@ -72,13 +72,13 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DDEBUG)
 endif()
 
-add_library(marshmallow_vorbis ${MARSHMALLOW_VORBIS_SRCS})
-add_library(marshmallow_vorbisfile ${MARSHMALLOW_VORBISFILE_SRCS})
+add_library(${VORBIS_VORBIS_LIBRARY} ${MARSHMALLOW_VORBIS_SRCS})
+add_library(${VORBIS_FILE_LIBRARY} ${MARSHMALLOW_VORBISFILE_SRCS})
 
-target_link_libraries(marshmallow_vorbis ${OGG_LIBRARY})
-target_link_libraries(marshmallow_vorbisfile marshmallow_vorbis)
+target_link_libraries(${VORBIS_VORBIS_LIBRARY} ${OGG_LIBRARY})
+target_link_libraries(${VORBIS_FILE_LIBRARY} ${VORBIS_VORBIS_LIBRARY})
 
-install(TARGETS marshmallow_vorbis marshmallow_vorbisfile
+install(TARGETS ${VORBIS_VORBIS_LIBRARY} ${VORBIS_FILE_LIBRARY}
         LIBRARY DESTINATION lib COMPONENT runtime
         ARCHIVE DESTINATION lib COMPONENT development)
 

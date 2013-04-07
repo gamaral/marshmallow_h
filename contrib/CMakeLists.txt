@@ -1,5 +1,5 @@
-# Copyright 2011-2012 Marshmallow Engine. All rights reserved.
-# Copyright 2011-2012 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
+# Copyright 2011-2013 Marshmallow Engine. All rights reserved.
+# Copyright 2011-2013 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -44,22 +44,23 @@ if(MARSHMALLOW_WITH_LUA AND MARSHMALLOW_CONTRIB_LUA)
 	add_subdirectory(lua)
 endif()
 
-# Zlib
+# zlib
 if(MARSHMALLOW_CONTRIB_ZLIB)
 	add_subdirectory(zlib)
 endif()
 
-# PNG
+# libpng
 if(MARSHMALLOW_CONTRIB_LIBPNG)
 	add_subdirectory(libpng)
 endif()
 
-# OGG
-if(MARSHMALLOW_CONTRIB_OGG)
-	add_subdirectory(ogg)
+# libogg
+if(MARSHMALLOW_CONTRIB_LIBOGG)
+	add_subdirectory(libogg)
 endif()
 
-if(MARSHMALLOW_CONTRIB_VORBIS)
-	add_subdirectory(vorbis)
+# libvorbis
+if(MARSHMALLOW_CONTRIB_LIBVORBIS)
+	add_subdirectory(libvorbis)
 endif()
 

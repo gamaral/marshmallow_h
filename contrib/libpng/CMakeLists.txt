@@ -1,7 +1,7 @@
 project(marshmallow_libpng)
 
 if(NOT ZLIB_FOUND)
-	message(FATAL_ERROR "LibPNG requires Zlib, and it was not found!")
+	message(FATAL_ERROR "libpng requires zlib, and it wasn't found!")
 endif()
 
 include_directories(${ZLIB_INCLUDE_DIR})
