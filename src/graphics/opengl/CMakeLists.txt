@@ -14,19 +14,19 @@ option(MARSHMALLOW_OPENGL_X11 "Use OpenGL X11 & GLX/EGL Backend (unix)"   OFF)
 ################################################################################
 
 set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS}
-	                              extensions.cpp
-	                              factory.cpp
-	                              painter.cpp
-	                              texturecoordinatedata.cpp
-	                              texturedata.cpp
-	                              vertexdata.cpp)
+                                      extensions.cpp
+                                      factory.cpp
+                                      painter.cpp
+                                      texturecoordinatedata.cpp
+                                      texturedata.cpp
+                                      vertexdata.cpp)
 
 set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
-	                              marshmallow_core
-	                              marshmallow_event
-	                              marshmallow_input
-	                              marshmallow_math
-	                              ${PNG_LIBRARY})
+                                      marshmallow_core
+                                      marshmallow_event
+                                      marshmallow_input
+                                      marshmallow_math
+                                      ${PNG_LIBRARY})
 
 include_directories(${PNG_PNG_INCLUDE_DIR})
 include_directories(${ZLIB_INCLUDE_DIR})
@@ -210,11 +210,14 @@ else()
 	message(WARNING "No OpenGL subsystem variant selected!")
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
-	if(BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
+	if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 		set(CMAKE_CXX_FLAGS "-fPIC -DPIC ${CMAKE_CXX_FLAGS}")
 		set(CMAKE_C_FLAGS "-fPIC -DPIC ${CMAKE_C_FLAGS}")
 	endif()
+else()
+	set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+	                                      marshmallow_graphics)
 endif()
 
 add_definitions(-DMARSHMALLOW_GRAPHICS_OPENGL)
