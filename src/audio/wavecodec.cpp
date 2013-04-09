@@ -170,7 +170,7 @@ WaveCodec::Private::close(void)
 size_t
 WaveCodec::Private::read(void *buffer, size_t bsize)
 {
-	if (!opened) return(-1);
+	if (!opened) return(0);
 
 	dio->seek(cursor, Core::DIOStart);
 	const size_t l_read = dio->read(buffer, bsize);

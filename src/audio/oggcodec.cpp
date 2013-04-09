@@ -56,16 +56,16 @@ struct OVData
 	long cursor;
 };
 
-size_t
+static size_t
 OVRead(void *buffer, size_t byte_size, size_t byte_count, void *data)
 {
-	if (!data) return(-1);
+	if (!data) return(0);
 
 	OVData *l_data = reinterpret_cast<OVData *>(data);
 
 	if (!l_data->dio->seek(l_data->cursor, Core::DIOStart)) {
 		MMERROR("Failed to restore DataIO cursor! " << l_data->cursor);
-		return(-1);
+		return(0);
 	}
 
 	size_t l_read = l_data->dio->read(buffer, byte_size * byte_count);
@@ -75,7 +75,7 @@ OVRead(void *buffer, size_t byte_size, size_t byte_count, void *data)
 	return(l_read);
 }
 
-int
+static int
 OVSeek(void *data, ogg_int64_t offset, int origin)
 {
 	if (!data) return(-1);
@@ -107,7 +107,7 @@ OVSeek(void *data, ogg_int64_t offset, int origin)
 	return(l_result ? 0 : -1);
 }
 
-long
+static long
 OVTell(void *data)
 {
 	if (!data) return(-1);
@@ -189,8 +189,8 @@ OggCodec::Private::open(const Core::SharedDataIO &_dio)
 
 	/* get track info */
 	vorbis_info *l_info = ov_info(&handle, -1);
-	rate = static_cast<uint32_t>(l_info->rate);
-	channels = static_cast<uint8_t>(l_info->channels);
+	rate = uint32_t(l_info->rate);
+	channels = uint8_t(l_info->channels);
 
 	return(opened = true);
 }
@@ -209,21 +209,38 @@ OggCodec::Private::close(void)
 size_t
 OggCodec::Private::read(void *buffer, size_t bsize)
 {
-	if (!opened) return(-1);
+	if (!opened) return(0);
 
 	int l_current_section;
 
 	size_t l_total = 0;
 
-	long l_read;
-	
+	long l_read = 0;
 	do {
 		l_read = ov_read(&handle,
 		                 reinterpret_cast<char *>(buffer) + l_total,
-		                 static_cast<int>(bsize - l_total), 0, 2, 1,
+		                 int(bsize - l_total), 0, 2, 1,
 		                 &l_current_section);
-		l_total += l_read;
-	} while(l_read > 0 && l_total < bsize);
+
+		if (l_read > 0) l_total += size_t(l_read);
+		else break;
+	} while(bsize > l_total);
+
+	/* check for errors */
+	if (l_read < 0) {
+		MMERROR("Error occurred while reading data!");
+		switch (l_read) {
+		case OV_HOLE:
+			MMDEBUG("OV_HOLE: Data interruption.");
+			break;
+		case OV_EBADLINK:
+			MMDEBUG("OV_EBADLINK: Invalid stream.");
+			break;
+		case OV_EINVAL:
+			MMDEBUG("OV_EINVAL: Invalid header.");
+			break;
+		}
+	}
 
 	return(l_total);
 }

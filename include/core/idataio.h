@@ -98,6 +98,12 @@ namespace Core { /******************************************** Core Namespace */
 		 */
 		virtual bool isOpen(void) const = 0;
 
+		/*!
+		 * Check for DIO reached End-Of-File.
+		 * @return true if DIO is at EOF
+		 */
+		virtual bool atEOF(void) const = 0;
+
 		virtual size_t read(void *buffer, size_t bsize) = 0;
 		virtual size_t write(const void *buffer, size_t bsize) = 0;
 

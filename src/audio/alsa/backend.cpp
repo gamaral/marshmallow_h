@@ -83,6 +83,10 @@ struct PCM::Handle
 
 	char  *buffer;
 	size_t buffer_size;
+
+	uint16_t bytes_per_frame;
+	uint8_t  bit_depth;
+	uint8_t  channels;
 };
 
 PCM::Handle *
@@ -142,7 +146,10 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 	snd_pcm_hw_params_free(l_params);
 	l_params = 0;
 
-	l_handle.buffer_size = snd_pcm_frames_to_bytes(l_handle.device, l_handle.frames);
+	l_handle.channels = channels;
+	l_handle.bit_depth = bit_depth;
+	l_handle.bytes_per_frame = channels * (bit_depth/8);
+	l_handle.buffer_size = l_handle.frames * l_handle.bytes_per_frame;
 	l_handle.buffer = new char[l_handle.buffer_size];
 
 	snd_config_update_free_global();
@@ -177,7 +184,7 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 
 	snd_pcm_sframes_t l_available;
 	snd_pcm_sframes_t l_written;
-	snd_pcm_sframes_t l_frames;
+	snd_pcm_uframes_t l_frames;
 
 	l_available = snd_pcm_avail_update(pcm_handle->device);
 	if (l_available < 0) {
@@ -186,16 +193,12 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 		return(false);
 	}
 
-	l_frames = snd_pcm_bytes_to_frames(pcm_handle->device, bsize);
-	if (l_frames < 0) {
-		MMERROR("Failed to translate frames to bytes.");
-		return(false);
-	}
+	l_frames = bsize / pcm_handle->bytes_per_frame;
 
 	/*
 	 * Skip if there isn't enough space in buffer for data.
 	 */
-	if (l_available < l_frames)
+	if (l_available < snd_pcm_sframes_t(l_frames))
 		return(false);
 
 	while (l_frames > 0) {
@@ -211,8 +214,9 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 		break;
 
 		default:
-			if (l_written >= 0) l_frames -= l_written;
-			else { snd_pcm_prepare(pcm_handle->device);
+			if (l_written >= 0 && snd_pcm_uframes_t(l_written) <= l_frames)
+				l_frames -= snd_pcm_uframes_t(l_written);
+			else {  snd_pcm_prepare(pcm_handle->device);
 				return(false);
 			}
 		}

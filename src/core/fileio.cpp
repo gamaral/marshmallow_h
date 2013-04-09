@@ -45,6 +45,7 @@ struct FileIO::Private
 	Identifier filename;
 	DIOMode    mode;
 	FILE      *handle;
+	bool       eof;
 };
 
 FileIO::FileIO(void)
@@ -52,6 +53,7 @@ FileIO::FileIO(void)
 {
 	m_p->handle = 0;
 	m_p->mode = DIOInvalid;
+	m_p->eof = false;
 }
 
 FileIO::FileIO(const Identifier &fn, DIOMode m)
@@ -59,6 +61,7 @@ FileIO::FileIO(const Identifier &fn, DIOMode m)
 {
 	m_p->handle = 0;
 	m_p->mode = DIOInvalid;
+	m_p->eof = false;
 	setFileName(fn);
 	open(m);
 }
@@ -106,6 +109,7 @@ FileIO::open(DIOMode m)
 	
 	m_p->handle = fopen(m_p->filename, l_mode);
 	m_p->mode = m;
+	m_p->eof = false;
 	return(m_p->handle != 0);
 }
 
@@ -115,6 +119,7 @@ FileIO::close(void)
 	fclose(m_p->handle);
 	m_p->handle = 0;
 	m_p->mode = DIOInvalid;
+	m_p->eof = false;
 	m_p->filename = Identifier();
 }
 
@@ -130,16 +135,33 @@ FileIO::isOpen(void) const
 	return(m_p->handle != 0);
 }
 
+bool
+FileIO::atEOF(void) const
+{
+	return(m_p->eof);
+}
+
+
 size_t
 FileIO::read(void *b, size_t bs)
 {
-	return(fread(b, 1, bs, m_p->handle));
+	size_t l_read = fread(b, 1, bs, m_p->handle);
+
+	if (l_read < bs)
+	    m_p->eof = (feof(m_p->handle) != 0);
+
+	return(l_read);
 }
 
 size_t
 FileIO::write(const void *b, size_t bs)
 {
-	return(fwrite(b, 1, bs, m_p->handle));
+	size_t l_written = fwrite(b, 1, bs, m_p->handle);
+
+	/* update end-of-file flag */
+	m_p->eof = (feof(m_p->handle) != 0);
+
+	return(l_written);
 }
 
 bool
@@ -154,7 +176,13 @@ FileIO::seek(long o, DIOSeek on)
 	default: return(false);
 	}
 
-	return(fseek(m_p->handle, o, l_origin) == 0);
+	if (fseek(m_p->handle, o, l_origin) != 0)
+		return(false);
+
+	/* update end-of-file flag */
+	m_p->eof = (feof(m_p->handle) != 0);
+
+	return(true);
 }
 
 long

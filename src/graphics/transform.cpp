@@ -67,7 +67,7 @@ Transform::Private::rebuildMatrix(MatrixType type)
 
 	if (rotation != 0) {
 #define DEGREE_TO_RADIAN 0.0174532925f
-		const float l_rotation_rad = rotation ? rotation * DEGREE_TO_RADIAN : 0;
+		const float l_rotation_rad = rotation != .0f ? rotation * DEGREE_TO_RADIAN : 0;
 		l_rotate[Matrix4::m11] =  cosf(l_rotation_rad);
 		l_rotate[Matrix4::m21] =  sinf(l_rotation_rad);
 		l_rotate[Matrix4::m12] = -l_rotate[Matrix4::m21];

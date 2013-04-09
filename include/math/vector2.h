@@ -85,7 +85,7 @@ namespace Math { /******************************************** Math Namespace */
 		    { return(i % MAX ? y : x); }
 
 		inline operator bool(void) const
-		    { return(x || y); }
+		    { return(x != .0f || y != .0f); }
 
 		inline Vector2 & operator*=(float rhs);
 		inline Vector2 & operator-=(float rhs);
@@ -133,8 +133,8 @@ namespace Math { /******************************************** Math Namespace */
 	Vector2
 	Vector2::normalized(float m) const
 	{
-		return(Vector2(m ? x / m : .0f,
-		               m ? y / m : .0f));
+		return(Vector2(m != .0f ? x / m : .0f,
+		               m != .0f ? y / m : .0f));
 	}
 
 	Vector2 &

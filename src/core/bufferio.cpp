@@ -50,6 +50,7 @@ struct BufferIO::Private
 	DIOMode        mode;
 	long           cursor;
 	long           size;
+	bool           eof;
 };
 
 BufferIO::BufferIO(void *b, size_t s)
@@ -60,8 +61,9 @@ BufferIO::BufferIO(void *b, size_t s)
 	m_p->buffer = reinterpret_cast<uint8_t *>(b);
 	m_p->const_buffer = reinterpret_cast<uint8_t *>(b);
 	m_p->mode = DIOReadWrite;
+	m_p->eof = false;
 	m_p->cursor = 0;
-	m_p->size = s;
+	m_p->size = long(s);
 }
 
 BufferIO::BufferIO(const void *cb, size_t s)
@@ -72,8 +74,9 @@ BufferIO::BufferIO(const void *cb, size_t s)
 	m_p->buffer = 0;
 	m_p->const_buffer = reinterpret_cast<const uint8_t *>(cb);
 	m_p->mode = DIOReadOnly;
+	m_p->eof = false;
 	m_p->cursor = 0;
-	m_p->size = s;
+	m_p->size = long(s);
 }
 
 BufferIO::BufferIO(IDataIO *source)
@@ -109,7 +112,7 @@ BufferIO::BufferIO(IDataIO *source)
 
 	uint8_t *l_buffer = new uint8_t[l_size];
 
-	if (l_size != long(source->read(l_buffer, l_size))) {
+	if (l_size != long(source->read(l_buffer, size_t(l_size)))) {
 		MMERROR("Failed to read data from source DIO.");
 		return;
 	}
@@ -117,6 +120,7 @@ BufferIO::BufferIO(IDataIO *source)
 	m_p->buffer = l_buffer;
 	m_p->const_buffer = l_buffer;
 	m_p->mode = DIOReadWrite;
+	m_p->eof = false;
 	m_p->cursor = 0;
 	m_p->size = l_size;
 
@@ -128,11 +132,12 @@ BufferIO::BufferIO(const BufferIO &source)
     : m_p(new Private)
 {
 	uint8_t *l_buffer = new uint8_t[source.m_p->size];
-	memcpy(l_buffer, source.m_p->const_buffer, source.m_p->size);
+	memcpy(l_buffer, source.m_p->const_buffer, size_t(source.m_p->size));
 
 	m_p->buffer = l_buffer;
 	m_p->const_buffer = l_buffer;
 	m_p->mode = DIOReadWrite;
+	m_p->eof = false;
 	m_p->cursor = 0;
 	m_p->size = source.m_p->size;
 }
@@ -147,7 +152,7 @@ BufferIO::~BufferIO(void)
 size_t
 BufferIO::size(void) const
 {
-	return(m_p->size);
+	return(size_t(m_p->size));
 }
 
 bool
@@ -163,6 +168,7 @@ BufferIO::close(void)
 	m_p->buffer = 0;
 	m_p->const_buffer = 0;
 	m_p->mode = DIOInvalid;
+	m_p->eof = false;
 	m_p->cursor = 0;
 	m_p->size = 0;
 }
@@ -179,17 +185,28 @@ BufferIO::isOpen(void) const
 	return(m_p->const_buffer && m_p->mode != DIOInvalid);
 }
 
+bool
+BufferIO::atEOF(void) const
+{
+	return(m_p->eof);
+}
+
 size_t
 BufferIO::read(void *b, size_t bs)
 {
+	assert(bs <= LONG_MAX && "Buffer too large!");
+
 	if (!m_p->const_buffer &&
 	    (m_p->cursor >= 0 || m_p->cursor >= m_p->size)) return(0);
 
 	size_t l_rcount =
-	    (m_p->cursor + long(bs) < m_p->size ?  bs : m_p->size - m_p->cursor);
+	    (m_p->cursor + long(bs) < m_p->size ?  bs : size_t(m_p->size - m_p->cursor));
 
 	memcpy(b, m_p->const_buffer + m_p->cursor, l_rcount);
 	m_p->cursor += l_rcount;
+
+	/* set end-of-file flag */
+	m_p->eof = (bs > l_rcount);
 
 	return(l_rcount);
 }
@@ -197,15 +214,20 @@ BufferIO::read(void *b, size_t bs)
 size_t
 BufferIO::write(const void *b, size_t bs)
 {
+	assert(bs <= LONG_MAX && "Buffer too large!");
+
 	if (!m_p->buffer && m_p->cursor >= 0) return(0);
 
-	size_t l_rcount =
-	    (m_p->cursor + long(bs) < m_p->size ? bs : m_p->size - m_p->cursor);
+	size_t l_wcount =
+	    (m_p->cursor + long(bs) < m_p->size ? bs : size_t(m_p->size - m_p->cursor));
 
-	memcpy(m_p->buffer + m_p->cursor, b, l_rcount);
-	m_p->cursor += l_rcount;
+	memcpy(m_p->buffer + m_p->cursor, b, l_wcount);
+	m_p->cursor += l_wcount;
 
-	return(l_rcount);
+	/* set end-of-file flag */
+	m_p->eof = (bs > l_wcount);
+
+	return(l_wcount);
 }
 
 bool
@@ -215,16 +237,16 @@ BufferIO::seek(long o, DIOSeek on)
 
 	switch (on) {
 	case DIOStart:
-		if (o >= 0 && static_cast<size_t>(o) <= m_p->size)
+		if (o >= 0 && o <= m_p->size)
 			l_cursor = o;
 		break;
 	case DIOEnd:
-		if (static_cast<long>(m_p->size) + o >= 0)
-			l_cursor = static_cast<long>(m_p->size) + o;
+		if (m_p->size + o >= 0)
+			l_cursor = m_p->size + o;
 		break;
 	case DIOCurrent:
 		if ((m_p->cursor + o) >= 0 &&
-		    static_cast<size_t>(m_p->cursor + o) < m_p->size)
+		    m_p->cursor + o < m_p->size)
 			l_cursor = m_p->cursor + o;
 		break;
 	default: return(false);
@@ -232,6 +254,9 @@ BufferIO::seek(long o, DIOSeek on)
 
 	if (-1 == l_cursor)
 		return(false);
+
+	/* reset end-of-file flag */
+	m_p->eof = false;
 
 	m_p->cursor = l_cursor;
 	return(true);

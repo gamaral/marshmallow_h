@@ -77,7 +77,7 @@ namespace Math { /******************************************** Math Namespace */
 		    { return(i % MAX ? y : x); }
 
 		inline operator bool(void) const
-		    { return(x || y); }
+		    { return(x != .0f || y != .0f); }
 
 		inline operator Vector2(void) const;
 

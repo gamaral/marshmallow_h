@@ -72,7 +72,7 @@ namespace Math { /******************************************** Math Namespace */
 		    { return(m_value[i % 2]); }
 
 		operator bool(void) const
-		    { return(m_value[0] || m_value[1]); }
+		    { return(m_value[0] != .0f || m_value[1] != .0f); }
 
 		Tuple2 & operator*=(float rhs);
 		Tuple2 & operator-=(float rhs);

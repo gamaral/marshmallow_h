@@ -110,6 +110,7 @@ namespace Core { /******************************************** Core Namespace */
 
 		VIRTUAL DIOMode mode(void) const;
 		VIRTUAL bool isOpen(void) const;
+		VIRTUAL bool atEOF(void) const;
 
 		VIRTUAL size_t read(void *buffer, size_t bsize);
 		VIRTUAL size_t write(const void *buffer, size_t bsize);
