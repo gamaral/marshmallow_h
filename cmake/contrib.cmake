@@ -165,8 +165,8 @@ endif()
 
 # libogg
 if(MARSHMALLOW_CONTRIB_LIBOGG)
-	set(OGG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/ogg/code/include
-	                    ${PROJECT_BINARY_DIR}/contrib/ogg/code/include)
+	set(OGG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/contrib/libogg/code/include
+	                    ${PROJECT_BINARY_DIR}/contrib/libogg/code/include)
 
 	set(OGG_LIBRARY marshmallow_libogg)
 
@@ -180,7 +180,7 @@ endif()
 
 # libvorbis
 if(MARSHMALLOW_CONTRIB_LIBVORBIS)
-	set(VORBIS_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/contrib/vorbis/code/include)
+	set(VORBIS_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/contrib/libvorbis/code/include)
 	set(VORBIS_VORBIS_INCLUDE_DIR ${VORBIS_INCLUDE_DIRS})
 	set(VORBIS_FILE_INCLUDE_DIR ${VORBIS_INCLUDE_DIRS})
 
