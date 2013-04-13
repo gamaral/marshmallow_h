@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -55,10 +55,18 @@ audio_codec_wave_test(void)
 	Core::SharedBufferIO l_sample_wav =
 	    new Core::BufferIO(reinterpret_cast<char *>(sample_wav), sample_wav_len);
 
+	Core::SharedBufferIO l_sample_ogg =
+	    new Core::BufferIO(reinterpret_cast<char *>(sample_ogg), sample_ogg_len);
+
 	Audio::SharedCodec l_codec = new Audio::WaveCodec;
 
 	l_codec->open(l_sample_wav.staticCast<Core::IDataIO>());
-	TEST("Open WAVE Codec", l_codec->isOpen());
+	ASSERT_TRUE("Audio::WaveCodec::open()", l_codec->isOpen());
+	l_codec->close();
+	ASSERT_FALSE("Audio::WaveCodec::close()", l_codec->isOpen());
+
+	l_codec->open(l_sample_ogg.staticCast<Core::IDataIO>());
+	ASSERT_FALSE("Audio::WaveCodec::open() NON-WAVE", l_codec->isOpen());
 }
 
 void
@@ -67,20 +75,27 @@ audio_codec_ogg_test(void)
 	Core::SharedBufferIO l_sample_ogg =
 	    new Core::BufferIO(reinterpret_cast<char *>(sample_ogg), sample_ogg_len);
 
+	Core::SharedBufferIO l_sample_wav =
+	    new Core::BufferIO(reinterpret_cast<char *>(sample_wav), sample_wav_len);
+
 	Audio::SharedCodec l_codec = new Audio::OggCodec;
 
 	l_codec->open(l_sample_ogg.staticCast<Core::IDataIO>());
-	TEST("Open Ogg Codec", l_codec->isOpen());
+	ASSERT_TRUE("Audio::OggCodec::open()", l_codec->isOpen());
+	l_codec->close();
+	ASSERT_FALSE("Audio::OggCodec::close()", l_codec->isOpen());
+
+	l_codec->open(l_sample_wav.staticCast<Core::IDataIO>());
+	ASSERT_FALSE("Audio::OggCodec::open() NON-OGG", l_codec->isOpen());
 }
 
 int
-MMain(int argc, char *argv[])
+main(int, char *[])
 {
-	MMUNUSED(argc);
-	MMUNUSED(argv);
+	MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY);
 
-	audio_codec_wave_test();
-	audio_codec_ogg_test();
+	RUN_TEST(audio_codec_wave_test);
+	RUN_TEST(audio_codec_ogg_test);
 
 	return(TEST_EXITCODE);
 }

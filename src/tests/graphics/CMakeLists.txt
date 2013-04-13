@@ -1,5 +1,4 @@
-
-SET(MASHMALLOW_TEST_GRAPHICS_LIBS marshmallow_entrypoint marshmallow_core marshmallow_graphics)
+SET(MASHMALLOW_TEST_GRAPHICS_LIBS marshmallow_core marshmallow_graphics)
 
 add_executable(marshmallow_test_graphics_tileset tileset.cpp)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -43,29 +43,28 @@ MARSHMALLOW_NAMESPACE_USE
 void
 hash_compare_test(void)
 {
-	TEST("ZERO SAME AS NULL-HASH",
-	     0 == Core::Hash());
-	TEST("ZERO NOT SAME AS TEST HASH",
-	     0 != Core::Hash("test", 4, ~static_cast<MMUID>(0)));
+	ASSERT_ZERO("Core::Hash() EQUAL TO ZERO", Core::Hash());
+	ASSERT_NOT_ZERO("Core::Hash() 'test' NOT EQUAL TO ZERO",
+	    Core::Hash("test", 4, ~static_cast<MMUID>(0)));
 }
 
 void
 strhash_compare_test(void)
 {
-	TEST("STRHASH TEST SAME AS STRHASH TEST",
-	     Core::StrHash("test") == Core::StrHash("test"));
-	TEST("STRHASH TSET NOT SAME AS STRHASH TEST",
-	     Core::StrHash("tset") != Core::StrHash("test"));
+	ASSERT_EQUAL("Core::StrHash() 'test' EQUAL TO 'test'",
+	    Core::StrHash("test"), Core::StrHash("test"));
+	ASSERT_NOT_EQUAL("Core::StrHash() 'tset' NOT EQUAL TO 'test'",
+	    Core::StrHash("tset"), Core::StrHash("test"));
 }
 
-int
-MMain(int argc, char *argv[])
-{
-	MMUNUSED(argc);
-	MMUNUSED(argv);
 
-	hash_compare_test();
-	strhash_compare_test();
+int
+main(int, char *[])
+{
+	MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY);
+
+	RUN_TEST(hash_compare_test);
+	RUN_TEST(strhash_compare_test);
 
 	return(TEST_EXITCODE);
 }

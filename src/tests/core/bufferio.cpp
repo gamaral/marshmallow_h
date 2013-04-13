@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -41,100 +41,123 @@
 MARSHMALLOW_NAMESPACE_USE
 
 static const char s_content[] = "this is a test!";
+static const size_t s_content_size = sizeof(s_content);
 
 void
 buffer_readonly_test(void)
 {
 	char l_scratch[15];
+	const size_t l_scratch_size = sizeof(l_scratch);
+	memset(l_scratch, 0, l_scratch_size);
+
 	size_t l_bytes_read;
-	Core::BufferIO l_buffer(s_content, sizeof(s_content));
+	Core::BufferIO l_buffer(s_content, s_content_size);
 
-	TEST("BUFFER READONLY ISOPEN", l_buffer.isOpen());
+	ASSERT_TRUE("Core::BufferIO::isOpen() == TRUE", l_buffer.isOpen());
 
-	memset(l_scratch, 0, sizeof(l_scratch));
+	const size_t l_size = l_buffer.size();
+	ASSERT_EQUAL("Core::BufferIO::size() CONFIRM", s_content_size, l_size);
+
 	l_bytes_read = l_buffer.read(l_scratch, 4);
-	TEST("BUFFER READONLY READ 4 OK", 4 == l_bytes_read);
-	TEST("BUFFER READONLY READ 4 COMPARE", 0 == strcmp(l_scratch, "this"));
+	ASSERT_EQUAL("Core::BufferIO::read() 4 BYTES", 4, l_bytes_read);
+	ASSERT_ZERO("Core::BufferIO::read() CONFIRM DATA OK",
+	    strncmp(l_scratch, s_content, 4));
 
 	l_bytes_read = l_buffer.seek(1, Core::DIOCurrent);
-	TEST("BUFFER READONLY SEEK CUR 1 OK", l_bytes_read);
+	ASSERT_TRUE("Core::BufferIO::seek() 1 BYTE FROM CURRENT", l_bytes_read);
 
-	memset(l_scratch, 0, sizeof(l_scratch));
+	memset(l_scratch, 0, l_scratch_size);
 	l_bytes_read = l_buffer.read(l_scratch, 2);
-	TEST("BUFFER READONLY READ 2 OK", 2 == l_bytes_read);
-	TEST("BUFFER READONLY READ 2 COMPARE", 0 == strcmp(l_scratch, "is"));
+	ASSERT_EQUAL("Core::BufferIO::read() 2 BYTES", 2, l_bytes_read);
+	ASSERT_ZERO("Core::BufferIO::read() CONFIRM DATA OK",
+	    strncmp(l_scratch, &s_content[5], 2));
 
 	l_bytes_read = l_buffer.seek(-6, Core::DIOEnd);
-	TEST("BUFFER READONLY SEEK END -6 OK", l_bytes_read);
+	ASSERT_TRUE("Core::BufferIO::seek() -6 BYTES FROM END", l_bytes_read);
 
-	memset(l_scratch, 0, sizeof(l_scratch));
+	memset(l_scratch, 0, l_scratch_size);
 	l_bytes_read = l_buffer.read(l_scratch, 6);
-	TEST("BUFFER READONLY READ 5 OK", 6 == l_bytes_read);
-	TEST("BUFFER READONLY READ 6 COMPARE", 0 == strcmp(l_scratch, "test!"));
+	ASSERT_EQUAL("Core::BufferIO::read() 6 BYTES", 6, l_bytes_read);
+	ASSERT_ZERO("Core::BufferIO::read() CONFIRM DATA OK",
+	    strncmp(l_scratch, &s_content[s_content_size-6], 6));
+	
+	ASSERT_FALSE("Core::BufferIO::atEOF() == FALSE", l_buffer.atEOF());
+	l_buffer.read(l_scratch, 1);
+	ASSERT_TRUE("Core::BufferIO::atEOF() == TRUE", l_buffer.atEOF());
+
+	l_buffer.close();
+	ASSERT_FALSE("Core::BufferIO::close()", l_buffer.isOpen());
 }
 
 void
 buffer_write_test(void)
 {
 	char l_scratch[16];
+	const size_t l_scratch_size = sizeof(l_scratch);
+	memset(l_scratch, 0, l_scratch_size);
+
 	size_t l_bytes_written;
-	Core::BufferIO l_buffer(l_scratch, sizeof(l_scratch));
+	Core::BufferIO l_buffer(l_scratch, l_scratch_size);
 
-	memset(l_scratch, 0, sizeof(l_scratch));
-
-	TEST("BUFFER WRITE ISOPEN", l_buffer.isOpen());
+	ASSERT_TRUE("Core::BufferIO::isOpen() == TRUE", l_buffer.isOpen());
 
 	l_bytes_written = l_buffer.write("thiss", 5);
-	TEST("BUFFER WRITE WRITE 5 OK", 5 == l_bytes_written);
-	TEST("BUFFER WRITE WRITE 5 COMPARE", 0 == strcmp(l_scratch, "thiss"));
+	ASSERT_EQUAL("Core::BufferIO::write() 5 BYTES", 5, l_bytes_written);
+	ASSERT_ZERO("Core::BufferIO::write() CONFIRM DATA OK", strcmp(l_scratch, "thiss"));
 
 	l_bytes_written = l_buffer.seek(-1, Core::DIOCurrent);
-	TEST("BUFFER WRITE SEEK CUR -1 OK", l_bytes_written);
+	ASSERT_TRUE("Core::BufferIO::seek() -1 FROM CURRENT", l_bytes_written);
 
 	l_bytes_written = l_buffer.write(" ", 1);
-	TEST("BUFFER WRITE WRITE 2 OK", 1 == l_bytes_written);
-	TEST("BUFFER WRITE WRITE 2 COMPARE", 0 == strcmp(l_scratch, "this "));
+	ASSERT_EQUAL("Core::BufferIO::write() 1 BYTE", 1, l_bytes_written);
+	ASSERT_ZERO("Core::BufferIO::write() CONFIRM DATA OK", strcmp(l_scratch, "this "));
 
 	l_bytes_written = l_buffer.seek(-11, Core::DIOEnd);
-	TEST("BUFFER WRITE SEEK END -11 OK", l_bytes_written);
+	ASSERT_TRUE("Core::BufferIO::seek() -11 BYTES FROM END", l_bytes_written);
 
 	l_bytes_written = l_buffer.write("is a test!", 10);
-	TEST("BUFFER WRITE WRITE 10 OK", 10 == l_bytes_written);
-	TEST("BUFFER WRITE WRITE 10 COMPARE", 0 == strcmp(l_scratch, s_content));
+	ASSERT_EQUAL("Core::BufferIO::write() 10 BYTES", 10, l_bytes_written);
+	ASSERT_ZERO("Core::BufferIO::write() CONFIRM DATA OK", strcmp(l_scratch, s_content));
+
+	l_buffer.close();
+	ASSERT_FALSE("Core::BufferIO::close()", l_buffer.isOpen());
 }
 
 void
 buffer_clone_test(void)
 {
 	char l_scratch[16];
+	const size_t l_scratch_size = sizeof(l_scratch);
+	memset(l_scratch, 0, l_scratch_size);
 
-	Core::BufferIO l_buffer_orig(s_content, sizeof(s_content));
-
+	Core::BufferIO l_buffer_orig(s_content, s_content_size);
 	Core::BufferIO l_buffer_copy(l_buffer_orig);
-	TEST("BUFFER COPY ISOPEN", l_buffer_copy.isOpen());
+	ASSERT_TRUE("Core::BufferIO::isOpen() == TRUE", l_buffer_copy.isOpen());
 
-	memset(l_scratch, 0, sizeof(l_scratch));
-	l_buffer_copy.read(l_scratch, 15);
-	TEST("BUFFER COPY CONTENT OK", 0 == strcmp(l_scratch, s_content));
-
+	size_t l_read = l_buffer_copy.read(l_scratch, 15);
+	ASSERT_EQUAL("Core::BufferIO::read() 15 BYTES", 15, l_read);
+	ASSERT_ZERO("Core::BufferIO::read() CONFIRM DATA OK", strcmp(l_scratch, s_content));
 
 	Core::BufferIO l_buffer_clone(&l_buffer_orig);
-	TEST("BUFFER CLONE ISOPEN", l_buffer_clone.isOpen());
+	ASSERT_TRUE("Core::BufferIO::isOpen() == TRUE", l_buffer_clone.isOpen());
 
-	memset(l_scratch, 0, sizeof(l_scratch));
-	l_buffer_clone.read(l_scratch, 15);
-	TEST("BUFFER CLONE CONTENT OK", 0 == strcmp(l_scratch, s_content));
+	memset(l_scratch, 0, l_scratch_size);
+	l_read = l_buffer_clone.read(l_scratch, 15);
+	ASSERT_EQUAL("Core::BufferIO::read() 15 BYTES", 15, l_read);
+	ASSERT_ZERO("Core::BufferIO::read() CONFIRM DATA OK", strcmp(l_scratch, s_content));
+
+	l_buffer_orig.close();
+	ASSERT_FALSE("Core::BufferIO::close()", l_buffer_orig.isOpen());
 }
 
 int
-MMain(int argc, char *argv[])
+main(int, char *[])
 {
-	MMUNUSED(argc);
-	MMUNUSED(argv);
+	MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY);
 
-	buffer_readonly_test();
-	buffer_write_test();
-	buffer_clone_test();
+	RUN_TEST(buffer_readonly_test);
+	RUN_TEST(buffer_write_test);
+	RUN_TEST(buffer_clone_test);
 
 	return(TEST_EXITCODE);
 }
