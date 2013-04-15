@@ -48,7 +48,8 @@ namespace Graphics { /************************************ Graphics Namespace */
 namespace Dummy { /******************************** Graphics::Dummy Namespace */
 
 	/*! @brief Graphic Dummy Texture Data Class */
-	class TextureData : public ITextureData
+	class MARSHMALLOW_GRAPHICS_EXPORT
+	TextureData : public ITextureData
 	{
 		Core::Identifier m_id;
 		Math::Size2i m_size;

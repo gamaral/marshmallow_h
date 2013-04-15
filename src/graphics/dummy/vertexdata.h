@@ -48,7 +48,8 @@ namespace Graphics {
 namespace Dummy {
 
 	/*! @brief Graphics Dummy Vertex Data Class */
-	class VertexData : public IVertexData
+	class MARSHMALLOW_GRAPHICS_EXPORT
+	VertexData : public IVertexData
 	{
 		Core::Identifier m_id;
 		float *m_data;
