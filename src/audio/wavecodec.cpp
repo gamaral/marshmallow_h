@@ -172,7 +172,7 @@ WaveCodec::Private::read(void *buffer, size_t bsize)
 {
 	if (!opened) return(0);
 
-	dio->seek(cursor, Core::DIOStart);
+	dio->seek(cursor, Core::DIOSet);
 	const size_t l_read = dio->read(buffer, bsize);
 	cursor = dio->tell();
 
@@ -259,7 +259,7 @@ WaveCodec::Validate(const Core::SharedDataIO &dio)
 	/*
 	 * Reset location
 	 */
-	if (!dio->seek(0, Core::DIOStart)) {
+	if (!dio->seek(0, Core::DIOSet)) {
 		MMDEBUG("Invalid DataIO (failed seek).");
 		return(false);
 	}

@@ -105,7 +105,7 @@ BufferIO::BufferIO(IDataIO *source)
 		return;
 	}
 
-	if (!source->seek(0, DIOStart)) {
+	if (!source->seek(0, DIOSet)) {
 		MMERROR("Failed to seek back to beginning.");
 		return;
 	}
@@ -236,7 +236,7 @@ BufferIO::seek(long o, DIOSeek on)
 	long l_cursor = -1;
 
 	switch (on) {
-	case DIOStart:
+	case DIOSet:
 		if (o >= 0 && o <= m_p->size)
 			l_cursor = o;
 		break;

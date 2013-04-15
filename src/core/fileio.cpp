@@ -37,6 +37,9 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 
+#include <cassert>
+#include <cstring>
+
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 
@@ -45,7 +48,6 @@ struct FileIO::Private
 	Identifier filename;
 	DIOMode    mode;
 	FILE      *handle;
-	bool       eof;
 };
 
 FileIO::FileIO(void)
@@ -53,7 +55,6 @@ FileIO::FileIO(void)
 {
 	m_p->handle = 0;
 	m_p->mode = DIOInvalid;
-	m_p->eof = false;
 }
 
 FileIO::FileIO(const Identifier &fn, DIOMode m)
@@ -61,7 +62,6 @@ FileIO::FileIO(const Identifier &fn, DIOMode m)
 {
 	m_p->handle = 0;
 	m_p->mode = DIOInvalid;
-	m_p->eof = false;
 	setFileName(fn);
 	open(m);
 }
@@ -97,29 +97,42 @@ FileIO::open(DIOMode m)
 		return(false);
 	}
 
-	char l_mode[4] = {0, 0, 0, 0};
-	unsigned char l_mode_c = 0;
+	char l_mode[4];
 
-	if (m & DIOReadOnly)
-		l_mode[l_mode_c++] = 'r';
-	if (m & DIOWriteOnly)
-		l_mode[l_mode_c++] = 'w';
+	/* null terminate */
+	l_mode[0] = '\0';
+
+	if (m & DIOWriteOnly) {
+		if ((m & (DIOReadOnly|DIOAppend)) == DIOReadOnly)
+			strcat(l_mode, "r+");
+		else if ((m & DIOAppend) == DIOAppend)
+			strcat(l_mode, m & DIOReadOnly ? "ra" : "a");
+		else
+			strcat(l_mode, m & DIOReadOnly ? "w+" : "w");
+	}
+	else if (m & DIOReadOnly)
+		strcat(l_mode, "r");
+	else {
+		assert(false && "Invalid open mode!");
+		return(false);
+	}
+
 	if (m & DIOBinary)
-		l_mode[l_mode_c++] = 'b';
+		strcat(l_mode, "b");
 	
 	m_p->handle = fopen(m_p->filename, l_mode);
 	m_p->mode = m;
-	m_p->eof = false;
+
 	return(m_p->handle != 0);
 }
 
 void
 FileIO::close(void)
 {
-	fclose(m_p->handle);
+	if (m_p->handle)
+		fclose(m_p->handle);
 	m_p->handle = 0;
 	m_p->mode = DIOInvalid;
-	m_p->eof = false;
 	m_p->filename = Identifier();
 }
 
@@ -138,39 +151,32 @@ FileIO::isOpen(void) const
 bool
 FileIO::atEOF(void) const
 {
-	return(m_p->eof);
+	return(feof(m_p->handle));
 }
 
 
 size_t
 FileIO::read(void *b, size_t bs)
 {
-	size_t l_read = fread(b, 1, bs, m_p->handle);
-
-	if (l_read < bs)
-	    m_p->eof = (feof(m_p->handle) != 0);
-
-	return(l_read);
+	assert(m_p->handle && "Invalid file handle!");
+	return(fread(b, 1, bs, m_p->handle));
 }
 
 size_t
 FileIO::write(const void *b, size_t bs)
 {
-	size_t l_written = fwrite(b, 1, bs, m_p->handle);
-
-	/* update end-of-file flag */
-	m_p->eof = (feof(m_p->handle) != 0);
-
-	return(l_written);
+	assert(m_p->handle && "Invalid file handle!");
+	return(fwrite(b, 1, bs, m_p->handle));
 }
 
 bool
 FileIO::seek(long o, DIOSeek on)
 {
+	assert(m_p->handle && "Invalid file handle!");
 	int l_origin;
 
 	switch (on) {
-	case   DIOStart: l_origin = SEEK_SET; break;
+	case     DIOSet: l_origin = SEEK_SET; break;
 	case     DIOEnd: l_origin = SEEK_END; break;
 	case DIOCurrent: l_origin = SEEK_CUR; break;
 	default: return(false);
@@ -179,21 +185,20 @@ FileIO::seek(long o, DIOSeek on)
 	if (fseek(m_p->handle, o, l_origin) != 0)
 		return(false);
 
-	/* update end-of-file flag */
-	m_p->eof = (feof(m_p->handle) != 0);
-
 	return(true);
 }
 
 long
 FileIO::tell(void) const
 {
+	assert(m_p->handle && "Invalid file handle!");
 	return(ftell(m_p->handle));
 }
 
 size_t
 FileIO::size(void) const
 {
+	assert(m_p->handle && "Invalid file handle!");
 	const long l_cursor = ftell(m_p->handle);
 	if (l_cursor == -1) {
 		MMWARNING("Failed to get current cursor position in file.");
