@@ -51,16 +51,18 @@ namespace Core { /******************************************** Core Namespace */
 		DIOInvalid   = 0,
 		DIOReadOnly  = (1 << 0),
 		DIOWriteOnly = (1 << 1),
-		DIOBinary    = (1 << 2),
+		DIOAppend    = (1 << 3)|DIOWriteOnly,
+		DIOBinary    = (1 << 4),
+		DIOCreate    = DIOWriteOnly,
+		DIOTruncate  = DIOWriteOnly,
 		DIOReadWrite = DIOReadOnly|DIOWriteOnly
 	};
 
 	enum DIOSeek
 	{
-		DIOStart,
+		DIOSet,
 		DIOCurrent,
-		DIOEnd,
-		DIOSet = DIOStart
+		DIOEnd
 	};
 
 	/*!

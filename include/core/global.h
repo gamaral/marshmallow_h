@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -37,11 +37,15 @@
 #ifndef MARSHMALLOW_CORE_GLOBAL_H
 #define MARSHMALLOW_CORE_GLOBAL_H 1
 
-#define MARSHMALLOW_VERSION          0x00010008
+#define MARSHMALLOW_VERSION ((MARSHMALLOW_VERSION_MAJOR << 24) \
+                           + (MARSHMALLOW_VERSION_MINOR << 16) \
+                           + (MARSHMALLOW_VERSION_BUILD <<  8) \
+                           +  MARSHMALLOW_VERSION_REVISION)
+
 #define MARSHMALLOW_VERSION_MAJOR    0x00
 #define MARSHMALLOW_VERSION_MINOR    0x01
 #define MARSHMALLOW_VERSION_BUILD    0x00
-#define MARSHMALLOW_VERSION_REVISION 0x08
+#define MARSHMALLOW_VERSION_REVISION 0x09
 
 #define VIRTUAL
 #define NO_ASSIGN_COPY(x) NO_ASSIGN(x); NO_COPY(x)

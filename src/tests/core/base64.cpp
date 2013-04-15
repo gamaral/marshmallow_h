@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -54,15 +54,15 @@ base64_decode_test(void)
 	char *out = 0;
 
 	Core::Base64::Decode(base64a, strlen(base64a), &out);
-	TEST("DECODE TEST A", 0 == strcmp(out, ubase64a));
+	ASSERT_ZERO("Core::Base64::Decode() TEST A", strcmp(out, ubase64a));
 	delete[] out;
 
 	Core::Base64::Decode(base64b, strlen(base64b), &out);
-	TEST("DECODE TEST B", 0 == strcmp(out, ubase64b));
+	ASSERT_ZERO("Core::Base64::Decode() TEST B", strcmp(out, ubase64b));
 	delete[] out;
 
 	Core::Base64::Decode(base64c, strlen(base64c), &out);
-	TEST("DECODE TEST C", 0 == strcmp(out, ubase64c));
+	ASSERT_ZERO("Core::Base64::Decode() TEST C", strcmp(out, ubase64c));
 	delete[] out;
 }
 
@@ -72,26 +72,25 @@ base64_encode_test(void)
 	char *out;
 
 	Core::Base64::Encode(ubase64a, strlen(ubase64a), &out);
-	TEST("ENCODE TEST A", 0 == strcmp(out, base64a));
+	ASSERT_ZERO("Core::Base64::Encode() TEST A", strcmp(out, base64a));
 	delete[] out;
 
 	Core::Base64::Encode(ubase64b, strlen(ubase64b), &out);
-	TEST("ENCODE TEST B", 0 == strcmp(out, base64b));
+	ASSERT_ZERO("Core::Base64::Encode() TEST B", strcmp(out, base64b));
 	delete[] out;
 
 	Core::Base64::Encode(ubase64c, strlen(ubase64c), &out);
-	TEST("ENCODE TEST C", 0 == strcmp(out, base64c));
+	ASSERT_ZERO("Core::Base64::Encode() TEST C", strcmp(out, base64c));
 	delete[] out;
 }
 
 int
-MMain(int argc, char *argv[])
+main(int, char *[])
 {
-	MMUNUSED(argc);
-	MMUNUSED(argv);
+	MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY);
 
-	base64_decode_test();
-	base64_encode_test();
+	RUN_TEST(base64_decode_test);
+	RUN_TEST(base64_encode_test);
 
 	return(TEST_EXITCODE);
 }

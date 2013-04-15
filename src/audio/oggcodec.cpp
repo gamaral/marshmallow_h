@@ -63,7 +63,7 @@ OVRead(void *buffer, size_t byte_size, size_t byte_count, void *data)
 
 	OVData *l_data = reinterpret_cast<OVData *>(data);
 
-	if (!l_data->dio->seek(l_data->cursor, Core::DIOStart)) {
+	if (!l_data->dio->seek(l_data->cursor, Core::DIOSet)) {
 		MMERROR("Failed to restore DataIO cursor! " << l_data->cursor);
 		return(0);
 	}
@@ -86,13 +86,13 @@ OVSeek(void *data, ogg_int64_t offset, int origin)
 	Core::DIOSeek l_seek;
 	switch (origin) {
 	case SEEK_SET:
-		l_seek = Core::DIOStart;
+		l_seek = Core::DIOSet;
 		break;
 	case SEEK_END:
 		l_seek = Core::DIOEnd;
 		break;
 	case SEEK_CUR:
-		if (!l_data->dio->seek(l_data->cursor, Core::DIOStart)) {
+		if (!l_data->dio->seek(l_data->cursor, Core::DIOSet)) {
 			MMERROR("Failed to restore DataIO cursor!");
 			return(-1);
 		}
@@ -327,7 +327,7 @@ OggCodec::Validate(const Core::SharedDataIO &dio)
 	/*
 	 * Reset location
 	 */
-	if (!dio->seek(0, Core::DIOStart)) {
+	if (!dio->seek(0, Core::DIOSet)) {
 		MMDEBUG("Invalid DataIO (failed seek).");
 		return(false);
 	}
@@ -348,7 +348,7 @@ OggCodec::Validate(const Core::SharedDataIO &dio)
 
 	MMDEBUG("Detected Ogg file.");
 
-	if (!dio->seek(0, Core::DIOStart)) {
+	if (!dio->seek(0, Core::DIOSet)) {
 		MMDEBUG("Invalid DataIO (reset failed).");
 		return(false);
 	}

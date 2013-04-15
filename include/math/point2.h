@@ -48,8 +48,7 @@ namespace Math { /******************************************** Math Namespace */
 	struct Vector2;
 
 	/*! @brief 2D Point */
-	struct MARSHMALLOW_MATH_EXPORT
-	Point2
+	struct Point2
 	{
 		enum Position { X, Y, MAX };
 

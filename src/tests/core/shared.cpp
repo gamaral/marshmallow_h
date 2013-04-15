@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -42,44 +42,37 @@ MARSHMALLOW_NAMESPACE_USE
 void
 shared_basic_test(void)
 {
-	TEST("TEST INVALID SHARED POINTER",
-	     !Core::Shared<int>());
+	ASSERT_INVALID("Core::Shared::Shared() INVALID", Core::Shared<int>());
 
 	Core::Shared<int> valid(new int);
-	TEST("TEST VALID SHARED POINTER",
-	     valid);
+	ASSERT_VALID("Core::Shared::Shared()", valid);
 
 	/* clear valid shared pointer */
 	valid.clear();
-	TEST("TEST INVALIDATED SHARED POINTER",
-	     !valid);
+	ASSERT_INVALID("Core::Shared::clear()", valid);
 }
 
 void
 weak_basic_test(void)
 {
-	TEST("TEST INVALID WEAK POINTER",
-	     !Core::Weak<int>());
+	ASSERT_INVALID("Core::Weak::Weak() INVALID", Core::Weak<int>());
 
 	Core::Shared<int> svalid(new int);
 	Core::Weak<int> valid(svalid);
-	TEST("TEST VALID WEAK POINTER",
-	     valid);
+	ASSERT_VALID("Core::Weak::Weak()", valid);
 
 	/* clear valid weak pointer */
 	valid.clear();
-	TEST("TEST INVALIDATED WEAK POINTER",
-	     !valid);
+	ASSERT_INVALID("Core::Weak::clear()", valid);
 }
 
 int
-MMain(int argc, char *argv[])
+main(int, char *[])
 {
-	MMUNUSED(argc);
-	MMUNUSED(argv);
+	MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY);
 
-	shared_basic_test();
-	weak_basic_test();
+	RUN_TEST(shared_basic_test);
+	RUN_TEST(weak_basic_test);
 
 	return(TEST_EXITCODE);
 }
