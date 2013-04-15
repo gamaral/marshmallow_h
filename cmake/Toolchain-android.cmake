@@ -449,19 +449,6 @@ if( ANDROID_FORBID_SYGWIN )
  endif()
 endif()
 
-# detect current host platform
-set( TOOL_OS_SUFFIX "" )
-if( CMAKE_HOST_APPLE )
- set( ANDROID_NDK_HOST_SYSTEM_NAME "darwin-x86" )
-elseif( CMAKE_HOST_WIN32 )
- set( ANDROID_NDK_HOST_SYSTEM_NAME "windows" )
- set( TOOL_OS_SUFFIX ".exe" )
-elseif( CMAKE_HOST_UNIX )
- set( ANDROID_NDK_HOST_SYSTEM_NAME "linux-x86" )
-else()
- message( FATAL_ERROR "Cross-compilation on your platform is not supported by this cmake toolchain" )
-endif()
-
 # see if we have path to Android NDK
 __INIT_VARIABLE( ANDROID_NDK PATH ENV_ANDROID_NDK )
 if( NOT ANDROID_NDK )
@@ -534,6 +521,28 @@ else()
     or put the toolchain or NDK in the default path:
       sudo ln -s ~/my-android-ndk ${ANDROID_NDK_SEARCH_PATH}
       sudo ln -s ~/my-android-toolchain ${ANDROID_STANDALONE_TOOLCHAIN_SEARCH_PATH}" )
+endif()
+
+# detect current host platform
+set( TOOL_OS_SUFFIX "" )
+if( CMAKE_HOST_APPLE )
+  set( ANDROID_NDK_HOST_SYSTEM_NAME "darwin-x86" )
+  if (NOT EXISTS "${ANDROID_NDK}/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}")
+    set( ANDROID_NDK_HOST_SYSTEM_NAME "darwin-x86_64" )
+  endif()
+elseif( CMAKE_HOST_WIN32 )
+  set( ANDROID_NDK_HOST_SYSTEM_NAME "windows" )
+  if (NOT EXISTS "${ANDROID_NDK}/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}")
+    set( ANDROID_NDK_HOST_SYSTEM_NAME "windows_x86_64" )
+  endif()
+ set( TOOL_OS_SUFFIX ".exe" )
+elseif( CMAKE_HOST_UNIX )
+  set( ANDROID_NDK_HOST_SYSTEM_NAME "linux-x86" )
+  if (NOT EXISTS "${ANDROID_NDK}/prebuilt/${ANDROID_NDK_HOST_SYSTEM_NAME}")
+    set( ANDROID_NDK_HOST_SYSTEM_NAME "linux-x86_64" )
+  endif()
+else()
+ message( FATAL_ERROR "Cross-compilation on your platform is not supported by this cmake toolchain" )
 endif()
 
 # get all the details about standalone toolchain
