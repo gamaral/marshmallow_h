@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Marshmallow Engine. All rights reserved.
+ * Copyright 2011-2013 Marshmallow Engine. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -63,40 +63,39 @@ tileset_fixed_test(void)
 
 	tcd = l_tileset.getTextureCoordinateData(0);
 	tcd->get(0, l_u, l_v);
-	TEST("TILESET 128-16 FIXED INDEX 0 TEST 0",
+	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 0 TEST 0",
 	    (l_u == .0f) && (l_v == .0f));
 	tcd->get(1, l_u, l_v);
-	TEST("TILESET 128-16 FIXED INDEX 0 TEST 1",
+	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 0 TEST 1",
 	    (l_u == .0f) && (l_v == .125f));
 	tcd->get(2, l_u, l_v);
-	TEST("TILESET 128-16 FIXED INDEX 0 TEST 2",
+	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 0 TEST 2",
 	    (l_u == .125f) && (l_v == .0f));
 	tcd->get(3, l_u, l_v);
-	TEST("TILESET 128-16 FIXED INDEX 0 TEST 3",
+	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 0 TEST 3",
 	    (l_u == .125f) && (l_v == .125f));
 
 	tcd = l_tileset.getTextureCoordinateData(63);
 	tcd->get(0, l_u, l_v);
-	TEST("TILESET 128-16 FIXED INDEX 63 TEST 0",
+	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 63 TEST 0",
 	    (l_u == .875f) && (l_v == .875f));
 	tcd->get(1, l_u, l_v);
-	TEST("TILESET 128-16 FIXED INDEX 63 TEST 1",
+	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 63 TEST 1",
 	    (l_u == .875f) && (l_v == 1.f));
 	tcd->get(2, l_u, l_v);
-	TEST("TILESET 128-16 FIXED INDEX 63 TEST 2",
+	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 63 TEST 2",
 	    (l_u == 1.f) && (l_v == .875f));
 	tcd->get(3, l_u, l_v);
-	TEST("TILESET 128-16 FIXED INDEX 63 TEST 3",
+	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 63 TEST 3",
 	    (l_u == 1.f) && (l_v == 1.f));
 }
 
 int
-MMain(int argc, char *argv[])
+main(int, char *[])
 {
-	MMUNUSED(argc);
-	MMUNUSED(argv);
+	MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY);
 
-	tileset_fixed_test();
+	RUN_TEST(tileset_fixed_test);
 
 	return(TEST_EXITCODE);
 }

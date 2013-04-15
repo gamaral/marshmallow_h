@@ -1,5 +1,4 @@
-
-SET(MASHMALLOW_TEST_AUDIO_LIBS marshmallow_entrypoint marshmallow_core marshmallow_audio)
+SET(MASHMALLOW_TEST_AUDIO_LIBS marshmallow_core marshmallow_audio)
 
 add_executable(marshmallow_test_audio_codecs codecs.cpp)
 

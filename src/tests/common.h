@@ -28,17 +28,29 @@
 
 #include <cstdio>
 
+#include "config.h"
+
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-static const char * s_test_format = "[%s] : %s \"%s\"\n";
+static const char * s_test_format = "[%s] %s:%d \"%s\"\n";
 static const char * s_str_passed  = "PASS";
 static const char * s_str_failed  = "FAIL";
 static bool s_passed = true;
 
-#define TEST(x, y) fprintf(stderr, s_test_format, y ? s_str_passed : s_str_failed, __FUNCTION__, x); s_passed &= (y)
+#define RUN_TEST(x) x()
+#define ASSERT_TRUE(x, y) fprintf(stderr, s_test_format, (y) ? s_str_passed : s_str_failed, __FUNCTION__, __LINE__, x), s_passed &= (y)
+#define ASSERT_FALSE(x, y) ASSERT_TRUE(x, !(y))
+#define ASSERT_VALID(x, y) ASSERT_TRUE(x, y)
+#define ASSERT_INVALID(x, y) ASSERT_TRUE(x, !y)
+#define ASSERT_ZERO(x, y) ASSERT_TRUE(x, 0 == (y))
+#define ASSERT_NOT_ZERO(x, y) ASSERT_TRUE(x, 0 != (y))
+#define ASSERT_NULL(x, y) ASSERT_TRUE(x, null == y)
+#define ASSERT_NOT_NULL(x, y) ASSERT_TRUE(x, null != y)
+#define ASSERT_EQUAL(x, y, z) ASSERT_TRUE(x, (y) == (z))
+#define ASSERT_NOT_EQUAL(x, y, z) ASSERT_TRUE(x, (y) != (z))
 #define TEST_EXITCODE s_passed ? 0 : -1
 
