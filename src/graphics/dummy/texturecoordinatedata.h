@@ -47,7 +47,8 @@ namespace Graphics { /************************************ Graphics Namespace */
 namespace Dummy { /******************************** Graphics::Dummy Namespace */
 
 	/*! @brief Graphics Dummy Texture Coordinate Data Class */
-	class TextureCoordinateData : public ITextureCoordinateData
+	class MARSHMALLOW_GRAPHICS_EXPORT
+	TextureCoordinateData : public ITextureCoordinateData
 	{
 		Core::Identifier m_id;
 		float *m_data;
