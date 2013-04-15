@@ -12,8 +12,7 @@ set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS backend.cpp
                                       texturedata.cpp
                                       vertexdata.cpp)
 
-set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
-	                              marshmallow_core
+set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS marshmallow_core
 	                              marshmallow_event
 	                              marshmallow_input
 	                              marshmallow_math)
