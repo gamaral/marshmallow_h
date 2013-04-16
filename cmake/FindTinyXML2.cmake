@@ -1,5 +1,5 @@
-# Copyright 2012 Marshmallow Engine. All rights reserved.
-# Copyright 2012 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
+# Copyright 2013 Marshmallow Engine. All rights reserved.
+# Copyright 2013 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -18,7 +18,7 @@
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 # SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 # ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-# NVORBISIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# NTINYXML2IGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # The views and conclusions contained in the software and documentation are those of the
@@ -26,25 +26,17 @@
 # or implied, of Marshmallow Engine.
 #
 ###############################################################################
-# Find VORBIS
+# Find TINYXML2
 ###############################################################################
 #
-#  VORBIS_FOUND
-#  VORBIS_INCLUDE_DIRS
-#  VORBIS_LIBRARIES
-#
-#  VORBIS_VORBIS_FOUND
-#  VORBIS_VORBIS_INCLUDE_DIR
-#  VORBIS_VORBIS_LIBRARY
-#
-#  VORBIS_FILE_FOUND
-#  VORBIS_FILE_INCLUDE_DIR
-#  VORBIS_FILE_LIBRARY
+#  TINYXML2_FOUND
+#  TINYXML2_INCLUDE_DIR
+#  TINYXML2_LIBRARY
 #
 ###############################################################################
 
-find_path(VORBIS_VORBIS_INCLUDE_DIR vorbis/codec.h
-	HINTS $ENV{VORBISDIR}
+find_path(TINYXML2_INCLUDE_DIR tinyxml2.h
+	HINTS $ENV{TINYXML2DIR}
 	PATH_SUFFIXES include
 	PATHS ~/Library/Frameworks
 	      /Library/Frameworks
@@ -52,52 +44,17 @@ find_path(VORBIS_VORBIS_INCLUDE_DIR vorbis/codec.h
 	      /usr
 )
 
-find_path(VORBIS_FILE_INCLUDE_DIR vorbis/vorbisfile.h
-	HINTS $ENV{VORBISDIR}
-	PATH_SUFFIXES include
-	PATHS ~/Library/Frameworks
-	      /Library/Frameworks
-	      /usr/local
-	      /usr
-)
-
-find_library(VORBIS_VORBIS_LIBRARY
-	vorbis
-	HINTS $ENV{VORBISDIR}
+find_library(TINYXML2_LIBRARY
+	tinyxml2
+	HINTS $ENV{TINYXML2DIR}
 	PATH_SUFFIXES lib64 lib
 	PATHS ~/Library/Frameworks
 	      /Library/Frameworks
 	      /usr/local
 	      /usr
-)
-
-find_library(VORBIS_FILE_LIBRARY
-	vorbisfile
-	HINTS $ENV{VORBISDIR}
-	PATH_SUFFIXES lib64 lib
-	PATHS ~/Library/Frameworks
-	      /Library/Frameworks
-	      /usr/local
-	      /usr
-)
-
-set(VORBIS_INCLUDE_DIRS ${VORBIS_VORBIS_INCLUDE_DIR}
-                        ${VORBIS_FILE_INCLUDE_DIR}
-)
-
-set(VORBIS_LIBRARIES ${VORBIS_VORBIS_LIBRARY}
-                     ${VORBIS_FILE_LIBRARY}
 )
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(VORBIS DEFAULT_MSG VORBIS_VORBIS_LIBRARY
-                                                     VORBIS_FILE_LIBRARY
-                                                     VORBIS_LIBRARIES
-)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(TINYXML2 DEFAULT_MSG TINYXML2_LIBRARY)
 
-mark_as_advanced(VORBIS_LIBRARIES VORBIS_INCLUDE_DIRS
-                                  VORBIS_VORBIS_LIBRARY
-                                  VORBIS_VORBIS_INCLUDE_DIR
-                                  VORBIS_FILE_LIBRARY
-                                  VORBIS_FILE_INCLUDE_DIR
-)
+mark_as_advanced(TINYXML2_LIBRARY TINYXML2_INCLUDE_DIR)
