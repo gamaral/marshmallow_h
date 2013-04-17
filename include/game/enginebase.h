@@ -85,7 +85,7 @@ namespace Game { /******************************************** Game Namespace */
 		 * @param sleep Sleep interval
 		 */
 		EngineBase(int fps = MARSHMALLOW_ENGINE_FRAMERATE,
-		           int sleep = MMSLEEP_INSOMNIAC);
+		           int sleep = MMSLEEP_DISABLED);
 		virtual ~EngineBase(void);
 
 		/*!
