@@ -28,7 +28,7 @@
 
 project(marshmallow_tinyxml2)
 
-set(MARSHMALLOW_TINYXML_SRCS code/tinyxml2.cpp)
+set(MARSHMALLOW_TINYXML2_SRCS code/tinyxml2.cpp)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code)
 
@@ -36,16 +36,16 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DDEBUG)
 endif()
 
-set(MARSHMALLOW_TINYXML_LIBTYPE "")
+set(MARSHMALLOW_TINYXML2_LIBTYPE)
 # TinyXML2 only works as static on Windows since it doesn't generate an import
 # library (.lib)
 if(BUILD_SHARED_LIBS AND WIN32)
-	set(MARSHMALLOW_TINYXML_LIBTYPE "STATIC")
+	set(MARSHMALLOW_TINYXML2_LIBTYPE "STATIC")
 endif()
 
-add_library(marshmallow_tinyxml ${MARSHMALLOW_TINYXML_LIBTYPE} ${MARSHMALLOW_TINYXML_SRCS})
+add_library(${TINYXML2_LIBRARY} ${MARSHMALLOW_TINYXML2_LIBTYPE} ${MARSHMALLOW_TINYXML2_SRCS})
 
-install(TARGETS marshmallow_tinyxml
+install(TARGETS ${TINYXML2_LIBRARY}
         LIBRARY DESTINATION lib COMPONENT runtime
         ARCHIVE DESTINATION lib COMPONENT development)
 

@@ -1,5 +1,5 @@
-# Copyright 2011 Marshmallow Engine. All rights reserved.
-# Copyright 2011 Guillermo A. Amaral B. (gamaral) <g@maral.me>
+# Copyright 2013 Marshmallow Engine. All rights reserved.
+# Copyright 2013 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -18,46 +18,38 @@
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 # SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 # ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# NMIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # The views and conclusions contained in the software and documentation are those of the
 # authors and should not be interpreted as representing official policies, either expressed
 # or implied, of Marshmallow Engine.
 #
+###############################################################################
+# Find M
+###############################################################################
+#
+#  M_FOUND
+#  M_LIBRARY
+#
+###############################################################################
 
-project(marshmallow_box2d)
+if(UNIX)
+	find_library(M_LIBRARY
+		NAMES m
+		PATH_SUFFIXES lib64 lib
+		PATHS ~/Library/Frameworks
+		      /Library/Frameworks
+		      /usr/local
+		      /usr
+	)
 
-include_directories(${BOX2D_INCLUDE_DIR})
-
-set(BOX2D_BASE "${CMAKE_CURRENT_SOURCE_DIR}/code/Box2D")
-
-file(GLOB BOX2D_Collision_SRCS ${BOX2D_BASE}/Box2D/Collision/*.cpp)
-file(GLOB BOX2D_Shapes_SRCS ${BOX2D_BASE}/Box2D/Collision/Shapes/*.cpp)
-file(GLOB BOX2D_Common_SRCS ${BOX2D_BASE}/Box2D/Common/*.cpp)
-file(GLOB BOX2D_Dynamics_SRCS ${BOX2D_BASE}/Box2D/Dynamics/*.cpp)
-file(GLOB BOX2D_Contacts_SRCS ${BOX2D_BASE}/Box2D/Dynamics/Contacts/*.cpp)
-file(GLOB BOX2D_Joints_SRCS ${BOX2D_BASE}/Box2D/Dynamics/Joints/*.cpp)
-file(GLOB BOX2D_Rope_SRCS ${BOX2D_BASE}/Box2D/Rope/*.cpp)
-
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
-	if(BUILD_SHARED_LIBS)
-		set(CMAKE_CXX_FLAGS "-fPIC -DPIC ${CMAKE_CXX_FLAGS}")
-		set(CMAKE_C_FLAGS "-fPIC -DPIC ${CMAKE_C_FLAGS}")
-	endif()
+elseif(WIN32)
+	set(M_LIBRARY CACHE STRING "")
+	set(M_FOUND TRUE)
 endif()
 
-add_library(${BOX2D_LIBRARY} STATIC
-            ${BOX2D_Joints_SRCS}
-            ${BOX2D_Contacts_SRCS}
-            ${BOX2D_Dynamics_SRCS}
-            ${BOX2D_Common_SRCS}
-            ${BOX2D_Shapes_SRCS}
-            ${BOX2D_Collision_SRCS}
-            ${BOX2D_Rope_SRCS}
-)
+include(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(M DEFAULT_MSG M_LIBRARY)
 
-install(TARGETS ${BOX2D_LIBRARY}
-        LIBRARY DESTINATION lib COMPONENT runtime
-        ARCHIVE DESTINATION lib COMPONENT development)
-
+mark_as_advanced(M_LIBRARY)
