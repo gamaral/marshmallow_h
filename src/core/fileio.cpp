@@ -117,7 +117,7 @@ FileIO::open(DIOMode m)
 		return(false);
 	}
 
-	if (m & DIOBinary)
+	if ((m & DIOText) == 0)
 		strcat(l_mode, "b");
 	
 	m_p->handle = fopen(m_p->filename, l_mode);
