@@ -34,20 +34,14 @@
 #
 ###############################################################################
 
-if(UNIX)
-	find_library(M_LIBRARY
-		NAMES m
-		PATH_SUFFIXES lib64 lib
-		PATHS ~/Library/Frameworks
-		      /Library/Frameworks
-		      /usr/local
-		      /usr
-	)
-
-elseif(WIN32)
-	set(M_LIBRARY CACHE STRING "")
-	set(M_FOUND TRUE)
-endif()
+find_library(M_LIBRARY
+	NAMES m
+	PATH_SUFFIXES lib64 lib
+	PATHS ~/Library/Frameworks
+	      /Library/Frameworks
+	      /usr/local
+	      /usr
+)
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(M DEFAULT_MSG M_LIBRARY)
