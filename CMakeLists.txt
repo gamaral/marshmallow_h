@@ -63,7 +63,11 @@ if(NOT BUILD_SHARED_LIBS)
     endif()
 endif()
 
-find_package(M REQUIRED)
+if(UNIX)
+	find_package(M REQUIRED)
+else()
+	set(M_LIBRARY)
+endif()
 
 ############################################################### GLOBAL OPTIONS #
 
