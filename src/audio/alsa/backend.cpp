@@ -148,7 +148,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 
 	l_handle.channels = channels;
 	l_handle.bit_depth = bit_depth;
-	l_handle.bytes_per_frame = channels * (bit_depth/8);
+	l_handle.bytes_per_frame = uint16_t(channels * (bit_depth/8));
 	l_handle.buffer_size = l_handle.frames * l_handle.bytes_per_frame;
 	l_handle.buffer = new char[l_handle.buffer_size];
 

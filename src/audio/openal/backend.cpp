@@ -56,8 +56,14 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
 namespace { /************************** Audio::Backend::<anonymous> Namespace */
 
-	ALCdevice  *s_device;
-	ALCcontext *s_context;
+	static ALCdevice  *s_device;
+	static ALCcontext *s_context;
+
+	static bool
+	IsBackendInitialized()
+	{
+		return(s_device && s_context);
+	}
 
 } /************************************ Audio::Backend::<anonymous> Namespace */
 
@@ -114,6 +120,8 @@ struct PCM::Handle
 PCM::Handle *
 PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 {
+	assert(IsBackendInitialized() && "Audio backend has not initialized yet!");
+
 	PCM::Handle *l_handle(0);
 	ALuint l_source(0);
 	ALenum l_format;
@@ -146,11 +154,15 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 
 	l_handle->source = l_source;
 	l_handle->format = l_format;
-	l_handle->rate = sample_rate;
+	l_handle->rate = ALsizei(sample_rate);
+#ifdef OPENAL_VARIABLE_BUFFER_SIZE
 	l_handle->buffer_size =
 	    ((sample_rate * OPENAL_BUFFERS_MAX)/MARSHMALLOW_ENGINE_FRAMERATE) * (bit_depth/8) * channels;
+#else
+	l_handle->buffer_size = 4096;
+#endif
 	l_handle->buffer = new char[l_handle->buffer_size];
-	l_handle->available = ~0;
+	l_handle->available = uint8_t(~0);
 
 	alGenBuffers(OPENAL_BUFFERS_MAX, l_handle->buffers);
 
@@ -164,6 +176,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 void
 PCM::Close(Handle *pcm_handle)
 {
+	assert(IsBackendInitialized() && "Audio backend finalized!");
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 
 	alSourceStop(pcm_handle->source);
