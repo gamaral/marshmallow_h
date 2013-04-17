@@ -30,8 +30,6 @@ project(marshmallow_lua)
 
 include_directories(${LUA_INCLUDE_DIRS})
 
-set(LUA_BASE ${CMAKE_CURRENT_SOURCE_DIR}/code)
-
 file(GLOB LUA_SRCS ${LUA_BASE}/src/lapi.c
                    ${LUA_BASE}/src/lauxlib.c
                    ${LUA_BASE}/src/lbaselib.c

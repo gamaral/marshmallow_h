@@ -83,10 +83,12 @@ find_library(VORBIS_FILE_LIBRARY
 
 set(VORBIS_INCLUDE_DIRS ${VORBIS_VORBIS_INCLUDE_DIR}
                         ${VORBIS_FILE_INCLUDE_DIR}
+                        CACHE INTERNAL ""
 )
 
 set(VORBIS_LIBRARIES ${VORBIS_VORBIS_LIBRARY}
                      ${VORBIS_FILE_LIBRARY}
+                     CACHE INTERNAL ""
 )
 
 include(FindPackageHandleStandardArgs)

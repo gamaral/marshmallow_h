@@ -25,14 +25,9 @@ elseif(MARSHMALLOW_OPENGL_X11)
 	option(MARSHMALLOW_INPUT_UNIX_X11   "X11 input event support"     ON)
 endif()
 
-file(GLOB MARSHMALLOW_INPUT_SRCS *.cpp)
-set(MARSHMALLOW_INPUT_LIBS marshmallow_core
-                           marshmallow_event
-)
 
-# TINYXML
-include_directories(${TINYXML2_INCLUDE_DIR})
-set(MARSHMALLOW_INPUT_LIBS ${MARSHMALLOW_INPUT_LIBS} ${TINYXML2_LIBRARY})
+file(GLOB MARSHMALLOW_INPUT_SRCS *.cpp)
+set(MARSHMALLOW_INPUT_LIBS marshmallow_core marshmallow_event)
 
 if(MARSHMALLOW_INPUT_LINUX_EVDEV)
 	option(MARSHMALLOW_EVDEV_KEYBOARD "Linux event device keyboard support" ON)

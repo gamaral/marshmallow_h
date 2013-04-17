@@ -28,14 +28,7 @@ set(MARSHMALLOW_GRAPHICS_SRCS ${MARSHMALLOW_GRAPHICS_SRCS}
 	                      dummy/texturedata.cpp
 	                      dummy/vertexdata.cpp)
 
-set(MARSHMALLOW_GRAPHICS_LIBS marshmallow_core
-                              marshmallow_math
-                              marshmallow_graphics_backend
-)
-
-# TINYXML
-include_directories(${TINYXML2_INCLUDE_DIR})
-set(MARSHMALLOW_GRAPHICS_LIBS ${MARSHMALLOW_GRAPHICS_LIBS} ${TINYXML2_LIBRARY})
+set(MARSHMALLOW_GRAPHICS_LIBS marshmallow_graphics_backend)
 
 configure_file(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 

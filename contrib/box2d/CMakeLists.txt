@@ -30,8 +30,6 @@ project(marshmallow_box2d)
 
 include_directories(${BOX2D_INCLUDE_DIR})
 
-set(BOX2D_BASE "${CMAKE_CURRENT_SOURCE_DIR}/code/Box2D")
-
 file(GLOB BOX2D_Collision_SRCS ${BOX2D_BASE}/Box2D/Collision/*.cpp)
 file(GLOB BOX2D_Shapes_SRCS ${BOX2D_BASE}/Box2D/Collision/Shapes/*.cpp)
 file(GLOB BOX2D_Common_SRCS ${BOX2D_BASE}/Box2D/Common/*.cpp)
