@@ -44,17 +44,30 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
+namespace { /************************** Audio::Backend::<anonymous> Namespace */
+
+	static bool s_initialized;
+
+	static bool
+	IsBackendInitialized()
+	{
+		return(s_initialized);
+	}
+
+} /************************************ Audio::Backend::<anonymous> Namespace */
+
 
 bool
 Backend::Initialize(void)
 {
 	MMDEBUG("Dummy audio backend initialized");
-	return(true);
+	return(s_initialized = true);
 }
 
 void
 Backend::Finalize(void)
 {
+	s_initialized = false;
 	MMDEBUG("Dummy audio backend finalized");
 }
 
@@ -82,6 +95,8 @@ struct PCM::Handle
 PCM::Handle *
 PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 {
+	assert(IsBackendInitialized() && "Audio backend has not initialized yet!");
+
 	MMUNUSED(sample_rate);
 
 	PCM::Handle *l_handle(new Handle);
@@ -98,6 +113,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 void
 PCM::Close(Handle *pcm_handle)
 {
+	assert(IsBackendInitialized() && "Audio backend finalized!");
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 	assert(pcm_handle->buffer && "Buffer missing from PCM handle!");
 
@@ -110,6 +126,7 @@ PCM::Close(Handle *pcm_handle)
 bool
 PCM::Write(Handle *pcm_handle, size_t)
 {
+	assert(IsBackendInitialized() && "Audio backend finalized!");
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 	return(pcm_handle);
 }
@@ -117,6 +134,7 @@ PCM::Write(Handle *pcm_handle, size_t)
 void
 PCM::Buffer(Handle *pcm_handle, char *&buffer, size_t &bsize)
 {
+	assert(IsBackendInitialized() && "Audio backend finalized!");
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 	buffer = pcm_handle->buffer;
 	bsize  = pcm_handle->buffer_size;

@@ -24,7 +24,6 @@ set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS}
 set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
                                       marshmallow_core
                                       marshmallow_event
-                                      marshmallow_input
                                       marshmallow_math
                                       ${PNG_LIBRARY})
 
@@ -93,6 +92,9 @@ if(MARSHMALLOW_OPENGL_X11)
 
 	if(MARSHMALLOW_INPUT_UNIX_X11)
 		add_definitions(-DMARSHMALLOW_INPUT_UNIX_X11)
+		set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+		                                      marshmallow_input
+		)
 	endif()
 
 	if(MARSHMALLOW_X11_GRAB_KEYBOARD)
@@ -115,6 +117,9 @@ elseif(MARSHMALLOW_OPENGL_WGL)
 
 	if(MARSHMALLOW_INPUT_W32_SYSTEM)
 		add_definitions(-DMARSHMALLOW_INPUT_W32_SYSTEM)
+		set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+		                                      marshmallow_input
+		)
 	endif()
 elseif(MARSHMALLOW_OPENGL_SDL)
 	set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS}
@@ -131,6 +136,9 @@ elseif(MARSHMALLOW_OPENGL_SDL)
 
 	if(MARSHMALLOW_INPUT_MISC_SDL)
 		add_definitions(-DMARSHMALLOW_INPUT_MISC_SDL)
+		set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+		                                      marshmallow_input
+		)
 	endif()
 elseif(MARSHMALLOW_OPENGL_QT4)
 	set(MARSHMALLOW_GRAPHICS_BACKEND_SRCS ${MARSHMALLOW_GRAPHICS_BACKEND_SRCS}
@@ -148,6 +156,9 @@ elseif(MARSHMALLOW_OPENGL_QT4)
 
 	if(MARSHMALLOW_INPUT_MISC_QT4)
 		add_definitions(-DMARSHMALLOW_INPUT_MISC_QT4)
+		set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+		                                      marshmallow_input
+		)
 	endif()
 
 #
@@ -180,12 +191,17 @@ elseif(MARSHMALLOW_OPENGL_BB)
 
 	if(MARSHMALLOW_INPUT_BB_SCREEN)
 		add_definitions(-DMARSHMALLOW_INPUT_BB_SCREEN)
+		set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+		                                      marshmallow_input
+		)
 	endif()
 
 	if(MARSHMALLOW_INPUT_BB_SENSOR)
 		add_definitions(-DMARSHMALLOW_INPUT_BB_SENSOR)
+		set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+		                                      marshmallow_input
+		)
 	endif()
-
 
 #
 # Android JNI
@@ -204,6 +220,9 @@ elseif(MARSHMALLOW_OPENGL_JNI)
 
 	if(MARSHMALLOW_INPUT_LINUX_JNI)
 		add_definitions(-DMARSHMALLOW_INPUT_LINUX_JNI)
+		set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS ${MARSHMALLOW_GRAPHICS_BACKEND_LIBS}
+		                                      marshmallow_input
+		)
 	endif()
 
 else()

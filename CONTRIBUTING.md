@@ -28,11 +28,11 @@ code (albeit with a few OOP tweaks)
 Contributors
 ------------
 
-Maintainer/Head-Honcho: [Guillermo Antonio Amaral Bastidas
-<g@maral.me>](gamaral)
+Maintainer/Head-Honcho: [Guillermo Antonio Amaral Bastidas][gamaral]
+
+More information can be found in the [HACKING file][hacking].
 
 [webirc]: http://webchat.freenode.net/?channels=#marshmallow_h "freenode.net WebIRC Client"
 [style9]: http://www.freebsd.org/cgi/man.cgi?query=style&sektion=9 "Style guide for FreeBSD"
-[gamaral]: mailto:g@maral.me
-
-vim:syn=markdown:
+[hacking]: https://github.com/gamaral/marshmallow_h/blob/develop/HACKING.md "Hacking on Marshmallow"
+[gamaral]: mailto:g@maral.me "Guillermo A. Amaral B."

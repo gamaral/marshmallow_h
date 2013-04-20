@@ -1,5 +1,5 @@
-# Copyright 2012 Marshmallow Engine. All rights reserved.
-# Copyright 2012 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
+# Copyright 2013 Marshmallow Engine. All rights reserved.
+# Copyright 2013 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
 #
 # Redistribution and use in source and binary forms, with or without modification, are
 # permitted provided that the following conditions are met:
@@ -18,7 +18,7 @@
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 # SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 # ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-# NVORBISIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# NMIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # The views and conclusions contained in the software and documentation are those of the
@@ -26,78 +26,24 @@
 # or implied, of Marshmallow Engine.
 #
 ###############################################################################
-# Find VORBIS
+# Find M
 ###############################################################################
 #
-#  VORBIS_FOUND
-#  VORBIS_INCLUDE_DIRS
-#  VORBIS_LIBRARIES
-#
-#  VORBIS_VORBIS_FOUND
-#  VORBIS_VORBIS_INCLUDE_DIR
-#  VORBIS_VORBIS_LIBRARY
-#
-#  VORBIS_FILE_FOUND
-#  VORBIS_FILE_INCLUDE_DIR
-#  VORBIS_FILE_LIBRARY
+#  M_FOUND
+#  M_LIBRARY
 #
 ###############################################################################
 
-find_path(VORBIS_VORBIS_INCLUDE_DIR vorbis/codec.h
-	HINTS $ENV{VORBISDIR}
-	PATH_SUFFIXES include
-	PATHS ~/Library/Frameworks
-	      /Library/Frameworks
-	      /usr/local
-	      /usr
-)
-
-find_path(VORBIS_FILE_INCLUDE_DIR vorbis/vorbisfile.h
-	HINTS $ENV{VORBISDIR}
-	PATH_SUFFIXES include
-	PATHS ~/Library/Frameworks
-	      /Library/Frameworks
-	      /usr/local
-	      /usr
-)
-
-find_library(VORBIS_VORBIS_LIBRARY
-	vorbis
-	HINTS $ENV{VORBISDIR}
+find_library(M_LIBRARY
+	NAMES m
 	PATH_SUFFIXES lib64 lib
 	PATHS ~/Library/Frameworks
 	      /Library/Frameworks
 	      /usr/local
 	      /usr
-)
-
-find_library(VORBIS_FILE_LIBRARY
-	vorbisfile
-	HINTS $ENV{VORBISDIR}
-	PATH_SUFFIXES lib64 lib
-	PATHS ~/Library/Frameworks
-	      /Library/Frameworks
-	      /usr/local
-	      /usr
-)
-
-set(VORBIS_INCLUDE_DIRS ${VORBIS_VORBIS_INCLUDE_DIR}
-                        ${VORBIS_FILE_INCLUDE_DIR}
-)
-
-set(VORBIS_LIBRARIES ${VORBIS_VORBIS_LIBRARY}
-                     ${VORBIS_FILE_LIBRARY}
 )
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(VORBIS DEFAULT_MSG VORBIS_VORBIS_LIBRARY
-                                                     VORBIS_FILE_LIBRARY
-                                                     VORBIS_LIBRARIES
-)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(M DEFAULT_MSG M_LIBRARY)
 
-mark_as_advanced(VORBIS_LIBRARIES VORBIS_INCLUDE_DIRS
-                                  VORBIS_VORBIS_LIBRARY
-                                  VORBIS_VORBIS_INCLUDE_DIR
-                                  VORBIS_FILE_LIBRARY
-                                  VORBIS_FILE_INCLUDE_DIR
-)
+mark_as_advanced(M_LIBRARY)

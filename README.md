@@ -38,24 +38,26 @@ Project wiki with a few pages!
 Source
 ------
 
-	git clone --recursive git://github.com/gamaral/marshmallow_h.git
+	git clone --recursive --depth 10 git://github.com/gamaral/marshmallow_h.git
 
-Notice the *--recursive* switch, it's needed so that submodules get checked
+Notice the **--recursive** switch, it's needed so that submodules get checked
 out along with the main repository.
 
 ### Submodules
 
 You may occasionally notice changes to the .gitsubmodules file, this usually
 means that it's time to update submodules, you can do so by running the
-following command:
+following commands:
 
+	git submodule init
 	git submodule update
 
 Building
 --------
 
-I include many predefined cmake init-caches, please take a look at the "cmake"
-directory in the project base, filenames are pretty self-explanatory.
+I include many predefined cmake init-caches, please take a look at the
+"**cmake**" directory in the project base, filenames are pretty
+self-explanatory.
 
 ### Linux/BSD
 
@@ -217,5 +219,3 @@ To test out the package, you can run the following command:
 	marshmallow_demos/run platformer_demo0
 
 [gamaral]: mailto:g@maral.me "Guillermo A. Amaral B."
-
-vim:syn=markdown:
