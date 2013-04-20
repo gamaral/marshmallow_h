@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+
 # Copyright 2011-2013 Marshmallow Engine. All rights reserved.
 # Copyright 2011-2013 Guillermo A. Amaral B. (gamaral) <g@maral.me>
 #
@@ -28,7 +30,6 @@
 
 project(MARSHMALLOW)
 
-cmake_minimum_required(VERSION 2.8)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 

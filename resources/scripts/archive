@@ -1,4 +1,9 @@
 #!/bin/sh
 
-exec git ls-files --cached --full-name --no-empty-directory | xargs tar --exclude=".git*" -cvf archive.tar
+DATE=`date "+%Y%m%d"`
+NAME="marshmallow_h-${DATE}-src"
+
+exec git ls-files --cached --full-name --no-empty-directory | \
+xargs tar --transform="s,^,${NAME}/," --exclude=".git*" -cvf - | \
+xz -e - > "${NAME}.tar.xz"
 
