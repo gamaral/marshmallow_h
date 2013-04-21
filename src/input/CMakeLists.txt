@@ -1,9 +1,10 @@
 ###################################################################### OPTIONS #
 
 if(UNIX AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	option(MARSHMALLOW_INPUT_LINUX_EVDEV "Linux event device support"       OFF)
+	option(MARSHMALLOW_INPUT_LINUX_EVDEV "Linux event device support" OFF)
 endif()
 
+# graphics backend dependent
 if(MARSHMALLOW_OPENGL_BB)
 	option(MARSHMALLOW_INPUT_BB_SCREEN "BlackBerry screen input event support" ON)
 	option(MARSHMALLOW_INPUT_BB_SENSOR "BlackBerry sensor input event support" ON)
@@ -16,13 +17,13 @@ if(MARSHMALLOW_OPENGL_BB)
 		option(MARSHMALLOW_INPUT_BB_MAGNETOMETER  "BlackBerry magnetometer support"         OFF)
 	endif()
 elseif(MARSHMALLOW_OPENGL_QT4)
-	option(MARSHMALLOW_INPUT_MISC_QT4   "Qt4 input event support"     ON)
+	option(MARSHMALLOW_INPUT_MISC_QT4 "Qt4 input event support" ON)
 elseif(MARSHMALLOW_OPENGL_SDL)
-	option(MARSHMALLOW_INPUT_MISC_SDL   "SDL input event support"     ON)
+	option(MARSHMALLOW_INPUT_MISC_SDL "SDL input event support" ON)
 elseif(MARSHMALLOW_OPENGL_WGL)
 	option(MARSHMALLOW_INPUT_W32_SYSTEM "Windows input event support" ON)
 elseif(MARSHMALLOW_OPENGL_X11)
-	option(MARSHMALLOW_INPUT_UNIX_X11   "X11 input event support"     ON)
+	option(MARSHMALLOW_INPUT_UNIX_X11 "X11 input event support" ON)
 endif()
 
 ################################################################################

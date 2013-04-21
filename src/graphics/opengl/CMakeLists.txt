@@ -1,15 +1,25 @@
 ###################################################################### OPTIONS #
 
-option(MARSHMALLOW_OPENGL_EGL "Use EGL context (x11, jni, bb, vc, ...)"   OFF)
+option(MARSHMALLOW_OPENGL_EGL "Use EGL context (x11, jni, bb, vc, ...)" OFF)
 option(MARSHMALLOW_OPENGL_ES2 "Use OpenGL ES 2.0 (x11, jni, bb, vc, ...)" OFF)
 
-option(MARSHMALLOW_OPENGL_BB  "Use OpenGL BlackBerry Screen Backend (bb)" OFF)
-option(MARSHMALLOW_OPENGL_JNI "Use OpenGL Android JNI Backend (jni)"      OFF)
 option(MARSHMALLOW_OPENGL_QT4 "Use OpenGL Qt4 Backend (qt4)"              OFF)
 option(MARSHMALLOW_OPENGL_SDL "Use OpenGL SDL Backend (sdl)"              OFF)
-option(MARSHMALLOW_OPENGL_VC  "Use OpenGL VideoCore Backend (broadcom)"   OFF)
-option(MARSHMALLOW_OPENGL_WGL "Use OpenGL WGL Backend (windows)"          OFF)
-option(MARSHMALLOW_OPENGL_X11 "Use OpenGL X11 & GLX/EGL Backend (unix)"   OFF)
+
+if(UNIX)
+	option(MARSHMALLOW_OPENGL_X11 "Use OpenGL X11 & GLX/EGL Backend (unix)" OFF)
+
+	# platform specific
+	if(MARSHMALLOW_RPI)
+		option(MARSHMALLOW_OPENGL_VC  "Use OpenGL VideoCore Backend (broadcom)" ON)
+	elseif(MARSHMALLOW_ANDROID)
+		option(MARSHMALLOW_OPENGL_JNI "Use OpenGL Android JNI Backend (jni)" ON)
+	elseif(MARSHMALLOW_BLACKBERRY)
+		option(MARSHMALLOW_OPENGL_BB  "Use OpenGL BlackBerry Screen Backend (bb)" ON)
+	endif()
+elseif(WIN32)
+	option(MARSHMALLOW_OPENGL_WGL "Use OpenGL WGL Backend (windows)" ON)
+endif()
 
 ################################################################################
 

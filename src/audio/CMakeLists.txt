@@ -1,8 +1,11 @@
 ###################################################################### OPTIONS #
 
 option(MARSHMALLOW_AUDIO_DUMMY  "Use Dummy Audio Backend"  ON)
-option(MARSHMALLOW_AUDIO_ALSA   "Use ALSA Audio Backend"   OFF)
 option(MARSHMALLOW_AUDIO_OPENAL "Use OpenAL Audio Backend" OFF)
+
+if(UNIX AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	option(MARSHMALLOW_AUDIO_ALSA   "Use ALSA Audio Backend"   OFF)
+endif()
 
 ################################################################################
 

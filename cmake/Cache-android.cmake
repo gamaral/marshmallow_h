@@ -1,3 +1,5 @@
+set(MARSHMALLOW_ANDROID TRUE CACHE BOOL "Marshmallow for Android" FORCE)
+
 # CMAKE
 set(BUILD_SHARED_LIBS              OFF    CACHE BOOL     "")
 set(CMAKE_SKIP_BUILD_RPATH         TRUE   CACHE INTERNAL "")

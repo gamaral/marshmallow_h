@@ -9,7 +9,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${DEBUG_FLAGS}")
 
 ################################################################## DEFINITIONS #
 
-
 if(BUILD_SHARED_LIBS)
 	set(MARSHMALLOW_SHARED TRUE)
 	add_definitions(-DMARSHMALLOW_SHARED)
@@ -17,8 +16,14 @@ else()
 	set(MARSHMALLOW_SHARED FALSE)
 endif()
 
-if(MARSHMALLOW_ANDROID)
+#################################################################### PLATFORMS #
+
+if(MARSHMALLOW_RPI)
+	add_definitions(-DMARSHMALLOW_RPI)
+elseif(MARSHMALLOW_ANDROID)
 	add_definitions(-DMARSHMALLOW_ANDROID)
+elseif(MARSHMALLOW_BLACKBERRY)
+	add_definitions(-DMARSHMALLOW_BLACKBERRY)
 endif()
 
 ##################################################################### INCLUDES #
