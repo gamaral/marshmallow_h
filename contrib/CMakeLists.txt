@@ -1,39 +1,11 @@
-# Copyright 2011-2013 Marshmallow Engine. All rights reserved.
-# Copyright 2011-2013 Guillermo A. Amaral B. (gamaral) <g@maral.me>.
-#
-# Redistribution and use in source and binary forms, with or without modification, are
-# permitted provided that the following conditions are met:
-#
-#    1. Redistributions of source code must retain the above copyright notice, this list of
-#       conditions and the following disclaimer.
-#
-#    2. Redistributions in binary form must reproduce the above copyright notice, this list
-#       of conditions and the following disclaimer in the documentation and/or other materials
-#       provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY MARSHMALLOW ENGINE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-# FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MARSHMALLOW ENGINE OR
-# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# The views and conclusions contained in the software and documentation are those of the
-# authors and should not be interpreted as representing official policies, either expressed
-# or implied, of Marshmallow Engine.
-#
-
+###############################################################################
 # TinyXML2 (REQUIRED)
 option(MARSHMALLOW_CONTRIB_TINYXML2 "Use bundled TinyXML2 library" ON)
 if(MARSHMALLOW_CONTRIB_TINYXML2)
 	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tinyxml2/code/tinyxml2.h)
 		message(FATAL_ERROR "\n** tinyxml2 submodule is unavailable **\n"
-		                    "Please run the following commands: \n"
-		                    "  git submodule init\n"
-		                    "  git submodule update contrib/tinyxml2"
+		                    "Please run the following command: \n"
+		                    "  git submodule update --init contrib/tinyxml2"
 		)
 	endif()
 
@@ -57,14 +29,14 @@ message(STATUS "TinyXML2 library:\n"
 )
 set(TINYXML2_FOUND ${TINYXML2_FOUND} PARENT_SCOPE)
 
+###############################################################################
 # zlib Compression Library (REQUIRED)
 option(MARSHMALLOW_CONTRIB_ZLIB "Use bundled zlib compression library" ON)
 if(MARSHMALLOW_CONTRIB_ZLIB)
 	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/zlib/code/CMakeLists.txt)
 		message(FATAL_ERROR "\n** zlib submodule is unavailable **\n"
-		                    "Please run the following commands: \n"
-		                    "  git submodule init\n"
-		                    "  git submodule update contrib/zlib"
+		                    "Please run the following command: \n"
+		                    "  git submodule update --init contrib/zlib"
 		)
 	endif()
 
@@ -90,14 +62,14 @@ message(STATUS "zlib compression library:\n"
 )
 set(ZLIB_FOUND ${ZLIB_FOUND} PARENT_SCOPE)
 
+###############################################################################
 # libpng (REQUIRED)
 option(MARSHMALLOW_CONTRIB_LIBPNG "Use bundled libpng library" ON)
 if(MARSHMALLOW_CONTRIB_LIBPNG)
 	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/libpng/code/CMakeLists.txt)
 		message(FATAL_ERROR "\n** libpng submodule is unavailable **\n"
-		                    "Please run the following commands: \n"
-		                    "  git submodule init\n"
-		                    "  git submodule update contrib/libpng"
+		                    "Please run the following command: \n"
+		                    "  git submodule update --init contrib/libpng"
 		)
 	endif()
 
@@ -130,14 +102,14 @@ message(STATUS "libpng library:\n"
 )
 set(PNG_FOUND ${PNG_FOUND} PARENT_SCOPE)
 
+###############################################################################
 # libogg (REQUIRED)
 option(MARSHMALLOW_CONTRIB_LIBOGG "Use bundled Ogg container format library" ON)
 if(MARSHMALLOW_CONTRIB_LIBOGG)
 	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/libogg/code/src)
 		message(FATAL_ERROR "\n** libogg submodule is unavailable **\n"
-		                    "Please run the following commands: \n"
-		                    "  git submodule init\n"
-		                    "  git submodule update contrib/libogg"
+		                    "Please run the following command: \n"
+		                    "  git submodule update --init contrib/libogg"
 		)
 	endif()
 
@@ -162,14 +134,14 @@ message(STATUS "Ogg container format library:\n"
 )
 set(OGG_FOUND ${OGG_FOUND} PARENT_SCOPE)
 
+###############################################################################
 # libvorbis (REQURED)
 option(MARSHMALLOW_CONTRIB_LIBVORBIS "Use bundled Vorbis audio compression library" ON)
 if(MARSHMALLOW_CONTRIB_LIBVORBIS)
 	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/libvorbis/code/lib)
 		message(FATAL_ERROR "\n** libvorbis submodule is unavailable **\n"
-		                    "Please run the following commands: \n"
-		                    "  git submodule init\n"
-		                    "  git submodule update contrib/libvorbis"
+		                    "Please run the following command: \n"
+		                    "  git submodule update --init contrib/libvorbis"
 		)
 	endif()
 
@@ -212,14 +184,14 @@ message(STATUS "Vorbis audio compression library:\n"
 set(VORBIS_VORBIS_FOUND ${VORBIS_VORBIS_FOUND} PARENT_SCOPE)
 set(VORBIS_FILE_FOUND ${VORBIS_FILE_FOUND} PARENT_SCOPE)
 
+###############################################################################
 # Box2D (OPTIONAL)
 option(MARSHMALLOW_WITH_BOX2D "Use Box2D Physics Engine" ON)
 if(MARSHMALLOW_WITH_BOX2D)
 	if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/box2d/code/Box2D)
 		message(FATAL_ERROR "\n** box2d submodule is unavailable **\n"
-		                    "Please run the following commands: \n"
-		                    "  git submodule init\n"
-		                    "  git submodule update contrib/box2d"
+		                    "Please run the following command: \n"
+		                    "  git submodule update --init contrib/box2d"
 		)
 	endif()
 
@@ -240,6 +212,7 @@ if(MARSHMALLOW_WITH_BOX2D)
 	)
 endif()
 
+###############################################################################
 # SQLite3 (OPTIONAL)
 option(MARSHMALLOW_WITH_SQLITE "Enable SQLite based features" OFF)
 if(MARSHMALLOW_WITH_SQLITE)
@@ -247,9 +220,8 @@ if(MARSHMALLOW_WITH_SQLITE)
 	if(MARSHMALLOW_CONTRIB_SQLITE)
 		if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/sqlite3/code/sqlite3.h)
 			message(FATAL_ERROR "\n** sqlite3 submodule is unavailable **\n"
-			                    "Please run the following commands: \n"
-			                    "  git submodule init\n"
-			                    "  git submodule update contrib/sqlite3"
+			                    "Please run the following command: \n"
+			                    "  git submodule update --init contrib/sqlite3"
 			)
 		endif()
 
@@ -273,6 +245,7 @@ if(MARSHMALLOW_WITH_SQLITE)
 	set(SQLITE_FOUND ${SQLITE_FOUND} PARENT_SCOPE)
 endif()
 
+###############################################################################
 # Lua Programming Language (OPTIONAL)
 option(MARSHMALLOW_WITH_LUA "Use Lua Programming Language" OFF)
 if(MARSHMALLOW_WITH_LUA)
@@ -280,9 +253,8 @@ if(MARSHMALLOW_WITH_LUA)
 	if (MARSHMALLOW_CONTRIB_LUA)
 		if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/lua/code/src)
 			message(FATAL_ERROR "\n** lua submodule is unavailable **\n"
-			                    "Please run the following commands: \n"
-			                    "  git submodule init\n"
-			                    "  git submodule update contrib/lua"
+			                    "Please run the following command: \n"
+			                    "  git submodule update --init contrib/lua"
 			)
 		endif()
 

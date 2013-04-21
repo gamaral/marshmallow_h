@@ -1,21 +1,24 @@
 ###################################################################### OPTIONS #
 
 option(MARSHMALLOW_AUDIO_DUMMY  "Use Dummy Audio Backend"  ON)
-option(MARSHMALLOW_AUDIO_ALSA   "Use ALSA Audio Backend"   OFF)
 option(MARSHMALLOW_AUDIO_OPENAL "Use OpenAL Audio Backend" OFF)
+
+if(UNIX AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	option(MARSHMALLOW_AUDIO_ALSA   "Use ALSA Audio Backend"   OFF)
+endif()
 
 ################################################################################
 
 add_definitions(-DMARSHMALLOW_AUDIO_LIBRARY)
 
-set(MARSHMALLOW_AUDIO_SRCS pcm.cpp
-                           track.cpp
-                           oggcodec.cpp
-                           wavecodec.cpp
+set(MARSHMALLOW_AUDIO_SRCS "pcm.cpp"
+                           "track.cpp"
+                           "oggcodec.cpp"
+                           "wavecodec.cpp"
 )
 
-set(MARSHMALLOW_AUDIO_LIBS marshmallow_core
-                           marshmallow_audio_backend
+set(MARSHMALLOW_AUDIO_LIBS "marshmallow_core"
+                           "marshmallow_audio_backend"
                            ${OGG_LIBRARY}
                            ${VORBIS_LIBRARIES}
 )

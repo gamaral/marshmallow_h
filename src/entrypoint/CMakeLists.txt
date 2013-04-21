@@ -1,7 +1,7 @@
 add_definitions(-DMARSHMALLOW_ENTRYPOINT_LIBRARY)
 
 set(MARSHMALLOW_ENTRYPOINT_SRCS)
-set(MARSHMALLOW_ENTRYPOINT_LIBS marshmallow_event)
+set(MARSHMALLOW_ENTRYPOINT_LIBS "marshmallow_event")
 
 if(MARSHMALLOW_ANDROID)
 	if(ANDROID_NATIVE_API_LEVEL LESS 9)
@@ -11,14 +11,16 @@ if(MARSHMALLOW_ANDROID)
 	set(ANDROID_JNI_GLUE_DIR "${ANDROID_NDK}/sources/android/native_app_glue")
 	include_directories(${ANDROID_JNI_GLUE_DIR})
 
-	set(MARSHMALLOW_ENTRYPOINT_SRCS ${MARSHMALLOW_ENTRYPOINT_SRCS}
-	                                "${ANDROID_JNI_GLUE_DIR}/android_native_app_glue.c"
-	                                "android.cpp")
-	set(MARSHMALLOW_ENTRYPOINT_LIBS ${MARSHMALLOW_ENTRYPOINT_LIBS} "android" "log")
+	list(APPEND MARSHMALLOW_ENTRYPOINT_SRCS
+	    "${ANDROID_JNI_GLUE_DIR}/android_native_app_glue.c"
+	    "android.cpp"
+	)
+
+	list(APPEND MARSHMALLOW_ENTRYPOINT_LIBS "android" "log")
 elseif(UNIX)
-	set(MARSHMALLOW_ENTRYPOINT_SRCS ${MARSHMALLOW_ENTRYPOINT_SRCS} "unix.cpp")
+	list(APPEND MARSHMALLOW_ENTRYPOINT_SRCS "unix.cpp")
 elseif(WIN32)
-	set(MARSHMALLOW_ENTRYPOINT_SRCS ${MARSHMALLOW_ENTRYPOINT_SRCS} "win32.cpp")
+	list(APPEND MARSHMALLOW_ENTRYPOINT_SRCS "win32.cpp")
 endif()
 
 add_library(marshmallow_entrypoint STATIC ${MARSHMALLOW_ENTRYPOINT_SRCS})

@@ -1,5 +1,6 @@
 # Copyright (c) 2010-2011, Ethan Rublee
 # Copyright (c) 2011-2012, Andrey Kamaev
+# Copyright (c) 2013, Guillermo A. Amaral B. (gamaral) <g@maral.me>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -298,9 +299,6 @@ endif()
 set( CMAKE_SYSTEM_NAME Linux )
 # this one not so much
 set( CMAKE_SYSTEM_VERSION 1 )
-
-# also important
-set( MARSHMALLOW_ANDROID TRUE CACHE BOOL "Building marshmallow for android." FORCE )
 
 # rpath makes low sence for Android
 set( CMAKE_SKIP_RPATH TRUE CACHE BOOL "If set, runtime paths are not added when using shared libraries." )

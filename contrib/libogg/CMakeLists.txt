@@ -1,50 +1,32 @@
-# Copyright 2012-2013 Marshmallow Engine. All rights reserved.
-# Copyright 2012-2013 Guillermo A. Amaral B. (gamaral) <g@maral.me>
-#
-# Redistribution and use in source and binary forms, with or without modification, are
-# permitted provided that the following conditions are met:
-#
-#    1. Redistributions of source code must retain the above copyright notice, this list of
-#       conditions and the following disclaimer.
-#
-#    2. Redistributions in binary form must reproduce the above copyright notice, this list
-#       of conditions and the following disclaimer in the documentation and/or other materials
-#       provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY MARSHMALLOW ENGINE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-# FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MARSHMALLOW ENGINE OR
-# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# The views and conclusions contained in the software and documentation are those of the
-# authors and should not be interpreted as representing official policies, either expressed
-# or implied, of Marshmallow Engine.
-#
-
 project(marshmallow_libogg)
-
-set(MARSHMALLOW_OGG_SRCS code/src/bitwise.c
-                         code/src/framing.c)
-
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config_types.h
-               ${CMAKE_CURRENT_BINARY_DIR}/code/include/ogg/config_types.h @ONLY)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code/include
-                    ${CMAKE_CURRENT_BINARY_DIR}/code/include)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DDEBUG)
 endif()
 
+check_include_file(inttypes.h  INCLUDE_INTTYPES_H)
+check_include_file(stdint.h    INCLUDE_STDINT_H)
+check_include_file(sys/types.h INCLUDE_SYS_TYPES_H)
+
+set(SIZE16  int16_t)
+set(USIZE16 uint16_t)
+set(SIZE32  int32_t)
+set(USIZE32 uint32_t)
+set(SIZE64  int64_t)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/code/include/ogg/config_types.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/code/include/ogg/config_types.h @ONLY)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code/include
+                    ${CMAKE_CURRENT_BINARY_DIR}/code/include)
+
+set(MARSHMALLOW_OGG_SRCS code/src/bitwise.c
+                         code/src/framing.c
+)
+
 # Windows Module-Definition File
 if (BUILD_SHARED_LIBS AND WIN32)
-	set(MARSHMALLOW_OGG_SRCS ${MARSHMALLOW_OGG_SRCS}
-	                         code/win32/ogg.def)
+	list(APPEND MARSHMALLOW_OGG_SRCS code/win32/ogg.def)
 endif()
 
 add_library(${OGG_LIBRARY} ${MARSHMALLOW_OGG_SRCS})

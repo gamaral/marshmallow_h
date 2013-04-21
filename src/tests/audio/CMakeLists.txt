@@ -1,8 +1,10 @@
-SET(MASHMALLOW_TEST_AUDIO_LIBS marshmallow_core marshmallow_audio)
+set(MASHMALLOW_TEST_AUDIO_LIBS "marshmallow_core"
+                               "marshmallow_audio"
+)
 
-add_executable(marshmallow_test_audio_codecs codecs.cpp)
+add_executable(test_audio_codecs "codecs.cpp")
 
-target_link_libraries(marshmallow_test_audio_codecs ${MASHMALLOW_TEST_AUDIO_LIBS})
+target_link_libraries(test_audio_codecs ${MASHMALLOW_TEST_AUDIO_LIBS})
 
-add_test(NAME marshmallow_test_audio_codecs COMMAND marshmallow_test_audio_codecs)
+add_test(NAME audio_codecs COMMAND test_audio_codecs)
 
