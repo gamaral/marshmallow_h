@@ -4,12 +4,29 @@ if(NOT ZLIB_FOUND)
 	message(FATAL_ERROR "libpng requires zlib, and it wasn't found!")
 endif()
 
-include_directories(${ZLIB_INCLUDE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/code)
+if(MARSHMALLOW_DEBUG)
+	add_definitions(-DLIBPNG_DEBUG)
+endif()
+
+if(WIN32 AND BUILD_SHARED_LIBS)
+	add_definitions(-DZLIB_DLL)
+endif()
+
+if(MSVC)
+	add_definitions(-DLIBPNG_NO_MODULEDEF -D_CRT_SECURE_NO_DEPRECATE)
+endif(MSVC)
+
+add_definitions(-DPNG_CONFIGURE_LIBPNG)
+#add_definitions(-DPNG_CONSOLE_IO_SUPPORTED)
+add_definitions(-DLIBPNG_NO_CONSOLE_IO)
+add_definitions(-DLIBPNG_NO_STDIO)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/code/scripts/pnglibconf.h.prebuilt
                ${CMAKE_CURRENT_BINARY_DIR}/code/pnglibconf.h)
+
+include_directories(${ZLIB_INCLUDE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/code)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/code)
 
 set(PNG_SRCS ${CMAKE_CURRENT_BINARY_DIR}/code/pnglibconf.h
              code/png.h
@@ -34,24 +51,6 @@ set(PNG_SRCS ${CMAKE_CURRENT_BINARY_DIR}/code/pnglibconf.h
              code/pngwtran.c
              code/pngwutil.c
 )
-
-add_definitions(-DPNG_CONFIGURE_LIBPNG)
-
-if(MARSHMALLOW_DEBUG)
-	add_definitions(-DLIBPNG_DEBUG)
-endif()
-
-if(BUILD_SHARED_LIBS)
-	add_definitions(-DZLIB_DLL)
-endif()
-
-if(MSVC)
-	add_definitions(-DLIBPNG_NO_MODULEDEF -D_CRT_SECURE_NO_DEPRECATE)
-endif(MSVC)
-
-#add_definitions(-DPNG_CONSOLE_IO_SUPPORTED)
-add_definitions(-DLIBPNG_NO_CONSOLE_IO)
-add_definitions(-DLIBPNG_NO_STDIO)
 
 add_library(${PNG_LIBRARY} ${PNG_SRCS})
 target_link_libraries(${PNG_LIBRARY} ${ZLIB_LIBRARY} ${M_LIBRARY})
