@@ -19,11 +19,13 @@ set(MARSHMALLOW_AUDIO_SRCS "pcm.cpp"
 
 set(MARSHMALLOW_AUDIO_LIBS "marshmallow_core"
                            "marshmallow_audio_backend"
-                           ${OGG_LIBRARY}
-                           ${VORBIS_LIBRARIES}
 )
 
-include_directories(${OGG_INCLUDE_DIR} ${VORBIS_INCLUDE_DIRS})
+include_directories(${OGG_INCLUDE_DIR})
+list(APPEND MARSHMALLOW_AUDIO_LIBS ${OGG_LIBRARY})
+
+include_directories(${VORBIS_INCLUDE_DIRS})
+list(APPEND MARSHMALLOW_AUDIO_LIBS ${VORBIS_LIBRARIES})
 
 if(MARSHMALLOW_AUDIO_ALSA)
 	add_subdirectory(alsa)
