@@ -8,14 +8,14 @@ option(MARSHMALLOW_AUDIO_OPENAL "Use OpenAL Audio Backend" OFF)
 
 add_definitions(-DMARSHMALLOW_AUDIO_LIBRARY)
 
-set(MARSHMALLOW_AUDIO_SRCS pcm.cpp
-                           track.cpp
-                           oggcodec.cpp
-                           wavecodec.cpp
+set(MARSHMALLOW_AUDIO_SRCS "pcm.cpp"
+                           "track.cpp"
+                           "oggcodec.cpp"
+                           "wavecodec.cpp"
 )
 
-set(MARSHMALLOW_AUDIO_LIBS marshmallow_core
-                           marshmallow_audio_backend
+set(MARSHMALLOW_AUDIO_LIBS "marshmallow_core"
+                           "marshmallow_audio_backend"
                            ${OGG_LIBRARY}
                            ${VORBIS_LIBRARIES}
 )
