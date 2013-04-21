@@ -1,5 +1,3 @@
-################################################################################
-
 set(MARSHMALLOW_AUDIO_DUMMY_SRCS backend.cpp)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)

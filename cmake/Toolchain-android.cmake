@@ -1,5 +1,6 @@
 # Copyright (c) 2010-2011, Ethan Rublee
 # Copyright (c) 2011-2012, Andrey Kamaev
+# Copyright (c) 2013, Guillermo A. Amaral B. (gamaral) <g@maral.me>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
