@@ -53,8 +53,8 @@
 #include "event/quitevent.h"
 #include "event/viewportevent.h"
 
-#ifdef MARSHMALLOW_INPUT_LINUX_JNI
-#  include "input/linux/jni.h"
+#ifdef MARSHMALLOW_INPUT_ANDROID_JNI
+#  include "input/android/jni.h"
 #endif
 
 #include "graphics/camera.h"

@@ -1,11 +1,10 @@
-if (BUILD_UNIT_TESTS)
-	configure_file(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
-	include_directories(${CMAKE_CURRENT_BINARY_DIR})
+set(MARSHMALLOW_TEST_CONFIG_H "${CMAKE_CURRENT_BINARY_DIR}/config.h")
+configure_file("config.h.in" ${MARSHMALLOW_TEST_CONFIG_H})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/tests)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/tests")
 
-	add_subdirectory(core)
-	add_subdirectory(audio)
-	add_subdirectory(graphics)
-endif (BUILD_UNIT_TESTS)
+add_subdirectory(core)
+add_subdirectory(audio)
+add_subdirectory(graphics)
 

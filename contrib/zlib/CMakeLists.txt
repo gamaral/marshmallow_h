@@ -7,6 +7,7 @@ include(CheckCSourceCompiles)
 
 option(ZLIB_ASM686 "Enable building i686 assembly implementation")
 option(ZLIB_AMD64  "Enable building amd64 assembly implementation")
+mark_as_advanced(ZLIB_ASM686 ZLIB_AMD64)
 
 check_include_file(sys/types.h HAVE_SYS_TYPES_H)
 check_include_file(stdint.h    HAVE_STDINT_H)

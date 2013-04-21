@@ -115,7 +115,7 @@ Backend::Setup(const Graphics::Display &display)
 
 	Painter::Initialize();
 
-#if MARSHMALLOW_DUMMY_FAIL
+#ifdef MARSHMALLOW_DUMMY_FAIL
 	return(s_active = false);
 #else
 	return(s_active = true);
