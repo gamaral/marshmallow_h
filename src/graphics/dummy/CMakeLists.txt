@@ -27,9 +27,9 @@ set(MARSHMALLOW_GRAPHICS_BACKEND_LIBS "marshmallow_core"
 	                              "marshmallow_math"
 )
 
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
-	if(MARSHMALLOW_SHARED)
-		# marshmallow_graphics is shared
+if(MARSHMALLOW_SHARED)
+	# marshmallow_graphics is shared
+	if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUXX)
 		set(CMAKE_CXX_FLAGS "-fPIC -DPIC ${CMAKE_CXX_FLAGS}")
 		set(CMAKE_C_FLAGS "-fPIC -DPIC ${CMAKE_C_FLAGS}")
 	endif()
