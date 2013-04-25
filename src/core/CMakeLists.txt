@@ -38,6 +38,17 @@ set(MARSHMALLOW_CORE_HDRS ${MARSHMALLOW_CORE_CONFIG_H}
 include_directories(${ZLIB_INCLUDE_DIR})
 list(APPEND MARSHMALLOW_CORE_LIBS ${ZLIB_LIBRARY})
 
+# unix clock_gettime check
+if (UNIX)
+	include(CheckLibraryExists)
+	check_library_exists(rt clock_gettime "time.h" HAVE_CLOCK_GETTIME)
+
+	# rt
+	if(HAVE_CLOCK_GETTIME)
+		list(APPEND MARSHMALLOW_CORE_LIBS "rt")
+	endif()
+endif()
+
 add_library(marshmallow_core ${MARSHMALLOW_CORE_SRCS} ${MARSHMALLOW_CORE_HDRS})
 
 target_link_libraries(marshmallow_core ${MARSHMALLOW_CORE_LIBS})

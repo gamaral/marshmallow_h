@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(marshmallow_h)
 
 include(CheckCSourceCompiles)
+include(CheckCXXSourceCompiles)
 
 set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 

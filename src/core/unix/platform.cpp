@@ -55,7 +55,11 @@ using namespace Core;
 
 namespace
 {
-	static time_t s_start_time = time(0);
+#ifdef HAVE_CLOCK_GETTIME
+	static struct timespec s_start_time;
+#else
+	static struct timeval s_start_time;
+#endif
 } // namespace
 
 /******************************************************************************/
@@ -63,7 +67,12 @@ namespace
 void
 Platform::Initialize(void)
 {
-	srand(static_cast<unsigned int>(s_start_time));
+#ifdef HAVE_CLOCK_GETTIME
+	clock_gettime(CLOCK_MONOTONIC_RAW, &s_start_time);
+#else
+	gettimeofday(&s_start_time, 0);
+#endif
+	srand(static_cast<unsigned int>(s_start_time.tv_sec));
 }
 
 void
@@ -91,15 +100,24 @@ Platform::Sleep(MMTIME timeout)
 time_t
 Platform::StartTime(void)
 {
-	return(s_start_time);
+	return(s_start_time.tv_sec);
 }
 
 MMTIME
 Platform::TimeStamp(void)
 {
+	MMTIME out;
+#ifdef HAVE_CLOCK_GETTIME
+	struct timespec time;
+	clock_gettime(CLOCK_MONOTONIC, &time);
+	out = static_cast<MMTIME>((time.tv_sec - s_start_time.tv_sec) * 1000)
+	    + ((time.tv_nsec - s_start_time.tv_nsec) / 1000000);
+#else
 	struct timeval time;
 	gettimeofday(&time, 0);
-	MMTIME out = static_cast<MMTIME>(((time.tv_sec - s_start_time) * 1000) + (time.tv_usec / 1000));
+	out = static_cast<MMTIME>(((time.tv_sec - s_start_time.tv_sec) * 1000)
+	    + ((time.tv_usec - s_start_time.tv_usec) / 1000));
+#endif
 	return(out);
 }
 
