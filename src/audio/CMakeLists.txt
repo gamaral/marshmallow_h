@@ -12,9 +12,9 @@ endif()
 add_definitions(-DMARSHMALLOW_AUDIO_LIBRARY)
 
 set(MARSHMALLOW_AUDIO_SRCS "pcm.cpp"
-                           "track.cpp"
-                           "oggcodec.cpp"
-                           "wavecodec.cpp"
+#                          "track.cpp"
+                           "oggtrack.cpp"
+                           "wavetrack.cpp"
 )
 
 set(MARSHMALLOW_AUDIO_LIBS "marshmallow_core"

@@ -196,7 +196,7 @@ BufferIO::atEOF(void) const
 }
 
 size_t
-BufferIO::read(void *b, size_t bs)
+BufferIO::read(void *b, size_t bs) const
 {
 	assert(bs <= LONG_MAX && "Buffer too large!");
 
@@ -235,7 +235,7 @@ BufferIO::write(const void *b, size_t bs)
 }
 
 bool
-BufferIO::seek(long o, DIOSeek on)
+BufferIO::seek(long o, DIOSeek on) const
 {
 	long l_cursor = -1;
 

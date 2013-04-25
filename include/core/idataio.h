@@ -110,10 +110,10 @@ namespace Core { /******************************************** Core Namespace */
 		 */
 		virtual bool atEOF(void) const = 0;
 
-		virtual size_t read(void *buffer, size_t bsize) = 0;
+		virtual size_t read(void *buffer, size_t bsize) const = 0;
 		virtual size_t write(const void *buffer, size_t bsize) = 0;
 
-		virtual bool seek(long offset, DIOSeek origin) = 0;
+		virtual bool seek(long offset, DIOSeek origin) const = 0;
 		virtual long tell(void) const = 0;
 	};
 	typedef Shared<IDataIO> SharedDataIO;

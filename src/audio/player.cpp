@@ -30,7 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include "audio/track.h"
+#include "audio/player.h"
 
 /*!
  * @file
@@ -51,7 +51,7 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
 
-struct Track::Private
+struct Player::Private
 {
 	Private(void)
 	    : bsize(0)
@@ -83,16 +83,16 @@ struct Track::Private
 };
 
 bool
-Track::Private::play(int _iterations)
+Player::Private::play(int _iterations)
 {
 	/* sanity checks */
 	if (_iterations == 0) {
-		MMDEBUG("Trying to play track with no iterations");
+		MMDEBUG("Trying to play player with no iterations");
 		if (iterations) stop();
 		return(false);
 	}
 	else if (iterations) {
-		MMERROR("Track already playing!");
+		MMERROR("Player already playing!");
 		return(false);
 	}
 
@@ -109,7 +109,7 @@ Track::Private::play(int _iterations)
 }
 
 void
-Track::Private::stop(void)
+Player::Private::stop(void)
 {
 	delete buffer, buffer = 0;
 	bsize = 0;
@@ -117,7 +117,7 @@ Track::Private::stop(void)
 }
 
 void
-Track::Private::update(void)
+Player::Private::update(void)
 {
 	if (!buffer) return;
 
@@ -161,36 +161,36 @@ Track::Private::update(void)
 	skip_decode = !pcm->mix(buffer, bdecoded);
 }
 
-/********************************************************************* Track */
+/********************************************************************* Player */
 
-Track::Track(void)
+Player::Player(void)
     : m_p(new Private)
 {
 }
 
-Track::Track(const Audio::WeakPCM &_pcm, const Audio::SharedCodec &_codec)
+Player::Player(const Audio::WeakPCM &_pcm, const Audio::SharedCodec &_codec)
     : m_p(new Private)
 {
 	setPCM(_pcm);
 	setCodec(_codec);
 }
 
-Track::~Track(void)
+Player::~Player(void)
 {
 	delete m_p, m_p = 0;
 }
 
 const Audio::WeakPCM &
-Track::pcm(void) const
+Player::pcm(void) const
 {
 	return(m_p->pcm);
 }
 
 void
-Track::setPCM(const Audio::WeakPCM &_pcm)
+Player::setPCM(const Audio::WeakPCM &_pcm)
 {
 	if (isPlaying()) {
-		MMERROR("Tried to replace PCM of a playing track!");
+		MMERROR("Tried to replace PCM of a playing player!");
 		return;
 	}
 
@@ -198,16 +198,16 @@ Track::setPCM(const Audio::WeakPCM &_pcm)
 }
 
 const Audio::SharedCodec &
-Track::codec(void) const
+Player::codec(void) const
 {
 	return(m_p->codec);
 }
 
 void
-Track::setCodec(const Audio::SharedCodec &_codec)
+Player::setCodec(const Audio::SharedCodec &_codec)
 {
 	if (isPlaying()) {
-		MMERROR("Tried to replace codec of a playing track!");
+		MMERROR("Tried to replace codec of a playing player!");
 		return;
 	}
 
@@ -215,39 +215,39 @@ Track::setCodec(const Audio::SharedCodec &_codec)
 }
 
 bool
-Track::play(int _iterations)
+Player::play(int _iterations)
 {
 	if (!isValid()) {
-		MMWARNING("Tried to play invalid track!");
+		MMWARNING("Tried to play invalid player!");
 		return(false);
 	}
 	return(m_p->play(_iterations));
 }
 
 void
-Track::stop(void)
+Player::stop(void)
 {
 	if (!isValid()) {
-		MMWARNING("Tried to stop an invalid track!");
+		MMWARNING("Tried to stop an invalid player!");
 		return;
 	}
 	m_p->stop();
 }
 
 bool
-Track::isPlaying(void) const
+Player::isPlaying(void) const
 {
 	return(m_p->iterations);
 }
 
 void
-Track::tick(float)
+Player::tick(float)
 {
 	m_p->update();
 }
 
 bool
-Track::isValid(void) const
+Player::isValid(void) const
 {
 	return(m_p->pcm && m_p->codec && m_p->pcm->isOpen() && m_p->codec->isOpen());
 }

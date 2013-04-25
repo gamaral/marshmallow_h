@@ -43,8 +43,6 @@
 #include "core/logger.h"
 #include "core/shared.h"
 
-#include "audio/icodec.h"
-
 #include "backend_p.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN

@@ -55,6 +55,8 @@ extern bool g_passed;
 #define ASSERT_NOT_NULL(x, y) ASSERT_TRUE(x, null != y)
 #define ASSERT_EQUAL(x, y, z) ASSERT_TRUE(x, (y) == (z))
 #define ASSERT_NOT_EQUAL(x, y, z) ASSERT_TRUE(x, (y) != (z))
+#define ASSERT_GREATER(x, y, z) ASSERT_TRUE(x, (y) > (z))
+#define ASSERT_LOWER(x, y, z) ASSERT_TRUE(x, (y) < (z))
 
 typedef void (*test_proc)(void);
 #define TESTS_BEGIN test_proc tests[] = {
