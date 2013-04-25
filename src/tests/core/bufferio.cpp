@@ -154,15 +154,9 @@ buffer_clone_test(void)
 	ASSERT_FALSE("Core::BufferIO::close()", l_buffer_orig.isOpen());
 }
 
-int
-main(int, char *[])
-{
-	MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY);
-
-	RUN_TEST(buffer_readonly_test);
-	RUN_TEST(buffer_write_test);
-	RUN_TEST(buffer_clone_test);
-
-	return(TEST_EXITCODE);
-}
+TESTS_BEGIN
+	TEST(buffer_readonly_test)
+	TEST(buffer_write_test)
+	TEST(buffer_clone_test)
+TESTS_END
 

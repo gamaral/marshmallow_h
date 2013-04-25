@@ -88,14 +88,8 @@ base64_encode_test(void)
 	delete[] out;
 }
 
-int
-main(int, char *[])
-{
-	MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY);
-
-	RUN_TEST(base64_decode_test);
-	RUN_TEST(base64_encode_test);
-
-	return(TEST_EXITCODE);
-}
+TESTS_BEGIN
+	TEST(base64_encode_test)
+	TEST(base64_decode_test)
+TESTS_END
 

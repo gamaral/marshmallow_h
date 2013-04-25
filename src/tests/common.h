@@ -45,7 +45,6 @@ static const char * s_str_passed  = "PASS";
 static const char * s_str_failed  = "FAIL";
 static bool s_passed = true;
 
-#define RUN_TEST(x) x()
 #define ASSERT_TRUE(x, y) fprintf(stderr, s_test_format, (y) ? s_str_passed : s_str_failed, __FUNCTION__, __LINE__, x), s_passed &= (y)
 #define ASSERT_FALSE(x, y) ASSERT_TRUE(x, !(y))
 #define ASSERT_VALID(x, y) ASSERT_TRUE(x, y)
@@ -56,5 +55,11 @@ static bool s_passed = true;
 #define ASSERT_NOT_NULL(x, y) ASSERT_TRUE(x, null != y)
 #define ASSERT_EQUAL(x, y, z) ASSERT_TRUE(x, (y) == (z))
 #define ASSERT_NOT_EQUAL(x, y, z) ASSERT_TRUE(x, (y) != (z))
+
+typedef void (*test_proc)(void);
+#define TESTS_BEGIN test_proc tests[] = {
+#define TEST(x) x,
+#define TESTS_END 0 };
+
 #define TEST_EXITCODE s_passed ? 0 : -1
 

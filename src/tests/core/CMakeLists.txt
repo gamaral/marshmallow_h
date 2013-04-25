@@ -3,11 +3,11 @@ file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/data"
 
 set(MASHMALLOW_TEST_CORE_LIBS "marshmallow_core")
 
-add_executable(test_core_hash "hash.cpp")
-add_executable(test_core_shared "shared.cpp")
-add_executable(test_core_base64 "base64.cpp")
-add_executable(test_core_fileio "fileio.cpp")
-add_executable(test_core_bufferio "bufferio.cpp")
+add_executable(test_core_hash ${TEST_MAIN} "hash.cpp")
+add_executable(test_core_shared ${TEST_MAIN} "shared.cpp")
+add_executable(test_core_base64 ${TEST_MAIN} "base64.cpp")
+add_executable(test_core_fileio ${TEST_MAIN} "fileio.cpp")
+add_executable(test_core_bufferio ${TEST_MAIN} "bufferio.cpp")
 
 target_link_libraries(test_core_hash ${MASHMALLOW_TEST_CORE_LIBS})
 target_link_libraries(test_core_shared ${MASHMALLOW_TEST_CORE_LIBS})

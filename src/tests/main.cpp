@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2013, Guillermo A. Amaral B. (gamaral) <g@maral.me>
+ * Copyright (c) 2013, Guillermo A. Amaral B. (gamaral) <g@maral.me>
  * All rights reserved.
  *
  * This file is part of Marshmallow Game Engine.
@@ -30,11 +30,9 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include "core/global.h"
-#include "core/hash.h"
-#include "core/strhash.h"
+#include "core/platform.h"
 
-#include "tests/common.h"
+#include "common.h"
 
 /*!
  * @file
@@ -42,27 +40,20 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE
+extern test_proc tests[];
 
-void
-hash_compare_test(void)
+int
+main(int, char *[])
 {
-	ASSERT_ZERO("Core::Hash() EQUAL TO ZERO", Core::Hash());
-	ASSERT_NOT_ZERO("Core::Hash() 'test' NOT EQUAL TO ZERO",
-	    Core::Hash("test", 4, ~static_cast<MMUID>(0)));
-}
+	if (-1 == MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY)) {
+		fprintf(stderr, "Failed to change directory!");
+		return(2);
+	}
 
-void
-strhash_compare_test(void)
-{
-	ASSERT_EQUAL("Core::StrHash() 'test' EQUAL TO 'test'",
-	    Core::StrHash("test"), Core::StrHash("test"));
-	ASSERT_NOT_EQUAL("Core::StrHash() 'tset' NOT EQUAL TO 'test'",
-	    Core::StrHash("tset"), Core::StrHash("test"));
-}
+	int i = 0;
+	while (tests[i] != 0)
+		tests[i++]();
 
-TESTS_BEGIN
-	TEST(hash_compare_test)
-	TEST(strhash_compare_test)
-TESTS_END
+	return(TEST_EXITCODE);
+}
 

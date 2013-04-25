@@ -70,14 +70,8 @@ weak_basic_test(void)
 	ASSERT_INVALID("Core::Weak::clear()", valid);
 }
 
-int
-main(int, char *[])
-{
-	MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY);
-
-	RUN_TEST(shared_basic_test);
-	RUN_TEST(weak_basic_test);
-
-	return(TEST_EXITCODE);
-}
+TESTS_BEGIN
+	TEST(shared_basic_test)
+	TEST(weak_basic_test)
+TESTS_END
 
