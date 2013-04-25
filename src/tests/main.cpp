@@ -40,6 +40,11 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+const char * g_test_format = "[%s] %s:%d \"%s\"\n";
+const char * g_str_passed  = "PASS";
+const char * g_str_failed  = "FAIL";
+bool g_passed = true;
+
 extern test_proc tests[];
 
 int
@@ -51,9 +56,9 @@ main(int, char *[])
 	}
 
 	int i = 0;
-	while (tests[i] != 0)
+	while (tests[i] != 0 && g_passed)
 		tests[i++]();
 
-	return(TEST_EXITCODE);
+	return(g_passed ? 0 : 1);
 }
 
