@@ -93,14 +93,8 @@ audio_codec_ogg_test(void)
 	ASSERT_FALSE("Audio::OggCodec::open() NON-OGG", l_codec->isOpen());
 }
 
-int
-main(int, char *[])
-{
-	MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY);
-
-	RUN_TEST(audio_codec_wave_test);
-	RUN_TEST(audio_codec_ogg_test);
-
-	return(TEST_EXITCODE);
-}
+TESTS_BEGIN
+    TEST(audio_codec_wave_test)
+    TEST(audio_codec_ogg_test)
+TESTS_END
 

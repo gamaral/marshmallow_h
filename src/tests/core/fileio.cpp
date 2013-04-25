@@ -134,14 +134,8 @@ fileio_writeonly_test(void)
 	ASSERT_FALSE("Core::FileIO::close()", l_file.isOpen());
 }
 
-int
-main(int, char *[])
-{
-	MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY);
-
-	RUN_TEST(fileio_writeonly_test);
-	RUN_TEST(fileio_readonly_test);
-
-	return(TEST_EXITCODE);
-}
+TESTS_BEGIN
+	TEST(fileio_writeonly_test)
+	TEST(fileio_readonly_test)
+TESTS_END
 

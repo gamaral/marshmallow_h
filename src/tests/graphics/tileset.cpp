@@ -94,13 +94,7 @@ tileset_fixed_test(void)
 	    (l_u == 1.f) && (l_v == 1.f));
 }
 
-int
-main(int, char *[])
-{
-	MMCHDIR(MARSHMALLOW_TESTS_DIRECTORY);
-
-	RUN_TEST(tileset_fixed_test);
-
-	return(TEST_EXITCODE);
-}
+TESTS_BEGIN
+	TEST(tileset_fixed_test)
+TESTS_END
 
