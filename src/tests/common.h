@@ -40,12 +40,12 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-static const char * s_test_format = "[%s] %s:%d \"%s\"\n";
-static const char * s_str_passed  = "PASS";
-static const char * s_str_failed  = "FAIL";
-static bool s_passed = true;
+extern const char * g_test_format;
+extern const char * g_str_passed;
+extern const char * g_str_failed;
+extern bool g_passed;
 
-#define ASSERT_TRUE(x, y) fprintf(stderr, s_test_format, (y) ? s_str_passed : s_str_failed, __FUNCTION__, __LINE__, x), s_passed &= (y)
+#define ASSERT_TRUE(x, y) fprintf(stderr, g_test_format, (y) ? g_str_passed : g_str_failed, __FUNCTION__, __LINE__, x), g_passed &= (y)
 #define ASSERT_FALSE(x, y) ASSERT_TRUE(x, !(y))
 #define ASSERT_VALID(x, y) ASSERT_TRUE(x, y)
 #define ASSERT_INVALID(x, y) ASSERT_TRUE(x, !y)
@@ -60,6 +60,4 @@ typedef void (*test_proc)(void);
 #define TESTS_BEGIN test_proc tests[] = {
 #define TEST(x) x,
 #define TESTS_END 0 };
-
-#define TEST_EXITCODE s_passed ? 0 : -1
 
