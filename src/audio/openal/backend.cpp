@@ -116,8 +116,7 @@ struct PCM::Handle
 	ALsizei rate;
 	ALuint  buffers[OPENAL_BUFFERS_MAX];
 	uint8_t available;
-
-	char  *buffer;
+	uint8_t bytes_per_frame;
 	size_t buffer_size;
 };
 
@@ -159,20 +158,19 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 	l_handle->source = l_source;
 	l_handle->format = l_format;
 	l_handle->rate = ALsizei(sample_rate);
-#ifdef OPENAL_VARIABLE_BUFFER_SIZE
-	l_handle->buffer_size =
-	    ((sample_rate * OPENAL_BUFFERS_MAX)/MARSHMALLOW_ENGINE_FRAMERATE) * (bit_depth/8) * channels;
-#else
-	l_handle->buffer_size = 4096;
-#endif
-	l_handle->buffer = new char[l_handle->buffer_size];
+	l_handle->bytes_per_frame = (bit_depth/8) * channels;
 	l_handle->available = uint8_t(~0);
 
+	l_handle->buffer_size =
+	    (sample_rate/MARSHMALLOW_ENGINE_FRAMERATE)
+	        * l_handle->bytes_per_frame
+	        * OPENAL_BUFFERS_MAX;
+	
 	alGenBuffers(OPENAL_BUFFERS_MAX, l_handle->buffers);
 
 	alGetError();
 
-	MMDEBUG("OpenAL PCM device opened. " << bool(l_handle));
+	MMDEBUG("OpenAL PCM device opened.");
 
 	return(l_handle);
 }
@@ -187,19 +185,20 @@ PCM::Close(Handle *pcm_handle)
 	alDeleteBuffers(OPENAL_BUFFERS_MAX, pcm_handle->buffers);
 	alDeleteSources(1, &pcm_handle->source);
 
-	delete[] pcm_handle->buffer, pcm_handle->buffer = 0;
 	delete pcm_handle;
 
 	MMDEBUG("OpenAL PCM device closed.");
 }
 
 bool
-PCM::Write(Handle *pcm_handle, size_t bsize)
+PCM::Write(Handle *pcm_handle, const char *buffer, size_t frames)
 {
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 
 	int l_buffer(-1);
 	ALint l_state(0);
+
+	const size_t l_buffer_size = frames * pcm_handle->bytes_per_frame;
 
 	alGetError();
 
@@ -240,8 +239,8 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 
 	alBufferData(pcm_handle->buffers[l_buffer],
 	             pcm_handle->format,
-	             pcm_handle->buffer,
-	             static_cast<ALsizei>(bsize),
+	             buffer,
+	             static_cast<ALsizei>(l_buffer_size),
 	             pcm_handle->rate);
 	if (alGetError() != AL_NO_ERROR) {
 		MMERROR("alBufferData failed! " << l_buffer);
@@ -257,19 +256,45 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 	pcm_handle->available &= static_cast<uint8_t>(~(1 << l_buffer));
 
 	if (l_state == AL_STOPPED ||
-	   (l_state == AL_INITIAL && bsize < pcm_handle->buffer_size))
+	   (l_state == AL_INITIAL && l_buffer_size < pcm_handle->buffer_size))
 		alSourcePlay(pcm_handle->source);
 
 	return(true);
 }
 
-void
-PCM::Buffer(Handle *pcm_handle, char *&buffer, size_t &bsize)
+size_t
+PCM::MaxFrames(Handle *pcm_handle)
+{
+	assert(pcm_handle && "Tried to use invalid PCM device!");
+	return(pcm_handle->buffer_size / pcm_handle->bytes_per_frame);
+}
+
+size_t
+PCM::AvailableFrames(Handle *pcm_handle)
 {
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 
-	buffer = pcm_handle->buffer;
-	bsize  = pcm_handle->buffer_size;
+	alGetError();
+
+	ALint l_state(0);
+	alGetSourcei(pcm_handle->source, AL_SOURCE_STATE, &l_state);
+	if (alGetError() != AL_NO_ERROR) {
+		MMERROR("alGetSourcei(AL_SOURCE_STATE) failed!");
+		return(0);
+	}
+	else if (l_state == AL_INITIAL)
+		return(MaxFrames(pcm_handle));
+
+	ALint l_processed(0);
+	alGetSourcei(pcm_handle->source, AL_BUFFERS_PROCESSED, &l_processed);
+	if (alGetError() != AL_NO_ERROR) {
+		MMERROR("alGetSourcei(AL_SOURCE_STATE) failed!");
+		return(0);
+	}
+	else if (l_processed > 0)
+		return(MaxFrames(pcm_handle));
+
+	return(0);
 }
 
 } /************************************************* Audio::Backend Namespace */

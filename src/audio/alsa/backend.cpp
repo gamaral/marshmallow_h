@@ -85,12 +85,9 @@ struct PCM::Handle
 	snd_pcm_t           *device;
 	snd_pcm_uframes_t    frames;
 
-	char  *buffer;
-	size_t buffer_size;
-
-	uint16_t bytes_per_frame;
-	uint8_t  bit_depth;
-	uint8_t  channels;
+	uint8_t bytes_per_frame;
+	uint8_t bit_depth;
+	uint8_t channels;
 };
 
 PCM::Handle *
@@ -153,8 +150,6 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 	l_handle.channels = channels;
 	l_handle.bit_depth = bit_depth;
 	l_handle.bytes_per_frame = uint16_t(channels * (bit_depth/8));
-	l_handle.buffer_size = l_handle.frames * l_handle.bytes_per_frame;
-	l_handle.buffer = new char[l_handle.buffer_size];
 
 	snd_config_update_free_global();
 
@@ -175,20 +170,19 @@ PCM::Close(Handle *pcm_handle)
 	snd_pcm_drain(pcm_handle->device);
 	snd_pcm_hw_free(pcm_handle->device);
 	snd_pcm_close(pcm_handle->device);
-	delete[] pcm_handle->buffer, pcm_handle->buffer = 0;
 	delete pcm_handle;
 
 	MMDEBUG("ALSA PCM device closed.");
 }
 
 bool
-PCM::Write(Handle *pcm_handle, size_t bsize)
+PCM::Write(Handle *pcm_handle, const char *buffer, size_t frames)
 {
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 
 	snd_pcm_sframes_t l_available;
 	snd_pcm_sframes_t l_written;
-	snd_pcm_uframes_t l_frames;
+	snd_pcm_uframes_t l_frames = frames;
 
 	l_available = snd_pcm_avail_update(pcm_handle->device);
 	if (l_available < 0) {
@@ -197,8 +191,6 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 		return(false);
 	}
 
-	l_frames = bsize / pcm_handle->bytes_per_frame;
-
 	/*
 	 * Skip if there isn't enough space in buffer for data.
 	 */
@@ -206,7 +198,7 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 		return(false);
 
 	while (l_frames > 0) {
-		l_written = snd_pcm_writei(pcm_handle->device, pcm_handle->buffer, l_frames);
+		l_written = snd_pcm_writei(pcm_handle->device, buffer, l_frames);
 		switch (l_written) {
 		case -EAGAIN: continue;
 
@@ -229,13 +221,18 @@ PCM::Write(Handle *pcm_handle, size_t bsize)
 	return(true);
 }
 
-void
-PCM::Buffer(Handle *pcm_handle, char *&buffer, size_t &bsize)
+size_t
+PCM::MaxFrames(Handle *pcm_handle)
 {
 	assert(pcm_handle && "Tried to use invalid PCM device!");
+	return(pcm_handle->frames);
+}
 
-	buffer = pcm_handle->buffer;
-	bsize  = pcm_handle->buffer_size;
+size_t
+PCM::AvailableFrames(Handle *pcm_handle)
+{
+	assert(pcm_handle && "Tried to use invalid PCM device!");
+	return(snd_pcm_avail_update(pcm_handle->device));
 }
 
 } /************************************************* Audio::Backend Namespace */

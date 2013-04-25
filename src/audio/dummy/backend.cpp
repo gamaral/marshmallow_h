@@ -92,8 +92,8 @@ namespace Backend { /******************************* Audio::Backend Namespace */
 
 struct PCM::Handle
 {
-	char  *buffer;
-	size_t buffer_size;
+	size_t bytes_per_frame;
+	size_t frames;
 };
 
 PCM::Handle *
@@ -105,9 +105,8 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 
 	PCM::Handle *l_handle(new Handle);
 
-	l_handle->buffer_size = (sample_rate/MARSHMALLOW_ENGINE_FRAMERATE)
-	                        * (bit_depth/8) * channels;
-	l_handle->buffer = new char[l_handle->buffer_size];
+	l_handle->bytes_per_frame = (bit_depth/8) * channels;
+	l_handle->frames = (sample_rate/MARSHMALLOW_ENGINE_FRAMERATE);
 
 	MMDEBUG("Dummy PCM device opened.");
 
@@ -121,28 +120,35 @@ PCM::Close(Handle *pcm_handle)
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 	assert(pcm_handle->buffer && "Buffer missing from PCM handle!");
 
-	delete[] pcm_handle->buffer, pcm_handle->buffer = 0;
 	delete pcm_handle;
 
 	MMDEBUG("Dummy PCM device closed.");
 }
 
 bool
-PCM::Write(Handle *pcm_handle, size_t)
+PCM::Write(Handle *pcm_handle, const char *buffer, size_t frames)
 {
 	assert(IsBackendInitialized() && "Audio backend finalized!");
 	assert(pcm_handle && "Tried to use invalid PCM device!");
-	return(pcm_handle);
+	return(true);
 }
 
-void
-PCM::Buffer(Handle *pcm_handle, char *&buffer, size_t &bsize)
+size_t
+PCM::MaxFrames(Handle *pcm_handle)
 {
 	assert(IsBackendInitialized() && "Audio backend finalized!");
 	assert(pcm_handle && "Tried to use invalid PCM device!");
-	buffer = pcm_handle->buffer;
-	bsize  = pcm_handle->buffer_size;
+	return(pcm_handle->frames);
 }
+
+size_t
+PCM::AvailableFrames(Handle *pcm_handle)
+{
+	assert(IsBackendInitialized() && "Audio backend finalized!");
+	assert(pcm_handle && "Tried to use invalid PCM device!");
+	return(pcm_handle->frames);
+}
+
 
 } /************************************************* Audio::Backend Namespace */
 } /********************************************************** Audio Namespace */

@@ -12,7 +12,7 @@ endif()
 add_definitions(-DMARSHMALLOW_AUDIO_LIBRARY)
 
 set(MARSHMALLOW_AUDIO_SRCS "pcm.cpp"
-#                          "track.cpp"
+                           "player.cpp"
                            "oggtrack.cpp"
                            "wavetrack.cpp"
 )

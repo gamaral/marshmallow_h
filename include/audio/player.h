@@ -38,60 +38,48 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_AUDIO_TRACK_H
-#define MARSHMALLOW_AUDIO_TRACK_H 1
+#ifndef MARSHMALLOW_AUDIO_PLAYER_H
+#define MARSHMALLOW_AUDIO_PLAYER_H 1
 
-#include <core/iasset.h>
-
-#include <core/global.h>
 #include <core/fd.h>
+#include <core/platform.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Core { /******************************************** Core Namespace */
-	struct IDataIO;
-	typedef Core::Shared<IDataIO> SharedDataIO;
-} /*********************************************************** Core Namespace */
 
 namespace Audio { /****************************************** Audio Namespace */
 
+	struct ITrack;
 	class PCM;
-	typedef Core::Weak<PCM> WeakPCM;
-
-	struct ICodec;
-	typedef Core::Shared<ICodec> SharedCodec;
-
 
 	/*!
-	 * @brief Audio Track
+	 * @brief Audio Player
 	 */
 	class MARSHMALLOW_AUDIO_EXPORT
-	Track
+	Player
 	{
 		struct Private;
 		Private *m_p;
 
 	public:
 
-		Track(void);
-		Track(const Audio::WeakPCM &pcm, const Audio::SharedCodec &codec);
-		~Track(void);
+		Player(void);
+		~Player(void);
 
-		const Audio::WeakPCM & pcm(void) const;
-		void setPCM(const Audio::WeakPCM &pcm);
+		PCM * pcm(void) const;
+		void setPCM(PCM *pcm);
 
-		const Audio::SharedCodec & codec(void) const;
-		void setCodec(const Audio::SharedCodec &codec);
+		void load(const Core::Identifier &id, ITrack *track);
+		bool contains(const Core::Identifier &id);
+		void eject(const Core::Identifier &id);
 
-		bool play(int iterations = 1);
-		void stop(void);
-		bool isPlaying(void) const;
+		bool play(const Core::Identifier &id,
+		          int iterations = 1,
+		          float gain = 1.f);
+		void stop(const Core::Identifier &id);
+		bool isPlaying(const Core::Identifier &id) const;
 
-		void tick(float delta);
-
-		bool isValid(void) const;
+		void tick(void);
 	};
-	typedef Core::Shared<Track> SharedTrack;
-	typedef Core::Weak<Track> WeakTrack;
 
 } /********************************************************** Audio Namespace */
 MARSHMALLOW_NAMESPACE_END

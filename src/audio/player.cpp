@@ -38,12 +38,14 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <map>
+
 #include <cstring>
 
+#include "core/identifier.h"
 #include "core/logger.h"
-#include "core/weak.h"
 
-#include "audio/icodec.h"
+#include "audio/itrack.h"
 #include "audio/pcm.h"
 
 #include "backend_p.h"
@@ -54,111 +56,149 @@ namespace Audio { /****************************************** Audio Namespace */
 struct Player::Private
 {
 	Private(void)
-	    : bsize(0)
-	    , bdecoded(0)
-	    , buffer(0)
-	    , iterations(0)
-	    , skip_decode(false)
 	{
 	}
 
 	~Private(void)
 	{
-		/* make sure we clsoe the PCM device */
-		stop();
 	}
 
-	bool play(int iterations);
-	void stop(void);
+	inline void load(const Core::Identifier &id, ITrack *track);
+	inline bool contains(const Core::Identifier &id);
+	inline void eject(const Core::Identifier &id);
 
-	void update(void);
+	inline bool play(const Core::Identifier &id, int playlist, float gain);
+	inline void stop(const Core::Identifier &id);
+	inline bool isPlaying(const Core::Identifier &id) const;
 
-	WeakPCM pcm;
-	SharedCodec codec;
-	size_t bsize;
-	size_t bdecoded;
-	char *buffer;
-	int iterations;
-	bool skip_decode;
+	typedef std::map<const Core::Identifier, ITrack *> TrackMap;
+	TrackMap tracks;
+
+	typedef std::pair<int, float> IterationGainPair;
+	typedef std::map<const Core::Identifier, IterationGainPair> PlaylistMap;
+	PlaylistMap playlist;
+
+	void tick(void);
+
+	PCM *pcm;
 };
 
+void
+Player::Private::load(const Core::Identifier &id, ITrack *track)
+{
+	tracks[id] = track;
+}
+
 bool
-Player::Private::play(int _iterations)
+Player::Private::contains(const Core::Identifier &id)
 {
-	/* sanity checks */
-	if (_iterations == 0) {
-		MMDEBUG("Trying to play player with no iterations");
-		if (iterations) stop();
-		return(false);
-	}
-	else if (iterations) {
-		MMERROR("Player already playing!");
-		return(false);
-	}
-
-	iterations = _iterations;
-	skip_decode = false;
-	codec->reset();
-
-	bsize = pcm->bufferSize();
-	buffer = new char[bsize];
-
-	update();
-
-	return(true);
+	return(tracks.find(id) != tracks.end());
 }
 
 void
-Player::Private::stop(void)
+Player::Private::eject(const Core::Identifier &id)
 {
-	delete buffer, buffer = 0;
-	bsize = 0;
-	iterations = 0;
+	TrackMap::iterator l_i = tracks.find(id);
+
+	if (l_i != tracks.end())
+		tracks.erase(l_i);
+}
+
+bool
+Player::Private::play(const Core::Identifier &id, int iterations, float gain)
+{
+	if (0 == iterations)
+		stop(id);
+	else
+		playlist[id] = std::make_pair(iterations, gain);
 }
 
 void
-Player::Private::update(void)
+Player::Private::stop(const Core::Identifier &id)
 {
-	if (!buffer) return;
+	PlaylistMap::iterator l_i = playlist.find(id);
+	if (l_i != playlist.end())
+		playlist.erase(l_i);
+}
 
-	/* sanity checks */
+bool
+Player::Private::isPlaying(const Core::Identifier &id) const
+{
+	return(playlist.find(id) != playlist.end());
+}
 
-	if (!pcm) {
-		MMDEBUG("Trying to play on an invalid PCM, stopping!");
-		stop();
+void
+Player::Private::tick(void)
+{
+	if (!pcm) return;
+
+	const size_t l_frames_available = pcm->framesAvailable();
+	if (!l_frames_available)
 		return;
-	}
 
-	if (!pcm->isOpen()) {
-		MMDEBUG("Trying to play on a closed PCM, stopping!");
-		stop();
-		return;
-	}
+	const size_t l_buffer_size = l_frames_available * pcm->frameSize();
+	char *l_buffer = new char[l_buffer_size];
+	char *l_mix = new char[l_buffer_size];
 
-	/* stop check */
+	memset(l_mix, 0, l_buffer_size);
 
-	if (!skip_decode) {
+	PlaylistMap::iterator l_i;
+	PlaylistMap::const_iterator l_c = playlist.end();
+	for (l_i = playlist.begin(); l_i != l_c;) {
+		PlaylistMap::value_type l_track_i = *l_i;
+		ITrack *l_track = tracks[l_track_i.first];
 
-		if (!iterations) {
-			stop();
-			return;
+		size_t l_offset = 0;
+		size_t l_read = 0;
+		do {
+			/* decode */
+			l_read += l_track->read(&l_buffer[l_offset],
+			    l_buffer_size - l_offset);
+
+			/* mix */
+			for (size_t l_bi = l_offset; l_bi < l_read; ++l_bi) {
+				const short l_mixed =
+				    l_mix[l_bi] + (l_buffer[l_bi] * l_track_i.second.second);
+				l_mix[l_bi] = MMRANGE(CHAR_MIN, l_mixed, CHAR_MAX);
+			}
+
+			/*
+			 * Success! Next track.
+			 */
+			if (l_read == l_buffer_size)
+				++l_i;
+
+			/*
+			 * Failed! Underrun occured.
+			 */
+	 		else {
+				/* auto-rewind */
+				l_track->rewind();
+
+				/* if looping forever, continue */
+				if (-1 == l_track_i.second.first)
+					continue;
+
+				/* check if we need to stop */
+				else if (0 == --l_track_i.second.first) {
+					playlist.erase(l_i++);
+					break;
+				}
+
+				/* update playlist */
+				else playlist[l_track_i.first] = l_track_i.second;
+			}
+
+			l_offset = l_read;
 		}
-
-		memset(buffer, 0, bsize);
-		size_t l_read = codec->read(buffer, bsize);
-
-		/*
-		 * Reaching the end, check if we need to loop
-		 */
-		if (l_read < bsize && (iterations == -1 || --iterations)) {
-			codec->reset();
-			l_read += codec->read(buffer + l_read, bsize - l_read);
-		}
-		bdecoded = l_read;
+		while(l_read < l_buffer_size);
 	}
-	else skip_decode = false;
+	
+	if (!pcm->write(l_mix, l_frames_available))
+		MMERROR("Failed to write to PCM device!");
 
-	skip_decode = !pcm->mix(buffer, bdecoded);
+	delete[] l_mix, l_mix = 0;
+	delete[] l_buffer, l_buffer = 0;
 }
 
 /********************************************************************* Player */
@@ -168,88 +208,63 @@ Player::Player(void)
 {
 }
 
-Player::Player(const Audio::WeakPCM &_pcm, const Audio::SharedCodec &_codec)
-    : m_p(new Private)
-{
-	setPCM(_pcm);
-	setCodec(_codec);
-}
-
 Player::~Player(void)
 {
 	delete m_p, m_p = 0;
 }
 
-const Audio::WeakPCM &
+void
+Player::load(const Core::Identifier &id, ITrack *track)
+{
+	m_p->load(id, track);
+}
+
+bool
+Player::contains(const Core::Identifier &id)
+{
+	return(m_p->contains(id));
+}
+
+void
+Player::eject(const Core::Identifier &id)
+{
+	m_p->eject(id);
+}
+
+bool
+Player::play(const Core::Identifier &id, int playlist, float gain)
+{
+	return(m_p->play(id, playlist, gain));
+}
+
+void
+Player::stop(const Core::Identifier &id)
+{
+	m_p->stop(id);
+}
+
+bool
+Player::isPlaying(const Core::Identifier &id) const
+{
+	return(m_p->isPlaying(id));
+}
+
+void
+Player::tick(void)
+{
+	m_p->tick();
+}
+
+PCM *
 Player::pcm(void) const
 {
 	return(m_p->pcm);
 }
 
 void
-Player::setPCM(const Audio::WeakPCM &_pcm)
+Player::setPCM(PCM *pcm)
 {
-	if (isPlaying()) {
-		MMERROR("Tried to replace PCM of a playing player!");
-		return;
-	}
-
-	m_p->pcm = _pcm;
-}
-
-const Audio::SharedCodec &
-Player::codec(void) const
-{
-	return(m_p->codec);
-}
-
-void
-Player::setCodec(const Audio::SharedCodec &_codec)
-{
-	if (isPlaying()) {
-		MMERROR("Tried to replace codec of a playing player!");
-		return;
-	}
-
-	m_p->codec = _codec;
-}
-
-bool
-Player::play(int _iterations)
-{
-	if (!isValid()) {
-		MMWARNING("Tried to play invalid player!");
-		return(false);
-	}
-	return(m_p->play(_iterations));
-}
-
-void
-Player::stop(void)
-{
-	if (!isValid()) {
-		MMWARNING("Tried to stop an invalid player!");
-		return;
-	}
-	m_p->stop();
-}
-
-bool
-Player::isPlaying(void) const
-{
-	return(m_p->iterations);
-}
-
-void
-Player::tick(float)
-{
-	m_p->update();
-}
-
-bool
-Player::isValid(void) const
-{
-	return(m_p->pcm && m_p->codec && m_p->pcm->isOpen() && m_p->codec->isOpen());
+	m_p->pcm = pcm;
 }
 
 } /********************************************************** Audio Namespace */
