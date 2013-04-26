@@ -4,9 +4,9 @@ if(NOT ALSA_FOUND)
 	message(FATAL_ERROR "ALSA was not found!")
 endif()
 
-set(MARSHMALLOW_AUDIO_BACKEND_SRCS "backend.cpp")
+set(MARSHMALLOW_AUDIO_ALSA_SRCS "backend.cpp")
 
-set(MARSHMALLOW_AUDIO_BACKEND_LIBS ${ALSA_LIBRARY})
+set(MARSHMALLOW_AUDIO_ALSA_LIBS ${ALSA_LIBRARY})
 
 include_directories(${ALSA_INCLUDE_DIR})
 
@@ -19,7 +19,7 @@ endif()
 
 ################################################################################
 
-add_library(marshmallow_audio_backend STATIC ${MARSHMALLOW_AUDIO_BACKEND_SRCS})
+add_library(marshmallow_audio_alsa STATIC ${MARSHMALLOW_AUDIO_ALSA_SRCS})
 
-target_link_libraries(marshmallow_audio_backend ${MARSHMALLOW_AUDIO_BACKEND_LIBS})
+target_link_libraries(marshmallow_audio_alsa ${MARSHMALLOW_AUDIO_ALSA_LIBS})
 

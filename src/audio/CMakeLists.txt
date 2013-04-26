@@ -17,9 +17,7 @@ set(MARSHMALLOW_AUDIO_SRCS "pcm.cpp"
                            "wavetrack.cpp"
 )
 
-set(MARSHMALLOW_AUDIO_LIBS "marshmallow_core"
-                           "marshmallow_audio_backend"
-)
+set(MARSHMALLOW_AUDIO_LIBS "marshmallow_core")
 
 include_directories(${OGG_INCLUDE_DIR})
 list(APPEND MARSHMALLOW_AUDIO_LIBS ${OGG_LIBRARY})
@@ -29,10 +27,13 @@ list(APPEND MARSHMALLOW_AUDIO_LIBS ${VORBIS_LIBRARIES})
 
 if(MARSHMALLOW_AUDIO_ALSA)
 	add_subdirectory(alsa)
+	list(APPEND MARSHMALLOW_AUDIO_LIBS "marshmallow_audio_alsa")
 elseif(MARSHMALLOW_AUDIO_OPENAL)
 	add_subdirectory(openal)
+	list(APPEND MARSHMALLOW_AUDIO_LIBS "marshmallow_audio_openal")
 elseif(MARSHMALLOW_AUDIO_DUMMY)
 	add_subdirectory(dummy)
+	list(APPEND MARSHMALLOW_AUDIO_LIBS "marshmallow_audio_dummy")
 endif()
 
 ################################################################################
