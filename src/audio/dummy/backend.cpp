@@ -43,8 +43,11 @@
 #include "core/global.h"
 #include "core/identifier.h"
 #include "core/logger.h"
+#include "core/platform.h"
 
 #include "game/config.h"
+
+#define WRITE_TIMEOUT_MS 8
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
@@ -94,6 +97,7 @@ struct PCM::Handle
 {
 	size_t bytes_per_frame;
 	size_t frames;
+	MMTIME last_write;
 };
 
 PCM::Handle *
@@ -107,6 +111,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 
 	l_handle->bytes_per_frame = (bit_depth/8) * channels;
 	l_handle->frames = (sample_rate/MARSHMALLOW_ENGINE_FRAMERATE);
+	l_handle->last_write = NOW();
 
 	MMDEBUG("Dummy PCM device opened.");
 
@@ -116,9 +121,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 void
 PCM::Close(Handle *pcm_handle)
 {
-	assert(IsBackendInitialized() && "Audio backend finalized!");
 	assert(pcm_handle && "Tried to use invalid PCM device!");
-	assert(pcm_handle->buffer && "Buffer missing from PCM handle!");
 
 	delete pcm_handle;
 
@@ -130,6 +133,15 @@ PCM::Write(Handle *pcm_handle, const char *buffer, size_t frames)
 {
 	assert(IsBackendInitialized() && "Audio backend finalized!");
 	assert(pcm_handle && "Tried to use invalid PCM device!");
+
+	MMUNUSED(buffer);
+	MMUNUSED(frames);
+
+	if (NOW() - pcm_handle->last_write < WRITE_TIMEOUT_MS)
+		return(false);
+
+	MMVERBOSE("Wrote " << frames << " frames into imaginary PCM device.");
+	pcm_handle->last_write = NOW();
 	return(true);
 }
 
@@ -138,6 +150,7 @@ PCM::MaxFrames(Handle *pcm_handle)
 {
 	assert(IsBackendInitialized() && "Audio backend finalized!");
 	assert(pcm_handle && "Tried to use invalid PCM device!");
+
 	return(pcm_handle->frames);
 }
 
@@ -146,9 +159,11 @@ PCM::AvailableFrames(Handle *pcm_handle)
 {
 	assert(IsBackendInitialized() && "Audio backend finalized!");
 	assert(pcm_handle && "Tried to use invalid PCM device!");
-	return(pcm_handle->frames);
-}
 
+	if (NOW() - pcm_handle->last_write >= WRITE_TIMEOUT_MS)
+		return(pcm_handle->frames);
+	return(0);
+}
 
 } /************************************************* Audio::Backend Namespace */
 } /********************************************************** Audio Namespace */
