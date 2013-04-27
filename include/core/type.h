@@ -41,13 +41,25 @@
 #ifndef MARSHMALLOW_CORE_TYPE_H
 #define MARSHMALLOW_CORE_TYPE_H 1
 
-#ifndef MARSHMALLOW_CORE_STRHASH_H
-#  include <core/strhash.h>
-#endif
+#include <core/strhash.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
-	typedef StrHash Type;
+
+	class Type : public StrHash
+	{
+	public:
+		Type(void);
+		Type(const char *_str);
+		Type(const std::string &_str);
+		Type(const Type &copy);
+
+		virtual ~Type(void);
+
+	public:
+		static const Type Null;
+	};
+
 } /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 

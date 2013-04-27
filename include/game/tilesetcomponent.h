@@ -41,8 +41,6 @@
 #ifndef MARSHMALLOW_GAME_TILESETCOMPONENT_H
 #define MARSHMALLOW_GAME_TILESETCOMPONENT_H 1
 
-#include <core/fd.h>
-
 #include <game/componentbase.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN

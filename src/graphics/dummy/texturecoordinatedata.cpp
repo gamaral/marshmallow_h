@@ -38,6 +38,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "core/type.h"
+
 #include <cstring>
 
 MARSHMALLOW_NAMESPACE_BEGIN

@@ -39,6 +39,7 @@
  */
 
 #include "core/logger.h"
+#include "core/type.h"
 
 #include <cstring>
 

@@ -39,6 +39,7 @@
  */
 
 #include "core/identifier.h"
+#include "core/type.h"
 
 #include <tinyxml2.h>
 

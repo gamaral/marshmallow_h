@@ -42,9 +42,16 @@
 #define MARSHMALLOW_GAME_IFACTORY_H 1
 
 #include <core/environment.h>
-#include <core/fd.h>
+#include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	class Identifier;
+	class Type;
+	template <class T> class Shared;
+	template <class T> class Weak;
+} /*********************************************************** Core Namespace */
+
 namespace Graphics { /************************************ Graphics Namespace */
 	struct ITexture;
 	typedef Core::Shared<ITexture> SharedTexture;

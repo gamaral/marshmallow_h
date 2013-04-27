@@ -38,13 +38,13 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cstring>
-
-#include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 
+#include <cassert>
+#include <cstring>
+
+#include "core/idataio.h"
 #include "core/logger.h"
-#include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */

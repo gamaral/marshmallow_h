@@ -41,8 +41,6 @@
 #ifndef MARSHMALLOW_GAME_SPLASHSCENELAYER_H
 #define MARSHMALLOW_GAME_SPLASHSCENELAYER_H 1
 
-#include <core/fd.h>
-
 #include <event/ieventlistener.h>
 
 #include <game/scenelayerbase.h>

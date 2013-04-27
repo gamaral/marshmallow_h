@@ -41,7 +41,6 @@
 #ifndef MARSHMALLOW_GRAPHICS_ITILESET_H
 #define MARSHMALLOW_GRAPHICS_ITILESET_H 1
 
-#include <core/fd.h>
 #include <core/iserializable.h>
 
 #include <graphics/config.h>

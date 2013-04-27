@@ -41,7 +41,6 @@
 #ifndef MARSHMALLOW_GAME_SCENEBASE_H
 #define MARSHMALLOW_GAME_SCENEBASE_H 1
 
-#include <core/fd.h>
 #include <core/global.h>
 
 #include <game/iscene.h>

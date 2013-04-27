@@ -42,11 +42,16 @@
 #define MARSHMALLOW_GRAPHICS_FACTORY_H 1
 
 #include <core/environment.h>
-#include <core/fd.h>
+#include <core/namespace.h>
 
 #include <graphics/config.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	template <class T> class Shared;
+	template <class T> class Weak;
+} /*********************************************************** Core Namespace */
+
 namespace Graphics { /************************************ Graphics Namespace */
 
 	struct ITextureCoordinateData;

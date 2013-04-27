@@ -38,11 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cstring>
-
-#include "core/logger.h"
-#include "core/shared.h"
-
 #include "backend_p.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN

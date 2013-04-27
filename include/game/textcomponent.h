@@ -41,8 +41,6 @@
 #ifndef MARSHMALLOW_GAME_TEXTCOMPONENT_H
 #define MARSHMALLOW_GAME_TEXTCOMPONENT_H 1
 
-#include <core/fd.h>
-
 #include <game/componentbase.h>
 
 #include <string>

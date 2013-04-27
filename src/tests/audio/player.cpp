@@ -120,10 +120,12 @@ audio_player_tick_test(void)
 		return;
 
 	Core::FileIO sample_wav2(s_wav_file2);
-	Audio::WaveTrack track_wav2(sample_wav2);
-	ASSERT_TRUE("Audio::WaveTrack::isValid() TRACK 2", track_wav2.isValid());
-	if (!track_wav2.isValid())
+	Audio::WaveTrack *track_wav2 = new Audio::WaveTrack(sample_wav2);
+	ASSERT_TRUE("Audio::WaveTrack::isValid() TRACK 2", track_wav2->isValid());
+	if (!track_wav2->isValid()) {
+		delete track_wav2, track_wav2 = 0;
 		return;
+	}
 
 	Audio::PCM pcm(track_wav1.rate(),
 	               track_wav1.depth(),
@@ -135,7 +137,7 @@ audio_player_tick_test(void)
 	Audio::Player player;
 	player.setPCM(&pcm);
 	player.load(s_sample_track, &track_wav1);
-	player.load(s_sample_track2, &track_wav2);
+	player.load(s_sample_track2, track_wav2); /* heap */
 	player.play(s_sample_track, 2, .5f);
 	player.play(s_sample_track2, 1, .5f);
 	if (!player.isPlaying(s_sample_track))
@@ -148,6 +150,10 @@ audio_player_tick_test(void)
 	
 	/* wait for pcm to flush */
 	Core::Platform::Sleep(500);
+
+	player.eject(s_sample_track);
+	player.eject(s_sample_track2, true); /* freed */
+
 	pcm.close();
 
 	Audio::Backend::Finalize();

@@ -41,8 +41,6 @@
 #ifndef MARSHMALLOW_GRAPHICS_MESHBASE_H
 #define MARSHMALLOW_GRAPHICS_MESHBASE_H 1
 
-#include <core/fd.h>
-
 #include <math/vector2.h>
 
 #include <graphics/color.h>

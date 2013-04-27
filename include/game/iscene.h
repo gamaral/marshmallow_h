@@ -41,7 +41,6 @@
 #ifndef MARSHMALLOW_GAME_ISCENE_H
 #define MARSHMALLOW_GAME_ISCENE_H 1
 
-#include <core/fd.h>
 #include <core/irenderable.h>
 #include <core/iserializable.h>
 #include <core/iupdateable.h>
@@ -49,6 +48,11 @@
 #include <list>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	class Identifier;
+	class Type;
+} /*********************************************************** Core Namespace */
+
 namespace Graphics { /************************************ Graphics Namespace */
 	class Color;
 } /******************************************************* Graphics Namespace */

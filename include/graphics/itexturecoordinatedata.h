@@ -41,7 +41,6 @@
 #ifndef MARSHMALLOW_GRAPHICS_ITEXTURECOORDINATEDATA_H
 #define MARSHMALLOW_GRAPHICS_ITEXTURECOORDINATEDATA_H 1
 
-#include <core/fd.h>
 #include <core/iasset.h>
 
 #include <graphics/config.h>

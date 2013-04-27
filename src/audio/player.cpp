@@ -42,6 +42,7 @@
 
 #include <cstring>
 
+#include "core/global.h"
 #include "core/identifier.h"
 #include "core/logger.h"
 
@@ -64,17 +65,11 @@ namespace { /*********************************** Audio::<anonymous> Namespace */
 
 struct Player::Private
 {
-	Private(void)
-	{
-	}
-
-	~Private(void)
-	{
-	}
+	~Private();
 
 	inline void load(const Core::Identifier &id, ITrack *track);
 	inline bool contains(const Core::Identifier &id);
-	inline void eject(const Core::Identifier &id);
+	inline ITrack * eject(const Core::Identifier &id);
 
 	inline bool play(const Core::Identifier &id, int playlist, float gain);
 	inline void stop(const Core::Identifier &id);
@@ -92,6 +87,22 @@ struct Player::Private
 	PCM *pcm;
 };
 
+Player::Private::~Private()
+{
+#if MARSHMALLOW_DEBUG
+	if (tracks.size() > 0) {
+		std::string l_track_list;
+
+		TrackMap::iterator l_i;
+		const TrackMap::const_iterator l_c = tracks.end();
+		for (l_i = tracks.begin(); l_i != l_c; ++l_i)
+			l_track_list.append(" " + l_i->first.str());
+
+		MMWARNING("Player destroyed while still holding track(s)!" << l_track_list);
+	}
+#endif
+}
+
 void
 Player::Private::load(const Core::Identifier &id, ITrack *track)
 {
@@ -104,13 +115,16 @@ Player::Private::contains(const Core::Identifier &id)
 	return(tracks.find(id) != tracks.end());
 }
 
-void
+ITrack *
 Player::Private::eject(const Core::Identifier &id)
 {
 	TrackMap::iterator l_i = tracks.find(id);
-
-	if (l_i != tracks.end())
-		tracks.erase(l_i);
+	if (l_i == tracks.end())
+		return(0);
+	
+	ITrack *l_track = l_i->second;
+	tracks.erase(l_i);
+	return(l_track);
 }
 
 bool
@@ -156,7 +170,7 @@ Player::Private::tick(void)
 	memset(l_mix, 0, l_buffer_size);
 
 	PlaylistMap::iterator l_i;
-	PlaylistMap::const_iterator l_c = playlist.end();
+	const PlaylistMap::const_iterator l_c = playlist.end();
 	for (l_i = playlist.begin(); l_i != l_c;) {
 		PlaylistMap::value_type l_track_i = *l_i;
 		ITrack *l_track = tracks[l_track_i.first];
@@ -238,10 +252,15 @@ Player::contains(const Core::Identifier &id)
 	return(m_p->contains(id));
 }
 
-void
-Player::eject(const Core::Identifier &id)
+ITrack *
+Player::eject(const Core::Identifier &id, bool free)
 {
-	m_p->eject(id);
+	ITrack *l_track = m_p->eject(id);
+
+	if (free)
+		delete l_track;
+
+	return(l_track);
 }
 
 bool

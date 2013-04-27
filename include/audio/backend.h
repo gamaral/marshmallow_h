@@ -42,9 +42,13 @@
 #define MARSHMALLOW_AUDIO_BACKEND_H 1
 
 #include <core/environment.h>
-#include <core/fd.h>
+#include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	class Identifier;
+} /*********************************************************** Core Namespace */
+
 namespace Audio { /****************************************** Audio Namespace */
 
 /*! @brief Audio Backend Interface

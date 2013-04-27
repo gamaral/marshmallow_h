@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2013, Guillermo A. Amaral B. (gamaral) <g@maral.me>
+ * Copyright (c) 2013, Guillermo A. Amaral B. (gamaral) <g@maral.me>
  * All rights reserved.
  *
  * This file is part of Marshmallow Game Engine.
@@ -30,28 +30,43 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
+#include "core/identifier.h"
+
 /*!
  * @file
  *
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#pragma once
-
-#ifndef MARSHMALLOW_CORE_FD_H
-#define MARSHMALLOW_CORE_FD_H 1
-
-#include <core/namespace.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
-	class StrHash;
-	typedef StrHash Identifier;
-	typedef StrHash Type;
 
-	template <class T> class Shared;
-	template <class T> class Weak;
+const Identifier Identifier::Null;
+
+Identifier::Identifier(void)
+    : StrHash()
+{
+}
+
+Identifier::Identifier(const char *_str)
+    : StrHash(_str)
+{
+}
+
+Identifier::Identifier(const std::string &_str)
+    : StrHash(_str)
+{
+}
+
+Identifier::Identifier(const Identifier &copy)
+    : StrHash(copy)
+{
+}
+
+Identifier::~Identifier(void)
+{
+}
+
 } /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
-#endif

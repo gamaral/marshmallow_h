@@ -43,20 +43,8 @@
 
 #include <core/iasset.h>
 
-#include <core/global.h>
-#include <core/fd.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Core { /******************************************** Core Namespace */
-	struct IDataIO;
-	typedef Core::Shared<IDataIO> SharedDataIO;
-} /*********************************************************** Core Namespace */
-
 namespace Audio { /****************************************** Audio Namespace */
-
-	struct ICodec;
-	typedef Core::Shared<ICodec> SharedCodec;
-
 
 	/*!
 	 * @brief Audio PCM
@@ -78,16 +66,14 @@ namespace Audio { /****************************************** Audio Namespace */
 
 		bool write(const char *buffer, size_t bsize);
 
-		size_t  framesAvailable(void) const;
-		size_t  framesMax(void) const;
+		size_t framesAvailable(void) const;
+		size_t framesMax(void) const;
 		uint8_t frameSize(void) const;
 
 		uint32_t rate(void) const;
 		uint8_t depth(void) const;
 		uint8_t channels(void) const;
 	};
-	typedef Core::Shared<PCM> SharedPCM;
-	typedef Core::Weak<PCM> WeakPCM;
 
 } /********************************************************** Audio Namespace */
 MARSHMALLOW_NAMESPACE_END

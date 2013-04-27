@@ -42,10 +42,17 @@
 #define MARSHMALLOW_EVENT_EVENTMANAGER_H 1
 
 #include <core/environment.h>
-#include <core/fd.h>
 #include <core/global.h>
+#include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	class Identifier;
+	class Type;
+	template <class T> class Shared;
+	template <class T> class Weak;
+} /*********************************************************** Core Namespace */
+
 namespace Event { /****************************************** Event Namespace */
 
 	struct IEventListener;

@@ -41,15 +41,17 @@
 #ifndef MARSHMALLOW_AUDIO_PLAYER_H
 #define MARSHMALLOW_AUDIO_PLAYER_H 1
 
-#include <core/fd.h>
 #include <core/platform.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	class Identifier;
+} /*********************************************************** Core Namespace */
 
 namespace Audio { /****************************************** Audio Namespace */
 
-	struct ITrack;
 	class PCM;
+	struct ITrack;
 
 	/*!
 	 * @brief Audio Player
@@ -70,7 +72,7 @@ namespace Audio { /****************************************** Audio Namespace */
 
 		void load(const Core::Identifier &id, ITrack *track);
 		bool contains(const Core::Identifier &id);
-		void eject(const Core::Identifier &id);
+		ITrack * eject(const Core::Identifier &id, bool free = false);
 
 		bool play(const Core::Identifier &id,
 		          int iterations = 1,

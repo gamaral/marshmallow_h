@@ -42,7 +42,6 @@
 #define MARSHMALLOW_GAME_SCENEMANAGER_H 1
 
 #include <core/environment.h>
-#include <core/fd.h>
 #include <core/global.h>
 #include <core/irenderable.h>
 #include <core/iserializable.h>

@@ -41,11 +41,13 @@
 #ifndef MARSHMALLOW_GRAPHICS_BACKEND_H
 #define MARSHMALLOW_GRAPHICS_BACKEND_H 1
 
-#include <core/fd.h>
-
 #include <math/size2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	class Identifier;
+} /*********************************************************** Core Namespace */
+
 namespace Graphics { /************************************ Graphics Namespace */
 
 	struct Display;

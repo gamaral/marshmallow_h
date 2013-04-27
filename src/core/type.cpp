@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2013, Guillermo A. Amaral B. (gamaral) <g@maral.me>
+ * Copyright (c) 2013, Guillermo A. Amaral B. (gamaral) <g@maral.me>
  * All rights reserved.
  *
  * This file is part of Marshmallow Game Engine.
@@ -30,7 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#pragma once
+#include "core/type.h"
 
 /*!
  * @file
@@ -38,54 +38,35 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef GAME_IENTITY_H
-#define GAME_IENTITY_H 1
-
-#include <core/irenderable.h>
-#include <core/iserializable.h>
-#include <core/iupdateable.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
-	class Identifier;
-	class Type;
+
+const Type Type::Null;
+
+Type::Type(void)
+    : StrHash()
+{
+}
+
+Type::Type(const char *_str)
+    : StrHash(_str)
+{
+}
+
+Type::Type(const std::string &_str)
+    : StrHash(_str)
+{
+}
+
+Type::Type(const Type &copy)
+    : StrHash(copy)
+{
+}
+
+Type::~Type(void)
+{
+}
+
 } /*********************************************************** Core Namespace */
-
-namespace Game { /******************************************** Game Namespace */
-
-	struct IComponent;
-	typedef Core::Shared<IComponent> SharedComponent;
-
-	class EntitySceneLayer;
-
-	/*! @brief Game Entity Interface */
-	struct MARSHMALLOW_GAME_EXPORT
-	IEntity : public Core::IRenderable
-	        , public Core::IUpdateable
-	        , public Core::ISerializable
-	{
-		virtual ~IEntity(void);
-
-		virtual const Core::Identifier & id(void) const = 0;
-		virtual const Core::Type & type(void) const = 0;
-
-		/*! @brief Parent Game Layer */
-		virtual EntitySceneLayer &layer(void) = 0;
-
-		virtual void pushComponent(const SharedComponent &component) = 0;
-		virtual void popComponent(void) = 0;
-		virtual void removeComponent(const Core::Identifier &identifier) = 0;
-		virtual void removeComponent(const SharedComponent &component) = 0;
-		virtual SharedComponent getComponent(const Core::Identifier &identifier) const = 0;
-		virtual SharedComponent getComponentType(const Core::Type &type) const = 0;
-
-		virtual void kill(void) = 0;
-		virtual bool isZombie(void) const = 0;
-	};
-	typedef Core::Shared<IEntity> SharedEntity;
-	typedef Core::Weak<IEntity> WeakEntity;
-
-} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
-#endif

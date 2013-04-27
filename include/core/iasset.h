@@ -47,9 +47,9 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 
+	class Identifier;
 	class StrHash;
-	typedef StrHash Identifier;
-	typedef StrHash Type;
+	class Type;
 
 	template <class T> class Shared;
 	template <class T> class Weak;

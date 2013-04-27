@@ -39,6 +39,7 @@
  */
 
 #include "core/identifier.h"
+#include "core/type.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */

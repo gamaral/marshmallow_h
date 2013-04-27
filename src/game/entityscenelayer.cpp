@@ -41,6 +41,7 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/shared.h"
+#include "core/type.h"
 
 #include "graphics/camera.h"
 

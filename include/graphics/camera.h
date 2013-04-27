@@ -41,8 +41,6 @@
 #ifndef MARSHMALLOW_GRAPHICS_CAMERA_H
 #define MARSHMALLOW_GRAPHICS_CAMERA_H 1
 
-#include <core/fd.h>
-
 #include <math/point2.h>
 #include <math/size2.h>
 

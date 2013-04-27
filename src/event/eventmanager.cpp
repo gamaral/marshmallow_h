@@ -46,6 +46,7 @@
 #include "core/logger.h"
 #include "core/platform.h"
 #include "core/shared.h"
+#include "core/type.h"
 #include "core/weak.h"
 
 #include "event/ievent.h"

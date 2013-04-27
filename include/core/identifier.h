@@ -41,13 +41,25 @@
 #ifndef MARSHMALLOW_CORE_IDENTIFIER_H
 #define MARSHMALLOW_CORE_IDENTIFIER_H 1
 
-#ifndef MARSHMALLOW_CORE_STRHASH_H
-#  include <core/strhash.h>
-#endif
+#include <core/strhash.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
-	typedef StrHash Identifier;
+
+	class Identifier : public StrHash
+	{
+	public:
+		Identifier(void);
+		Identifier(const char *_str);
+		Identifier(const std::string &_str);
+		Identifier(const Identifier &copy);
+
+		virtual ~Identifier(void);
+
+	public:
+		static const Identifier Null;
+	};
+
 } /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 

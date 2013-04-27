@@ -50,6 +50,8 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 
+	class Identifier;
+
 	template <class T> class Shared;
 	template <class T> class Weak;
 

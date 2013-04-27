@@ -41,8 +41,6 @@
 #ifndef MARSHMALLOW_GAME_TILEMAPSCENELAYER_H
 #define MARSHMALLOW_GAME_TILEMAPSCENELAYER_H 1
 
-#include <core/fd.h>
-
 #include <math/vector2.h>
 
 #include <graphics/ivertexdata.h>

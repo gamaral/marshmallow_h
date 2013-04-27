@@ -43,10 +43,13 @@
 
 #include <audio/itrack.h>
 
-#include <core/fd.h>
 #include <core/global.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	struct IDataIO;
+} /*********************************************************** Core Namespace */
+
 namespace Audio { /****************************************** Audio Namespace */
 
 	/*!
@@ -72,8 +75,8 @@ namespace Audio { /****************************************** Audio Namespace */
 		VIRTUAL bool isValid(void) const;
 
 		VIRTUAL uint32_t rate(void) const;
-		VIRTUAL uint8_t  depth(void) const;
-		VIRTUAL uint8_t  channels(void) const;
+		VIRTUAL uint8_t depth(void) const;
+		VIRTUAL uint8_t channels(void) const;
 	
 	public:
 

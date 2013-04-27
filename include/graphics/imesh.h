@@ -41,12 +41,15 @@
 #ifndef MARSHMALLOW_GRAPHICS_IMESH_H
 #define MARSHMALLOW_GRAPHICS_IMESH_H 1
 
-#include <core/fd.h>
 #include <core/iserializable.h>
 
 #include <graphics/config.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	class Type;
+} /*********************************************************** Core Namespace */
+
 namespace Math { /******************************************** Math Namespace */
 	struct Vector2;
 } /*********************************************************** Math Namespace */

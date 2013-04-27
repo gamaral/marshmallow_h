@@ -43,6 +43,7 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/platform.h"
+#include "core/type.h"
 #include "core/weak.h"
 #include "core/zlib.h"
 

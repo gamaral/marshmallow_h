@@ -41,12 +41,16 @@
 #ifndef MARSHMALLOW_GAME_ISCENELAYER_H
 #define MARSHMALLOW_GAME_ISCENELAYER_H 1
 
-#include <core/fd.h>
 #include <core/irenderable.h>
 #include <core/iserializable.h>
 #include <core/iupdateable.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	class Identifier;
+	class Type;
+} /*********************************************************** Core Namespace */
+
 namespace Game { /******************************************** Game Namespace */
 
 	struct IScene;

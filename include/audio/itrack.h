@@ -43,7 +43,6 @@
 
 #include <core/environment.h>
 #include <core/namespace.h>
-#include <core/idataio.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
@@ -63,8 +62,8 @@ namespace Audio { /****************************************** Audio Namespace */
 		virtual bool isValid(void) const = 0;
 
 		virtual uint32_t rate(void) const = 0;
-		virtual uint8_t  channels(void) const = 0;
-		virtual uint8_t  depth(void) const = 0;
+		virtual uint8_t channels(void) const = 0;
+		virtual uint8_t depth(void) const = 0;
 	};
 
 } /********************************************************** Audio Namespace */

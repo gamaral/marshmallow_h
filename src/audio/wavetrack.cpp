@@ -38,10 +38,11 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <cassert>
 #include <cstring>
 
+#include "core/idataio.h"
 #include "core/logger.h"
-#include "core/shared.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */

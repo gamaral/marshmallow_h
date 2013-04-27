@@ -42,9 +42,15 @@
 #define MARSHMALLOW_EVENT_IEVENT_H 1
 
 #include <core/environment.h>
-#include <core/fd.h>
+#include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	class Type;
+	template <class T> class Shared;
+	template <class T> class Weak;
+} /*********************************************************** Core Namespace */
+
 namespace Event { /****************************************** Event Namespace */
 
 	/*! @brief Event Interface */

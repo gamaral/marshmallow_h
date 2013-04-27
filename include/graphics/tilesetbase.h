@@ -41,8 +41,6 @@
 #ifndef MARSHMALLOW_GRAPHICS_TILESETBASE_H
 #define MARSHMALLOW_GRAPHICS_TILESETBASE_H 1
 
-#include <core/fd.h>
-
 #include <math/size2.h>
 
 #include <graphics/itexturecoordinatedata.h>
