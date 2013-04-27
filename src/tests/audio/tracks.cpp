@@ -48,6 +48,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#define MAX_FRAME_SIZE 8 /* channels */ * 32 /* float */
+
 MARSHMALLOW_NAMESPACE_USE
 
 static const Core::Identifier s_ogg_file("audio/data/sample.ogg");
@@ -66,14 +68,14 @@ audio_track_wave_test(void)
 	const int frame_size =
 	    track_wav.channels() * (track_wav.depth() / 8);
 
-	char frame[frame_size];
+	char frame[MAX_FRAME_SIZE];
 	ssize_t track_read = track_wav.read(frame, frame_size);
 	ASSERT_EQUAL("Audio::WaveTrack::read()", track_read, frame_size);
 
 	const bool track_rewind = track_wav.rewind();
 	ASSERT_TRUE("Audio::WaveTrack::rewind()", track_rewind);
 
-	char frame_confirm[frame_size];
+	char frame_confirm[MAX_FRAME_SIZE];
 	track_read = track_wav.read(frame_confirm, frame_size);
 	ASSERT_EQUAL("Audio::WaveTrack::read() REPEAT", track_read, frame_size);
 
@@ -125,14 +127,14 @@ audio_track_ogg_test(void)
 	const int frame_size =
 	    track_ogg.channels() * (track_ogg.depth() / 8);
 
-	char frame[frame_size];
+	char frame[MAX_FRAME_SIZE];
 	ssize_t track_read = track_ogg.read(frame, frame_size);
 	ASSERT_EQUAL("Audio::OggTrack::read()", track_read, frame_size);
 
 	const bool track_rewind = track_ogg.rewind();
 	ASSERT_TRUE("Audio::OggTrack::rewind()", track_rewind);
 
-	char frame_confirm[frame_size];
+	char frame_confirm[MAX_FRAME_SIZE];
 	track_read = track_ogg.read(frame_confirm, frame_size);
 	ASSERT_EQUAL("Audio::OggTrack::read()", track_read, frame_size);
 

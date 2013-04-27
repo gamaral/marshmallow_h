@@ -149,7 +149,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 
 	l_handle.channels = channels;
 	l_handle.bit_depth = bit_depth;
-	l_handle.bytes_per_frame = uint16_t(channels * (bit_depth/8));
+	l_handle.bytes_per_frame = uint8_t(channels * (bit_depth/8));
 
 	snd_config_update_free_global();
 
@@ -165,7 +165,6 @@ PCM::Close(Handle *pcm_handle)
 {
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 	assert(pcm_handle->device && "Device missing from PCM handle!");
-	assert(pcm_handle->buffer && "Buffer missing from PCM handle!");
 
 	snd_pcm_drain(pcm_handle->device);
 	snd_pcm_hw_free(pcm_handle->device);

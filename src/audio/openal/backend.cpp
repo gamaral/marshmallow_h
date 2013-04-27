@@ -158,7 +158,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 	l_handle->source = l_source;
 	l_handle->format = l_format;
 	l_handle->rate = ALsizei(sample_rate);
-	l_handle->bytes_per_frame = (bit_depth/8) * channels;
+	l_handle->bytes_per_frame = uint8_t((bit_depth/8) * channels);
 	l_handle->available = uint8_t(~0);
 
 	l_handle->buffer_size =
@@ -178,7 +178,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 void
 PCM::Close(Handle *pcm_handle)
 {
-	assert(IsBackendInitialized() && "Audio backend finalized!");
+	assert(IsBackendInitialized() && "Audio backend finalized before PCM was closed!");
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 
 	alSourceStop(pcm_handle->source);

@@ -52,6 +52,15 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
+namespace { /*********************************** Audio::<anonymous> Namespace */
+
+	static inline char
+	Mixer(char a, char b, float gain)
+	{
+		return(char(MMRANGE(CHAR_MIN, a + int(b * gain), CHAR_MAX)));
+	}
+
+} /********************************************* Audio::<anonymous> Namespace */
 
 struct Player::Private
 {
@@ -107,10 +116,14 @@ Player::Private::eject(const Core::Identifier &id)
 bool
 Player::Private::play(const Core::Identifier &id, int iterations, float gain)
 {
-	if (0 == iterations)
+	if (0 == iterations) {
 		stop(id);
-	else
+		return(false);
+	}
+	else {
 		playlist[id] = std::make_pair(iterations, gain);
+		return(true);
+	}
 }
 
 void
@@ -156,11 +169,11 @@ Player::Private::tick(void)
 			    l_buffer_size - l_offset);
 
 			/* mix */
-			for (size_t l_bi = l_offset; l_bi < l_read; ++l_bi) {
-				const short l_mixed =
-				    l_mix[l_bi] + (l_buffer[l_bi] * l_track_i.second.second);
-				l_mix[l_bi] = MMRANGE(CHAR_MIN, l_mixed, CHAR_MAX);
-			}
+			for (size_t l_bi = l_offset; l_bi < l_read; ++l_bi)
+				l_mix[l_bi] =
+				    Mixer(l_mix[l_bi],
+				          l_buffer[l_bi],
+				          l_track_i.second.second);
 
 			/*
 			 * Success! Next track.
@@ -262,9 +275,9 @@ Player::pcm(void) const
 }
 
 void
-Player::setPCM(PCM *pcm)
+Player::setPCM(PCM *_pcm)
 {
-	m_p->pcm = pcm;
+	m_p->pcm = _pcm;
 }
 
 } /********************************************************** Audio Namespace */

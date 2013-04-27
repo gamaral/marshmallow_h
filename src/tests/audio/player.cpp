@@ -148,6 +148,7 @@ audio_player_tick_test(void)
 	
 	/* wait for pcm to flush */
 	Core::Platform::Sleep(500);
+	pcm.close();
 
 	Audio::Backend::Finalize();
 }

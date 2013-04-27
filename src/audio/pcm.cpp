@@ -57,7 +57,6 @@ struct PCM::Private
 	    , channels(0)
 	    , frame_size(0)
 	    , frames_max(0)
-	    , buffer(0)
 	{
 	}
 
@@ -71,11 +70,9 @@ struct PCM::Private
 
 	Backend::PCM::Handle *handle;
 	uint32_t sample_rate;
-	uint8_t  bit_depth;
-	uint8_t  channels;
-	uint8_t  frame_size;
-
-	char *buffer;
+	uint8_t bit_depth;
+	uint8_t channels;
+	uint8_t frame_size;
 	size_t frames_max;
 };
 
@@ -93,9 +90,6 @@ PCM::Private::open(uint32_t _sample_rate, uint8_t _bit_depth, uint8_t _channels)
 	frame_size  = static_cast<uint8_t>((_bit_depth/8) * _channels);
 	frames_max  = Backend::PCM::MaxFrames(handle);
 
-	buffer = new char[frames_max * frame_size];
-	memset(buffer, 0, frames_max * frame_size);
-
 	return(true);
 }
 
@@ -109,8 +103,6 @@ PCM::Private::close(void)
 	channels    = 0;
 	frame_size  = 0;
 	frames_max  = 0;
-
-	delete[] buffer, buffer = 0;
 
 	Backend::PCM::Close(handle), handle = 0;
 }
