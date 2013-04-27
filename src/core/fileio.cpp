@@ -160,7 +160,7 @@ FileIO::atEOF(void) const
 
 
 size_t
-FileIO::read(void *b, size_t bs)
+FileIO::read(void *b, size_t bs) const
 {
 	assert(m_p->handle && "Invalid file handle!");
 	return(fread(b, 1, bs, m_p->handle));
@@ -174,7 +174,7 @@ FileIO::write(const void *b, size_t bs)
 }
 
 bool
-FileIO::seek(long o, DIOSeek on)
+FileIO::seek(long o, DIOSeek on) const
 {
 	assert(m_p->handle && "Invalid file handle!");
 	int l_origin;

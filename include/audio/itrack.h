@@ -38,60 +38,34 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_AUDIO_TRACK_H
-#define MARSHMALLOW_AUDIO_TRACK_H 1
+#ifndef MARSHMALLOW_AUDIO_ITRACK_H
+#define MARSHMALLOW_AUDIO_ITRACK_H 1
 
-#include <core/iasset.h>
-
-#include <core/global.h>
-#include <core/fd.h>
+#include <core/environment.h>
+#include <core/namespace.h>
+#include <core/idataio.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Core { /******************************************** Core Namespace */
-	struct IDataIO;
-	typedef Core::Shared<IDataIO> SharedDataIO;
-} /*********************************************************** Core Namespace */
-
 namespace Audio { /****************************************** Audio Namespace */
 
-	class PCM;
-	typedef Core::Weak<PCM> WeakPCM;
-
-	struct ICodec;
-	typedef Core::Shared<ICodec> SharedCodec;
-
-
 	/*!
-	 * @brief Audio Track
+	 * @brief Audio Track Interface
 	 */
-	class MARSHMALLOW_AUDIO_EXPORT
-	Track
+	struct MARSHMALLOW_AUDIO_EXPORT
+	ITrack
 	{
-		struct Private;
-		Private *m_p;
+		virtual ~ITrack(void) {};
 
-	public:
+		virtual size_t read(void *buffer, size_t bsize) const = 0;
+		virtual bool rewind(void) const = 0;
+		virtual bool seek(long offset) const = 0;
 
-		Track(void);
-		Track(const Audio::WeakPCM &pcm, const Audio::SharedCodec &codec);
-		~Track(void);
+		virtual bool isValid(void) const = 0;
 
-		const Audio::WeakPCM & pcm(void) const;
-		void setPCM(const Audio::WeakPCM &pcm);
-
-		const Audio::SharedCodec & codec(void) const;
-		void setCodec(const Audio::SharedCodec &codec);
-
-		bool play(int iterations = 1);
-		void stop(void);
-		bool isPlaying(void) const;
-
-		void tick(float delta);
-
-		bool isValid(void) const;
+		virtual uint32_t rate(void) const = 0;
+		virtual uint8_t  channels(void) const = 0;
+		virtual uint8_t  depth(void) const = 0;
 	};
-	typedef Core::Shared<Track> SharedTrack;
-	typedef Core::Weak<Track> WeakTrack;
 
 } /********************************************************** Audio Namespace */
 MARSHMALLOW_NAMESPACE_END

@@ -30,20 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include <cstring>
-
-#include "audio/oggcodec.h"
-#include "audio/wavecodec.h"
-
-#include "core/platform.h"
-#include "core/bufferio.h"
-#include "core/identifier.h"
-#include "core/shared.h"
-
-#include "tests/common.h"
-
-#include "sample_ogg.h"
-#include "sample_wav.h"
+#pragma once
 
 /*!
  * @file
@@ -51,50 +38,49 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-MARSHMALLOW_NAMESPACE_USE
+#ifndef MARSHMALLOW_AUDIO_WAVETRACK_H
+#define MARSHMALLOW_AUDIO_WAVETRACK_H 1
 
-void
-audio_codec_wave_test(void)
-{
-	Core::SharedBufferIO l_sample_wav =
-	    new Core::BufferIO(reinterpret_cast<char *>(sample_wav), sample_wav_len);
+#include <audio/itrack.h>
 
-	Core::SharedBufferIO l_sample_ogg =
-	    new Core::BufferIO(reinterpret_cast<char *>(sample_ogg), sample_ogg_len);
+#include <core/fd.h>
+#include <core/global.h>
 
-	Audio::SharedCodec l_codec = new Audio::WaveCodec;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Audio { /****************************************** Audio Namespace */
 
-	l_codec->open(l_sample_wav.staticCast<Core::IDataIO>());
-	ASSERT_TRUE("Audio::WaveCodec::open()", l_codec->isOpen());
-	l_codec->close();
-	ASSERT_FALSE("Audio::WaveCodec::close()", l_codec->isOpen());
+	/*!
+	 * @brief Audio Track Interface
+	 */
+	class MARSHMALLOW_AUDIO_EXPORT
+	WaveTrack : public ITrack
+	{
+		struct Private;
+		Private *m_p;
 
-	l_codec->open(l_sample_ogg.staticCast<Core::IDataIO>());
-	ASSERT_FALSE("Audio::WaveCodec::open() NON-WAVE", l_codec->isOpen());
-}
+	public:
 
-void
-audio_codec_ogg_test(void)
-{
-	Core::SharedBufferIO l_sample_ogg =
-	    new Core::BufferIO(reinterpret_cast<char *>(sample_ogg), sample_ogg_len);
+		WaveTrack(const Core::IDataIO &dio);
+		virtual ~WaveTrack(void);
 
-	Core::SharedBufferIO l_sample_wav =
-	    new Core::BufferIO(reinterpret_cast<char *>(sample_wav), sample_wav_len);
+	public: /* virtual */
 
-	Audio::SharedCodec l_codec = new Audio::OggCodec;
+		VIRTUAL size_t read(void *buffer, size_t bsize) const;
+		VIRTUAL bool rewind(void) const;
+		VIRTUAL bool seek(long offset) const;
+	
+		VIRTUAL bool isValid(void) const;
 
-	l_codec->open(l_sample_ogg.staticCast<Core::IDataIO>());
-	ASSERT_TRUE("Audio::OggCodec::open()", l_codec->isOpen());
-	l_codec->close();
-	ASSERT_FALSE("Audio::OggCodec::close()", l_codec->isOpen());
+		VIRTUAL uint32_t rate(void) const;
+		VIRTUAL uint8_t  depth(void) const;
+		VIRTUAL uint8_t  channels(void) const;
 
-	l_codec->open(l_sample_wav.staticCast<Core::IDataIO>());
-	ASSERT_FALSE("Audio::OggCodec::open() NON-OGG", l_codec->isOpen());
-}
+	public:
 
-TESTS_BEGIN
-    TEST(audio_codec_wave_test)
-    TEST(audio_codec_ogg_test)
-TESTS_END
+		static bool Validate(const Core::IDataIO &dio);
+	};
 
+} /********************************************************** Audio Namespace */
+MARSHMALLOW_NAMESPACE_END
+
+#endif

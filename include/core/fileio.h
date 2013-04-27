@@ -103,10 +103,10 @@ namespace Core { /******************************************** Core Namespace */
 		VIRTUAL bool isOpen(void) const;
 		VIRTUAL bool atEOF(void) const;
 
-		VIRTUAL size_t read(void *buffer, size_t bsize);
+		VIRTUAL size_t read(void *buffer, size_t bsize) const;
 		VIRTUAL size_t write(const void *buffer, size_t bsize);
 
-		VIRTUAL bool seek(long offset, DIOSeek origin);
+		VIRTUAL bool seek(long offset, DIOSeek origin) const;
 		VIRTUAL long tell(void) const;
 
 		VIRTUAL size_t size(void) const;

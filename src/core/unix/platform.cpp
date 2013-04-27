@@ -111,12 +111,12 @@ Platform::TimeStamp(void)
 	struct timespec time;
 	clock_gettime(CLOCK_MONOTONIC, &time);
 	out = static_cast<MMTIME>((time.tv_sec - s_start_time.tv_sec) * 1000)
-	    + ((time.tv_nsec - s_start_time.tv_nsec) / 1000000);
+	    + int((time.tv_nsec - s_start_time.tv_nsec) / 1000000);
 #else
 	struct timeval time;
 	gettimeofday(&time, 0);
 	out = static_cast<MMTIME>(((time.tv_sec - s_start_time.tv_sec) * 1000)
-	    + ((time.tv_usec - s_start_time.tv_usec) / 1000));
+	    + int((time.tv_usec - s_start_time.tv_usec) / 1000));
 #endif
 	return(out);
 }

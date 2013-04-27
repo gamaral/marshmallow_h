@@ -83,12 +83,17 @@ namespace PCM { /****************************** Audio::Backend::PCM Namespace */
 	/*!
 	 * Write to PCM device
 	 */
-	bool Write(Handle *pcm_handle, size_t bsize);
+	bool Write(Handle *pcm_handle, const char *buffer, size_t frames);
 
 	/*!
-	 * Get PCM buffer info
+	 * Get the maximum amount of PCM frames that can be written per call
 	 */
-	void Buffer(Handle *pcm_handle, char *&buffer, size_t &bsize);
+	size_t MaxFrames(Handle *pcm_handle);
+
+	/*!
+	 * Get the amount of PCM frames that can be written right now
+	 */
+	size_t AvailableFrames(Handle *pcm_handle);
 
 } /******************************************** Audio::Backend::PCM Namespace */
 } /************************************************* Audio::Backend Namespace */

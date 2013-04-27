@@ -38,10 +38,10 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_AUDIO_WAVECODEC_H
-#define MARSHMALLOW_AUDIO_WAVECODEC_H 1
+#ifndef MARSHMALLOW_AUDIO_OGGTRACK_H
+#define MARSHMALLOW_AUDIO_OGGTRACK_H 1
 
-#include <audio/icodec.h>
+#include <audio/itrack.h>
 
 #include <core/fd.h>
 #include <core/global.h>
@@ -50,40 +50,35 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
 
 	/*!
-	 * @brief Audio Codec Interface
+	 * @brief Audio Track Interface
 	 */
 	class MARSHMALLOW_AUDIO_EXPORT
-	WaveCodec : public ICodec
+	OggTrack : public ITrack
 	{
 		struct Private;
 		Private *m_p;
 
 	public:
 
-		WaveCodec(void);
-		virtual ~WaveCodec(void);
+		OggTrack(const Core::IDataIO &dio);
+		virtual ~OggTrack(void);
 
 	public: /* virtual */
 
-		VIRTUAL bool open(const Core::SharedDataIO &dio);
-		VIRTUAL void close(void);
-
-		VIRTUAL bool isOpen(void) const;
+		VIRTUAL size_t read(void *buffer, size_t bsize) const;
+		VIRTUAL bool rewind(void) const;
+		VIRTUAL bool seek(long offset) const;
+	
+		VIRTUAL bool isValid(void) const;
 
 		VIRTUAL uint32_t rate(void) const;
 		VIRTUAL uint8_t  depth(void) const;
 		VIRTUAL uint8_t  channels(void) const;
-
-		VIRTUAL size_t read(void *buffer, size_t bsize);
-
-		VIRTUAL void reset(void);
 	
 	public:
 
-		static bool Validate(const Core::SharedDataIO &dio);
+		static bool Validate(const Core::IDataIO &dio);
 	};
-	typedef Core::Shared<ICodec> SharedCodec;
-	typedef Core::Weak<ICodec> WeakCodec;
 
 } /********************************************************** Audio Namespace */
 MARSHMALLOW_NAMESPACE_END

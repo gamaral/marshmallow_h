@@ -9,5 +9,5 @@ endif()
 
 ################################################################################
 
-add_library(marshmallow_audio_backend STATIC ${MARSHMALLOW_AUDIO_DUMMY_SRCS})
+add_library(marshmallow_audio_dummy STATIC ${MARSHMALLOW_AUDIO_DUMMY_SRCS})
 

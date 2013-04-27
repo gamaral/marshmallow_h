@@ -30,7 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include "audio/oggcodec.h"
+#include "audio/oggtrack.h"
 
 /*!
  * @file
@@ -50,33 +50,27 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
 namespace { /*********************************** Audio::<anonymous> Namespace */
 
+struct OVData
+{
+	OVData(const Core::IDataIO &_dio)
+	    : dio(_dio)
+	{}
+
+	const Core::IDataIO &dio;
+};
+
 /*
  * The following are callbacks to bridge Ogg Vorbis with out DataIO interface.
  */
-
-struct OVData
-{
-	Core::SharedDataIO dio;
-	long cursor;
-};
 
 static size_t
 OVRead(void *buffer, size_t byte_size, size_t byte_count, void *data)
 {
 	if (!data) return(0);
 
-	OVData *l_data = reinterpret_cast<OVData *>(data);
+	const Core::IDataIO &dio = reinterpret_cast<OVData *>(data)->dio;
 
-	if (!l_data->dio->seek(l_data->cursor, Core::DIOSet)) {
-		MMERROR("Failed to restore DataIO cursor! " << l_data->cursor);
-		return(0);
-	}
-
-	size_t l_read = l_data->dio->read(buffer, byte_size * byte_count);
-
-	l_data->cursor = l_data->dio->tell();
-
-	return(l_read);
+	return(dio.read(buffer, byte_size * byte_count));
 }
 
 static int
@@ -84,7 +78,7 @@ OVSeek(void *data, ogg_int64_t offset, int origin)
 {
 	if (!data) return(-1);
 
-	OVData *l_data = reinterpret_cast<OVData *>(data);
+	const Core::IDataIO &dio = reinterpret_cast<OVData *>(data)->dio;
 
 	/* translate origin */
 	Core::DIOSeek l_seek;
@@ -96,17 +90,11 @@ OVSeek(void *data, ogg_int64_t offset, int origin)
 		l_seek = Core::DIOEnd;
 		break;
 	case SEEK_CUR:
-		if (!l_data->dio->seek(l_data->cursor, Core::DIOSet)) {
-			MMERROR("Failed to restore DataIO cursor!");
-			return(-1);
-		}
 		l_seek = Core::DIOCurrent;
 		break;
 	}
 
-	const bool l_result = l_data->dio->seek(offset, l_seek);
-
-	l_data->cursor = l_data->dio->tell();
+	const bool l_result = dio.seek(offset, l_seek);
 
 	return(l_result ? 0 : -1);
 }
@@ -116,47 +104,39 @@ OVTell(void *data)
 {
 	if (!data) return(-1);
 
-	OVData *l_data = reinterpret_cast<OVData *>(data);
+	const Core::IDataIO &dio = reinterpret_cast<OVData *>(data)->dio;
 
-	return(l_data->cursor);
+	return(dio.tell());
 }
 
 } /********************************************* Audio::<anonymous> Namespace */
 
-struct OggCodec::Private
+struct OggTrack::Private
 {
-	Private(void)
-	    : data(0)
-	    , rate(0)
-	    , channels(0)
-	    , opened(false)
-	{}
+	Private(const Core::IDataIO &dio);
+	~Private(void);
 
-	inline bool open(const Core::SharedDataIO &_dio);
-	inline void close(void);
 	inline size_t read(void *buffer, size_t bsize);
-	inline void reset(void);
+	inline bool seek(long frame);
 
-	OVData *data;
+	OVData data;
 	OggVorbis_File handle;
 
 	uint32_t rate;
 	uint8_t  channels;
-	bool opened;
+	bool     valid;
 };
 
-bool
-OggCodec::Private::open(const Core::SharedDataIO &_dio)
+OggTrack::Private::Private(const Core::IDataIO &_dio)
+    : data(_dio)
+    , rate(0)
+    , channels(0)
+    , valid(false)
 {
-	if (!OggCodec::Validate(_dio)) {
+	if (!OggTrack::Validate(_dio)) {
 		MMERROR("Tried to open invalid Ogg file.");
-		return(false);
+		return;
 	}
-
-	/* init data struct */
-	data = new OVData;
-	data->dio = _dio;
-	data->cursor = 0;
 
 	/* dataio callbacks */
 	ov_callbacks l_callbacks;
@@ -167,7 +147,7 @@ OggCodec::Private::open(const Core::SharedDataIO &_dio)
 
 	/* setup callbacks */
 	int l_rc;
-	if ((l_rc = ov_open_callbacks(data, &handle, 0, 0, l_callbacks))) {
+	if ((l_rc = ov_open_callbacks(&data, &handle, 0, 0, l_callbacks))) {
 		switch (l_rc) {
 		case OV_EREAD:
 			MMERROR("A read from media returned an error.");
@@ -187,8 +167,7 @@ OggCodec::Private::open(const Core::SharedDataIO &_dio)
 		}
 
 		MMERROR("Failed to setup Ogg Vorbis <=> DataIO callbacks.");
-		delete data, data = 0;
-		return(false);
+		return;
 	}
 
 	/* get track info */
@@ -196,25 +175,20 @@ OggCodec::Private::open(const Core::SharedDataIO &_dio)
 	rate = uint32_t(l_info->rate);
 	channels = uint8_t(l_info->channels);
 
-	return(opened = true);
+	valid = true;
 }
 
-void
-OggCodec::Private::close(void)
+OggTrack::Private::~Private(void)
 {
-	if (!opened) return;
-
+	if (!valid) return;
+		
+	valid = false;
 	ov_clear(&handle);
-	delete data, data = 0;
-
-	opened = false;
 }
 
 size_t
-OggCodec::Private::read(void *buffer, size_t bsize)
+OggTrack::Private::read(void *buffer, size_t bsize)
 {
-	if (!opened) return(0);
-
 	int l_current_section;
 
 	size_t l_total = 0;
@@ -249,89 +223,85 @@ OggCodec::Private::read(void *buffer, size_t bsize)
 	return(l_total);
 }
 
-void
-OggCodec::Private::reset(void)
+bool
+OggTrack::Private::seek(long frame)
 {
-	if (!opened) return;
-
-	if (ov_pcm_seek(&handle, 0))
-		MMERROR("Failed to reset codec.");
+	return(ov_pcm_seek(&handle, frame) == 0);
 }
 
-/****************************************************************** OggCodec */
+/****************************************************************** OggTrack */
 
-OggCodec::OggCodec(void)
-    : m_p(new Private)
+OggTrack::OggTrack(const Core::IDataIO &dio)
+    : m_p(new Private(dio))
 {
 }
 
-OggCodec::~OggCodec(void)
+OggTrack::~OggTrack(void)
 {
-	close();
 	delete m_p, m_p = 0;
 }
 
 bool
-OggCodec::open(const Core::SharedDataIO &dio)
+OggTrack::isValid(void) const
 {
-	return(m_p->open(dio));
-}
-
-void
-OggCodec::close(void)
-{
-	m_p->close();
-}
-
-bool
-OggCodec::isOpen(void) const
-{
-	return(m_p->opened);
+	return(m_p->valid && m_p->data.dio.isOpen());
 }
 
 uint32_t
-OggCodec::rate(void) const
+OggTrack::rate(void) const
 {
+	assert(isValid() && "Invalid Track!");
 	return(m_p->rate);
 }
 
 uint8_t
-OggCodec::depth(void) const
+OggTrack::depth(void) const
 {
+	assert(isValid() && "Invalid Track!");
 	return(16);
 }
 
 uint8_t
-OggCodec::channels(void) const
+OggTrack::channels(void) const
 {
+	assert(isValid() && "Invalid Track!");
 	return(m_p->channels);
 }
 
 size_t
-OggCodec::read(void *buffer, size_t bsize)
+OggTrack::read(void *buffer, size_t bsize) const
 {
+	assert(isValid() && "Invalid Track!");
 	return(m_p->read(buffer, bsize));
 }
 
-void
-OggCodec::reset(void)
+bool
+OggTrack::rewind(void) const
 {
-	m_p->reset();
+	assert(isValid() && "Invalid Track!");
+	return(m_p->seek(0));
 }
 
 bool
-OggCodec::Validate(const Core::SharedDataIO &dio)
+OggTrack::seek(long offset) const
+{
+	assert(isValid() && "Invalid Track!");
+	return(m_p->seek(offset));
+}
+
+bool
+OggTrack::Validate(const Core::IDataIO &dio)
 {
 	/* sanity check */
-	if (!dio->isOpen() && !dio->open(Core::DIOReadOnly)) {
-		MMERROR("Failed to open audio stream.");
+	if (!dio.isOpen()) {
+		MMERROR("Audio stream is closed!");
 		return(false);
 	}
 
 	/*
 	 * Reset location
 	 */
-	if (!dio->seek(0, Core::DIOSet)) {
+	if (!dio.seek(0, Core::DIOSet)) {
 		MMDEBUG("Invalid DataIO (failed seek).");
 		return(false);
 	}
@@ -339,7 +309,7 @@ OggCodec::Validate(const Core::SharedDataIO &dio)
 	char l_ident[5] = { 0, 0, 0, 0, 0 };
 	
 	/* read type */
-	if (4 != dio->read(l_ident, 4)) {
+	if (4 != dio.read(l_ident, 4)) {
 		MMDEBUG("Invalid DataIO (short read).");
 		return(false);
 	}
@@ -352,7 +322,7 @@ OggCodec::Validate(const Core::SharedDataIO &dio)
 
 	MMDEBUG("Detected Ogg file.");
 
-	if (!dio->seek(0, Core::DIOSet)) {
+	if (!dio.seek(0, Core::DIOSet)) {
 		MMDEBUG("Invalid DataIO (reset failed).");
 		return(false);
 	}

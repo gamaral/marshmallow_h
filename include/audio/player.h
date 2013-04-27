@@ -38,52 +38,48 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_AUDIO_OGGCODEC_H
-#define MARSHMALLOW_AUDIO_OGGCODEC_H 1
-
-#include <audio/icodec.h>
+#ifndef MARSHMALLOW_AUDIO_PLAYER_H
+#define MARSHMALLOW_AUDIO_PLAYER_H 1
 
 #include <core/fd.h>
-#include <core/global.h>
+#include <core/platform.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
 namespace Audio { /****************************************** Audio Namespace */
 
+	struct ITrack;
+	class PCM;
+
 	/*!
-	 * @brief Audio Codec Interface
+	 * @brief Audio Player
 	 */
 	class MARSHMALLOW_AUDIO_EXPORT
-	OggCodec : public ICodec
+	Player
 	{
 		struct Private;
 		Private *m_p;
 
 	public:
 
-		OggCodec(void);
-		virtual ~OggCodec(void);
+		Player(void);
+		~Player(void);
 
-	public: /* virtual */
+		PCM * pcm(void) const;
+		void setPCM(PCM *pcm);
 
-		VIRTUAL bool open(const Core::SharedDataIO &dio);
-		VIRTUAL void close(void);
+		void load(const Core::Identifier &id, ITrack *track);
+		bool contains(const Core::Identifier &id);
+		void eject(const Core::Identifier &id);
 
-		VIRTUAL bool isOpen(void) const;
+		bool play(const Core::Identifier &id,
+		          int iterations = 1,
+		          float gain = 1.f);
+		void stop(const Core::Identifier &id);
+		bool isPlaying(const Core::Identifier &id) const;
 
-		VIRTUAL uint32_t rate(void) const;
-		VIRTUAL uint8_t  depth(void) const;
-		VIRTUAL uint8_t  channels(void) const;
-
-		VIRTUAL size_t read(void *buffer, size_t bsize);
-
-		VIRTUAL void reset(void);
-	
-	public:
-
-		static bool Validate(const Core::SharedDataIO &dio);
+		void tick(void);
 	};
-	typedef Core::Shared<OggCodec> SharedOggCodec;
-	typedef Core::Weak<OggCodec> WeakOggCodec;
 
 } /********************************************************** Audio Namespace */
 MARSHMALLOW_NAMESPACE_END

@@ -76,17 +76,15 @@ namespace Audio { /****************************************** Audio Namespace */
 		void close(void);
 		bool isOpen(void) const;
 
-		bool mix(char *buffer, size_t bsize);
-		bool override(char *buffer, size_t bsize);
+		bool write(const char *buffer, size_t bsize);
+
+		size_t  framesAvailable(void) const;
+		size_t  framesMax(void) const;
+		uint8_t frameSize(void) const;
 
 		uint32_t rate(void) const;
 		uint8_t depth(void) const;
 		uint8_t channels(void) const;
-
-		uint8_t frameSize(void) const;
-		size_t bufferSize(void) const;
-
-		void tick(float delta);
 	};
 	typedef Core::Shared<PCM> SharedPCM;
 	typedef Core::Weak<PCM> WeakPCM;

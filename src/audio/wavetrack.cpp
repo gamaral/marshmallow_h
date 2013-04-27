@@ -30,7 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include "audio/wavecodec.h"
+#include "audio/wavetrack.h"
 
 /*!
  * @file
@@ -46,37 +46,32 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
 
-struct WaveCodec::Private
+struct WaveTrack::Private
 {
-	Private(void)
-	    : cursor(0)
-	    , start(0)
-	    , rate(0)
-	    , depth(0)
-	    , channels(0)
-	    , opened(false)
-	{}
+	Private(const Core::IDataIO &dio);
 
-	inline bool open(const Core::SharedDataIO &_dio);
-	inline void close(void);
 	inline size_t read(void *buffer, size_t bsize);
-	inline void reset(void);
+	inline bool seek(long frame) const;
 
-	Core::SharedDataIO dio;
-	long cursor;
-	long start;
+	const Core::IDataIO &dio;
+	long     start;
 	uint32_t rate;
 	uint8_t  depth;
 	uint8_t  channels;
-	bool opened;
+	bool     valid;
 };
 
-bool
-WaveCodec::Private::open(const Core::SharedDataIO &_dio)
+WaveTrack::Private::Private(const Core::IDataIO &_dio)
+    : dio(_dio)
+    , start(0)
+    , rate(0)
+    , depth(0)
+    , channels(0)
+    , valid(false)
 {
-	if (!WaveCodec::Validate(_dio)) {
+	if (!WaveTrack::Validate(dio)) {
 		MMERROR("Tried to open invalid WAVE file.");
-		return(false);
+		return;
 	}
 
 	char l_ident[5] = { 0, 0, 0, 0, 0 };
@@ -84,22 +79,22 @@ WaveCodec::Private::open(const Core::SharedDataIO &_dio)
 	/*
 	 * FMT SUBCHUNK
 	 */
-	if (4 != _dio->read(l_ident, 4)) {
+	if (4 != dio.read(l_ident, 4)) {
 		MMDEBUG("Invalid WAVE (short read).");
-		return(false);
+		return;
 	}
 
 	/* compare wave chunk id */
 	if (strcmp(l_ident, "fmt ")) {
 		MMDEBUG("Invalid WAVE format (unknown chunk).");
-		return(false);
+		return;
 	}
 
 	/* read chunk size */
 	uint32_t l_chunck_size = 0;
-	if (4 != _dio->read(&l_chunck_size, 4)) {
+	if (4 != dio.read(&l_chunck_size, 4)) {
 		MMDEBUG("Invalid WAVE (short read).");
-		return(false);
+		return;
 	}
 
 	/* fmt subchunk data */
@@ -116,154 +111,134 @@ WaveCodec::Private::open(const Core::SharedDataIO &_dio)
 	/* match subchunch size */
 	if (l_chunck_size != sizeof(l_fmt_subchunk)) {
 		MMDEBUG("Invalid WAVE (fmt subchunk size mismatch).");
-		return(false);
+		return;
 	}
 
 	/* read fmt wave chunk */
-	if (l_chunck_size != _dio->read(&l_fmt_subchunk, l_chunck_size)) {
+	if (l_chunck_size != dio.read(&l_fmt_subchunk, l_chunck_size)) {
 		MMDEBUG("Invalid WAVE (short read).");
-		return(false);
+		return;
 	}
 
 	/* compare wave format (PCM) */
 #define WAVE_PCM_FORMAT 1
 	if (l_fmt_subchunk.audio_format != WAVE_PCM_FORMAT) {
 		MMDEBUG("Invalid WAVE format (non-PCM).");
-		return(false);
+		return;
 	}
-
-	/* update sound parameters */
-	rate = l_fmt_subchunk.sample_rate;
-	depth = static_cast<uint8_t>(l_fmt_subchunk.bps);
-	channels = static_cast<uint8_t>(l_fmt_subchunk.channels);
-	MMDEBUG("WAVE Rate: " << rate);
-	MMDEBUG("WAVE Depth: " << int(depth));
-	MMDEBUG("WAVE Channels: " << int(channels));
 
 	/*
 	 * DATA SUBCHUNK
 	 */
-	_dio->read(l_ident, 4);
+	dio.read(l_ident, 4);
 	if (strcmp(l_ident, "data")) {
 		MMDEBUG("Non-standard WAVE format.");
-		return(false);
+		return;
 	}
 
 	/* skip length */
-	_dio->seek(4, Core::DIOCurrent);
+	dio.seek(4, Core::DIOCurrent);
 
-	/* data start */
-	cursor = start = _dio->tell();
+	/* populate parameters */
+	rate = l_fmt_subchunk.sample_rate;
+	depth = static_cast<uint8_t>(l_fmt_subchunk.bps);
+	channels = static_cast<uint8_t>(l_fmt_subchunk.channels);
+	start = dio.tell();
 
-	/* store data io */
-	dio = _dio;
+	MMDEBUG("WAVE Rate: " << rate);
+	MMDEBUG("WAVE Depth: " << int(depth));
+	MMDEBUG("WAVE Channels: " << int(channels));
 
-	return(opened = true);
-}
-
-void
-WaveCodec::Private::close(void)
-{
-	if (!opened) return;
-
-	cursor = 0;
-	start = 0;
-	opened = false;
+	/* valid wave */
+	valid = true;
 }
 
 size_t
-WaveCodec::Private::read(void *buffer, size_t bsize)
+WaveTrack::Private::read(void *buffer, size_t bsize)
 {
-	if (!opened) return(0);
-
-	dio->seek(cursor, Core::DIOSet);
-	const size_t l_read = dio->read(buffer, bsize);
-	cursor = dio->tell();
-
-	return(l_read);
+	return(dio.read(buffer, bsize));
 }
 
-void
-WaveCodec::Private::reset(void)
+bool
+WaveTrack::Private::seek(long frame) const
 {
-	if (!opened) return;
-	cursor = start;
+	return(dio.seek(start + (frame * (channels * (depth / 8))),
+	    Core::DIOSet));
 }
 
 /****************************************************************** WaveCode */
 
-WaveCodec::WaveCodec(void)
-    : m_p(new Private)
+WaveTrack::WaveTrack(const Core::IDataIO &dio)
+    : m_p(new Private(dio))
 {
 }
 
-WaveCodec::~WaveCodec(void)
+WaveTrack::~WaveTrack(void)
 {
-	close();
 	delete m_p, m_p = 0;
 }
 
 bool
-WaveCodec::open(const Core::SharedDataIO &dio)
+WaveTrack::isValid(void) const
 {
-	return(m_p->open(dio));
-}
-
-void
-WaveCodec::close(void)
-{
-	m_p->close();
-}
-
-bool
-WaveCodec::isOpen(void) const
-{
-	return(m_p->opened);
+	return(m_p->valid && m_p->dio.isOpen());
 }
 
 uint32_t
-WaveCodec::rate(void) const
+WaveTrack::rate(void) const
 {
+	assert(isValid() && "Invalid Track!");
 	return(m_p->rate);
 }
 
 uint8_t
-WaveCodec::depth(void) const
+WaveTrack::depth(void) const
 {
+	assert(isValid() && "Invalid Track!");
 	return(m_p->depth);
 }
 
 uint8_t
-WaveCodec::channels(void) const
+WaveTrack::channels(void) const
 {
+	assert(isValid() && "Invalid Track!");
 	return(m_p->channels);
 }
 
 size_t
-WaveCodec::read(void *buffer, size_t bsize)
+WaveTrack::read(void *buffer, size_t bsize) const
 {
+	assert(isValid() && "Invalid Track!");
 	return(m_p->read(buffer, bsize));
 }
 
-void
-WaveCodec::reset(void)
+bool
+WaveTrack::rewind(void) const
 {
-	m_p->reset();
+	assert(isValid() && "Invalid Track!");
+	return(m_p->seek(0));
 }
 
 bool
-WaveCodec::Validate(const Core::SharedDataIO &dio)
+WaveTrack::seek(long offset) const
+{
+	assert(isValid() && "Invalid Track!");
+	return(m_p->seek(offset));
+}
+
+bool
+WaveTrack::Validate(const Core::IDataIO &dio)
 {
 	/* sanity check */
-	if (!dio->isOpen() && !dio->open(Core::DIOReadOnly)) {
-		MMERROR("Failed to open audio stream.");
+	if (!dio.isOpen()) {
+		MMERROR("Audio stream is closed!");
 		return(false);
 	}
 
 	/*
 	 * Reset location
 	 */
-	if (!dio->seek(0, Core::DIOSet)) {
+	if (!dio.seek(0, Core::DIOSet)) {
 		MMDEBUG("Invalid DataIO (failed seek).");
 		return(false);
 	}
@@ -271,7 +246,7 @@ WaveCodec::Validate(const Core::SharedDataIO &dio)
 	char l_ident[5] = { 0, 0, 0, 0, 0 };
 	
 	/* read type */
-	if (4 != dio->read(l_ident, 4)) {
+	if (4 != dio.read(l_ident, 4)) {
 		MMDEBUG("Invalid DataIO (short read).");
 		return(false);
 	}
@@ -285,13 +260,13 @@ WaveCodec::Validate(const Core::SharedDataIO &dio)
 	MMDEBUG("Detected RIFF file.");
 
 	/* skip length */
-	if (!dio->seek(4, Core::DIOCurrent)) {
+	if (!dio.seek(4, Core::DIOCurrent)) {
 		MMDEBUG("Invalid RIFF (failed seek).");
 		return(false);
 	}
 
 	/* read type */
-	if (4 != dio->read(l_ident, 4)) {
+	if (4 != dio.read(l_ident, 4)) {
 		MMDEBUG("Invalid RIFF (short read).");
 		return(false);
 	}

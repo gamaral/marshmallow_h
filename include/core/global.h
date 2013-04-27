@@ -60,5 +60,6 @@
 #define MMUNUSED(x) static_cast<void>(x)
 #define MMMIN(x,y) (x < y ? x : y)
 #define MMMAX(x,y) (x > y ? x : y)
+#define MMRANGE(x,y,z) (y < x ? x : ( y > z ? z : y))
 
 #endif
