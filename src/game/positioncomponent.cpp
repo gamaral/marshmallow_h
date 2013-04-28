@@ -53,19 +53,19 @@ struct PositionComponent::Private
 
 PositionComponent::PositionComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
 }
 
 PositionComponent::~PositionComponent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 Math::Point2 &
 PositionComponent::position(void)
 {
-	return(m_p->position);
+	return(PIMPL->position);
 }
 
 bool
@@ -74,8 +74,8 @@ PositionComponent::serialize(XMLElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	n.SetAttribute("x", m_p->position.x);
-	n.SetAttribute("y", m_p->position.y);
+	n.SetAttribute("x", PIMPL->position.x);
+	n.SetAttribute("y", PIMPL->position.y);
 	return(true);
 }
 
@@ -85,8 +85,8 @@ PositionComponent::deserialize(XMLElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	n.QueryFloatAttribute("x", &m_p->position.x);
-	n.QueryFloatAttribute("y", &m_p->position.y);
+	n.QueryFloatAttribute("x", &PIMPL->position.x);
+	n.QueryFloatAttribute("y", &PIMPL->position.y);
 	return(true);
 }
 

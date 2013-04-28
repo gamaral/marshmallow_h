@@ -54,9 +54,7 @@ namespace Game { /******************************************** Game Namespace */
 	class MARSHMALLOW_GAME_EXPORT
 	EntityBase : public IEntity
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION;
 		NO_ASSIGN_COPY(EntityBase);
 	public:
 
@@ -69,9 +67,11 @@ namespace Game { /******************************************** Game Namespace */
 		VIRTUAL EntitySceneLayer & layer(void);
 
 		VIRTUAL void pushComponent(Game::IComponent *component);
-		VIRTUAL void popComponent(void);
-		VIRTUAL void removeComponent(const Core::Identifier &identifier);
+		VIRTUAL Game::IComponent * popComponent(void);
+
 		VIRTUAL void removeComponent(Game::IComponent *component);
+		VIRTUAL Game::IComponent * removeComponent(const Core::Identifier &identifier);
+
 		VIRTUAL Game::IComponent * getComponent(const Core::Identifier &identifier) const;
 		VIRTUAL Game::IComponent * getComponentType(const Core::Type &type) const;
 

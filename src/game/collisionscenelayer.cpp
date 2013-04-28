@@ -38,10 +38,12 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml2.h>
-
 #include "core/identifier.h"
 #include "core/type.h"
+
+#include <cassert>
+
+#include <tinyxml2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
@@ -53,36 +55,33 @@ struct CollisionSceneLayer::Private
 
 CollisionSceneLayer::CollisionSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s)
-    , m_p(new Private)
+    , PIMPL(new Private)
 {
 }
 
 CollisionSceneLayer::~CollisionSceneLayer(void)
 {
-	delete m_p, m_p = 0;
+	delete PIMPL, PIMPL = 0;
 }
 
 void
-CollisionSceneLayer::registerCollider(ColliderComponent &collider)
+CollisionSceneLayer::registerCollider(ColliderComponent *collider)
 {
-	m_p->colliders.push_back(&collider);
+	assert(collider && "Invalid collider!");
+	PIMPL->colliders.push_back(collider);
 }
 
 void
-CollisionSceneLayer::deregisterCollider(ColliderComponent &collider)
+CollisionSceneLayer::deregisterCollider(ColliderComponent *collider)
 {
-	m_p->colliders.remove(&collider);
+	assert(collider && "Invalid collider!");
+	PIMPL->colliders.remove(collider);
 }
 
 const ColliderList &
 CollisionSceneLayer::colliders(void) const
 {
-	return(m_p->colliders);
-}
-
-void
-CollisionSceneLayer::update(float)
-{
+	return(PIMPL->colliders);
 }
 
 bool

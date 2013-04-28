@@ -72,7 +72,7 @@ struct SceneManager::Private
 };
 
 SceneManager::SceneManager(void)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
 	Event::EventManager::Instance()->connect(this, Event::RenderEvent::Type());
 	Event::EventManager::Instance()->connect(this, Event::UpdateEvent::Type());
@@ -83,9 +83,9 @@ SceneManager::~SceneManager(void)
 	Event::EventManager::Instance()->disconnect(this, Event::UpdateEvent::Type());
 	Event::EventManager::Instance()->disconnect(this, Event::RenderEvent::Type());
 
-	m_p->stack.clear();
+	PIMPL->stack.clear();
 
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 void
@@ -93,28 +93,28 @@ SceneManager::pushScene(Game::IScene *scene)
 {
 	if (!scene) return;
 
-	if (m_p->active) {
-		m_p->active->deactivate();
-		m_p->stack.push_front(m_p->active);
+	if (PIMPL->active) {
+		PIMPL->active->deactivate();
+		PIMPL->stack.push_front(PIMPL->active);
 	}
 
-	m_p->active = scene;
-	m_p->active->activate();
+	PIMPL->active = scene;
+	PIMPL->active->activate();
 }
 
 Game::IScene *
 SceneManager::popScene(void)
 {
-	IScene *l_scene = m_p->active;
+	IScene *l_scene = PIMPL->active;
 
-	if (m_p->active)
-		m_p->active->deactivate();
+	if (PIMPL->active)
+		PIMPL->active->deactivate();
 
-	if (!m_p->stack.empty()) {
-		m_p->active = m_p->stack.front();
-		m_p->stack.pop_front();
+	if (!PIMPL->stack.empty()) {
+		PIMPL->active = PIMPL->stack.front();
+		PIMPL->stack.pop_front();
 	} else {
-		m_p->active = 0;
+		PIMPL->active = 0;
 		MMWARNING("Scene stack is empty!");
 	}
 
@@ -124,42 +124,42 @@ SceneManager::popScene(void)
 Game::IScene *
 SceneManager::activeScene(void) const
 {
-	return(m_p->active);
+	return(PIMPL->active);
 }
 
 void
 SceneManager::render(void)
 {
 	SceneStack::const_iterator l_i;
-	SceneStack::const_iterator l_c = m_p->stack.end();
+	SceneStack::const_iterator l_c = PIMPL->stack.end();
 
-	for (l_i = m_p->stack.begin(); l_i != l_c; ++l_i)
+	for (l_i = PIMPL->stack.begin(); l_i != l_c; ++l_i)
 		(*l_i)->render();
 
-	if (m_p->active)
-		m_p->active->render();
+	if (PIMPL->active)
+		PIMPL->active->render();
 }
 
 void
 SceneManager::update(float d)
 {
-	if (m_p->active) m_p->active->update(d);
+	if (PIMPL->active) PIMPL->active->update(d);
 }
 
 bool
 SceneManager::serialize(XMLElement &n) const
 {
 	SceneStack::const_reverse_iterator l_i;
-	SceneStack::const_reverse_iterator l_c = m_p->stack.rend();
-	for (l_i = m_p->stack.rbegin(); l_i != l_c; ++l_i) {
+	SceneStack::const_reverse_iterator l_c = PIMPL->stack.rend();
+	for (l_i = PIMPL->stack.rbegin(); l_i != l_c; ++l_i) {
 		XMLElement *l_element = n.GetDocument()->NewElement("scene");
 		if ((*l_i)->serialize(*l_element))
 			n.InsertEndChild(l_element);
 	}
 
-	if (m_p->active) {
+	if (PIMPL->active) {
 		XMLElement *l_element = n.GetDocument()->NewElement("scene");
-		if (m_p->active->serialize(*l_element))
+		if (PIMPL->active->serialize(*l_element))
 			n.InsertEndChild(l_element);
 	}
 	

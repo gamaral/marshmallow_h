@@ -60,9 +60,7 @@ namespace Game { /******************************************** Game Namespace */
 	class MARSHMALLOW_GAME_EXPORT
 	CollisionSceneLayer : public SceneLayerBase
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION;
 		NO_ASSIGN_COPY(CollisionSceneLayer);
 	public:
 
@@ -70,8 +68,8 @@ namespace Game { /******************************************** Game Namespace */
 		    IScene &scene);
 		virtual ~CollisionSceneLayer(void);
 
-		void registerCollider(ColliderComponent &collider);
-		void deregisterCollider(ColliderComponent &collider);
+		void registerCollider(ColliderComponent *collider);
+		void deregisterCollider(ColliderComponent *collider);
 
 		const ColliderList & colliders(void) const;
 
@@ -81,7 +79,7 @@ namespace Game { /******************************************** Game Namespace */
 		    { return(Type()); }
 
 		VIRTUAL void render(void) {}
-		VIRTUAL void update(float delta);
+		VIRTUAL void update(float) {}
 
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);

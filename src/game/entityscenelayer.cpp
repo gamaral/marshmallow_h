@@ -56,59 +56,60 @@ namespace Game { /******************************************** Game Namespace */
 
 struct EntitySceneLayer::Private
 {
+	Private()
+	    : visiblility_testing(true)
+	{}
+
+	~Private();
+
+	inline void
+	removeEntity(const Core::Identifier &identifier);
+
+	inline Game::IEntity *
+	getEntity(const Core::Identifier &identifier) const;
+
+	inline void
+	render(void);
+
+	inline void
+	update(float delta);
+
 	EntityList entities;
 	bool visiblility_testing;
 };
 
-EntitySceneLayer::EntitySceneLayer(const Core::Identifier &i, IScene &s, int f)
-    : SceneLayerBase(i, s, f)
-    , m_p(new Private)
+EntitySceneLayer::Private::~Private()
 {
-	m_p->visiblility_testing = true;
-}
-
-EntitySceneLayer::~EntitySceneLayer(void)
-{
-	m_p->entities.clear();
-
-	delete m_p, m_p = 0;
+	/* free entities */
+	while (entities.size() > 0) {
+		delete entities.back();
+		entities.pop_back();
+	}
 }
 
 void
-EntitySceneLayer::addEntity(Game::IEntity *e)
-{
-	m_p->entities.push_back(e);
-}
-
-void
-EntitySceneLayer::removeEntity(const Core::Identifier &i)
+EntitySceneLayer::Private::removeEntity(const Core::Identifier &i)
 {
 	EntityList::const_iterator l_i;
-	EntityList::const_iterator l_c = m_p->entities.end();
+	EntityList::const_iterator l_c = entities.end();
 
 	/* maybe replace later with a map if required */
-	for (l_i = m_p->entities.begin(); l_i != l_c; ++l_i) {
+	for (l_i = entities.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->id() == i) {
-			m_p->entities.remove(*l_i);
+			entities.remove(*l_i);
 			return;
 		}
 	}
 }
 
-void
-EntitySceneLayer::removeEntity(Game::IEntity *e)
-{
-	m_p->entities.remove(e);
-}
-
 Game::IEntity *
-EntitySceneLayer::getEntity(const Core::Identifier &i) const
+EntitySceneLayer::Private::getEntity(const Core::Identifier &i) const
 {
 	EntityList::const_iterator l_i;
-	EntityList::const_iterator l_c = m_p->entities.end();
+	EntityList::const_iterator l_c = entities.end();
 
 	/* maybe replace later with a map if required */
-	for (l_i = m_p->entities.begin(); l_i != l_c; ++l_i) {
+	for (l_i = entities.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->id() == i)
 			return(*l_i);
 	}
@@ -116,34 +117,16 @@ EntitySceneLayer::getEntity(const Core::Identifier &i) const
 	return(0);
 }
 
-const Game::EntityList &
-EntitySceneLayer::getEntities(void) const
-{
-	return(m_p->entities);
-}
-
-bool
-EntitySceneLayer::visiblityTesting(void) const
-{
-	return(m_p->visiblility_testing);
-}
-
 void
-EntitySceneLayer::setVisibilityTesting(bool value)
-{
-	m_p->visiblility_testing = value;
-}
-
-void
-EntitySceneLayer::render(void)
+EntitySceneLayer::Private::render(void)
 {
 	EntityList::const_iterator l_i;
 
-	if (m_p->visiblility_testing) {
+	if (visiblility_testing) {
 		const Math::Point2 &l_camera_pos = Graphics::Camera::Position();
 		const float l_visiblility_radius2 = Graphics::Camera::VisibleMagnitude2();
 
-		for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();l_i++) {
+		for (l_i = entities.begin(); l_i != entities.end();l_i++) {
 			IEntity *l_entity = (*l_i);
 			float l_size2 = 0;
 
@@ -173,23 +156,91 @@ EntitySceneLayer::render(void)
 				l_entity->render();
 		}
 	}
-	else for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();l_i++)
+	else for (l_i = entities.begin(); l_i != entities.end();l_i++)
 		if (!(*l_i)->isZombie()) (*l_i)->render();
+}
+
+void
+EntitySceneLayer::Private::update(float d)
+{
+	EntityList::const_iterator l_i;
+
+	for (l_i = entities.begin(); l_i != entities.end();) {
+		IEntity *l_entity = (*l_i++);
+
+		if (l_entity->isZombie()) {
+			entities.remove(l_entity);
+			delete l_entity;
+		}
+		else
+			l_entity->update(d);
+	}
+}
+EntitySceneLayer::EntitySceneLayer(const Core::Identifier &i, IScene &s, int f)
+    : SceneLayerBase(i, s, f)
+    , PIMPL_CREATE
+{
+}
+
+EntitySceneLayer::~EntitySceneLayer(void)
+{
+	PIMPL->entities.clear();
+
+	PIMPL_DESTROY;
+}
+
+void
+EntitySceneLayer::addEntity(Game::IEntity *e)
+{
+	PIMPL->entities.push_back(e);
+}
+
+void
+EntitySceneLayer::removeEntity(const Core::Identifier &i)
+{
+	PIMPL->removeEntity(i);
+}
+
+void
+EntitySceneLayer::removeEntity(Game::IEntity *e)
+{
+	PIMPL->entities.remove(e);
+}
+
+Game::IEntity *
+EntitySceneLayer::getEntity(const Core::Identifier &i) const
+{
+	return(PIMPL->getEntity(i));
+}
+
+const Game::EntityList &
+EntitySceneLayer::getEntities(void) const
+{
+	return(PIMPL->entities);
+}
+
+bool
+EntitySceneLayer::visiblityTesting(void) const
+{
+	return(PIMPL->visiblility_testing);
+}
+
+void
+EntitySceneLayer::setVisibilityTesting(bool value)
+{
+	PIMPL->visiblility_testing = value;
+}
+
+void
+EntitySceneLayer::render(void)
+{
+	PIMPL->render();
 }
 
 void
 EntitySceneLayer::update(float d)
 {
-	EntityList::const_iterator l_i;
-
-	for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();) {
-		IEntity *l_entity = (*l_i++);
-
-		if (l_entity->isZombie())
-			removeEntity(l_entity);
-		else
-			l_entity->update(d);
-	}
+	PIMPL->update(d);
 }
 
 bool
@@ -199,7 +250,7 @@ EntitySceneLayer::serialize(XMLElement &n) const
 		return(false);
 
 	EntityList::const_iterator l_i;
-	for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();) {
+	for (l_i = PIMPL->entities.begin(); l_i != PIMPL->entities.end();) {
 		IEntity *l_entity = (*l_i++);
 		XMLElement *l_element = n.GetDocument()->NewElement("entity");
 		if (l_entity->serialize(*l_element))

@@ -54,19 +54,19 @@ struct SizeComponent::Private
 
 SizeComponent::SizeComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
 }
 
 SizeComponent::~SizeComponent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 Math::Size2f &
 SizeComponent::size(void)
 {
-	return(m_p->size);
+	return(PIMPL->size);
 }
 
 bool
@@ -75,8 +75,8 @@ SizeComponent::serialize(XMLElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	n.SetAttribute("width", m_p->size.width);
-	n.SetAttribute("height", m_p->size.height);
+	n.SetAttribute("width", PIMPL->size.width);
+	n.SetAttribute("height", PIMPL->size.height);
 	return(true);
 }
 
@@ -86,8 +86,8 @@ SizeComponent::deserialize(XMLElement &n)
 	if (!ComponentBase::deserialize(n))
 	    return(false);
 
-	n.QueryFloatAttribute("width",  &m_p->size.width);
-	n.QueryFloatAttribute("height", &m_p->size.height);
+	n.QueryFloatAttribute("width",  &PIMPL->size.width);
+	n.QueryFloatAttribute("height", &PIMPL->size.height);
 	return(true);
 }
 

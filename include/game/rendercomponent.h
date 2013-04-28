@@ -56,15 +56,14 @@ namespace Game { /******************************************** Game Namespace */
 	class MARSHMALLOW_GAME_EXPORT
 	RenderComponent : public ComponentBase
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION;
 		NO_ASSIGN_COPY(RenderComponent);
 	public:
 		RenderComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~RenderComponent(void);
 
-		Graphics::IMesh * mesh(void);
+		Graphics::IMesh * mesh(void) const;
+		void setMesh(Graphics::IMesh *mesh);
 
 	public: /* virtual */
 

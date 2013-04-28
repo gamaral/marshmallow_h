@@ -38,10 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <Box2D/Box2D.h>
-
-#include <tinyxml2.h>
-
 #include "core/logger.h"
 #include "core/type.h"
 
@@ -55,6 +51,10 @@
 #include "game/iscene.h"
 #include "game/positioncomponent.h"
 #include "game/rendercomponent.h"
+
+#include <Box2D/Box2D.h>
+
+#include <tinyxml2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
@@ -87,43 +87,43 @@ struct Box2DComponent::Private
 
 Box2DComponent::Box2DComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
 }
 
 Box2DComponent::~Box2DComponent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 b2Body *
 Box2DComponent::body(void)
 {
-	return(m_p->body);
+	return(PIMPL->body);
 }
 
 int &
 Box2DComponent::bodyType(void)
 {
-	return(m_p->body_type);
+	return(PIMPL->body_type);
 }
 
 float &
 Box2DComponent::density(void)
 {
-	return(m_p->density);
+	return(PIMPL->density);
 }
 
 float &
 Box2DComponent::friction(void)
 {
-	return(m_p->friction);
+	return(PIMPL->friction);
 }
 
 Math::Size2f &
 Box2DComponent::size(void)
 {
-	return(m_p->size);
+	return(PIMPL->size);
 }
 
 void
@@ -131,68 +131,68 @@ Box2DComponent::update(float d)
 {
 	MMUNUSED(d);
 
-	if (!m_p->position) {
-		m_p->position = static_cast<PositionComponent *>
+	if (!PIMPL->position) {
+		PIMPL->position = static_cast<PositionComponent *>
 		    (entity().getComponentType("Game::PositionComponent"));
 	}
 
-	if (!m_p->render) {
-		m_p->render = static_cast<RenderComponent *>
+	if (!PIMPL->render) {
+		PIMPL->render = static_cast<RenderComponent *>
 		    (entity().getComponentType("Game::RenderComponent"));
 	}
 
-	if (!m_p->init && !m_p->b2layer && m_p->position) {
-		m_p->b2layer = static_cast<Box2DSceneLayer *>
+	if (!PIMPL->init && !PIMPL->b2layer && PIMPL->position) {
+		PIMPL->b2layer = static_cast<Box2DSceneLayer *>
 		    (entity().layer().scene().getLayerType("Game::Box2DSceneLayer"));
 
-		if (!m_p->b2layer) {
+		if (!PIMPL->b2layer) {
 			MMWARNING("Box2DComponent used with non Box2D Scene!");
 			return;
 		}
 
-		b2World &l_world = m_p->b2layer->world();
+		b2World &l_world = PIMPL->b2layer->world();
 
 		/* create box2d body */
 		b2BodyDef bodyDef;
-		bodyDef.type = static_cast<b2BodyType>(m_p->body_type);
+		bodyDef.type = static_cast<b2BodyType>(PIMPL->body_type);
 #define DEGREE_TO_RADIAN 0.0174532925f
-		if (m_p->render) bodyDef.angle = m_p->render->mesh()->rotation() * DEGREE_TO_RADIAN;
+		if (PIMPL->render) bodyDef.angle = PIMPL->render->mesh()->rotation() * DEGREE_TO_RADIAN;
 		bodyDef.position.Set
-		    (m_p->position->position().x,
-		     m_p->position->position().y);
-		m_p->body = l_world.CreateBody(&bodyDef);
+		    (PIMPL->position->position().x,
+		     PIMPL->position->position().y);
+		PIMPL->body = l_world.CreateBody(&bodyDef);
 
 		/* create shape */
 		b2PolygonShape l_dynamicBox;
-		l_dynamicBox.SetAsBox(m_p->size.width  / 2.f,
-		                      m_p->size.height / 2.f);
+		l_dynamicBox.SetAsBox(PIMPL->size.width  / 2.f,
+		                      PIMPL->size.height / 2.f);
 
 		/* create fixture */
 		b2FixtureDef l_fixtureDef;
 		l_fixtureDef.shape = &l_dynamicBox;
-		l_fixtureDef.density = m_p->density;
-		l_fixtureDef.friction = m_p->friction;
-		m_p->body->CreateFixture(&l_fixtureDef);
+		l_fixtureDef.density = PIMPL->density;
+		l_fixtureDef.friction = PIMPL->friction;
+		PIMPL->body->CreateFixture(&l_fixtureDef);
 
-		m_p->init = true;
+		PIMPL->init = true;
 	}
 
 	/* abort if not initialized */
-	if (!m_p->init)
+	if (!PIMPL->init)
 		return;
 
-	b2Vec2 l_position = m_p->body->GetPosition();
-	float32 l_angle = m_p->body->GetAngle();
+	b2Vec2 l_position = PIMPL->body->GetPosition();
+	float32 l_angle = PIMPL->body->GetAngle();
 
 	/* entity position */
-	m_p->position->position().x = l_position.x;
-	m_p->position->position().y = l_position.y;
+	PIMPL->position->position().x = l_position.x;
+	PIMPL->position->position().y = l_position.y;
 
 	/* render mesh rotation */
-	if (m_p->render) {
+	if (PIMPL->render) {
 #define RADIAN_TO_DEGREE 57.2957795f
 		Graphics::MeshBase *l_gbase =
-		    static_cast<Graphics::MeshBase *>(m_p->render->mesh());
+		    static_cast<Graphics::MeshBase *>(PIMPL->render->mesh());
 		if (l_gbase) l_gbase->setRotation(fmodf(l_angle * RADIAN_TO_DEGREE, 360.f));
 	}
 }
@@ -203,7 +203,7 @@ Box2DComponent::serialize(XMLElement &n) const
 	if (!ComponentBase::serialize(n))
 	    return(false);
 
-	switch (m_p->body_type) {
+	switch (PIMPL->body_type) {
 	case b2_staticBody:
 	    n.SetAttribute("body", "static");
 	    break;
@@ -215,11 +215,11 @@ Box2DComponent::serialize(XMLElement &n) const
 	    break;
 	}
 
-	n.SetAttribute("width", m_p->size.width);
-	n.SetAttribute("height", m_p->size.height);
+	n.SetAttribute("width", PIMPL->size.width);
+	n.SetAttribute("height", PIMPL->size.height);
 
-	n.SetAttribute("density", m_p->density);
-	n.SetAttribute("friction", m_p->friction);
+	n.SetAttribute("density", PIMPL->density);
+	n.SetAttribute("friction", PIMPL->friction);
 
 	return(true);
 }
@@ -232,17 +232,17 @@ Box2DComponent::deserialize(XMLElement &n)
 
 	const char *l_body = n.Attribute("body");
 
-	m_p->body_type = b2_staticBody;
+	PIMPL->body_type = b2_staticBody;
 	if (l_body && l_body[0] == 'k')
-	    m_p->body_type = b2_kinematicBody;
+	    PIMPL->body_type = b2_kinematicBody;
 	if (l_body && l_body[0] == 'd')
-	    m_p->body_type = b2_dynamicBody;
+	    PIMPL->body_type = b2_dynamicBody;
 
-	n.QueryFloatAttribute("width", &m_p->size.width);
-	n.QueryFloatAttribute("height", &m_p->size.height);
+	n.QueryFloatAttribute("width", &PIMPL->size.width);
+	n.QueryFloatAttribute("height", &PIMPL->size.height);
 
-	n.QueryFloatAttribute("density", &m_p->density);
-	n.QueryFloatAttribute("friction", &m_p->friction);
+	n.QueryFloatAttribute("density", &PIMPL->density);
+	n.QueryFloatAttribute("friction", &PIMPL->friction);
 
 	return(true);
 }

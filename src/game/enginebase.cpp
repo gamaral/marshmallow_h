@@ -129,7 +129,7 @@ struct EngineBase::Private
 };
 
 EngineBase::EngineBase(int fps_, int sleep)
-    : m_p(new Private(fps_, sleep))
+    : PIMPL_CREATE_X(fps_, sleep)
 {
 	MMINFO("Marshmallow Engine Version "
 	    << MARSHMALLOW_VERSION_MAJOR << "."
@@ -144,7 +144,7 @@ EngineBase::~EngineBase(void)
 {
 	Engine::SetInstance(0);
 
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 bool
@@ -160,8 +160,8 @@ EngineBase::initialize(void)
 
 	Platform::Initialize();
 
-	if (!m_p->event_manager)
-		m_p->event_manager = new Event::EventManager("EngineBase.EventManager");
+	if (!PIMPL->event_manager)
+		PIMPL->event_manager = new Event::EventManager("EngineBase.EventManager");
 	eventManager()->connect(this, Event::QuitEvent::Type());
 
 	Audio::Backend::Initialize();
@@ -169,11 +169,11 @@ EngineBase::initialize(void)
 	Input::Joystick::Initialize();
 	Input::Keyboard::Initialize();
 
-	if (!m_p->scene_manager)
-		m_p->scene_manager = new SceneManager();
+	if (!PIMPL->scene_manager)
+		PIMPL->scene_manager = new SceneManager();
 
-	if (!m_p->factory)
-		m_p->factory = new Factory();
+	if (!PIMPL->factory)
+		PIMPL->factory = new Factory();
 
 	/*
 	 * Environment Overrides
@@ -191,7 +191,7 @@ EngineBase::initialize(void)
 	}
 
 	/* validate */
-	m_p->valid = true;
+	PIMPL->valid = true;
 
 	return(true);
 }
@@ -206,69 +206,69 @@ EngineBase::finalize(void)
 	if (isValid())
 		eventManager()->disconnect(this, Event::QuitEvent::Type());
 
-	delete m_p->factory, m_p->factory = 0;
-	delete m_p->scene_manager, m_p->scene_manager = 0;
+	delete PIMPL->factory, PIMPL->factory = 0;
+	delete PIMPL->scene_manager, PIMPL->scene_manager = 0;
 
 	Joystick::Finalize();
 	Keyboard::Finalize();
 	Graphics::Backend::Finalize();
 	Audio::Backend::Finalize();
 
-	delete m_p->event_manager, m_p->event_manager = 0;
+	delete PIMPL->event_manager, PIMPL->event_manager = 0;
 
 	Platform::Finalize();
 
 	/* invalidate */
-	m_p->valid = false;
+	PIMPL->valid = false;
 }
 
 bool
 EngineBase::isSuspended(void) const
 {
-	return(m_p->suspended);
+	return(PIMPL->suspended);
 }
 
 bool
 EngineBase::isValid(void) const
 {
-	return(m_p->valid);
+	return(PIMPL->valid);
 }
 
 void
 EngineBase::setEventManager(Event::EventManager *m)
 {
-	m_p->event_manager = m;
+	PIMPL->event_manager = m;
 }
 
 void
 EngineBase::setSceneManager(Game::SceneManager *m)
 {
 	
-	m_p->scene_manager = m;
+	PIMPL->scene_manager = m;
 }
 
 void
 EngineBase::setFactory(Game::IFactory *f)
 {
-	m_p->factory = f;
+	PIMPL->factory = f;
 }
 
 int
 EngineBase::fps(void) const
 {
-	return(m_p->fps);
+	return(PIMPL->fps);
 }
 
 MMTIME
 EngineBase::deltaTime(void) const
 {
-	return(m_p->delta_time);
+	return(PIMPL->delta_time);
 }
 
 int
 EngineBase::frameRate(void)
 {
-	return(m_p->frame_rate);
+	return(PIMPL->frame_rate);
 }
 
 int
@@ -283,7 +283,7 @@ EngineBase::run(void)
 	}
 
 #define MILLISECONDS_PER_SECOND 1000
-	const MMTIME l_tick_target = MILLISECONDS_PER_SECOND / m_p->fps;
+	const MMTIME l_tick_target = MILLISECONDS_PER_SECOND / PIMPL->fps;
 	const MMTIME l_tick_fast_target = (l_tick_target * 2) / 3;
 	MMTIME l_second = 0;
 	MMTIME l_tock = 0;
@@ -291,8 +291,8 @@ EngineBase::run(void)
 
 	/* start */
 	bool l_wait  = false;
-	m_p->valid   = true;
-	m_p->running = true;
+	PIMPL->valid   = true;
+	PIMPL->running = true;
 
 	tick(.0f);
 	update(.0f);
@@ -301,23 +301,23 @@ EngineBase::run(void)
 	/*
 	 * Game Loop
 	 */
-	while (m_p->running) {
+	while (PIMPL->running) {
 		l_tick = NOW();
 
 #if MARSHMALLOW_DEBUG
 		/* detect breakpoint */
-		if (m_p->delta_time > MILLISECONDS_PER_SECOND) {
+		if (PIMPL->delta_time > MILLISECONDS_PER_SECOND) {
 			MMWARNING("Abnormally long time between ticks, debugger breakpoint?");
-			m_p->delta_time = l_tick_target;
+			PIMPL->delta_time = l_tick_target;
 		}
 #endif
 
 		/* update dt counters */
-		l_tock   += m_p->delta_time;
-		l_second += m_p->delta_time;
+		l_tock   += PIMPL->delta_time;
+		l_second += PIMPL->delta_time;
 
 		/* wait if no vsync or cpu/gpu too fast */
-		l_wait |= (m_p->delta_time <= l_tick_fast_target);
+		l_wait |= (PIMPL->delta_time <= l_tick_fast_target);
 
 		/*
 		 * Second
@@ -325,8 +325,8 @@ EngineBase::run(void)
 		if (l_second >= MILLISECONDS_PER_SECOND) {
 			second();
 
-			l_wait = (m_p->delta_time <= (l_tick_fast_target));
-			m_p->frame_rate = 0;
+			l_wait = (PIMPL->delta_time <= (l_tick_fast_target));
+			PIMPL->frame_rate = 0;
 
 			/* reset second */
 			l_second = 0;
@@ -345,7 +345,7 @@ EngineBase::run(void)
 			 * Render
 			 */
 			render();
-			m_p->frame_rate++;
+			PIMPL->frame_rate++;
 
 			/* reset tock */
 			l_tock= 0;
@@ -358,14 +358,14 @@ EngineBase::run(void)
 		 * but it might be worth it for sub 20% CPU usage (very battery
 		 * friendly).
 		 */
-		if (l_wait) Platform::Sleep(m_p->sleep);
+		if (l_wait) Platform::Sleep(PIMPL->sleep);
 
 		/*
 		 * Tick
 		 */
-		tick(static_cast<float>(m_p->delta_time) / MILLISECONDS_PER_SECOND);
+		tick(static_cast<float>(PIMPL->delta_time) / MILLISECONDS_PER_SECOND);
 
-		m_p->delta_time = NOW() - l_tick;
+		PIMPL->delta_time = NOW() - l_tick;
 	}
 
 	/*
@@ -373,47 +373,47 @@ EngineBase::run(void)
 	 */
 
 	finalize();
-	return(m_p->exit_code);
+	return(PIMPL->exit_code);
 }
 
 void
 EngineBase::stop(int ec)
 {
 	MMINFO("EngineBase stopped.");
-	m_p->exit_code = ec;
-	m_p->running = false;
+	PIMPL->exit_code = ec;
+	PIMPL->running = false;
 }
 
 void
 EngineBase::suspend(void)
 {
 	MMINFO("EngineBase suspended.");
-	m_p->suspended = true;
+	PIMPL->suspended = true;
 }
 
 void
 EngineBase::resume(void)
 {
 	MMINFO("EngineBase resumed.");
-	m_p->suspended = false;
+	PIMPL->suspended = false;
 }
 
 Event::EventManager *
 EngineBase::eventManager(void) const
 {
-	return(m_p->event_manager);
+	return(PIMPL->event_manager);
 }
 
 Game::SceneManager *
 EngineBase::sceneManager(void) const
 {
-	return(m_p->scene_manager);
+	return(PIMPL->scene_manager);
 }
 
 Game::IFactory *
 EngineBase::factory(void) const
 {
-	return(m_p->factory);
+	return(PIMPL->factory);
 }
 
 void
@@ -426,14 +426,14 @@ EngineBase::tick(float delta)
 	Keyboard::Tick(delta);
 	Joystick::Tick(delta);
 
-	if (m_p->event_manager) m_p->event_manager->execute();
+	if (PIMPL->event_manager) PIMPL->event_manager->execute();
 	else MMWARNING("No event manager!");
 }
 
 void
 EngineBase::second(void)
 {
-	MMDEBUG("FPS=" << m_p->frame_rate);
+	MMDEBUG("FPS=" << PIMPL->frame_rate);
 }
 
 void
@@ -441,7 +441,7 @@ EngineBase::render(void)
 {
 	using namespace Event;
 
-	if (!Graphics::Backend::Active() || m_p->suspended)
+	if (!Graphics::Backend::Active() || PIMPL->suspended)
 		return;
 
 	Graphics::Painter::Render();
@@ -455,7 +455,7 @@ EngineBase::render(void)
 void
 EngineBase::update(float d)
 {
-	if (!Graphics::Backend::Active() || m_p->suspended)
+	if (!Graphics::Backend::Active() || PIMPL->suspended)
 		return;
 
 	Event::UpdateEvent event(d);
@@ -465,13 +465,13 @@ EngineBase::update(float d)
 bool
 EngineBase::serialize(XMLElement &n) const
 {
-	n.SetAttribute("fps", m_p->fps);
-	n.SetAttribute("sleep",  m_p->sleep);
+	n.SetAttribute("fps", PIMPL->fps);
+	n.SetAttribute("sleep",  PIMPL->sleep);
 
-	if (m_p->scene_manager) {
+	if (PIMPL->scene_manager) {
 		XMLElement *l_element = n.GetDocument()->NewElement("scenes");
 
-		if (!m_p->scene_manager->serialize(*l_element)) {
+		if (!PIMPL->scene_manager->serialize(*l_element)) {
 			MMWARNING("Scene Manager serialization failed");
 			return(false);
 		}
@@ -494,12 +494,12 @@ EngineBase::deserialize(XMLElement &n)
 
 	l_element = n.FirstChildElement("scenes");
 
-	n.QueryIntAttribute("fps", &m_p->fps);
-	n.QueryIntAttribute("sleep",  &m_p->sleep);
+	n.QueryIntAttribute("fps", &PIMPL->fps);
+	n.QueryIntAttribute("sleep",  &PIMPL->sleep);
 
-	if (l_element && m_p->scene_manager)
-		m_p->scene_manager->deserialize(*l_element);
-	else if (l_element && !m_p->scene_manager)
+	if (l_element && PIMPL->scene_manager)
+		PIMPL->scene_manager->deserialize(*l_element);
+	else if (l_element && !PIMPL->scene_manager)
 		return(false);
 	
 	return(true);

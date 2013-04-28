@@ -54,9 +54,7 @@ namespace Game { /******************************************** Game Namespace */
 	class MARSHMALLOW_GAME_EXPORT
 	PauseSceneLayer : public SceneLayerBase
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION;
 		NO_ASSIGN_COPY(PauseSceneLayer);
 	public:
 

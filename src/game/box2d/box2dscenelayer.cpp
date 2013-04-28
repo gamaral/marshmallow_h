@@ -38,15 +38,15 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <Box2D/Box2D.h>
-
-#include <tinyxml2.h>
-
 #include "core/type.h"
 
 #include "math/vector2.h"
 
 #include "graphics/transform.h"
+
+#include <Box2D/Box2D.h>
+
+#include <tinyxml2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
@@ -54,7 +54,8 @@ namespace Game { /******************************************** Game Namespace */
 struct Box2DSceneLayer::Private
 {
 	Private()
-	    : world(b2Vec2(0.f, -10.f)) {}
+	    : world(b2Vec2(0.f, -10.f))
+	{}
 
 	Graphics::Transform transform;
 	b2World world;
@@ -62,31 +63,31 @@ struct Box2DSceneLayer::Private
 
 Box2DSceneLayer::Box2DSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
 }
 
 Box2DSceneLayer::~Box2DSceneLayer(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 void
 Box2DSceneLayer::update(float d)
 {
-	m_p->world.Step
+	PIMPL->world.Step
 	    (static_cast<float>(d),
 #define VELOCITY_ITERATIONS 10
 	     VELOCITY_ITERATIONS,
 #define POSITION_ITERATIONS 8
 	     POSITION_ITERATIONS);
-	m_p->world.ClearForces();
+	PIMPL->world.ClearForces();
 }
 
 Math::Vector2
 Box2DSceneLayer::gravity(void) const
 {
-	b2Vec2 l_gravity = m_p->world.GetGravity();
+	b2Vec2 l_gravity = PIMPL->world.GetGravity();
 	return(Math::Vector2(l_gravity.x, l_gravity.y));
 }
 
@@ -94,25 +95,25 @@ void
 Box2DSceneLayer::setGravity(const Math::Vector2 &gravity_)
 {
 	b2Vec2 l_gravity(gravity_.x, gravity_.y);
-	m_p->world.SetGravity(l_gravity);
+	PIMPL->world.SetGravity(l_gravity);
 }
 
 Graphics::Transform &
 Box2DSceneLayer::transform(void) const
 {
-	return(m_p->transform);
+	return(PIMPL->transform);
 }
 
 void
 Box2DSceneLayer::setTransform(const Graphics::Transform &_transform)
 {
-	m_p->transform = _transform;
+	PIMPL->transform = _transform;
 }
 
 b2World &
 Box2DSceneLayer::world(void)
 {
-	return(m_p->world);
+	return(PIMPL->world);
 }
 
 bool
@@ -122,7 +123,7 @@ Box2DSceneLayer::serialize(XMLElement &n) const
 		return(false);
 
 	XMLElement *l_child = n.GetDocument()->NewElement("gravity");
-	b2Vec2 l_gravity = m_p->world.GetGravity();
+	b2Vec2 l_gravity = PIMPL->world.GetGravity();
 	l_child->SetAttribute("x", l_gravity.x);
 	l_child->SetAttribute("y", l_gravity.y);
 	n.InsertEndChild(l_child);
@@ -141,7 +142,7 @@ Box2DSceneLayer::deserialize(XMLElement &n)
 		float l_x, l_y;
 		l_child->QueryFloatAttribute("x", &l_x);
 		l_child->QueryFloatAttribute("y", &l_y);
-		m_p->world.SetGravity(b2Vec2(l_x, l_y));
+		PIMPL->world.SetGravity(b2Vec2(l_x, l_y));
 	}
 	
 	return(true);

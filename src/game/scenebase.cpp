@@ -62,55 +62,55 @@ struct SceneBase::Private
 };
 
 SceneBase::SceneBase(const Core::Identifier &i)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
-	m_p->id = i;
-	m_p->bgcolor = Graphics::Color::Black();
-	m_p->active = false;
+	PIMPL->id = i;
+	PIMPL->bgcolor = Graphics::Color::Black();
+	PIMPL->active = false;
 }
 
 SceneBase::~SceneBase(void)
 {
-	m_p->layers.clear();
+	PIMPL->layers.clear();
 
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 const Core::Identifier &
 SceneBase::id(void) const
 {
-	return(m_p->id);
+	return(PIMPL->id);
 }
 
 bool
 SceneBase::isActive(void) const
 {
-	return(m_p->active);
+	return(PIMPL->active);
 }
 
 void
 SceneBase::pushLayer(ISceneLayer *l)
 {
-	m_p->layers.push_front(l);
+	PIMPL->layers.push_front(l);
 }
 
 void
 SceneBase::popLayer(void)
 {
-	m_p->layers.pop_front();
+	PIMPL->layers.pop_front();
 }
 
 void
 SceneBase::removeLayer(const Core::Identifier &i)
 {
 	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_c = m_p->layers.end();
+	SceneLayerList::const_iterator l_c = PIMPL->layers.end();
 
 	/* maybe replace later with a map if required */
-	for (l_i = m_p->layers.begin(); l_i != l_c; ++l_i)
+	for (l_i = PIMPL->layers.begin(); l_i != l_c; ++l_i)
 		if ((*l_i)->id() == i) {
 			ISceneLayer *l_slayer = *l_i;
-			m_p->layers.remove(l_slayer);
+			PIMPL->layers.remove(l_slayer);
 			return;
 		}
 }
@@ -119,10 +119,10 @@ ISceneLayer *
 SceneBase::getLayer(const Core::Identifier &i) const
 {
 	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_c = m_p->layers.end();
+	SceneLayerList::const_iterator l_c = PIMPL->layers.end();
 
 	/* maybe replace later with a map if required */
-	for (l_i = m_p->layers.begin(); l_i != l_c; ++l_i) {
+	for (l_i = PIMPL->layers.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->id() == i)
 			return(*l_i);
 	}
@@ -134,10 +134,10 @@ ISceneLayer *
 SceneBase::getLayerType(const Core::Type &t) const
 {
 	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_c = m_p->layers.end();
+	SceneLayerList::const_iterator l_c = PIMPL->layers.end();
 
 	/* maybe replace later with a map if required */
-	for (l_i = m_p->layers.begin(); l_i != l_c; ++l_i) {
+	for (l_i = PIMPL->layers.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->type() == t)
 			return(*l_i);
 	}
@@ -148,13 +148,13 @@ SceneBase::getLayerType(const Core::Type &t) const
 const SceneLayerList &
 SceneBase::getLayers(void) const
 {
-	return(m_p->layers);
+	return(PIMPL->layers);
 }
 
 const Graphics::Color &
 SceneBase::background(void) const
 {
-	return(m_p->bgcolor);
+	return(PIMPL->bgcolor);
 }
 
 void
@@ -162,10 +162,10 @@ SceneBase::setBackground(const Graphics::Color &color)
 {
 	using namespace Graphics;
 
-	m_p->bgcolor = color;
+	PIMPL->bgcolor = color;
 
 	if (isActive())
-		Painter::SetBackgroundColor(m_p->bgcolor);
+		Painter::SetBackgroundColor(PIMPL->bgcolor);
 }
 
 void
@@ -173,25 +173,25 @@ SceneBase::activate(void)
 {
 	using namespace Graphics;
 
-	Painter::SetBackgroundColor(m_p->bgcolor);
+	Painter::SetBackgroundColor(PIMPL->bgcolor);
 
-	m_p->active = true;
+	PIMPL->active = true;
 }
 
 void
 SceneBase::deactivate(void)
 {
-	m_p->active = false;
+	PIMPL->active = false;
 }
 
 void
 SceneBase::render(void)
 {
-	if (m_p->layers.empty()) return;
+	if (PIMPL->layers.empty()) return;
 
 	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_b = m_p->layers.begin();
-	SceneLayerList::const_iterator l_c = --m_p->layers.end();
+	SceneLayerList::const_iterator l_b = PIMPL->layers.begin();
+	SceneLayerList::const_iterator l_c = --PIMPL->layers.end();
 
 	for (l_i = l_b; l_i != l_c; ++l_i)
 		if ((*l_i)->flags() & slfRenderBlock)
@@ -209,11 +209,11 @@ SceneBase::render(void)
 void
 SceneBase::update(float d)
 {
-	if (m_p->layers.empty()) return;
+	if (PIMPL->layers.empty()) return;
 
 	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_b = m_p->layers.begin();
-	SceneLayerList::const_iterator l_c = --m_p->layers.end();
+	SceneLayerList::const_iterator l_b = PIMPL->layers.begin();
+	SceneLayerList::const_iterator l_c = --PIMPL->layers.end();
 
 	for (l_i = l_b; l_i != l_c; ++l_i)
 		if ((*l_i)->flags() & slfUpdateBlock)
@@ -228,7 +228,7 @@ SceneBase::update(float d)
 		else l_i--;
 
 		if (l_slayer->isZombie())
-			m_p->layers.remove(l_slayer);
+			PIMPL->layers.remove(l_slayer);
 		else
 			l_slayer->update(d);
 	} while(!l_finished);
@@ -241,8 +241,8 @@ SceneBase::serialize(XMLElement &n) const
 	n.SetAttribute("type", type().str().c_str());
 
 	SceneLayerList::const_reverse_iterator l_i;
-	SceneLayerList::const_reverse_iterator l_c = m_p->layers.rend();
-	for (l_i = m_p->layers.rbegin(); l_i != l_c; ++l_i) {
+	SceneLayerList::const_reverse_iterator l_c = PIMPL->layers.rend();
+	for (l_i = PIMPL->layers.rbegin(); l_i != l_c; ++l_i) {
 		XMLElement *l_element = n.GetDocument()->NewElement("layer");
 		if ((*l_i)->serialize(*l_element))
 			n.InsertEndChild(l_element);

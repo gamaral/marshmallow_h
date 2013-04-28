@@ -61,43 +61,43 @@ struct SceneLayerBase::Private
 };
 
 SceneLayerBase::SceneLayerBase(const Core::Identifier &i, IScene &s, int f)
-    : m_p(new Private(i, s, f))
+    : PIMPL_CREATE_X(i, s, f)
 {
 }
 
 SceneLayerBase::~SceneLayerBase(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 const Core::Identifier &
 SceneLayerBase::id(void) const
 {
-	return(m_p->id);
+	return(PIMPL->id);
 }
 
 IScene &
 SceneLayerBase::scene(void)
 {
-	return(m_p->scene);
+	return(PIMPL->scene);
 }
 
 int
 SceneLayerBase::flags(void) const
 {
-	return(m_p->flags);
+	return(PIMPL->flags);
 }
 
 void
 SceneLayerBase::kill(void)
 {
-	m_p->killed = true;
+	PIMPL->killed = true;
 }
 
 bool
 SceneLayerBase::isZombie(void) const
 {
-	return(m_p->killed);
+	return(PIMPL->killed);
 }
 
 bool

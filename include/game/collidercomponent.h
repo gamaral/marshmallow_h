@@ -57,9 +57,7 @@ namespace Game { /******************************************** Game Namespace */
 	class MARSHMALLOW_GAME_EXPORT
 	ColliderComponent : public ComponentBase
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION;
 		NO_ASSIGN_COPY(ColliderComponent);
 	public:
 
@@ -74,10 +72,17 @@ namespace Game { /******************************************** Game Namespace */
 		ColliderComponent(const Core::Identifier &identifier, IEntity &entity);
 		virtual ~ColliderComponent(void);
 
-		int & body(void);
-		bool & active(void);
-		bool & bullet(void);
-		int & bulletResolution(void);
+		bool active(void) const;
+		void setActive(bool active);
+
+		bool bullet(void) const;
+		void setBullet(bool bullet);
+
+		int body(void) const;
+		void setBody(int body);
+
+		int bulletResolution(void) const;
+		void setBulletResolution(int resolution);
 
 		float radius2(void) const;
 
@@ -93,17 +98,17 @@ namespace Game { /******************************************** Game Namespace */
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);
 
-		Game::CollisionSceneLayer * layer(void);
-		Game::MovementComponent * movement(void);
-		Game::PositionComponent * position(void);
-		Game::SizeComponent * size(void);
-
 	public: /* static */
 
 		static const Core::Type & Type(void);
 
 	protected:
 	
+		Game::CollisionSceneLayer * layer(void) const;
+		Game::MovementComponent * movement(void) const;
+		Game::PositionComponent * position(void) const;
+		Game::SizeComponent * size(void) const;
+
 		virtual bool collision(ColliderComponent &collider, float delta, const CollisionData &data);
 	};
 

@@ -61,9 +61,7 @@ namespace Game { /******************************************** Game Namespace */
 	             , public Core::ISerializable
 	             , public Event::IEventListener
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION;
 		NO_ASSIGN_COPY(SceneManager);
 	public:
 

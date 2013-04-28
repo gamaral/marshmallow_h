@@ -56,16 +56,15 @@ namespace Game { /******************************************** Game Namespace */
 	class MARSHMALLOW_GAME_EXPORT
 	TilesetComponent : public ComponentBase
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION;
 		NO_ASSIGN_COPY(TilesetComponent);
 	public:
 
 		TilesetComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~TilesetComponent(void);
 
-		Graphics::ITileset * tileset(void);
+		Graphics::ITileset * tileset(void) const;
+		void setTileset(Graphics::ITileset *tileset);
 
 	public: /* virtual */
 

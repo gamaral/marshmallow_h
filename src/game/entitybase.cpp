@@ -60,7 +60,34 @@ struct EntityBase::Private
 	Private(const Core::Identifier &i, EntitySceneLayer &l)
 	    : id(i)
 	    , layer(l)
-	    , killed(false) {}
+	    , killed(false)
+	{}
+
+	~Private();
+
+	inline void
+	pushComponent(Game::IComponent *component);
+
+	inline Game::IComponent *
+	popComponent(void);
+
+	inline void
+	removeComponent(Game::IComponent *component);
+
+	inline Game::IComponent *
+	removeComponent(const Core::Identifier &identifier);
+
+	inline Game::IComponent *
+	getComponent(const Core::Identifier &identifier) const;
+	
+	inline Game::IComponent *
+	getComponentType(const Core::Type &type) const;
+
+	inline void
+	render(void);
+
+	inline void
+	update(float delta);
 
 	ComponentList components;
 	Core::Identifier id;
@@ -68,68 +95,60 @@ struct EntityBase::Private
 	bool killed;
 };
 
-EntityBase::EntityBase(const Core::Identifier &i, EntitySceneLayer &l)
-    : m_p(new Private(i, l))
+EntityBase::Private::~Private()
 {
-}
-
-EntityBase::~EntityBase(void)
-{
-	m_p->components.clear();
-
-	delete m_p, m_p = 0;
-}
-
-const Core::Identifier &
-EntityBase::id(void) const
-{
-	return(m_p->id);
-}
-
-EntitySceneLayer &
-EntityBase::layer(void)
-{
-	return(m_p->layer);
+	/* free components */
+	while (components.size() > 0) {
+		delete components.back();
+		components.pop_back();
+	}
 }
 
 void
-EntityBase::pushComponent(IComponent *c)
+EntityBase::Private::pushComponent(IComponent *c)
 {
-	m_p->components.push_front(c);
-}
-
-void
-EntityBase::popComponent(void)
-{
-	m_p->components.pop_front();
-}
-
-void
-EntityBase::removeComponent(const Core::Identifier &i)
-{
-	ComponentList::const_iterator l_i;
-	ComponentList::const_iterator l_c = m_p->components.end();
-
-	for (l_i = m_p->components.begin(); l_i != l_c; ++l_i)
-		if ((*l_i)->id() == i) {
-			m_p->components.remove(*l_i);
-			return;
-		}
-}
-
-void
-EntityBase::removeComponent(IComponent *c)
-{
-	m_p->components.remove(c);
+	components.push_front(c);
 }
 
 IComponent *
-EntityBase::getComponent(const Core::Identifier &i) const
+EntityBase::Private::popComponent(void)
+{
+	IComponent *l_component = components.front();
+	components.pop_front();
+	return(l_component);
+}
+
+void
+EntityBase::Private::removeComponent(IComponent *c)
+{
+	components.remove(c);
+}
+
+IComponent *
+EntityBase::Private::removeComponent(const Core::Identifier &i)
+{
+	IComponent *l_component = 0;
+
+	ComponentList::const_iterator l_i;
+	ComponentList::const_iterator l_c = components.end();
+
+	for (l_i = components.begin(); l_i != l_c; ++l_i)
+		if ((*l_i)->id() == i) {
+			l_component = *l_i;
+			components.remove(l_component);
+			break;
+		}
+
+	return(l_component);
+}
+
+IComponent *
+EntityBase::Private::getComponent(const Core::Identifier &i) const
 {
 	ComponentList::const_iterator l_i;
-	ComponentList::const_iterator l_c = m_p->components.end();
+	ComponentList::const_iterator l_c = components.end();
 
-	for (l_i = m_p->components.begin(); l_i != l_c; ++l_i) {
+	for (l_i = components.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->id() == i)
 			return(*l_i);
 	}
@@ -137,12 +156,12 @@ EntityBase::getComponent(const Core::Identifier &i) const
 }
 
 IComponent *
-EntityBase::getComponentType(const Core::Type &t) const
+EntityBase::Private::getComponentType(const Core::Type &t) const
 {
 	ComponentList::const_iterator l_i;
-	ComponentList::const_iterator l_c = m_p->components.end();
+	ComponentList::const_iterator l_c = components.end();
 
-	for (l_i = m_p->components.begin(); l_i != l_c; ++l_i) {
+	for (l_i = components.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->type() == t)
 			return(*l_i);
 	}
@@ -150,39 +169,110 @@ EntityBase::getComponentType(const Core::Type &t) const
 }
 
 void
-EntityBase::render(void)
+EntityBase::Private::render(void)
 {
-	if (isZombie()) return;
+	if (killed) return;
 
 	ComponentList::const_reverse_iterator l_i;
-	ComponentList::const_reverse_iterator l_c = m_p->components.rend();
+	ComponentList::const_reverse_iterator l_c = components.rend();
 
-	for (l_i = m_p->components.rbegin(); l_i != l_c; ++l_i)
+	for (l_i = components.rbegin(); l_i != l_c; ++l_i)
 		(*l_i)->render();
+}
+
+void
+EntityBase::Private::update(float d)
+{
+	if (killed) return;
+
+	ComponentList::const_reverse_iterator l_i;
+	ComponentList::const_reverse_iterator l_c = components.rend();
+
+	for (l_i = components.rbegin(); l_i != l_c; ++l_i)
+		(*l_i)->update(d);
+}
+
+EntityBase::EntityBase(const Core::Identifier &i, EntitySceneLayer &l)
+    : PIMPL_CREATE_X(i, l)
+{
+}
+
+EntityBase::~EntityBase(void)
+{
+	PIMPL->components.clear();
+	PIMPL_DESTROY;
+}
+
+const Core::Identifier &
+EntityBase::id(void) const
+{
+	return(PIMPL->id);
+}
+
+EntitySceneLayer &
+EntityBase::layer(void)
+{
+	return(PIMPL->layer);
+}
+
+void
+EntityBase::pushComponent(IComponent *c)
+{
+	PIMPL->pushComponent(c);
+}
+
+IComponent *
+EntityBase::popComponent(void)
+{
+	return(PIMPL->popComponent());
+}
+
+void
+EntityBase::removeComponent(IComponent *c)
+{
+	PIMPL->removeComponent(c);
+}
+
+IComponent *
+EntityBase::removeComponent(const Core::Identifier &i)
+{
+	return(PIMPL->removeComponent(i));
+}
+
+IComponent *
+EntityBase::getComponent(const Core::Identifier &i) const
+{
+	return(PIMPL->getComponent(i));
+}
+
+IComponent *
+EntityBase::getComponentType(const Core::Type &t) const
+{
+	return(PIMPL->getComponentType(t));
+}
+
+void
+EntityBase::render(void)
+{
+	PIMPL->render();
 }
 
 void
 EntityBase::update(float d)
 {
-	if (isZombie()) return;
-
-	ComponentList::const_reverse_iterator l_i;
-	ComponentList::const_reverse_iterator l_c = m_p->components.rend();
-
-	for (l_i = m_p->components.rbegin(); l_i != l_c; ++l_i)
-		(*l_i)->update(d);
+	PIMPL->update(d);
 }
 
 void
 EntityBase::kill(void)
 {
-	m_p->killed = true;
+	PIMPL->killed = true;
 }
 
 bool
 EntityBase::isZombie(void) const
 {
-	return(m_p->killed);
+	return(PIMPL->killed);
 }
 
 bool
@@ -192,9 +282,9 @@ EntityBase::serialize(XMLElement &n) const
 	n.SetAttribute("type", type().str().c_str());
 
 	ComponentList::const_reverse_iterator l_i;
-	ComponentList::const_reverse_iterator l_c = m_p->components.rend();
+	ComponentList::const_reverse_iterator l_c = PIMPL->components.rend();
 
-	for (l_i = m_p->components.rbegin(); l_i != l_c; l_i++) {
+	for (l_i = PIMPL->components.rbegin(); l_i != l_c; l_i++) {
 		XMLElement *l_element = n.GetDocument()->NewElement("component");
 		if ((*l_i)->serialize(*l_element))
 			n.InsertEndChild(l_element);

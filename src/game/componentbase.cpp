@@ -57,19 +57,19 @@ struct ComponentBase::Private
 };
 
 ComponentBase::ComponentBase(const Core::Identifier &i, IEntity &e)
-    : m_p(new Private(i, e))
+    : PIMPL(new Private(i, e))
 {
 }
 
 ComponentBase::~ComponentBase(void)
 {
-	delete m_p, m_p = 0;
+	delete PIMPL, PIMPL = 0;
 }
 
 const Core::Identifier &
 ComponentBase::id(void) const
 {
-	return(m_p->id);
+	return(PIMPL->id);
 }
 
 bool
@@ -90,7 +90,7 @@ ComponentBase::deserialize(XMLElement &n)
 IEntity &
 ComponentBase::entity(void) const
 {
-	return(m_p->entity);
+	return(PIMPL->entity);
 }
 
 } /*********************************************************** Game Namespace */

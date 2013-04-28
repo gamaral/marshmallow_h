@@ -60,42 +60,42 @@ struct PauseSceneLayer::Private
 
 PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
 }
 
 PauseSceneLayer::~PauseSceneLayer(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 Graphics::IMesh *
 PauseSceneLayer::mesh(void) const
 {
-	return(m_p->mesh);
+	return(PIMPL->mesh);
 }
 
 void
 PauseSceneLayer::render(void)
 {
-	if (!m_p->mesh)
+	if (!PIMPL->mesh)
 		return;
 
 	Graphics::Painter::PushMatrix();
 	Graphics::Painter::LoadIdentity();
-	Graphics::Painter::Draw(*m_p->mesh, Math::Point2(0,0));
+	Graphics::Painter::Draw(*PIMPL->mesh, Math::Point2(0,0));
 	Graphics::Painter::PopMatrix();
 }
 
 void
 PauseSceneLayer::update(float)
 {
-	if (m_p->mesh)
+	if (PIMPL->mesh)
 		return;
 
 	Graphics::QuadMesh *l_mesh = new Graphics::QuadMesh(8, 8);
 	l_mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.25f));
-	m_p->mesh = l_mesh;
+	PIMPL->mesh = l_mesh;
 }
 
 const Core::Type &

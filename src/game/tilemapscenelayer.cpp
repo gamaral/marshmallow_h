@@ -294,133 +294,133 @@ TilemapSceneLayer::Private::recalculateVertexData(uint32_t o)
 
 TilemapSceneLayer::TilemapSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
-	m_p->recalculateRelativeTileSize();
+	PIMPL->recalculateRelativeTileSize();
 }
 
 TilemapSceneLayer::~TilemapSceneLayer(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 Graphics::ITileset *
 TilemapSceneLayer::tileset(uint32_t i, uint32_t *o)
 {
-	return(m_p->tileset(i, o));
+	return(PIMPL->tileset(i, o));
 }
 
 void
 TilemapSceneLayer::attachTileset(uint32_t o, Graphics::ITileset *ts)
 {
-	m_p->tilesets[o] = ts;
-	m_p->vertexes[o] =
+	PIMPL->tilesets[o] = ts;
+	PIMPL->vertexes[o] =
 	    Graphics::Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
-	m_p->recalculateVertexData(o);
+	PIMPL->recalculateVertexData(o);
 }
 
 void
 TilemapSceneLayer::dettachTileset(uint32_t o)
 {
-	m_p->tilesets.erase(o);
-	m_p->vertexes.erase(o);
+	PIMPL->tilesets.erase(o);
+	PIMPL->vertexes.erase(o);
 }
 
 const uint32_t *
 TilemapSceneLayer::data(void) const
 {
-	return(m_p->data);
+	return(PIMPL->data);
 }
 
 void
 TilemapSceneLayer::setData(uint32_t *d)
 {
-	delete [] m_p->data;
-	m_p->data = d;
+	delete [] PIMPL->data;
+	PIMPL->data = d;
 }
 
 const Math::Vector2 &
 TilemapSceneLayer::translate(void) const
 {
-	return(m_p->translate);
+	return(PIMPL->translate);
 }
 
 void
 TilemapSceneLayer::setTranslation(const Math::Vector2 &t)
 {
-	m_p->translate = t;
+	PIMPL->translate = t;
 }
 
 const Math::Size2i &
 TilemapSceneLayer::size(void) const
 {
-	return(m_p->size);
+	return(PIMPL->size);
 }
 
 void
 TilemapSceneLayer::setSize(const Math::Size2i &s)
 {
-	m_p->size = s;
-	m_p->recalculateRelativeTileSize();
-	m_p->recalculateAllVertexData();
+	PIMPL->size = s;
+	PIMPL->recalculateRelativeTileSize();
+	PIMPL->recalculateAllVertexData();
 }
 
 const Math::Size2i &
 TilemapSceneLayer::tileSize(void) const
 {
-	return(m_p->tile_size);
+	return(PIMPL->tile_size);
 }
 
 void
 TilemapSceneLayer::setTileSize(const Math::Size2i &s)
 {
-	m_p->tile_size = s;
-	m_p->recalculateRelativeTileSize();
-	m_p->recalculateAllVertexData();
+	PIMPL->tile_size = s;
+	PIMPL->recalculateRelativeTileSize();
+	PIMPL->recalculateAllVertexData();
 }
 
 const Math::Size2f &
 TilemapSceneLayer::scale(void) const
 {
-	return(m_p->scale);
+	return(PIMPL->scale);
 }
 
 void
 TilemapSceneLayer::setScale(const Math::Size2f &s)
 {
-	m_p->scale = s;
-	m_p->recalculateRelativeTileSize();
+	PIMPL->scale = s;
+	PIMPL->recalculateRelativeTileSize();
 }
 
 float
 TilemapSceneLayer::opacity(void) const
 {
-	return(m_p->opacity);
+	return(PIMPL->opacity);
 }
 
 void
 TilemapSceneLayer::setOpacity(float a)
 {
-	m_p->opacity = a;
+	PIMPL->opacity = a;
 }
 
 bool
 TilemapSceneLayer::visible(void) const
 {
-	return(m_p->visible);
+	return(PIMPL->visible);
 }
 
 void
 TilemapSceneLayer::setVisibility(bool v)
 {
-	m_p->visible = v;
+	PIMPL->visible = v;
 }
 
 bool
 TilemapSceneLayer::hasProperty(const std::string &n, std::string *v) const
 {
-	PropertyMap::const_iterator l_i = m_p->properties.find(n);
-	const bool l_found = (l_i != m_p->properties.end());
+	PropertyMap::const_iterator l_i = PIMPL->properties.find(n);
+	const bool l_found = (l_i != PIMPL->properties.end());
 	if (l_found && v) *v = l_i->second;
 	return(l_found);
 }
@@ -428,31 +428,31 @@ TilemapSceneLayer::hasProperty(const std::string &n, std::string *v) const
 const std::string &
 TilemapSceneLayer::property(const std::string &n) const
 {
-	return(m_p->properties[n]);
+	return(PIMPL->properties[n]);
 }
 
 void
 TilemapSceneLayer::setProperty(const std::string &n, const std::string &v)
 {
-	m_p->properties[n] = v;
+	PIMPL->properties[n] = v;
 }
 
 const Math::Size2f &
 TilemapSceneLayer::virtualSize(void) const
 {
-	return(m_p->rsize);
+	return(PIMPL->rsize);
 }
 
 const Math::Size2f &
 TilemapSceneLayer::virtualHalfSize(void) const
 {
-	return(m_p->hrsize);
+	return(PIMPL->hrsize);
 }
 
 void
 TilemapSceneLayer::render(void)
 {
-	m_p->render();
+	PIMPL->render();
 }
 
 const Core::Type &

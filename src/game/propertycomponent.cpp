@@ -55,29 +55,29 @@ struct PropertyComponent::Private
 
 PropertyComponent::PropertyComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
 }
 
 PropertyComponent::~PropertyComponent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 std::string
 PropertyComponent::get(const Core::Identifier &i) const
 {
 	std::map<Core::Identifier, std::string>::iterator l_it;
-	l_it = m_p->data.find(i);
+	l_it = PIMPL->data.find(i);
 
-	if (l_it != m_p->data.end()) return(l_it->second);
+	if (l_it != PIMPL->data.end()) return(l_it->second);
 	else return(std::string());
 }
 
 void
 PropertyComponent::set(const Core::Identifier &i, const std::string &v)
 {
-	m_p->data[i] = v;
+	PIMPL->data[i] = v;
 }
 
 bool

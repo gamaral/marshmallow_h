@@ -38,11 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <map>
-#include <vector>
-
-#include <tinyxml2.h>
-
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/type.h"
@@ -53,6 +48,11 @@
 #include "game/ientity.h"
 #include "game/rendercomponent.h"
 #include "game/tilesetcomponent.h"
+
+#include <map>
+#include <vector>
+
+#include <tinyxml2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
@@ -78,17 +78,22 @@ struct AnimationComponent::Private
 	    , playing(false)
 	{}
 
-	void play(const Core::Identifier &animation, bool loop);
-	void stop(uint16_t *tile);
-	void animate(float d);
+	inline void pushFrame(const Core::Identifier &animation, uint16_t tile, int duration);
+	inline void popFrame(const Core::Identifier &animation);
 
-	AnimationComponent &_interface;
+	inline float frameRate(const Core::Identifier &animation) const;
+
+	inline void play(const Core::Identifier &animation, bool loop);
+	inline void stop(uint16_t *tile);
+	inline void animate(float d);
 
 	AnimationFrames     animation_frames;
 	AnimationFramerates animation_framerate;
 
-	const FrameList  *current_framelist;
-	RenderComponent  *render;
+	AnimationComponent &_interface;
+
+	const FrameList *current_framelist;
+	RenderComponent *render;
 	TilesetComponent *tileset;
 	Graphics::ITextureCoordinateData *stop_data;
 
@@ -101,6 +106,36 @@ struct AnimationComponent::Private
 	bool   loop;
 	bool   playing;
 };
+
+void
+AnimationComponent::Private::pushFrame(const Core::Identifier &a, uint16_t t, int d)
+{
+	FrameList &l_framelist = animation_frames[a];
+	l_framelist.push_back(FrameEntry(t, d));
+	if (current_framelist == &l_framelist)
+		++current_frame_entries;
+}
+
+void
+AnimationComponent::Private::popFrame(const Core::Identifier &a)
+{
+	FrameList &l_framelist = animation_frames[a];
+	l_framelist.pop_back();
+	if (current_framelist == &l_framelist)
+		--current_frame_entries;
+}
+
+float
+AnimationComponent::Private::frameRate(const Core::Identifier &a) const
+{
+	AnimationFramerates::const_iterator l_i =
+	    animation_framerate.find(a);
+	if (l_i != animation_framerate.end())
+		return(l_i->second);
+
+	/* animation not found */
+	return(0.f);
+}
 
 void
 AnimationComponent::Private::stop(uint16_t *s)
@@ -208,80 +243,67 @@ AnimationComponent::Private::animate(float d)
 
 AnimationComponent::AnimationComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_p(0)
+    , PIMPL_CREATE_X(*this)
 {
-	m_p = new Private(*this);
 }
 
 AnimationComponent::~AnimationComponent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 void
 AnimationComponent::pushFrame(const Core::Identifier &a, uint16_t t, int d)
 {
-	FrameList &l_framelist = m_p->animation_frames[a];
-	l_framelist.push_back(FrameEntry(t, d));
-	if (m_p->current_framelist == &l_framelist)
-		++m_p->current_frame_entries;
+	PIMPL->pushFrame(a, t, d);
 }
 
 void
 AnimationComponent::popFrame(const Core::Identifier &a)
 {
-	FrameList &l_framelist = m_p->animation_frames[a];
-	l_framelist.pop_back();
-	if (m_p->current_framelist == &l_framelist)
-		--m_p->current_frame_entries;
+	PIMPL->popFrame(a);
 }
 
 float
 AnimationComponent::frameRate(const Core::Identifier &a) const
 {
-	AnimationFramerates::const_iterator l_i =
-	    m_p->animation_framerate.find(a);
-	if (l_i != m_p->animation_framerate.end())
-		return(l_i->second);
-
-	/* animation not found */
-	return(0.f);
+	return(PIMPL->frameRate(a));
 }
 
 void
 AnimationComponent::setFrameRate(const Core::Identifier &a, float fps)
 {
-	m_p->animation_framerate[a] = fps;
+	PIMPL->animation_framerate[a] = fps;
 }
 
 float
 AnimationComponent::playbackRatio(void) const
 {
-	return(m_p->playback_ratio);
+	return(PIMPL->playback_ratio);
 }
 
 void
 AnimationComponent::setPlaybackRatio(float r)
 {
-	m_p->playback_ratio = r;
+	PIMPL->playback_ratio = r;
 }
 
 void
 AnimationComponent::play(const Core::Identifier &a, bool l)
 {
-	m_p->play(a, l);
+	PIMPL->play(a, l);
 }
 
 void
 AnimationComponent::stop(uint16_t *s)
 {
-	m_p->stop(s);
+	PIMPL->stop(s);
 }
 
 void
 AnimationComponent::update(float d)
 {
-	m_p->animate(d);
+	PIMPL->animate(d);
 }
 
 bool

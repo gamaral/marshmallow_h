@@ -192,73 +192,73 @@ TextComponent::Private::render(void)
 
 TextComponent::TextComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
 }
 
 TextComponent::~TextComponent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 Graphics::ITileset *
 TextComponent::tileset(void)
 {
-	return(m_p->tileset);
+	return(PIMPL->tileset);
 }
 
 const std::string &
 TextComponent::text(void) const
 {
-	return(m_p->text);
+	return(PIMPL->text);
 }
 
 const Graphics::Color &
 TextComponent::color(void) const
 {
-	return(m_p->color);
+	return(PIMPL->color);
 }
 
 void
 TextComponent::setText(const std::string &t)
 {
-	m_p->text = t;
-	m_p->invalidated = true;
-	m_p->rebuild();
+	PIMPL->text = t;
+	PIMPL->invalidated = true;
+	PIMPL->rebuild();
 }
 
 void
 TextComponent::setColor(const Graphics::Color &c)
 {
-	m_p->color = c;
+	PIMPL->color = c;
 }
 
 float
 TextComponent::scale(void) const
 {
-	return(m_p->scale);
+	return(PIMPL->scale);
 }
 
 void
 TextComponent::setScale(float s)
 {
-	m_p->scale = s;
-	m_p->invalidated = true;
-	m_p->rebuild();
+	PIMPL->scale = s;
+	PIMPL->invalidated = true;
+	PIMPL->rebuild();
 }
 
 uint16_t
 TextComponent::tileOffset(void) const
 {
-	return(m_p->tile_offset);
+	return(PIMPL->tile_offset);
 }
 
 void
 TextComponent::setTileOffset(uint16_t o)
 {
-	m_p->tile_offset = o;
-	m_p->invalidated = true;
-	m_p->rebuild();
+	PIMPL->tile_offset = o;
+	PIMPL->invalidated = true;
+	PIMPL->rebuild();
 }
 
 bool
@@ -282,19 +282,19 @@ TextComponent::update(float delta)
 {
 	ComponentBase::update(delta);
 
-	if (!m_p->position)
-	    m_p->position = static_cast<PositionComponent *>
+	if (!PIMPL->position)
+	    PIMPL->position = static_cast<PositionComponent *>
 	        (entity().getComponentType("Game::PositionComponent"));
 
-	if (m_p->invalidated)
-	    m_p->rebuild();
+	if (PIMPL->invalidated)
+	    PIMPL->rebuild();
 }
 
 void
 TextComponent::render(void)
 {
 	ComponentBase::render();
-	m_p->render();
+	PIMPL->render();
 }
 
 const Core::Type &

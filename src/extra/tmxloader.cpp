@@ -506,9 +506,7 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 			/* attach tileset used */
 
 			Game::TilesetComponent *l_tscomponent = new Game::TilesetComponent("tileset", *l_entity);
-#if FIXME
-			l_tscomponent->tileset() = l_tileset;
-#endif
+			l_tscomponent->setTileset(l_tileset);
 			l_entity->pushComponent(l_tscomponent);
 
 			/* generate tile mesh */
@@ -522,13 +520,11 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 			l_vdata->set(2,  l_object_hrsize.width,  l_object_hrsize.height);
 			l_vdata->set(3,  l_object_hrsize.width, -l_object_hrsize.height);
 
-#if FIXME
 			Graphics::ITextureCoordinateData *l_tdata =
 			    l_tileset->getTextureCoordinateData(static_cast<uint16_t>(l_object_gid - l_ts_firstgid));
 
-			l_render->mesh() =
-			    new Graphics::QuadMesh(l_tdata, l_tileset->textureData(), l_vdata);
-#endif
+			l_render->setMesh(new Graphics::QuadMesh
+			    (l_tdata, l_tileset->textureData(), l_vdata));
 
 			l_entity->pushComponent(l_render);
 		}
@@ -640,13 +636,13 @@ TMXLoader::Private::processTileset(XMLElement &e)
 /****************************************************************** TMXLoader */
 
 TMXLoader::TMXLoader(Game::IScene &s)
-    : m_p(new Private(s))
+    : PIMPL_CREATE_X(s)
 {
 }
 
 TMXLoader::~TMXLoader(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 bool

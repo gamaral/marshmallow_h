@@ -62,9 +62,7 @@ namespace Extra { /****************************************** Extra Namespace */
 	class MARSHMALLOW_EXTRA_EXPORT
 	TMXLoader
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION;
 		NO_ASSIGN_COPY(TMXLoader);
 	public:
 

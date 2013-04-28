@@ -61,40 +61,52 @@ struct RenderComponent::Private
 	    , mesh(0)
 	{}
 
+	~Private()
+	{
+		delete mesh, mesh = 0;
+		delete position, position = 0;
+	}
+
 	PositionComponent *position;
 	Graphics::IMesh *mesh;
 };
 
 RenderComponent::RenderComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
 }
 
 RenderComponent::~RenderComponent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 Graphics::IMesh *
-RenderComponent::mesh(void)
+RenderComponent::mesh(void) const
 {
-	return(m_p->mesh);
+	return(PIMPL->mesh);
+}
+
+void
+RenderComponent::setMesh(Graphics::IMesh *m)
+{
+	PIMPL->mesh = m;
 }
 
 void
 RenderComponent::update(float)
 {
-	if (!m_p->position)
-		m_p->position = static_cast<PositionComponent *>
+	if (!PIMPL->position)
+		PIMPL->position = static_cast<PositionComponent *>
 		    (entity().getComponentType("Game::PositionComponent"));
 }
 
 void
 RenderComponent::render(void)
 {
-	if (m_p->position && m_p->mesh)
-		Graphics::Painter::Draw(*m_p->mesh, m_p->position->position());
+	if (PIMPL->position && PIMPL->mesh)
+		Graphics::Painter::Draw(*PIMPL->mesh, PIMPL->position->position());
 }
 
 bool
@@ -104,7 +116,7 @@ RenderComponent::serialize(XMLElement &n) const
 	    return(false);
 
 	XMLElement *l_mesh = n.GetDocument()->NewElement("mesh");
-	if (m_p->mesh && !m_p->mesh->serialize(*l_mesh)) {
+	if (PIMPL->mesh && !PIMPL->mesh->serialize(*l_mesh)) {
 		MMWARNING("Render component '" << id().str() << "' serialization failed to serialize mesh!");
 		return(false);
 	}
@@ -138,7 +150,7 @@ RenderComponent::deserialize(XMLElement &n)
 		return(false);
 	}
 
-	m_p->mesh = l_mesh;
+	PIMPL->mesh = l_mesh;
 
 	return(true);
 }

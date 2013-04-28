@@ -53,24 +53,36 @@ struct TilesetComponent::Private
 	    : tileset(0)
 	{}
 
+	~Private()
+	{
+		delete tileset, tileset = 0;
+	}
+
 	Graphics::ITileset *tileset;
 };
 
 TilesetComponent::TilesetComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
 }
 
 TilesetComponent::~TilesetComponent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 Graphics::ITileset *
-TilesetComponent::tileset(void)
+TilesetComponent::tileset(void) const
 {
-	return(m_p->tileset);
+	return(PIMPL->tileset);
+}
+
+
+void
+TilesetComponent::setTileset(Graphics::ITileset *t)
+{
+	PIMPL->tileset = t;
 }
 
 bool

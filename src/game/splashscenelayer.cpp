@@ -75,7 +75,7 @@ enum SplashState
 struct SplashSceneLayer::Private
 {
 	Private(SplashSceneLayer &i)
-	    : _interface(i)
+	    : layer(i)
 	    , mesh(new Graphics::QuadMesh(2.f, 2.f))
 	    , exposure(1.5f)
 	    , fade(1.f)
@@ -90,7 +90,7 @@ struct SplashSceneLayer::Private
 
 	void calculateQuadScale(void);
 
-	SplashSceneLayer &_interface;
+	SplashSceneLayer &layer;
 
 	Graphics::QuadMesh *mesh;
 	float exposure;
@@ -116,7 +116,7 @@ SplashSceneLayer::Private::setState(int s)
 		break;
 	case ssFinished:
 		if (autoKill)
-			_interface.kill();
+			layer.kill();
 		break;
 	case ssFadeOut:
 	case ssExposure:
@@ -149,9 +149,8 @@ SplashSceneLayer::Private::calculateQuadScale(void)
 
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
     : SceneLayerBase(i, s, slfUpdateBlock)
-    , m_p(0)
+    , PIMPL_CREATE_X(*this)
 {
-	m_p = new Private(*this);
 	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
 }
 
@@ -159,67 +158,67 @@ SplashSceneLayer::~SplashSceneLayer(void)
 {
 	Game::Engine::Instance()->eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 Graphics::QuadMesh *
 SplashSceneLayer::mesh(void) const
 {
-	return(m_p->mesh);
+	return(PIMPL->mesh);
 }
 
 float
 SplashSceneLayer::exposure(void) const
 {
-	return(m_p->exposure);
+	return(PIMPL->exposure);
 }
 
 void
 SplashSceneLayer::setExposure(float t)
 {
-	m_p->exposure = t;
+	PIMPL->exposure = t;
 }
 
 float
 SplashSceneLayer::fade(void) const
 {
-	return(m_p->fade);
+	return(PIMPL->fade);
 }
 
 void
 SplashSceneLayer::setFade(float t)
 {
-	m_p->fade = t;
+	PIMPL->fade = t;
 }
 
 bool
 SplashSceneLayer::autoKill(void) const
 {
-	return(m_p->autoKill);
+	return(PIMPL->autoKill);
 }
 
 void
 SplashSceneLayer::setAutoKill(bool ak)
 {
-	m_p->autoKill = ak;
+	PIMPL->autoKill = ak;
 }
 
 void
 SplashSceneLayer::reset(void)
 {
-	if (m_p->state != ssFinished)
+	if (PIMPL->state != ssFinished)
 		return;
 
-	m_p->setState(ssFadeIn);
+	PIMPL->setState(ssFadeIn);
 }
 
 bool
 SplashSceneLayer::skip(void)
 {
-	if (m_p->state != ssExposure)
+	if (PIMPL->state != ssExposure)
 		return(false);
 
-	m_p->setState(ssFadeOut);
+	PIMPL->setState(ssFadeOut);
 	return(true);
 }
 
@@ -229,7 +228,7 @@ SplashSceneLayer::render(void)
 	Graphics::Painter::PushMatrix();
 	Graphics::Painter::LoadIdentity();
 
-	Graphics::Painter::Draw(*m_p->mesh, Math::Point2(0, 0));
+	Graphics::Painter::Draw(*PIMPL->mesh, Math::Point2(0, 0));
 
 	Graphics::Painter::PopMatrix();
 }
@@ -239,35 +238,35 @@ SplashSceneLayer::update(float d)
 {
 	float l_fiv;
 
-	if (m_p->state == ssFinished)
+	if (PIMPL->state == ssFinished)
 		return;
 
 	/* update timer */
-	m_p->timer += d;
+	PIMPL->timer += d;
 
-	switch (m_p->state) {
+	switch (PIMPL->state) {
 	case ssInit:
-		m_p->setState(ssFadeIn);
+		PIMPL->setState(ssFadeIn);
 
 		/* adjust quad scale based on texture data */
-		m_p->calculateQuadScale();
+		PIMPL->calculateQuadScale();
 
 		break;
 	case ssFadeIn:
-		if (m_p->timer < m_p->fade) {
-			l_fiv = m_p->timer / m_p->fade;
-			m_p->mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
-		} else m_p->setState(ssExposure);
+		if (PIMPL->timer < PIMPL->fade) {
+			l_fiv = PIMPL->timer / PIMPL->fade;
+			PIMPL->mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
+		} else PIMPL->setState(ssExposure);
 		break;
 	case ssFadeOut:
-		if (m_p->timer < m_p->fade) {
-			l_fiv = 1.f - (m_p->timer / m_p->fade);
-			m_p->mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
-		} else m_p->setState(ssFinished);
+		if (PIMPL->timer < PIMPL->fade) {
+			l_fiv = 1.f - (PIMPL->timer / PIMPL->fade);
+			PIMPL->mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
+		} else PIMPL->setState(ssFinished);
 		break;
 	case ssExposure:
-		if (m_p->timer >= m_p->exposure)
-			m_p->setState(ssFadeOut);
+		if (PIMPL->timer >= PIMPL->exposure)
+			PIMPL->setState(ssFadeOut);
 		break;
 	case ssFinished: break;
 	}
@@ -279,13 +278,13 @@ SplashSceneLayer::serialize(XMLElement &n) const
 	if (!SceneLayerBase::serialize(n))
 		return(false);
 
-	n.SetAttribute("fade", m_p->fade);
-	n.SetAttribute("exposure", m_p->exposure);
+	n.SetAttribute("fade", PIMPL->fade);
+	n.SetAttribute("exposure", PIMPL->exposure);
 
-	n.SetAttribute("autokill", m_p->autoKill ? "true" : "false");
+	n.SetAttribute("autokill", PIMPL->autoKill ? "true" : "false");
 
 	XMLElement *l_mesh = n.GetDocument()->NewElement("mesh");
-	if (m_p->mesh && !m_p->mesh->serialize(*l_mesh)) {
+	if (PIMPL->mesh && !PIMPL->mesh->serialize(*l_mesh)) {
 		MMWARNING("Splash scene layer '" << id().str() << "' serialization failed to serialize mesh!");
 		return(false);
 	}
@@ -300,18 +299,18 @@ SplashSceneLayer::deserialize(XMLElement &n)
 	if (!SceneLayerBase::deserialize(n))
 		return(false);
 
-	n.QueryFloatAttribute("fade", &m_p->fade);
-	n.QueryFloatAttribute("exposure", &m_p->exposure);
+	n.QueryFloatAttribute("fade", &PIMPL->fade);
+	n.QueryFloatAttribute("exposure", &PIMPL->exposure);
 
 	const char *l_autokill = n.Attribute("autokill");
-	m_p->autoKill = (l_autokill && l_autokill[0] == 't');
+	PIMPL->autoKill = (l_autokill && l_autokill[0] == 't');
 
 	XMLElement *l_child = n.FirstChildElement("mesh");
 	if (!l_child) {
 		MMWARNING("Splash scene layer '" << id().str() << "' deserialized without a mesh!");
 		return(false);
 	}
-	m_p->mesh->deserialize(*l_child);
+	PIMPL->mesh->deserialize(*l_child);
 
 	return(true);
 }

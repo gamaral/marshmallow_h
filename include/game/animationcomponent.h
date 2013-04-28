@@ -44,23 +44,13 @@
 #include <game/componentbase.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Graphics { /************************************ Graphics Namespace */
-	struct ITextureCoordinateData;
-} /******************************************************* Graphics Namespace */
-
 namespace Game { /******************************************** Game Namespace */
-
-	class RenderComponent;
-	class TilesetComponent;
-	struct AnimationSequence;
 
 	/*! @brief Game Animation Component Class */
 	class MARSHMALLOW_GAME_EXPORT
 	AnimationComponent : public ComponentBase
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION;
 		NO_ASSIGN_COPY(AnimationComponent);
 	public:
 
