@@ -49,8 +49,6 @@
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
-#include <tinyxml2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
@@ -107,52 +105,6 @@ RenderComponent::render(void)
 {
 	if (PIMPL->position && PIMPL->mesh)
 		Graphics::Painter::Draw(*PIMPL->mesh, PIMPL->position->position());
-}
-
-bool
-RenderComponent::serialize(XMLElement &n) const
-{
-	if (!ComponentBase::serialize(n))
-	    return(false);
-
-	XMLElement *l_mesh = n.GetDocument()->NewElement("mesh");
-	if (PIMPL->mesh && !PIMPL->mesh->serialize(*l_mesh)) {
-		MMWARNING("Render component '" << id().str() << "' serialization failed to serialize mesh!");
-		return(false);
-	}
-	n.InsertEndChild(l_mesh);
-
-	return(true);
-}
-
-bool
-RenderComponent::deserialize(XMLElement &n)
-{
-	if (!ComponentBase::deserialize(n))
-	    return(false);
-
-	XMLElement *l_child = n.FirstChildElement("mesh");
-	if (!l_child) {
-		MMWARNING("Render component '" << id().str() << "' deserialized without a mesh!");
-		return(false);
-	}
-
-	const char *l_mesh_type = l_child->Attribute("type");
-	Graphics::IMesh *l_mesh =
-	    Game::Factory::Instance()->createMesh(l_mesh_type);
-	if (!l_mesh) {
-		MMWARNING("Render component '" << id().str() << "' has an unknown mesh type");
-		return(false);
-	}
-
-	if (!l_mesh->deserialize(*l_child)) {
-		MMWARNING("Render component '" << id().str() << "' deserialization of mesh failed");
-		return(false);
-	}
-
-	PIMPL->mesh = l_mesh;
-
-	return(true);
 }
 
 const Core::Type &

@@ -89,9 +89,6 @@ namespace Game { /******************************************** Game Namespace */
 		VIRTUAL void render(void);
 		VIRTUAL void update(float d);
 
-		VIRTUAL bool serialize(XMLElement &node) const;
-		VIRTUAL bool deserialize(XMLElement &node);
-
 	public: /* static */
 
 		static const Core::Type & Type(void);

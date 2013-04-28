@@ -38,8 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml2.h>
-
 #include "core/type.h"
 
 #include "math/size2.h"
@@ -67,28 +65,6 @@ Math::Size2f &
 SizeComponent::size(void)
 {
 	return(PIMPL->size);
-}
-
-bool
-SizeComponent::serialize(XMLElement &n) const
-{
-	if (!ComponentBase::serialize(n))
-	    return(false);
-
-	n.SetAttribute("width", PIMPL->size.width);
-	n.SetAttribute("height", PIMPL->size.height);
-	return(true);
-}
-
-bool
-SizeComponent::deserialize(XMLElement &n)
-{
-	if (!ComponentBase::deserialize(n))
-	    return(false);
-
-	n.QueryFloatAttribute("width",  &PIMPL->size.width);
-	n.QueryFloatAttribute("height", &PIMPL->size.height);
-	return(true);
 }
 
 const Core::Type &

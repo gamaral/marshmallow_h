@@ -38,8 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml2.h>
-
 #include "core/type.h"
 
 #include "graphics/itileset.h"
@@ -83,22 +81,6 @@ void
 TilesetComponent::setTileset(Graphics::ITileset *t)
 {
 	PIMPL->tileset = t;
-}
-
-bool
-TilesetComponent::serialize(XMLElement &n) const
-{
-	MMUNUSED(n);
-	/* TODO: IMPLEMENT */
-	return(false);
-}
-
-bool
-TilesetComponent::deserialize(XMLElement &n)
-{
-	MMUNUSED(n);
-	/* TODO: IMPLEMENT */
-	return(false);
 }
 
 const Core::Type &

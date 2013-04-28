@@ -46,8 +46,6 @@
 
 #include <Box2D/Box2D.h>
 
-#include <tinyxml2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
@@ -114,38 +112,6 @@ b2World &
 Box2DSceneLayer::world(void)
 {
 	return(PIMPL->world);
-}
-
-bool
-Box2DSceneLayer::serialize(XMLElement &n) const
-{
-	if (!SceneLayerBase::serialize(n))
-		return(false);
-
-	XMLElement *l_child = n.GetDocument()->NewElement("gravity");
-	b2Vec2 l_gravity = PIMPL->world.GetGravity();
-	l_child->SetAttribute("x", l_gravity.x);
-	l_child->SetAttribute("y", l_gravity.y);
-	n.InsertEndChild(l_child);
-
-	return(true);
-}
-
-bool
-Box2DSceneLayer::deserialize(XMLElement &n)
-{
-	if (!SceneLayerBase::deserialize(n))
-		return(false);
-
-	XMLElement *l_child = n.FirstChildElement("gravity");
-	if (l_child) {
-		float l_x, l_y;
-		l_child->QueryFloatAttribute("x", &l_x);
-		l_child->QueryFloatAttribute("y", &l_y);
-		PIMPL->world.SetGravity(b2Vec2(l_x, l_y));
-	}
-	
-	return(true);
 }
 
 const Core::Type &

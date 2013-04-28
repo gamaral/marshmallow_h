@@ -41,8 +41,6 @@
 #include "core/identifier.h"
 #include "core/type.h"
 
-#include <tinyxml2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
@@ -98,21 +96,6 @@ bool
 SceneLayerBase::isZombie(void) const
 {
 	return(PIMPL->killed);
-}
-
-bool
-SceneLayerBase::serialize(XMLElement &n) const
-{
-	n.SetAttribute("id", id().str().c_str());
-	n.SetAttribute("type", type().str().c_str());
-	return(true);
-}
-
-bool
-SceneLayerBase::deserialize(XMLElement &n)
-{
-	MMUNUSED(n);
-	return(true);
 }
 
 } /*********************************************************** Game Namespace */

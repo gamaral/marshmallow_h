@@ -38,10 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml2.h>
-
-#include <cassert>
-
 #include "core/identifier.h"
 #include "core/logger.h"
 
@@ -50,6 +46,8 @@
 #include "graphics/factory.h"
 #include "graphics/itexturecoordinatedata.h"
 #include "graphics/itexturedata.h"
+
+#include <cassert>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
@@ -205,22 +203,6 @@ TilesetBase::getTextureCoordinateData(uint16_t i)
 	}
 
 	return(l_cached);
-}
-
-bool
-TilesetBase::serialize(XMLElement &n) const
-{
-	MMUNUSED(n);
-	/* TODO: Implement */
-	return(false);
-}
-
-bool
-TilesetBase::deserialize(XMLElement &n)
-{
-	MMUNUSED(n);
-	/* TODO: Implement */
-	return(false);
 }
 
 void

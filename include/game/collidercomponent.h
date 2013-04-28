@@ -95,9 +95,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		VIRTUAL void update(float delta);
 
-		VIRTUAL bool serialize(XMLElement &node) const;
-		VIRTUAL bool deserialize(XMLElement &node);
-
 	public: /* static */
 
 		static const Core::Type & Type(void);

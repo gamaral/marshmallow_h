@@ -81,9 +81,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		VIRTUAL void render(void);
 		VIRTUAL void update(float delta);
-
-		VIRTUAL bool serialize(XMLElement &node) const;
-		VIRTUAL bool deserialize(XMLElement &node);
 	};
 
 } /*********************************************************** Game Namespace */

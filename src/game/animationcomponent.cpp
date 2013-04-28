@@ -52,8 +52,6 @@
 #include <map>
 #include <vector>
 
-#include <tinyxml2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
@@ -304,22 +302,6 @@ void
 AnimationComponent::update(float d)
 {
 	PIMPL->animate(d);
-}
-
-bool
-AnimationComponent::serialize(XMLElement &n) const
-{
-	MMUNUSED(n);
-	/* TODO: IMPLEMENT */
-	return(true);
-}
-
-bool
-AnimationComponent::deserialize(XMLElement &n)
-{
-	MMUNUSED(n);
-	/* TODO: IMPLEMENT */
-	return(false);
 }
 
 const Core::Type &

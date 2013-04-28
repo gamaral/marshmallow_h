@@ -38,8 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml2.h>
-
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/type.h"
@@ -270,49 +268,6 @@ SplashSceneLayer::update(float d)
 		break;
 	case ssFinished: break;
 	}
-}
-
-bool
-SplashSceneLayer::serialize(XMLElement &n) const
-{
-	if (!SceneLayerBase::serialize(n))
-		return(false);
-
-	n.SetAttribute("fade", PIMPL->fade);
-	n.SetAttribute("exposure", PIMPL->exposure);
-
-	n.SetAttribute("autokill", PIMPL->autoKill ? "true" : "false");
-
-	XMLElement *l_mesh = n.GetDocument()->NewElement("mesh");
-	if (PIMPL->mesh && !PIMPL->mesh->serialize(*l_mesh)) {
-		MMWARNING("Splash scene layer '" << id().str() << "' serialization failed to serialize mesh!");
-		return(false);
-	}
-	n.InsertEndChild(l_mesh);
-
-	return(true);
-}
-
-bool
-SplashSceneLayer::deserialize(XMLElement &n)
-{
-	if (!SceneLayerBase::deserialize(n))
-		return(false);
-
-	n.QueryFloatAttribute("fade", &PIMPL->fade);
-	n.QueryFloatAttribute("exposure", &PIMPL->exposure);
-
-	const char *l_autokill = n.Attribute("autokill");
-	PIMPL->autoKill = (l_autokill && l_autokill[0] == 't');
-
-	XMLElement *l_child = n.FirstChildElement("mesh");
-	if (!l_child) {
-		MMWARNING("Splash scene layer '" << id().str() << "' deserialized without a mesh!");
-		return(false);
-	}
-	PIMPL->mesh->deserialize(*l_child);
-
-	return(true);
 }
 
 bool

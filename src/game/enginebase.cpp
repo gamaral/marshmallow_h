@@ -38,8 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml2.h>
-
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/platform.h"
@@ -62,6 +60,8 @@
 #include "game/engine_p.h"
 #include "game/factory.h"
 #include "game/scenemanager.h"
+
+#include <cstdio>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
@@ -460,49 +460,6 @@ EngineBase::update(float d)
 
 	Event::UpdateEvent event(d);
 	eventManager()->dispatch(event);
-}
-
-bool
-EngineBase::serialize(XMLElement &n) const
-{
-	n.SetAttribute("fps", PIMPL->fps);
-	n.SetAttribute("sleep",  PIMPL->sleep);
-
-	if (PIMPL->scene_manager) {
-		XMLElement *l_element = n.GetDocument()->NewElement("scenes");
-
-		if (!PIMPL->scene_manager->serialize(*l_element)) {
-			MMWARNING("Scene Manager serialization failed");
-			return(false);
-		}
-
-		n.InsertEndChild(l_element);
-	}
-
-	return(true);
-}
-
-bool
-EngineBase::deserialize(XMLElement &n)
-{
-	/*
-	 * Engine deserialization should ideally
-	 * take place BEFORE it has been started.
-	 */
-
-	XMLElement *l_element;
-
-	l_element = n.FirstChildElement("scenes");
-
-	n.QueryIntAttribute("fps", &PIMPL->fps);
-	n.QueryIntAttribute("sleep",  &PIMPL->sleep);
-
-	if (l_element && PIMPL->scene_manager)
-		PIMPL->scene_manager->deserialize(*l_element);
-	else if (l_element && !PIMPL->scene_manager)
-		return(false);
-	
-	return(true);
 }
 
 bool

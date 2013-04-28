@@ -43,8 +43,6 @@
 
 #include <cassert>
 
-#include <tinyxml2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
@@ -82,24 +80,6 @@ const ColliderList &
 CollisionSceneLayer::colliders(void) const
 {
 	return(PIMPL->colliders);
-}
-
-bool
-CollisionSceneLayer::serialize(XMLElement &n) const
-{
-	if (!SceneLayerBase::serialize(n))
-		return(false);
-
-	return(true);
-}
-
-bool
-CollisionSceneLayer::deserialize(XMLElement &n)
-{
-	if (!SceneLayerBase::deserialize(n))
-		return(false);
-
-	return(true);
 }
 
 const Core::Type &

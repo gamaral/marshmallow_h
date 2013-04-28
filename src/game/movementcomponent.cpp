@@ -45,8 +45,6 @@
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
-#include <tinyxml2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
@@ -140,61 +138,6 @@ MovementComponent::update(float d)
 	/* update position */
 
 	PIMPL->position->position() += l_velocity * d;
-}
-
-bool
-MovementComponent::serialize(XMLElement &n) const
-{
-	if (!ComponentBase::serialize(n))
-	    return(false);
-
-	XMLElement *l_acceleration = n.GetDocument()->NewElement("acceleration");
-	l_acceleration->SetAttribute("x", PIMPL->acceleration.x);
-	l_acceleration->SetAttribute("y", PIMPL->acceleration.y);
-	n.InsertEndChild(l_acceleration);
-
-	XMLElement *l_limit = n.GetDocument()->NewElement("limit");
-	l_limit->SetAttribute("x1", PIMPL->limit_x.first());
-	l_limit->SetAttribute("x2", PIMPL->limit_x.second());
-	l_limit->SetAttribute("y1", PIMPL->limit_y.first());
-	l_limit->SetAttribute("y2", PIMPL->limit_y.second());
-	n.InsertEndChild(l_limit);
-
-	XMLElement *l_velocity = n.GetDocument()->NewElement("velocity");
-	l_velocity->SetAttribute("x", PIMPL->velocity.x);
-	l_velocity->SetAttribute("y", PIMPL->velocity.y);
-	n.InsertEndChild(l_velocity);
-
-	return(true);
-}
-
-bool
-MovementComponent::deserialize(XMLElement &n)
-{
-	if (!ComponentBase::deserialize(n))
-	    return(false);
-
-	XMLElement *l_acceleration = n.FirstChildElement( "acceleration" );
-	if (l_acceleration) {
-		l_acceleration->QueryFloatAttribute("x", &PIMPL->acceleration.x);
-		l_acceleration->QueryFloatAttribute("y", &PIMPL->acceleration.y);
-	}
-
-	XMLElement *l_limit = n.FirstChildElement( "limit" );
-	if (l_limit) {
-		l_limit->QueryFloatAttribute("x1", &PIMPL->limit_x[0]);
-		l_limit->QueryFloatAttribute("x2", &PIMPL->limit_x[1]);
-		l_limit->QueryFloatAttribute("y1", &PIMPL->limit_y[0]);
-		l_limit->QueryFloatAttribute("y2", &PIMPL->limit_y[1]);
-	}
-
-	XMLElement *l_velocity = n.FirstChildElement( "velocity" );
-	if (l_velocity) {
-		l_velocity->QueryFloatAttribute("x", &PIMPL->velocity.x);
-		l_velocity->QueryFloatAttribute("y", &PIMPL->velocity.y);
-	}
-
-	return(true);
 }
 
 const Core::Type &

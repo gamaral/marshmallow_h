@@ -38,8 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml2.h>
-
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/type.h"
@@ -47,6 +45,8 @@
 #include "graphics/itexturecoordinatedata.h"
 #include "graphics/itexturedata.h"
 #include "graphics/ivertexdata.h"
+
+#include <cstring>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
@@ -205,120 +205,6 @@ MeshBase::setTextureCoordinate(uint16_t i, float u, float v)
 {
 	if (!m_p->tcdata->set(i, u, v))
 		MMWARNING("Failed to assign values (" << u << ", " << v << ") to texture coordinate " << i);
-}
-
-bool
-MeshBase::serialize(XMLElement &n) const
-{
-	n.SetAttribute("type", type().str().c_str());
-	n.SetAttribute("rotation", m_p->rotation);
-
-	/* color */
-	XMLElement *l_color = n.GetDocument()->NewElement("color");
-	l_color->SetAttribute("r", m_p->color[0]);
-	l_color->SetAttribute("g", m_p->color[1]);
-	l_color->SetAttribute("b", m_p->color[2]);
-	l_color->SetAttribute("a", m_p->color[3]);
-	n.InsertEndChild(l_color);
-
-	/* texture */
-	if (m_p->tdata->isLoaded()) {
-		XMLElement *l_texture = n.GetDocument()->NewElement("texture");
-		l_texture->SetAttribute("id", m_p->tdata->id().str().c_str());
-		l_texture->SetAttribute("min", ScaleModeToString(m_p->tdata->minificationMode()));
-		l_texture->SetAttribute("mag", ScaleModeToString(m_p->tdata->magnificationMode()));
-		n.InsertEndChild(l_texture);
-	}
-
-	/* texture coordinates */
-	for (uint16_t i = 0; i < m_p->tcdata->count(); ++i) {
-		float l_u, l_v;
-		if (m_p->tcdata->get(i, l_u, l_v)) {
-			XMLElement *l_vector = n.GetDocument()->NewElement("tcoord");
-			l_vector->SetAttribute("u", l_u);
-			l_vector->SetAttribute("v", l_v);
-			n.InsertEndChild(l_vector);
-		} else MMWARNING("Failed to serialize text coord " << i);
-	}
-
-	/* vertexes */
-	for (uint16_t i = 0; i < m_p->vdata->count(); ++i) {
-		float l_x, l_y;
-		if (m_p->vdata->get(i, l_x, l_y)) {
-			XMLElement *l_vector = n.GetDocument()->NewElement("vector");
-			l_vector->SetAttribute("x", l_x);
-			l_vector->SetAttribute("y", l_y);
-			n.InsertEndChild(l_vector);
-		} else MMWARNING("Failed to serialize vertex " << i);
-	}
-
-	return(true);
-}
-
-bool
-MeshBase::deserialize(XMLElement &n)
-{
-	XMLElement *l_child;
-	uint16_t l_i;
-
-	n.QueryFloatAttribute("rotation", &m_p->rotation);
-
-	/* color */
-	l_child = n.FirstChildElement("color");
-	if (l_child) {
-		l_child->QueryFloatAttribute("r", &m_p->color[0]);
-		l_child->QueryFloatAttribute("g", &m_p->color[1]);
-		l_child->QueryFloatAttribute("b", &m_p->color[2]);
-		l_child->QueryFloatAttribute("a", &m_p->color[3]);
-	}
-
-	/* scale */
-	l_child = n.FirstChildElement("scale");
-	if (l_child) {
-		l_child->QueryFloatAttribute("x", &m_p->scale[0]);
-		l_child->QueryFloatAttribute("y", &m_p->scale[1]);
-	}
-
-	/* texture */
-	l_child = n.FirstChildElement("texture");
-	if (l_child) {
-		const char *l_file = l_child->Attribute("id");
-		if (l_file) {
-			const ITextureData::ScaleMode l_mag =
-			    StringToScaleMode(l_child->Attribute("mag"));
-			const ITextureData::ScaleMode l_min =
-			    StringToScaleMode(l_child->Attribute("min"));
-			m_p->tdata->load(l_file, l_mag, l_min);
-		}
-	}
-
-	/* texture coordinates */
-	for (l_child = n.FirstChildElement("tcoord"), l_i = 0;
-	     l_child;
-	     l_child = l_child->NextSiblingElement("tcoord")) {
-		float l_u, l_v;
-		l_child->QueryFloatAttribute("u", &l_u);
-		l_child->QueryFloatAttribute("v", &l_v);
-		if (!m_p->tcdata->set(l_i++, l_u, l_v)) {
-			MMWARNING("Failed to assign texture coordinate data.");
-			break;
-		}
-	}
-
-	/* vertexes */
-	for (l_child = n.FirstChildElement("vector"), l_i = 0;
-	     l_child;
-	     l_child = l_child->NextSiblingElement("vector")) {
-		float l_x, l_y;
-		l_child->QueryFloatAttribute("x", &l_x);
-		l_child->QueryFloatAttribute("y", &l_y);
-		if (!m_p->vdata->set(l_i++, l_x, l_y)) {
-			MMWARNING("Failed to assign vertex data.");
-			break;
-		}
-	}
-
-	return(true);
 }
 
 } /******************************************************* Graphics Namespace */

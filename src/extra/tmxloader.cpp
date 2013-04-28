@@ -67,6 +67,7 @@
 #include <cassert>
 
 #include <tinyxml2.h>
+namespace TinyXML = tinyxml2;
 
 #define TMXLAYER_DATA_NODE          "data"
 #define TMXLAYER_NODE               "layer"
@@ -107,10 +108,10 @@ struct TMXLoader::Private
 	{}
 
 	bool load(const char *file);
-	bool processLayer(XMLElement &element);
-	bool processMap(XMLElement &element);
-	bool processObjectGroup(XMLElement &element);
-	bool processTileset(XMLElement &element);
+	bool processLayer(TinyXML::XMLElement &element);
+	bool processMap(TinyXML::XMLElement &element);
+	bool processObjectGroup(TinyXML::XMLElement &element);
+	bool processTileset(TinyXML::XMLElement &element);
 
 	Game::IScene &scene;
 
@@ -132,11 +133,11 @@ bool
 TMXLoader::Private::load(const char *f)
 {
 	TinyXML::XMLDocument l_tmx;
-	XMLElement *l_root;
+	TinyXML::XMLElement *l_root;
 
 	is_loaded = false;
 
-	if (l_tmx.LoadFile(f) != XML_NO_ERROR)
+	if (l_tmx.LoadFile(f) != TinyXML::XML_NO_ERROR)
 	    return(false);
 
 	/* get parent directory */
@@ -148,7 +149,7 @@ TMXLoader::Private::load(const char *f)
 	    return(false);
 
 	/* parse tilesets */
-	XMLElement *l_tileset = l_root->FirstChildElement(TMXTILESET_NODE);
+	TinyXML::XMLElement *l_tileset = l_root->FirstChildElement(TMXTILESET_NODE);
 	while (l_tileset) {
 		if (!processTileset(*l_tileset))
 			return(false);
@@ -156,7 +157,7 @@ TMXLoader::Private::load(const char *f)
 	}
 
 	/* parse layers and object groups */
-	XMLElement *l_element = l_root->FirstChildElement();
+	TinyXML::XMLElement *l_element = l_root->FirstChildElement();
 	while (l_element) {
 		if (0 == strcmp(l_element->Value(), TMXLAYER_NODE)
 		    && !processLayer(*l_element))
@@ -176,12 +177,12 @@ TMXLoader::Private::load(const char *f)
 }
 
 bool
-TMXLoader::Private::processMap(XMLElement &m)
+TMXLoader::Private::processMap(TinyXML::XMLElement &m)
 {
-	if ((XML_SUCCESS != m.QueryIntAttribute("width", &map_size.width))
-	 || (XML_SUCCESS != m.QueryIntAttribute("height", &map_size.height))
-	 || (XML_SUCCESS != m.QueryIntAttribute("tilewidth", &tile_size.width))
-	 || (XML_SUCCESS != m.QueryIntAttribute("tileheight", &tile_size.height))) {
+	if ((TinyXML::XML_SUCCESS != m.QueryIntAttribute("width", &map_size.width))
+	 || (TinyXML::XML_SUCCESS != m.QueryIntAttribute("height", &map_size.height))
+	 || (TinyXML::XML_SUCCESS != m.QueryIntAttribute("tilewidth", &tile_size.width))
+	 || (TinyXML::XML_SUCCESS != m.QueryIntAttribute("tileheight", &tile_size.height))) {
 		MMWARNING("Map element is missing one or more required attributes.");
 		return(false);
 	}
@@ -190,8 +191,8 @@ TMXLoader::Private::processMap(XMLElement &m)
 	scale.set(1.f, 1.f);
 
 	/* process properties */
-	XMLElement *l_properties = m.FirstChildElement(TMXPROPERTIES_NODE);
-	XMLElement *l_property = l_properties ? l_properties->FirstChildElement(TMXPROPERTIES_PROPERTY_NODE) : 0;
+	TinyXML::XMLElement *l_properties = m.FirstChildElement(TMXPROPERTIES_NODE);
+	TinyXML::XMLElement *l_property = l_properties ? l_properties->FirstChildElement(TMXPROPERTIES_PROPERTY_NODE) : 0;
 	if (l_property)
 	do {
 		const char *l_pname = l_property->Attribute("name");
@@ -272,7 +273,7 @@ TMXLoader::Private::processMap(XMLElement &m)
 }
 
 bool
-TMXLoader::Private::processLayer(XMLElement &e)
+TMXLoader::Private::processLayer(TinyXML::XMLElement &e)
 {
 	const char *l_name;
 	float l_opacity = 1.f;
@@ -286,7 +287,7 @@ TMXLoader::Private::processLayer(XMLElement &e)
 	MMIGNORE e.QueryFloatAttribute("opacity", &l_opacity);
 	MMIGNORE e.QueryIntAttribute("visible", &l_visible);
 
-	XMLElement *l_data = e.FirstChildElement(TMXLAYER_DATA_NODE);
+	TinyXML::XMLElement *l_data = e.FirstChildElement(TMXLAYER_DATA_NODE);
 
 	if (!l_data) {
 		MMWARNING("Layer element is missing data element.");
@@ -301,7 +302,7 @@ TMXLoader::Private::processLayer(XMLElement &e)
 		MMWARNING("Layer data element is missing one or more required attributes.");
 		return(false);
 	}
-	const char *l_data_raw = XMLUtil::SkipWhiteSpace(l_data->GetText());
+	const char *l_data_raw = TinyXML::XMLUtil::SkipWhiteSpace(l_data->GetText());
 	size_t l_data_raw_len = strlen(l_data_raw);
 
 	/* right-side data trim */
@@ -358,8 +359,8 @@ TMXLoader::Private::processLayer(XMLElement &e)
 	l_layer->setVisibility(1 == l_visible);
 
 	/* process properties */
-	XMLElement *l_properties = e.FirstChildElement(TMXPROPERTIES_NODE);
-	XMLElement *l_property = l_properties ? l_properties->FirstChildElement(TMXPROPERTIES_PROPERTY_NODE) : 0;
+	TinyXML::XMLElement *l_properties = e.FirstChildElement(TMXPROPERTIES_NODE);
+	TinyXML::XMLElement *l_property = l_properties ? l_properties->FirstChildElement(TMXPROPERTIES_PROPERTY_NODE) : 0;
 	if (l_property)
 	do {
 		const char *l_pname = l_property->Attribute("name");
@@ -415,7 +416,7 @@ TMXLoader::Private::processLayer(XMLElement &e)
 }
 
 bool
-TMXLoader::Private::processObjectGroup(XMLElement &e)
+TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 {
 	const char *l_name;
 
@@ -426,7 +427,7 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 
 	Game::EntitySceneLayer *l_layer = new Game::EntitySceneLayer(l_name, scene);
 
-	XMLElement *l_object = e.FirstChildElement(TMXOBJECTGROUP_OBJECT_NODE);
+	TinyXML::XMLElement *l_object = e.FirstChildElement(TMXOBJECTGROUP_OBJECT_NODE);
 	while (l_object) {
 		const char *l_object_name;
 		const char *l_object_type;
@@ -446,8 +447,8 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 			return(false);
 		}
 
-		if ((XML_SUCCESS != l_object->QueryIntAttribute("x", &l_object_x))
-		 || (XML_SUCCESS != l_object->QueryIntAttribute("y", &l_object_y))) {
+		if ((TinyXML::XML_SUCCESS != l_object->QueryIntAttribute("x", &l_object_x))
+		 || (TinyXML::XML_SUCCESS != l_object->QueryIntAttribute("y", &l_object_y))) {
 			MMWARNING("Object element is missing one or more required attributes.");
 			return(false);
 		}
@@ -462,7 +463,7 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 		Math::Size2f l_object_hrsize;
 
 		/* standard object */
-		if (XML_SUCCESS != l_object->QueryIntAttribute("gid", &l_object_gid)) {
+		if (TinyXML::XML_SUCCESS != l_object->QueryIntAttribute("gid", &l_object_gid)) {
 			l_object->QueryIntAttribute("width",  &l_object_width);
 			l_object->QueryIntAttribute("height", &l_object_height);
 
@@ -546,8 +547,8 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 		l_entity->pushComponent(l_size);
 
 		/* object properties */
-		XMLElement *l_properties = l_object->FirstChildElement(TMXPROPERTIES_NODE);
-		XMLElement *l_property = l_properties ? l_properties->FirstChildElement(TMXPROPERTIES_PROPERTY_NODE) : 0;
+		TinyXML::XMLElement *l_properties = l_object->FirstChildElement(TMXPROPERTIES_NODE);
+		TinyXML::XMLElement *l_property = l_properties ? l_properties->FirstChildElement(TMXPROPERTIES_PROPERTY_NODE) : 0;
 		if (l_property) {
 			Game::PropertyComponent *l_pcomponent = new Game::PropertyComponent("property", *l_entity);
 
@@ -576,7 +577,7 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 }
 
 bool
-TMXLoader::Private::processTileset(XMLElement &e)
+TMXLoader::Private::processTileset(TinyXML::XMLElement &e)
 {
 	int l_first_gid;
 	const char *l_name;
@@ -585,10 +586,10 @@ TMXLoader::Private::processTileset(XMLElement &e)
 	int l_tile_margin = 0;
 	int l_tile_spacing = 0;
 
-	if ((XML_SUCCESS != e.QueryIntAttribute("firstgid", &l_first_gid))
+	if ((TinyXML::XML_SUCCESS != e.QueryIntAttribute("firstgid", &l_first_gid))
 	 || (!(l_name = e.Attribute("name")))
-	 || (XML_SUCCESS != e.QueryIntAttribute("tilewidth", &l_tile_width))
-	 || (XML_SUCCESS != e.QueryIntAttribute("tileheight", &l_tile_height))) {
+	 || (TinyXML::XML_SUCCESS != e.QueryIntAttribute("tilewidth", &l_tile_width))
+	 || (TinyXML::XML_SUCCESS != e.QueryIntAttribute("tileheight", &l_tile_height))) {
 		MMWARNING("Tileset element is missing one or more required attributes.");
 		return(false);
 	}
@@ -597,7 +598,7 @@ TMXLoader::Private::processTileset(XMLElement &e)
 	MMIGNORE e.QueryIntAttribute("margin", &l_tile_margin);
 	MMIGNORE e.QueryIntAttribute("spacing", &l_tile_spacing);
 
-	XMLElement *l_image = e.FirstChildElement(TMXTILESET_IMAGE_NODE);
+	TinyXML::XMLElement *l_image = e.FirstChildElement(TMXTILESET_IMAGE_NODE);
 	if (!l_image) {
 		MMWARNING("Tileset element is missing an image element.");
 		return(false);

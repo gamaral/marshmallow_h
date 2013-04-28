@@ -99,9 +99,6 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 		VIRTUAL Math::Vector2 vertex(uint16_t index) const;
 		VIRTUAL void textureCoordinate(uint16_t index, float &u, float &v) const;
-
-		VIRTUAL bool serialize(XMLElement &node) const;
-		VIRTUAL bool deserialize(XMLElement &node);
 	};
 
 } /******************************************************* Graphics Namespace */

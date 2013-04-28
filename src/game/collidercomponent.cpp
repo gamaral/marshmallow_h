@@ -51,8 +51,6 @@
 #include "game/positioncomponent.h"
 #include "game/sizecomponent.h"
 
-#include <tinyxml2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
@@ -272,24 +270,6 @@ void
 ColliderComponent::update(float d)
 {
 	PIMPL->update(d);
-}
-
-bool
-ColliderComponent::serialize(XMLElement &n) const
-{
-	if (!ComponentBase::serialize(n))
-	    return(false);
-
-	return(true);
-}
-
-bool
-ColliderComponent::deserialize(XMLElement &n)
-{
-	if (!ComponentBase::deserialize(n))
-	    return(false);
-
-	return(true);
 }
 
 Game::CollisionSceneLayer *

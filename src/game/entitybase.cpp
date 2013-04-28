@@ -45,8 +45,6 @@
 #include "game/factory.h"
 #include "game/icomponent.h"
 
-#include <tinyxml2.h>
-
 #include <list>
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -273,54 +271,6 @@ bool
 EntityBase::isZombie(void) const
 {
 	return(PIMPL->killed);
-}
-
-bool
-EntityBase::serialize(XMLElement &n) const
-{
-	n.SetAttribute("id", id().str().c_str());
-	n.SetAttribute("type", type().str().c_str());
-
-	ComponentList::const_reverse_iterator l_i;
-	ComponentList::const_reverse_iterator l_c = PIMPL->components.rend();
-
-	for (l_i = PIMPL->components.rbegin(); l_i != l_c; l_i++) {
-		XMLElement *l_element = n.GetDocument()->NewElement("component");
-		if ((*l_i)->serialize(*l_element))
-			n.InsertEndChild(l_element);
-	}
-	
-	return(true);
-}
-
-bool
-EntityBase::deserialize(XMLElement &n)
-{
-	XMLElement *l_child;
-	for (l_child = n.FirstChildElement("component") ;
-	     l_child;
-	     l_child = l_child->NextSiblingElement("component")) {
-
-		const char *l_id   = l_child->Attribute("id");
-		const char *l_type = l_child->Attribute("type");
-
-		IComponent *l_component =
-		    Factory::Instance()->createComponent(l_type, l_id, *this);
-
-		if (!l_component) {
-			MMWARNING("Failed to create component '" << l_id << "' (" << l_type << ")");
-			continue;
-		}
-
-		if (!l_component->deserialize(*l_child)) {
-			MMWARNING("Failed to deserialize component '" << l_id << "' (" << l_type << ")");
-			continue;
-		}
-
-		pushComponent(l_component);
-	}
-
-	return(true);
 }
 
 } /*********************************************************** Game Namespace */

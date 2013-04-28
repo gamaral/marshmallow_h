@@ -41,8 +41,6 @@
 #include "core/identifier.h"
 #include "core/type.h"
 
-#include <tinyxml2.h>
-
 #include <map>
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -78,26 +76,6 @@ void
 PropertyComponent::set(const Core::Identifier &i, const std::string &v)
 {
 	PIMPL->data[i] = v;
-}
-
-bool
-PropertyComponent::serialize(XMLElement &n) const
-{
-	if (!ComponentBase::serialize(n))
-	    return(false);
-
-	/* TODO(gamaral) fill in serialization code */
-	return(true);
-}
-
-bool
-PropertyComponent::deserialize(XMLElement &n)
-{
-	if (!ComponentBase::deserialize(n))
-	    return(false);
-
-	/* TODO(gamaral) fill in deserialization code */
-	return(true);
 }
 
 const Core::Type &

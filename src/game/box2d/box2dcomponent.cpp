@@ -54,8 +54,6 @@
 
 #include <Box2D/Box2D.h>
 
-#include <tinyxml2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
@@ -195,56 +193,6 @@ Box2DComponent::update(float d)
 		    static_cast<Graphics::MeshBase *>(PIMPL->render->mesh());
 		if (l_gbase) l_gbase->setRotation(fmodf(l_angle * RADIAN_TO_DEGREE, 360.f));
 	}
-}
-
-bool
-Box2DComponent::serialize(XMLElement &n) const
-{
-	if (!ComponentBase::serialize(n))
-	    return(false);
-
-	switch (PIMPL->body_type) {
-	case b2_staticBody:
-	    n.SetAttribute("body", "static");
-	    break;
-	case b2_kinematicBody:
-	    n.SetAttribute("body", "kinematic");
-	    break;
-	case b2_dynamicBody:
-	    n.SetAttribute("body", "dynamic");
-	    break;
-	}
-
-	n.SetAttribute("width", PIMPL->size.width);
-	n.SetAttribute("height", PIMPL->size.height);
-
-	n.SetAttribute("density", PIMPL->density);
-	n.SetAttribute("friction", PIMPL->friction);
-
-	return(true);
-}
-
-bool
-Box2DComponent::deserialize(XMLElement &n)
-{
-	if (!ComponentBase::deserialize(n))
-	    return(false);
-
-	const char *l_body = n.Attribute("body");
-
-	PIMPL->body_type = b2_staticBody;
-	if (l_body && l_body[0] == 'k')
-	    PIMPL->body_type = b2_kinematicBody;
-	if (l_body && l_body[0] == 'd')
-	    PIMPL->body_type = b2_dynamicBody;
-
-	n.QueryFloatAttribute("width", &PIMPL->size.width);
-	n.QueryFloatAttribute("height", &PIMPL->size.height);
-
-	n.QueryFloatAttribute("density", &PIMPL->density);
-	n.QueryFloatAttribute("friction", &PIMPL->friction);
-
-	return(true);
 }
 
 const Core::Type &

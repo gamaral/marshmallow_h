@@ -22,10 +22,6 @@ set(MARSHMALLOW_GAME_LIBS "marshmallow_core"
                           "marshmallow_math"
 )
 
-# tinyxml
-include_directories(${TINYXML2_INCLUDE_DIR})
-list(APPEND MARSHMALLOW_GAME_LIBS ${TINYXML2_LIBRARY})
-
 # box2d
 if (MARSHMALLOW_WITH_BOX2D)
 	include_directories(${BOX2D_INCLUDE_DIR})

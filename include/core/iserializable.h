@@ -44,10 +44,6 @@
 #include <core/environment.h>
 #include <core/namespace.h>
 
-namespace tinyxml2 { class XMLElement; }
-namespace TinyXML = tinyxml2;
-using namespace TinyXML;
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 
@@ -59,6 +55,7 @@ namespace Core { /******************************************** Core Namespace */
 	{
 		virtual ~ISerializable(void);
 
+#if 0
 		/*!
 		 * @brief Serialization feature
 		 * @param node XML node
@@ -70,6 +67,7 @@ namespace Core { /******************************************** Core Namespace */
 		 * @param node XML node
 		 */
 		virtual bool deserialize(XMLElement &node) = 0;
+#endif
 	};
 
 } /*********************************************************** Core Namespace */

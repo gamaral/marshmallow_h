@@ -48,8 +48,6 @@
 #include "game/factory.h"
 #include "game/iscenelayer.h"
 
-#include <tinyxml2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
@@ -232,53 +230,6 @@ SceneBase::update(float d)
 		else
 			l_slayer->update(d);
 	} while(!l_finished);
-}
-
-bool
-SceneBase::serialize(XMLElement &n) const
-{
-	n.SetAttribute("id", id().str().c_str());
-	n.SetAttribute("type", type().str().c_str());
-
-	SceneLayerList::const_reverse_iterator l_i;
-	SceneLayerList::const_reverse_iterator l_c = PIMPL->layers.rend();
-	for (l_i = PIMPL->layers.rbegin(); l_i != l_c; ++l_i) {
-		XMLElement *l_element = n.GetDocument()->NewElement("layer");
-		if ((*l_i)->serialize(*l_element))
-			n.InsertEndChild(l_element);
-	}
-	
-	return(true);
-}
-
-bool
-SceneBase::deserialize(XMLElement &n)
-{
-	XMLElement *l_child;
-	for (l_child = n.FirstChildElement("layer") ;
-	     l_child;
-	     l_child = l_child->NextSiblingElement("layer")) {
-
-		const char *l_id   = l_child->Attribute("id");
-		const char *l_type = l_child->Attribute("type");
-
-		ISceneLayer *l_layer =
-		    Factory::Instance()->createSceneLayer(l_type, l_id, *this);
-
-		if (!l_layer) {
-			MMWARNING("SceneLayer '" << l_id << "' of type '" << l_type << "' creation failed");
-			continue;
-		}
-
-		if (!l_layer->deserialize(*l_child)) {
-			MMWARNING("SceneLayer '" << l_id << "' of type '" << l_type << "' failed deserialization");
-			continue;
-		}
-
-		pushLayer(l_layer);
-	}
-	
-	return(true);
 }
 
 } /*********************************************************** Game Namespace */

@@ -49,8 +49,6 @@
 #include "game/positioncomponent.h"
 #include "game/sizecomponent.h"
 
-#include <tinyxml2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
@@ -241,56 +239,6 @@ void
 EntitySceneLayer::update(float d)
 {
 	PIMPL->update(d);
-}
-
-bool
-EntitySceneLayer::serialize(XMLElement &n) const
-{
-	if (!SceneLayerBase::serialize(n))
-		return(false);
-
-	EntityList::const_iterator l_i;
-	for (l_i = PIMPL->entities.begin(); l_i != PIMPL->entities.end();) {
-		IEntity *l_entity = (*l_i++);
-		XMLElement *l_element = n.GetDocument()->NewElement("entity");
-		if (l_entity->serialize(*l_element))
-			n.InsertEndChild(l_element);
-	}
-	
-	return(true);
-}
-
-bool
-EntitySceneLayer::deserialize(XMLElement &n)
-{
-	if (!SceneLayerBase::deserialize(n))
-		return(false);
-
-	XMLElement *l_child;
-	for (l_child = n.FirstChildElement("entity") ;
-	     l_child;
-	     l_child = l_child->NextSiblingElement("entity")) {
-
-		const char *l_id   = l_child->Attribute("id");
-		const char *l_type = l_child->Attribute("type");
-
-		IEntity *l_entity =
-		    Factory::Instance()->createEntity(l_type, l_id, *this);
-
-		if (!l_entity) {
-			MMWARNING("Entity '" << l_id << "' of type '" << l_type << "' creation failed");
-			continue;
-		}
-
-		if (!l_entity->deserialize(*l_child)) {
-			MMWARNING("Entity '" << l_id << "' of type '" << l_type << "' failed deserialization");
-			continue;
-		}
-
-		addEntity(l_entity);
-	}
-	
-	return(true);
 }
 
 const Core::Type &

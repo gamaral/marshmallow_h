@@ -38,8 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <tinyxml2.h>
-
 #include "core/identifier.h"
 #include "core/type.h"
 
@@ -70,21 +68,6 @@ const Core::Identifier &
 ComponentBase::id(void) const
 {
 	return(PIMPL->id);
-}
-
-bool
-ComponentBase::serialize(XMLElement &n) const
-{
-	n.SetAttribute("id", id().str().c_str());
-	n.SetAttribute("type", type().str().c_str());
-	return(true);
-}
-
-bool
-ComponentBase::deserialize(XMLElement &n)
-{
-	MMUNUSED(n);
-	return(true);
 }
 
 IEntity &

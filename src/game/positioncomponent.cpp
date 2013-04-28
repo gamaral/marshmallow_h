@@ -41,8 +41,6 @@
 #include "core/identifier.h"
 #include "core/type.h"
 
-#include <tinyxml2.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
@@ -66,28 +64,6 @@ Math::Point2 &
 PositionComponent::position(void)
 {
 	return(PIMPL->position);
-}
-
-bool
-PositionComponent::serialize(XMLElement &n) const
-{
-	if (!ComponentBase::serialize(n))
-	    return(false);
-
-	n.SetAttribute("x", PIMPL->position.x);
-	n.SetAttribute("y", PIMPL->position.y);
-	return(true);
-}
-
-bool
-PositionComponent::deserialize(XMLElement &n)
-{
-	if (!ComponentBase::deserialize(n))
-	    return(false);
-
-	n.QueryFloatAttribute("x", &PIMPL->position.x);
-	n.QueryFloatAttribute("y", &PIMPL->position.y);
-	return(true);
 }
 
 const Core::Type &

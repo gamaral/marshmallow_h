@@ -55,8 +55,6 @@
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
-#include <tinyxml2.h>
-
 #include <string>
 #include <vector>
 
@@ -259,22 +257,6 @@ TextComponent::setTileOffset(uint16_t o)
 	PIMPL->tile_offset = o;
 	PIMPL->invalidated = true;
 	PIMPL->rebuild();
-}
-
-bool
-TextComponent::serialize(XMLElement &n) const
-{
-	MMUNUSED(n);
-	/* TODO: IMPLEMENT */
-	return(false);
-}
-
-bool
-TextComponent::deserialize(XMLElement &n)
-{
-	MMUNUSED(n);
-	/* TODO: IMPLEMENT */
-	return(false);
 }
 
 void

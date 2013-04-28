@@ -41,10 +41,6 @@ list(APPEND MARSHMALLOW_GRAPHICS_SRCS "dummy/texturecoordinatedata.cpp"
                                       "dummy/vertexdata.cpp"
 )
 
-# tinyxml
-include_directories(${TINYXML2_INCLUDE_DIR})
-list(APPEND MARSHMALLOW_GRAPHICS_LIBS ${TINYXML2_LIBRARY})
-
 if(MARSHMALLOW_GRAPHICS_LOCK_WIDTH)
 	add_definitions(-DMARSHMALLOW_GRAPHICS_LOCK_WIDTH)
 else(MARSHMALLOW_GRAPHICS_LOCK_WIDTH)

@@ -80,9 +80,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		VIRTUAL void kill(void);
 		VIRTUAL bool isZombie(void) const;
-
-		VIRTUAL bool serialize(XMLElement &node) const;
-		VIRTUAL bool deserialize(XMLElement &node);
 	};
 
 } /*********************************************************** Game Namespace */

@@ -38,10 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <list>
-
-#include <tinyxml2.h>
-
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/type.h"
@@ -52,6 +48,8 @@
 
 #include "game/factory.h"
 #include "game/iscene.h"
+
+#include <list>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
@@ -144,56 +142,6 @@ void
 SceneManager::update(float d)
 {
 	if (PIMPL->active) PIMPL->active->update(d);
-}
-
-bool
-SceneManager::serialize(XMLElement &n) const
-{
-	SceneStack::const_reverse_iterator l_i;
-	SceneStack::const_reverse_iterator l_c = PIMPL->stack.rend();
-	for (l_i = PIMPL->stack.rbegin(); l_i != l_c; ++l_i) {
-		XMLElement *l_element = n.GetDocument()->NewElement("scene");
-		if ((*l_i)->serialize(*l_element))
-			n.InsertEndChild(l_element);
-	}
-
-	if (PIMPL->active) {
-		XMLElement *l_element = n.GetDocument()->NewElement("scene");
-		if (PIMPL->active->serialize(*l_element))
-			n.InsertEndChild(l_element);
-	}
-	
-	return(true);
-}
-
-bool
-SceneManager::deserialize(XMLElement &n)
-{
-	XMLElement *l_child;
-	for (l_child = n.FirstChildElement("scene") ;
-	     l_child;
-	     l_child = l_child->NextSiblingElement("scene")) {
-
-		const char *l_id   = l_child->Attribute("id");
-		const char *l_type = l_child->Attribute("type");
-
-		IScene *l_scene =
-		    Factory::Instance()->createScene(l_type, l_id);
-
-		if (!l_scene) {
-			MMWARNING("Scene '" << l_id << "' of type '" << l_type << "' creation failed");
-			continue;
-		}
-
-		if (!l_scene->deserialize(*l_child)) {
-			MMWARNING("Scene '" << l_id << "' of type '" << l_type << "' failed deserialization");
-			continue;
-		}
-
-		pushScene(l_scene);
-	}
-	
-	return(true);
 }
 
 bool

@@ -76,9 +76,6 @@ namespace Graphics { /************************************ Graphics Namespace */
 		VIRTUAL int margin(void) const;
 		VIRTUAL Graphics::ITextureCoordinateData * getTextureCoordinateData(uint16_t index);
 		
-		VIRTUAL bool serialize(XMLElement &node) const;
-		VIRTUAL bool deserialize(XMLElement &node);
-
 	protected:
 
 		void reset(void);
