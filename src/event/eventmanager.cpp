@@ -45,30 +45,37 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/platform.h"
-#include "core/shared.h"
 #include "core/type.h"
-#include "core/weak.h"
 
 #include "event/ievent.h"
 #include "event/ieventlistener.h"
+
+/*
+ * Implementation Notes
+ * ====================
+ *
+ * The event manager allocates an event list for every event type encountered,
+ * this means it will have to deallocate them upon destruction.
+ *
+ * Queued events will be automatically freed after execution.
+ */
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace { /******************************************** Anonymous Namespace */
 
 	using namespace Event;
 
-	EventManager *s_instance(0);
+	static EventManager *s_instance(0);
 
-	bool
-	SortSharedEvent(const SharedEvent& lhs, const SharedEvent& rhs) {
+	static bool
+	SortEvent(const IEvent *lhs, const IEvent *rhs) {
 		return(lhs->priority() > rhs->priority()
 		   || lhs->timeStamp() < rhs->timeStamp());
 	}
 
+	typedef std::list<const IEvent *> EventList;
 	typedef std::list<IEventListener *> EventListenerList;
-	typedef Core::Shared<EventListenerList> SharedEventListenerList;
-	typedef std::map<MMUID, SharedEventListenerList> EventListenerMap;
-	typedef std::list<SharedEvent> EventList;
+	typedef std::map<MMUID, EventListenerList *> EventListenerMap;
 
 } /****************************************************** Anonymous Namespace */
 
@@ -76,50 +83,62 @@ namespace Event { /****************************************** Event Namespace */
 
 struct EventManager::Private
 {
-	EventListenerMap elmap;
-	EventList queue[2];
+	Private(const Core::Identifier &i)
+	    : id(i)
+	    , dispatch_type(Core::Type::Null)
+	    , active_queue(0)
+	    , dispatch_invalid(true)
+	{}
+
+	~Private();
+
+	inline bool connect(IEventListener *handler, const Core::Type &type);
+	inline bool disconnect(IEventListener *handler, const Core::Type &type);
+
+	inline bool queue(const IEvent *event);
+	inline bool dequeue(const IEvent *event, bool all = false);
+
+	inline bool dispatch(const IEvent &event);
+
+	inline bool execute(void);
+
+	EventListenerMap listener_map;
+#define QUEUE_MAX 2
+	EventList event_queue[QUEUE_MAX];
 	Core::Identifier id;
-	uint8_t active_queue;
 	Core::Type dispatch_type;
+	uint8_t active_queue;
 	bool dispatch_invalid;
 };
 
-EventManager::EventManager(const Core::Identifier &i)
-    : m_p(new Private)
+EventManager::Private::~Private()
 {
-	m_p->id = i;
-	m_p->active_queue = 0;
-	m_p->dispatch_type = Core::Type::Null;
-	m_p->dispatch_invalid = true;
-
-	if (!s_instance) s_instance = this;
-}
-
-EventManager::~EventManager(void)
-{
-	if (s_instance == this) s_instance = 0;
-	delete m_p, m_p = 0;
-}
-
-const Core::Identifier &
-EventManager::id(void) const
-{
-	return(m_p->id);
+	/* flush event queues */
+	for (int i = 0; i < QUEUE_MAX; ++i) {
+		EventList &l_queue = event_queue[i];
+		while (!l_queue.empty()) {
+			delete l_queue.front();
+			l_queue.pop_front();
+		}
+	}
 }
 
 bool
-EventManager::connect(IEventListener *handler, const Core::Type &t)
+EventManager::Private::connect(IEventListener *handler, const Core::Type &t)
 {
-	MMINFO("Connecting `" << &handler << "` handler to event type `" << t.str() << "`.");
+	MMINFO("Connecting `" << &handler
+	                      << "` handler to event type `"
+	                      << t.str()
+	                      << "`.");
 
-	EventListenerMap::const_iterator l_elmapi =
-	    m_p->elmap.find(t.uid());
+	EventListenerMap::const_iterator l_listener_mapi =
+	    listener_map.find(t.uid());
 
 	/* if this is a new type, assign a new EventListenerList */
-	if (l_elmapi == m_p->elmap.end())
-		m_p->elmap[t.uid()] = new EventListenerList;
+	if (l_listener_mapi == listener_map.end())
+		listener_map[t.uid()] = new EventListenerList;
 
-	SharedEventListenerList l_listeners(m_p->elmap[t.uid()]);
+	EventListenerList *l_listeners(listener_map[t.uid()]);
 
 	EventListenerList::const_iterator l_listenersi =
 	    std::find(l_listeners->begin(), l_listeners->end(), handler);
@@ -134,53 +153,53 @@ EventManager::connect(IEventListener *handler, const Core::Type &t)
 	MMINFO("Connected! Current listener count is: " << l_listeners->size() << ".");
 
 	/* invalidate dispatch if needed */
-	m_p->dispatch_invalid |= (m_p->dispatch_type == t);
+	dispatch_invalid |= (dispatch_type == t);
 
 	return(true);
 }
 
 bool
-EventManager::disconnect(IEventListener *handler, const Core::Type &t)
+EventManager::Private::disconnect(IEventListener *handler, const Core::Type &t)
 {
 	MMINFO("Disconnecting `" << &handler << "` handler from event type `" << t.str() << "`");
 
-	EventListenerMap::const_iterator l_elmapi =
-	    m_p->elmap.find(t.uid());
+	EventListenerMap::const_iterator l_listener_mapi =
+	    listener_map.find(t.uid());
 
 	/* if this is a new type, assign a new EventListenerList */
-	if (l_elmapi == m_p->elmap.end()) {
+	if (l_listener_mapi == listener_map.end()) {
 		MMWARNING("Failed! Event type not in registry.");
 		return(false);
 	}
 
-	SharedEventListenerList l_listeners(m_p->elmap[t.uid()]);
+	EventListenerList *l_listeners(listener_map[t.uid()]);
 	l_listeners->remove(handler);
 	MMINFO("Disconnected! Current listener count is: " << l_listeners->size() << ".");
 
 	/* invalidate dispatch if needed */
-	m_p->dispatch_invalid |= (m_p->dispatch_type == t);
+	dispatch_invalid |= (dispatch_type == t);
 
 	return(true);
 }
 
 bool
-EventManager::dispatch(const IEvent &event)
+EventManager::Private::dispatch(const IEvent &event)
 {
 	bool l_handled = false;
 
-	EventListenerMap::const_iterator l_elmapi =
-	    m_p->elmap.find(event.type().uid());
-	if (l_elmapi == m_p->elmap.end())
+	EventListenerMap::const_iterator l_listener_mapi =
+	    listener_map.find(event.type().uid());
+	if (l_listener_mapi == listener_map.end())
 		return(false);
 
-	m_p->dispatch_invalid = false;
-	m_p->dispatch_type = event.type();
+	dispatch_invalid = false;
+	dispatch_type = event.type();
 
-	SharedEventListenerList l_listeners(l_elmapi->second);
+	EventListenerList *l_listeners(l_listener_mapi->second);
 	EventListenerList::iterator l_listenersi;
 
 	for (l_listenersi = l_listeners->begin();
-	     !l_handled && !m_p->dispatch_invalid
+	     !l_handled && !dispatch_invalid
 	       && (l_listenersi != l_listeners->end());) {
 		if (*l_listenersi)
 			l_handled = (*l_listenersi++)->handleEvent(event);
@@ -188,18 +207,26 @@ EventManager::dispatch(const IEvent &event)
 			l_listeners->erase(l_listenersi++);
 	}
 
-	if (m_p->dispatch_invalid && !l_handled)
+	if (dispatch_invalid && !l_handled)
 		MMERROR("Dispatch listeners changed without current event being handled.");
 
-	m_p->dispatch_type = Core::Type::Null;
+	dispatch_type = Core::Type::Null;
 
 	return(l_handled);
 }
 
 bool
-EventManager::dequeue(const SharedEvent &event, bool all)
+EventManager::Private::queue(const IEvent *event)
 {
-	EventList &l_queue = m_p->queue[m_p->active_queue == 0 ? 1 : 0];
+	EventList &l_queue = event_queue[active_queue == 0 ? 1 : 0];
+	l_queue.push_back(event);
+	return(true);
+}
+
+bool
+EventManager::Private::dequeue(const IEvent *event, bool all)
+{
+	EventList &l_queue = event_queue[active_queue == 0 ? 1 : 0];
 
 	if (all) {
 		const MMUID l_type = event->type();
@@ -220,19 +247,11 @@ EventManager::dequeue(const SharedEvent &event, bool all)
 }
 
 bool
-EventManager::queue(const SharedEvent &event)
-{
-	EventList &l_queue = m_p->queue[m_p->active_queue == 0 ? 1 : 0];
-	l_queue.push_back(event);
-	return(true);
-}
-
-bool
-EventManager::execute()
+EventManager::Private::execute()
 {
 	/* fetch and sort active queue */
-	EventList &l_queue = m_p->queue[m_p->active_queue];
-	l_queue.sort(SortSharedEvent);
+	EventList &l_queue = event_queue[active_queue];
+	l_queue.sort(SortEvent);
 
 	/* dispatch events in active queue
 	 *
@@ -240,18 +259,75 @@ EventManager::execute()
 	 *     we ran out of messages
 	 *     event timestamp is in the future
 	 */
-	SharedEvent event;
+	const IEvent *l_event;
 	while (!l_queue.empty()
-	    && (event = l_queue.front())->timeStamp() <= NOW()) {
-		dispatch(*event); l_queue.pop_front();
+	    && (l_event = l_queue.front())->timeStamp() <= NOW()) {
+		dispatch(*l_event);
+		l_queue.pop_front();
+		delete l_event;
 	}
 
 	if (l_queue.empty()) {
 		/* switch active queues */
-		m_p->active_queue = (m_p->active_queue == 0 ? 1 : 0);
+		active_queue = (active_queue == 0 ? 1 : 0);
 		return(true);
 	}
 	return(false);
+}
+
+EventManager::EventManager(const Core::Identifier &i)
+    : PIMPL_CREATE_X(i)
+{
+	if (!s_instance) s_instance = this;
+}
+
+EventManager::~EventManager(void)
+{
+	if (s_instance == this) s_instance = 0;
+
+	PIMPL_DESTROY;
+}
+
+const Core::Identifier &
+EventManager::id(void) const
+{
+	return(PIMPL->id);
+}
+
+bool
+EventManager::connect(IEventListener *handler, const Core::Type &t)
+{
+	return(PIMPL->connect(handler, t));
+}
+
+bool
+EventManager::disconnect(IEventListener *handler, const Core::Type &t)
+{
+	return(PIMPL->disconnect(handler, t));
+}
+
+bool
+EventManager::dispatch(const IEvent &event)
+{
+	return(PIMPL->dispatch(event));
+}
+
+bool
+EventManager::queue(const IEvent *event)
+{
+	return(PIMPL->queue(event));
+}
+
+bool
+EventManager::dequeue(const IEvent *event, bool all)
+{
+	return(PIMPL->dequeue(event, all));
+}
+
+bool
+EventManager::execute()
+{
+	return(PIMPL->execute());
 }
 
 EventManager *

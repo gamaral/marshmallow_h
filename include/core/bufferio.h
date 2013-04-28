@@ -47,9 +47,6 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 
-	template <class T> class Shared;
-	template <class T> class Weak;
-
 	/*!
 	 * @brief An IDataIO implementation of a simple memory buffer device
 	 */
@@ -122,8 +119,6 @@ namespace Core { /******************************************** Core Namespace */
 		VIRTUAL bool seek(long offset, DIOSeek origin) const;
 		VIRTUAL long tell(void) const;
 	};
-	typedef Shared<BufferIO> SharedBufferIO;
-	typedef Weak<BufferIO> WeakBufferIO;
 
 } /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END

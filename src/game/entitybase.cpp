@@ -40,10 +40,9 @@
 
 #include "core/identifier.h"
 #include "core/logger.h"
-#include "core/shared.h"
 #include "core/type.h"
 
-#include "game/factorybase.h"
+#include "game/factory.h"
 #include "game/icomponent.h"
 
 #include <tinyxml2.h>
@@ -52,8 +51,9 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
-
-typedef std::list<SharedComponent> ComponentList;
+namespace { /************************************ Game::<anonymous> Namespace */
+	typedef std::list<IComponent *> ComponentList;
+} /********************************************** Game::<anonymous> Namespace */
 
 struct EntityBase::Private
 {
@@ -93,7 +93,7 @@ EntityBase::layer(void)
 }
 
 void
-EntityBase::pushComponent(const SharedComponent &c)
+EntityBase::pushComponent(IComponent *c)
 {
 	m_p->components.push_front(c);
 }
@@ -118,12 +118,12 @@ EntityBase::removeComponent(const Core::Identifier &i)
 }
 
 void
-EntityBase::removeComponent(const SharedComponent &c)
+EntityBase::removeComponent(IComponent *c)
 {
 	m_p->components.remove(c);
 }
 
-SharedComponent
+IComponent *
 EntityBase::getComponent(const Core::Identifier &i) const
 {
 	ComponentList::const_iterator l_i;
@@ -133,10 +133,10 @@ EntityBase::getComponent(const Core::Identifier &i) const
 		if ((*l_i)->id() == i)
 			return(*l_i);
 	}
-	return(SharedComponent());
+	return(0);
 }
 
-SharedComponent
+IComponent *
 EntityBase::getComponentType(const Core::Type &t) const
 {
 	ComponentList::const_iterator l_i;
@@ -146,7 +146,7 @@ EntityBase::getComponentType(const Core::Type &t) const
 		if ((*l_i)->type() == t)
 			return(*l_i);
 	}
-	return(SharedComponent());
+	return(0);
 }
 
 void
@@ -214,8 +214,8 @@ EntityBase::deserialize(XMLElement &n)
 		const char *l_id   = l_child->Attribute("id");
 		const char *l_type = l_child->Attribute("type");
 
-		SharedComponent l_component =
-		    FactoryBase::Instance()->createComponent(l_type, l_id, *this);
+		IComponent *l_component =
+		    Factory::Instance()->createComponent(l_type, l_id, *this);
 
 		if (!l_component) {
 			MMWARNING("Failed to create component '" << l_id << "' (" << l_type << ")");

@@ -42,7 +42,6 @@
 
 #include "core/logger.h"
 #include "core/type.h"
-#include "core/weak.h"
 
 #include "math/size2.h"
 
@@ -61,14 +60,25 @@ namespace Game { /******************************************** Game Namespace */
 
 struct ColliderComponent::Private
 {
-	WeakCollisionSceneLayer layer;
-	WeakMovementComponent   movement;
-	WeakPositionComponent   position;
-	WeakSizeComponent       size;
+	Private()
+	    : layer(0)
+	    , movement(0)
+	    , position(0)
+	    , size(0)
+	    , body(btBox)
+	    , bullet_resolution(DELTA_STEPS)
+	    , active(true)
+	    , bullet(false)
+	{}
+
+	CollisionSceneLayer *layer;
+	MovementComponent   *movement;
+	PositionComponent   *position;
+	SizeComponent       *size;
 	int  body;
+	int  bullet_resolution;
 	bool active;
 	bool bullet;
-	int  bullet_resolution;
 	bool init;
 };
 
@@ -76,11 +86,6 @@ ColliderComponent::ColliderComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
     , m_p(new Private)
 {
-	m_p->body = btBox;
-	m_p->active = true;
-	m_p->bullet = false;
-	m_p->bullet_resolution = DELTA_STEPS;
-	m_p->init = false;
 }
 
 ColliderComponent::~ColliderComponent(void)
@@ -178,23 +183,24 @@ void
 ColliderComponent::update(float d)
 {
 	if (!m_p->movement) {
-		m_p->movement = entity().getComponentType("Game::MovementComponent").
-		    staticCast<MovementComponent>();
+		m_p->movement = static_cast<MovementComponent *>
+		    (entity().getComponentType("Game::MovementComponent"));
 	}
 
 	if (!m_p->position) {
-		m_p->position = entity().getComponentType("Game::PositionComponent").
-		    staticCast<PositionComponent>();
+		m_p->position = static_cast<PositionComponent *>
+		    (entity().getComponentType("Game::PositionComponent"));
 	}
 
 	if (!m_p->size) {
-		m_p->size = entity().getComponentType("Game::SizeComponent").
-		    staticCast<SizeComponent>();
+		m_p->size = static_cast<SizeComponent *>
+		    (entity().getComponentType("Game::SizeComponent"));
 	}
 
 	if (!m_p->init && !m_p->layer && m_p->position && m_p->size) {
-		m_p->layer = entity().layer().scene()
-		    .getLayerType("Game::CollisionSceneLayer").staticCast<CollisionSceneLayer>();
+		m_p->layer = static_cast<CollisionSceneLayer *>
+		    (entity().layer().scene().getLayerType("Game::CollisionSceneLayer"));
+
 		if (!m_p->layer) {
 			MMWARNING("Collider component used with no collision scene layer!");
 			return;
@@ -255,25 +261,25 @@ ColliderComponent::deserialize(XMLElement &n)
 	return(true);
 }
 
-WeakCollisionSceneLayer &
+Game::CollisionSceneLayer *
 ColliderComponent::layer(void)
 {
 	return(m_p->layer);
 }
 
-WeakMovementComponent &
+Game::MovementComponent *
 ColliderComponent::movement(void)
 {
 	return(m_p->movement);
 }
 
-WeakPositionComponent &
+Game::PositionComponent *
 ColliderComponent::position(void)
 {
 	return(m_p->position);
 }
 
-WeakSizeComponent &
+Game::SizeComponent *
 ColliderComponent::size(void)
 {
 	return(m_p->size);

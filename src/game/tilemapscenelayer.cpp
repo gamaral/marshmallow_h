@@ -40,7 +40,8 @@
 
 #include <map>
 
-#include "core/shared.h"
+#include <cassert>
+
 #include "core/type.h"
 
 #include "graphics/camera.h"
@@ -52,8 +53,8 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 namespace { /************************************ Game::<anonymous> Namespace */
-	typedef std::map<uint32_t, Graphics::SharedTileset> TilesetCollection;
-	typedef std::map<uint32_t, Graphics::SharedVertexData> VertexDataCache;
+	typedef std::map<uint32_t, Graphics::ITileset *> TilesetCollection;
+	typedef std::map<uint32_t, Graphics::IVertexData *> VertexDataCache;
 	typedef std::map<std::string, std::string> PropertyMap;
 } /********************************************** Game::<anonymous> Namespace */
 
@@ -73,7 +74,7 @@ struct TilemapSceneLayer::Private
 		data = 0;
 	}
 
-	Graphics::SharedTileset tileset(uint32_t i, uint32_t *o);
+	Graphics::ITileset * tileset(uint32_t i, uint32_t *o);
 	void render(void);
 
 	void recalculateAllVertexData();
@@ -102,14 +103,14 @@ struct TilemapSceneLayer::Private
 	bool  visible;
 };
 
-Graphics::SharedTileset
+Graphics::ITileset *
 TilemapSceneLayer::Private::tileset(uint32_t i, uint32_t *o)
 {
 	TilesetCollection::iterator l_i;
 	TilesetCollection::const_iterator l_end = tilesets.end();
 
 	uint32_t l_offset = 0;
-	Graphics::SharedTileset l_ts;
+	Graphics::ITileset *l_ts;
 
 	for (l_i = tilesets.begin(); l_i != l_end; ++l_i)
 		if (l_i->first <= i && l_offset < l_i->first) {
@@ -120,7 +121,7 @@ TilemapSceneLayer::Private::tileset(uint32_t i, uint32_t *o)
 	if (l_offset > 0) {
 		if (o) *o = l_offset;
 		return(l_ts);
-	} else return(Graphics::SharedTileset());
+	} else return(0);
 }
 
 void
@@ -228,10 +229,9 @@ TilemapSceneLayer::Private::render(void)
 		assert(oic == ti->second && "Tile origin count mismatch!");
 
 		uint32_t l_tioffset;
-		Graphics::SharedTileset l_ts = tileset(ti->first, &l_tioffset);
-		Graphics::SharedTextureCoordinateData l_tcd;
+		Graphics::ITileset *l_ts = tileset(ti->first, &l_tioffset);
 		if (l_ts) {
-			Graphics::SharedVertexData &l_svdata = vertexes[l_tioffset];
+			Graphics::IVertexData *l_svdata = vertexes[l_tioffset];
 
 			Graphics::QuadMesh l_mesh(l_ts->getTextureCoordinateData(static_cast<uint16_t>(ti->first - l_tioffset)),
 			    l_ts->textureData(), l_svdata);
@@ -304,17 +304,18 @@ TilemapSceneLayer::~TilemapSceneLayer(void)
 	delete m_p, m_p = 0;
 }
 
-Graphics::SharedTileset
+Graphics::ITileset *
 TilemapSceneLayer::tileset(uint32_t i, uint32_t *o)
 {
 	return(m_p->tileset(i, o));
 }
 
 void
-TilemapSceneLayer::attachTileset(uint32_t o, Graphics::SharedTileset ts)
+TilemapSceneLayer::attachTileset(uint32_t o, Graphics::ITileset *ts)
 {
 	m_p->tilesets[o] = ts;
-	m_p->vertexes[o] = Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
+	m_p->vertexes[o] =
+	    Graphics::Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 	m_p->recalculateVertexData(o);
 }
 

@@ -47,9 +47,6 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 
-	template <class T> class Shared;
-	template <class T> class Weak;
-
 	enum DIOMode
 	{
 		DIOInvalid   = 0,
@@ -116,8 +113,6 @@ namespace Core { /******************************************** Core Namespace */
 		virtual bool seek(long offset, DIOSeek origin) const = 0;
 		virtual long tell(void) const = 0;
 	};
-	typedef Shared<IDataIO> SharedDataIO;
-	typedef Weak<IDataIO> WeakDataIO;
 
 } /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END

@@ -57,13 +57,8 @@ namespace Math { /******************************************** Math Namespace */
 namespace Graphics { /************************************ Graphics Namespace */
 
 	struct ITextureCoordinateData;
-	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
-
 	struct ITextureData;
-	typedef Core::Shared<ITextureData> SharedTextureData;
-
 	struct IVertexData;
-	typedef Core::Shared<IVertexData> SharedVertexData;
 
 	class Color;
 
@@ -73,9 +68,9 @@ namespace Graphics { /************************************ Graphics Namespace */
 	{
 		virtual ~IMesh(void);
 
-		virtual const SharedTextureCoordinateData & textureCoordinateData(void) const = 0;
-		virtual const SharedTextureData & textureData(void) const = 0;
-		virtual const SharedVertexData & vertexData(void) const = 0;
+		virtual ITextureCoordinateData * textureCoordinateData(void) const = 0;
+		virtual ITextureData * textureData(void) const = 0;
+		virtual IVertexData * vertexData(void) const = 0;
 
 		virtual const Graphics::Color & color(void) const = 0;
 		virtual float rotation(void) const = 0;
@@ -87,8 +82,6 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 		virtual const Core::Type & type(void) const = 0;
 	};
-	typedef Core::Shared<IMesh> SharedMesh;
-	typedef Core::Weak<IMesh> WeakMesh;
 
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END

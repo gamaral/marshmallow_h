@@ -40,12 +40,11 @@
 
 #include "core/identifier.h"
 #include "core/logger.h"
-#include "core/shared.h"
 #include "core/type.h"
 
 #include "graphics/camera.h"
 
-#include "game/factorybase.h"
+#include "game/factory.h"
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 #include "game/sizecomponent.h"
@@ -76,7 +75,7 @@ EntitySceneLayer::~EntitySceneLayer(void)
 }
 
 void
-EntitySceneLayer::addEntity(const SharedEntity &e)
+EntitySceneLayer::addEntity(Game::IEntity *e)
 {
 	m_p->entities.push_back(e);
 }
@@ -97,12 +96,12 @@ EntitySceneLayer::removeEntity(const Core::Identifier &i)
 }
 
 void
-EntitySceneLayer::removeEntity(const SharedEntity &e)
+EntitySceneLayer::removeEntity(Game::IEntity *e)
 {
 	m_p->entities.remove(e);
 }
 
-SharedEntity
+Game::IEntity *
 EntitySceneLayer::getEntity(const Core::Identifier &i) const
 {
 	EntityList::const_iterator l_i;
@@ -114,10 +113,10 @@ EntitySceneLayer::getEntity(const Core::Identifier &i) const
 			return(*l_i);
 	}
 
-	return(SharedEntity());
+	return(0);
 }
 
-const EntityList &
+const Game::EntityList &
 EntitySceneLayer::getEntities(void) const
 {
 	return(m_p->entities);
@@ -145,23 +144,21 @@ EntitySceneLayer::render(void)
 		const float l_visiblility_radius2 = Graphics::Camera::VisibleMagnitude2();
 
 		for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();l_i++) {
-			SharedEntity l_entity = (*l_i);
+			IEntity *l_entity = (*l_i);
 			float l_size2 = 0;
 
 			if (l_entity->isZombie())
 				continue;
 
-			SharedPositionComponent l_positionComponent =
-			    l_entity->getComponentType("Game::PositionComponent")
-			        .staticCast<Game::PositionComponent>();
+			PositionComponent *l_positionComponent = static_cast<PositionComponent *>
+			    (l_entity->getComponentType("Game::PositionComponent"));
 			if (!l_positionComponent) {
 				l_entity->render();
 				continue;
 			}
 
-			SharedSizeComponent l_sizeComponent =
-			    l_entity->getComponentType("Game::SizeComponent")
-			        .staticCast<Game::SizeComponent>();
+			SizeComponent *l_sizeComponent = static_cast<SizeComponent *>
+			    (l_entity->getComponentType("Game::SizeComponent"));
 			if (l_sizeComponent) {
 				const Math::Size2f &l_size =
 				    l_sizeComponent->size();
@@ -186,7 +183,7 @@ EntitySceneLayer::update(float d)
 	EntityList::const_iterator l_i;
 
 	for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();) {
-		SharedEntity l_entity = (*l_i++);
+		IEntity *l_entity = (*l_i++);
 
 		if (l_entity->isZombie())
 			removeEntity(l_entity);
@@ -203,7 +200,7 @@ EntitySceneLayer::serialize(XMLElement &n) const
 
 	EntityList::const_iterator l_i;
 	for (l_i = m_p->entities.begin(); l_i != m_p->entities.end();) {
-		SharedEntity l_entity = (*l_i++);
+		IEntity *l_entity = (*l_i++);
 		XMLElement *l_element = n.GetDocument()->NewElement("entity");
 		if (l_entity->serialize(*l_element))
 			n.InsertEndChild(l_element);
@@ -226,8 +223,8 @@ EntitySceneLayer::deserialize(XMLElement &n)
 		const char *l_id   = l_child->Attribute("id");
 		const char *l_type = l_child->Attribute("type");
 
-		SharedEntity l_entity =
-		    FactoryBase::Instance()->createEntity(l_type, l_id, *this);
+		IEntity *l_entity =
+		    Factory::Instance()->createEntity(l_type, l_id, *this);
 
 		if (!l_entity) {
 			MMWARNING("Entity '" << l_id << "' of type '" << l_type << "' creation failed");

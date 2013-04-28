@@ -42,7 +42,6 @@
 #include <stack>
 
 #include "core/logger.h"
-#include "core/shared.h"
 #include "core/type.h"
 
 #include "math/matrix4.h"

@@ -53,7 +53,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
 	struct IScene;
-	typedef Core::Shared<IScene> SharedScene;
 
 	/*! @brief Game Scene Manager */
 	class MARSHMALLOW_GAME_EXPORT
@@ -71,10 +70,10 @@ namespace Game { /******************************************** Game Namespace */
 		SceneManager(void);
 		virtual ~SceneManager(void);
 
-		void pushScene(const SharedScene &scene);
-		void popScene(void);
+		void pushScene(Game::IScene *scene);
+		Game::IScene * popScene(void);
 
-		SharedScene activeScene(void) const;
+		Game::IScene * activeScene(void) const;
 
 	public: /* virtual */
 
@@ -86,7 +85,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		VIRTUAL bool handleEvent(const Event::IEvent &event);
 	};
-	typedef Core::Shared<SceneManager> SharedSceneManager;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

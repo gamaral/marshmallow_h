@@ -41,11 +41,52 @@
 #ifndef MARSHMALLOW_GAME_FACTORY_H
 #define MARSHMALLOW_GAME_FACTORY_H 1
 
-#include <game/factorybase.h>
+#include <core/global.h>
+
+#include <game/ifactory.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
-	typedef FactoryBase Factory;
+
+	/*! @brief Game Factory  Class */
+	class MARSHMALLOW_GAME_EXPORT
+	Factory : public IFactory
+	{
+		NO_ASSIGN_COPY(Factory);
+	public:
+
+		Factory(void);
+		virtual ~Factory(void);
+
+	public: /* virtual */
+
+		VIRTUAL Game::IScene *
+		createScene(const Core::Type &type,
+		            const Core::Identifier &identifier) const;
+
+		VIRTUAL Game::ISceneLayer *
+		createSceneLayer(const Core::Type &type,
+		                 const Core::Identifier &identifier,
+		                 IScene &scene) const;
+
+		VIRTUAL Game::IEntity *
+		createEntity(const Core::Type &type,
+		             const Core::Identifier &identifier,
+		             EntitySceneLayer &layer) const;
+
+		VIRTUAL Game::IComponent *
+		createComponent(const Core::Type &type,
+		                const Core::Identifier &identifier,
+		                IEntity &entity) const;
+
+		VIRTUAL Graphics::IMesh *
+		createMesh(const Core::Type &type) const;
+
+	public: /* static */
+
+		static IFactory *Instance(void);
+	};
+
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 

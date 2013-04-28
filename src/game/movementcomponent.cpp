@@ -41,7 +41,6 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/type.h"
-#include "core/weak.h"
 
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
@@ -55,13 +54,15 @@ struct MovementComponent::Private
 {
 	Private(void)
 	    : limit_x(-1.f, -1.f)
-	    , limit_y(-1.f, -1.f) {}
+	    , limit_y(-1.f, -1.f)
+	    , position(0)
+	{}
 
-	WeakPositionComponent position;
 	Math::Vector2 acceleration;
+	Math::Vector2 velocity;
 	Math::Pair limit_x;
 	Math::Pair limit_y;
-	Math::Vector2 velocity;
+	PositionComponent *position;
 };
 
 MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
@@ -112,8 +113,8 @@ void
 MovementComponent::update(float d)
 {
 	if (!m_p->position) {
-		m_p->position = entity().getComponentType("Game::PositionComponent").
-		    staticCast<PositionComponent>();
+		m_p->position = static_cast<PositionComponent *>
+		    (entity().getComponentType("Game::PositionComponent"));
 	}
 
 	const Math::Pair &l_limit_x = m_p->limit_x;

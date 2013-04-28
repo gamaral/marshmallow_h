@@ -49,51 +49,40 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 	class Identifier;
 	class Type;
-	template <class T> class Shared;
-	template <class T> class Weak;
 } /*********************************************************** Core Namespace */
 
 namespace Event { /****************************************** Event Namespace */
 
-	struct IEventListener;
-	typedef Core::Weak<IEventListener> WeakEventListener;
-
 	struct IEvent;
-	typedef Core::Shared<IEvent> SharedEvent;
+	struct IEventListener;
 
 	/*! @brief Event Manager */
 	class MARSHMALLOW_EVENT_EXPORT
 	EventManager
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION;
 		NO_ASSIGN_COPY(EventManager);
 	public:
 
 		EventManager(const Core::Identifier &identifier);
-		virtual ~EventManager(void);
+		~EventManager(void);
 
-	public: /* virtual */
+		const Core::Identifier & id(void) const;
 
-		virtual const Core::Identifier & id(void) const;
+		bool connect(IEventListener *handler, const Core::Type &type);
+		bool disconnect(IEventListener *handler, const Core::Type &type);
 
-		virtual bool connect(IEventListener *handler, const Core::Type &type);
-		virtual bool disconnect(IEventListener *handler, const Core::Type &type);
+		bool queue(const IEvent *event);
+		bool dequeue(const IEvent *event, bool all = false);
 
-		virtual bool dequeue(const SharedEvent &event, bool all = false);
-		virtual bool queue(const SharedEvent &event);
+		bool dispatch(const IEvent &event);
 
-		virtual bool dispatch(const IEvent &event);
-
-		virtual bool execute(void);
+		bool execute(void);
 
 	public: /* static */
 
 		static EventManager *Instance(void);
 	};
-	typedef Core::Shared<EventManager> SharedEventManager;
-	typedef Core::Weak<EventManager> WeakEventManager;
 
 } /********************************************************** Event Namespace */
 MARSHMALLOW_NAMESPACE_END

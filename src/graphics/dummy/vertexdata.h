@@ -77,8 +77,6 @@ namespace Dummy {
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<VertexData> SharedVertexData;
-	typedef Core::Weak<VertexData> WeakVertexData;
 
 } // Dummy
 } // Graphics

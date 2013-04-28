@@ -47,9 +47,6 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 
-	template <class T> class Shared;
-	template <class T> class Weak;
-
 	/*!
 	 * @brief Updateable Interface
 	 */
@@ -63,8 +60,6 @@ namespace Core { /******************************************** Core Namespace */
 		 */
 		virtual void update(float delta) = 0;
 	};
-	typedef Shared<IUpdateable> SharedUpdateable;
-	typedef Weak<IUpdateable> WeakUpdateable;
 
 } /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END

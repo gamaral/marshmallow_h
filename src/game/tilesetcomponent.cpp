@@ -40,7 +40,6 @@
 
 #include <tinyxml2.h>
 
-#include "core/weak.h"
 #include "core/type.h"
 
 #include "graphics/itileset.h"
@@ -50,7 +49,11 @@ namespace Game { /******************************************** Game Namespace */
 
 struct TilesetComponent::Private
 {
-	Graphics::SharedTileset tileset;
+	Private()
+	    : tileset(0)
+	{}
+
+	Graphics::ITileset *tileset;
 };
 
 TilesetComponent::TilesetComponent(const Core::Identifier &i, IEntity &e)
@@ -64,7 +67,7 @@ TilesetComponent::~TilesetComponent(void)
 	delete m_p, m_p = 0;
 }
 
-Graphics::SharedTileset &
+Graphics::ITileset *
 TilesetComponent::tileset(void)
 {
 	return(m_p->tileset);

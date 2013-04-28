@@ -47,8 +47,6 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 	class Type;
-	template <class T> class Shared;
-	template <class T> class Weak;
 } /*********************************************************** Core Namespace */
 
 namespace Event { /****************************************** Event Namespace */
@@ -74,8 +72,6 @@ namespace Event { /****************************************** Event Namespace */
 		 */
 		virtual MMTIME timeStamp(void) const = 0;
 	};
-	typedef Core::Shared<IEvent> SharedEvent;
-	typedef Core::Weak<IEvent> WeakEvent;
 
 } /********************************************************** Event Namespace */
 MARSHMALLOW_NAMESPACE_END

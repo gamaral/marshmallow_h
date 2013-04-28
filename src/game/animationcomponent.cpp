@@ -46,7 +46,6 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/type.h"
-#include "core/weak.h"
 
 #include "graphics/meshbase.h"
 #include "graphics/tileset.h"
@@ -68,13 +67,16 @@ struct AnimationComponent::Private
 	Private(AnimationComponent &i)
 	    : _interface(i)
 	    , current_framelist(0)
+	    , render(0)
+	    , tileset(0)
 	    , current_frame_entry(0)
+	    , current_frame_duration(0)
 	    , current_framerate(0.f)
 	    , playback_ratio(1.f)
 	    , timestamp(0)
-	    , current_frame_duration(0)
 	    , loop(false)
-	    , playing(false) {}
+	    , playing(false)
+	{}
 
 	void play(const Core::Identifier &animation, bool loop);
 	void stop(uint16_t *tile);
@@ -84,19 +86,18 @@ struct AnimationComponent::Private
 
 	AnimationFrames     animation_frames;
 	AnimationFramerates animation_framerate;
-	Graphics::SharedTextureCoordinateData stop_data;
 
-	WeakRenderComponent  render;
-	WeakTilesetComponent tileset;
-
-	const FrameList *current_framelist;
+	const FrameList  *current_framelist;
+	RenderComponent  *render;
+	TilesetComponent *tileset;
+	Graphics::ITextureCoordinateData *stop_data;
 
 	size_t current_frame_entries;
 	size_t current_frame_entry;
+	int    current_frame_duration;
 	float  current_framerate;
 	float  playback_ratio;
 	float  timestamp;
-	int    current_frame_duration;
 	bool   loop;
 	bool   playing;
 };
@@ -112,8 +113,8 @@ AnimationComponent::Private::stop(uint16_t *s)
 
 	if (s) stop_data = tileset->tileset()->getTextureCoordinateData(*s);
 
-	Graphics::SharedMeshBase l_mesh =
-	    render->mesh().staticCast<Graphics::MeshBase>();
+	Graphics::MeshBase *l_mesh =
+	    static_cast<Graphics::MeshBase *>(render->mesh());
 	l_mesh->setTextureCoordinateData(stop_data);
 }
 
@@ -158,14 +159,14 @@ void
 AnimationComponent::Private::animate(float d)
 {
 	if (!tileset) {
-		tileset = _interface.entity().getComponentType(TilesetComponent::Type()).
-		    staticCast<TilesetComponent>();
+		tileset = static_cast<TilesetComponent *>
+		    (_interface.entity().getComponentType(TilesetComponent::Type()));
 		if (!tileset) return;
 	}
 
 	if (!render) {
-		render = _interface.entity().getComponentType(RenderComponent::Type()).
-		    staticCast<RenderComponent>();
+		render = static_cast<RenderComponent *>
+		    (_interface.entity().getComponentType(RenderComponent::Type()));
 		if (render)
 			stop_data = render->mesh()->textureCoordinateData();
 		else return;
@@ -191,8 +192,8 @@ AnimationComponent::Private::animate(float d)
 				}
 			}
 
-			Graphics::SharedMeshBase l_mesh =
-			    render->mesh().staticCast<Graphics::MeshBase>();
+			Graphics::MeshBase *l_mesh =
+			    static_cast<Graphics::MeshBase *>(render->mesh());
 
 			/* replace texture coordinate data */
 			const FrameEntry &l_entry = (*current_framelist)[current_frame_entry];

@@ -58,21 +58,14 @@ MARSHMALLOW_NAMESPACE_BEGIN
 
 namespace Event { /****************************************** Event Namespace */
 	class EventManager;
-	typedef Core::Shared<EventManager> SharedEventManager;
-	
 	struct IEventListener;
-	typedef Core::Shared<IEventListener> SharedEventListener;
 } /********************************************************** Event Namespace */
 
 namespace Game { /******************************************** Game Namespace */
 
-	class SceneManager;
-	typedef Core::Shared<SceneManager> SharedSceneManager;
-
-	struct IFactory;
-	typedef Core::Shared<IFactory> SharedFactory;
-
 	class EngineBaseEventListener;
+	class SceneManager;
+	struct IFactory;
 
 	/*! @brief Game Engine Base Class */
 	class MARSHMALLOW_GAME_EXPORT
@@ -95,17 +88,17 @@ namespace Game { /******************************************** Game Namespace */
 		/*!
 		 * @brief Set Event Manager
 		 */
-		void setEventManager(const Event::SharedEventManager &manager);
+		void setEventManager(Event::EventManager *manager);
 
 		/*!
 		 * @brief Set Scene Manager
 		 */
-		void setSceneManager(const SharedSceneManager &manager);
+		void setSceneManager(Game::SceneManager *manager);
 
 		/*!
 		 * @brief Set Factory
 		 */
-		void setFactory(const SharedFactory &factory);
+		void setFactory(Game::IFactory *factory);
 
 		/*!
 		 * @brief Target frames per second
@@ -133,9 +126,9 @@ namespace Game { /******************************************** Game Namespace */
 		VIRTUAL void suspend(void);
 		VIRTUAL void resume(void);
 
-		VIRTUAL Event::SharedEventManager eventManager(void) const;
-		VIRTUAL SharedSceneManager sceneManager(void) const;
-		VIRTUAL SharedFactory factory(void) const;
+		VIRTUAL Event::EventManager *eventManager(void) const;
+		VIRTUAL Game::SceneManager *sceneManager(void) const;
+		VIRTUAL Game::IFactory *factory(void) const;
 
 		VIRTUAL bool initialize(void);
 		VIRTUAL void finalize(void);

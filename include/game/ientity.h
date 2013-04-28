@@ -53,10 +53,8 @@ namespace Core { /******************************************** Core Namespace */
 
 namespace Game { /******************************************** Game Namespace */
 
-	struct IComponent;
-	typedef Core::Shared<IComponent> SharedComponent;
-
 	class EntitySceneLayer;
+	struct IComponent;
 
 	/*! @brief Game Entity Interface */
 	struct MARSHMALLOW_GAME_EXPORT
@@ -72,18 +70,16 @@ namespace Game { /******************************************** Game Namespace */
 		/*! @brief Parent Game Layer */
 		virtual EntitySceneLayer &layer(void) = 0;
 
-		virtual void pushComponent(const SharedComponent &component) = 0;
+		virtual void pushComponent(Game::IComponent *component) = 0;
 		virtual void popComponent(void) = 0;
 		virtual void removeComponent(const Core::Identifier &identifier) = 0;
-		virtual void removeComponent(const SharedComponent &component) = 0;
-		virtual SharedComponent getComponent(const Core::Identifier &identifier) const = 0;
-		virtual SharedComponent getComponentType(const Core::Type &type) const = 0;
+		virtual void removeComponent(Game::IComponent *component) = 0;
+		virtual Game::IComponent * getComponent(const Core::Identifier &identifier) const = 0;
+		virtual Game::IComponent * getComponentType(const Core::Type &type) const = 0;
 
 		virtual void kill(void) = 0;
 		virtual bool isZombie(void) const = 0;
 	};
-	typedef Core::Shared<IEntity> SharedEntity;
-	typedef Core::Weak<IEntity> WeakEntity;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

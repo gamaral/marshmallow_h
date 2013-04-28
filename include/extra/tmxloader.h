@@ -50,11 +50,10 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 	struct ITileset;
-	typedef Core::Shared<ITileset> SharedTileset;
 } /******************************************************* Graphics Namespace */
 
 namespace Game { /******************************************** Game Namespace */
-	typedef std::list<SharedSceneLayer> SharedSceneLayerList;
+	typedef std::list<ISceneLayer *> SceneLayerList;
 } /*********************************************************** Game Namespace */
 
 namespace Extra { /****************************************** Extra Namespace */
@@ -75,10 +74,8 @@ namespace Extra { /****************************************** Extra Namespace */
 		bool isLoaded(void) const;
 		bool load(const char *file);
 
-		const Game::SharedSceneLayerList & layers(void) const;
+		const Game::SceneLayerList & layers(void) const;
 	};
-	typedef Core::Shared<TMXLoader> SharedTMXLoader;
-	typedef Core::Weak<TMXLoader> WeakTMXLoader;
 
 } /********************************************************** Extra Namespace */
 MARSHMALLOW_NAMESPACE_END

@@ -47,34 +47,26 @@
 #include <graphics/config.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Core { /******************************************** Core Namespace */
-	template <class T> class Shared;
-	template <class T> class Weak;
-} /*********************************************************** Core Namespace */
-
 namespace Graphics { /************************************ Graphics Namespace */
 
 	struct ITextureCoordinateData;
-	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
-
 	struct ITextureData;
-	typedef Core::Shared<ITextureData> SharedTextureData;
-
 	struct IVertexData;
-	typedef Core::Shared<IVertexData> SharedVertexData;
 
-namespace Factory { /**************************** Graphics::Factory Namespace */
-
-	MARSHMALLOW_GRAPHICS_EXPORT
-	SharedTextureCoordinateData CreateTextureCoordinateData(uint16_t count);
+namespace Backend { /**************************** Graphics::Backend Namespace */
+namespace Factory { /******************* Graphics::Backend::Factory Namespace */
 
 	MARSHMALLOW_GRAPHICS_EXPORT
-	SharedTextureData CreateTextureData(void);
+	ITextureCoordinateData * CreateTextureCoordinateData(uint16_t count);
 
 	MARSHMALLOW_GRAPHICS_EXPORT
-	SharedVertexData CreateVertexData(uint16_t count);
+	ITextureData * CreateTextureData(void);
 
-} /********************************************** Graphics::Factory Namespace */
+	MARSHMALLOW_GRAPHICS_EXPORT
+	IVertexData * CreateVertexData(uint16_t count);
+
+} /************************************* Graphics::Backend::Factory Namespace */
+} /********************************************** Graphics::Backend Namespace */
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 

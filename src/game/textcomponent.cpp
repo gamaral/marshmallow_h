@@ -41,7 +41,6 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/type.h"
-#include "core/weak.h"
 
 #include "math/point2.h"
 
@@ -70,17 +69,18 @@ namespace Game { /******************************************** Game Namespace */
 struct TextComponent::Private
 {
 	Private(void)
-	: scale(1.f)
-	, tile_offset(0)
-	, invalidated(false) {}
+	    : scale(1.f)
+	    , tile_offset(0)
+	    , invalidated(false)
+	{}
 
 	void rebuild(void);
 	void render(void);
 
-	std::vector<Graphics::SharedMesh> mesh;
+	std::vector<Graphics::IMesh *> mesh;
 
-	WeakPositionComponent position;
-	Graphics::SharedTileset tileset;
+	PositionComponent *position;
+	Graphics::ITileset *tileset;
 
 	Graphics::Color color;
 
@@ -107,8 +107,8 @@ TextComponent::Private::rebuild(void)
 	/* TODO: this needs to be kept around, only replaced when font size
 	 *       changes.
 	 */
-	Graphics::SharedVertexData l_vdata =
-	    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
+	Graphics::IVertexData *l_vdata =
+	    Graphics::Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 	{
 		float l_hwidth  =
 		    (static_cast<float>(tileset->tileSize().width)  / 2.f) * scale;
@@ -131,7 +131,7 @@ TextComponent::Private::rebuild(void)
 	for (uint16_t i = 0; i < l_text_count; ++i) {
 		l_char = text[i];
 		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
-			Graphics::SharedTextureCoordinateData l_tdata =
+			Graphics::ITextureCoordinateData *l_tdata =
 				tileset->getTextureCoordinateData(static_cast<uint16_t>
 				    (tile_offset + (l_char - MIN_CHAR)));
 
@@ -166,20 +166,25 @@ TextComponent::Private::render(void)
 
 		/* render valid characters */
 		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
-			Graphics::SharedQuadMesh l_mesh = mesh[i].staticCast<Graphics::QuadMesh>();
+			Graphics::QuadMesh *l_mesh =
+			    static_cast<Graphics::QuadMesh *>(mesh[i]);
 			l_mesh->setColor(color);
 			Graphics::Painter::Draw(*l_mesh, l_point);
-			l_point.x += static_cast<float>(tileset->tileSize().width) * scale;
+			l_point.x +=
+			    static_cast<float>(tileset->tileSize().width) * scale;
 		}
 
 		/* handle line break */
 		else if ('\n' == l_char) {
-			l_point.x  = position->position().x;
-			l_point.y += static_cast<float>(tileset->tileSize().height) * -scale;
+			l_point.x =
+			    position->position().x;
+			l_point.y +=
+			    static_cast<float>(tileset->tileSize().height) * -scale;
 		}
 
 		/* skip unknown character */
-		else l_point.x += static_cast<float>(tileset->tileSize().width) * scale;
+		else l_point.x +=
+		    static_cast<float>(tileset->tileSize().width) * scale;
 	}
 }
 
@@ -196,7 +201,7 @@ TextComponent::~TextComponent(void)
 	delete m_p, m_p = 0;
 }
 
-Graphics::SharedTileset &
+Graphics::ITileset *
 TextComponent::tileset(void)
 {
 	return(m_p->tileset);
@@ -278,8 +283,8 @@ TextComponent::update(float delta)
 	ComponentBase::update(delta);
 
 	if (!m_p->position)
-	    m_p->position = entity().getComponentType("Game::PositionComponent").
-	        staticCast<PositionComponent>();
+	    m_p->position = static_cast<PositionComponent *>
+	        (entity().getComponentType("Game::PositionComponent"));
 
 	if (m_p->invalidated)
 	    m_p->rebuild();

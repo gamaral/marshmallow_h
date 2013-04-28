@@ -93,8 +93,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<Box2DSceneLayer> SharedBox2DSceneLayer;
-	typedef Core::Weak<Box2DSceneLayer> WeakBox2DSceneLayer;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

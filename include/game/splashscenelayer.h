@@ -48,7 +48,6 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 	class QuadMesh;
-	typedef Core::Shared<QuadMesh> SharedQuadMesh;
 } /******************************************************* Graphics Namespace */
 
 namespace Game { /******************************************** Game Namespace */
@@ -68,7 +67,7 @@ namespace Game { /******************************************** Game Namespace */
 		    IScene &scene);
 		virtual ~SplashSceneLayer(void);
 
-		Graphics::SharedQuadMesh mesh(void) const;
+		Graphics::QuadMesh * mesh(void) const;
 
 		float exposure(void) const;
 		void setExposure(float t);
@@ -99,8 +98,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<SplashSceneLayer> SharedSplashSceneLayer;
-	typedef Core::Weak<SplashSceneLayer> WeakSplashSceneLayer;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

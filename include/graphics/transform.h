@@ -85,8 +85,6 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 		const Math::Matrix4 & matrix(MatrixType type = mtModel) const;
 	};
-	typedef Core::Shared<Transform> SharedTransform;
-	typedef Core::Weak<Transform> WeakTransform;
 
 } /********************************************** Graphics::Painter Namespace */
 MARSHMALLOW_NAMESPACE_END

@@ -90,8 +90,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<CollisionSceneLayer> SharedCollisionSceneLayer;
-	typedef Core::Weak<CollisionSceneLayer> WeakCollisionSceneLayer;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

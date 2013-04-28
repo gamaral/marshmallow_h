@@ -67,8 +67,8 @@ namespace Game { /******************************************** Game Namespace */
 		    IScene &scene);
 		virtual ~TilemapSceneLayer(void);
 
-		Graphics::SharedTileset tileset(uint32_t index, uint32_t *offset = 0);
-		void attachTileset(uint32_t offset, Graphics::SharedTileset tileset);
+		Graphics::ITileset * tileset(uint32_t index, uint32_t *offset = 0);
+		void attachTileset(uint32_t offset, Graphics::ITileset *tileset);
 		void dettachTileset(uint32_t offset);
 
 		const uint32_t * data(void) const;
@@ -111,8 +111,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<TilemapSceneLayer> SharedTilemapSceneLayer;
-	typedef Core::Weak<TilemapSceneLayer> WeakTilemapSceneLayer;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

@@ -38,7 +38,6 @@
 #include "core/fileio.h"
 #include "core/identifier.h"
 #include "core/platform.h"
-#include "core/shared.h"
 
 #include "tests/common.h"
 

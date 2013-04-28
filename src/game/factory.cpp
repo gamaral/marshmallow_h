@@ -30,7 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include "game/factorybase.h"
+#include "game/factory.h"
 
 /*!
  * @file
@@ -39,7 +39,6 @@
  */
 
 #include "core/type.h"
-#include "core/weak.h"
 
 #include "graphics/quadmesh.h"
 
@@ -60,30 +59,31 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 namespace { /************************************ Game::<anonymous> Namespace */
-	Game::IFactory *s_instance(0);
+	static Game::IFactory *s_instance(0);
 } /********************************************** Game::<anonymous> Namespace */
 
-FactoryBase::FactoryBase(void)
+Factory::Factory(void)
 {
 	if (!s_instance) s_instance = this;
 }
 
-FactoryBase::~FactoryBase(void)
+Factory::~Factory(void)
 {
 	if (s_instance == this) s_instance = 0;
 }
 
-SharedScene
-FactoryBase::createScene(const Core::Type &t,
-    const Core::Identifier &i) const
+IScene *
+Factory::createScene(const Core::Type &t,
+                     const Core::Identifier &i) const
 {
 	if (t == Scene::Type()) return(new Scene(i));
-	return(SharedScene());
+	return(0);
 }
 
-SharedSceneLayer
-FactoryBase::createSceneLayer(const Core::Type &t,
-    const Core::Identifier &i, IScene &s) const
+ISceneLayer *
+Factory::createSceneLayer(const Core::Type &t,
+                          const Core::Identifier &i,
+                          IScene &s) const
 {
 	if (t == EntitySceneLayer::Type()) return(new EntitySceneLayer(i, s));
 	else if (t == PauseSceneLayer::Type()) return(new PauseSceneLayer(i, s));
@@ -91,19 +91,20 @@ FactoryBase::createSceneLayer(const Core::Type &t,
 #if MARSHMALLOW_WITH_BOX2D
 	else if (t == Box2DSceneLayer::Type()) return(new Box2DSceneLayer(i, s));
 #endif
-	return(SharedSceneLayer());
+	return(0);
 }
 
-SharedEntity
-FactoryBase::createEntity(const Core::Type &t,
-    const Core::Identifier &i, EntitySceneLayer &l) const
+IEntity *
+Factory::createEntity(const Core::Type &t,
+                      const Core::Identifier &i,
+                      EntitySceneLayer &l) const
 {
 	if (t == Entity::Type()) return(new Entity(i, l));
-	return(SharedEntity());
+	return(0);
 }
 
-SharedComponent
-FactoryBase::createComponent(const Core::Type &t,
+IComponent *
+Factory::createComponent(const Core::Type &t,
     const Core::Identifier &i, IEntity &e) const
 {
 	if (t == MovementComponent::Type()) return(new MovementComponent(i, e));
@@ -112,18 +113,18 @@ FactoryBase::createComponent(const Core::Type &t,
 #if MARSHMALLOW_WITH_BOX2D
 	else if (t == Box2DComponent::Type()) return(new Box2DComponent(i, e));
 #endif
-	return(SharedComponent());
+	return(0);
 }
 
-Graphics::SharedMesh
-FactoryBase::createMesh(const Core::Type &t) const
+Graphics::IMesh *
+Factory::createMesh(const Core::Type &t) const
 {
 	if (t == Graphics::QuadMesh::Type()) return(new Graphics::QuadMesh);
-	return(Graphics::SharedMesh());
+	return(0);
 }
 
 IFactory *
-FactoryBase::Instance(void)
+Factory::Instance(void)
 {
 	return(s_instance);
 }

@@ -76,8 +76,6 @@ namespace Game { /******************************************** Game Namespace */
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);
 	};
-	typedef Core::Shared<SceneLayerBase> SharedSceneLayerBase;
-	typedef Core::Weak<SceneLayerBase> WeakSceneLayerBase;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

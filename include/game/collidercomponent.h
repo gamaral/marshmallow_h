@@ -47,16 +47,9 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
 	class CollisionSceneLayer;
-	typedef Core::Weak<CollisionSceneLayer> WeakCollisionSceneLayer;
-
 	class MovementComponent;
-	typedef Core::Weak<MovementComponent> WeakMovementComponent;
-
 	class PositionComponent;
-	typedef Core::Weak<PositionComponent> WeakPositionComponent;
-
 	class SizeComponent;
-	typedef Core::Weak<SizeComponent> WeakSizeComponent;
 
 	union CollisionData;
 
@@ -100,10 +93,10 @@ namespace Game { /******************************************** Game Namespace */
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);
 
-		WeakCollisionSceneLayer & layer(void);
-		WeakMovementComponent & movement(void);
-		WeakPositionComponent & position(void);
-		WeakSizeComponent & size(void);
+		Game::CollisionSceneLayer * layer(void);
+		Game::MovementComponent * movement(void);
+		Game::PositionComponent * position(void);
+		Game::SizeComponent * size(void);
 
 	public: /* static */
 
@@ -113,8 +106,6 @@ namespace Game { /******************************************** Game Namespace */
 	
 		virtual bool collision(ColliderComponent &collider, float delta, const CollisionData &data);
 	};
-	typedef Core::Shared<ColliderComponent> SharedColliderComponent;
-	typedef Core::Weak<ColliderComponent> WeakColliderComponent;
 
 	/*! @brief Game Bounce Collider Component Class */
 	class MARSHMALLOW_GAME_EXPORT
@@ -139,8 +130,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<BounceColliderComponent> SharedBounceColliderComponent;
-	typedef Core::Weak<BounceColliderComponent> WeakBounceColliderComponent;
 
 	/*! @brief Game Collision Data */
 	union CollisionData

@@ -42,7 +42,6 @@
 
 #include "core/identifier.h"
 #include "core/logger.h"
-#include "core/shared.h"
 #include "core/type.h"
 
 #include "graphics/itexturecoordinatedata.h"
@@ -78,17 +77,18 @@ ScaleModeToString(Graphics::ITextureData::ScaleMode mode)
 
 } /****************************************** Graphics::<anonymous> Namespace */
 
+/* TODO: cleanup */
 struct MeshBase::Private
 {
-	SharedTextureCoordinateData tcdata;
-	SharedTextureData tdata;
-	SharedVertexData vdata;
 	Color color;
+	ITextureCoordinateData *tcdata;
+	ITextureData *tdata;
+	IVertexData *vdata;
 	float scale[2];
 	float rotation;
 };
 
-MeshBase::MeshBase(SharedTextureCoordinateData tc, SharedTextureData t, SharedVertexData v)
+MeshBase::MeshBase(ITextureCoordinateData *tc, ITextureData *t, IVertexData *v)
     : m_p(new Private)
 {
 	m_p->tcdata = tc;
@@ -123,36 +123,36 @@ MeshBase::setScale(float x, float y)
 }
 
 void
-MeshBase::setTextureCoordinateData(SharedTextureCoordinateData tc)
+MeshBase::setTextureCoordinateData(ITextureCoordinateData *tc)
 {
 	m_p->tcdata = tc;
 }
 
 void
-MeshBase::setTextureData(SharedTextureData td)
+MeshBase::setTextureData(ITextureData *td)
 {
 	m_p->tdata = td;
 }
 
 void
-MeshBase::setVertexData(Graphics::SharedVertexData vd)
+MeshBase::setVertexData(IVertexData *vd)
 {
 	m_p->vdata = vd;
 }
 
-const Graphics::SharedTextureCoordinateData &
+ITextureCoordinateData *
 MeshBase::textureCoordinateData(void) const
 {
 	return(m_p->tcdata);
 }
 
-const Graphics::SharedTextureData &
+ITextureData *
 MeshBase::textureData(void) const
 {
 	return(m_p->tdata);
 }
 
-const Graphics::SharedVertexData &
+IVertexData *
 MeshBase::vertexData(void) const
 {
 	return(m_p->vdata);

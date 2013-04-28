@@ -56,8 +56,16 @@
 #define NO_COPY(x) x(const x&)
 #define NO_ASSIGN(x) x& operator=(const x&)
 
+#define PRIVATE_IMPLEMENTATION struct Private;\
+                               Private *m_p
+#define PIMPL m_p
+#define PIMPL_CREATE PIMPL(new Private)
+#define PIMPL_CREATE_X(...) PIMPL(new Private(__VA_ARGS__))
+#define PIMPL_DESTROY delete PIMPL, PIMPL = 0
+
 #define MMIGNORE (void)
 #define MMUNUSED(x) static_cast<void>(x)
+
 #define MMMIN(x,y) (x < y ? x : y)
 #define MMMAX(x,y) (x > y ? x : y)
 #define MMRANGE(x,y,z) (y < x ? x : ( y > z ? z : y))

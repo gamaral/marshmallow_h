@@ -41,12 +41,11 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/type.h"
-#include "core/weak.h"
 
 #include "graphics/imesh.h"
 #include "graphics/painter.h"
 
-#include "game/factorybase.h"
+#include "game/factory.h"
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
@@ -57,8 +56,13 @@ namespace Game { /******************************************** Game Namespace */
 
 struct RenderComponent::Private
 {
-	WeakPositionComponent position;
-	Graphics::SharedMesh  mesh;
+	Private()
+	    : position(0)
+	    , mesh(0)
+	{}
+
+	PositionComponent *position;
+	Graphics::IMesh *mesh;
 };
 
 RenderComponent::RenderComponent(const Core::Identifier &i, IEntity &e)
@@ -72,7 +76,7 @@ RenderComponent::~RenderComponent(void)
 	delete m_p, m_p = 0;
 }
 
-Graphics::SharedMesh &
+Graphics::IMesh *
 RenderComponent::mesh(void)
 {
 	return(m_p->mesh);
@@ -82,8 +86,8 @@ void
 RenderComponent::update(float)
 {
 	if (!m_p->position)
-		m_p->position = entity().getComponentType("Game::PositionComponent").
-		    staticCast<PositionComponent>();
+		m_p->position = static_cast<PositionComponent *>
+		    (entity().getComponentType("Game::PositionComponent"));
 }
 
 void
@@ -122,8 +126,8 @@ RenderComponent::deserialize(XMLElement &n)
 	}
 
 	const char *l_mesh_type = l_child->Attribute("type");
-	Graphics::SharedMesh l_mesh =
-	    Game::FactoryBase::Instance()->createMesh(l_mesh_type);
+	Graphics::IMesh *l_mesh =
+	    Game::Factory::Instance()->createMesh(l_mesh_type);
 	if (!l_mesh) {
 		MMWARNING("Render component '" << id().str() << "' has an unknown mesh type");
 		return(false);

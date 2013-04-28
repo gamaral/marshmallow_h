@@ -52,9 +52,6 @@ namespace Core { /******************************************** Core Namespace */
 
 	class Identifier;
 
-	template <class T> class Shared;
-	template <class T> class Weak;
-
 	/*!
 	 * @brief An IDataIO implementation of a file buffer device
 	 */
@@ -113,8 +110,6 @@ namespace Core { /******************************************** Core Namespace */
 
 		VIRTUAL size_t size(void) const;
 	};
-	typedef Shared<FileIO> SharedFileIO;
-	typedef Weak<FileIO> WeakFileIO;
 
 } /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END

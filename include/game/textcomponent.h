@@ -47,19 +47,14 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
-	struct ITileset;
-	typedef Core::Shared<ITileset> SharedTileset;
-
-	struct IMesh;
-	typedef Core::Shared<IMesh> SharedMesh;
-
 	class Color;
+	struct IMesh;
+	struct ITileset;
 } /******************************************************* Graphics Namespace */
 
 namespace Game { /******************************************** Game Namespace */
 
 	class PositionComponent;
-	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
 	/*! @brief Game Text Component Class */
 	class MARSHMALLOW_GAME_EXPORT
@@ -74,7 +69,7 @@ namespace Game { /******************************************** Game Namespace */
 		TextComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~TextComponent(void);
 
-		Graphics::SharedTileset & tileset(void);
+		Graphics::ITileset * tileset(void);
 
 		const std::string & text(void) const;
 		void setText(const std::string &text);
@@ -103,8 +98,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<TextComponent> SharedTextComponent;
-	typedef Core::Weak<TextComponent> WeakTextComponent;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

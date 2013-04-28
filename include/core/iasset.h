@@ -51,9 +51,6 @@ namespace Core { /******************************************** Core Namespace */
 	class StrHash;
 	class Type;
 
-	template <class T> class Shared;
-	template <class T> class Weak;
-
 	/*!
 	 * @brief Asset Interface
 	 */
@@ -65,8 +62,6 @@ namespace Core { /******************************************** Core Namespace */
 		virtual const Identifier & id(void) const = 0;
 		virtual const Type & type(void) const = 0;
 	};
-	typedef Shared<IAsset> SharedAsset;
-	typedef Weak<IAsset> WeakAsset;
 
 } /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END

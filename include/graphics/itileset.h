@@ -54,10 +54,7 @@ namespace Math { /******************************************** Math Namespace */
 namespace Graphics { /************************************ Graphics Namespace */
 
 	struct ITextureCoordinateData;
-	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
-
 	struct ITextureData;
-	typedef Core::Shared<ITextureData> SharedTextureData;
 
 	/*! @brief Graphics Tileset Interface */
 	struct MARSHMALLOW_GRAPHICS_EXPORT
@@ -67,7 +64,7 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 		virtual const Core::Identifier & name(void) const = 0;
 		virtual const Math::Size2i & size(void) const = 0;
-		virtual const SharedTextureData & textureData(void) const = 0;
+		virtual ITextureData * textureData(void) const = 0;
 		virtual const Math::Size2i & tileSize(void) const = 0;
 		virtual int spacing(void) const = 0;
 		virtual int margin(void) const = 0;
@@ -75,10 +72,8 @@ namespace Graphics { /************************************ Graphics Namespace */
 		/*! @brief Get tile texture coordinate data
 		 *  @param index Tile index, top-to-bottom wrapping from left-to-right.
 		 */
-		virtual SharedTextureCoordinateData getTextureCoordinateData(uint16_t index) = 0;
+		virtual ITextureCoordinateData * getTextureCoordinateData(uint16_t index) = 0;
 	};
-	typedef Core::Shared<ITileset> SharedTileset;
-	typedef Core::Weak<ITileset> WeakTileset;
 
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END

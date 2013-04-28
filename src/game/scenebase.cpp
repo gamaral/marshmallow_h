@@ -40,13 +40,12 @@
 
 #include "core/identifier.h"
 #include "core/logger.h"
-#include "core/shared.h"
 #include "core/type.h"
 
 #include "graphics/color.h"
 #include "graphics/painter.h"
 
-#include "game/factorybase.h"
+#include "game/factory.h"
 #include "game/iscenelayer.h"
 
 #include <tinyxml2.h>
@@ -90,7 +89,7 @@ SceneBase::isActive(void) const
 }
 
 void
-SceneBase::pushLayer(SharedSceneLayer l)
+SceneBase::pushLayer(ISceneLayer *l)
 {
 	m_p->layers.push_front(l);
 }
@@ -110,13 +109,13 @@ SceneBase::removeLayer(const Core::Identifier &i)
 	/* maybe replace later with a map if required */
 	for (l_i = m_p->layers.begin(); l_i != l_c; ++l_i)
 		if ((*l_i)->id() == i) {
-			SharedSceneLayer l_slayer = *l_i;
+			ISceneLayer *l_slayer = *l_i;
 			m_p->layers.remove(l_slayer);
 			return;
 		}
 }
 
-SharedSceneLayer
+ISceneLayer *
 SceneBase::getLayer(const Core::Identifier &i) const
 {
 	SceneLayerList::const_iterator l_i;
@@ -128,10 +127,10 @@ SceneBase::getLayer(const Core::Identifier &i) const
 			return(*l_i);
 	}
 
-	return(SharedSceneLayer());
+	return(0);
 }
 
-SharedSceneLayer
+ISceneLayer *
 SceneBase::getLayerType(const Core::Type &t) const
 {
 	SceneLayerList::const_iterator l_i;
@@ -143,7 +142,7 @@ SceneBase::getLayerType(const Core::Type &t) const
 			return(*l_i);
 	}
 
-	return(SharedSceneLayer());
+	return(0);
 }
 
 const SceneLayerList &
@@ -223,7 +222,7 @@ SceneBase::update(float d)
 	/* TODO: polish later if possible */
 	bool l_finished = false;
 	do {
-		SharedSceneLayer l_slayer = (*l_i);
+		ISceneLayer *l_slayer = (*l_i);
 
 		if (l_i == l_b) l_finished = true;
 		else l_i--;
@@ -263,8 +262,8 @@ SceneBase::deserialize(XMLElement &n)
 		const char *l_id   = l_child->Attribute("id");
 		const char *l_type = l_child->Attribute("type");
 
-		SharedSceneLayer l_layer =
-		    FactoryBase::Instance()->createSceneLayer(l_type, l_id, *this);
+		ISceneLayer *l_layer =
+		    Factory::Instance()->createSceneLayer(l_type, l_id, *this);
 
 		if (!l_layer) {
 			MMWARNING("SceneLayer '" << l_id << "' of type '" << l_type << "' creation failed");

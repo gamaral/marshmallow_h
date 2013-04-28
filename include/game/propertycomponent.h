@@ -75,8 +75,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<PropertyComponent> SharedPropertyComponent;
-	typedef Core::Weak<PropertyComponent> WeakPropertyComponent;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

@@ -33,7 +33,6 @@
 #include <iostream>
 
 #include "core/identifier.h"
-#include "core/shared.h"
 
 #include "math/size2.h"
 
@@ -54,15 +53,15 @@ MARSHMALLOW_NAMESPACE_USE
 void
 tileset_fixed_test(void)
 {
-	Graphics::Dummy::SharedTextureData l_textureData = new Graphics::Dummy::TextureData;
-	l_textureData->load("128x128");
-	l_textureData->setSize(Math::Size2i(128, 128));
+	Graphics::Dummy::TextureData l_textureData;
+	l_textureData.load("128x128");
+	l_textureData.setSize(Math::Size2i(128, 128));
 
 	Graphics::Tileset l_tileset;
 	l_tileset.setTileSize(Math::Size2i(16, 16));
-	l_tileset.setTextureData(l_textureData.staticCast<Graphics::ITextureData>());
+	l_tileset.setTextureData(&l_textureData);
 
-	Graphics::SharedTextureCoordinateData tcd;
+	Graphics::ITextureCoordinateData *tcd;
 	float l_u, l_v;
 
 	tcd = l_tileset.getTextureCoordinateData(0);

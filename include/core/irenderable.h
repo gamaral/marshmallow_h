@@ -47,9 +47,6 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 
-	template <class T> class Shared;
-	template <class T> class Weak;
-
 	/*!
 	 * @brief Renderable Interface
 	 */
@@ -63,8 +60,6 @@ namespace Core { /******************************************** Core Namespace */
 		 */
 		virtual void render(void) = 0;
 	};
-	typedef Shared<IRenderable> SharedRenderable;
-	typedef Weak<IRenderable> WeakRenderable;
 
 } /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END

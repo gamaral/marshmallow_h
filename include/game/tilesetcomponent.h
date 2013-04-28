@@ -46,13 +46,11 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 	struct ITileset;
-	typedef Core::Shared<ITileset> SharedTileset;
 } /******************************************************* Graphics Namespace */
 
 namespace Game { /******************************************** Game Namespace */
 
 	class PositionComponent;
-	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
 	/*! @brief Game Tileset Component Class */
 	class MARSHMALLOW_GAME_EXPORT
@@ -67,7 +65,7 @@ namespace Game { /******************************************** Game Namespace */
 		TilesetComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~TilesetComponent(void);
 
-		Graphics::SharedTileset & tileset(void);
+		Graphics::ITileset * tileset(void);
 
 	public: /* virtual */
 
@@ -81,8 +79,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<TilesetComponent> SharedTilesetComponent;
-	typedef Core::Weak<TilesetComponent> WeakTilesetComponent;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

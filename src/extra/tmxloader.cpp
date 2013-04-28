@@ -44,7 +44,6 @@
 #include "core/logger.h"
 #include "core/platform.h"
 #include "core/type.h"
-#include "core/weak.h"
 #include "core/zlib.h"
 
 #include "graphics/backend.h"
@@ -65,6 +64,8 @@
 
 #include <map>
 
+#include <cassert>
+
 #include <tinyxml2.h>
 
 #define TMXLAYER_DATA_NODE          "data"
@@ -81,7 +82,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Extra { /****************************************** Extra Namespace */
 namespace { /*********************************** Extra::<anonymous> Namespace */
 
-	typedef std::map<uint16_t, Graphics::SharedTileset> TilesetCollection;
+	typedef std::map<uint16_t, Graphics::ITileset *> TilesetCollection;
 
 	Graphics::Color
 	PixelToColor(uint16_t *p)
@@ -115,7 +116,7 @@ struct TMXLoader::Private
 
 	TilesetCollection tilesets;
 
-	Game::SharedSceneLayerList layers;
+	Game::SceneLayerList layers;
 
 	std::string base_directory;
 
@@ -167,7 +168,7 @@ TMXLoader::Private::load(const char *f)
 	}
 
 	/* attach layers to scene */
-	Game::SharedSceneLayerList::iterator l_layer_i;
+	Game::SceneLayerList::iterator l_layer_i;
 	for (l_layer_i = layers.begin(); l_layer_i != layers.end(); ++l_layer_i)
 		scene.pushLayer(*l_layer_i);
 
@@ -438,7 +439,7 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 		l_object_name = l_object->Attribute("name");
 		l_object_type = l_object->Attribute("type");
 
-		Game::SharedEntity l_entity = Game::Factory::Instance()->
+		Game::IEntity *l_entity = Game::Factory::Instance()->
 		    createEntity(l_object_type, l_object_name ? l_object_name : "", *l_layer);
 		if (!l_entity) {
 			MMWARNING("Object '" << l_object_name << "' of type '" << l_object_type << "' was left unhandled.");
@@ -493,7 +494,7 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 				return(false);
 			}
 
-			Graphics::SharedTileset l_tileset = tilesets[l_ts_firstgid];
+			Graphics::ITileset *l_tileset = tilesets[l_ts_firstgid];
 
 			/* calculate object size from tileset */
 			l_object_width  = l_tileset->tileSize().width;
@@ -505,24 +506,29 @@ TMXLoader::Private::processObjectGroup(XMLElement &e)
 			/* attach tileset used */
 
 			Game::TilesetComponent *l_tscomponent = new Game::TilesetComponent("tileset", *l_entity);
+#if FIXME
 			l_tscomponent->tileset() = l_tileset;
+#endif
 			l_entity->pushComponent(l_tscomponent);
 
 			/* generate tile mesh */
 
 			Game::RenderComponent *l_render = new Game::RenderComponent("render", *l_entity);
 
-			Graphics::SharedVertexData l_vdata = Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
+			Graphics::IVertexData *l_vdata =
+			    Graphics::Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 			l_vdata->set(0, -l_object_hrsize.width,  l_object_hrsize.height);
 			l_vdata->set(1, -l_object_hrsize.width, -l_object_hrsize.height);
 			l_vdata->set(2,  l_object_hrsize.width,  l_object_hrsize.height);
 			l_vdata->set(3,  l_object_hrsize.width, -l_object_hrsize.height);
 
-			Graphics::SharedTextureCoordinateData l_tdata =
+#if FIXME
+			Graphics::ITextureCoordinateData *l_tdata =
 			    l_tileset->getTextureCoordinateData(static_cast<uint16_t>(l_object_gid - l_ts_firstgid));
 
 			l_render->mesh() =
 			    new Graphics::QuadMesh(l_tdata, l_tileset->textureData(), l_vdata);
+#endif
 
 			l_entity->pushComponent(l_render);
 		}
@@ -613,7 +619,8 @@ TMXLoader::Private::processTileset(XMLElement &e)
 	(void) l_trans;
 #endif
 
-	Graphics::SharedTextureData l_texture = Graphics::Factory::CreateTextureData();
+	Graphics::ITextureData *l_texture =
+	    Graphics::Backend::Factory::CreateTextureData();
 	if (!l_texture->load(l_source)) {
 		MMERROR("Failed to load tileset texture.");
 		return(false);
@@ -648,7 +655,7 @@ TMXLoader::isLoaded(void) const
 	return(m_p->is_loaded);
 }
 
-const Game::SharedSceneLayerList &
+const Game::SceneLayerList &
 TMXLoader::layers(void) const
 {
 	return(m_p->layers);

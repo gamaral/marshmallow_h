@@ -45,11 +45,6 @@
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Core { /******************************************** Core Namespace */
-	template <class T> class Shared;
-	template <class T> class Weak;
-} /*********************************************************** Core Namespace */
-
 namespace Event { /****************************************** Event Namespace */
 
 	struct IEvent;
@@ -66,8 +61,6 @@ namespace Event { /****************************************** Event Namespace */
 		 */
 		virtual bool handleEvent(const Event::IEvent &event) = 0;
 	};
-	typedef Core::Shared<IEventListener> SharedEventListener;
-	typedef Core::Weak<IEventListener> WeakEventListener;
 
 } /********************************************************** Event Namespace */
 MARSHMALLOW_NAMESPACE_END

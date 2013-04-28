@@ -94,8 +94,6 @@ namespace Dummy { /******************************** Graphics::Dummy Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<TextureData> SharedTextureData;
-	typedef Core::Weak<TextureData> WeakTextureData;
 
 } /************************************************ Graphics::Dummy Namespace */
 } /******************************************************* Graphics Namespace */

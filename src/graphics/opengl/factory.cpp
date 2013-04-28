@@ -38,36 +38,33 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/shared.h"
-
 #include "texturecoordinatedata.h"
 #include "texturedata.h"
 #include "vertexdata.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
+namespace Backend { /**************************** Graphics::Backend Namespace */
 
-SharedTextureCoordinateData
+ITextureCoordinateData *
 Factory::CreateTextureCoordinateData(uint16_t c)
 {
-	using namespace OpenGL;
-	return(new TextureCoordinateData(c));
+	return(new OpenGL::TextureCoordinateData(c));
 }
 
-SharedTextureData
+ITextureData *
 Factory::CreateTextureData(void)
 {
-	using namespace OpenGL;
-	return(new TextureData());
+	return(new OpenGL::TextureData());
 }
 
-SharedVertexData
+IVertexData *
 Factory::CreateVertexData(uint16_t c)
 {
-	using namespace OpenGL;
-	return(new VertexData(c));
+	return(new OpenGL::VertexData(c));
 }
 
+} /********************************************** Graphics::Backend Namespace */
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 

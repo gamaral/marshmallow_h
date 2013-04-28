@@ -43,7 +43,6 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/type.h"
-#include "core/weak.h"
 
 #include "math/point2.h"
 
@@ -93,7 +92,7 @@ struct SplashSceneLayer::Private
 
 	SplashSceneLayer &_interface;
 
-	Graphics::SharedQuadMesh mesh;
+	Graphics::QuadMesh *mesh;
 	float exposure;
 	float fade;
 	float timer;
@@ -163,7 +162,7 @@ SplashSceneLayer::~SplashSceneLayer(void)
 	delete m_p, m_p = 0;
 }
 
-Graphics::SharedQuadMesh
+Graphics::QuadMesh *
 SplashSceneLayer::mesh(void) const
 {
 	return(m_p->mesh);

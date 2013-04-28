@@ -64,8 +64,6 @@ namespace Game { /******************************************** Game Namespace */
 		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;
 	};
-	typedef Core::Shared<IComponent> SharedComponent;
-	typedef Core::Weak<IComponent> WeakComponent;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

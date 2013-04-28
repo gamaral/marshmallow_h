@@ -51,9 +51,6 @@ using namespace TinyXML;
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 
-	template <class T> class Shared;
-	template <class T> class Weak;
-
 	/*!
 	 * @brief Serializable Interface
 	 */
@@ -74,8 +71,6 @@ namespace Core { /******************************************** Core Namespace */
 		 */
 		virtual bool deserialize(XMLElement &node) = 0;
 	};
-	typedef Shared<ISerializable> SharedSerializable;
-	typedef Weak<ISerializable> WeakSerializable;
 
 } /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END

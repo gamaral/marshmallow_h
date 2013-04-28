@@ -49,7 +49,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
 	struct IEntity;
-	typedef Core::Weak<IEntity> WeakEntity;
 
 	/*! @brief Game Component Base Class */
 	class MARSHMALLOW_GAME_EXPORT

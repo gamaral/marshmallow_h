@@ -51,7 +51,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
 	class PositionComponent;
-	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
 	/*! @brief Game Movement Component Class */
 	class MARSHMALLOW_GAME_EXPORT
@@ -87,8 +86,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<MovementComponent> SharedMovementComponent;
-	typedef Core::Weak<MovementComponent> WeakMovementComponent;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

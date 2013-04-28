@@ -65,7 +65,9 @@ namespace Graphics { /************************************ Graphics Namespace */
 		QuadMesh(const Math::Size2f &size);
 		QuadMesh(float width, float height);
 		QuadMesh(void);
-		QuadMesh(SharedTextureCoordinateData tc, SharedTextureData t, SharedVertexData v);
+		QuadMesh(Graphics::ITextureCoordinateData *tc,
+		         Graphics::ITextureData *t,
+		         Graphics::IVertexData *v);
 		virtual ~QuadMesh(void);
 
 	public: /* virtual */
@@ -80,8 +82,6 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<QuadMesh> SharedQuadMesh;
-	typedef Core::Weak<QuadMesh> WeakQuadMesh;
 
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END

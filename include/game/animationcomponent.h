@@ -46,17 +46,12 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 	struct ITextureCoordinateData;
-	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
 } /******************************************************* Graphics Namespace */
 
 namespace Game { /******************************************** Game Namespace */
 
 	class RenderComponent;
-	typedef Core::Weak<RenderComponent> WeakRenderComponent;
-
 	class TilesetComponent;
-	typedef Core::Weak<TilesetComponent> WeakTilesetComponent;
-
 	struct AnimationSequence;
 
 	/*! @brief Game Animation Component Class */
@@ -98,8 +93,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<AnimationComponent> SharedAnimationComponent;
-	typedef Core::Weak<AnimationComponent> WeakAnimationComponent;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

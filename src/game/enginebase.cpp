@@ -43,7 +43,6 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/platform.h"
-#include "core/shared.h"
 #include "core/type.h"
 
 #include "event/eventmanager.h"
@@ -101,9 +100,23 @@ GetBackendOverrides(Graphics::Display &display)
 
 struct EngineBase::Private
 {
-	Event::SharedEventManager  event_manager;
-	Game::SharedSceneManager   scene_manager;
-	Game::SharedFactory        factory;
+	Private(int fps_, int sleep_)
+	    : event_manager(0)
+	    , factory(0)
+	    , scene_manager(0)
+	    , delta_time(0)
+	    , exit_code(0)
+	    , fps(fps_)
+	    , frame_rate(0)
+	    , sleep(sleep_)
+	    , running(false)
+	    , suspended(false)
+	    , valid(false)
+	{}
+
+	Event::EventManager *event_manager;
+	Game::IFactory      *factory;
+	Game::SceneManager  *scene_manager;
 	MMTIME delta_time;
 	int    exit_code;
 	int    fps;
@@ -113,15 +126,6 @@ struct EngineBase::Private
 	bool   suspended;
 	bool   valid;
 
-	Private(int fps_, int sleep_)
-	    : delta_time(0)
-	    , exit_code(0)
-	    , fps(fps_)
-	    , frame_rate(0)
-	    , sleep(sleep_)
-	    , running(false)
-	    , suspended(false)
-	    , valid(false) {}
 };
 
 EngineBase::EngineBase(int fps_, int sleep)
@@ -202,15 +206,15 @@ EngineBase::finalize(void)
 	if (isValid())
 		eventManager()->disconnect(this, Event::QuitEvent::Type());
 
-	m_p->factory.clear();
-	m_p->scene_manager.clear();
+	delete m_p->factory, m_p->factory = 0;
+	delete m_p->scene_manager, m_p->scene_manager = 0;
 
 	Joystick::Finalize();
 	Keyboard::Finalize();
 	Graphics::Backend::Finalize();
 	Audio::Backend::Finalize();
 
-	m_p->event_manager.clear();
+	delete m_p->event_manager, m_p->event_manager = 0;
 
 	Platform::Finalize();
 
@@ -231,20 +235,20 @@ EngineBase::isValid(void) const
 }
 
 void
-EngineBase::setEventManager(const Event::SharedEventManager &m)
+EngineBase::setEventManager(Event::EventManager *m)
 {
 	m_p->event_manager = m;
 }
 
 void
-EngineBase::setSceneManager(const Game::SharedSceneManager &m)
+EngineBase::setSceneManager(Game::SceneManager *m)
 {
 	
 	m_p->scene_manager = m;
 }
 
 void
-EngineBase::setFactory(const SharedFactory &f)
+EngineBase::setFactory(Game::IFactory *f)
 {
 	m_p->factory = f;
 }
@@ -394,19 +398,19 @@ EngineBase::resume(void)
 	m_p->suspended = false;
 }
 
-Event::SharedEventManager
+Event::EventManager *
 EngineBase::eventManager(void) const
 {
 	return(m_p->event_manager);
 }
 
-Game::SharedSceneManager
+Game::SceneManager *
 EngineBase::sceneManager(void) const
 {
 	return(m_p->scene_manager);
 }
 
-SharedFactory
+Game::IFactory *
 EngineBase::factory(void) const
 {
 	return(m_p->factory);

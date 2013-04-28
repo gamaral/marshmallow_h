@@ -57,7 +57,7 @@ namespace Graphics { /************************************ Graphics Namespace */
  *  The \b graphics backend is an indispensable part of the engine, in most
  *  cases it takes care of both the display and native events.
  */
-namespace Backend { /************************ Graphics::Backend Namespace */
+namespace Backend { /**************************** Graphics::Backend Namespace */
 
 	MARSHMALLOW_GRAPHICS_EXPORT
 	const Core::Identifier & Implementation(void);
@@ -74,7 +74,7 @@ namespace Backend { /************************ Graphics::Backend Namespace */
 	MARSHMALLOW_GRAPHICS_EXPORT
 	const Math::Size2i & WindowSize(void);
 
-} /******************************************** Graphics::Backend Namespace */
+} /********************************************** Graphics::Backend Namespace */
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 

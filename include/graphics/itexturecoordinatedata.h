@@ -59,8 +59,6 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 		virtual uint16_t count(void) const = 0;
 	};
-	typedef Core::Shared<ITextureCoordinateData> SharedTextureCoordinateData;
-	typedef Core::Weak<ITextureCoordinateData> WeakTextureCoordinateData;
 
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END

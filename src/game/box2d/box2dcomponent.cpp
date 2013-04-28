@@ -44,7 +44,6 @@
 
 #include "core/logger.h"
 #include "core/type.h"
-#include "core/weak.h"
 
 #include "math/size2.h"
 
@@ -62,11 +61,24 @@ namespace Game { /******************************************** Game Namespace */
 
 struct Box2DComponent::Private
 {
-	WeakBox2DSceneLayer   b2layer;
-	WeakPositionComponent position;
-	WeakRenderComponent   render;
+	Private()
+	    : b2layer(0)
+	    , position(0)
+	    , render(0)
+	    , body(0)
+	    , body_type(b2_staticBody)
+	    , density(1.f)
+	    , friction(0.3f)
+	    , init(false)
+	{}
+
 	Math::Size2f size;
-	b2Body*      body;
+
+	Box2DSceneLayer   *b2layer;
+	PositionComponent *position;
+	RenderComponent   *render;
+	b2Body            *body;
+
 	int   body_type;
 	float density;
 	float friction;
@@ -77,11 +89,6 @@ Box2DComponent::Box2DComponent(const Core::Identifier &i, IEntity &e)
     : ComponentBase(i, e)
     , m_p(new Private)
 {
-	  m_p->body = 0;
-	  m_p->body_type = b2_staticBody;
-	  m_p->density = 1.f;
-	  m_p->friction = 0.3f;
-	  m_p->init = false;
 }
 
 Box2DComponent::~Box2DComponent(void)
@@ -125,18 +132,18 @@ Box2DComponent::update(float d)
 	MMUNUSED(d);
 
 	if (!m_p->position) {
-		m_p->position = entity().getComponentType("Game::PositionComponent").
-		    staticCast<PositionComponent>();
+		m_p->position = static_cast<PositionComponent *>
+		    (entity().getComponentType("Game::PositionComponent"));
 	}
 
 	if (!m_p->render) {
-		m_p->render = entity().getComponentType("Game::RenderComponent").
-		    staticCast<RenderComponent>();
+		m_p->render = static_cast<RenderComponent *>
+		    (entity().getComponentType("Game::RenderComponent"));
 	}
 
 	if (!m_p->init && !m_p->b2layer && m_p->position) {
-		WeakSceneLayer l_layer = entity().layer().scene().getLayerType("Game::Box2DSceneLayer");
-		m_p->b2layer = l_layer.cast<Box2DSceneLayer>();
+		m_p->b2layer = static_cast<Box2DSceneLayer *>
+		    (entity().layer().scene().getLayerType("Game::Box2DSceneLayer"));
 
 		if (!m_p->b2layer) {
 			MMWARNING("Box2DComponent used with non Box2D Scene!");
@@ -184,7 +191,8 @@ Box2DComponent::update(float d)
 	/* render mesh rotation */
 	if (m_p->render) {
 #define RADIAN_TO_DEGREE 57.2957795f
-		Graphics::WeakMeshBase l_gbase(m_p->render->mesh().staticCast<Graphics::MeshBase>());
+		Graphics::MeshBase *l_gbase =
+		    static_cast<Graphics::MeshBase *>(m_p->render->mesh());
 		if (l_gbase) l_gbase->setRotation(fmodf(l_angle * RADIAN_TO_DEGREE, 360.f));
 	}
 }

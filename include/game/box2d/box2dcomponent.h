@@ -54,13 +54,8 @@ namespace Math { /******************************************** Math Namespace */
 namespace Game { /******************************************** Game Namespace */
 
 	class Box2DSceneLayer;
-	typedef Core::Weak<Box2DSceneLayer> WeakBox2DSceneLayer;
-
 	class PositionComponent;
-	typedef Core::Weak<PositionComponent> WeakPositionComponent;
-
 	class RenderComponent;
-	typedef Core::Weak<RenderComponent> WeakRenderComponent;
 
 	/*! @brief Game Box2D Component Class */
 	class MARSHMALLOW_GAME_EXPORT
@@ -95,8 +90,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<Box2DComponent> SharedBox2DComponent;
-	typedef Core::Weak<Box2DComponent> WeakBox2DComponent;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

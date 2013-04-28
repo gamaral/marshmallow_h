@@ -54,16 +54,14 @@ namespace Graphics { /************************************ Graphics Namespace */
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	TilesetBase : public ITileset
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION;
 		NO_ASSIGN_COPY(TilesetBase);
 	public:
 		TilesetBase(void);
 		virtual ~TilesetBase(void);
 
 		void setName(const Core::Identifier &name);
-		void setTextureData(const SharedTextureData &tileset);
+		void setTextureData(Graphics::ITextureData *tileset);
 		void setTileSize(const Math::Size2i &size);
 		void setMargin(int margin);
 		void setSpacing(int spacing);
@@ -72,11 +70,11 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 		VIRTUAL const Core::Identifier & name(void) const;
 		VIRTUAL const Math::Size2i & size(void) const;
-		VIRTUAL const SharedTextureData & textureData(void) const;
+		VIRTUAL Graphics::ITextureData * textureData(void) const;
 		VIRTUAL const Math::Size2i & tileSize(void) const;
 		VIRTUAL int spacing(void) const;
 		VIRTUAL int margin(void) const;
-		VIRTUAL SharedTextureCoordinateData getTextureCoordinateData(uint16_t index);
+		VIRTUAL Graphics::ITextureCoordinateData * getTextureCoordinateData(uint16_t index);
 		
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);
@@ -85,8 +83,6 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 		void reset(void);
 	};
-	typedef Core::Shared<TilesetBase> SharedTilesetBase;
-	typedef Core::Weak<TilesetBase> WeakTilesetBase;
 
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END

@@ -84,8 +84,6 @@ namespace Dummy { /******************************** Graphics::Dummy Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<TextureCoordinateData> SharedTextureCoordinateData;
-	typedef Core::Weak<TextureCoordinateData> WeakTextureCoordinateData;
 
 } /************************************************ Graphics::Dummy Namespace */
 } /******************************************************* Graphics Namespace */

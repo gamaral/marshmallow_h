@@ -46,13 +46,11 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 	struct IMesh;
-	typedef Core::Shared<IMesh> SharedMesh;
 } /******************************************************* Graphics Namespace */
 
 namespace Game { /******************************************** Game Namespace */
 
 	class PositionComponent;
-	typedef Core::Weak<PositionComponent> WeakPositionComponent;
 
 	/*! @brief Game Render Component Class */
 	class MARSHMALLOW_GAME_EXPORT
@@ -66,7 +64,7 @@ namespace Game { /******************************************** Game Namespace */
 		RenderComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~RenderComponent(void);
 
-		Graphics::SharedMesh & mesh(void);
+		Graphics::IMesh * mesh(void);
 
 	public: /* virtual */
 
@@ -83,8 +81,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<RenderComponent> SharedRenderComponent;
-	typedef Core::Weak<RenderComponent> WeakRenderComponent;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

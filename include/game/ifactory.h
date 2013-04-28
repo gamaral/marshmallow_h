@@ -48,16 +48,11 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 	class Identifier;
 	class Type;
-	template <class T> class Shared;
-	template <class T> class Weak;
 } /*********************************************************** Core Namespace */
 
 namespace Graphics { /************************************ Graphics Namespace */
-	struct ITexture;
-	typedef Core::Shared<ITexture> SharedTexture;
-
 	struct IMesh;
-	typedef Core::Shared<IMesh> SharedMesh;
+	struct ITexture;
 } /******************************************************* Graphics Namespace */
 
 namespace Game { /******************************************** Game Namespace */
@@ -65,16 +60,9 @@ namespace Game { /******************************************** Game Namespace */
 	class EntitySceneLayer;
 
 	struct IComponent;
-	typedef Core::Shared<IComponent> SharedComponent;
-
 	struct IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
-
 	struct IScene;
-	typedef Core::Shared<IScene> SharedScene;
-
 	struct ISceneLayer;
-	typedef Core::Shared<ISceneLayer> SharedSceneLayer;
 
 	/*! @brief Game Factory Interface */
 	struct MARSHMALLOW_GAME_EXPORT
@@ -82,22 +70,28 @@ namespace Game { /******************************************** Game Namespace */
 	{
 		virtual ~IFactory(void);
 
-		virtual SharedScene createScene(const Core::Type &type,
-		    const Core::Identifier &identifier) const = 0;
+		virtual Game::IScene *
+		createScene(const Core::Type &type,
+		            const Core::Identifier &identifier) const = 0;
 
-		virtual SharedSceneLayer createSceneLayer(const Core::Type &type,
-		    const Core::Identifier &identifier, IScene &scene) const = 0;
+		virtual Game::ISceneLayer *
+		createSceneLayer(const Core::Type &type,
+		                 const Core::Identifier &identifier,
+		                 IScene &scene) const = 0;
 
-		virtual SharedEntity createEntity(const Core::Type &type,
-		    const Core::Identifier &identifier, EntitySceneLayer &layer) const = 0;
+		virtual Game::IEntity *
+		createEntity(const Core::Type &type,
+		             const Core::Identifier &identifier,
+		             EntitySceneLayer &layer) const = 0;
 
-		virtual SharedComponent createComponent(const Core::Type &type,
-		    const Core::Identifier &identifier, IEntity &entity) const = 0;
+		virtual Game::IComponent *
+		createComponent(const Core::Type &type,
+		                const Core::Identifier &identifier,
+		                IEntity &entity) const = 0;
 
-		virtual Graphics::SharedMesh createMesh(const Core::Type &type) const = 0;
+		virtual Graphics::IMesh *
+		createMesh(const Core::Type &type) const = 0;
 	};
-	typedef Core::Shared<IFactory> SharedFactory;
-	typedef Core::Weak<IFactory> WeakFactory;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

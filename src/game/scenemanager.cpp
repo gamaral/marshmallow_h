@@ -45,24 +45,30 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/type.h"
-#include "core/weak.h"
 
 #include "event/eventmanager.h"
 #include "event/renderevent.h"
 #include "event/updateevent.h"
 
-#include "game/factorybase.h"
+#include "game/factory.h"
 #include "game/iscene.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
+namespace { /************************************ Game::<anonymous> Namespace */
 
-typedef std::list<SharedScene> SceneStack;
+	typedef std::list<IScene *> SceneStack;
+
+} /********************************************** Game::<anonymous> Namespace */
 
 struct SceneManager::Private
 {
-	SceneStack  stack;
-	SharedScene active;
+	Private()
+	    : active(0)
+	{}
+
+	SceneStack stack;
+	IScene *active;
 };
 
 SceneManager::SceneManager(void)
@@ -83,7 +89,7 @@ SceneManager::~SceneManager(void)
 }
 
 void
-SceneManager::pushScene(const SharedScene &scene)
+SceneManager::pushScene(Game::IScene *scene)
 {
 	if (!scene) return;
 
@@ -96,9 +102,11 @@ SceneManager::pushScene(const SharedScene &scene)
 	m_p->active->activate();
 }
 
-void
+Game::IScene *
 SceneManager::popScene(void)
 {
+	IScene *l_scene = m_p->active;
+
 	if (m_p->active)
 		m_p->active->deactivate();
 
@@ -106,12 +114,14 @@ SceneManager::popScene(void)
 		m_p->active = m_p->stack.front();
 		m_p->stack.pop_front();
 	} else {
-		m_p->active.clear();
+		m_p->active = 0;
 		MMWARNING("Scene stack is empty!");
 	}
+
+	return(l_scene);
 }
 
-SharedScene
+Game::IScene *
 SceneManager::activeScene(void) const
 {
 	return(m_p->active);
@@ -167,8 +177,8 @@ SceneManager::deserialize(XMLElement &n)
 		const char *l_id   = l_child->Attribute("id");
 		const char *l_type = l_child->Attribute("type");
 
-		SharedScene l_scene =
-		    FactoryBase::Instance()->createScene(l_type, l_id);
+		IScene *l_scene =
+		    Factory::Instance()->createScene(l_type, l_id);
 
 		if (!l_scene) {
 			MMWARNING("Scene '" << l_id << "' of type '" << l_type << "' creation failed");

@@ -54,9 +54,7 @@ namespace Event { /****************************************** Event Namespace */
 	class MARSHMALLOW_EVENT_EXPORT
 	DebugEventListener : public IEventListener
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION;
 		NO_ASSIGN_COPY(DebugEventListener);
 	public:
 

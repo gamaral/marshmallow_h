@@ -78,8 +78,6 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 		virtual const Math::Size2i & size(void) const = 0;
 	};
-	typedef Core::Shared<ITextureData> SharedTextureData;
-	typedef Core::Weak<ITextureData> WeakTextureData;
 
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END

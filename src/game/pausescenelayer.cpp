@@ -38,7 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/shared.h"
 #include "core/type.h"
 
 #include "math/point2.h"
@@ -49,9 +48,14 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
+/* TODO: clean up */
 struct PauseSceneLayer::Private
 {
-	Graphics::SharedMesh mesh;
+	Private()
+	    : mesh(0)
+	{}
+
+	Graphics::IMesh *mesh;
 };
 
 PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, IScene &s)
@@ -65,7 +69,7 @@ PauseSceneLayer::~PauseSceneLayer(void)
 	delete m_p, m_p = 0;
 }
 
-Graphics::SharedMesh
+Graphics::IMesh *
 PauseSceneLayer::mesh(void) const
 {
 	return(m_p->mesh);

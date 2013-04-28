@@ -36,12 +36,11 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include <csignal>
 #include <cstdio>
 #include <cstring>
-#include <signal.h>
 
 #include "core/logger.h"
-#include "core/shared.h"
 
 #include "event/eventmanager.h"
 #include "event/quitevent.h"
@@ -63,8 +62,7 @@ SignalHandler(int signal, siginfo_t *siginfo, void *context)
 	}
 
 	MMDEBUG("\n*** Unix system signal received. Queueing quit event message. ***\n");
-	Event::SharedEvent l_event = new Event::QuitEvent;
-	Event::EventManager::Instance()->queue(l_event);
+	Event::EventManager::Instance()->queue(new Event::QuitEvent);
 }
 
 int

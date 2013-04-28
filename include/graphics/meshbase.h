@@ -59,7 +59,9 @@ namespace Graphics { /************************************ Graphics Namespace */
 		NO_ASSIGN_COPY(MeshBase);
 	public:
 
-		MeshBase(SharedTextureCoordinateData tc, SharedTextureData t, SharedVertexData v);
+		MeshBase(Graphics::ITextureCoordinateData *tc,
+		         Graphics::ITextureData *t,
+		         Graphics::IVertexData *v);
 		virtual ~MeshBase(void);
 
 		void setColor(const Graphics::Color &color);
@@ -69,13 +71,13 @@ namespace Graphics { /************************************ Graphics Namespace */
 		void setScale(float x, float y);
 
 		/*! @brief Replace texture coordinate data */
-		void setTextureCoordinateData(SharedTextureCoordinateData tc);
+		void setTextureCoordinateData(Graphics::ITextureCoordinateData *tc);
 
 		/*! @brief Replace texture data */
-		void setTextureData(SharedTextureData td);
+		void setTextureData(Graphics::ITextureData *td);
 
 		/*! @brief Replace vertex data */
-		void setVertexData(Graphics::SharedVertexData vd);
+		void setVertexData(Graphics::IVertexData *vd);
 
 	public: /* operators */
 
@@ -87,9 +89,9 @@ namespace Graphics { /************************************ Graphics Namespace */
 		virtual void setVertex(uint16_t index, const Math::Vector2 &vertex);
 		virtual void setTextureCoordinate(uint16_t index, float u, float v);
 
-		VIRTUAL const Graphics::SharedTextureCoordinateData & textureCoordinateData(void) const;
-		VIRTUAL const Graphics::SharedTextureData & textureData(void) const;
-		VIRTUAL const Graphics::SharedVertexData & vertexData(void) const;
+		VIRTUAL Graphics::ITextureCoordinateData * textureCoordinateData(void) const;
+		VIRTUAL Graphics::ITextureData * textureData(void) const;
+		VIRTUAL Graphics::IVertexData * vertexData(void) const;
 
 		VIRTUAL const Graphics::Color & color(void) const;
 		VIRTUAL float rotation(void) const;
@@ -101,8 +103,6 @@ namespace Graphics { /************************************ Graphics Namespace */
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);
 	};
-	typedef Core::Shared<MeshBase> SharedMeshBase;
-	typedef Core::Weak<MeshBase> WeakMeshBase;
 
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END

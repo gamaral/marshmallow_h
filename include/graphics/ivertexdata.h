@@ -59,8 +59,6 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 		virtual uint16_t count(void) const = 0;
 	};
-	typedef Core::Shared<IVertexData> SharedVertexData;
-	typedef Core::Weak<IVertexData> WeakVertexData;
 
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END

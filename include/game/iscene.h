@@ -60,9 +60,7 @@ namespace Graphics { /************************************ Graphics Namespace */
 namespace Game { /******************************************** Game Namespace */
 
 	struct ISceneLayer;
-	typedef Core::Shared<ISceneLayer> SharedSceneLayer;
-
-	typedef std::list<SharedSceneLayer> SceneLayerList;
+	typedef std::list<Game::ISceneLayer *> SceneLayerList;
 
 	/*! @brief Game Scene Interface */
 	struct MARSHMALLOW_GAME_EXPORT
@@ -75,20 +73,18 @@ namespace Game { /******************************************** Game Namespace */
 		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;
 
-		virtual void pushLayer(SharedSceneLayer layer) = 0;
+		virtual void pushLayer(Game::ISceneLayer *layer) = 0;
 		virtual void popLayer(void) = 0;
 		virtual void removeLayer(const Core::Identifier &identifier) = 0;
-		virtual SharedSceneLayer getLayer(const Core::Identifier &identifier) const = 0;
-		virtual SharedSceneLayer getLayerType(const Core::Type &type) const = 0;
-		virtual const SceneLayerList & getLayers(void) const = 0;
+		virtual Game::ISceneLayer * getLayer(const Core::Identifier &identifier) const = 0;
+		virtual Game::ISceneLayer * getLayerType(const Core::Type &type) const = 0;
+		virtual const Game::SceneLayerList & getLayers(void) const = 0;
 
 		virtual const Graphics::Color & background(void) const = 0;
 
 		virtual void activate(void) = 0;
 		virtual void deactivate(void) = 0;
 	};
-	typedef Core::Shared<IScene> SharedScene;
-	typedef Core::Weak<IScene> WeakScene;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

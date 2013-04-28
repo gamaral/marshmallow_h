@@ -69,12 +69,12 @@ namespace Game { /******************************************** Game Namespace */
 
 		VIRTUAL const Core::Identifier & id(void) const;
 
-		VIRTUAL void pushLayer(SharedSceneLayer layer);
+		VIRTUAL void pushLayer(Game::ISceneLayer *layer);
 		VIRTUAL void popLayer(void);
 		VIRTUAL void removeLayer(const Core::Identifier &identifier);
-		VIRTUAL SharedSceneLayer getLayer(const Core::Identifier &identifier) const;
-		VIRTUAL SharedSceneLayer getLayerType(const Core::Type &type) const;
-		VIRTUAL const SceneLayerList & getLayers(void) const;
+		VIRTUAL Game::ISceneLayer * getLayer(const Core::Identifier &identifier) const;
+		VIRTUAL Game::ISceneLayer * getLayerType(const Core::Type &type) const;
+		VIRTUAL const Game::SceneLayerList & getLayers(void) const;
 
 		VIRTUAL const Graphics::Color & background(void) const;
 
@@ -87,9 +87,8 @@ namespace Game { /******************************************** Game Namespace */
 		VIRTUAL bool serialize(XMLElement &node) const;
 		VIRTUAL bool deserialize(XMLElement &node);
 	};
-	typedef Core::Shared<SceneBase> SharedSceneBase;
-	typedef Core::Weak<SceneBase> WeakSceneBase;
-}
+
+} /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

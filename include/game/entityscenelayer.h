@@ -49,9 +49,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
 	struct IEntity;
-	typedef Core::Shared<IEntity> SharedEntity;
-
-	typedef std::list<SharedEntity> EntityList;
+	typedef std::list<IEntity *> EntityList;
 
 	/*! @brief Game Entity Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
@@ -67,10 +65,10 @@ namespace Game { /******************************************** Game Namespace */
 		    IScene &scene, int flags = slfNone);
 		virtual ~EntitySceneLayer(void);
 
-		void addEntity(const SharedEntity &entity);
+		void addEntity(Game::IEntity *entity);
 		void removeEntity(const Core::Identifier &identifier);
-		void removeEntity(const SharedEntity &entity);
-		SharedEntity getEntity(const Core::Identifier &identifier) const;
+		void removeEntity(Game::IEntity *entity);
+		Game::IEntity * getEntity(const Core::Identifier &identifier) const;
 		const EntityList & getEntities(void) const;
 
 		bool visiblityTesting(void) const;
@@ -91,8 +89,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<EntitySceneLayer> SharedEntitySceneLayer;
-	typedef Core::Weak<EntitySceneLayer> WeakEntitySceneLayer;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

@@ -79,8 +79,6 @@ namespace Game { /******************************************** Game Namespace */
 		virtual void kill(void) = 0;
 		virtual bool isZombie(void) const = 0;
 	};
-	typedef Core::Shared<ISceneLayer> SharedSceneLayer;
-	typedef Core::Weak<ISceneLayer> WeakSceneLayer;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

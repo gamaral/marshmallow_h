@@ -46,7 +46,6 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 	struct IMesh;
-	typedef Core::Shared<IMesh> SharedMesh;
 } /******************************************************* Graphics Namespace */
 
 namespace Game { /******************************************** Game Namespace */
@@ -65,7 +64,7 @@ namespace Game { /******************************************** Game Namespace */
 		    IScene &scene);
 		virtual ~PauseSceneLayer(void);
 
-		Graphics::SharedMesh mesh(void) const;
+		Graphics::IMesh * mesh(void) const;
 
 	public: /* virtual */
 
@@ -79,8 +78,6 @@ namespace Game { /******************************************** Game Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<PauseSceneLayer> SharedPauseSceneLayer;
-	typedef Core::Weak<PauseSceneLayer> WeakPauseSceneLayer;
 
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END

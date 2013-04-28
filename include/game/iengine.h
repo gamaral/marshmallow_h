@@ -50,16 +50,12 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
 	class EventManager;
-	typedef Core::Shared<EventManager> SharedEventManager;
 } /********************************************************** Event Namespace */
 
 namespace Game { /******************************************** Game Namespace */
 
 	class SceneManager;
-	typedef Core::Shared<SceneManager> SharedSceneManager;
-
 	struct IFactory;
-	typedef Core::Shared<IFactory> SharedFactory;
 
 	/*! @brief Game Engine Interface */
 	struct MARSHMALLOW_GAME_EXPORT
@@ -94,17 +90,17 @@ namespace Game { /******************************************** Game Namespace */
 		/*!
 		 * @brief Event Manager
 		 */
-		virtual Event::SharedEventManager eventManager(void) const = 0;
+		virtual Event::EventManager * eventManager(void) const = 0;
 
 		/*!
 		 * @brief Scene Manager
 		 */
-		virtual SharedSceneManager sceneManager(void) const = 0;
+		virtual Game::SceneManager * sceneManager(void) const = 0;
 
 		/*!
 		 * @brief Factory
 		 */
-		virtual SharedFactory factory(void) const = 0;
+		virtual Game::IFactory * factory(void) const = 0;
 
 		virtual bool initialize(void) = 0;
 		virtual void finalize(void) = 0;
