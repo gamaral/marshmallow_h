@@ -57,34 +57,34 @@ SensorEvent::SensorEvent(Input::Sensor::Type type_,
                        size_t source_,
                        MMTIME timestamp_)
     : InputEvent(itSensor, type_, 0, source_, timestamp_)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
-	m_p->x = x_;
-	m_p->y = y_;
-	m_p->z = z_;
+	PIMPL->x = x_;
+	PIMPL->y = y_;
+	PIMPL->z = z_;
 }
 
 SensorEvent::~SensorEvent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 float
 SensorEvent::x() const
 {
-	return(m_p->x);
+	return(PIMPL->x);
 }
 
 float
 SensorEvent::y() const
 {
-	return(m_p->y);
+	return(PIMPL->y);
 }
 
 float
 SensorEvent::z() const
 {
-	return(m_p->z);
+	return(PIMPL->z);
 }
 
 const Core::Type &

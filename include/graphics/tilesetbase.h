@@ -54,7 +54,7 @@ namespace Graphics { /************************************ Graphics Namespace */
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	TilesetBase : public ITileset
 	{
-		PRIVATE_IMPLEMENTATION;
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(TilesetBase);
 	public:
 		TilesetBase(void);

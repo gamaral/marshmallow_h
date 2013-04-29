@@ -58,9 +58,7 @@ namespace Audio { /****************************************** Audio Namespace */
 	class MARSHMALLOW_AUDIO_EXPORT
 	OggTrack : public ITrack
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 	public:
 
 		OggTrack(const Core::IDataIO &dio);

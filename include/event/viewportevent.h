@@ -41,18 +41,16 @@
 #ifndef MARSHMALLOW_EVENT_VIEWPORTEVENT_H
 #define MARSHMALLOW_EVENT_VIEWPORTEVENT_H 1
 
-#include <event/eventbase.h>
+#include <event/event.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
 
 	/*! @brief Event Viewport Class */
 	class MARSHMALLOW_EVENT_EXPORT
-	ViewportEvent : public EventBase
+	ViewportEvent : public Event
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(ViewportEvent);
 	public:
 

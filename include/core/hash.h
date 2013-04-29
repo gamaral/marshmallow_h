@@ -42,6 +42,7 @@
 #define MARSHMALLOW_CORE_HASH_H 1
 
 #include <core/environment.h>
+#include <core/global.h>
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -55,9 +56,7 @@ namespace Core { /******************************************** Core Namespace */
 	class MARSHMALLOW_CORE_EXPORT
 	Hash
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 	public:
 
 		Hash(void);

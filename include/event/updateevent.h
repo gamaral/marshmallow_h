@@ -41,18 +41,16 @@
 #ifndef MARSHMALLOW_EVENT_UPDATEEVENT_H
 #define MARSHMALLOW_EVENT_UPDATEEVENT_H 1
 
-#include <event/eventbase.h>
+#include <event/event.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
 
 	/*! @brief Event Update Class */
 	class MARSHMALLOW_EVENT_EXPORT
-	UpdateEvent : public EventBase
+	UpdateEvent : public Event
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(UpdateEvent);
 	public:
 

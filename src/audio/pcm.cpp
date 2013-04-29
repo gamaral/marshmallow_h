@@ -105,79 +105,79 @@ PCM::Private::close(void)
 /********************************************************************* PCM */
 
 PCM::PCM(void)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
 }
 
 PCM::PCM(uint32_t _sample_rate, uint8_t _bit_depth, uint8_t _channels)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
-	m_p->open(_sample_rate, _bit_depth, _channels);
+	PIMPL->open(_sample_rate, _bit_depth, _channels);
 }
 
 PCM::~PCM(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 bool
 PCM::open(uint32_t _sample_rate, uint8_t _bit_depth, uint8_t _channels)
 {
-	return(m_p->open(_sample_rate, _bit_depth, _channels));
+	return(PIMPL->open(_sample_rate, _bit_depth, _channels));
 }
 
 void
 PCM::close(void)
 {
-	m_p->close();
+	PIMPL->close();
 }
 
 bool
 PCM::isOpen(void) const
 {
-	return(m_p->handle);
+	return(PIMPL->handle);
 }
 
 bool
 PCM::write(const char *buffer, size_t bsize)
 {
-	return(Backend::PCM::Write(m_p->handle, buffer, bsize));
+	return(Backend::PCM::Write(PIMPL->handle, buffer, bsize));
 }
 
 size_t
 PCM::framesAvailable(void) const
 {
-	return(Backend::PCM::AvailableFrames(m_p->handle));
+	return(Backend::PCM::AvailableFrames(PIMPL->handle));
 }
 
 size_t
 PCM::framesMax(void) const
 {
-	return(m_p->frames_max);
+	return(PIMPL->frames_max);
 }
 
 uint8_t
 PCM::frameSize(void) const
 {
-	return(m_p->frame_size);
+	return(PIMPL->frame_size);
 }
 
 uint32_t
 PCM::rate(void) const
 {
-	return(m_p->sample_rate);
+	return(PIMPL->sample_rate);
 }
 
 uint8_t
 PCM::depth(void) const
 {
-	return(m_p->bit_depth);
+	return(PIMPL->bit_depth);
 }
 
 uint8_t
 PCM::channels(void) const
 {
-	return(m_p->channels);
+	return(PIMPL->channels);
 }
 
 } /********************************************************** Audio Namespace */

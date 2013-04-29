@@ -53,42 +53,42 @@ struct InputEvent::Private
 };
 
 InputEvent::InputEvent(InputType type_, int code_, int value_, size_t source_, MMTIME time_)
-    : EventBase(time_, HighPriority)
-    , m_p(new Private)
+    : Event(time_, HighPriority)
+    , PIMPL_CREATE
 {
-	m_p->type = type_;
-	m_p->code = code_;
-	m_p->value = value_;
-	m_p->source = source_;
+	PIMPL->type = type_;
+	PIMPL->code = code_;
+	PIMPL->value = value_;
+	PIMPL->source = source_;
 }
 
 InputEvent::~InputEvent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 InputEvent::InputType
 InputEvent::inputType(void) const
 {
-	return(m_p->type);
+	return(PIMPL->type);
 }
 
 int
 InputEvent::code(void) const
 {
-	return(m_p->code);
+	return(PIMPL->code);
 }
 
 int
 InputEvent::value(void) const
 {
-	return(m_p->value);
+	return(PIMPL->value);
 }
 
 size_t
 InputEvent::source(void) const
 {
-	return(m_p->source);
+	return(PIMPL->source);
 }
 
 const Core::Type &

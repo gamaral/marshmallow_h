@@ -38,10 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <algorithm>
-#include <list>
-#include <map>
-
 #include "core/identifier.h"
 #include "core/logger.h"
 #include "core/platform.h"
@@ -49,6 +45,10 @@
 
 #include "event/ievent.h"
 #include "event/ieventlistener.h"
+
+#include <algorithm>
+#include <list>
+#include <map>
 
 /*
  * Implementation Notes

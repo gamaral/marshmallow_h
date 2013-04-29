@@ -57,7 +57,7 @@ namespace Game { /******************************************** Game Namespace */
 	SplashSceneLayer : public Game::SceneLayerBase
 	                 , public Event::IEventListener
 	{
-		PRIVATE_IMPLEMENTATION;
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(SplashSceneLayer);
 	public:
 

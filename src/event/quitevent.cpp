@@ -49,21 +49,21 @@ struct QuitEvent::Private
 };
 
 QuitEvent::QuitEvent(int c, MMTIME t)
-    : EventBase(t, HighPriority)
-    , m_p(new Private)
+    : Event(t, HighPriority)
+    , PIMPL_CREATE
 {
-	m_p->code = c;
+	PIMPL->code = c;
 }
 
 QuitEvent::~QuitEvent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 int
 QuitEvent::code(void) const
 {
-	return(m_p->code);
+	return(PIMPL->code);
 }
 
 const Core::Type &

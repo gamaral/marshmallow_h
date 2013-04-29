@@ -49,21 +49,21 @@ struct ViewportEvent::Private
 };
 
 ViewportEvent::ViewportEvent(Reason reason_)
-    : EventBase(0, HighestPriority)
-    , m_p(new Private)
+    : Event(0, HighestPriority)
+    , PIMPL_CREATE
 {
-	m_p->reason = reason_;
+	PIMPL->reason = reason_;
 }
 
 ViewportEvent::~ViewportEvent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 ViewportEvent::Reason
 ViewportEvent::reason(void) const
 {
-	return(m_p->reason);
+	return(PIMPL->reason);
 }
 
 const Core::Type &

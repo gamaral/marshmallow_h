@@ -40,8 +40,8 @@
 
 #include "core/type.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Event;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
 struct JoystickButtonEvent::Private
 {
@@ -55,14 +55,14 @@ JoystickButtonEvent::JoystickButtonEvent(
     size_t source_,
     MMTIME timestamp_)
     : InputEvent(itJoystick, button_, action_, source_, timestamp_)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
-	m_p->state = state_;
+	PIMPL->state = state_;
 }
 
 JoystickButtonEvent::~JoystickButtonEvent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 const Core::Type &
@@ -75,12 +75,15 @@ JoystickButtonEvent::Type(void)
 int
 JoystickButtonEvent::state(void) const
 {
-	return(m_p->state);
+	return(PIMPL->state);
 }
 
 bool
 JoystickButtonEvent::pressed(int button_) const
 {
-	return(button_ == (m_p->state & button_));
+	return(button_ == (PIMPL->state & button_));
 }
+
+} /********************************************************** Event Namespace */
+MARSHMALLOW_NAMESPACE_END
 

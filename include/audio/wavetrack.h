@@ -58,9 +58,7 @@ namespace Audio { /****************************************** Audio Namespace */
 	class MARSHMALLOW_AUDIO_EXPORT
 	WaveTrack : public ITrack
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 	public:
 
 		WaveTrack(const Core::IDataIO &dio);

@@ -57,7 +57,7 @@
 #define NO_ASSIGN(x) x& operator=(const x&)
 
 #define PRIVATE_IMPLEMENTATION struct Private;\
-		Private *m_p
+		Private *m_p;
 
 #define PIMPL m_p
 #define PIMPL_CREATE PIMPL(new Private)

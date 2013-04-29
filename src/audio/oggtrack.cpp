@@ -232,26 +232,26 @@ OggTrack::Private::seek(long frame)
 /****************************************************************** OggTrack */
 
 OggTrack::OggTrack(const Core::IDataIO &dio)
-    : m_p(new Private(dio))
+    : PIMPL_CREATE_X(dio)
 {
 }
 
 OggTrack::~OggTrack(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 bool
 OggTrack::isValid(void) const
 {
-	return(m_p->valid && m_p->data.dio.isOpen());
+	return(PIMPL->valid && PIMPL->data.dio.isOpen());
 }
 
 uint32_t
 OggTrack::rate(void) const
 {
 	assert(isValid() && "Invalid Track!");
-	return(m_p->rate);
+	return(PIMPL->rate);
 }
 
 uint8_t
@@ -265,28 +265,28 @@ uint8_t
 OggTrack::channels(void) const
 {
 	assert(isValid() && "Invalid Track!");
-	return(m_p->channels);
+	return(PIMPL->channels);
 }
 
 size_t
 OggTrack::read(void *buffer, size_t bsize) const
 {
 	assert(isValid() && "Invalid Track!");
-	return(m_p->read(buffer, bsize));
+	return(PIMPL->read(buffer, bsize));
 }
 
 bool
 OggTrack::rewind(void) const
 {
 	assert(isValid() && "Invalid Track!");
-	return(m_p->seek(0));
+	return(PIMPL->seek(0));
 }
 
 bool
 OggTrack::seek(long offset) const
 {
 	assert(isValid() && "Invalid Track!");
-	return(m_p->seek(offset));
+	return(PIMPL->seek(offset));
 }
 
 bool

@@ -61,9 +61,7 @@ namespace Game { /******************************************** Game Namespace */
 	class MARSHMALLOW_GAME_EXPORT
 	Box2DComponent : public ComponentBase
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(Box2DComponent);
 	public:
 

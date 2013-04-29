@@ -56,7 +56,7 @@ namespace Game { /******************************************** Game Namespace */
 	class MARSHMALLOW_GAME_EXPORT
 	MovementComponent : public ComponentBase
 	{
-		PRIVATE_IMPLEMENTATION;
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(MovementComponent);
 	public:
 

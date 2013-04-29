@@ -57,27 +57,27 @@ TouchEvent::TouchEvent(Input::Touch::Action action_,
                        size_t source_,
                        MMTIME timestamp_)
     : InputEvent(itTouch, action_, 0, source_, timestamp_)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
-	m_p->x = x_;
-	m_p->y = y_;
+	PIMPL->x = x_;
+	PIMPL->y = y_;
 }
 
 TouchEvent::~TouchEvent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 int
 TouchEvent::x() const
 {
-	return(m_p->x);
+	return(PIMPL->x);
 }
 
 int
 TouchEvent::y() const
 {
-	return(m_p->y);
+	return(PIMPL->y);
 }
 
 const Core::Type &

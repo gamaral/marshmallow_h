@@ -53,9 +53,7 @@ namespace Graphics { /************************************ Graphics Namespace */
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	MeshBase : public IMesh
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(MeshBase);
 	public:
 

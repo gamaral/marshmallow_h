@@ -38,10 +38,6 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <map>
-
-#include <cstring>
-
 #include "core/global.h"
 #include "core/identifier.h"
 #include "core/logger.h"
@@ -50,6 +46,10 @@
 #include "audio/pcm.h"
 
 #include "backend_p.h"
+
+#include <map>
+
+#include <cstring>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
@@ -231,31 +231,31 @@ Player::Private::tick(void)
 /********************************************************************* Player */
 
 Player::Player(void)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
 }
 
 Player::~Player(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 void
 Player::load(const Core::Identifier &id, ITrack *track)
 {
-	m_p->load(id, track);
+	PIMPL->load(id, track);
 }
 
 bool
 Player::contains(const Core::Identifier &id)
 {
-	return(m_p->contains(id));
+	return(PIMPL->contains(id));
 }
 
 ITrack *
 Player::eject(const Core::Identifier &id, bool free)
 {
-	ITrack *l_track = m_p->eject(id);
+	ITrack *l_track = PIMPL->eject(id);
 
 	if (free)
 		delete l_track;
@@ -266,37 +266,37 @@ Player::eject(const Core::Identifier &id, bool free)
 bool
 Player::play(const Core::Identifier &id, int playlist, float gain)
 {
-	return(m_p->play(id, playlist, gain));
+	return(PIMPL->play(id, playlist, gain));
 }
 
 void
 Player::stop(const Core::Identifier &id)
 {
-	m_p->stop(id);
+	PIMPL->stop(id);
 }
 
 bool
 Player::isPlaying(const Core::Identifier &id) const
 {
-	return(m_p->isPlaying(id));
+	return(PIMPL->isPlaying(id));
 }
 
 void
 Player::tick(void)
 {
-	m_p->tick();
+	PIMPL->tick();
 }
 
 PCM *
 Player::pcm(void) const
 {
-	return(m_p->pcm);
+	return(PIMPL->pcm);
 }
 
 void
 Player::setPCM(PCM *_pcm)
 {
-	m_p->pcm = _pcm;
+	PIMPL->pcm = _pcm;
 }
 
 } /********************************************************** Audio Namespace */

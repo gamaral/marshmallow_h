@@ -54,9 +54,7 @@ namespace Core { /******************************************** Core Namespace */
 	class MARSHMALLOW_CORE_EXPORT
 	StrHash : public Hash
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 	public:
 
 		StrHash(void);

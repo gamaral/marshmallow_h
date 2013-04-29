@@ -649,19 +649,19 @@ TMXLoader::~TMXLoader(void)
 bool
 TMXLoader::isLoaded(void) const
 {
-	return(m_p->is_loaded);
+	return(PIMPL->is_loaded);
 }
 
 const Game::SceneLayerList &
 TMXLoader::layers(void) const
 {
-	return(m_p->layers);
+	return(PIMPL->layers);
 }
 
 bool
 TMXLoader::load(const char *f)
 {
-	return(m_p->load(f));
+	return(PIMPL->load(f));
 }
 
 } /******************************************************* Graphics Namespace */

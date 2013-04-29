@@ -41,6 +41,7 @@
 #ifndef MARSHMALLOW_GRAPHICS_TRANSFORM_H
 #define MARSHMALLOW_GRAPHICS_TRANSFORM_H 1
 
+#include <core/global.h>
 #include <core/iserializable.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -57,8 +58,7 @@ namespace Graphics { /************************************ Graphics Namespace */
 	class MARSHMALLOW_GRAPHICS_EXPORT
 	Transform
 	{
-		struct Private;
-		Private *m_p;
+		PRIVATE_IMPLEMENTATION
 	public:
 		enum MatrixType
 		{

@@ -41,18 +41,16 @@
 #ifndef MARSHMALLOW_EVENT_QUITEVENT_H
 #define MARSHMALLOW_EVENT_QUITEVENT_H 1
 
-#include <event/eventbase.h>
+#include <event/event.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
 
 	/*! @brief Event Quit Class */
 	class MARSHMALLOW_EVENT_EXPORT
-	QuitEvent : public EventBase
+	QuitEvent : public Event
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(QuitEvent);
 	public:
 

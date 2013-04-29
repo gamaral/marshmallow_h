@@ -52,9 +52,7 @@ namespace Event { /****************************************** Event Namespace */
 	class MARSHMALLOW_EVENT_EXPORT
 	JoystickButtonEvent : public InputEvent
 	{
-		struct Private;
-		Private *m_p;
-		
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(JoystickButtonEvent);
 	public:
 

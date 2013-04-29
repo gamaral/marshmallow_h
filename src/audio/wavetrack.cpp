@@ -38,11 +38,11 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include <cassert>
-#include <cstring>
-
 #include "core/idataio.h"
 #include "core/logger.h"
+
+#include <cassert>
+#include <cstring>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
@@ -170,61 +170,61 @@ WaveTrack::Private::seek(long frame) const
 /****************************************************************** WaveCode */
 
 WaveTrack::WaveTrack(const Core::IDataIO &dio)
-    : m_p(new Private(dio))
+    : PIMPL_CREATE_X(dio)
 {
 }
 
 WaveTrack::~WaveTrack(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 bool
 WaveTrack::isValid(void) const
 {
-	return(m_p->valid && m_p->dio.isOpen());
+	return(PIMPL->valid && PIMPL->dio.isOpen());
 }
 
 uint32_t
 WaveTrack::rate(void) const
 {
 	assert(isValid() && "Invalid Track!");
-	return(m_p->rate);
+	return(PIMPL->rate);
 }
 
 uint8_t
 WaveTrack::depth(void) const
 {
 	assert(isValid() && "Invalid Track!");
-	return(m_p->depth);
+	return(PIMPL->depth);
 }
 
 uint8_t
 WaveTrack::channels(void) const
 {
 	assert(isValid() && "Invalid Track!");
-	return(m_p->channels);
+	return(PIMPL->channels);
 }
 
 size_t
 WaveTrack::read(void *buffer, size_t bsize) const
 {
 	assert(isValid() && "Invalid Track!");
-	return(m_p->read(buffer, bsize));
+	return(PIMPL->read(buffer, bsize));
 }
 
 bool
 WaveTrack::rewind(void) const
 {
 	assert(isValid() && "Invalid Track!");
-	return(m_p->seek(0));
+	return(PIMPL->seek(0));
 }
 
 bool
 WaveTrack::seek(long offset) const
 {
 	assert(isValid() && "Invalid Track!");
-	return(m_p->seek(offset));
+	return(PIMPL->seek(offset));
 }
 
 bool

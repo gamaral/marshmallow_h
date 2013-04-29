@@ -53,52 +53,52 @@ struct StrHash::Private
 
 StrHash::StrHash(void)
     : Hash()
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
 }
 
 StrHash::StrHash(const char *s)
     : Hash()
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
-	m_p->str = s;
-	rehash(s, m_p->str.length(), ~static_cast<MMUID>(0));
+	PIMPL->str = s;
+	rehash(s, PIMPL->str.length(), ~static_cast<MMUID>(0));
 }
 
 StrHash::StrHash(const std::string &s)
     : Hash()
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
-	m_p->str = s;
-	rehash(m_p->str.c_str(), m_p->str.length(), ~static_cast<MMUID>(0));
+	PIMPL->str = s;
+	rehash(PIMPL->str.c_str(), PIMPL->str.length(), ~static_cast<MMUID>(0));
 }
 
 StrHash::StrHash(const StrHash &c)
     : Hash(c)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
-	m_p->str = c.m_p->str;
+	PIMPL->str = c.PIMPL->str;
 }
 
 StrHash::~StrHash(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 const std::string &
 StrHash::str(void) const
 {
-	return(m_p->str);
+	return(PIMPL->str);
 }
 
 StrHash::operator const std::string & (void) const
 {
-	return(m_p->str);
+	return(PIMPL->str);
 }
 
 StrHash::operator const char * (void) const
 {
-	return(m_p->str.c_str());
+	return(PIMPL->str.c_str());
 }
 
 StrHash &
@@ -106,7 +106,7 @@ StrHash::operator=(const StrHash &rhs)
 {
 	if (this != &rhs) {
 		Hash::operator=(rhs);
-		m_p->str = rhs.m_p->str;
+		PIMPL->str = rhs.PIMPL->str;
 	}
 	return(*this);
 }

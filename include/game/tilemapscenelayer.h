@@ -57,7 +57,7 @@ namespace Game { /******************************************** Game Namespace */
 	class MARSHMALLOW_GAME_EXPORT
 	TilemapSceneLayer : public SceneLayerBase
 	{
-		PRIVATE_IMPLEMENTATION;
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(TilemapSceneLayer);
 	public:
 

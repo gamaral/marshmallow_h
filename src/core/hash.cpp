@@ -47,63 +47,63 @@ struct Hash::Private
 };
 
 Hash::Hash(void)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
-	m_p->result = 0;
+	PIMPL->result = 0;
 }
 
 Hash::Hash(const char *d, size_t length, MMUID mask)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
-	m_p->result = Algorithm(d, length, mask);
+	PIMPL->result = Algorithm(d, length, mask);
 }
 
 Hash::Hash(const Hash &copy)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
-	m_p->result = copy.m_p->result;
+	PIMPL->result = copy.PIMPL->result;
 }
 
 Hash::~Hash(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 MMUID
 Hash::result(void) const
 {
-	return(m_p->result);
+	return(PIMPL->result);
 }
 
 Hash::operator MMUID() const
 {
-	return(m_p->result);
+	return(PIMPL->result);
 }
 
 Hash &
 Hash::operator=(const Core::Hash &rhs)
 {
 	if (this != &rhs)
-		m_p->result = rhs.m_p->result;
+		PIMPL->result = rhs.PIMPL->result;
 	return(*this);
 }
 
 bool
 Hash::operator==(const Hash &rhs) const
 {
-	return(m_p->result == rhs.m_p->result);
+	return(PIMPL->result == rhs.PIMPL->result);
 }
 
 bool
 Hash::operator!=(const Hash &rhs) const
 {
-	return(m_p->result != rhs.m_p->result);
+	return(PIMPL->result != rhs.PIMPL->result);
 }
 
 bool
 Hash::operator<(const Hash &rhs) const
 {
-	return(m_p->result < rhs.m_p->result);
+	return(PIMPL->result < rhs.PIMPL->result);
 }
 
 MMUID
@@ -130,7 +130,7 @@ Hash::Algorithm(const char *data, size_t length, MMUID mask)
 void
 Hash::rehash(const char *d, size_t length, MMUID mask)
 {
-	m_p->result = Algorithm(d, length, mask);
+	PIMPL->result = Algorithm(d, length, mask);
 }
 
 } /*********************************************************** Core Namespace */

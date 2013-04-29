@@ -55,17 +55,17 @@ struct FileIO::Private
 };
 
 FileIO::FileIO(void)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
-	m_p->handle = 0;
-	m_p->mode = DIOInvalid;
+	PIMPL->handle = 0;
+	PIMPL->mode = DIOInvalid;
 }
 
 FileIO::FileIO(const Identifier &fn, DIOMode m)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
-	m_p->handle = 0;
-	m_p->mode = DIOInvalid;
+	PIMPL->handle = 0;
+	PIMPL->mode = DIOInvalid;
 	setFileName(fn);
 	open(m);
 }
@@ -73,13 +73,14 @@ FileIO::FileIO(const Identifier &fn, DIOMode m)
 FileIO::~FileIO(void)
 {
 	close();
-	delete m_p, m_p = 0;
+
+	PIMPL_DESTROY;
 }
 
 const Identifier &
 FileIO::fileName(void) const
 {
-	return(m_p->filename);
+	return(PIMPL->filename);
 }
 
 void
@@ -90,13 +91,13 @@ FileIO::setFileName(const Identifier &fn)
 		return;
 	}
 
-	m_p->filename = fn;
+	PIMPL->filename = fn;
 }
 
 bool
 FileIO::open(DIOMode m)
 {
-	if (!m_p->filename) {
+	if (!PIMPL->filename) {
 		MMWARNING("Tried to open device without a filename.");
 		return(false);
 	}
@@ -124,59 +125,59 @@ FileIO::open(DIOMode m)
 	if ((m & DIOText) == 0)
 		strcat(l_mode, "b");
 	
-	m_p->handle = fopen(m_p->filename, l_mode);
-	m_p->mode = m;
+	PIMPL->handle = fopen(PIMPL->filename, l_mode);
+	PIMPL->mode = m;
 
-	return(m_p->handle != 0);
+	return(PIMPL->handle != 0);
 }
 
 void
 FileIO::close(void)
 {
-	if (m_p->handle)
-		fclose(m_p->handle);
-	m_p->handle = 0;
-	m_p->mode = DIOInvalid;
-	m_p->filename = Identifier();
+	if (PIMPL->handle)
+		fclose(PIMPL->handle);
+	PIMPL->handle = 0;
+	PIMPL->mode = DIOInvalid;
+	PIMPL->filename = Identifier();
 }
 
 DIOMode
 FileIO::mode(void) const
 {
-	return(m_p->mode);
+	return(PIMPL->mode);
 }
 
 bool
 FileIO::isOpen(void) const
 {
-	return(m_p->handle != 0);
+	return(PIMPL->handle != 0);
 }
 
 bool
 FileIO::atEOF(void) const
 {
-	return(feof(m_p->handle));
+	return(feof(PIMPL->handle));
 }
 
 
 size_t
 FileIO::read(void *b, size_t bs) const
 {
-	assert(m_p->handle && "Invalid file handle!");
-	return(fread(b, 1, bs, m_p->handle));
+	assert(PIMPL->handle && "Invalid file handle!");
+	return(fread(b, 1, bs, PIMPL->handle));
 }
 
 size_t
 FileIO::write(const void *b, size_t bs)
 {
-	assert(m_p->handle && "Invalid file handle!");
-	return(fwrite(b, 1, bs, m_p->handle));
+	assert(PIMPL->handle && "Invalid file handle!");
+	return(fwrite(b, 1, bs, PIMPL->handle));
 }
 
 bool
 FileIO::seek(long o, DIOSeek on) const
 {
-	assert(m_p->handle && "Invalid file handle!");
+	assert(PIMPL->handle && "Invalid file handle!");
 	int l_origin;
 
 	switch (on) {
@@ -186,7 +187,7 @@ FileIO::seek(long o, DIOSeek on) const
 	default: return(false);
 	}
 
-	if (fseek(m_p->handle, o, l_origin) != 0)
+	if (fseek(PIMPL->handle, o, l_origin) != 0)
 		return(false);
 
 	return(true);
@@ -195,15 +196,15 @@ FileIO::seek(long o, DIOSeek on) const
 long
 FileIO::tell(void) const
 {
-	assert(m_p->handle && "Invalid file handle!");
-	return(ftell(m_p->handle));
+	assert(PIMPL->handle && "Invalid file handle!");
+	return(ftell(PIMPL->handle));
 }
 
 size_t
 FileIO::size(void) const
 {
-	assert(m_p->handle && "Invalid file handle!");
-	const long l_cursor = ftell(m_p->handle);
+	assert(PIMPL->handle && "Invalid file handle!");
+	const long l_cursor = ftell(PIMPL->handle);
 	if (l_cursor == -1) {
 		MMWARNING("Failed to get current cursor position in file.");
 		return(0);
@@ -211,17 +212,17 @@ FileIO::size(void) const
 
 	long l_result = -1;
 
-	if (fseek(m_p->handle, 0, SEEK_END) != 0) {
+	if (fseek(PIMPL->handle, 0, SEEK_END) != 0) {
 		MMWARNING("Failed to move cursor to end of file.");
 		return(0);
 	}
 
-	if ((l_result = ftell(m_p->handle)) == -1) {
+	if ((l_result = ftell(PIMPL->handle)) == -1) {
 		MMWARNING("Failed to move cursor to end of file.");
 		return(0);
 	}
 
-	if (fseek(m_p->handle, l_cursor, SEEK_SET) != 0)
+	if (fseek(PIMPL->handle, l_cursor, SEEK_SET) != 0)
 		MMWARNING("Failed to return cursor to last position in file.");
 
 	return(l_result > 0 ? static_cast<size_t>(l_result) : 0);

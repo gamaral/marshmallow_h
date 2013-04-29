@@ -41,7 +41,9 @@
 #ifndef MARSHMALLOW_AUDIO_PCM_H
 #define MARSHMALLOW_AUDIO_PCM_H 1
 
-#include <core/iasset.h>
+#include <core/global.h>
+#include <core/namespace.h>
+#include <core/platform.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
@@ -52,9 +54,7 @@ namespace Audio { /****************************************** Audio Namespace */
 	class MARSHMALLOW_AUDIO_EXPORT
 	PCM
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 	public:
 		PCM(void);
 		PCM(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels);

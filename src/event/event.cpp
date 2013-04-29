@@ -30,7 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include "event/eventbase.h"
+#include "event/event.h"
 
 /*!
  * @file
@@ -43,34 +43,37 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
 
-struct EventBase::Private
+struct Event::Private
 {
+	Private(MMTIME t, uint8_t p)
+	    : timestamp(t)
+	    , priority(p)
+	{}
+
 	MMTIME timestamp;
 	uint8_t priority;
 };
 
-EventBase::EventBase(MMTIME t, uint8_t p)
-    : m_p(new Private)
+Event::Event(MMTIME t, uint8_t p)
+    : PIMPL_CREATE_X(t, p)
 {
-	m_p->timestamp = (t == 0) ? NOW() : t;
-	m_p->priority = p;
 }
 
-EventBase::~EventBase(void)
+Event::~Event(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 uint8_t
-EventBase::priority(void) const
+Event::priority(void) const
 {
-	return(m_p->priority);
+	return(PIMPL->priority);
 }
 
 MMTIME
-EventBase::timeStamp(void) const
+Event::timeStamp(void) const
 {
-	return(m_p->timestamp);
+	return(PIMPL->timestamp);
 }
 
 } /********************************************************** Event Namespace */

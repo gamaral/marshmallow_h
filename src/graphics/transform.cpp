@@ -101,100 +101,100 @@ Transform::Private::rebuildMatrix(MatrixType type)
 }
 
 Transform::Transform(void)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
-	m_p->invalidated = true;
-	m_p->rotation = 0.f;
-	m_p->scale = Math::Size2f::Identity();
-	m_p->translation = Math::Point2::Zero();
+	PIMPL->invalidated = true;
+	PIMPL->rotation = 0.f;
+	PIMPL->scale = Math::Size2f::Identity();
+	PIMPL->translation = Math::Point2::Zero();
 }
 
 Transform::Transform(const Transform &other)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
-	m_p->invalidated = other.m_p->invalidated;
-	m_p->rotation = other.m_p->rotation;
-	m_p->scale = other.m_p->scale;
-	m_p->translation = other.m_p->translation;
-	m_p->matrix = other.m_p->matrix;
+	PIMPL->invalidated = other.PIMPL->invalidated;
+	PIMPL->rotation = other.PIMPL->rotation;
+	PIMPL->scale = other.PIMPL->scale;
+	PIMPL->translation = other.PIMPL->translation;
+	PIMPL->matrix = other.PIMPL->matrix;
 }
 
 Transform::~Transform(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 float
 Transform::rotation(void) const
 {
-	return(m_p->rotation);
+	return(PIMPL->rotation);
 }
 
 void
 Transform::setRotation(float value)
 {
-	m_p->rotation = value;
-	m_p->invalidated = true;
+	PIMPL->rotation = value;
+	PIMPL->invalidated = true;
 }
 
 const Math::Size2f &
 Transform::scale(void) const
 {
-	return(m_p->scale);
+	return(PIMPL->scale);
 }
 
 void
 Transform::setScale(const Math::Size2f &value)
 {
-	m_p->scale = value;
-	m_p->invalidated = true;
+	PIMPL->scale = value;
+	PIMPL->invalidated = true;
 }
 
 void
 Transform::setScale(float w, float h)
 {
-	m_p->scale.set(w, h);
-	m_p->invalidated = true;
+	PIMPL->scale.set(w, h);
+	PIMPL->invalidated = true;
 }
 
 const Math::Point2 &
 Transform::translation(void) const
 {
-	return(m_p->translation);
+	return(PIMPL->translation);
 }
 
 void
 Transform::setTranslation(const Math::Point2 &value)
 {
-	m_p->translation = value;
-	m_p->invalidated = true;
+	PIMPL->translation = value;
+	PIMPL->invalidated = true;
 }
 
 void
 Transform::setTranslation(float x, float y)
 {
-	m_p->translation.set(x, y);
-	m_p->invalidated = true;
+	PIMPL->translation.set(x, y);
+	PIMPL->invalidated = true;
 }
 
 const Math::Matrix4 &
 Transform::matrix(MatrixType type) const
 {
-	if (m_p->invalidated)
-		m_p->rebuildMatrix(type);
+	if (PIMPL->invalidated)
+		PIMPL->rebuildMatrix(type);
 
-	return(m_p->matrix);
+	return(PIMPL->matrix);
 }
 
 Transform &
 Transform::operator =(const Transform &rhs)
 {
 	if (this != &rhs) {
-		m_p->invalidated = rhs.m_p->invalidated;
-		m_p->rotation = rhs.m_p->rotation;
-		m_p->scale = rhs.m_p->scale;
-		m_p->translation = rhs.m_p->translation;
-		m_p->matrix = rhs.m_p->matrix;
+		PIMPL->invalidated = rhs.PIMPL->invalidated;
+		PIMPL->rotation = rhs.PIMPL->rotation;
+		PIMPL->scale = rhs.PIMPL->scale;
+		PIMPL->translation = rhs.PIMPL->translation;
+		PIMPL->matrix = rhs.PIMPL->matrix;
 	}
 	return(*this);
 }

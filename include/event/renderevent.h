@@ -41,14 +41,14 @@
 #ifndef MARSHMALLOW_EVENT_RENDEREVENT_H
 #define MARSHMALLOW_EVENT_RENDEREVENT_H 1
 
-#include <event/eventbase.h>
+#include <event/event.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
 
 	/*! @brief Event Render Class */
 	class MARSHMALLOW_EVENT_EXPORT
-	RenderEvent : public EventBase
+	RenderEvent : public Event
 	{
 		NO_ASSIGN_COPY(RenderEvent);
 	public:

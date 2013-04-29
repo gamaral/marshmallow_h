@@ -52,9 +52,7 @@ namespace Event { /****************************************** Event Namespace */
 	class MARSHMALLOW_EVENT_EXPORT
 	TouchEvent : public InputEvent
 	{
-		struct Private;
-		Private *m_p;
-		
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(TouchEvent);
 	public:
 

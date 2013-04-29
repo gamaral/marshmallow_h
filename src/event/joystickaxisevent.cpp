@@ -40,8 +40,8 @@
 
 #include "core/type.h"
 
-MARSHMALLOW_NAMESPACE_USE
-using namespace Event;
+MARSHMALLOW_NAMESPACE_BEGIN
+namespace Event { /****************************************** Event Namespace */
 
 struct JoystickAxisEvent::Private
 {
@@ -57,27 +57,27 @@ JoystickAxisEvent::JoystickAxisEvent(
     size_t source_,
     MMTIME timestamp_)
     : InputEvent(itJoystick, axis_, value_, source_, timestamp_)
-    , m_p(new Private)
+    , PIMPL_CREATE
 {
-	m_p->minimum = minimum_;
-	m_p->maximum = maximum_;
+	PIMPL->minimum = minimum_;
+	PIMPL->maximum = maximum_;
 }
 
 JoystickAxisEvent::~JoystickAxisEvent(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 int
 JoystickAxisEvent::minimum(void) const
 {
-	return(m_p->minimum);
+	return(PIMPL->minimum);
 }
 
 int
 JoystickAxisEvent::maximum(void) const
 {
-	return(m_p->maximum);
+	return(PIMPL->maximum);
 }
 
 const Core::Type &
@@ -86,4 +86,7 @@ JoystickAxisEvent::Type(void)
 	static const Core::Type s_type("Event::JoystickAxisEvent");
 	return(s_type);
 }
+
+} /********************************************************** Event Namespace */
+MARSHMALLOW_NAMESPACE_END
 

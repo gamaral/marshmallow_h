@@ -71,7 +71,7 @@ namespace Game { /******************************************** Game Namespace */
 	class MARSHMALLOW_GAME_EXPORT
 	EngineBase : public IEngine
 	{
-		PRIVATE_IMPLEMENTATION;
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(EngineBase);
 	public:
 
@@ -124,9 +124,9 @@ namespace Game { /******************************************** Game Namespace */
 		VIRTUAL void suspend(void);
 		VIRTUAL void resume(void);
 
-		VIRTUAL Event::EventManager *eventManager(void) const;
-		VIRTUAL Game::SceneManager *sceneManager(void) const;
-		VIRTUAL Game::IFactory *factory(void) const;
+		VIRTUAL Event::EventManager * eventManager(void) const;
+		VIRTUAL Game::SceneManager * sceneManager(void) const;
+		VIRTUAL Game::IFactory * factory(void) const;
 
 		VIRTUAL bool initialize(void);
 		VIRTUAL void finalize(void);

@@ -41,6 +41,7 @@
 #ifndef MARSHMALLOW_AUDIO_PLAYER_H
 #define MARSHMALLOW_AUDIO_PLAYER_H 1
 
+#include <core/global.h>
 #include <core/platform.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -59,9 +60,7 @@ namespace Audio { /****************************************** Audio Namespace */
 	class MARSHMALLOW_AUDIO_EXPORT
 	Player
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 	public:
 
 		Player(void);

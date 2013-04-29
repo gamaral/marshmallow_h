@@ -41,18 +41,16 @@
 #ifndef MARSHMALLOW_EVENT_INPUTEVENT_H
 #define MARSHMALLOW_EVENT_INPUTEVENT_H 1
 
-#include <event/eventbase.h>
+#include <event/event.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
 
 	/*! @brief Generic Input Class */
 	class MARSHMALLOW_EVENT_EXPORT
-	InputEvent : public EventBase
+	InputEvent : public Event
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(InputEvent);
 	public:
 

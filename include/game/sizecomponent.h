@@ -55,7 +55,7 @@ namespace Game { /******************************************** Game Namespace */
 	class MARSHMALLOW_GAME_EXPORT
 	SizeComponent : public ComponentBase
 	{
-		PRIVATE_IMPLEMENTATION;
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(SizeComponent);
 	public:
 		SizeComponent(const Core::Identifier &i, IEntity &entity);

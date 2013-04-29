@@ -62,12 +62,10 @@ namespace Event { /****************************************** Event Namespace */
 
 	/*! @brief Event Base Class */
 	class MARSHMALLOW_EVENT_EXPORT
-	EventBase : public IEvent
+	Event : public IEvent
 	{
-		struct Private;
-		Private *m_p;
-
-		NO_ASSIGN_COPY(EventBase);
+		PRIVATE_IMPLEMENTATION
+		NO_ASSIGN_COPY(Event);
 	public:
 
 		/*! @brief Event constructor
@@ -78,8 +76,8 @@ namespace Event { /****************************************** Event Namespace */
 		 *  @param priority  Use a higher value to get higher priority.
 		 */
 
-		EventBase(MMTIME timestamp = 0, uint8_t priority = 0);
-		virtual ~EventBase(void);
+		Event(MMTIME timestamp = 0, uint8_t priority = 0);
+		virtual ~Event(void);
 
 	public: /* virtual */
 

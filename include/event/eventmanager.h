@@ -60,7 +60,7 @@ namespace Event { /****************************************** Event Namespace */
 	class MARSHMALLOW_EVENT_EXPORT
 	EventManager
 	{
-		PRIVATE_IMPLEMENTATION;
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(EventManager);
 	public:
 

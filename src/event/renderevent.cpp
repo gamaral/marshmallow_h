@@ -44,7 +44,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
 
 RenderEvent::RenderEvent(void)
-    : EventBase(0, HighestPriority)
+    : Event(0, HighestPriority)
 {
 }
 

@@ -46,45 +46,54 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
+namespace { /************************************ Core::<anonymous> Namespace */
+
+	enum BufferIOFlags
+	{
+		bioEOF  = (1 << 0),
+		bioFREE = (1 << 1)
+	};
+
+} /********************************************** Core::<anonymous> Namespace */
 
 struct BufferIO::Private
 {
-	uint8_t       *buffer;
-	const uint8_t *const_buffer;
 	DIOMode        mode;
 	long           cursor;
 	long           size;
-	bool           eof;
+	uint8_t       *buffer;
+	const uint8_t *const_buffer;
+	uint8_t        flags;
 };
 
 BufferIO::BufferIO(void *b, size_t s)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
 	assert(s <= LONG_MAX && "Buffer too large!");
 
-	m_p->buffer = reinterpret_cast<uint8_t *>(b);
-	m_p->const_buffer = reinterpret_cast<uint8_t *>(b);
-	m_p->mode = DIOReadWrite;
-	m_p->eof = false;
-	m_p->cursor = 0;
-	m_p->size = long(s);
+	PIMPL->buffer = reinterpret_cast<uint8_t *>(b);
+	PIMPL->const_buffer = reinterpret_cast<uint8_t *>(b);
+	PIMPL->mode = DIOReadWrite;
+	PIMPL->cursor = 0;
+	PIMPL->size = long(s);
+	PIMPL->flags = 0;
 }
 
 BufferIO::BufferIO(const void *cb, size_t s)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
 	assert(s <= LONG_MAX && "Buffer too large!");
 
-	m_p->buffer = 0;
-	m_p->const_buffer = reinterpret_cast<const uint8_t *>(cb);
-	m_p->mode = DIOReadOnly;
-	m_p->eof = false;
-	m_p->cursor = 0;
-	m_p->size = long(s);
+	PIMPL->buffer = 0;
+	PIMPL->const_buffer = reinterpret_cast<const uint8_t *>(cb);
+	PIMPL->mode = DIOReadOnly;
+	PIMPL->cursor = 0;
+	PIMPL->size = long(s);
+	PIMPL->flags = 0;
 }
 
 BufferIO::BufferIO(IDataIO *source)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
 	if (!source->isOpen()) {
 		MMERROR("Source DIO is closed!");
@@ -121,42 +130,42 @@ BufferIO::BufferIO(IDataIO *source)
 		return;
 	}
 
-	m_p->buffer = l_buffer;
-	m_p->const_buffer = l_buffer;
-	m_p->mode = DIOReadWrite;
-	m_p->eof = false;
-	m_p->cursor = 0;
-	m_p->size = l_size;
+	PIMPL->buffer = l_buffer;
+	PIMPL->const_buffer = l_buffer;
+	PIMPL->mode = DIOReadWrite;
+	PIMPL->cursor = 0;
+	PIMPL->size = l_size;
+	PIMPL->flags = bioFREE;
 
 	if (!source->seek(l_cursor, DIOSet))
 		MMERROR("Failed to return source DIO to original position.");
 }
 
 BufferIO::BufferIO(const BufferIO &source)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
-	uint8_t *l_buffer = new uint8_t[source.m_p->size];
-	memcpy(l_buffer, source.m_p->const_buffer, size_t(source.m_p->size));
+	uint8_t *l_buffer = new uint8_t[source.PIMPL->size];
+	memcpy(l_buffer, source.PIMPL->const_buffer, size_t(source.PIMPL->size));
 
-	m_p->buffer = l_buffer;
-	m_p->const_buffer = l_buffer;
-	m_p->mode = DIOReadWrite;
-	m_p->eof = false;
-	m_p->cursor = 0;
-	m_p->size = source.m_p->size;
+	PIMPL->buffer = l_buffer;
+	PIMPL->const_buffer = l_buffer;
+	PIMPL->mode = DIOReadWrite;
+	PIMPL->cursor = 0;
+	PIMPL->size = source.PIMPL->size;
+	PIMPL->flags = bioFREE;
 }
 
 BufferIO::~BufferIO(void)
 {
 	close();
 
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 size_t
 BufferIO::size(void) const
 {
-	return(size_t(m_p->size));
+	return(size_t(PIMPL->size));
 }
 
 bool
@@ -169,30 +178,33 @@ BufferIO::open(DIOMode)
 void
 BufferIO::close(void)
 {
-	m_p->buffer = 0;
-	m_p->const_buffer = 0;
-	m_p->mode = DIOInvalid;
-	m_p->eof = false;
-	m_p->cursor = 0;
-	m_p->size = 0;
+	if (PIMPL->flags & bioFREE)
+		delete[] PIMPL->buffer;
+
+	PIMPL->buffer = 0;
+	PIMPL->const_buffer = 0;
+	PIMPL->mode = DIOInvalid;
+	PIMPL->cursor = 0;
+	PIMPL->size = 0;
+	PIMPL->flags = 0;
 }
 
 DIOMode
 BufferIO::mode(void) const
 {
-	return(m_p->mode);
+	return(PIMPL->mode);
 }
 
 bool
 BufferIO::isOpen(void) const
 {
-	return(m_p->const_buffer && m_p->mode != DIOInvalid);
+	return(PIMPL->const_buffer && PIMPL->mode != DIOInvalid);
 }
 
 bool
 BufferIO::atEOF(void) const
 {
-	return(m_p->eof);
+	return(PIMPL->flags & bioEOF);
 }
 
 size_t
@@ -200,17 +212,18 @@ BufferIO::read(void *b, size_t bs) const
 {
 	assert(bs <= LONG_MAX && "Buffer too large!");
 
-	if (!m_p->const_buffer &&
-	    (m_p->cursor >= 0 || m_p->cursor >= m_p->size)) return(0);
+	if (!PIMPL->const_buffer &&
+	    (PIMPL->cursor >= 0 || PIMPL->cursor >= PIMPL->size)) return(0);
 
 	size_t l_rcount =
-	    (m_p->cursor + long(bs) < m_p->size ?  bs : size_t(m_p->size - m_p->cursor));
+	    (PIMPL->cursor + long(bs) < PIMPL->size ?  bs : size_t(PIMPL->size - PIMPL->cursor));
 
-	memcpy(b, m_p->const_buffer + m_p->cursor, l_rcount);
-	m_p->cursor += l_rcount;
+	memcpy(b, PIMPL->const_buffer + PIMPL->cursor, l_rcount);
+	PIMPL->cursor += l_rcount;
 
 	/* set end-of-file flag */
-	m_p->eof = (bs > l_rcount);
+	if (bs > l_rcount)
+		PIMPL->flags |= bioEOF;
 
 	return(l_rcount);
 }
@@ -220,16 +233,17 @@ BufferIO::write(const void *b, size_t bs)
 {
 	assert(bs <= LONG_MAX && "Buffer too large!");
 
-	if (!m_p->buffer && m_p->cursor >= 0) return(0);
+	if (!PIMPL->buffer && PIMPL->cursor >= 0) return(0);
 
 	size_t l_wcount =
-	    (m_p->cursor + long(bs) < m_p->size ? bs : size_t(m_p->size - m_p->cursor));
+	    (PIMPL->cursor + long(bs) < PIMPL->size ? bs : size_t(PIMPL->size - PIMPL->cursor));
 
-	memcpy(m_p->buffer + m_p->cursor, b, l_wcount);
-	m_p->cursor += l_wcount;
+	memcpy(PIMPL->buffer + PIMPL->cursor, b, l_wcount);
+	PIMPL->cursor += l_wcount;
 
 	/* set end-of-file flag */
-	m_p->eof = (bs > l_wcount);
+	if (bs > l_wcount)
+		PIMPL->flags |= bioEOF;
 
 	return(l_wcount);
 }
@@ -241,17 +255,17 @@ BufferIO::seek(long o, DIOSeek on) const
 
 	switch (on) {
 	case DIOSet:
-		if (o >= 0 && o <= m_p->size)
+		if (o >= 0 && o <= PIMPL->size)
 			l_cursor = o;
 		break;
 	case DIOEnd:
-		if (m_p->size + o >= 0)
-			l_cursor = m_p->size + o;
+		if (PIMPL->size + o >= 0)
+			l_cursor = PIMPL->size + o;
 		break;
 	case DIOCurrent:
-		if ((m_p->cursor + o) >= 0 &&
-		    m_p->cursor + o < m_p->size)
-			l_cursor = m_p->cursor + o;
+		if ((PIMPL->cursor + o) >= 0 &&
+		    PIMPL->cursor + o < PIMPL->size)
+			l_cursor = PIMPL->cursor + o;
 		break;
 	default: return(false);
 	}
@@ -260,16 +274,16 @@ BufferIO::seek(long o, DIOSeek on) const
 		return(false);
 
 	/* reset end-of-file flag */
-	m_p->eof = false;
+	PIMPL->flags &= uint8_t(~bioEOF);
 
-	m_p->cursor = l_cursor;
+	PIMPL->cursor = l_cursor;
 	return(true);
 }
 
 long
 BufferIO::tell(void) const
 {
-	return(m_p->cursor);
+	return(PIMPL->cursor);
 }
 
 } /*********************************************************** Core Namespace */

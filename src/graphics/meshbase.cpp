@@ -89,99 +89,99 @@ struct MeshBase::Private
 };
 
 MeshBase::MeshBase(ITextureCoordinateData *tc, ITextureData *t, IVertexData *v)
-    : m_p(new Private)
+    : PIMPL_CREATE
 {
-	m_p->tcdata = tc;
-	m_p->tdata = t;
-	m_p->vdata = v;
-	m_p->rotation = 0;
-	m_p->scale[0] = m_p->scale[1] = 1.f;
+	PIMPL->tcdata = tc;
+	PIMPL->tdata = t;
+	PIMPL->vdata = v;
+	PIMPL->rotation = 0;
+	PIMPL->scale[0] = PIMPL->scale[1] = 1.f;
 }
 
 MeshBase::~MeshBase(void)
 {
-	delete m_p, m_p = 0;
+	PIMPL_DESTROY;
 }
 
 void
 MeshBase::setColor(const Graphics::Color &c)
 {
-	m_p->color = c;
+	PIMPL->color = c;
 }
 
 void
 MeshBase::setRotation(float a)
 {
-	m_p->rotation = a;
+	PIMPL->rotation = a;
 }
 
 void
 MeshBase::setScale(float x, float y)
 {
-	m_p->scale[0] = x;
-	m_p->scale[1] = y;
+	PIMPL->scale[0] = x;
+	PIMPL->scale[1] = y;
 }
 
 void
 MeshBase::setTextureCoordinateData(ITextureCoordinateData *tc)
 {
-	m_p->tcdata = tc;
+	PIMPL->tcdata = tc;
 }
 
 void
 MeshBase::setTextureData(ITextureData *td)
 {
-	m_p->tdata = td;
+	PIMPL->tdata = td;
 }
 
 void
 MeshBase::setVertexData(IVertexData *vd)
 {
-	m_p->vdata = vd;
+	PIMPL->vdata = vd;
 }
 
 ITextureCoordinateData *
 MeshBase::textureCoordinateData(void) const
 {
-	return(m_p->tcdata);
+	return(PIMPL->tcdata);
 }
 
 ITextureData *
 MeshBase::textureData(void) const
 {
-	return(m_p->tdata);
+	return(PIMPL->tdata);
 }
 
 IVertexData *
 MeshBase::vertexData(void) const
 {
-	return(m_p->vdata);
+	return(PIMPL->vdata);
 }
 
 const Graphics::Color &
 MeshBase::color(void) const
 {
-	return(m_p->color);
+	return(PIMPL->color);
 }
 
 float
 MeshBase::rotation(void) const
 {
-	return(m_p->rotation);
+	return(PIMPL->rotation);
 }
 
 void
 MeshBase::scale(float &x, float &y) const
 {
-	x = m_p->scale[0];
-	y = m_p->scale[1];
+	x = PIMPL->scale[0];
+	y = PIMPL->scale[1];
 }
 
 Math::Vector2
 MeshBase::vertex(uint16_t i) const
 {
 	Math::Vector2 l_vector;
-	if (!m_p->vdata->get(i, l_vector.x, l_vector.y))
+	if (!PIMPL->vdata->get(i, l_vector.x, l_vector.y))
 		MMWARNING("Failed to retrieve values for vertex " << i);
 	return(l_vector);
 }
@@ -189,21 +189,21 @@ MeshBase::vertex(uint16_t i) const
 void
 MeshBase::setVertex(uint16_t i, const Math::Vector2 &v)
 {
-	if (!m_p->vdata->set(i, v.x, v.y))
+	if (!PIMPL->vdata->set(i, v.x, v.y))
 		MMWARNING("Failed to assign values (" << v.x << ", " << v.y << ") to vertex " << i);
 }
 
 void
 MeshBase::textureCoordinate(uint16_t i, float &u, float &v) const
 {
-	if (!m_p->tcdata->get(i, u, v))
+	if (!PIMPL->tcdata->get(i, u, v))
 		MMWARNING("Failed to retrieve values for vertex " << i);
 }
 
 void
 MeshBase::setTextureCoordinate(uint16_t i, float u, float v)
 {
-	if (!m_p->tcdata->set(i, u, v))
+	if (!PIMPL->tcdata->set(i, u, v))
 		MMWARNING("Failed to assign values (" << u << ", " << v << ") to texture coordinate " << i);
 }
 

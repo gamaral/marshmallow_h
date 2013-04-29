@@ -53,9 +53,7 @@ namespace Core { /******************************************** Core Namespace */
 	class MARSHMALLOW_CORE_EXPORT
 	BufferIO : public IDataIO
 	{
-		struct Private;
-		Private *m_p;
-
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN(BufferIO);
 	public:
 
