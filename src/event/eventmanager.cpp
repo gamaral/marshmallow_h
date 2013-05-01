@@ -113,6 +113,13 @@ struct EventManager::Private
 
 EventManager::Private::~Private()
 {
+	/* free listener maps */
+	EventListenerMap::iterator l_elm_i;
+	const EventListenerMap::const_iterator l_elm_c = listener_map.end();
+	for (l_elm_i = listener_map.begin(); l_elm_i != l_elm_c; ++l_elm_i)
+		delete l_elm_i->second;
+	listener_map.clear();
+
 	/* flush event queues */
 	for (int i = 0; i < QUEUE_MAX; ++i) {
 		EventList &l_queue = event_queue[i];

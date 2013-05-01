@@ -58,7 +58,16 @@ namespace Game { /******************************************** Game Namespace */
 		PositionComponent(const Core::Identifier &i, IEntity &entity);
 		virtual ~PositionComponent(void);
 
-		Math::Point2 & position(void);
+		const Math::Point2 & position(void) const;
+		void setPosition(const Math::Point2 &pos);
+		void setPosition(float x, float y);
+		void setPositionX(float x);
+		void setPositionY(float y);
+
+		void translate(const Math::Vector2 &relative);
+		void translate(float x, float y);
+		void translateX(float x);
+		void translateY(float y);
 
 	public: /* virtual */
 

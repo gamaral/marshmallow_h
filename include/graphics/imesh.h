@@ -56,11 +56,17 @@ namespace Math { /******************************************** Math Namespace */
 
 namespace Graphics { /************************************ Graphics Namespace */
 
+	class Color;
 	struct ITextureCoordinateData;
 	struct ITextureData;
 	struct IVertexData;
 
-	class Color;
+	enum MeshFlag {
+		mfTextureCoordinateFree = (1 << 0),
+		mfTextureDataFree       = (1 << 1),
+		mfVertexDataFree        = (1 << 2),
+		mfNone                  = 0
+	};
 
 	/*! @brief Graphics Mesh Interface */
 	struct MARSHMALLOW_GRAPHICS_EXPORT
@@ -75,6 +81,8 @@ namespace Graphics { /************************************ Graphics Namespace */
 		virtual const Graphics::Color & color(void) const = 0;
 		virtual float rotation(void) const = 0;
 		virtual void scale(float &x, float &y) const = 0;
+
+		virtual int flags(void) const = 0;
 
 		virtual Math::Vector2 vertex(uint16_t index) const = 0;
 		virtual void textureCoordinate(uint16_t index, float &u, float &v) const = 0;

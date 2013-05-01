@@ -66,9 +66,8 @@ add_subdirectory(src)
 
 if(EXISTS ${PROJECT_SOURCE_DIR}/target/CMakeLists.txt)
 	add_subdirectory(target)	
-# DISABLED - NEW DEMOS NEEDED
-#elseif(EXISTS ${PROJECT_SOURCE_DIR}/demos/CMakeLists.txt)
-#	add_subdirectory(demos)
+elseif(EXISTS ${PROJECT_SOURCE_DIR}/demos/CMakeLists.txt)
+	add_subdirectory(demos)
 else()
 	set(MARSHMALLOW_LIBRARY_ONLY ON)
 endif()

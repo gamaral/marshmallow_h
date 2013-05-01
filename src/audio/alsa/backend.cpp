@@ -144,6 +144,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 	}
 
 	snd_pcm_hw_params_get_period_size_max(l_params, &l_handle.frames, 0);
+	l_handle.frames *= l_periods;
 	snd_pcm_hw_params_free(l_params);
 	l_params = 0;
 

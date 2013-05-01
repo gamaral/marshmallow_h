@@ -41,50 +41,109 @@
 #ifndef MARSHMALLOW_GAME_ENGINE_H
 #define MARSHMALLOW_GAME_ENGINE_H 1
 
-#include <core/environment.h>
-#include <core/namespace.h>
+#include <core/global.h>
+
+#include <game/config.h>
+#include <game/iengine.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+
+/*
+ * Sleep Intervals
+ */
+#define MMSLEEP_DISABLED  0
+#define MMSLEEP_INSOMNIAC 2
+#define MMSLEEP_LITESLEEP 4
+#define MMSLEEP_DEEPSLEEP 6
+
+namespace Event { /****************************************** Event Namespace */
+	class EventManager;
+	struct IEventListener;
+} /********************************************************** Event Namespace */
+
 namespace Game { /******************************************** Game Namespace */
 
-	struct IEngine;
+	class EngineEventListener;
+	class SceneManager;
+	struct IFactory;
 
-namespace Engine { /********************************** Game::Engine Namespace */
+	/*! @brief Game Engine Base Class */
+	class MARSHMALLOW_GAME_EXPORT
+	Engine : public IEngine
+	{
+		PRIVATE_IMPLEMENTATION
+		NO_ASSIGN_COPY(Engine);
+	public:
 
-	/*!
-	 * @brief Toggle engine between suspend and resume
-	 * @return true when suspended
-	 */
-	MARSHMALLOW_GAME_EXPORT
-	bool Pause(void);
+		/*!
+		 * @param fps Desired frame rate
+		 * @param sleep Sleep interval
+		 */
+		Engine(int fps = MARSHMALLOW_ENGINE_FRAMERATE,
+		           int sleep = MMSLEEP_DISABLED);
+		virtual ~Engine(void);
 
-	/*!
-	 * @brief Suspend game engine
-	 */
-	MARSHMALLOW_GAME_EXPORT
-	void Suspend(void);
+		/*!
+		 * @brief Set Event Manager
+		 */
+		void setEventManager(Event::EventManager *manager);
 
-	/*!
-	 * @brief Resume game engine
-	 */
-	MARSHMALLOW_GAME_EXPORT
-	void Resume(void);
+		/*!
+		 * @brief Set Scene Manager
+		 */
+		void setSceneManager(Game::SceneManager *manager);
 
-	/*!
-	 * @brief Stop game engine
-	 * @param exit_code Exit code returned by game binary
-	 */
-	MARSHMALLOW_GAME_EXPORT
-	void Stop(int exit_code = 0);
+		/*!
+		 * @brief Set Factory
+		 */
+		void setFactory(Game::IFactory *factory);
 
-	/*!
-	 * @brief Game engine singleton
-	 * @return Pointer to game engine instance
-	 */
-	MARSHMALLOW_GAME_EXPORT
-	IEngine * Instance(void);
+		/*!
+		 * @brief Target frames per second
+		 */
+		int fps(void) const;
 
-} /*************************************************** Game::Engine Namespace */
+		/*!
+		 * @brief Time that has elapsed since last tick
+		 */
+		MMTIME deltaTime(void) const;
+
+		/*!
+		 * @brief Actual frame rate achieved
+		 */
+		int frameRate(void);
+
+	public: /* virtual */
+
+		virtual void second(void);
+		virtual void tick(float delta);
+
+		VIRTUAL int run(void);
+		VIRTUAL void stop(int exit_code = 0);
+
+		VIRTUAL void suspend(void);
+		VIRTUAL void resume(void);
+
+		VIRTUAL Event::EventManager * eventManager(void) const;
+		VIRTUAL Game::SceneManager * sceneManager(void) const;
+		VIRTUAL Game::IFactory * factory(void) const;
+
+		VIRTUAL bool initialize(void);
+		VIRTUAL void finalize(void);
+
+		VIRTUAL bool isSuspended(void) const;
+		VIRTUAL bool isValid(void) const;
+
+		VIRTUAL void render(void);
+		VIRTUAL void update(float delta);
+
+		VIRTUAL bool handleEvent(const Event::IEvent &event);
+
+	public: /* static */
+
+		static IEngine *Instance(void);
+	};
+
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 

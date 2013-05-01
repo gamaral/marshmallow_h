@@ -40,11 +40,14 @@
 
 #include "core/identifier.h"
 #include "core/logger.h"
+#include "core/platform.h"
 
 #include "graphics/camera.h"
 #include "graphics/color.h"
 #include "graphics/display.h"
 #include "graphics/painter_p.h"
+
+#include "game/config.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
@@ -130,6 +133,9 @@ Backend::Tick(float)
 void
 Backend::Finish(void)
 {
+	/* simulated slow swap */
+	Core::Platform::Sleep(1000/MARSHMALLOW_ENGINE_FRAMERATE);
+	Painter::Reset();
 }
 
 const Graphics::Display &

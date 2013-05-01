@@ -103,8 +103,6 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<TextureCoordinateData> SharedTextureCoordinateData;
-	typedef Core::Weak<TextureCoordinateData> WeakTextureCoordinateData;
 
 } /*********************************************** Graphics::OpenGL Namespace */
 } /******************************************************* Graphics Namespace */

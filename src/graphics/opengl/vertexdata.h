@@ -103,8 +103,6 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<VertexData> SharedVertexData;
-	typedef Core::Weak<VertexData> WeakVertexData;
 
 } /*********************************************** Graphics::OpenGL Namespace */
 } /******************************************************* Graphics Namespace */

@@ -133,7 +133,10 @@ TextComponent::Private::rebuild(void)
 				tileset->getTextureCoordinateData(static_cast<uint16_t>
 				    (tile_offset + (l_char - MIN_CHAR)));
 
-			mesh[i] = new Graphics::QuadMesh(l_tdata, tileset->textureData(), l_vdata);
+			mesh[i] = new Graphics::QuadMesh(l_tdata,
+			                                 tileset->textureData(),
+			                                 l_vdata,
+			                                 Graphics::mfNone);
 		}
 	}
 

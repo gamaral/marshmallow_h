@@ -52,50 +52,76 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 namespace { /******************************** Graphics::<anonymous> Namespace */
 
-static const char * s_scalemode_string[Graphics::ITextureData::smModes] =
-    { "nearest", "linear" };
+	static const char * s_scalemode_string[ITextureData::smModes] =
+	    { "nearest", "linear" };
 
-Graphics::ITextureData::ScaleMode
-StringToScaleMode(const char *str)
-{
-	using namespace Graphics;
+	ITextureData::ScaleMode
+	StringToScaleMode(const char *str)
+	{
+		using namespace Graphics;
 
-	if (!str) return(ITextureData::smDefault);
+		if (!str) return(ITextureData::smDefault);
 
-	for (int i = 0; i < ITextureData::smModes; ++i)
-		if (MMSTRCASECMP(str, s_scalemode_string[i]) == 0)
-			return(static_cast<ITextureData::ScaleMode>(i));
+		for (int i = 0; i < ITextureData::smModes; ++i)
+			if (MMSTRCASECMP(str, s_scalemode_string[i]) == 0)
+				return(static_cast<ITextureData::ScaleMode>(i));
 
-	return(ITextureData::smDefault);
-}
+		return(ITextureData::smDefault);
+	}
 
-const char *
-ScaleModeToString(Graphics::ITextureData::ScaleMode mode)
-{
-	return(s_scalemode_string[mode]);
-}
+	const char *
+	ScaleModeToString(ITextureData::ScaleMode mode)
+	{
+		return(s_scalemode_string[mode]);
+	}
 
 } /****************************************** Graphics::<anonymous> Namespace */
 
 /* TODO: cleanup */
 struct MeshBase::Private
 {
+	Private(ITextureCoordinateData *tc,
+	        ITextureData *t,
+	        IVertexData *v,
+	        int f)
+	    : tcdata(tc)
+	    , tdata(t)
+	    , vdata(v)
+	    , rotation(0)
+	    , flags(static_cast<char>(f))
+	{
+		scale[0] = scale[1] = 1.f;
+	}
+
+	~Private(void);
+
 	Color color;
 	ITextureCoordinateData *tcdata;
 	ITextureData *tdata;
 	IVertexData *vdata;
 	float scale[2];
 	float rotation;
+	char  flags;
 };
 
-MeshBase::MeshBase(ITextureCoordinateData *tc, ITextureData *t, IVertexData *v)
-    : PIMPL_CREATE
+MeshBase::Private::~Private(void)
 {
-	PIMPL->tcdata = tc;
-	PIMPL->tdata = t;
-	PIMPL->vdata = v;
-	PIMPL->rotation = 0;
-	PIMPL->scale[0] = PIMPL->scale[1] = 1.f;
+	if (flags & mfTextureCoordinateFree)
+		delete tcdata;
+	tcdata = 0;
+
+	if (flags & mfTextureDataFree)
+		delete tdata;
+	tdata = 0;
+
+	if (flags & mfVertexDataFree)
+		delete vdata;
+	vdata = 0;
+}
+
+MeshBase::MeshBase(ITextureCoordinateData *tc, ITextureData *t, IVertexData *v, int f)
+    : PIMPL_CREATE_X(tc, t, v, f)
+{
 }
 
 MeshBase::~MeshBase(void)
@@ -175,6 +201,12 @@ MeshBase::scale(float &x, float &y) const
 {
 	x = PIMPL->scale[0];
 	y = PIMPL->scale[1];
+}
+
+int
+MeshBase::flags(void) const
+{
+	return(PIMPL->flags);
 }
 
 Math::Vector2

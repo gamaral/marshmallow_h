@@ -30,7 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include "game/rendercomponent.h"
+#include "game/backend_p.h"
 
 /*!
  * @file
@@ -38,80 +38,66 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/identifier.h"
-#include "core/logger.h"
-#include "core/type.h"
+#include "game/iengine.h"
 
-#include "graphics/imesh.h"
-#include "graphics/painter.h"
-
-#include "game/factory.h"
-#include "game/ientity.h"
-#include "game/positioncomponent.h"
+#include <cassert>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
+namespace { /************************************ Game::<anonymous> Namespace */
+	static Game::IEngine *s_instance(0);
+} /********************************************** Game::<anonymous> Namespace */
 
-struct RenderComponent::Private
+bool
+Backend::Pause(void)
 {
-	Private()
-	    : position(0)
-	    , mesh(0)
-	{}
+	assert(s_instance && s_instance->isValid()
+	    && "No valid engine instance!");
 
-	~Private()
-	{
-		delete mesh, mesh = 0;
-		position = 0;
-	}
+	if (s_instance->isSuspended())
+		s_instance->resume();
+	else
+		s_instance->suspend();
 
-	PositionComponent *position;
-	Graphics::IMesh *mesh;
-};
-
-RenderComponent::RenderComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e)
-    , PIMPL_CREATE
-{
-}
-
-RenderComponent::~RenderComponent(void)
-{
-	PIMPL_DESTROY;
-}
-
-Graphics::IMesh *
-RenderComponent::mesh(void) const
-{
-	return(PIMPL->mesh);
+	return(s_instance->isSuspended());
 }
 
 void
-RenderComponent::setMesh(Graphics::IMesh *m)
+Backend::Suspend(void)
 {
-	PIMPL->mesh = m;
+	assert(s_instance && s_instance->isValid()
+	    && "No valid engine instance!");
+	s_instance->suspend();
 }
 
 void
-RenderComponent::update(float)
+Backend::Resume(void)
 {
-	if (!PIMPL->position)
-		PIMPL->position = static_cast<PositionComponent *>
-		    (entity().getComponentType("Game::PositionComponent"));
+	assert(s_instance && s_instance->isValid()
+	    && "No valid engine instance!");
+	s_instance->resume();
 }
 
 void
-RenderComponent::render(void)
+Backend::Stop(int exit_code)
 {
-	if (PIMPL->position && PIMPL->mesh)
-		Graphics::Painter::Draw(*PIMPL->mesh, PIMPL->position->position());
+	assert(s_instance && s_instance->isValid()
+	    && "No valid engine instance!");
+	s_instance->stop(exit_code);
 }
 
-const Core::Type &
-RenderComponent::Type(void)
+IEngine *
+Backend::Instance(void)
 {
-	static const Core::Type s_type("Game::RenderComponent");
-	return(s_type);
+	return(s_instance);
+}
+
+void
+Backend::SetInstance(IEngine *instance)
+{
+	assert(((0 == s_instance && instance) || (s_instance && 0 == instance))
+	    && "Tried to assign an invalid engine instance!");
+	s_instance = instance;
 }
 
 } /*********************************************************** Game Namespace */

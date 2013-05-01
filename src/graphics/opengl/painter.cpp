@@ -408,7 +408,6 @@ GLPainter::LoadViewProjection(void)
 void
 GLPainter::Draw(const Graphics::IMesh &m, const Math::Point2 *o, size_t c)
 {
-	using OpenGL::SharedTextureData;
 	using OpenGL::TextureData;
 
 	if (0 == (flags & sfInitialized))
@@ -430,8 +429,7 @@ GLPainter::Draw(const Graphics::IMesh &m, const Math::Point2 *o, size_t c)
 	/* set texture */
 	glActiveTexture(GL_TEXTURE0);
 
-	SharedTextureData l_texture_data =
-	    m.textureData().staticCast<TextureData>();
+	TextureData *l_texture_data = static_cast<TextureData *>(m.textureData());
 	if (last_texture_id != l_texture_data->id()) {
 		last_texture_id = l_texture_data->id();
 		if (l_texture_data->isLoaded()) {
@@ -442,8 +440,7 @@ GLPainter::Draw(const Graphics::IMesh &m, const Math::Point2 *o, size_t c)
 			if (l_texture_data->sessionId() != session_id)
 				l_texture_data->reload();
 
-			SharedTextureData l_data =
-			    l_texture_data.staticCast<TextureData>();
+			TextureData *l_data = static_cast<TextureData *>(l_texture_data);
 			glBindTexture(GL_TEXTURE_2D, l_data->textureId());
 			glUniform1i(location_usecolor, 0);
 		}
@@ -485,18 +482,15 @@ inline void
 GLPainter::BeginDrawQuadMesh(const Graphics::QuadMesh &g, bool tcoords)
 {
 	using OpenGL::Extensions::glBindBuffer;
-	using OpenGL::SharedTextureCoordinateData;
-	using OpenGL::SharedVertexData;
 	using OpenGL::TextureCoordinateData;
 	using OpenGL::VertexData;
 
-	SharedVertexData l_vdata =
-	    g.vertexData().staticCast<VertexData>();
+	VertexData *l_vdata = static_cast<VertexData *>(g.vertexData());
 
 	if (!l_vdata) return;
 
-	SharedTextureCoordinateData l_tcdata =
-	    g.textureCoordinateData() .staticCast<TextureCoordinateData>();
+	TextureCoordinateData *l_tcdata =
+	    static_cast<TextureCoordinateData *>(g.textureCoordinateData());
 
 	/* ** vertex ** */
 

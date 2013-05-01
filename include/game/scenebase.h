@@ -68,10 +68,14 @@ namespace Game { /******************************************** Game Namespace */
 		VIRTUAL const Core::Identifier & id(void) const;
 
 		VIRTUAL void pushLayer(Game::ISceneLayer *layer);
-		VIRTUAL void popLayer(void);
-		VIRTUAL void removeLayer(const Core::Identifier &identifier);
+		VIRTUAL Game::ISceneLayer * popLayer(void);
+
+		VIRTUAL void removeLayer(Game::ISceneLayer *layer);
+		VIRTUAL bool removeLayer(const Core::Identifier &identifier);
+
 		VIRTUAL Game::ISceneLayer * getLayer(const Core::Identifier &identifier) const;
 		VIRTUAL Game::ISceneLayer * getLayerType(const Core::Type &type) const;
+
 		VIRTUAL const Game::SceneLayerList & getLayers(void) const;
 
 		VIRTUAL const Graphics::Color & background(void) const;

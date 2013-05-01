@@ -41,16 +41,16 @@
 #ifndef MARSHMALLOW_GAME_ENGINE_P_H
 #define MARSHMALLOW_GAME_ENGINE_P_H 1
 
-#include "game/engine.h"
+#include "game/backend.h"
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
-namespace Engine { /********************************** Game::Engine Namespace */
+namespace Backend { /********************************* Game::Engine Namespace */
 
 	MARSHMALLOW_GAME_EXPORT
 	void SetInstance(IEngine *instance);
 
-} /*************************************************** Game::Engine Namespace */
+} /************************************************** Game::Backend Namespace */
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 

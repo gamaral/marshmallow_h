@@ -53,7 +53,7 @@ namespace Core { /******************************************** Core Namespace */
 namespace Audio { /****************************************** Audio Namespace */
 
 	/*!
-	 * @brief Audio Track Interface
+	 * @brief Audio Wave Track Class
 	 */
 	class MARSHMALLOW_AUDIO_EXPORT
 	WaveTrack : public ITrack

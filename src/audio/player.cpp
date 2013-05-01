@@ -49,6 +49,7 @@
 
 #include <map>
 
+#include <cassert>
 #include <cstring>
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -65,7 +66,10 @@ namespace { /*********************************** Audio::<anonymous> Namespace */
 
 struct Player::Private
 {
+	Private();
 	~Private();
+
+	inline void setPCM(PCM *_pcm);
 
 	inline void load(const Core::Identifier &id, ITrack *track);
 	inline bool contains(const Core::Identifier &id);
@@ -85,7 +89,16 @@ struct Player::Private
 	void tick(void);
 
 	PCM *pcm;
+	char *buffer;
+	char *mix;
 };
+
+Player::Private::Private()
+    : pcm(0)
+    , buffer(0)
+    , mix(0)
+{
+}
 
 Player::Private::~Private()
 {
@@ -101,6 +114,31 @@ Player::Private::~Private()
 		MMWARNING("Player destroyed while still holding track(s)!" << l_track_list);
 	}
 #endif
+
+	/* clear buffers */
+	delete [] buffer, buffer = 0;
+	delete [] mix, mix = 0;
+	pcm = 0;
+}
+
+void
+Player::Private::setPCM(PCM *_pcm)
+{
+	if (pcm == _pcm) return;
+
+	/* clean buffers */
+	if (pcm) {
+		delete [] buffer, buffer = 0;
+		delete [] mix, mix = 0;
+	}
+
+	pcm = _pcm;
+
+	/* create new buffers */
+	if (pcm && pcm->isOpen()) {
+		buffer = new char[pcm->framesMax() * pcm->frameSize()];
+		mix = new char[pcm->framesMax() * pcm->frameSize()];
+	}
 }
 
 void
@@ -157,17 +195,21 @@ Player::Private::isPlaying(const Core::Identifier &id) const
 void
 Player::Private::tick(void)
 {
-	if (!pcm) return;
+	if (!pcm || !pcm->isOpen()) return;
+
+	if (!buffer || !mix) {
+		buffer = new char[pcm->framesMax() * pcm->frameSize()];
+		mix = new char[pcm->framesMax() * pcm->frameSize()];
+	}
 
 	const size_t l_frames_available = pcm->framesAvailable();
 	if (!l_frames_available)
 		return;
 
-	const size_t l_buffer_size = l_frames_available * pcm->frameSize();
-	char *l_buffer = new char[l_buffer_size];
-	char *l_mix = new char[l_buffer_size];
+	assert(pcm->framesMax() >= l_frames_available && "PCM's gone wild!");
 
-	memset(l_mix, 0, l_buffer_size);
+	const size_t l_buffer_max = l_frames_available * pcm->frameSize();
+	memset(mix, 0, l_buffer_max);
 
 	PlaylistMap::iterator l_i;
 	const PlaylistMap::const_iterator l_c = playlist.end();
@@ -179,20 +221,21 @@ Player::Private::tick(void)
 		size_t l_read = 0;
 		do {
 			/* decode */
-			l_read += l_track->read(&l_buffer[l_offset],
-			    l_buffer_size - l_offset);
+			l_read += l_track->read(&buffer[l_offset],
+			    l_buffer_max - l_offset);
 
 			/* mix */
 			for (size_t l_bi = l_offset; l_bi < l_read; ++l_bi)
-				l_mix[l_bi] =
-				    Mixer(l_mix[l_bi],
-				          l_buffer[l_bi],
+				mix[l_bi] =
+				    Mixer(mix[l_bi],
+				          buffer[l_bi],
 				          l_track_i.second.second);
+			l_offset = l_read;
 
 			/*
 			 * Success! Next track.
 			 */
-			if (l_read == l_buffer_size)
+			if (l_read == l_buffer_max)
 				++l_i;
 
 			/*
@@ -215,17 +258,12 @@ Player::Private::tick(void)
 				/* update playlist */
 				else playlist[l_track_i.first] = l_track_i.second;
 			}
-
-			l_offset = l_read;
 		}
-		while(l_read < l_buffer_size);
+		while(l_read < l_buffer_max);
 	}
 	
-	if (!pcm->write(l_mix, l_frames_available))
+	if (!pcm->write(mix, l_frames_available))
 		MMERROR("Failed to write to PCM device!");
-
-	delete[] l_mix, l_mix = 0;
-	delete[] l_buffer, l_buffer = 0;
 }
 
 /********************************************************************* Player */
@@ -296,7 +334,7 @@ Player::pcm(void) const
 void
 Player::setPCM(PCM *_pcm)
 {
-	PIMPL->pcm = _pcm;
+	PIMPL->setPCM(_pcm);
 }
 
 } /********************************************************** Audio Namespace */

@@ -53,7 +53,7 @@ namespace Core { /******************************************** Core Namespace */
 namespace Audio { /****************************************** Audio Namespace */
 
 	/*!
-	 * @brief Audio Track Interface
+	 * @brief Audio Ogg Track Class
 	 */
 	class MARSHMALLOW_AUDIO_EXPORT
 	OggTrack : public ITrack

@@ -30,7 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include "game/rendercomponent.h"
+#pragma once
 
 /*!
  * @file
@@ -38,82 +38,54 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#include "core/identifier.h"
-#include "core/logger.h"
-#include "core/type.h"
+#ifndef MARSHMALLOW_GAME_BACKEND_H
+#define MARSHMALLOW_GAME_BACKEND_H 1
 
-#include "graphics/imesh.h"
-#include "graphics/painter.h"
-
-#include "game/factory.h"
-#include "game/ientity.h"
-#include "game/positioncomponent.h"
+#include <core/environment.h>
+#include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
-struct RenderComponent::Private
-{
-	Private()
-	    : position(0)
-	    , mesh(0)
-	{}
+	struct IEngine;
 
-	~Private()
-	{
-		delete mesh, mesh = 0;
-		position = 0;
-	}
+namespace Backend { /******************************** Game::Backend Namespace */
 
-	PositionComponent *position;
-	Graphics::IMesh *mesh;
-};
+	/*!
+	 * @brief Toggle engine between suspend and resume
+	 * @return true when suspended
+	 */
+	MARSHMALLOW_GAME_EXPORT
+	bool Pause(void);
 
-RenderComponent::RenderComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e)
-    , PIMPL_CREATE
-{
-}
+	/*!
+	 * @brief Suspend game engine
+	 */
+	MARSHMALLOW_GAME_EXPORT
+	void Suspend(void);
 
-RenderComponent::~RenderComponent(void)
-{
-	PIMPL_DESTROY;
-}
+	/*!
+	 * @brief Resume game engine
+	 */
+	MARSHMALLOW_GAME_EXPORT
+	void Resume(void);
 
-Graphics::IMesh *
-RenderComponent::mesh(void) const
-{
-	return(PIMPL->mesh);
-}
+	/*!
+	 * @brief Stop game engine
+	 * @param exit_code Exit code returned by game binary
+	 */
+	MARSHMALLOW_GAME_EXPORT
+	void Stop(int exit_code = 0);
 
-void
-RenderComponent::setMesh(Graphics::IMesh *m)
-{
-	PIMPL->mesh = m;
-}
+	/*!
+	 * @brief Game engine singleton
+	 * @return Pointer to game engine instance
+	 */
+	MARSHMALLOW_GAME_EXPORT
+	IEngine * Instance(void);
 
-void
-RenderComponent::update(float)
-{
-	if (!PIMPL->position)
-		PIMPL->position = static_cast<PositionComponent *>
-		    (entity().getComponentType("Game::PositionComponent"));
-}
-
-void
-RenderComponent::render(void)
-{
-	if (PIMPL->position && PIMPL->mesh)
-		Graphics::Painter::Draw(*PIMPL->mesh, PIMPL->position->position());
-}
-
-const Core::Type &
-RenderComponent::Type(void)
-{
-	static const Core::Type s_type("Game::RenderComponent");
-	return(s_type);
-}
-
+} /************************************************** Game::Backend Namespace */
 } /*********************************************************** Game Namespace */
 MARSHMALLOW_NAMESPACE_END
 
+#endif

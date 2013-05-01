@@ -67,7 +67,8 @@ namespace Graphics { /************************************ Graphics Namespace */
 		QuadMesh(void);
 		QuadMesh(Graphics::ITextureCoordinateData *tc,
 		         Graphics::ITextureData *t,
-		         Graphics::IVertexData *v);
+		         Graphics::IVertexData *v,
+		         int flags);
 		virtual ~QuadMesh(void);
 
 	public: /* virtual */

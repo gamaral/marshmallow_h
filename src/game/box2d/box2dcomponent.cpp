@@ -183,8 +183,7 @@ Box2DComponent::update(float d)
 	float32 l_angle = PIMPL->body->GetAngle();
 
 	/* entity position */
-	PIMPL->position->position().x = l_position.x;
-	PIMPL->position->position().y = l_position.y;
+	PIMPL->position->setPosition(l_position.x, l_position.y);
 
 	/* render mesh rotation */
 	if (PIMPL->render) {

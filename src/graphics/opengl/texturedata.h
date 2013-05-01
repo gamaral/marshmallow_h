@@ -102,8 +102,6 @@ namespace OpenGL { /****************************** Graphics::OpenGL Namespace */
 
 		static const Core::Type & Type(void);
 	};
-	typedef Core::Shared<TextureData> SharedTextureData;
-	typedef Core::Weak<TextureData> WeakTextureData;
 
 } /*********************************************** Graphics::OpenGL Namespace */
 } /******************************************************* Graphics Namespace */

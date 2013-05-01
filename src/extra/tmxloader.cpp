@@ -525,19 +525,19 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 			    l_tileset->getTextureCoordinateData(static_cast<uint16_t>(l_object_gid - l_ts_firstgid));
 
 			l_render->setMesh(new Graphics::QuadMesh
-			    (l_tdata, l_tileset->textureData(), l_vdata));
+			    (l_tdata, l_tileset->textureData(), l_vdata, Graphics::mfNone));
 
 			l_entity->pushComponent(l_render);
 		}
 
 		/* create position component */
 		Game::PositionComponent *l_pos_component = new Game::PositionComponent("position", *l_entity);
-		l_pos_component->position().x = scale.width  * static_cast<float>(l_object_x);
-		l_pos_component->position().y = scale.height * static_cast<float>(l_object_y);
+		l_pos_component->setPosition(scale.width  * static_cast<float>(l_object_x),
+		                             scale.height * static_cast<float>(l_object_y));
 
 		/* change position to center of object (offset) */
-		l_pos_component->position().x += l_object_hrsize.width;
-		l_pos_component->position().y -= l_object_hrsize.height;
+		l_pos_component->translate(l_object_hrsize.width,
+		                          -l_object_hrsize.height);
 
 		l_entity->pushComponent(l_pos_component);
 

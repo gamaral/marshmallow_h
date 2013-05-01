@@ -53,24 +53,129 @@ namespace Game { /******************************************** Game Namespace */
 
 struct SceneBase::Private
 {
+	Private(const Core::Identifier &i)
+	    : layers()
+	    , bgcolor(Graphics::Color::Black())
+	    , id(i)
+	    , active(false)
+	{}
+
+	~Private(void);
+
+	inline void
+	pushLayer(Game::ISceneLayer *layer);
+
+	inline Game::ISceneLayer *
+	popLayer(void);
+
+	inline void
+	removeLayer(Game::ISceneLayer *layer);
+
+	inline bool
+	removeLayer(const Core::Identifier &identifier);
+
+	inline Game::ISceneLayer *
+	getLayer(const Core::Identifier &identifier) const;
+
+	inline Game::ISceneLayer *
+	getLayerType(const Core::Type &type) const;
+
 	SceneLayerList layers;
-	Core::Identifier id;
 	Graphics::Color bgcolor;
+	const Core::Identifier &id;
 	bool active;
 };
 
-SceneBase::SceneBase(const Core::Identifier &i)
-    : PIMPL_CREATE
+SceneBase::Private::~Private(void)
 {
-	PIMPL->id = i;
-	PIMPL->bgcolor = Graphics::Color::Black();
-	PIMPL->active = false;
+	/* free layers left behind */
+	while (!layers.empty()) {
+		ISceneLayer *l_layer = layers.back();
+		if (l_layer->flags() & slfAutoFree)
+			delete l_layer;
+		layers.pop_back();
+	}
+}
+
+void
+SceneBase::Private::pushLayer(Game::ISceneLayer *l)
+{
+	layers.push_front(l);
+}
+
+
+Game::ISceneLayer *
+SceneBase::Private::popLayer(void)
+{
+	if (layers.empty())
+		return(0);
+
+	ISceneLayer *l_layer = layers.front();
+	layers.pop_front();
+	return(l_layer);
+}
+
+void
+SceneBase::Private::removeLayer(Game::ISceneLayer *l)
+{
+	layers.remove(l);
+}
+
+bool
+SceneBase::Private::removeLayer(const Core::Identifier &i)
+{
+	SceneLayerList::const_iterator l_i;
+	const SceneLayerList::const_iterator l_c = layers.end();
+
+	/* maybe replace later with a map if required */
+	for (l_i = layers.begin(); l_i != l_c; ++l_i)
+		if ((*l_i)->id() == i) {
+			ISceneLayer *l_slayer = *l_i;
+			layers.remove(l_slayer);
+			return(true);
+		}
+	return(false);
+}
+
+
+Game::ISceneLayer *
+SceneBase::Private::getLayer(const Core::Identifier &i) const
+{
+	SceneLayerList::const_iterator l_i;
+	const SceneLayerList::const_iterator l_c = layers.end();
+
+	/* maybe replace later with a map if required */
+	for (l_i = layers.begin(); l_i != l_c; ++l_i) {
+		if ((*l_i)->id() == i)
+			return(*l_i);
+	}
+
+	return(0);
+}
+
+
+Game::ISceneLayer *
+SceneBase::Private::getLayerType(const Core::Type &t) const
+{
+	SceneLayerList::const_iterator l_i;
+	const SceneLayerList::const_iterator l_c = layers.end();
+
+	/* maybe replace later with a map if required */
+	for (l_i = layers.begin(); l_i != l_c; ++l_i) {
+		if ((*l_i)->type() == t)
+			return(*l_i);
+	}
+
+	return(0);
+}
+
+SceneBase::SceneBase(const Core::Identifier &i)
+    : PIMPL_CREATE_X(i)
+{
 }
 
 SceneBase::~SceneBase(void)
 {
-	PIMPL->layers.clear();
-
 	PIMPL_DESTROY;
 }
 
@@ -89,58 +194,37 @@ SceneBase::isActive(void) const
 void
 SceneBase::pushLayer(ISceneLayer *l)
 {
-	PIMPL->layers.push_front(l);
+	PIMPL->pushLayer(l);
 }
 
-void
+ISceneLayer *
 SceneBase::popLayer(void)
 {
-	PIMPL->layers.pop_front();
+	return(PIMPL->popLayer());
 }
 
 void
+SceneBase::removeLayer(ISceneLayer *l)
+{
+	return(PIMPL->removeLayer(l));
+}
+
+bool
 SceneBase::removeLayer(const Core::Identifier &i)
 {
-	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_c = PIMPL->layers.end();
-
-	/* maybe replace later with a map if required */
-	for (l_i = PIMPL->layers.begin(); l_i != l_c; ++l_i)
-		if ((*l_i)->id() == i) {
-			ISceneLayer *l_slayer = *l_i;
-			PIMPL->layers.remove(l_slayer);
-			return;
-		}
+	return(PIMPL->removeLayer(i));
 }
 
 ISceneLayer *
 SceneBase::getLayer(const Core::Identifier &i) const
 {
-	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_c = PIMPL->layers.end();
-
-	/* maybe replace later with a map if required */
-	for (l_i = PIMPL->layers.begin(); l_i != l_c; ++l_i) {
-		if ((*l_i)->id() == i)
-			return(*l_i);
-	}
-
-	return(0);
+	return(PIMPL->getLayer(i));
 }
 
 ISceneLayer *
 SceneBase::getLayerType(const Core::Type &t) const
 {
-	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_c = PIMPL->layers.end();
-
-	/* maybe replace later with a map if required */
-	for (l_i = PIMPL->layers.begin(); l_i != l_c; ++l_i) {
-		if ((*l_i)->type() == t)
-			return(*l_i);
-	}
-
-	return(0);
+	return(PIMPL->getLayerType(t));
 }
 
 const SceneLayerList &
@@ -211,7 +295,7 @@ SceneBase::update(float d)
 
 	SceneLayerList::const_iterator l_i;
 	SceneLayerList::const_iterator l_b = PIMPL->layers.begin();
-	SceneLayerList::const_iterator l_c = --PIMPL->layers.end();
+	const SceneLayerList::const_iterator l_c = --PIMPL->layers.end();
 
 	for (l_i = l_b; l_i != l_c; ++l_i)
 		if ((*l_i)->flags() & slfUpdateBlock)
@@ -225,10 +309,11 @@ SceneBase::update(float d)
 		if (l_i == l_b) l_finished = true;
 		else l_i--;
 
-		if (l_slayer->isZombie())
+		if (l_slayer->isZombie()) {
 			PIMPL->layers.remove(l_slayer);
-		else
-			l_slayer->update(d);
+			if (l_slayer->flags() & slfAutoFree)
+				delete l_slayer;
+		} else l_slayer->update(d);
 	} while(!l_finished);
 }
 

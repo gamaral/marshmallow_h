@@ -60,10 +60,60 @@ PositionComponent::~PositionComponent(void)
 	PIMPL_DESTROY;
 }
 
-Math::Point2 &
-PositionComponent::position(void)
+const Math::Point2 &
+PositionComponent::position(void) const
 {
 	return(PIMPL->position);
+}
+
+void
+PositionComponent::setPosition(const Math::Point2 &p)
+{
+	PIMPL->position = p;
+}
+
+void
+PositionComponent::setPosition(float x, float y)
+{
+	PIMPL->position.x = x;
+	PIMPL->position.y = y;
+}
+
+void
+PositionComponent::setPositionX(float x)
+{
+	PIMPL->position.x = x;
+}
+
+void
+PositionComponent::setPositionY(float y)
+{
+	PIMPL->position.y = y;
+}
+
+void
+PositionComponent::translate(const Math::Vector2 &r)
+{
+	PIMPL->position += r;
+}
+
+void
+PositionComponent::translate(float x, float y)
+{
+	PIMPL->position.x += x;
+	PIMPL->position.y += y;
+}
+
+void
+PositionComponent::translateX(float x)
+{
+	PIMPL->position.x += x;
+}
+
+void
+PositionComponent::translateY(float y)
+{
+	PIMPL->position.y += y;
 }
 
 const Core::Type &

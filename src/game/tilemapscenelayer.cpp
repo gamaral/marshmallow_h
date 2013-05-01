@@ -233,8 +233,14 @@ TilemapSceneLayer::Private::render(void)
 		if (l_ts) {
 			Graphics::IVertexData *l_svdata = vertexes[l_tioffset];
 
-			Graphics::QuadMesh l_mesh(l_ts->getTextureCoordinateData(static_cast<uint16_t>(ti->first - l_tioffset)),
-			    l_ts->textureData(), l_svdata);
+			const uint16_t l_index = static_cast<uint16_t>(ti->first - l_tioffset);
+
+			Graphics::QuadMesh l_mesh
+			    (l_ts->getTextureCoordinateData(l_index),
+			     l_ts->textureData(),
+			     l_svdata,
+			     Graphics::mfNone);
+
 			l_mesh.setColor(l_color);
 
 			Graphics::Painter::Draw(l_mesh, l_origins, oic);

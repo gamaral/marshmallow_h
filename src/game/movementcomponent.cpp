@@ -137,7 +137,7 @@ MovementComponent::update(float d)
 
 	/* update position */
 
-	PIMPL->position->position() += l_velocity * d;
+	PIMPL->position->translate(l_velocity * d);
 }
 
 const Core::Type &

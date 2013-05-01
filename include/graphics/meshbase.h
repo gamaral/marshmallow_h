@@ -59,7 +59,8 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 		MeshBase(Graphics::ITextureCoordinateData *tc,
 		         Graphics::ITextureData *t,
-		         Graphics::IVertexData *v);
+		         Graphics::IVertexData *v,
+		         int flags = mfNone);
 		virtual ~MeshBase(void);
 
 		void setColor(const Graphics::Color &color);
@@ -94,6 +95,8 @@ namespace Graphics { /************************************ Graphics Namespace */
 		VIRTUAL const Graphics::Color & color(void) const;
 		VIRTUAL float rotation(void) const;
 		VIRTUAL void scale(float &x, float &y) const;
+
+		VIRTUAL int flags(void) const;
 
 		VIRTUAL Math::Vector2 vertex(uint16_t index) const;
 		VIRTUAL void textureCoordinate(uint16_t index, float &u, float &v) const;
