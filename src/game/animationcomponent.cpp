@@ -240,7 +240,7 @@ AnimationComponent::Private::animate(float d)
 /********************************************************* AnimationComponent */
 
 AnimationComponent::AnimationComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e)
+    : Component(i, e)
     , PIMPL_CREATE_X(*this)
 {
 }

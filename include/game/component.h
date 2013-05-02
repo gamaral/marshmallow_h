@@ -38,8 +38,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_GAME_COMPONENTBASE_H
-#define MARSHMALLOW_GAME_COMPONENTBASE_H 1
+#ifndef MARSHMALLOW_GAME_COMPONENT_H
+#define MARSHMALLOW_GAME_COMPONENT_H 1
 
 #include <core/global.h>
 
@@ -50,20 +50,20 @@ namespace Game { /******************************************** Game Namespace */
 
 	struct IEntity;
 
-	/*! @brief Game Component Base Class */
+	/*! @brief Game Component  Class */
 	class MARSHMALLOW_GAME_EXPORT
-	ComponentBase : public IComponent
+	Component : public IComponent
 	{
 		PRIVATE_IMPLEMENTATION
-		NO_ASSIGN_COPY(ComponentBase);
+		NO_ASSIGN_COPY(Component);
 	public:
 
-		ComponentBase(const Core::Identifier &identifier, IEntity &entity);
-		virtual ~ComponentBase(void);
+		Component(const Core::Identifier &identifier, IEntity &entity);
+		virtual ~Component(void);
 
 		IEntity & entity(void) const;
 
-	public: /* virtual */
+	public: /* reimp */
 
 		VIRTUAL const Core::Identifier & id(void) const;
 

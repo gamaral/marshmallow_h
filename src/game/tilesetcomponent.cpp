@@ -60,7 +60,7 @@ struct TilesetComponent::Private
 };
 
 TilesetComponent::TilesetComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e)
+    : Component(i, e)
     , PIMPL_CREATE
 {
 }

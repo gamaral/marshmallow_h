@@ -64,7 +64,7 @@ struct MovementComponent::Private
 };
 
 MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e)
+    : Component(i, e)
     , PIMPL_CREATE
 {
 }

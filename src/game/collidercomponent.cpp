@@ -222,7 +222,7 @@ ColliderComponent::Private::update(float d)
 }
 
 ColliderComponent::ColliderComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e)
+    : Component(i, e)
     , PIMPL_CREATE_X(*this)
 {
 }

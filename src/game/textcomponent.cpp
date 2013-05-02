@@ -192,7 +192,7 @@ TextComponent::Private::render(void)
 /******************************************************************************/
 
 TextComponent::TextComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e)
+    : Component(i, e)
     , PIMPL_CREATE
 {
 }
@@ -265,7 +265,7 @@ TextComponent::setTileOffset(uint16_t o)
 void
 TextComponent::update(float delta)
 {
-	ComponentBase::update(delta);
+	Component::update(delta);
 
 	if (!PIMPL->position)
 	    PIMPL->position = static_cast<PositionComponent *>
@@ -278,7 +278,7 @@ TextComponent::update(float delta)
 void
 TextComponent::render(void)
 {
-	ComponentBase::render();
+	Component::render();
 	PIMPL->render();
 }
 

@@ -50,7 +50,7 @@ struct PositionComponent::Private
 };
 
 PositionComponent::PositionComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e)
+    : Component(i, e)
     , PIMPL_CREATE
 {
 }

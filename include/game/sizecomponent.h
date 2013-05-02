@@ -41,7 +41,7 @@
 #ifndef MARSHMALLOW_GAME_SIZECOMPONENT_H
 #define MARSHMALLOW_GAME_SIZECOMPONENT_H 1
 
-#include <game/componentbase.h>
+#include <game/component.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Math { /******************************************** Math Namespace */
@@ -53,7 +53,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Size Component Class */
 	class MARSHMALLOW_GAME_EXPORT
-	SizeComponent : public ComponentBase
+	SizeComponent : public Component
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(SizeComponent);

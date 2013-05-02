@@ -45,7 +45,7 @@
 #include <math/point2.h>
 #include <math/vector2.h>
 
-#include <game/componentbase.h>
+#include <game/component.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
@@ -54,7 +54,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Movement Component Class */
 	class MARSHMALLOW_GAME_EXPORT
-	MovementComponent : public ComponentBase
+	MovementComponent : public Component
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(MovementComponent);

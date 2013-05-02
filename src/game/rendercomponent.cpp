@@ -70,7 +70,7 @@ struct RenderComponent::Private
 };
 
 RenderComponent::RenderComponent(const Core::Identifier &i, IEntity &e)
-    : ComponentBase(i, e)
+    : Component(i, e)
     , PIMPL_CREATE
 {
 }

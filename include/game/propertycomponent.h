@@ -41,7 +41,7 @@
 #ifndef MARSHMALLOW_GAME_PROPERTYCOMPONENT_H
 #define MARSHMALLOW_GAME_PROPERTYCOMPONENT_H 1
 
-#include <game/componentbase.h>
+#include <game/component.h>
 
 #include <string>
 
@@ -50,7 +50,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Property Component Class */
 	class MARSHMALLOW_GAME_EXPORT
-	PropertyComponent : public ComponentBase
+	PropertyComponent : public Component
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(PropertyComponent);

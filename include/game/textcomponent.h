@@ -41,7 +41,7 @@
 #ifndef MARSHMALLOW_GAME_TEXTCOMPONENT_H
 #define MARSHMALLOW_GAME_TEXTCOMPONENT_H 1
 
-#include <game/componentbase.h>
+#include <game/component.h>
 
 #include <string>
 
@@ -58,7 +58,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Text Component Class */
 	class MARSHMALLOW_GAME_EXPORT
-	TextComponent : public ComponentBase
+	TextComponent : public Component
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(TextComponent);

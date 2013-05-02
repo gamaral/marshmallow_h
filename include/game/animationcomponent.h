@@ -41,14 +41,14 @@
 #ifndef MARSHMALLOW_GAME_ANIMATIONCOMPONENT_H
 #define MARSHMALLOW_GAME_ANIMATIONCOMPONENT_H 1
 
-#include <game/componentbase.h>
+#include <game/component.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Animation Component Class */
 	class MARSHMALLOW_GAME_EXPORT
-	AnimationComponent : public ComponentBase
+	AnimationComponent : public Component
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(AnimationComponent);

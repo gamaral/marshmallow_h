@@ -30,7 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include "game/componentbase.h"
+#include "game/component.h"
 
 /*!
  * @file
@@ -44,7 +44,7 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
-struct ComponentBase::Private
+struct Component::Private
 {
 	Private(const Core::Identifier &i, IEntity &e)
 	    : id(i)
@@ -54,24 +54,24 @@ struct ComponentBase::Private
 	IEntity &entity;
 };
 
-ComponentBase::ComponentBase(const Core::Identifier &i, IEntity &e)
+Component::Component(const Core::Identifier &i, IEntity &e)
     : PIMPL(new Private(i, e))
 {
 }
 
-ComponentBase::~ComponentBase(void)
+Component::~Component(void)
 {
 	delete PIMPL, PIMPL = 0;
 }
 
 const Core::Identifier &
-ComponentBase::id(void) const
+Component::id(void) const
 {
 	return(PIMPL->id);
 }
 
 IEntity &
-ComponentBase::entity(void) const
+Component::entity(void) const
 {
 	return(PIMPL->entity);
 }

@@ -41,7 +41,7 @@
 #ifndef MARSHMALLOW_GAME_COLLIDERCOMPONENT_H
 #define MARSHMALLOW_GAME_COLLIDERCOMPONENT_H 1
 
-#include <game/componentbase.h>
+#include <game/component.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
@@ -55,7 +55,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Collider Component Class */
 	class MARSHMALLOW_GAME_EXPORT
-	ColliderComponent : public ComponentBase
+	ColliderComponent : public Component
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(ColliderComponent);

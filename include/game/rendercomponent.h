@@ -41,7 +41,7 @@
 #ifndef MARSHMALLOW_GAME_RENDERCOMPONENT_H
 #define MARSHMALLOW_GAME_RENDERCOMPONENT_H 1
 
-#include <game/componentbase.h>
+#include <game/component.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
@@ -54,7 +54,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Render Component Class */
 	class MARSHMALLOW_GAME_EXPORT
-	RenderComponent : public ComponentBase
+	RenderComponent : public Component
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(RenderComponent);

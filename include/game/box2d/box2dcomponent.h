@@ -41,7 +41,7 @@
 #ifndef MARSHMALLOW_GAME_BOX2DCOMPONENT_H
 #define MARSHMALLOW_GAME_BOX2DCOMPONENT_H 1
 
-#include <game/componentbase.h>
+#include <game/component.h>
 
 class b2Body;
 
@@ -59,7 +59,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Box2D Component Class */
 	class MARSHMALLOW_GAME_EXPORT
-	Box2DComponent : public ComponentBase
+	Box2DComponent : public Component
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(Box2DComponent);
