@@ -39,18 +39,238 @@
  */
 
 #include "core/identifier.h"
+#include "core/logger.h"
 #include "core/type.h"
+
+#include "game/factory.h"
+#include "game/icomponent.h"
+
+#include <list>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
+namespace { /************************************ Game::<anonymous> Namespace */
+	typedef std::list<IComponent *> ComponentList;
+} /********************************************** Game::<anonymous> Namespace */
 
-Entity::Entity(const Core::Identifier &i, EntitySceneLayer &s)
-    : EntityBase(i, s)
+struct Entity::Private
+{
+	Private(const Core::Identifier &i, EntitySceneLayer &l)
+	    : id(i)
+	    , layer(l)
+	    , killed(false)
+	{}
+
+	~Private();
+
+	inline void
+	pushComponent(Game::IComponent *component);
+
+	inline Game::IComponent *
+	popComponent(void);
+
+	inline void
+	removeComponent(Game::IComponent *component);
+
+	inline Game::IComponent *
+	removeComponent(const Core::Identifier &identifier);
+
+	inline Game::IComponent *
+	getComponent(const Core::Identifier &identifier) const;
+	
+	inline Game::IComponent *
+	getComponentType(const Core::Type &type) const;
+
+	inline void
+	render(void);
+
+	inline void
+	update(float delta);
+
+	ComponentList components;
+	Core::Identifier id;
+	EntitySceneLayer &layer;
+	bool killed;
+};
+
+Entity::Private::~Private()
+{
+	/* free components */
+	while (components.size() > 0) {
+		delete components.back();
+		components.pop_back();
+	}
+}
+
+void
+Entity::Private::pushComponent(IComponent *c)
+{
+	components.push_front(c);
+}
+
+IComponent *
+Entity::Private::popComponent(void)
+{
+	IComponent *l_component = components.front();
+	components.pop_front();
+	return(l_component);
+}
+
+void
+Entity::Private::removeComponent(IComponent *c)
+{
+	components.remove(c);
+}
+
+IComponent *
+Entity::Private::removeComponent(const Core::Identifier &i)
+{
+	IComponent *l_component = 0;
+
+	ComponentList::const_iterator l_i;
+	ComponentList::const_iterator l_c = components.end();
+
+	for (l_i = components.begin(); l_i != l_c; ++l_i)
+		if ((*l_i)->id() == i) {
+			l_component = *l_i;
+			components.remove(l_component);
+			break;
+		}
+
+	return(l_component);
+}
+
+IComponent *
+Entity::Private::getComponent(const Core::Identifier &i) const
+{
+	ComponentList::const_iterator l_i;
+	ComponentList::const_iterator l_c = components.end();
+
+	for (l_i = components.begin(); l_i != l_c; ++l_i) {
+		if ((*l_i)->id() == i)
+			return(*l_i);
+	}
+	return(0);
+}
+
+IComponent *
+Entity::Private::getComponentType(const Core::Type &t) const
+{
+	ComponentList::const_iterator l_i;
+	ComponentList::const_iterator l_c = components.end();
+
+	for (l_i = components.begin(); l_i != l_c; ++l_i) {
+		if ((*l_i)->type() == t)
+			return(*l_i);
+	}
+	return(0);
+}
+
+void
+Entity::Private::render(void)
+{
+	if (killed) return;
+
+	ComponentList::const_reverse_iterator l_i;
+	ComponentList::const_reverse_iterator l_c = components.rend();
+
+	for (l_i = components.rbegin(); l_i != l_c; ++l_i)
+		(*l_i)->render();
+}
+
+void
+Entity::Private::update(float d)
+{
+	if (killed) return;
+
+	ComponentList::const_reverse_iterator l_i;
+	ComponentList::const_reverse_iterator l_c = components.rend();
+
+	for (l_i = components.rbegin(); l_i != l_c; ++l_i)
+		(*l_i)->update(d);
+}
+
+Entity::Entity(const Core::Identifier &i, EntitySceneLayer &l)
+    : PIMPL_CREATE_X(i, l)
 {
 }
 
 Entity::~Entity(void)
 {
+	PIMPL->components.clear();
+	PIMPL_DESTROY;
+}
+
+const Core::Identifier &
+Entity::id(void) const
+{
+	return(PIMPL->id);
+}
+
+EntitySceneLayer &
+Entity::layer(void)
+{
+	return(PIMPL->layer);
+}
+
+void
+Entity::pushComponent(IComponent *c)
+{
+	PIMPL->pushComponent(c);
+}
+
+IComponent *
+Entity::popComponent(void)
+{
+	return(PIMPL->popComponent());
+}
+
+void
+Entity::removeComponent(IComponent *c)
+{
+	PIMPL->removeComponent(c);
+}
+
+IComponent *
+Entity::removeComponent(const Core::Identifier &i)
+{
+	return(PIMPL->removeComponent(i));
+}
+
+IComponent *
+Entity::getComponent(const Core::Identifier &i) const
+{
+	return(PIMPL->getComponent(i));
+}
+
+IComponent *
+Entity::getComponentType(const Core::Type &t) const
+{
+	return(PIMPL->getComponentType(t));
+}
+
+void
+Entity::render(void)
+{
+	PIMPL->render();
+}
+
+void
+Entity::update(float d)
+{
+	PIMPL->update(d);
+}
+
+void
+Entity::kill(void)
+{
+	PIMPL->killed = true;
+}
+
+bool
+Entity::isZombie(void) const
+{
+	return(PIMPL->killed);
 }
 
 const Core::Type &

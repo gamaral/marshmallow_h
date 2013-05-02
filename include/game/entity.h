@@ -41,21 +41,45 @@
 #ifndef MARSHMALLOW_GAME_ENTITY_H
 #define MARSHMALLOW_GAME_ENTITY_H 1
 
-#include <game/entitybase.h>
+#include <core/global.h>
+
+#include <game/ientity.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
-	/*! @brief Game No Frills Entity Class */
-	class MARSHMALLOW_GAME_EXPORT Entity : public EntityBase
+	class EntitySceneLayer;
+
+	/*! @brief Game Entity Base Class */
+	class MARSHMALLOW_GAME_EXPORT
+	Entity : public IEntity
 	{
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(Entity);
 	public:
 
-		Entity(const Core::Identifier &identifier, EntitySceneLayer &l);
+		Entity(const Core::Identifier &identifier, EntitySceneLayer &layer);
 		virtual ~Entity(void);
 
-	public: /* virtual */
+	public: /* reimp */
+
+		VIRTUAL const Core::Identifier & id(void) const;
+		VIRTUAL EntitySceneLayer & layer(void);
+
+		VIRTUAL void pushComponent(Game::IComponent *component);
+		VIRTUAL Game::IComponent * popComponent(void);
+
+		VIRTUAL void removeComponent(Game::IComponent *component);
+		VIRTUAL Game::IComponent * removeComponent(const Core::Identifier &identifier);
+
+		VIRTUAL Game::IComponent * getComponent(const Core::Identifier &identifier) const;
+		VIRTUAL Game::IComponent * getComponentType(const Core::Type &type) const;
+
+		VIRTUAL void render(void);
+		VIRTUAL void update(float delta);
+
+		VIRTUAL void kill(void);
+		VIRTUAL bool isZombie(void) const;
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
