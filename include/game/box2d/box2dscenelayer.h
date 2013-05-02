@@ -41,7 +41,7 @@
 #ifndef MARSHMALLOW_GAME_BOX2DSCENELAYER_H
 #define MARSHMALLOW_GAME_BOX2DSCENELAYER_H 1
 
-#include <game/scenelayerbase.h>
+#include <game/scenelayer.h>
 
 class b2World;
 
@@ -58,7 +58,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Box2D Powered Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
-	Box2DSceneLayer : public SceneLayerBase
+	Box2DSceneLayer : public SceneLayer
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(Box2DSceneLayer);

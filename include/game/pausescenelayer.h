@@ -41,7 +41,7 @@
 #ifndef MARSHMALLOW_GAME_PAUSESCENELAYER_H
 #define MARSHMALLOW_GAME_PAUSESCENELAYER_H 1
 
-#include <game/scenelayerbase.h>
+#include <game/scenelayer.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
@@ -52,7 +52,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Pause Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
-	PauseSceneLayer : public SceneLayerBase
+	PauseSceneLayer : public SceneLayer
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(PauseSceneLayer);

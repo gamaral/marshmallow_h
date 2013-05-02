@@ -60,7 +60,7 @@ struct Box2DSceneLayer::Private
 };
 
 Box2DSceneLayer::Box2DSceneLayer(const Core::Identifier &i, IScene &s)
-    : SceneLayerBase(i, s)
+    : SceneLayer(i, s)
     , PIMPL_CREATE
 {
 }

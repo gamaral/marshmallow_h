@@ -46,7 +46,7 @@
 #include <graphics/ivertexdata.h>
 #include <graphics/tileset.h>
 
-#include <game/scenelayerbase.h>
+#include <game/scenelayer.h>
 
 #include <string>
 
@@ -55,7 +55,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Tilemap Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
-	TilemapSceneLayer : public SceneLayerBase
+	TilemapSceneLayer : public SceneLayer
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(TilemapSceneLayer);

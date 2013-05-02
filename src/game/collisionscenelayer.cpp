@@ -52,7 +52,7 @@ struct CollisionSceneLayer::Private
 };
 
 CollisionSceneLayer::CollisionSceneLayer(const Core::Identifier &i, IScene &s)
-    : SceneLayerBase(i, s)
+    : SceneLayer(i, s)
     , PIMPL(new Private)
 {
 }

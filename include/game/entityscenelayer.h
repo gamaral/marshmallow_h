@@ -41,7 +41,7 @@
 #ifndef MARSHMALLOW_GAME_ENTITYSCENELAYER_H
 #define MARSHMALLOW_GAME_ENTITYSCENELAYER_H 1
 
-#include <game/scenelayerbase.h>
+#include <game/scenelayer.h>
 
 #include <list>
 
@@ -53,7 +53,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Entity Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
-	EntitySceneLayer : public SceneLayerBase
+	EntitySceneLayer : public SceneLayer
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(EntitySceneLayer);

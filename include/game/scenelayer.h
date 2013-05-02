@@ -38,8 +38,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_GAME_SCENELAYERBASE_H
-#define MARSHMALLOW_GAME_SCENELAYERBASE_H 1
+#ifndef MARSHMALLOW_GAME_SCENELAYER_H
+#define MARSHMALLOW_GAME_SCENELAYER_H 1
 
 #include <core/global.h>
 
@@ -50,21 +50,21 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Scene Layer Base Class */
 	class MARSHMALLOW_GAME_EXPORT
-	SceneLayerBase : public ISceneLayer
+	SceneLayer : public ISceneLayer
 	{
 		PRIVATE_IMPLEMENTATION
-		NO_ASSIGN_COPY(SceneLayerBase);
+		NO_ASSIGN_COPY(SceneLayer);
 	public:
 
-		SceneLayerBase(const Core::Identifier &identifier,
+		SceneLayer(const Core::Identifier &identifier,
 		    IScene &scene, int flags = slfNone);
-		virtual ~SceneLayerBase(void);
+		virtual ~SceneLayer(void);
 
-	public: /* virtual */
+	public: /* reimp */
 
 		VIRTUAL const Core::Identifier & id(void) const;
 
-		VIRTUAL IScene &scene(void);
+		VIRTUAL IScene & scene(void);
 
 		VIRTUAL int flags(void) const;
 

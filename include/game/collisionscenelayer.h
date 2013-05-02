@@ -42,7 +42,7 @@
 #define MARSHMALLOW_GAME_COLLISIONSCENELAYER_H 1
 
 #include <game/collidercomponent.h>
-#include <game/scenelayerbase.h>
+#include <game/scenelayer.h>
 
 #include <list>
 
@@ -58,7 +58,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Collision Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
-	CollisionSceneLayer : public SceneLayerBase
+	CollisionSceneLayer : public SceneLayer
 	{
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(CollisionSceneLayer);

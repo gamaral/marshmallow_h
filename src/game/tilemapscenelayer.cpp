@@ -299,7 +299,7 @@ TilemapSceneLayer::Private::recalculateVertexData(uint32_t o)
 /******************************************************************************/
 
 TilemapSceneLayer::TilemapSceneLayer(const Core::Identifier &i, IScene &s)
-    : SceneLayerBase(i, s)
+    : SceneLayer(i, s)
     , PIMPL_CREATE
 {
 	PIMPL->recalculateRelativeTileSize();

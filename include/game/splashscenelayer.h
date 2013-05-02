@@ -43,7 +43,7 @@
 
 #include <event/ieventlistener.h>
 
-#include <game/scenelayerbase.h>
+#include <game/scenelayer.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
@@ -54,7 +54,7 @@ namespace Game { /******************************************** Game Namespace */
 
 	/*! @brief Game Splash Scene Layer Class */
 	class MARSHMALLOW_GAME_EXPORT
-	SplashSceneLayer : public Game::SceneLayerBase
+	SplashSceneLayer : public Game::SceneLayer
 	                 , public Event::IEventListener
 	{
 		PRIVATE_IMPLEMENTATION

@@ -30,7 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include "game/scenelayerbase.h"
+#include "game/scenelayer.h"
 
 /*!
  * @file
@@ -44,7 +44,7 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
-struct SceneLayerBase::Private
+struct SceneLayer::Private
 {
 	Private(const Core::Identifier &i, IScene &s, int f)
 	    : id(i)
@@ -58,42 +58,42 @@ struct SceneLayerBase::Private
 	bool killed;
 };
 
-SceneLayerBase::SceneLayerBase(const Core::Identifier &i, IScene &s, int f)
+SceneLayer::SceneLayer(const Core::Identifier &i, IScene &s, int f)
     : PIMPL_CREATE_X(i, s, f)
 {
 }
 
-SceneLayerBase::~SceneLayerBase(void)
+SceneLayer::~SceneLayer(void)
 {
 	PIMPL_DESTROY;
 }
 
 const Core::Identifier &
-SceneLayerBase::id(void) const
+SceneLayer::id(void) const
 {
 	return(PIMPL->id);
 }
 
 IScene &
-SceneLayerBase::scene(void)
+SceneLayer::scene(void)
 {
 	return(PIMPL->scene);
 }
 
 int
-SceneLayerBase::flags(void) const
+SceneLayer::flags(void) const
 {
 	return(PIMPL->flags);
 }
 
 void
-SceneLayerBase::kill(void)
+SceneLayer::kill(void)
 {
 	PIMPL->killed = true;
 }
 
 bool
-SceneLayerBase::isZombie(void) const
+SceneLayer::isZombie(void) const
 {
 	return(PIMPL->killed);
 }

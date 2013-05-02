@@ -175,7 +175,7 @@ EntitySceneLayer::Private::update(float d)
 	}
 }
 EntitySceneLayer::EntitySceneLayer(const Core::Identifier &i, IScene &s, int f)
-    : SceneLayerBase(i, s, f)
+    : SceneLayer(i, s, f)
     , PIMPL_CREATE
 {
 }

@@ -59,7 +59,7 @@ struct PauseSceneLayer::Private
 };
 
 PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, IScene &s)
-    : SceneLayerBase(i, s, slfUpdateBlock)
+    : SceneLayer(i, s, slfUpdateBlock)
     , PIMPL_CREATE
 {
 }
