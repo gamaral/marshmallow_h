@@ -30,7 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include "graphics/meshbase.h"
+#include "graphics/mesh.h"
 
 /*!
  * @file
@@ -78,7 +78,7 @@ namespace { /******************************** Graphics::<anonymous> Namespace */
 } /****************************************** Graphics::<anonymous> Namespace */
 
 /* TODO: cleanup */
-struct MeshBase::Private
+struct Mesh::Private
 {
 	Private(ITextureCoordinateData *tc,
 	        ITextureData *t,
@@ -104,7 +104,7 @@ struct MeshBase::Private
 	char  flags;
 };
 
-MeshBase::Private::~Private(void)
+Mesh::Private::~Private(void)
 {
 	if (flags & mfTextureCoordinateFree)
 		delete tcdata;
@@ -119,98 +119,98 @@ MeshBase::Private::~Private(void)
 	vdata = 0;
 }
 
-MeshBase::MeshBase(ITextureCoordinateData *tc, ITextureData *t, IVertexData *v, int f)
+Mesh::Mesh(ITextureCoordinateData *tc, ITextureData *t, IVertexData *v, int f)
     : PIMPL_CREATE_X(tc, t, v, f)
 {
 }
 
-MeshBase::~MeshBase(void)
+Mesh::~Mesh(void)
 {
 	PIMPL_DESTROY;
 }
 
 void
-MeshBase::setColor(const Graphics::Color &c)
+Mesh::setColor(const Graphics::Color &c)
 {
 	PIMPL->color = c;
 }
 
 void
-MeshBase::setRotation(float a)
+Mesh::setRotation(float a)
 {
 	PIMPL->rotation = a;
 }
 
 void
-MeshBase::setScale(float x, float y)
+Mesh::setScale(float x, float y)
 {
 	PIMPL->scale[0] = x;
 	PIMPL->scale[1] = y;
 }
 
 void
-MeshBase::setTextureCoordinateData(ITextureCoordinateData *tc)
+Mesh::setTextureCoordinateData(ITextureCoordinateData *tc)
 {
 	PIMPL->tcdata = tc;
 }
 
 void
-MeshBase::setTextureData(ITextureData *td)
+Mesh::setTextureData(ITextureData *td)
 {
 	PIMPL->tdata = td;
 }
 
 void
-MeshBase::setVertexData(IVertexData *vd)
+Mesh::setVertexData(IVertexData *vd)
 {
 	PIMPL->vdata = vd;
 }
 
 ITextureCoordinateData *
-MeshBase::textureCoordinateData(void) const
+Mesh::textureCoordinateData(void) const
 {
 	return(PIMPL->tcdata);
 }
 
 ITextureData *
-MeshBase::textureData(void) const
+Mesh::textureData(void) const
 {
 	return(PIMPL->tdata);
 }
 
 IVertexData *
-MeshBase::vertexData(void) const
+Mesh::vertexData(void) const
 {
 	return(PIMPL->vdata);
 }
 
 const Graphics::Color &
-MeshBase::color(void) const
+Mesh::color(void) const
 {
 	return(PIMPL->color);
 }
 
 float
-MeshBase::rotation(void) const
+Mesh::rotation(void) const
 {
 	return(PIMPL->rotation);
 }
 
 void
-MeshBase::scale(float &x, float &y) const
+Mesh::scale(float &x, float &y) const
 {
 	x = PIMPL->scale[0];
 	y = PIMPL->scale[1];
 }
 
 int
-MeshBase::flags(void) const
+Mesh::flags(void) const
 {
 	return(PIMPL->flags);
 }
 
 Math::Vector2
-MeshBase::vertex(uint16_t i) const
+Mesh::vertex(uint16_t i) const
 {
 	Math::Vector2 l_vector;
 	if (!PIMPL->vdata->get(i, l_vector.x, l_vector.y))
@@ -219,21 +219,21 @@ MeshBase::vertex(uint16_t i) const
 }
 
 void
-MeshBase::setVertex(uint16_t i, const Math::Vector2 &v)
+Mesh::setVertex(uint16_t i, const Math::Vector2 &v)
 {
 	if (!PIMPL->vdata->set(i, v.x, v.y))
 		MMWARNING("Failed to assign values (" << v.x << ", " << v.y << ") to vertex " << i);
 }
 
 void
-MeshBase::textureCoordinate(uint16_t i, float &u, float &v) const
+Mesh::textureCoordinate(uint16_t i, float &u, float &v) const
 {
 	if (!PIMPL->tcdata->get(i, u, v))
 		MMWARNING("Failed to retrieve values for vertex " << i);
 }
 
 void
-MeshBase::setTextureCoordinate(uint16_t i, float u, float v)
+Mesh::setTextureCoordinate(uint16_t i, float u, float v)
 {
 	if (!PIMPL->tcdata->set(i, u, v))
 		MMWARNING("Failed to assign values (" << u << ", " << v << ") to texture coordinate " << i);

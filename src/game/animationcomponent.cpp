@@ -42,7 +42,7 @@
 #include "core/logger.h"
 #include "core/type.h"
 
-#include "graphics/meshbase.h"
+#include "graphics/mesh.h"
 #include "graphics/tileset.h"
 
 #include "game/ientity.h"
@@ -146,8 +146,8 @@ AnimationComponent::Private::stop(uint16_t *s)
 
 	if (s) stop_data = tileset->tileset()->getTextureCoordinateData(*s);
 
-	Graphics::MeshBase *l_mesh =
-	    static_cast<Graphics::MeshBase *>(render->mesh());
+	Graphics::Mesh *l_mesh =
+	    static_cast<Graphics::Mesh *>(render->mesh());
 	l_mesh->setTextureCoordinateData(stop_data);
 }
 
@@ -225,8 +225,8 @@ AnimationComponent::Private::animate(float d)
 				}
 			}
 
-			Graphics::MeshBase *l_mesh =
-			    static_cast<Graphics::MeshBase *>(render->mesh());
+			Graphics::Mesh *l_mesh =
+			    static_cast<Graphics::Mesh *>(render->mesh());
 
 			/* replace texture coordinate data */
 			const FrameEntry &l_entry = (*current_framelist)[current_frame_entry];

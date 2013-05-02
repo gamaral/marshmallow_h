@@ -43,7 +43,7 @@
 
 #include "math/size2.h"
 
-#include "graphics/meshbase.h"
+#include "graphics/mesh.h"
 
 #include "game/box2d/box2dscenelayer.h"
 #include "game/entityscenelayer.h"
@@ -188,9 +188,9 @@ Box2DComponent::update(float d)
 	/* render mesh rotation */
 	if (PIMPL->render) {
 #define RADIAN_TO_DEGREE 57.2957795f
-		Graphics::MeshBase *l_gbase =
-		    static_cast<Graphics::MeshBase *>(PIMPL->render->mesh());
-		if (l_gbase) l_gbase->setRotation(fmodf(l_angle * RADIAN_TO_DEGREE, 360.f));
+		Graphics::Mesh *l_mesh =
+		    static_cast<Graphics::Mesh *>(PIMPL->render->mesh());
+		if (l_mesh) l_mesh->setRotation(fmodf(l_angle * RADIAN_TO_DEGREE, 360.f));
 	}
 }
 

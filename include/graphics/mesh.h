@@ -38,8 +38,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_GRAPHICS_MESHBASE_H
-#define MARSHMALLOW_GRAPHICS_MESHBASE_H 1
+#ifndef MARSHMALLOW_GRAPHICS_MESH_H
+#define MARSHMALLOW_GRAPHICS_MESH_H 1
 
 #include <math/vector2.h>
 
@@ -49,19 +49,19 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 
-	/*! @brief Graphics Mesh Base Class */
+	/*! @brief Graphics Mesh  Class */
 	class MARSHMALLOW_GRAPHICS_EXPORT
-	MeshBase : public IMesh
+	Mesh : public IMesh
 	{
 		PRIVATE_IMPLEMENTATION
-		NO_ASSIGN_COPY(MeshBase);
+		NO_ASSIGN_COPY(Mesh);
 	public:
 
-		MeshBase(Graphics::ITextureCoordinateData *tc,
+		Mesh(Graphics::ITextureCoordinateData *tc,
 		         Graphics::ITextureData *t,
 		         Graphics::IVertexData *v,
 		         int flags = mfNone);
-		virtual ~MeshBase(void);
+		virtual ~Mesh(void);
 
 		void setColor(const Graphics::Color &color);
 

@@ -44,14 +44,14 @@
 #include <math/rect2.h>
 #include <math/size2.h>
 
-#include <graphics/meshbase.h>
+#include <graphics/mesh.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 
 	/*! @brief Graphics Quad Mesh Class */
 	class MARSHMALLOW_GRAPHICS_EXPORT
-	QuadMesh : public MeshBase
+	QuadMesh : public Mesh
 #define MARSHMALLOW_QUAD_VERTEXES 4
 	{
 		NO_ASSIGN_COPY(QuadMesh);

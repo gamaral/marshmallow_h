@@ -22,7 +22,7 @@ configure_file(config.h.in ${MARSHMALLOW_GRAPHICS_CONFIG_H})
 set(MARSHMALLOW_GRAPHICS_SRCS "camera.cpp"
                               "color.cpp"
                               "interface.cpp"
-                              "meshbase.cpp"
+                              "mesh.cpp"
                               "quadmesh.cpp"
                               "tilesetbase.cpp"
                               "transform.cpp"
