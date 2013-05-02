@@ -57,7 +57,7 @@
 #include "game/positioncomponent.h"
 #include "game/propertycomponent.h"
 #include "game/rendercomponent.h"
-#include "game/scenebase.h"
+#include "game/scene.h"
 #include "game/sizecomponent.h"
 #include "game/tilemapscenelayer.h"
 #include "game/tilesetcomponent.h"
@@ -253,9 +253,9 @@ TMXLoader::Private::processMap(TinyXML::XMLElement &m)
 			}
 
 			/* set background color */
-			Game::SceneBase &l_scene_base =
-			    static_cast<Game::SceneBase &>(scene);
-			l_scene_base.setBackground(PixelToColor(l_pxl));
+			Game::Scene &l_scene =
+			    static_cast<Game::Scene &>(scene);
+			l_scene.setBackground(PixelToColor(l_pxl));
 			continue;
 		}
 

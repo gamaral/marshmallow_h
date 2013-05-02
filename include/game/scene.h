@@ -41,22 +41,50 @@
 #ifndef MARSHMALLOW_GAME_SCENE_H
 #define MARSHMALLOW_GAME_SCENE_H 1
 
-#include <game/scenebase.h>
+#include <core/global.h>
+
+#include <game/iscene.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
-	/*! @brief Game No Frills Scene Class */
+	/*! @brief Game Scene Base Class */
 	class MARSHMALLOW_GAME_EXPORT
-	Scene : public SceneBase
+	Scene : public IScene
 	{
+		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(Scene);
 	public:
 
 		Scene(const Core::Identifier &identifier);
 		virtual ~Scene(void);
 
-	public: /* virtual */
+		bool isActive(void) const;
+
+		void setBackground(const Graphics::Color &color);
+
+	public: /* reimp */
+
+		VIRTUAL const Core::Identifier & id(void) const;
+
+		VIRTUAL void pushLayer(Game::ISceneLayer *layer);
+		VIRTUAL Game::ISceneLayer * popLayer(void);
+
+		VIRTUAL void removeLayer(Game::ISceneLayer *layer);
+		VIRTUAL bool removeLayer(const Core::Identifier &identifier);
+
+		VIRTUAL Game::ISceneLayer * getLayer(const Core::Identifier &identifier) const;
+		VIRTUAL Game::ISceneLayer * getLayerType(const Core::Type &type) const;
+
+		VIRTUAL const Game::SceneLayerList & getLayers(void) const;
+
+		VIRTUAL const Graphics::Color & background(void) const;
+
+		VIRTUAL void activate(void);
+		VIRTUAL void deactivate(void);
+
+		VIRTUAL void render(void);
+		VIRTUAL void update(float delta);
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
