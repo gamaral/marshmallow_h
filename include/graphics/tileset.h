@@ -41,11 +41,46 @@
 #ifndef MARSHMALLOW_GRAPHICS_TILESET_H
 #define MARSHMALLOW_GRAPHICS_TILESET_H 1
 
-#include <graphics/tilesetbase.h>
+#include <math/size2.h>
+
+#include <graphics/itexturecoordinatedata.h>
+#include <graphics/itexturedata.h>
+#include <graphics/itileset.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
-	typedef TilesetBase Tileset;
+
+	/*! @brief Graphics Tileset  Class */
+	class MARSHMALLOW_GRAPHICS_EXPORT
+	Tileset : public ITileset
+	{
+		PRIVATE_IMPLEMENTATION
+		NO_ASSIGN_COPY(Tileset);
+	public:
+		Tileset(void);
+		virtual ~Tileset(void);
+
+		void setName(const Core::Identifier &name);
+		void setTextureData(Graphics::ITextureData *tileset);
+		void setTileSize(const Math::Size2i &size);
+		void setMargin(int margin);
+		void setSpacing(int spacing);
+
+	public: /* virtual */
+
+		VIRTUAL const Core::Identifier & name(void) const;
+		VIRTUAL const Math::Size2i & size(void) const;
+		VIRTUAL Graphics::ITextureData * textureData(void) const;
+		VIRTUAL const Math::Size2i & tileSize(void) const;
+		VIRTUAL int spacing(void) const;
+		VIRTUAL int margin(void) const;
+		VIRTUAL Graphics::ITextureCoordinateData * getTextureCoordinateData(uint16_t index);
+		
+	protected:
+
+		void reset(void);
+	};
+
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 

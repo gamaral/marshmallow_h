@@ -24,7 +24,7 @@ set(MARSHMALLOW_GRAPHICS_SRCS "camera.cpp"
                               "interface.cpp"
                               "mesh.cpp"
                               "quadmesh.cpp"
-                              "tilesetbase.cpp"
+                              "tileset.cpp"
                               "transform.cpp"
 )
 

@@ -30,7 +30,7 @@
  * policies, either expressed or implied, of the project as a whole.
  */
 
-#include "graphics/tilesetbase.h"
+#include "graphics/tileset.h"
 
 /*!
  * @file
@@ -53,7 +53,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 
 /* TODO cleanup */
-struct TilesetBase::Private
+struct Tileset::Private
 {
 	Private()
 	    : name()
@@ -84,12 +84,12 @@ struct TilesetBase::Private
 	float  ptilesize[2]; // proportional tile-size
 };
 
-TilesetBase::TilesetBase()
+Tileset::Tileset()
     : PIMPL_CREATE
 {
 }
 
-TilesetBase::~TilesetBase(void)
+Tileset::~Tileset(void)
 {
 	/* reset will clear out cache data and return */
 	PIMPL->texture_data = 0;
@@ -99,70 +99,70 @@ TilesetBase::~TilesetBase(void)
 }
 
 void
-TilesetBase::setName(const Core::Identifier &n)
+Tileset::setName(const Core::Identifier &n)
 {
 	PIMPL->name = n;
 }
 
 void
-TilesetBase::setTileSize(const Math::Size2i &s)
+Tileset::setTileSize(const Math::Size2i &s)
 {
 	PIMPL->tile_size = s;
 	reset();
 }
 
 void
-TilesetBase::setMargin(int m)
+Tileset::setMargin(int m)
 {
 	PIMPL->margin = m;
 	reset();
 }
 
 void
-TilesetBase::setSpacing(int s)
+Tileset::setSpacing(int s)
 {
 	PIMPL->spacing = s;
 	reset();
 }
 
 const Core::Identifier &
-TilesetBase::name(void) const
+Tileset::name(void) const
 {
 	return(PIMPL->name);
 }
 
 const Math::Size2i &
-TilesetBase::size(void) const
+Tileset::size(void) const
 {
 	return(PIMPL->size);
 }
 
 ITextureData *
-TilesetBase::textureData(void) const
+Tileset::textureData(void) const
 {
 	return(PIMPL->texture_data);
 }
 
 const Math::Size2i &
-TilesetBase::tileSize(void) const
+Tileset::tileSize(void) const
 {
 	return(PIMPL->tile_size);
 }
 
 int
-TilesetBase::spacing(void) const
+Tileset::spacing(void) const
 {
 	return(PIMPL->spacing);
 }
 
 int
-TilesetBase::margin(void) const
+Tileset::margin(void) const
 {
 	return(PIMPL->margin);
 }
 
 void
-TilesetBase::setTextureData(ITextureData *ts)
+Tileset::setTextureData(ITextureData *ts)
 {
 	if (ts == PIMPL->texture_data)
 		return;
@@ -174,7 +174,7 @@ TilesetBase::setTextureData(ITextureData *ts)
 }
 
 ITextureCoordinateData *
-TilesetBase::getTextureCoordinateData(uint16_t i)
+Tileset::getTextureCoordinateData(uint16_t i)
 {
 	if (!PIMPL->texture_data || !PIMPL->texture_data->isLoaded())
 		return(0);
@@ -206,7 +206,7 @@ TilesetBase::getTextureCoordinateData(uint16_t i)
 }
 
 void
-TilesetBase::reset(void)
+Tileset::reset(void)
 {
 	/* clear current tile cache */
 
