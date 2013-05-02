@@ -49,26 +49,43 @@ namespace Audio { /****************************************** Audio Namespace */
 
 struct WaveTrack::Private
 {
-	Private(const Core::IDataIO &dio);
+	Private(void)
+	    : start(0)
+	    , dio(0)
+	    , flags(0)
+	    , rate(0)
+	    , depth(0)
+	    , channels(0)
+	    , valid(false)
+	{}
 
+	~Private(void)
+	{
+		if (flags & tfDataFree)
+		    delete dio, dio = 0;
+	}
+
+	inline bool
+	isValid(void) const
+	{
+		return(valid && dio && dio->isOpen());
+	}
+
+	inline void reset(void);
 	inline size_t read(void *buffer, size_t bsize);
 	inline bool seek(long frame) const;
 
-	const Core::IDataIO &dio;
 	long     start;
+	Core::IDataIO *dio;
+	int      flags;
 	uint32_t rate;
 	uint8_t  depth;
 	uint8_t  channels;
 	bool     valid;
 };
 
-WaveTrack::Private::Private(const Core::IDataIO &_dio)
-    : dio(_dio)
-    , start(0)
-    , rate(0)
-    , depth(0)
-    , channels(0)
-    , valid(false)
+void
+WaveTrack::Private::reset(void)
 {
 	if (!WaveTrack::Validate(dio)) {
 		MMERROR("Tried to open invalid WAVE file.");
@@ -80,7 +97,7 @@ WaveTrack::Private::Private(const Core::IDataIO &_dio)
 	/*
 	 * FMT SUBCHUNK
 	 */
-	if (4 != dio.read(l_ident, 4)) {
+	if (4 != dio->read(l_ident, 4)) {
 		MMDEBUG("Invalid WAVE (short read).");
 		return;
 	}
@@ -93,7 +110,7 @@ WaveTrack::Private::Private(const Core::IDataIO &_dio)
 
 	/* read chunk size */
 	uint32_t l_chunck_size = 0;
-	if (4 != dio.read(&l_chunck_size, 4)) {
+	if (4 != dio->read(&l_chunck_size, 4)) {
 		MMDEBUG("Invalid WAVE (short read).");
 		return;
 	}
@@ -116,7 +133,7 @@ WaveTrack::Private::Private(const Core::IDataIO &_dio)
 	}
 
 	/* read fmt wave chunk */
-	if (l_chunck_size != dio.read(&l_fmt_subchunk, l_chunck_size)) {
+	if (l_chunck_size != dio->read(&l_fmt_subchunk, l_chunck_size)) {
 		MMDEBUG("Invalid WAVE (short read).");
 		return;
 	}
@@ -131,20 +148,20 @@ WaveTrack::Private::Private(const Core::IDataIO &_dio)
 	/*
 	 * DATA SUBCHUNK
 	 */
-	dio.read(l_ident, 4);
+	dio->read(l_ident, 4);
 	if (strcmp(l_ident, "data")) {
 		MMDEBUG("Non-standard WAVE format.");
 		return;
 	}
 
 	/* skip length */
-	dio.seek(4, Core::DIOCurrent);
+	dio->seek(4, Core::DIOCurrent);
 
 	/* populate parameters */
 	rate = l_fmt_subchunk.sample_rate;
 	depth = static_cast<uint8_t>(l_fmt_subchunk.bps);
 	channels = static_cast<uint8_t>(l_fmt_subchunk.channels);
-	start = dio.tell();
+	start = dio->tell();
 
 	MMDEBUG("WAVE Rate: " << rate);
 	MMDEBUG("WAVE Depth: " << int(depth));
@@ -157,20 +174,20 @@ WaveTrack::Private::Private(const Core::IDataIO &_dio)
 size_t
 WaveTrack::Private::read(void *buffer, size_t bsize)
 {
-	return(dio.read(buffer, bsize));
+	return(dio->read(buffer, bsize));
 }
 
 bool
 WaveTrack::Private::seek(long frame) const
 {
-	return(dio.seek(start + (frame * (channels * (depth / 8))),
+	return(dio->seek(start + (frame * (channels * (depth / 8))),
 	    Core::DIOSet));
 }
 
 /****************************************************************** WaveCode */
 
-WaveTrack::WaveTrack(const Core::IDataIO &dio)
-    : PIMPL_CREATE_X(dio)
+WaveTrack::WaveTrack(void)
+    : PIMPL_CREATE
 {
 }
 
@@ -179,10 +196,25 @@ WaveTrack::~WaveTrack(void)
 	PIMPL_DESTROY;
 }
 
+void
+WaveTrack::setData(Core::IDataIO *d, bool f)
+{
+	PIMPL->dio = d;
+	PIMPL->reset();
+	if (f) PIMPL->flags |= tfDataFree;
+	else PIMPL->flags &= ~tfDataFree;
+}
+
+Core::IDataIO *
+WaveTrack::data(void) const
+{
+	return(PIMPL->dio);
+}
+
 bool
 WaveTrack::isValid(void) const
 {
-	return(PIMPL->valid && PIMPL->dio.isOpen());
+	return(PIMPL->isValid());
 }
 
 uint32_t
@@ -228,10 +260,10 @@ WaveTrack::seek(long offset) const
 }
 
 bool
-WaveTrack::Validate(const Core::IDataIO &dio)
+WaveTrack::Validate(const Core::IDataIO *dio)
 {
 	/* sanity check */
-	if (!dio.isOpen()) {
+	if (!dio->isOpen()) {
 		MMERROR("Audio stream is closed!");
 		return(false);
 	}
@@ -239,7 +271,7 @@ WaveTrack::Validate(const Core::IDataIO &dio)
 	/*
 	 * Reset location
 	 */
-	if (!dio.seek(0, Core::DIOSet)) {
+	if (!dio->seek(0, Core::DIOSet)) {
 		MMDEBUG("Invalid DataIO (failed seek).");
 		return(false);
 	}
@@ -247,7 +279,7 @@ WaveTrack::Validate(const Core::IDataIO &dio)
 	char l_ident[5] = { 0, 0, 0, 0, 0 };
 	
 	/* read type */
-	if (4 != dio.read(l_ident, 4)) {
+	if (4 != dio->read(l_ident, 4)) {
 		MMDEBUG("Invalid DataIO (short read).");
 		return(false);
 	}
@@ -261,13 +293,13 @@ WaveTrack::Validate(const Core::IDataIO &dio)
 	MMDEBUG("Detected RIFF file.");
 
 	/* skip length */
-	if (!dio.seek(4, Core::DIOCurrent)) {
+	if (!dio->seek(4, Core::DIOCurrent)) {
 		MMDEBUG("Invalid RIFF (failed seek).");
 		return(false);
 	}
 
 	/* read type */
-	if (4 != dio.read(l_ident, 4)) {
+	if (4 != dio->read(l_ident, 4)) {
 		MMDEBUG("Invalid RIFF (short read).");
 		return(false);
 	}

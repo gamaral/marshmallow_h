@@ -59,7 +59,8 @@ audio_track_wave_test(void)
 {
 	Core::FileIO sample_wav(s_wav_file);
 
-	Audio::WaveTrack track_wav(sample_wav);
+	Audio::WaveTrack track_wav;
+	track_wav.setData(&sample_wav);
 	ASSERT_TRUE("Audio::WaveTrack::isValid()", track_wav.isValid());
 	if (!track_wav.isValid())
 		return;
@@ -107,9 +108,10 @@ audio_track_wave_test(void)
 void
 audio_track_wave_fail_test(void)
 {
-	Core::FileIO sample_ogg(s_ogg_file);
+	Core::FileIO *sample_ogg = new Core::FileIO(s_ogg_file);
 
-	Audio::WaveTrack track_ogg(sample_ogg);
+	Audio::WaveTrack track_ogg;
+	track_ogg.setData(sample_ogg, true /* free */);
 	ASSERT_FALSE("Audio::WaveTrack::isValid()", track_ogg.isValid());
 }
 
@@ -118,7 +120,8 @@ audio_track_ogg_test(void)
 {
 	Core::FileIO sample_ogg(s_ogg_file);
 
-	Audio::OggTrack track_ogg(sample_ogg);
+	Audio::OggTrack track_ogg;
+	track_ogg.setData(&sample_ogg);
 	ASSERT_TRUE("Audio::OggTrack::isValid()", track_ogg.isValid());
 	if (!track_ogg.isValid())
 		return;
@@ -165,8 +168,9 @@ audio_track_ogg_test(void)
 void
 audio_track_ogg_fail_test(void)
 {
-	Core::FileIO sample_wav(s_wav_file);
-	Audio::OggTrack track_ogg(sample_wav);
+	Core::FileIO *sample_wav = new Core::FileIO(s_wav_file);
+	Audio::OggTrack track_ogg;
+	track_ogg.setData(sample_wav, true);
 	ASSERT_FALSE("Audio::OggTrack::isValid()", track_ogg.isValid());
 }
 

@@ -63,7 +63,8 @@ audio_player_track_test(void)
 {
 	Core::FileIO sample_wav(s_wav_file);
 
-	Audio::WaveTrack track_wav(sample_wav);
+	Audio::WaveTrack track_wav;
+	track_wav.setData(&sample_wav);
 	ASSERT_TRUE("Audio::WaveTrack::isValid()", track_wav.isValid());
 	if (!track_wav.isValid())
 		return;
@@ -88,7 +89,8 @@ audio_player_play_test(void)
 {
 	Core::FileIO sample_wav(s_wav_file);
 
-	Audio::WaveTrack track_wav(sample_wav);
+	Audio::WaveTrack track_wav;
+	track_wav.setData(&sample_wav);
 	ASSERT_TRUE("Audio::WaveTrack::isValid()", track_wav.isValid());
 	if (!track_wav.isValid())
 		return;
@@ -114,13 +116,15 @@ audio_player_tick_test(void)
 	Audio::Backend::Initialize();
 
 	Core::FileIO sample_wav(s_wav_file);
-	Audio::WaveTrack track_wav1(sample_wav);
+	Audio::WaveTrack track_wav1;
+	track_wav1.setData(&sample_wav);
 	ASSERT_TRUE("Audio::WaveTrack::isValid() TRACK 1", track_wav1.isValid());
 	if (!track_wav1.isValid())
 		return;
 
 	Core::FileIO sample_wav2(s_wav_file2);
-	Audio::WaveTrack *track_wav2 = new Audio::WaveTrack(sample_wav2);
+	Audio::WaveTrack *track_wav2 = new Audio::WaveTrack;
+	track_wav2->setData(&sample_wav2);
 	ASSERT_TRUE("Audio::WaveTrack::isValid() TRACK 2", track_wav2->isValid());
 	if (!track_wav2->isValid()) {
 		delete track_wav2, track_wav2 = 0;

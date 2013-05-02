@@ -46,10 +46,6 @@
 #include <core/global.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Core { /******************************************** Core Namespace */
-	struct IDataIO;
-} /*********************************************************** Core Namespace */
-
 namespace Audio { /****************************************** Audio Namespace */
 
 	/*!
@@ -61,24 +57,28 @@ namespace Audio { /****************************************** Audio Namespace */
 		PRIVATE_IMPLEMENTATION
 	public:
 
-		WaveTrack(const Core::IDataIO &dio);
+		WaveTrack(void);
 		virtual ~WaveTrack(void);
 
+		void setData(Core::IDataIO *data, bool free = false);
+
 	public: /* virtual */
+
+		VIRTUAL Core::IDataIO *data(void) const;
+
+		VIRTUAL bool isValid(void) const;
 
 		VIRTUAL size_t read(void *buffer, size_t bsize) const;
 		VIRTUAL bool rewind(void) const;
 		VIRTUAL bool seek(long offset) const;
 	
-		VIRTUAL bool isValid(void) const;
-
 		VIRTUAL uint32_t rate(void) const;
 		VIRTUAL uint8_t depth(void) const;
 		VIRTUAL uint8_t channels(void) const;
 
 	public:
 
-		static bool Validate(const Core::IDataIO &dio);
+		static bool Validate(const Core::IDataIO *dio);
 	};
 
 } /********************************************************** Audio Namespace */

@@ -45,7 +45,17 @@
 #include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	struct IDataIO;
+} /*********************************************************** Core Namespace */
+
 namespace Audio { /****************************************** Audio Namespace */
+
+	enum TrackFlags
+	{
+		tfDataFree = (1 << 0),
+		tfNone = 0
+	};
 
 	/*!
 	 * @brief Audio Track Interface
@@ -54,6 +64,8 @@ namespace Audio { /****************************************** Audio Namespace */
 	ITrack
 	{
 		virtual ~ITrack(void) {};
+
+		virtual Core::IDataIO *data(void) const = 0;
 
 		virtual size_t read(void *buffer, size_t bsize) const = 0;
 		virtual bool rewind(void) const = 0;
