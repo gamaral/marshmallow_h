@@ -49,7 +49,6 @@
 
 #include <map>
 
-#include <cassert>
 #include <cstring>
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -202,12 +201,11 @@ Player::Private::tick(void)
 		mix = new char[pcm->framesMax() * pcm->frameSize()];
 	}
 
-	const size_t l_frames_available = pcm->framesAvailable();
+	const size_t l_frames_available =
+	    MMMIN(pcm->framesMax(), pcm->framesAvailable());
 	if (!l_frames_available)
 		return;
-
-	assert(pcm->framesMax() >= l_frames_available && "PCM's gone wild!");
-
+	
 	const size_t l_buffer_max = l_frames_available * pcm->frameSize();
 	memset(mix, 0, l_buffer_max);
 
