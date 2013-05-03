@@ -92,20 +92,9 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 	public: /* static */
 
-		static const Color & Visible(void)
-		    { static const Color s_visible(1.f, 1.f, 1.f, 1.f);
-		      return(s_visible); }
-
-		static const Color & Invisible(void)
-		    { static const Color s_invisible(1.f, 1.f, 1.f, 0.f);
-		      return(s_invisible); }
-
-		static const Color & Black(void)
-		    { static const Color s_black(0.f, 0.f, 0.f, 1.f);
-		      return(s_black); }
-
-		static const Color & White(void)
-		    { return(Visible()); }
+		static const Color Black;
+		static const Color Transparent;
+		static const Color White;
 	};
 
 } /******************************************************* Graphics Namespace */

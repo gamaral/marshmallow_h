@@ -87,7 +87,7 @@ Backend::Initialize(void)
 	/*
 	 * Initial Background Color (IMPORTANT)
 	 */
-	Painter::SetBackgroundColor(Color::Black());
+	Painter::SetBackgroundColor(Color::Black);
 
 	s_active = false;
 
