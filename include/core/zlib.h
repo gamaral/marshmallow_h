@@ -75,7 +75,8 @@ namespace Zlib { /************************************** Core::Zlib Namespace */
 	 * @return Actual out buffer size
 	 */
 	MARSHMALLOW_CORE_EXPORT
-	size_t Inflate(const char *in, size_t in_size, size_t out_size, char **out);
+	size_t Inflate(const char *in, size_t in_size, size_t out_size,
+	               char **out);
 
 	/*!
 	 * Deflate a buffer using zlib compression, out buffer
@@ -91,7 +92,8 @@ namespace Zlib { /************************************** Core::Zlib Namespace */
 	 * @return Actual Out buffer size
 	 */
 	MARSHMALLOW_CORE_EXPORT
-	size_t Deflate(const char *in, size_t in_size, char **out, int level = DefaultCompression);
+	size_t Deflate(const char *in, size_t in_size, char **out,
+	               int level = DefaultCompression);
 
 } /***************************************************** Core::Zlib Namespace */
 } /*********************************************************** Core Namespace */
