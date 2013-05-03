@@ -64,7 +64,7 @@ namespace Audio { /****************************************** Audio Namespace */
 
 	public: /* virtual */
 
-		VIRTUAL Core::IDataIO *data(void) const;
+		VIRTUAL Core::IDataIO * data(void) const;
 
 		VIRTUAL bool isValid(void) const;
 

@@ -65,7 +65,7 @@ namespace Audio { /****************************************** Audio Namespace */
 	{
 		virtual ~ITrack(void) {};
 
-		virtual Core::IDataIO *data(void) const = 0;
+		virtual Core::IDataIO * data(void) const = 0;
 
 		virtual size_t read(void *buffer, size_t bsize) const = 0;
 		virtual bool rewind(void) const = 0;
