@@ -64,7 +64,7 @@ struct ColliderComponent::Private
 	    , movement(0)
 	    , position(0)
 	    , size(0)
-	    , body(btBox)
+	    , body(Box)
 	    , bullet_resolution(DELTA_STEPS)
 	    , active(true)
 	    , bullet(false)
@@ -101,7 +101,7 @@ ColliderComponent::Private::isColliding(ColliderComponent &cc, float d, Collisio
 		const Math::Point2 &l_pos_b = c.position->position();
 
 		switch(body) {
-		case btSphere: {
+		case Sphere: {
 			float l_distance2 = l_pos_b.difference(l_pos_a).magnitude2();
 			l_distance2 -= c.radius2() + radius2();
 
@@ -112,7 +112,7 @@ ColliderComponent::Private::isColliding(ColliderComponent &cc, float d, Collisio
 			}
 			} break;
 
-		case btBox: {
+		case Box: {
 			const Math::Size2f l_size_a = size->size() / 2.f;
 			const Math::Size2f l_size_b = c.size->size() / 2.f;
 
@@ -136,7 +136,7 @@ ColliderComponent::Private::isColliding(ColliderComponent &cc, float d, Collisio
 				return(true);
 			} break;
 
-		case btCapsule:
+		case Capsule:
 		default: return(false);
 		}
 	}

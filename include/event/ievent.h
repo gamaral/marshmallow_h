@@ -55,6 +55,18 @@ namespace Event { /****************************************** Event Namespace */
 	struct MARSHMALLOW_EVENT_EXPORT
 	IEvent
 	{
+		/*! @brief Event Priority */
+		enum Priority
+		{
+			LowestPriority = 0,
+			LowerPriority,
+			LowPriority,
+			NormalPriority,
+			HighPriority,
+			HigherPriority,
+			HighestPriority
+		};
+
 		virtual ~IEvent(void);
 
 		/*!

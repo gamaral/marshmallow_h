@@ -265,9 +265,9 @@ TMXLoader::Private::processMap(TinyXML::XMLElement &m)
 
 	/* calculate half-relative map size (used to offset coordinates) */
 	hrmap_size.width = scale.width
-	    * static_cast<float>(map_size.width  * tile_size.width);
+	    * float(map_size.width  * tile_size.width);
 	hrmap_size.height = scale.height
-	    * static_cast<float>(map_size.height * tile_size.height);
+	    * float(map_size.height * tile_size.height);
 
 	return(true);
 }
@@ -326,14 +326,14 @@ TMXLoader::Private::processLayer(TinyXML::XMLElement &e)
 		if (0 == strcmp(l_data_compression, TMXDATA_COMPRESSION_ZLIB)) {
 			char *l_inflated_data;
 			if (0 < Core::Zlib::Inflate(l_decoded_data, l_decoded_data_size,
-			    static_cast<size_t>(map_size.width * map_size.height * 4), &l_inflated_data))
+			    size_t(map_size.width * map_size.height * 4), &l_inflated_data))
 				l_data_array = l_inflated_data;
 		}
 #define TMXDATA_COMPRESSION_GZIP "gzip"
 		else if (0 == strcmp(l_data_compression, TMXDATA_COMPRESSION_GZIP)) {
 			char *l_inflated_data;
 			if (0 < Core::Gzip::Inflate(l_decoded_data, l_decoded_data_size,
-			    static_cast<size_t>(map_size.width * map_size.height * 4), &l_inflated_data))
+			    size_t(map_size.width * map_size.height * 4), &l_inflated_data))
 				l_data_array = l_inflated_data;
 		}
 
@@ -468,8 +468,8 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 			l_object->QueryIntAttribute("height", &l_object_height);
 
 			/* calculate object size */
-			l_object_rsize.width = scale.width * static_cast<float>(l_object_width);
-			l_object_rsize.height = scale.height * static_cast<float>(l_object_height);
+			l_object_rsize.width = scale.width * float(l_object_width);
+			l_object_rsize.height = scale.height * float(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
 		}
@@ -500,8 +500,8 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 			/* calculate object size from tileset */
 			l_object_width  = l_tileset->tileSize().width;
 			l_object_height = l_tileset->tileSize().height;
-			l_object_rsize.width  = scale.width  * static_cast<float>(l_object_width);
-			l_object_rsize.height = scale.height * static_cast<float>(l_object_height);
+			l_object_rsize.width  = scale.width  * float(l_object_width);
+			l_object_rsize.height = scale.height * float(l_object_height);
 			l_object_hrsize = l_object_rsize / 2.f;
 
 			/* attach tileset used */
@@ -522,18 +522,18 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 			l_vdata->set(3,  l_object_hrsize.width, -l_object_hrsize.height);
 
 			Graphics::ITextureCoordinateData *l_tdata =
-			    l_tileset->getTextureCoordinateData(static_cast<uint16_t>(l_object_gid - l_ts_firstgid));
+			    l_tileset->getTextureCoordinateData(uint16_t(l_object_gid - l_ts_firstgid));
 
 			l_render->setMesh(new Graphics::QuadMesh
-			    (l_tdata, l_tileset->textureData(), l_vdata, Graphics::mfNone));
+			    (l_tdata, l_tileset->textureData(), l_vdata, Graphics::QuadMesh::None));
 
 			l_entity->pushComponent(l_render);
 		}
 
 		/* create position component */
 		Game::PositionComponent *l_pos_component = new Game::PositionComponent("position", l_entity);
-		l_pos_component->setPosition(scale.width  * static_cast<float>(l_object_x),
-		                             scale.height * static_cast<float>(l_object_y));
+		l_pos_component->setPosition(scale.width  * float(l_object_x),
+		                             scale.height * float(l_object_y));
 
 		/* change position to center of object (offset) */
 		l_pos_component->translate(l_object_hrsize.width,
@@ -630,7 +630,7 @@ TMXLoader::Private::processTileset(TinyXML::XMLElement &e)
 	l_tileset->setSpacing(l_tile_spacing);
 	l_tileset->setTileSize(Math::Size2i(l_tile_width, l_tile_height));
 	l_tileset->setTextureData(l_texture);
-	tilesets[static_cast<uint16_t>(l_first_gid)] = l_tileset;
+	tilesets[uint16_t(l_first_gid)] = l_tileset;
 
 	return(true);
 }

@@ -55,19 +55,18 @@ namespace Game { /******************************************** Game Namespace */
 
 	struct IScene;
 
-	enum SceneLayerFlag {
-		slfUpdateBlock = (1 << 0),
-		slfRenderBlock = (1 << 1),
-		slfAutoFree    = (1 << 2),
-		slfNone        = 0
-	};
-
 	/*! @brief Game Scene Interface */
 	struct MARSHMALLOW_GAME_EXPORT
 	ISceneLayer : public Core::IRenderable
 	            , public Core::IUpdateable
 	            , public Core::ISerializable
 	{
+		enum Flag {
+			UpdateBlock = (1 << 0),
+			RenderBlock = (1 << 1),
+			None        = 0
+		};
+
 		virtual ~ISceneLayer(void);
 
 		virtual const Core::Identifier & id(void) const = 0;

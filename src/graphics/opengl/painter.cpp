@@ -403,7 +403,7 @@ void
 GLPainter::LoadViewProjection(void)
 {
 	LoadProjection();
-	matrix *= Camera::Transform().matrix(Transform::mtView);
+	matrix *= Camera::Transform().matrix(Transform::View);
 }
 void
 GLPainter::Draw(const Graphics::IMesh &m, const Math::Point2 *o, size_t c)

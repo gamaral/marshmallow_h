@@ -50,7 +50,7 @@ namespace Core { /******************************************** Core Namespace */
 struct FileIO::Private
 {
 	Identifier filename;
-	DIOMode    mode;
+	int        mode;
 	FILE      *handle;
 };
 
@@ -58,14 +58,14 @@ FileIO::FileIO(void)
     : PIMPL_CREATE
 {
 	PIMPL->handle = 0;
-	PIMPL->mode = DIOInvalid;
+	PIMPL->mode = Invalid;
 }
 
-FileIO::FileIO(const Identifier &fn, DIOMode m)
+FileIO::FileIO(const Identifier &fn, int m)
     : PIMPL_CREATE
 {
 	PIMPL->handle = 0;
-	PIMPL->mode = DIOInvalid;
+	PIMPL->mode = Invalid;
 	setFileName(fn);
 	open(m);
 }
@@ -95,7 +95,7 @@ FileIO::setFileName(const Identifier &fn)
 }
 
 bool
-FileIO::open(DIOMode m)
+FileIO::open(int m)
 {
 	if (!PIMPL->filename) {
 		MMWARNING("Tried to open device without a filename.");
@@ -107,22 +107,22 @@ FileIO::open(DIOMode m)
 	/* null terminate */
 	l_mode[0] = '\0';
 
-	if (m & DIOWriteOnly) {
-		if ((m & (DIOReadOnly|DIOAppend)) == DIOReadOnly)
+	if (m & WriteOnly) {
+		if ((m & (ReadOnly|Append)) == ReadOnly)
 			strcat(l_mode, "r+");
-		else if ((m & DIOAppend) == DIOAppend)
-			strcat(l_mode, m & DIOReadOnly ? "ra" : "a");
+		else if ((m & Append) == Append)
+			strcat(l_mode, m & ReadOnly ? "ra" : "a");
 		else
-			strcat(l_mode, m & DIOReadOnly ? "w+" : "w");
+			strcat(l_mode, m & ReadOnly ? "w+" : "w");
 	}
-	else if (m & DIOReadOnly)
+	else if (m & ReadOnly)
 		strcat(l_mode, "r");
 	else {
 		assert(false && "Invalid open mode!");
 		return(false);
 	}
 
-	if ((m & DIOText) == 0)
+	if ((m & Text) == 0)
 		strcat(l_mode, "b");
 	
 	PIMPL->handle = fopen(PIMPL->filename, l_mode);
@@ -137,11 +137,11 @@ FileIO::close(void)
 	if (PIMPL->handle)
 		fclose(PIMPL->handle);
 	PIMPL->handle = 0;
-	PIMPL->mode = DIOInvalid;
+	PIMPL->mode = Invalid;
 	PIMPL->filename = Identifier();
 }
 
-DIOMode
+int
 FileIO::mode(void) const
 {
 	return(PIMPL->mode);
@@ -175,15 +175,15 @@ FileIO::write(const void *b, size_t bs)
 }
 
 bool
-FileIO::seek(long o, DIOSeek on) const
+FileIO::seek(long o, Seek on) const
 {
 	assert(PIMPL->handle && "Invalid file handle!");
 	int l_origin;
 
 	switch (on) {
-	case     DIOSet: l_origin = SEEK_SET; break;
-	case     DIOEnd: l_origin = SEEK_END; break;
-	case DIOCurrent: l_origin = SEEK_CUR; break;
+	case     Set: l_origin = SEEK_SET; break;
+	case     End: l_origin = SEEK_END; break;
+	case Current: l_origin = SEEK_CUR; break;
 	default: return(false);
 	}
 

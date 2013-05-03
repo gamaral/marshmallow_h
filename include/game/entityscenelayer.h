@@ -61,7 +61,7 @@ namespace Game { /******************************************** Game Namespace */
 
 		EntitySceneLayer(const Core::Identifier &identifier,
 		                 Game::IScene *scene,
-		                 int flags = slfNone);
+		                 int flags = None);
 		virtual ~EntitySceneLayer(void);
 
 		void addEntity(Game::IEntity *entity);

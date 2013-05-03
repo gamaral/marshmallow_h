@@ -56,19 +56,19 @@ namespace Event { /****************************************** Event Namespace */
 
 		enum InputType
 		{
-			itUnknown = 0,                    /*!< Unknown Sensor */
-			itKeyboard,
-			itJoystick,
-			itGamepad,
-			itTouch,
-			itSensor,
+			Unknown = 0,                      /*!< Unknown Sensor */
+			Keyboard,
+			Joystick,
+			Gamepad,
+			Touch,
+			Sensor,
 			InputTypes                      /*!< Input Type Count */
 		};
 
 	public:
 
-		InputEvent(InputType type, int code, int value,
-		           size_t source, MMTIME timestamp = 0);
+		InputEvent(InputType type, int code, int value, size_t source,
+		           MMTIME timestamp = 0);
 		virtual ~InputEvent(void);
 
 		InputType inputType(void) const;

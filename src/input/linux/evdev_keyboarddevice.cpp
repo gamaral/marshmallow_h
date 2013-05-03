@@ -39,7 +39,6 @@
  */
 
 #include "core/logger.h"
-#include "core/shared.h"
 
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
@@ -229,7 +228,7 @@ KeyboardDevice::handleEvent(struct input_event &event)
 	if (l_prev_action != l_action) {
 		Keyboard::SetKeyState(l_key, l_action);
 
-		SharedEvent l_event(new KeyboardEvent(l_key, l_action, id()));
+		IEvent *l_event(new KeyboardEvent(l_key, l_action, id()));
 		EventManager::Instance()->queue(l_event);
 	}
 

@@ -39,7 +39,6 @@
  */
 
 #include "core/logger.h"
-#include "core/shared.h"
 
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
@@ -167,7 +166,7 @@ HandleSDLKeyboardEvent(const SDL_KeyboardEvent &e)
 	const Keyboard::Action l_prev_action = Keyboard::KeyState(l_key);
 	if (l_prev_action != l_action) {
 		Keyboard::SetKeyState(l_key, l_action);
-		Event::SharedEvent event(new Event::KeyboardEvent(l_key, l_action, 0));
+		Event::IEvent *event(new Event::KeyboardEvent(l_key, l_action, 0));
 		Event::EventManager::Instance()->queue(event);
 	}
 

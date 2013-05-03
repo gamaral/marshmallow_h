@@ -75,17 +75,17 @@ namespace Dummy { /******************************** Graphics::Dummy Namespace */
 		    { return(Type()); }
 
 		VIRTUAL bool load(const Core::Identifier &id,
-		                  ScaleMode min = smNearest,
-		                  ScaleMode mag = smNearest);
+		                  ScaleMode min = Nearest,
+		                  ScaleMode mag = Nearest);
 		VIRTUAL void unload(void);
 
 		VIRTUAL bool isLoaded(void) const
 		    { return(m_id != 0); }
 
 		VIRTUAL ScaleMode minificationMode(void) const
-		    { return(smNearest); }
+		    { return(Nearest); }
 		VIRTUAL ScaleMode magnificationMode(void) const
-		    { return(smNearest); }
+		    { return(Nearest); }
 
 		VIRTUAL const Math::Size2i & size(void) const
 		    { return(m_size); }

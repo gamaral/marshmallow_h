@@ -58,7 +58,7 @@ namespace Game { /******************************************** Game Namespace */
 
 		SceneLayer(const Core::Identifier &identifier,
 		           Game::IScene *scene,
-		           int flags = slfNone);
+		           int flags = None);
 		virtual ~SceneLayer(void);
 
 	public: /* reimp */

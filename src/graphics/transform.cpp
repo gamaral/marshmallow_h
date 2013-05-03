@@ -82,19 +82,20 @@ Transform::Private::rebuildMatrix(MatrixType type)
 	l_scale[Matrix4::m22] = scale.height;
 
 	switch (type) {
-	case mtModel:
+	case Model:
 		l_translate[Matrix4::m14] = translation.x;
 		l_translate[Matrix4::m24] = translation.y;
 
 		matrix = l_translate * l_scale * l_rotate;
 		break;
 
-	case mtView:
+	case View:
 		l_translate[Matrix4::m14] = -translation.x;
 		l_translate[Matrix4::m24] = -translation.y;
 
 		matrix = l_scale * l_rotate * l_translate;
 		break;
+	default: break;
 	}
 
 	invalidated = false;

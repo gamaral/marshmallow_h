@@ -60,7 +60,7 @@ namespace Graphics { /************************************ Graphics Namespace */
 		Mesh(Graphics::ITextureCoordinateData *tc,
 		         Graphics::ITextureData *t,
 		         Graphics::IVertexData *v,
-		         int flags = mfNone);
+		         int flags = None);
 		virtual ~Mesh(void);
 
 		void setColor(const Graphics::Color &color);

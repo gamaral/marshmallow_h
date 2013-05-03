@@ -39,7 +39,6 @@
  */
 
 #include "core/logger.h"
-#include "core/shared.h"
 
 #include "event/eventmanager.h"
 #include "event/joystickaxisevent.h"
@@ -144,14 +143,14 @@ JoystickDevice::handleEvent(struct input_event &event)
 			default: break;
 			}
 
-			SharedEvent l_event(new JoystickAxisEvent(
+			IEvent *l_event(new JoystickAxisEvent(
 			    l_axis,
 			    l_value, -1, 1,
 			    id()));
 			EventManager::Instance()->queue(l_event);
 		}
 
-		SharedEvent l_event(new JoystickButtonEvent(
+		IEvent *l_event(new JoystickButtonEvent(
 		    l_btn,
 		    l_action,
 		    m_btn_state,
@@ -166,7 +165,7 @@ JoystickDevice::handleEvent(struct input_event &event)
 
 		struct input_absinfo *l_absinfo = l_entry->second;
 
-		SharedEvent l_event(new JoystickAxisEvent(
+		IEvent *l_event(new JoystickAxisEvent(
 		    static_cast<Joystick::Axis>(l_absinfo->value),
 		    event.value,
 		    l_absinfo->minimum,

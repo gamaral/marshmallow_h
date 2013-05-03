@@ -47,31 +47,31 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 
-	enum DIOMode
-	{
-		DIOInvalid   = 0,
-		DIOReadOnly  = (1 << 0),
-		DIOWriteOnly = (1 << 1),
-		DIOAppend    = (1 << 3)|DIOWriteOnly,
-		DIOText      = (1 << 4),
-		DIOCreate    = DIOWriteOnly,
-		DIOTruncate  = DIOWriteOnly,
-		DIOReadWrite = DIOReadOnly|DIOWriteOnly
-	};
-
-	enum DIOSeek
-	{
-		DIOSet,
-		DIOCurrent,
-		DIOEnd
-	};
-
 	/*!
 	 * @brief DataIO Interface
 	 */
 	struct MARSHMALLOW_CORE_EXPORT
 	IDataIO
 	{
+		enum ModeFlag
+		{
+			ReadOnly  = (1 << 0),
+			WriteOnly = (1 << 1),
+			Append    = (1 << 3)|WriteOnly,
+			Text      = (1 << 4),
+			Create    = WriteOnly,
+			Truncate  = WriteOnly,
+			ReadWrite = ReadOnly|WriteOnly,
+			Invalid   = 0
+		};
+
+		enum Seek
+		{
+			Set,
+			Current,
+			End
+		};
+
 		virtual ~IDataIO(void);
 
 		/*!
@@ -80,7 +80,7 @@ namespace Core { /******************************************** Core Namespace */
 		 * @param mode Open mode
 		 * @return true on success
 		 */
-		virtual bool open(DIOMode mode = DIOReadOnly) = 0;
+		virtual bool open(int mode = ReadOnly) = 0;
 
 		/*!
 		 * Close DIO
@@ -93,7 +93,7 @@ namespace Core { /******************************************** Core Namespace */
 		 *
 		 * @return current open mode
 		 */
-		virtual DIOMode mode(void) const = 0;
+		virtual int mode(void) const = 0;
 
 		/*!
 		 * Check for DIO open state
@@ -110,7 +110,7 @@ namespace Core { /******************************************** Core Namespace */
 		virtual size_t read(void *buffer, size_t bsize) const = 0;
 		virtual size_t write(const void *buffer, size_t bsize) = 0;
 
-		virtual bool seek(long offset, DIOSeek origin) const = 0;
+		virtual bool seek(long offset, Seek origin) const = 0;
 		virtual long tell(void) const = 0;
 	};
 

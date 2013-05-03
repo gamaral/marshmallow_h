@@ -88,13 +88,10 @@ struct Scene::Private
 
 Scene::Private::~Private(void)
 {
-	/* free layers left behind */
-	while (!layers.empty()) {
-		ISceneLayer *l_layer = layers.back();
-		if (l_layer->flags() & slfAutoFree)
-			delete l_layer;
-		layers.pop_back();
-	}
+#if MARSHMALLOW_DEBUG
+	if (!layers.empty())
+		MMWARNING("Scene destroyed while still holding layer(s)! " << layers.size());
+#endif
 }
 
 void
@@ -276,7 +273,7 @@ Scene::render(void)
 	SceneLayerList::const_iterator l_c = --PIMPL->layers.end();
 
 	for (l_i = l_b; l_i != l_c; ++l_i)
-		if ((*l_i)->flags() & slfRenderBlock)
+		if ((*l_i)->flags() & ISceneLayer::RenderBlock)
 			break;
 
 	bool l_finished = false;
@@ -298,7 +295,7 @@ Scene::update(float d)
 	const SceneLayerList::const_iterator l_c = --PIMPL->layers.end();
 
 	for (l_i = l_b; l_i != l_c; ++l_i)
-		if ((*l_i)->flags() & slfUpdateBlock)
+		if ((*l_i)->flags() & ISceneLayer::UpdateBlock)
 			break;
 
 	/* TODO: polish later if possible */
@@ -309,11 +306,9 @@ Scene::update(float d)
 		if (l_i == l_b) l_finished = true;
 		else l_i--;
 
-		if (l_slayer->isZombie()) {
+		if (l_slayer->isZombie())
 			PIMPL->layers.remove(l_slayer);
-			if (l_slayer->flags() & slfAutoFree)
-				delete l_slayer;
-		} else l_slayer->update(d);
+		else l_slayer->update(d);
 	} while(!l_finished);
 }
 

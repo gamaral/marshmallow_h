@@ -156,7 +156,7 @@ audio_player_tick_test(void)
 	Core::Platform::Sleep(500);
 
 	player.eject(s_sample_track);
-	player.eject(s_sample_track2, true); /* freed */
+	delete player.eject(s_sample_track2);
 
 	pcm.close();
 

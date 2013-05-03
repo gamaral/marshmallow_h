@@ -72,16 +72,16 @@ OVSeek(void *data, ogg_int64_t offset, int origin)
 	const Core::IDataIO *dio = reinterpret_cast<const Core::IDataIO *>(data);
 
 	/* translate origin */
-	Core::DIOSeek l_seek;
+	Core::IDataIO::Seek l_seek;
 	switch (origin) {
 	case SEEK_SET:
-		l_seek = Core::DIOSet;
+		l_seek = Core::IDataIO::Set;
 		break;
 	case SEEK_END:
-		l_seek = Core::DIOEnd;
+		l_seek = Core::IDataIO::End;
 		break;
 	case SEEK_CUR:
-		l_seek = Core::DIOCurrent;
+		l_seek = Core::IDataIO::Current;
 		break;
 	}
 
@@ -135,7 +135,7 @@ struct OggTrack::Private
 
 OggTrack::Private::~Private(void)
 {
-	if (flags & tfDataFree)
+	if (flags & DataFree)
 	    delete dio, dio = 0;
 
 	if (!valid) return;
@@ -252,8 +252,8 @@ OggTrack::setData(Core::IDataIO *d, bool f)
 {
 	PIMPL->dio = d;
 	PIMPL->reset();
-	if (f) PIMPL->flags |= tfDataFree;
-	else PIMPL->flags &= ~tfDataFree;
+	if (f) PIMPL->flags |= DataFree;
+	else PIMPL->flags &= ~DataFree;
 }
 
 Core::IDataIO *
@@ -322,7 +322,7 @@ OggTrack::Validate(const Core::IDataIO &dio)
 	/*
 	 * Reset location
 	 */
-	if (!dio.seek(0, Core::DIOSet)) {
+	if (!dio.seek(0, Core::IDataIO::Set)) {
 		MMDEBUG("Invalid DataIO (failed seek).");
 		return(false);
 	}
@@ -343,7 +343,7 @@ OggTrack::Validate(const Core::IDataIO &dio)
 
 	MMDEBUG("Detected Ogg file.");
 
-	if (!dio.seek(0, Core::DIOSet)) {
+	if (!dio.seek(0, Core::IDataIO::Set)) {
 		MMDEBUG("Invalid DataIO (reset failed).");
 		return(false);
 	}

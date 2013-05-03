@@ -58,7 +58,7 @@ namespace { /************************************ Core::<anonymous> Namespace */
 
 struct BufferIO::Private
 {
-	DIOMode        mode;
+	int            mode;
 	long           cursor;
 	long           size;
 	uint8_t       *buffer;
@@ -73,7 +73,7 @@ BufferIO::BufferIO(void *b, size_t s)
 
 	PIMPL->buffer = reinterpret_cast<uint8_t *>(b);
 	PIMPL->const_buffer = reinterpret_cast<uint8_t *>(b);
-	PIMPL->mode = DIOReadWrite;
+	PIMPL->mode = ReadWrite;
 	PIMPL->cursor = 0;
 	PIMPL->size = long(s);
 	PIMPL->flags = 0;
@@ -86,7 +86,7 @@ BufferIO::BufferIO(const void *cb, size_t s)
 
 	PIMPL->buffer = 0;
 	PIMPL->const_buffer = reinterpret_cast<const uint8_t *>(cb);
-	PIMPL->mode = DIOReadOnly;
+	PIMPL->mode = ReadOnly;
 	PIMPL->cursor = 0;
 	PIMPL->size = long(s);
 	PIMPL->flags = 0;
@@ -106,7 +106,7 @@ BufferIO::BufferIO(IDataIO *source)
 		return;
 	}
 
-	if (!source->seek(0, DIOEnd)) {
+	if (!source->seek(0, End)) {
 		MMERROR("Failed to seek to end.");
 		return;
 	}
@@ -118,7 +118,7 @@ BufferIO::BufferIO(IDataIO *source)
 		return;
 	}
 
-	if (!source->seek(0, DIOSet)) {
+	if (!source->seek(0, Set)) {
 		MMERROR("Failed to seek back to beginning.");
 		return;
 	}
@@ -132,12 +132,12 @@ BufferIO::BufferIO(IDataIO *source)
 
 	PIMPL->buffer = l_buffer;
 	PIMPL->const_buffer = l_buffer;
-	PIMPL->mode = DIOReadWrite;
+	PIMPL->mode = ReadWrite;
 	PIMPL->cursor = 0;
 	PIMPL->size = l_size;
 	PIMPL->flags = bioFREE;
 
-	if (!source->seek(l_cursor, DIOSet))
+	if (!source->seek(l_cursor, Set))
 		MMERROR("Failed to return source DIO to original position.");
 }
 
@@ -149,7 +149,7 @@ BufferIO::BufferIO(const BufferIO &source)
 
 	PIMPL->buffer = l_buffer;
 	PIMPL->const_buffer = l_buffer;
-	PIMPL->mode = DIOReadWrite;
+	PIMPL->mode = ReadWrite;
 	PIMPL->cursor = 0;
 	PIMPL->size = source.PIMPL->size;
 	PIMPL->flags = bioFREE;
@@ -169,7 +169,7 @@ BufferIO::size(void) const
 }
 
 bool
-BufferIO::open(DIOMode)
+BufferIO::open(int)
 {
 	MMWARNING("BufferIO open was called, it will be ignored.");
 	return(isOpen());
@@ -183,13 +183,13 @@ BufferIO::close(void)
 
 	PIMPL->buffer = 0;
 	PIMPL->const_buffer = 0;
-	PIMPL->mode = DIOInvalid;
+	PIMPL->mode = Invalid;
 	PIMPL->cursor = 0;
 	PIMPL->size = 0;
 	PIMPL->flags = 0;
 }
 
-DIOMode
+int
 BufferIO::mode(void) const
 {
 	return(PIMPL->mode);
@@ -198,7 +198,7 @@ BufferIO::mode(void) const
 bool
 BufferIO::isOpen(void) const
 {
-	return(PIMPL->const_buffer && PIMPL->mode != DIOInvalid);
+	return(PIMPL->const_buffer && PIMPL->mode != Invalid);
 }
 
 bool
@@ -249,20 +249,20 @@ BufferIO::write(const void *b, size_t bs)
 }
 
 bool
-BufferIO::seek(long o, DIOSeek on) const
+BufferIO::seek(long o, Seek on) const
 {
 	long l_cursor = -1;
 
 	switch (on) {
-	case DIOSet:
+	case Set:
 		if (o >= 0 && o <= PIMPL->size)
 			l_cursor = o;
 		break;
-	case DIOEnd:
+	case End:
 		if (PIMPL->size + o >= 0)
 			l_cursor = PIMPL->size + o;
 		break;
-	case DIOCurrent:
+	case Current:
 		if ((PIMPL->cursor + o) >= 0 &&
 		    PIMPL->cursor + o < PIMPL->size)
 			l_cursor = PIMPL->cursor + o;

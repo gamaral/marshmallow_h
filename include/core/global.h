@@ -52,7 +52,8 @@
 #define MARSHMALLOW_VERSION_REVISION 0x0a
 
 #define VIRTUAL
-#define NO_ASSIGN_COPY(x) NO_ASSIGN(x); NO_COPY(x)
+#define NO_ASSIGN_COPY(x) NO_ASSIGN(x); \
+	        NO_COPY(x)
 #define NO_COPY(x) x(const x&)
 #define NO_ASSIGN(x) x& operator=(const x&)
 

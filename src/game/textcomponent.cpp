@@ -136,7 +136,7 @@ TextComponent::Private::rebuild(void)
 			mesh[i] = new Graphics::QuadMesh(l_tdata,
 			                                 tileset->textureData(),
 			                                 l_vdata,
-			                                 Graphics::mfNone);
+			                                 Graphics::QuadMesh::None);
 		}
 	}
 

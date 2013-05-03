@@ -70,7 +70,7 @@ QuadMesh::QuadMesh(const Math::Rect2  &r)
     : Mesh(Backend::Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
            Backend::Factory::CreateTextureData(),
            Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES),
-               mfTextureCoordinateFree|mfTextureDataFree|mfVertexDataFree)
+           TextureCoordinateFree|TextureDataFree|VertexDataFree)
 {
 	setVertex(0, r.topLeft());
 	setTextureCoordinate(0, 0, 0);
@@ -86,7 +86,7 @@ QuadMesh::QuadMesh(const Math::Size2f &s)
     : Mesh(Backend::Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
            Backend::Factory::CreateTextureData(),
            Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES),
-           mfTextureCoordinateFree|mfTextureDataFree|mfVertexDataFree)
+           TextureCoordinateFree|TextureDataFree|VertexDataFree)
 {
 	/* half size */
 	const float l_hwidth  = s.width  / 2.f;
@@ -106,7 +106,7 @@ QuadMesh::QuadMesh(float width, float height)
     : Mesh(Backend::Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
            Backend::Factory::CreateTextureData(),
            Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES),
-           mfTextureCoordinateFree|mfTextureDataFree|mfVertexDataFree)
+           TextureCoordinateFree|TextureDataFree|VertexDataFree)
 {
 	/* half size */
 	const float l_hwidth  = width  / 2.f;
@@ -126,7 +126,7 @@ QuadMesh::QuadMesh(void)
     : Mesh(Backend::Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
            Backend::Factory::CreateTextureData(),
            Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES),
-           mfTextureCoordinateFree|mfTextureDataFree|mfVertexDataFree)
+           TextureCoordinateFree|TextureDataFree|VertexDataFree)
 {
 	setTextureCoordinate(0, 0, 0);
 	setTextureCoordinate(1, 0, 1);

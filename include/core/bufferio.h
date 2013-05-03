@@ -104,17 +104,17 @@ namespace Core { /******************************************** Core Namespace */
 		 * @brief Ignored
 		 * @return true
 		 */
-		VIRTUAL bool open(DIOMode mode = DIOReadOnly);
+		VIRTUAL bool open(int mode = ReadOnly);
 		VIRTUAL void close(void);
 
-		VIRTUAL DIOMode mode(void) const;
+		VIRTUAL int mode(void) const;
 		VIRTUAL bool isOpen(void) const;
 		VIRTUAL bool atEOF(void) const;
 
 		VIRTUAL size_t read(void *buffer, size_t bsize) const;
 		VIRTUAL size_t write(const void *buffer, size_t bsize);
 
-		VIRTUAL bool seek(long offset, DIOSeek origin) const;
+		VIRTUAL bool seek(long offset, Seek origin) const;
 		VIRTUAL long tell(void) const;
 	};
 

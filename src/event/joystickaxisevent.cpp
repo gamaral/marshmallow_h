@@ -56,7 +56,7 @@ JoystickAxisEvent::JoystickAxisEvent(
     int maximum_,
     size_t source_,
     MMTIME timestamp_)
-    : InputEvent(itJoystick, axis_, value_, source_, timestamp_)
+    : InputEvent(Joystick, axis_, value_, source_, timestamp_)
     , PIMPL_CREATE
 {
 	PIMPL->minimum = minimum_;

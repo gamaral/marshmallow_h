@@ -48,7 +48,6 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 
 	class Identifier;
-	class StrHash;
 	class Type;
 
 	/*!

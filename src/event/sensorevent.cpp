@@ -56,7 +56,7 @@ SensorEvent::SensorEvent(Input::Sensor::Type type_,
                        float x_, float y_, float z_,
                        size_t source_,
                        MMTIME timestamp_)
-    : InputEvent(itSensor, type_, 0, source_, timestamp_)
+    : InputEvent(Sensor, type_, 0, source_, timestamp_)
     , PIMPL_CREATE
 {
 	PIMPL->x = x_;

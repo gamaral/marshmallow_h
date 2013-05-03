@@ -52,7 +52,8 @@ struct InputEvent::Private
 	size_t source;
 };
 
-InputEvent::InputEvent(InputType type_, int code_, int value_, size_t source_, MMTIME time_)
+InputEvent::InputEvent(InputType type_, int code_, int value_, size_t source_,
+                       MMTIME time_)
     : Event(time_, HighPriority)
     , PIMPL_CREATE
 {

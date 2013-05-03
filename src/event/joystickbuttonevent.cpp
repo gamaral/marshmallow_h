@@ -54,7 +54,7 @@ JoystickButtonEvent::JoystickButtonEvent(
     int state_,
     size_t source_,
     MMTIME timestamp_)
-    : InputEvent(itJoystick, button_, action_, source_, timestamp_)
+    : InputEvent(Joystick, button_, action_, source_, timestamp_)
     , PIMPL_CREATE
 {
 	PIMPL->state = state_;

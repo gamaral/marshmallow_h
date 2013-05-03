@@ -146,7 +146,7 @@ SplashSceneLayer::Private::calculateQuadScale(void)
 }
 
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, Game::IScene *s)
-    : SceneLayer(i, s, slfUpdateBlock)
+    : SceneLayer(i, s, UpdateBlock)
     , PIMPL_CREATE_X(*this)
 {
 	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());

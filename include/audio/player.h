@@ -71,7 +71,7 @@ namespace Audio { /****************************************** Audio Namespace */
 
 		void load(const Core::Identifier &id, ITrack *track);
 		bool contains(const Core::Identifier &id);
-		ITrack * eject(const Core::Identifier &id, bool free = false);
+		ITrack * eject(const Core::Identifier &id);
 
 		bool play(const Core::Identifier &id,
 		          int iterations = 1,

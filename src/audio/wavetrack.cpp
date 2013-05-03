@@ -61,7 +61,7 @@ struct WaveTrack::Private
 
 	~Private(void)
 	{
-		if (flags & tfDataFree)
+		if (flags & DataFree)
 		    delete dio, dio = 0;
 	}
 
@@ -155,7 +155,7 @@ WaveTrack::Private::reset(void)
 	}
 
 	/* skip length */
-	dio->seek(4, Core::DIOCurrent);
+	dio->seek(4, Core::IDataIO::Current);
 
 	/* populate parameters */
 	rate = l_fmt_subchunk.sample_rate;
@@ -181,7 +181,7 @@ bool
 WaveTrack::Private::seek(long frame) const
 {
 	return(dio->seek(start + (frame * (channels * (depth / 8))),
-	    Core::DIOSet));
+	    Core::IDataIO::Set));
 }
 
 /****************************************************************** WaveCode */
@@ -201,8 +201,8 @@ WaveTrack::setData(Core::IDataIO *d, bool f)
 {
 	PIMPL->dio = d;
 	PIMPL->reset();
-	if (f) PIMPL->flags |= tfDataFree;
-	else PIMPL->flags &= ~tfDataFree;
+	if (f) PIMPL->flags |= DataFree;
+	else PIMPL->flags &= ~DataFree;
 }
 
 Core::IDataIO *
@@ -271,7 +271,7 @@ WaveTrack::Validate(const Core::IDataIO &dio)
 	/*
 	 * Reset location
 	 */
-	if (!dio.seek(0, Core::DIOSet)) {
+	if (!dio.seek(0, Core::IDataIO::Set)) {
 		MMDEBUG("Invalid DataIO (failed seek).");
 		return(false);
 	}
@@ -293,7 +293,7 @@ WaveTrack::Validate(const Core::IDataIO &dio)
 	MMDEBUG("Detected RIFF file.");
 
 	/* skip length */
-	if (!dio.seek(4, Core::DIOCurrent)) {
+	if (!dio.seek(4, Core::IDataIO::Current)) {
 		MMDEBUG("Invalid RIFF (failed seek).");
 		return(false);
 	}

@@ -38,8 +38,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_EVENT_EVENTBASE_H
-#define MARSHMALLOW_EVENT_EVENTBASE_H 1
+#ifndef MARSHMALLOW_EVENT_EVENT_H
+#define MARSHMALLOW_EVENT_EVENT_H 1
 
 #include <core/global.h>
 
@@ -47,18 +47,6 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Event { /****************************************** Event Namespace */
-
-	/*! @brief Event Priority */
-	enum EventPriority
-	{
-		LowestPriority  = 0,
-		LowerPriority   = 1,
-		LowPriority     = 2,
-		NormalPriority  = 5,
-		HighPriority    = 8,
-		HigherPriority  = 9,
-		HighestPriority = 10
-	};
 
 	/*! @brief Event Base Class */
 	class MARSHMALLOW_EVENT_EXPORT

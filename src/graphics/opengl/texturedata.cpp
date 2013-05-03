@@ -206,21 +206,21 @@ TextureData::load(const Core::Identifier &_id, ScaleMode min, ScaleMode mag)
 	GLint l_mag_scale;
 	m_mag = mag;
 	switch(mag) {
-	case smLinear: l_mag_scale = GL_LINEAR; break;
+	case Linear: l_mag_scale = GL_LINEAR; break;
 
 	default:
-	case smNearest: l_mag_scale = GL_NEAREST; break;
+	case Nearest: l_mag_scale = GL_NEAREST; break;
 	}
 
 	GLint l_min_scale;
 	m_min = min;
 	switch(min) {
-	case smLinear:
+	case Linear:
 		l_min_scale = l_mipmaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
 		break;
 
 	default:
-	case smNearest:
+	case Nearest:
 		l_min_scale = l_mipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
 		break;
 	}

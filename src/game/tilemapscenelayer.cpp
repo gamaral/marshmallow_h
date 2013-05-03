@@ -239,7 +239,7 @@ TilemapSceneLayer::Private::render(void)
 			    (l_ts->getTextureCoordinateData(l_index),
 			     l_ts->textureData(),
 			     l_svdata,
-			     Graphics::mfNone);
+			     Graphics::QuadMesh::None);
 
 			l_mesh.setColor(l_color);
 

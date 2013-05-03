@@ -78,11 +78,11 @@ struct Player::Private
 	inline void stop(const Core::Identifier &id);
 	inline bool isPlaying(const Core::Identifier &id) const;
 
-	typedef std::map<const Core::Identifier, ITrack *> TrackMap;
+	typedef std::map<MMUID, ITrack *> TrackMap;
 	TrackMap tracks;
 
 	typedef std::pair<int, float> IterationGainPair;
-	typedef std::map<const Core::Identifier, IterationGainPair> PlaylistMap;
+	typedef std::map<MMUID, IterationGainPair> PlaylistMap;
 	PlaylistMap playlist;
 
 	void tick(void);
@@ -102,16 +102,8 @@ Player::Private::Private()
 Player::Private::~Private()
 {
 #if MARSHMALLOW_DEBUG
-	if (tracks.size() > 0) {
-		std::string l_track_list;
-
-		TrackMap::iterator l_i;
-		const TrackMap::const_iterator l_c = tracks.end();
-		for (l_i = tracks.begin(); l_i != l_c; ++l_i)
-			l_track_list.append(" " + l_i->first.str());
-
-		MMWARNING("Player destroyed while still holding track(s)!" << l_track_list);
-	}
+	if (!tracks.empty())
+		MMWARNING("Player destroyed while still holding track(s)! " << tracks.size());
 #endif
 
 	/* clear buffers */
@@ -289,14 +281,9 @@ Player::contains(const Core::Identifier &id)
 }
 
 ITrack *
-Player::eject(const Core::Identifier &id, bool free)
+Player::eject(const Core::Identifier &id)
 {
-	ITrack *l_track = PIMPL->eject(id);
-
-	if (free)
-		delete l_track;
-
-	return(l_track);
+	return(PIMPL->eject(id));
 }
 
 bool

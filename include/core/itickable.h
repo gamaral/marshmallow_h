@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2013, Guillermo A. Amaral B. (gamaral) <g@maral.me>
+ * Copyright (c) 2013, Guillermo A. Amaral B. (gamaral) <g@maral.me>
  * All rights reserved.
  *
  * This file is part of Marshmallow Game Engine.
@@ -38,56 +38,30 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
-#ifndef MARSHMALLOW_GRAPHICS_TRANSFORM_H
-#define MARSHMALLOW_GRAPHICS_TRANSFORM_H 1
+#ifndef MARSHMALLOW_CORE_ITICKABLE_H
+#define MARSHMALLOW_CORE_ITICKABLE_H 1
 
-#include <core/global.h>
-#include <core/iserializable.h>
+#include <core/environment.h>
+#include <core/namespace.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
-namespace Math { /******************************************** Math Namespace */
-	class Matrix4;
-	struct Point2;
-	template <typename T> struct Size2;
-	typedef Size2<float> Size2f;
-} /*********************************************************** Math Namespace */
+namespace Core { /******************************************** Core Namespace */
 
-namespace Graphics { /************************************ Graphics Namespace */
-
-	/*! @brief Graphics Transform */
-	class MARSHMALLOW_GRAPHICS_EXPORT
-	Transform
+	/*!
+	 * @brief Tickable Interface
+	 */
+	struct MARSHMALLOW_CORE_EXPORT
+	ITickable
 	{
-		PRIVATE_IMPLEMENTATION
-	public:
-		enum MatrixType
-		{
-			Model,
-			View,
-			MatrixTypes
-		};
-	public:
-		Transform(void);
-		Transform(const Transform &other);
-		virtual ~Transform(void);
-		
-		Transform & operator =(const Transform& rhs);
+		virtual ~ITickable(void);
 
-		float rotation(void) const;
-		void setRotation(float value);
-
-		const Math::Size2f & scale(void) const;
-		void setScale(const Math::Size2f &value);
-		void setScale(float w, float h);
-
-		const Math::Point2 & translation(void) const;
-		void setTranslation(const Math::Point2 &value);
-		void setTranslation(float x, float y);
-
-		const Math::Matrix4 & matrix(MatrixType type = Model) const;
+		/*!
+		 * @brief Tick feature
+		 */
+		virtual void tick(float delta) = 0;
 	};
 
-} /********************************************** Graphics::Painter Namespace */
+} /*********************************************************** Core Namespace */
 MARSHMALLOW_NAMESPACE_END
 
 #endif

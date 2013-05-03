@@ -52,7 +52,7 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 namespace { /******************************** Graphics::<anonymous> Namespace */
 
-	static const char * s_scalemode_string[ITextureData::smModes] =
+	static const char * s_scalemode_string[ITextureData::ScaleModes] =
 	    { "nearest", "linear" };
 
 	ITextureData::ScaleMode
@@ -60,13 +60,13 @@ namespace { /******************************** Graphics::<anonymous> Namespace */
 	{
 		using namespace Graphics;
 
-		if (!str) return(ITextureData::smDefault);
+		if (!str) return(ITextureData::Nearest);
 
-		for (int i = 0; i < ITextureData::smModes; ++i)
+		for (int i = 0; i < ITextureData::ScaleModes; ++i)
 			if (MMSTRCASECMP(str, s_scalemode_string[i]) == 0)
 				return(static_cast<ITextureData::ScaleMode>(i));
 
-		return(ITextureData::smDefault);
+		return(ITextureData::Nearest);
 	}
 
 	const char *
@@ -106,15 +106,15 @@ struct Mesh::Private
 
 Mesh::Private::~Private(void)
 {
-	if (flags & mfTextureCoordinateFree)
+	if (flags & TextureCoordinateFree)
 		delete tcdata;
 	tcdata = 0;
 
-	if (flags & mfTextureDataFree)
+	if (flags & TextureDataFree)
 		delete tdata;
 	tdata = 0;
 
-	if (flags & mfVertexDataFree)
+	if (flags & VertexDataFree)
 		delete vdata;
 	vdata = 0;
 }

@@ -51,18 +51,18 @@ namespace Core { /******************************************** Core Namespace */
 
 namespace Audio { /****************************************** Audio Namespace */
 
-	enum TrackFlags
-	{
-		tfDataFree = (1 << 0),
-		tfNone = 0
-	};
-
 	/*!
 	 * @brief Audio Track Interface
 	 */
 	struct MARSHMALLOW_AUDIO_EXPORT
 	ITrack
 	{
+		enum Flags
+		{
+			DataFree = (1 << 0),
+			None = 0
+		};
+
 		virtual ~ITrack(void) {};
 
 		virtual Core::IDataIO * data(void) const = 0;

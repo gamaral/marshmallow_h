@@ -61,15 +61,14 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 		enum ScaleMode
 		{
-			smNearest,
-			smLinear,
-			smModes,
-			smDefault = smNearest
+			Nearest,
+			Linear,
+			ScaleModes
 		};
 
 		virtual bool load(const Core::Identifier &id,
-		                  ScaleMode min = smDefault,
-		                  ScaleMode mag = smDefault) = 0;
+		                  ScaleMode min = Nearest,
+		                  ScaleMode mag = Nearest) = 0;
 		virtual void unload(void) = 0;
 		virtual bool isLoaded(void) const = 0;
 

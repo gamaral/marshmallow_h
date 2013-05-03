@@ -54,7 +54,7 @@ fileio_readonly_test(void)
 {
 	char l_scratch[s_content_size];
 
-	Core::FileIO l_file(s_data_file, Core::DIOReadOnly);
+	Core::FileIO l_file(s_data_file, Core::FileIO::ReadOnly);
 	ASSERT_TRUE("Core::FileIO::open()", l_file.isOpen());
 	if (!l_file.isOpen()) return;
 
@@ -71,7 +71,7 @@ fileio_readonly_test(void)
 	ASSERT_ZERO("Core::FileIO::read() FAIL/EOF", l_read);
 	ASSERT_TRUE("Core::FileIO::isEOF() == TRUE", l_file.atEOF());
 
-	bool l_seeked = l_file.seek(-6, Core::DIOCurrent);
+	bool l_seeked = l_file.seek(-6, Core::FileIO::Current);
 	ASSERT_TRUE("Core::FileIO::seek() -6 BYTES FROM CURRENT", l_seeked);
 	ASSERT_EQUAL("Core::FileIO::tell() CONFIRM NEW POSITION",
 	    s_content_size -6, l_file.tell());
@@ -81,7 +81,7 @@ fileio_readonly_test(void)
 	    strcmp(l_scratch, &s_content[s_content_size -6]));
 	ASSERT_FALSE("Core::FileIO::isEOF() == FALSE", l_file.atEOF());
 
-	l_seeked = l_file.seek(-5, Core::DIOEnd);
+	l_seeked = l_file.seek(-5, Core::FileIO::End);
 	ASSERT_TRUE("Core::FileIO::seek() -5 BYTES FROM END", l_seeked);
 	ASSERT_EQUAL("Core::FileIO::tell() CONFIRM NEW POSITION",
 	    s_content_size -5, l_file.tell());
@@ -91,7 +91,7 @@ fileio_readonly_test(void)
 	    strcmp(l_scratch, &s_content[s_content_size -5]));
 	ASSERT_FALSE("Core::FileIO::isEOF() == FALSE", l_file.atEOF());
 
-	l_seeked = l_file.seek(4, Core::DIOSet);
+	l_seeked = l_file.seek(4, Core::FileIO::Set);
 	ASSERT_TRUE("Core::FileIO::seek() SET CURSOR POSITION TO 4", l_seeked);
 	ASSERT_EQUAL("Core::FileIO::tell() CONFIRM NEW POSITION", 4, l_file.tell());
 	l_read = l_file.read(l_scratch, 4);
@@ -100,7 +100,7 @@ fileio_readonly_test(void)
 	    strncmp(l_scratch, &s_content[4], 4));
 	ASSERT_FALSE("Core::FileIO::isEOF() == FALSE", l_file.atEOF());
 
-	l_seeked = l_file.seek(0, Core::DIOEnd);
+	l_seeked = l_file.seek(0, Core::FileIO::End);
 	ASSERT_TRUE("Core::FileIO::seek() SET CURSOR TO EOF", l_seeked);
 	l_read = l_file.read(l_scratch, 1);
 	ASSERT_ZERO("Core::FileIO::read() FAIL/EOF", l_read);
@@ -113,7 +113,7 @@ fileio_readonly_test(void)
 void
 fileio_writeonly_test(void)
 {
-	Core::FileIO l_file(s_data_file, Core::DIOTruncate);
+	Core::FileIO l_file(s_data_file, Core::FileIO::Truncate);
 	ASSERT_TRUE("Core::FileIO::open() TRUNCATE", l_file.isOpen());
 	if (!l_file.isOpen()) return;
 
@@ -126,7 +126,7 @@ fileio_writeonly_test(void)
 	ASSERT_EQUAL("Core::FileIO::tell() CONFIRM POSITION",
 	    s_content_size, l_file.tell());
 
-	bool l_seeked = l_file.seek(0, Core::DIOSet);
+	bool l_seeked = l_file.seek(0, Core::FileIO::Set);
 	ASSERT_TRUE("Core::FileIO::seek() SET CURSOR TO BEGINNING OF FILE", l_seeked);
 	ASSERT_ZERO("Core::FileIO::tell() CONFIRM POSITION", l_file.tell());
 

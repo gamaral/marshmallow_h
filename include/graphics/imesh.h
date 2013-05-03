@@ -61,17 +61,17 @@ namespace Graphics { /************************************ Graphics Namespace */
 	struct ITextureData;
 	struct IVertexData;
 
-	enum MeshFlag {
-		mfTextureCoordinateFree = (1 << 0),
-		mfTextureDataFree       = (1 << 1),
-		mfVertexDataFree        = (1 << 2),
-		mfNone                  = 0
-	};
-
 	/*! @brief Graphics Mesh Interface */
 	struct MARSHMALLOW_GRAPHICS_EXPORT
 	IMesh : public Core::ISerializable
 	{
+		enum Flag {
+			TextureCoordinateFree = (1 << 0),
+			TextureDataFree       = (1 << 1),
+			VertexDataFree        = (1 << 2),
+			None                  = 0
+		};
+
 		virtual ~IMesh(void);
 
 		virtual ITextureCoordinateData * textureCoordinateData(void) const = 0;
