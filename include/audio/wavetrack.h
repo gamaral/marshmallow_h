@@ -78,7 +78,7 @@ namespace Audio { /****************************************** Audio Namespace */
 
 	public:
 
-		static bool Validate(const Core::IDataIO *dio);
+		static bool Validate(const Core::IDataIO &dio);
 	};
 
 } /********************************************************** Audio Namespace */

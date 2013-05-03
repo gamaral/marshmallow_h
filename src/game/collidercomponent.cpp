@@ -162,22 +162,22 @@ ColliderComponent::Private::update(float d)
 {
 	if (!movement) {
 		movement = static_cast<MovementComponent *>
-		    (component.entity().getComponentType("Game::MovementComponent"));
+		    (component.entity()->getComponentType("Game::MovementComponent"));
 	}
 
 	if (!position) {
 		position = static_cast<PositionComponent *>
-		    (component.entity().getComponentType("Game::PositionComponent"));
+		    (component.entity()->getComponentType("Game::PositionComponent"));
 	}
 
 	if (!size) {
 		size = static_cast<SizeComponent *>
-		    (component.entity().getComponentType("Game::SizeComponent"));
+		    (component.entity()->getComponentType("Game::SizeComponent"));
 	}
 
 	if (!init && !layer && position && size) {
 		layer = static_cast<CollisionSceneLayer *>
-		    (component.entity().layer().scene().getLayerType("Game::CollisionSceneLayer"));
+		    (component.entity()->layer()->scene()->getLayerType("Game::CollisionSceneLayer"));
 
 		if (!layer) {
 			MMWARNING("Collider component used with no collision scene layer!");
@@ -221,7 +221,8 @@ ColliderComponent::Private::update(float d)
 	}
 }
 
-ColliderComponent::ColliderComponent(const Core::Identifier &i, IEntity &e)
+ColliderComponent::ColliderComponent(const Core::Identifier &i,
+                                     Game::IEntity *e)
     : Component(i, e)
     , PIMPL_CREATE_X(*this)
 {
@@ -311,7 +312,8 @@ ColliderComponent::Type(void)
 
 /************************************************** BounceColliderComponent */
 
-BounceColliderComponent::BounceColliderComponent(const Core::Identifier &i, IEntity &e)
+BounceColliderComponent::BounceColliderComponent(const Core::Identifier &i,
+                                                 Game::IEntity *e)
     : ColliderComponent(i, e)
 {
 }

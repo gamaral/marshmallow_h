@@ -64,7 +64,7 @@ namespace Game { /******************************************** Game Namespace */
 		NO_ASSIGN_COPY(TextComponent);
 	public:
 
-		TextComponent(const Core::Identifier &i, IEntity &entity);
+		TextComponent(const Core::Identifier &i, Game::IEntity *entity);
 		virtual ~TextComponent(void);
 
 		Graphics::ITileset * tileset(void);

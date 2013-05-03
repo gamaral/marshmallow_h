@@ -46,15 +46,16 @@ namespace Game { /******************************************** Game Namespace */
 
 struct Component::Private
 {
-	Private(const Core::Identifier &i, IEntity &e)
+	Private(const Core::Identifier &i, Game::IEntity *e)
 	    : id(i)
-	    , entity(e) {}
+	    , entity(e)
+	{}
 
 	Core::Identifier id;
-	IEntity &entity;
+	Game::IEntity *entity;
 };
 
-Component::Component(const Core::Identifier &i, IEntity &e)
+Component::Component(const Core::Identifier &i, Game::IEntity *e)
     : PIMPL(new Private(i, e))
 {
 }
@@ -70,7 +71,7 @@ Component::id(void) const
 	return(PIMPL->id);
 }
 
-IEntity &
+Game::IEntity *
 Component::entity(void) const
 {
 	return(PIMPL->entity);

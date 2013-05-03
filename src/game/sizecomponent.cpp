@@ -50,7 +50,7 @@ struct SizeComponent::Private
 	Math::Size2f size;
 };
 
-SizeComponent::SizeComponent(const Core::Identifier &i, IEntity &e)
+SizeComponent::SizeComponent(const Core::Identifier &i, Game::IEntity *e)
     : Component(i, e)
     , PIMPL_CREATE
 {

@@ -97,7 +97,7 @@ namespace { /*********************************** Extra::<anonymous> Namespace */
 
 struct TMXLoader::Private
 {
-	Private(Game::IScene &s)
+	Private(Game::IScene *s)
 	    : scene(s)
 	    , base_directory(".")
 	    , scale(1.f, 1.f)
@@ -113,7 +113,7 @@ struct TMXLoader::Private
 	bool processObjectGroup(TinyXML::XMLElement &element);
 	bool processTileset(TinyXML::XMLElement &element);
 
-	Game::IScene &scene;
+	Game::IScene *scene;
 
 	TilesetCollection tilesets;
 
@@ -171,7 +171,7 @@ TMXLoader::Private::load(const char *f)
 	/* attach layers to scene */
 	Game::SceneLayerList::iterator l_layer_i;
 	for (l_layer_i = layers.begin(); l_layer_i != layers.end(); ++l_layer_i)
-		scene.pushLayer(*l_layer_i);
+		scene->pushLayer(*l_layer_i);
 
 	return(is_loaded = true);
 }
@@ -253,9 +253,9 @@ TMXLoader::Private::processMap(TinyXML::XMLElement &m)
 			}
 
 			/* set background color */
-			Game::Scene &l_scene =
-			    static_cast<Game::Scene &>(scene);
-			l_scene.setBackground(PixelToColor(l_pxl));
+			Game::Scene *l_scene =
+			    static_cast<Game::Scene *>(scene);
+			l_scene->setBackground(PixelToColor(l_pxl));
 			continue;
 		}
 
@@ -441,7 +441,7 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 		l_object_type = l_object->Attribute("type");
 
 		Game::IEntity *l_entity = Game::Factory::Instance()->
-		    createEntity(l_object_type, l_object_name ? l_object_name : "", *l_layer);
+		    createEntity(l_object_type, l_object_name ? l_object_name : "", l_layer);
 		if (!l_entity) {
 			MMWARNING("Object '" << l_object_name << "' of type '" << l_object_type << "' was left unhandled.");
 			return(false);
@@ -506,13 +506,13 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 
 			/* attach tileset used */
 
-			Game::TilesetComponent *l_tscomponent = new Game::TilesetComponent("tileset", *l_entity);
+			Game::TilesetComponent *l_tscomponent = new Game::TilesetComponent("tileset", l_entity);
 			l_tscomponent->setTileset(l_tileset);
 			l_entity->pushComponent(l_tscomponent);
 
 			/* generate tile mesh */
 
-			Game::RenderComponent *l_render = new Game::RenderComponent("render", *l_entity);
+			Game::RenderComponent *l_render = new Game::RenderComponent("render", l_entity);
 
 			Graphics::IVertexData *l_vdata =
 			    Graphics::Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
@@ -531,7 +531,7 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 		}
 
 		/* create position component */
-		Game::PositionComponent *l_pos_component = new Game::PositionComponent("position", *l_entity);
+		Game::PositionComponent *l_pos_component = new Game::PositionComponent("position", l_entity);
 		l_pos_component->setPosition(scale.width  * static_cast<float>(l_object_x),
 		                             scale.height * static_cast<float>(l_object_y));
 
@@ -542,7 +542,7 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 		l_entity->pushComponent(l_pos_component);
 
 		/* create size component */
-		Game::SizeComponent *l_size = new Game::SizeComponent("size", *l_entity);
+		Game::SizeComponent *l_size = new Game::SizeComponent("size", l_entity);
 		l_size->size() = l_object_rsize;
 		l_entity->pushComponent(l_size);
 
@@ -550,7 +550,8 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 		TinyXML::XMLElement *l_properties = l_object->FirstChildElement(TMXPROPERTIES_NODE);
 		TinyXML::XMLElement *l_property = l_properties ? l_properties->FirstChildElement(TMXPROPERTIES_PROPERTY_NODE) : 0;
 		if (l_property) {
-			Game::PropertyComponent *l_pcomponent = new Game::PropertyComponent("property", *l_entity);
+			Game::PropertyComponent *l_pcomponent =
+			    new Game::PropertyComponent("property", l_entity);
 
 			do {
 				const char *l_pname = l_property->Attribute("name");
@@ -636,7 +637,7 @@ TMXLoader::Private::processTileset(TinyXML::XMLElement &e)
 
 /****************************************************************** TMXLoader */
 
-TMXLoader::TMXLoader(Game::IScene &s)
+TMXLoader::TMXLoader(Game::IScene *s)
     : PIMPL_CREATE_X(s)
 {
 }

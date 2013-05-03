@@ -49,7 +49,7 @@ struct PositionComponent::Private
 	Math::Point2 position;
 };
 
-PositionComponent::PositionComponent(const Core::Identifier &i, IEntity &e)
+PositionComponent::PositionComponent(const Core::Identifier &i, Game::IEntity *e)
     : Component(i, e)
     , PIMPL_CREATE
 {

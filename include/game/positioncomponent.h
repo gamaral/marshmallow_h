@@ -55,7 +55,8 @@ namespace Game { /******************************************** Game Namespace */
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(PositionComponent);
 	public:
-		PositionComponent(const Core::Identifier &i, IEntity &entity);
+		PositionComponent(const Core::Identifier &i,
+		                  Game::IEntity *entity);
 		virtual ~PositionComponent(void);
 
 		const Math::Point2 & position(void) const;

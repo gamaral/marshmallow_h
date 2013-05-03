@@ -55,7 +55,7 @@ namespace { /************************************ Game::<anonymous> Namespace */
 
 struct Entity::Private
 {
-	Private(const Core::Identifier &i, EntitySceneLayer &l)
+	Private(const Core::Identifier &i, Game::EntitySceneLayer *l)
 	    : id(i)
 	    , layer(l)
 	    , killed(false)
@@ -87,9 +87,9 @@ struct Entity::Private
 	inline void
 	update(float delta);
 
-	ComponentList components;
+	Game::ComponentList components;
 	Core::Identifier id;
-	EntitySceneLayer &layer;
+	Game::EntitySceneLayer *layer;
 	bool killed;
 };
 
@@ -190,7 +190,7 @@ Entity::Private::update(float d)
 		(*l_i)->update(d);
 }
 
-Entity::Entity(const Core::Identifier &i, EntitySceneLayer &l)
+Entity::Entity(const Core::Identifier &i, Game::EntitySceneLayer *l)
     : PIMPL_CREATE_X(i, l)
 {
 }
@@ -207,8 +207,8 @@ Entity::id(void) const
 	return(PIMPL->id);
 }
 
-EntitySceneLayer &
-Entity::layer(void)
+Game::EntitySceneLayer *
+Entity::layer(void) const
 {
 	return(PIMPL->layer);
 }

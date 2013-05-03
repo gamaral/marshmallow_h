@@ -46,19 +46,19 @@ namespace Game { /******************************************** Game Namespace */
 
 struct SceneLayer::Private
 {
-	Private(const Core::Identifier &i, IScene &s, int f)
+	Private(const Core::Identifier &i, Game::IScene *s, int f)
 	    : id(i)
 	    , scene(s)
 	    , flags(f)
 	    , killed(false) {}
 
 	Core::Identifier id;
-	IScene &scene;
+	Game::IScene *scene;
 	int flags;
 	bool killed;
 };
 
-SceneLayer::SceneLayer(const Core::Identifier &i, IScene &s, int f)
+SceneLayer::SceneLayer(const Core::Identifier &i, Game::IScene *s, int f)
     : PIMPL_CREATE_X(i, s, f)
 {
 }
@@ -74,8 +74,8 @@ SceneLayer::id(void) const
 	return(PIMPL->id);
 }
 
-IScene &
-SceneLayer::scene(void)
+Game::IScene *
+SceneLayer::scene(void) const
 {
 	return(PIMPL->scene);
 }

@@ -55,7 +55,8 @@ namespace Game { /******************************************** Game Namespace */
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(PropertyComponent);
 	public:
-		PropertyComponent(const Core::Identifier &i, IEntity &entity);
+		PropertyComponent(const Core::Identifier &i,
+		                  Game::IEntity *entity);
 		virtual ~PropertyComponent(void);
 
 		std::string get(const Core::Identifier &id) const;

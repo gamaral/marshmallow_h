@@ -58,13 +58,14 @@ namespace Game { /******************************************** Game Namespace */
 		NO_ASSIGN_COPY(Entity);
 	public:
 
-		Entity(const Core::Identifier &identifier, EntitySceneLayer &layer);
+		Entity(const Core::Identifier &identifier,
+		       Game::EntitySceneLayer *layer);
 		virtual ~Entity(void);
 
 	public: /* reimp */
 
 		VIRTUAL const Core::Identifier & id(void) const;
-		VIRTUAL EntitySceneLayer & layer(void);
+		VIRTUAL Game::EntitySceneLayer * layer(void) const;
 
 		VIRTUAL void pushComponent(Game::IComponent *component);
 		VIRTUAL Game::IComponent * popComponent(void);

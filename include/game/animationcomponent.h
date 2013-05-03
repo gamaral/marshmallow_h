@@ -54,7 +54,8 @@ namespace Game { /******************************************** Game Namespace */
 		NO_ASSIGN_COPY(AnimationComponent);
 	public:
 
-		AnimationComponent(const Core::Identifier &identifier, IEntity &entity);
+		AnimationComponent(const Core::Identifier &identifier,
+		                   Game::IEntity *entity);
 		virtual ~AnimationComponent(void);
 
 		void pushFrame(const Core::Identifier &animation, uint16_t tile, int duration = 1);

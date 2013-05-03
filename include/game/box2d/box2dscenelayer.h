@@ -65,7 +65,7 @@ namespace Game { /******************************************** Game Namespace */
 	public:
 
 		Box2DSceneLayer(const Core::Identifier &identifier,
-		    IScene &scene);
+		                Game::IScene *scene);
 		virtual ~Box2DSceneLayer(void);
 
 		Math::Vector2 gravity(void) const;

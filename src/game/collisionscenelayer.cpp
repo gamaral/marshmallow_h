@@ -51,15 +51,16 @@ struct CollisionSceneLayer::Private
 	ColliderList colliders;
 };
 
-CollisionSceneLayer::CollisionSceneLayer(const Core::Identifier &i, IScene &s)
+CollisionSceneLayer::CollisionSceneLayer(const Core::Identifier &i,
+                                         Game::IScene *s)
     : SceneLayer(i, s)
-    , PIMPL(new Private)
+    , PIMPL_CREATE
 {
 }
 
 CollisionSceneLayer::~CollisionSceneLayer(void)
 {
-	delete PIMPL, PIMPL = 0;
+	PIMPL_DESTROY;
 }
 
 void

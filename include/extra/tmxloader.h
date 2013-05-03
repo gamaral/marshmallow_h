@@ -66,7 +66,7 @@ namespace Extra { /****************************************** Extra Namespace */
 		NO_ASSIGN_COPY(TMXLoader);
 	public:
 
-		TMXLoader(Game::IScene &scene);
+		TMXLoader(Game::IScene *scene);
 		virtual ~TMXLoader(void);
 
 		bool isLoaded(void) const;

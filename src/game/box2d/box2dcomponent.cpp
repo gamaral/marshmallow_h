@@ -83,7 +83,7 @@ struct Box2DComponent::Private
 	bool  init;
 };
 
-Box2DComponent::Box2DComponent(const Core::Identifier &i, IEntity &e)
+Box2DComponent::Box2DComponent(const Core::Identifier &i, Game::IEntity *e)
     : Component(i, e)
     , PIMPL_CREATE
 {
@@ -131,17 +131,17 @@ Box2DComponent::update(float d)
 
 	if (!PIMPL->position) {
 		PIMPL->position = static_cast<PositionComponent *>
-		    (entity().getComponentType("Game::PositionComponent"));
+		    (entity()->getComponentType("Game::PositionComponent"));
 	}
 
 	if (!PIMPL->render) {
 		PIMPL->render = static_cast<RenderComponent *>
-		    (entity().getComponentType("Game::RenderComponent"));
+		    (entity()->getComponentType("Game::RenderComponent"));
 	}
 
 	if (!PIMPL->init && !PIMPL->b2layer && PIMPL->position) {
 		PIMPL->b2layer = static_cast<Box2DSceneLayer *>
-		    (entity().layer().scene().getLayerType("Game::Box2DSceneLayer"));
+		    (entity()->layer()->scene()->getLayerType("Game::Box2DSceneLayer"));
 
 		if (!PIMPL->b2layer) {
 			MMWARNING("Box2DComponent used with non Box2D Scene!");

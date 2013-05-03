@@ -51,7 +51,8 @@ struct PropertyComponent::Private
 	std::map<Core::Identifier, std::string> data;
 };
 
-PropertyComponent::PropertyComponent(const Core::Identifier &i, IEntity &e)
+PropertyComponent::PropertyComponent(const Core::Identifier &i,
+                                     Game::IEntity *e)
     : Component(i, e)
     , PIMPL_CREATE
 {

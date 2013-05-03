@@ -83,7 +83,7 @@ Factory::createScene(const Core::Type &t,
 ISceneLayer *
 Factory::createSceneLayer(const Core::Type &t,
                           const Core::Identifier &i,
-                          IScene &s) const
+                          Game::IScene *s) const
 {
 	if (t == EntitySceneLayer::Type()) return(new EntitySceneLayer(i, s));
 	else if (t == PauseSceneLayer::Type()) return(new PauseSceneLayer(i, s));
@@ -94,10 +94,10 @@ Factory::createSceneLayer(const Core::Type &t,
 	return(0);
 }
 
-IEntity *
+Game::IEntity *
 Factory::createEntity(const Core::Type &t,
                       const Core::Identifier &i,
-                      EntitySceneLayer &l) const
+                      Game::EntitySceneLayer *l) const
 {
 	if (t == Entity::Type()) return(new Entity(i, l));
 	return(0);
@@ -105,7 +105,8 @@ Factory::createEntity(const Core::Type &t,
 
 IComponent *
 Factory::createComponent(const Core::Type &t,
-    const Core::Identifier &i, IEntity &e) const
+                         const Core::Identifier &i,
+                         Game::IEntity *e) const
 {
 	if (t == MovementComponent::Type()) return(new MovementComponent(i, e));
 	else if (t == RenderComponent::Type()) return(new RenderComponent(i, e));

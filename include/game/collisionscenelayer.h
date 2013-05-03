@@ -65,7 +65,7 @@ namespace Game { /******************************************** Game Namespace */
 	public:
 
 		CollisionSceneLayer(const Core::Identifier &identifier,
-		    IScene &scene);
+		                    Game::IScene *scene);
 		virtual ~CollisionSceneLayer(void);
 
 		void registerCollider(ColliderComponent *collider);

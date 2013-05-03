@@ -62,7 +62,7 @@ namespace Game { /******************************************** Game Namespace */
 	public:
 
 		SplashSceneLayer(const Core::Identifier &identifier,
-		    IScene &scene);
+		                 Game::IScene *scene);
 		virtual ~SplashSceneLayer(void);
 
 		Graphics::QuadMesh * mesh(void) const;

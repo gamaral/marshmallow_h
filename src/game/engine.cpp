@@ -173,7 +173,7 @@ Engine::initialize(void)
 		PIMPL->scene_manager = new SceneManager();
 
 	if (!PIMPL->factory)
-		PIMPL->factory = new Factory();
+		PIMPL->factory = new Factory;
 
 	/*
 	 * Environment Overrides

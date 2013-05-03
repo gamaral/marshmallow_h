@@ -59,7 +59,7 @@ struct TilesetComponent::Private
 	Graphics::ITileset *tileset;
 };
 
-TilesetComponent::TilesetComponent(const Core::Identifier &i, IEntity &e)
+TilesetComponent::TilesetComponent(const Core::Identifier &i, Game::IEntity *e)
     : Component(i, e)
     , PIMPL_CREATE
 {

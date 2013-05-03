@@ -58,12 +58,12 @@ namespace Game { /******************************************** Game Namespace */
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(SizeComponent);
 	public:
-		SizeComponent(const Core::Identifier &i, IEntity &entity);
+		SizeComponent(const Core::Identifier &i, Game::IEntity *entity);
 		virtual ~SizeComponent(void);
 
 		Math::Size2f & size(void);
 
-	public: /* virtual */
+	public: /* reimp */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }

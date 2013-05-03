@@ -191,7 +191,7 @@ TextComponent::Private::render(void)
 
 /******************************************************************************/
 
-TextComponent::TextComponent(const Core::Identifier &i, IEntity &e)
+TextComponent::TextComponent(const Core::Identifier &i, Game::IEntity *e)
     : Component(i, e)
     , PIMPL_CREATE
 {
@@ -269,7 +269,7 @@ TextComponent::update(float delta)
 
 	if (!PIMPL->position)
 	    PIMPL->position = static_cast<PositionComponent *>
-	        (entity().getComponentType("Game::PositionComponent"));
+	        (entity()->getComponentType("Game::PositionComponent"));
 
 	if (PIMPL->invalidated)
 	    PIMPL->rebuild();

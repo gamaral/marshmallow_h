@@ -65,7 +65,8 @@ namespace Game { /******************************************** Game Namespace */
 		NO_ASSIGN_COPY(Box2DComponent);
 	public:
 
-		Box2DComponent(const Core::Identifier &identifier, IEntity &entity);
+		Box2DComponent(const Core::Identifier &identifier,
+		               Game::IEntity *entity);
 		virtual ~Box2DComponent(void);
 
 		b2Body * body(void);

@@ -58,7 +58,7 @@ struct PauseSceneLayer::Private
 	Graphics::IMesh *mesh;
 };
 
-PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, IScene &s)
+PauseSceneLayer::PauseSceneLayer(const Core::Identifier &i, Game::IScene *s)
     : SceneLayer(i, s, slfUpdateBlock)
     , PIMPL_CREATE
 {

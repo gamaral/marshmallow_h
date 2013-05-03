@@ -59,7 +59,8 @@ namespace Game { /******************************************** Game Namespace */
 		PRIVATE_IMPLEMENTATION
 		NO_ASSIGN_COPY(RenderComponent);
 	public:
-		RenderComponent(const Core::Identifier &i, IEntity &entity);
+		RenderComponent(const Core::Identifier &i,
+		                Game::IEntity *entity);
 		virtual ~RenderComponent(void);
 
 		Graphics::IMesh * mesh(void) const;

@@ -298,7 +298,7 @@ TilemapSceneLayer::Private::recalculateVertexData(uint32_t o)
 
 /******************************************************************************/
 
-TilemapSceneLayer::TilemapSceneLayer(const Core::Identifier &i, IScene &s)
+TilemapSceneLayer::TilemapSceneLayer(const Core::Identifier &i, Game::IScene *s)
     : SceneLayer(i, s)
     , PIMPL_CREATE
 {

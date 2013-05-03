@@ -87,7 +87,7 @@ struct WaveTrack::Private
 void
 WaveTrack::Private::reset(void)
 {
-	if (!WaveTrack::Validate(dio)) {
+	if (!WaveTrack::Validate(*dio)) {
 		MMERROR("Tried to open invalid WAVE file.");
 		return;
 	}
@@ -260,10 +260,10 @@ WaveTrack::seek(long offset) const
 }
 
 bool
-WaveTrack::Validate(const Core::IDataIO *dio)
+WaveTrack::Validate(const Core::IDataIO &dio)
 {
 	/* sanity check */
-	if (!dio->isOpen()) {
+	if (!dio.isOpen()) {
 		MMERROR("Audio stream is closed!");
 		return(false);
 	}
@@ -271,7 +271,7 @@ WaveTrack::Validate(const Core::IDataIO *dio)
 	/*
 	 * Reset location
 	 */
-	if (!dio->seek(0, Core::DIOSet)) {
+	if (!dio.seek(0, Core::DIOSet)) {
 		MMDEBUG("Invalid DataIO (failed seek).");
 		return(false);
 	}
@@ -279,7 +279,7 @@ WaveTrack::Validate(const Core::IDataIO *dio)
 	char l_ident[5] = { 0, 0, 0, 0, 0 };
 	
 	/* read type */
-	if (4 != dio->read(l_ident, 4)) {
+	if (4 != dio.read(l_ident, 4)) {
 		MMDEBUG("Invalid DataIO (short read).");
 		return(false);
 	}
@@ -293,13 +293,13 @@ WaveTrack::Validate(const Core::IDataIO *dio)
 	MMDEBUG("Detected RIFF file.");
 
 	/* skip length */
-	if (!dio->seek(4, Core::DIOCurrent)) {
+	if (!dio.seek(4, Core::DIOCurrent)) {
 		MMDEBUG("Invalid RIFF (failed seek).");
 		return(false);
 	}
 
 	/* read type */
-	if (4 != dio->read(l_ident, 4)) {
+	if (4 != dio.read(l_ident, 4)) {
 		MMDEBUG("Invalid RIFF (short read).");
 		return(false);
 	}

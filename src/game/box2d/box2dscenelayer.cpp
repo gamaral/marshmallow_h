@@ -59,7 +59,7 @@ struct Box2DSceneLayer::Private
 	b2World world;
 };
 
-Box2DSceneLayer::Box2DSceneLayer(const Core::Identifier &i, IScene &s)
+Box2DSceneLayer::Box2DSceneLayer(const Core::Identifier &i, Game::IScene *s)
     : SceneLayer(i, s)
     , PIMPL_CREATE
 {

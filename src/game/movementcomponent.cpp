@@ -63,7 +63,7 @@ struct MovementComponent::Private
 	PositionComponent *position;
 };
 
-MovementComponent::MovementComponent(const Core::Identifier &i, IEntity &e)
+MovementComponent::MovementComponent(const Core::Identifier &i, Game::IEntity *e)
     : Component(i, e)
     , PIMPL_CREATE
 {
@@ -112,7 +112,7 @@ MovementComponent::update(float d)
 {
 	if (!PIMPL->position) {
 		PIMPL->position = static_cast<PositionComponent *>
-		    (entity().getComponentType("Game::PositionComponent"));
+		    (entity()->getComponentType("Game::PositionComponent"));
 	}
 
 	const Math::Pair &l_limit_x = PIMPL->limit_x;

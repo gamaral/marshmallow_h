@@ -62,7 +62,7 @@ namespace Game { /******************************************** Game Namespace */
 	public:
 
 		TilemapSceneLayer(const Core::Identifier &identifier,
-		    IScene &scene);
+		                  Game::IScene *scene);
 		virtual ~TilemapSceneLayer(void);
 
 		Graphics::ITileset * tileset(uint32_t index, uint32_t *offset = 0);

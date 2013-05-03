@@ -60,7 +60,7 @@ namespace Game { /******************************************** Game Namespace */
 		NO_ASSIGN_COPY(TilesetComponent);
 	public:
 
-		TilesetComponent(const Core::Identifier &i, IEntity &entity);
+		TilesetComponent(const Core::Identifier &i, Game::IEntity *entity);
 		virtual ~TilesetComponent(void);
 
 		Graphics::ITileset * tileset(void) const;

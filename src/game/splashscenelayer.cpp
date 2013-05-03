@@ -145,7 +145,7 @@ SplashSceneLayer::Private::calculateQuadScale(void)
 	mesh->setScale(l_pixel_scale_x, l_pixel_scale_y);
 }
 
-SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, IScene &s)
+SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, Game::IScene *s)
     : SceneLayer(i, s, slfUpdateBlock)
     , PIMPL_CREATE_X(*this)
 {

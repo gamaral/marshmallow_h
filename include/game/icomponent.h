@@ -53,6 +53,8 @@ namespace Core { /******************************************** Core Namespace */
 
 namespace Game { /******************************************** Game Namespace */
 
+	struct IEntity;
+
 	/*! @brief Game Component Interface */
 	struct MARSHMALLOW_GAME_EXPORT
 	IComponent : public Core::IRenderable
@@ -60,6 +62,8 @@ namespace Game { /******************************************** Game Namespace */
 	           , public Core::ISerializable
 	{
 		virtual ~IComponent(void);
+
+		virtual IEntity * entity(void) const = 0;
 
 		virtual const Core::Identifier & id(void) const = 0;
 		virtual const Core::Type & type(void) const = 0;

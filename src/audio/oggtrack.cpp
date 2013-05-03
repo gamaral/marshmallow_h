@@ -147,7 +147,7 @@ OggTrack::Private::~Private(void)
 void
 OggTrack::Private::reset(void)
 {
-	if (!OggTrack::Validate(dio)) {
+	if (!OggTrack::Validate(*dio)) {
 		MMERROR("Tried to open invalid Ogg file.");
 		return;
 	}
@@ -311,10 +311,10 @@ OggTrack::seek(long offset) const
 }
 
 bool
-OggTrack::Validate(const Core::IDataIO *dio)
+OggTrack::Validate(const Core::IDataIO &dio)
 {
 	/* sanity check */
-	if (!dio->isOpen()) {
+	if (!dio.isOpen()) {
 		MMERROR("Audio stream is closed!");
 		return(false);
 	}
@@ -322,7 +322,7 @@ OggTrack::Validate(const Core::IDataIO *dio)
 	/*
 	 * Reset location
 	 */
-	if (!dio->seek(0, Core::DIOSet)) {
+	if (!dio.seek(0, Core::DIOSet)) {
 		MMDEBUG("Invalid DataIO (failed seek).");
 		return(false);
 	}
@@ -330,7 +330,7 @@ OggTrack::Validate(const Core::IDataIO *dio)
 	char l_ident[5] = { 0, 0, 0, 0, 0 };
 	
 	/* read type */
-	if (4 != dio->read(l_ident, 4)) {
+	if (4 != dio.read(l_ident, 4)) {
 		MMDEBUG("Invalid DataIO (short read).");
 		return(false);
 	}
@@ -343,7 +343,7 @@ OggTrack::Validate(const Core::IDataIO *dio)
 
 	MMDEBUG("Detected Ogg file.");
 
-	if (!dio->seek(0, Core::DIOSet)) {
+	if (!dio.seek(0, Core::DIOSet)) {
 		MMDEBUG("Invalid DataIO (reset failed).");
 		return(false);
 	}

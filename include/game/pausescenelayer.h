@@ -59,7 +59,7 @@ namespace Game { /******************************************** Game Namespace */
 	public:
 
 		PauseSceneLayer(const Core::Identifier &identifier,
-		    IScene &scene);
+		                Game::IScene *scene);
 		virtual ~PauseSceneLayer(void);
 
 		Graphics::IMesh * mesh(void) const;

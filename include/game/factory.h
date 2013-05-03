@@ -67,17 +67,17 @@ namespace Game { /******************************************** Game Namespace */
 		VIRTUAL Game::ISceneLayer *
 		createSceneLayer(const Core::Type &type,
 		                 const Core::Identifier &identifier,
-		                 IScene &scene) const;
+		                 Game::IScene *scene) const;
 
 		VIRTUAL Game::IEntity *
 		createEntity(const Core::Type &type,
 		             const Core::Identifier &identifier,
-		             EntitySceneLayer &layer) const;
+		             Game::EntitySceneLayer *layer) const;
 
 		VIRTUAL Game::IComponent *
 		createComponent(const Core::Type &type,
 		                const Core::Identifier &identifier,
-		                IEntity &entity) const;
+		                Game::IEntity *entity) const;
 
 		VIRTUAL Graphics::IMesh *
 		createMesh(const Core::Type &type) const;

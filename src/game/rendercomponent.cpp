@@ -69,7 +69,7 @@ struct RenderComponent::Private
 	Graphics::IMesh *mesh;
 };
 
-RenderComponent::RenderComponent(const Core::Identifier &i, IEntity &e)
+RenderComponent::RenderComponent(const Core::Identifier &i, Game::IEntity *e)
     : Component(i, e)
     , PIMPL_CREATE
 {
@@ -97,7 +97,7 @@ RenderComponent::update(float)
 {
 	if (!PIMPL->position)
 		PIMPL->position = static_cast<PositionComponent *>
-		    (entity().getComponentType("Game::PositionComponent"));
+		    (entity()->getComponentType("Game::PositionComponent"));
 }
 
 void

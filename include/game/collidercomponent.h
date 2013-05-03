@@ -69,7 +69,8 @@ namespace Game { /******************************************** Game Namespace */
 
 	public:
 
-		ColliderComponent(const Core::Identifier &identifier, IEntity &entity);
+		ColliderComponent(const Core::Identifier &identifier,
+		                  Game::IEntity *entity);
 		virtual ~ColliderComponent(void);
 
 		bool active(void) const;
@@ -106,7 +107,9 @@ namespace Game { /******************************************** Game Namespace */
 		Game::PositionComponent * position(void) const;
 		Game::SizeComponent * size(void) const;
 
-		virtual bool collision(ColliderComponent &collider, float delta, const CollisionData &data);
+		virtual bool collision(ColliderComponent &collider,
+		                       float delta,
+		                       const CollisionData &data);
 	};
 
 	/*! @brief Game Bounce Collider Component Class */
@@ -116,7 +119,8 @@ namespace Game { /******************************************** Game Namespace */
 		NO_ASSIGN_COPY(BounceColliderComponent);
 	public:
 
-		BounceColliderComponent(const Core::Identifier &identifier, IEntity &entity);
+		BounceColliderComponent(const Core::Identifier &identifier,
+		                        Game::IEntity *entity);
 		virtual ~BounceColliderComponent(void) {};
 
 	public: /* virtual */

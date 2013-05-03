@@ -48,8 +48,6 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
-	struct IEntity;
-
 	/*! @brief Game Component  Class */
 	class MARSHMALLOW_GAME_EXPORT
 	Component : public IComponent
@@ -58,14 +56,15 @@ namespace Game { /******************************************** Game Namespace */
 		NO_ASSIGN_COPY(Component);
 	public:
 
-		Component(const Core::Identifier &identifier, IEntity &entity);
+		Component(const Core::Identifier &identifier,
+		          Game::IEntity *entity);
 		virtual ~Component(void);
-
-		IEntity & entity(void) const;
 
 	public: /* reimp */
 
 		VIRTUAL const Core::Identifier & id(void) const;
+
+		VIRTUAL IEntity * entity(void) const;
 
 		VIRTUAL void render(void) {};
 		VIRTUAL void update(float) {};

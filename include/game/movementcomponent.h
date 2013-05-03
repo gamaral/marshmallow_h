@@ -60,7 +60,8 @@ namespace Game { /******************************************** Game Namespace */
 		NO_ASSIGN_COPY(MovementComponent);
 	public:
 
-		MovementComponent(const Core::Identifier &identifier, IEntity &entity);
+		MovementComponent(const Core::Identifier &identifier,
+		                  Game::IEntity *entity);
 		virtual ~MovementComponent(void);
 
 		Math::Vector2 & acceleration(void);

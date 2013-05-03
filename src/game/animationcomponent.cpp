@@ -193,13 +193,13 @@ AnimationComponent::Private::animate(float d)
 {
 	if (!tileset) {
 		tileset = static_cast<TilesetComponent *>
-		    (_interface.entity().getComponentType(TilesetComponent::Type()));
+		    (_interface.entity()->getComponentType(TilesetComponent::Type()));
 		if (!tileset) return;
 	}
 
 	if (!render) {
 		render = static_cast<RenderComponent *>
-		    (_interface.entity().getComponentType(RenderComponent::Type()));
+		    (_interface.entity()->getComponentType(RenderComponent::Type()));
 		if (render)
 			stop_data = render->mesh()->textureCoordinateData();
 		else return;
@@ -239,7 +239,8 @@ AnimationComponent::Private::animate(float d)
 
 /********************************************************* AnimationComponent */
 
-AnimationComponent::AnimationComponent(const Core::Identifier &i, IEntity &e)
+AnimationComponent::AnimationComponent(const Core::Identifier &i,
+                                       Game::IEntity *e)
     : Component(i, e)
     , PIMPL_CREATE_X(*this)
 {
