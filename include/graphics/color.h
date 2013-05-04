@@ -92,9 +92,9 @@ namespace Graphics { /************************************ Graphics Namespace */
 
 	public: /* static */
 
-		static const Color Black;
-		static const Color Transparent;
-		static const Color White;
+		static const Color & Black(void);
+		static const Color & Transparent(void);
+		static const Color & White(void);
 	};
 
 } /******************************************************* Graphics Namespace */

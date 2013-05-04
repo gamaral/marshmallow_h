@@ -56,7 +56,7 @@ namespace Dummy { /******************************** Graphics::Dummy Namespace */
 	TextureData : public ITextureData
 	{
 		Core::Identifier m_id;
-		Math::Size2i m_size;
+		Math::Size2i  m_size;
 
 		NO_ASSIGN_COPY(TextureData);
 	public:

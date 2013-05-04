@@ -97,11 +97,11 @@ namespace Math { /******************************************** Math Namespace */
 
 	public: /* static */
 
-		static const Size2<T> &Zero(void)
+		static const Size2<T> & Zero(void)
 		    { static Size2<T> s_zero(0, 0);
 		      return(s_zero); }
 
-		static const Size2<T> &Identity(void)
+		static const Size2<T> & Identity(void)
 		    { static Size2<T> s_identity(1, 1);
 		      return(s_identity); }
 	};

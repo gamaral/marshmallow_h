@@ -215,19 +215,19 @@ Tick(int mask)
 bool
 EVDEV::InitializeKeyboard(void)
 {
-	return(Initialize(KeyboardType));
+	return(Initialize(Keyboard));
 }
 
 void
 EVDEV::FinalizeKeyboard(void)
 {
-	Finalize(KeyboardType);
+	Finalize(Keyboard);
 }
 
 void
 EVDEV::TickKeyboard(void)
 {
-	Tick(KeyboardType);
+	Tick(Keyboard);
 }
 #endif
 
@@ -235,19 +235,19 @@ EVDEV::TickKeyboard(void)
 bool
 EVDEV::InitializeJoystick(void)
 {
-	return(Initialize(JoystickType|GamepadType));
+	return(Initialize(Joystick|Gamepad));
 }
 
 void
 EVDEV::FinalizeJoystick(void)
 {
-	Finalize(JoystickType|GamepadType);
+	Finalize(Joystick|Gamepad);
 }
 
 void
 EVDEV::TickJoystick(void)
 {
-	Tick(JoystickType|GamepadType);
+	Tick(Joystick|Gamepad);
 }
 #endif
 

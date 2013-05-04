@@ -156,7 +156,7 @@ FileIO::isOpen(void) const
 bool
 FileIO::atEOF(void) const
 {
-	return(feof(PIMPL->handle));
+	return(feof(PIMPL->handle) != 0);
 }
 
 

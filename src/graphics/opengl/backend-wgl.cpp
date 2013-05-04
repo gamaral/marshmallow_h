@@ -40,8 +40,8 @@
 
 #include <cassert>
 
+#include "core/identifier.h"
 #include "core/logger.h"
-#include "core/type.h"
 
 #include "event/eventmanager.h"
 #include "event/quitevent.h"
@@ -167,7 +167,7 @@ WGLBackend::Initialize(void)
 	/*
 	 * Initial Background Color (IMPORTANT)
 	 */
-	Painter::SetBackgroundColor(Color::Black);
+	Painter::SetBackgroundColor(Color::Black());
 
 	return(true);
 }

@@ -44,8 +44,8 @@
 #include <cassert>
 #include <cstring>
 
+#include "core/identifier.h"
 #include "core/logger.h"
-#include "core/type.h"
 
 #include "entrypoint/android.h"
 
@@ -167,7 +167,7 @@ JNIBackend::Initialize(void)
 	/*
 	 * Initial Background Color (IMPORTANT)
 	 */
-	Painter::SetBackgroundColor(Color::Black);
+	Painter::SetBackgroundColor(Color::Black());
 
 	return(true);
 }

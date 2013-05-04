@@ -46,6 +46,7 @@
 
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
+#include "event/touchevent.h"
 
 #include "graphics/backend.h"
 #include "graphics/itexturedata.h"
@@ -57,36 +58,35 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
-namespace { /************************************ Game::<anonymous> Namespace */
-
-enum SplashState
-{
-	ssInit     = 0,
-	ssFadeIn   = 1,
-	ssExposure = 2,
-	ssFadeOut  = 3,
-	ssFinished = 4
-};
-
-} /********************************************** Game::<anonymous> Namespace */
 
 struct SplashSceneLayer::Private
 {
+	enum State
+	{
+		Init     = 0,
+		FadeIn   = 1,
+		Exposure = 2,
+		FadeOut  = 3,
+		Finished = 4
+	};
+
 	Private(SplashSceneLayer &i)
 	    : layer(i)
 	    , mesh(new Graphics::QuadMesh(2.f, 2.f))
 	    , exposure(1.5f)
 	    , fade(1.f)
 	    , timer(0.f)
-	    , state(ssInit)
+	    , state(Init)
 	    , autoKill(true)
 	{
 		mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
 	}
 
-	void setState(int state);
+	inline void setState(State state);
 
-	void calculateQuadScale(void);
+	inline void calculateQuadScale(void);
+
+	inline void update(float d);
 
 	SplashSceneLayer &layer;
 
@@ -94,36 +94,36 @@ struct SplashSceneLayer::Private
 	float exposure;
 	float fade;
 	float timer;
-	SplashState state;
+	State state;
 	bool autoBegin;
 	bool autoKill;
 };
 
 void
-SplashSceneLayer::Private::setState(int s)
+SplashSceneLayer::Private::setState(State s)
 {
 	if (state == s)
 		return;
 
-	switch (static_cast<SplashState>(s)) {
-	case ssFadeIn:
-		if (state == ssInit || state == ssFinished) break;
-	case ssInit:
+	switch (s) {
+	case FadeIn:
+		if (state == Init || state == Finished) break;
+	case Init:
 		timer = 0.;
 		mesh->setColor(Graphics::Color(0.f, 0.f, 0.f, 0.f));
 		break;
-	case ssFinished:
+	case Finished:
 		if (autoKill)
 			layer.kill();
 		break;
-	case ssFadeOut:
-	case ssExposure:
+	case FadeOut:
+	case Exposure:
 		timer = 0.;
 		mesh->setColor(Graphics::Color(1.f, 1.f, 1.f, 1.f));
 		break;
 	}
 
-	state = static_cast<SplashState>(s);
+	state = s;
 }
 
 void
@@ -145,15 +145,56 @@ SplashSceneLayer::Private::calculateQuadScale(void)
 	mesh->setScale(l_pixel_scale_x, l_pixel_scale_y);
 }
 
+void
+SplashSceneLayer::Private::update(float d)
+{
+	float l_fiv;
+
+	if (state == Finished)
+		return;
+
+	/* update timer */
+	timer += d;
+
+	switch (state) {
+	case Init:
+		setState(FadeIn);
+
+		/* adjust quad scale based on texture data */
+		calculateQuadScale();
+
+		break;
+	case FadeIn:
+		if (timer < fade) {
+			l_fiv = timer / fade;
+			mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
+		} else setState(Exposure);
+		break;
+	case FadeOut:
+		if (timer < fade) {
+			l_fiv = 1.f - (timer / fade);
+			mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
+		} else setState(Finished);
+		break;
+	case Exposure:
+		if (timer >= exposure)
+			setState(FadeOut);
+		break;
+	case Finished: break;
+	}
+}
+
 SplashSceneLayer::SplashSceneLayer(const Core::Identifier &i, Game::IScene *s)
     : SceneLayer(i, s, UpdateBlock)
     , PIMPL_CREATE_X(*this)
 {
 	Game::Engine::Instance()->eventManager()->connect(this, Event::KeyboardEvent::Type());
+	Game::Engine::Instance()->eventManager()->connect(this, Event::TouchEvent::Type());
 }
 
 SplashSceneLayer::~SplashSceneLayer(void)
 {
+	Game::Engine::Instance()->eventManager()->disconnect(this, Event::TouchEvent::Type());
 	Game::Engine::Instance()->eventManager()->disconnect(this, Event::KeyboardEvent::Type());
 
 	PIMPL_DESTROY;
@@ -204,19 +245,19 @@ SplashSceneLayer::setAutoKill(bool ak)
 void
 SplashSceneLayer::reset(void)
 {
-	if (PIMPL->state != ssFinished)
+	if (PIMPL->state != Private::Finished)
 		return;
 
-	PIMPL->setState(ssFadeIn);
+	PIMPL->setState(Private::FadeIn);
 }
 
 bool
 SplashSceneLayer::skip(void)
 {
-	if (PIMPL->state != ssExposure)
+	if (PIMPL->state != Private::Exposure)
 		return(false);
 
-	PIMPL->setState(ssFadeOut);
+	PIMPL->setState(Private::FadeOut);
 	return(true);
 }
 
@@ -234,46 +275,14 @@ SplashSceneLayer::render(void)
 void
 SplashSceneLayer::update(float d)
 {
-	float l_fiv;
-
-	if (PIMPL->state == ssFinished)
-		return;
-
-	/* update timer */
-	PIMPL->timer += d;
-
-	switch (PIMPL->state) {
-	case ssInit:
-		PIMPL->setState(ssFadeIn);
-
-		/* adjust quad scale based on texture data */
-		PIMPL->calculateQuadScale();
-
-		break;
-	case ssFadeIn:
-		if (PIMPL->timer < PIMPL->fade) {
-			l_fiv = PIMPL->timer / PIMPL->fade;
-			PIMPL->mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
-		} else PIMPL->setState(ssExposure);
-		break;
-	case ssFadeOut:
-		if (PIMPL->timer < PIMPL->fade) {
-			l_fiv = 1.f - (PIMPL->timer / PIMPL->fade);
-			PIMPL->mesh->setColor(Graphics::Color(l_fiv, l_fiv, l_fiv, l_fiv));
-		} else PIMPL->setState(ssFinished);
-		break;
-	case ssExposure:
-		if (PIMPL->timer >= PIMPL->exposure)
-			PIMPL->setState(ssFadeOut);
-		break;
-	case ssFinished: break;
-	}
+	PIMPL->update(d);
 }
 
 bool
 SplashSceneLayer::handleEvent(const Event::IEvent &e)
 {
-	if (e.type() == Event::KeyboardEvent::Type())
+	if (e.type() == Event::KeyboardEvent::Type()
+	    || e.type() == Event::KeyboardEvent::Type())
 		return(skip());
 	return(false);
 }

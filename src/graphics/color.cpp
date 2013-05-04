@@ -41,10 +41,6 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 
-const Color Color::Black(0.f, 0.f, 0.f, 1.f);
-const Color Color::Transparent(1.f, 1.f, 1.f, 0.f);
-const Color Color::White(1.f, 1.f, 1.f, 1.f);
-
 Color::Color(float r, float g, float b, float a)
 {
 	m_rgba[0] = r;
@@ -72,6 +68,27 @@ Color::operator=(const Color &rhs) {
 	m_rgba[2] = rhs.m_rgba[2],
 	m_rgba[3] = rhs.m_rgba[3];
 	return(*this);
+}
+
+const Color &
+Color::Black(void)
+{
+		static const Color s_color(0.f, 0.f, 0.f, 1.f);
+		return(s_color);
+}
+
+const Color &
+Color::Transparent(void)
+{
+		static const Color s_color(0.f, 0.f, 0.f,  0.f);
+		return(s_color);
+}
+
+const Color &
+Color::White(void)
+{
+		static const Color s_color(1.f, 1.f, 1.f, 1.f);
+		return(s_color);
 }
 
 } /******************************************************* Graphics Namespace */

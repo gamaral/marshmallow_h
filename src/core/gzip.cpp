@@ -81,7 +81,7 @@ size_t
 Gzip::Deflate(const char *in, size_t in_size, char **out, int l)
 {
 	z_stream l_stream;
-	uLongf l_out_size = compressBound(in_size);
+	uLongf l_out_size = compressBound(uLongf(in_size));
 
 	*out = new char[l_out_size];
 

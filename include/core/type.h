@@ -46,7 +46,8 @@
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
 
-	class Type : public StrHash
+	class MARSHMALLOW_CORE_EXPORT
+	Type : public StrHash
 	{
 	public:
 		Type(void);

@@ -461,13 +461,13 @@ Map::PopulateEventCodes(uint16_t vendor, uint16_t product, const char *name,
 	/* device type */
 	const char *l_entry_type = 0;
 	switch (type) {
-	case GamepadType:  l_entry_type = "gamepad"; break;
-	case JoystickType: l_entry_type = "joystick"; break;
-	case KeyboardType: l_entry_type = "keyboard"; break;
-	case MouseType:    l_entry_type = "mouse"; break;
+	case Gamepad:  l_entry_type = "gamepad"; break;
+	case Joystick: l_entry_type = "joystick"; break;
+	case Keyboard: l_entry_type = "keyboard"; break;
+	case Mouse:    l_entry_type = "mouse"; break;
 
-	case AnyType:
-	case UnknownType: return(false);
+	case Any:
+	case Unknown: return(false);
 	}
 
 	/* event type */
@@ -544,16 +544,16 @@ Map::PopulateEventCodes(uint16_t vendor, uint16_t product, const char *name,
 				    l_element->IntAttribute( "fuzz" );
 			}
 
-			if (GamepadType == type)
+			if (Gamepad == type)
 				codes[static_cast<unsigned short>(l_code)] =
 				    ParseJoystickSym(l_sym, event);
-			else if (JoystickType == type)
+			else if (Joystick == type)
 				codes[static_cast<unsigned short>(l_code)] =
 				    ParseJoystickSym(l_sym, event);
-			else if (KeyboardType == type)
+			else if (Keyboard == type)
 				codes[static_cast<unsigned short>(l_code)] =
 				    ParseKeyboardSym(l_sym, event);
-			else if (MouseType == type)
+			else if (Mouse == type)
 				codes[static_cast<unsigned short>(l_code)] =
 				    ParseMouseSym(l_sym, event);
 		}

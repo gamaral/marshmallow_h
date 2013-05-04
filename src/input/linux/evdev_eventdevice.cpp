@@ -99,10 +99,10 @@ EventDevice::EventDevice(int fd_, Type type_)
 	uint8_t l_id_offset;
 
 	switch (m_type) {
-	case GamepadType:
-	case JoystickType: l_id_offset = EVDEV_ID_JS; break;
-	case KeyboardType: l_id_offset = EVDEV_ID_KB; break;
-	case MouseType:    l_id_offset = EVDEV_ID_MS; break;
+	case Gamepad:
+	case Joystick: l_id_offset = EVDEV_ID_JS; break;
+	case Keyboard: l_id_offset = EVDEV_ID_KB; break;
+	case Mouse:    l_id_offset = EVDEV_ID_MS; break;
 	default: return;
 	}
 
@@ -126,10 +126,10 @@ EventDevice::~EventDevice(void)
 	uint8_t l_id_offset;
 
 	switch (m_type) {
-	case GamepadType:
-	case JoystickType: l_id_offset = EVDEV_ID_JS; break;
-	case KeyboardType: l_id_offset = EVDEV_ID_KB; break;
-	case MouseType:    l_id_offset = EVDEV_ID_MS; break;
+	case Gamepad:
+	case Joystick: l_id_offset = EVDEV_ID_JS; break;
+	case Keyboard: l_id_offset = EVDEV_ID_KB; break;
+	case Mouse:    l_id_offset = EVDEV_ID_MS; break;
 	default: return;
 	}
 
@@ -160,7 +160,7 @@ EventDevice::Open(unsigned int evdev_id, int mask)
 	unsigned long l_key_bits[KBITS_SIZE];
 
 	int  l_fd = -1;
-	Type l_type = UnknownType;
+	Type l_type = Unknown;
 
 	if (-1 == (l_fd = ::open(l_evdev_path, O_RDONLY|O_NONBLOCK)))
 		return(0);
@@ -180,17 +180,17 @@ EventDevice::Open(unsigned int evdev_id, int mask)
 	 * Device type detection
 	 */
 	if (0 != (l_key_bits[s_kbindex] & (1ul << s_kbbit))
-	    && KeyboardType == (mask & KeyboardType))
-		l_type = KeyboardType;
+	    && Keyboard == (mask & Keyboard))
+		l_type = Keyboard;
 	else if (0 != (l_key_bits[s_msindex] & (1ul << s_msbit))
-	    && MouseType == (mask & MouseType))
-		l_type = MouseType;
+	    && Mouse == (mask & Mouse))
+		l_type = Mouse;
 	else if (0 != (l_key_bits[s_gpindex] & (1ul << s_gpbit))
-	    && GamepadType == (mask & GamepadType))
-		l_type = GamepadType;
+	    && Gamepad == (mask & Gamepad))
+		l_type = Gamepad;
 	else if (0 != (l_key_bits[s_jsindex] & (1ul << s_jsbit))
-	    && JoystickType == (mask & JoystickType))
-		l_type = JoystickType;
+	    && Joystick == (mask & Joystick))
+		l_type = Joystick;
 	else {
 		MMWARNING("Unknown event device type. IGNORING.");
 		return(0);
@@ -203,15 +203,15 @@ EventDevice::Open(unsigned int evdev_id, int mask)
 	 */
 	switch (l_type) {
 #ifdef MARSHMALLOW_EVDEV_KEYBOARD
-	case KeyboardType:
+	case Keyboard:
 		l_evdev =
 		    new KeyboardDevice(l_fd, l_type, l_id.vendor, l_id.product);
 		break;
 #endif
 
 #ifdef MARSHMALLOW_EVDEV_JOYSTICK
-	case GamepadType:
-	case JoystickType:
+	case Gamepad:
+	case Joystick:
 		l_evdev =
 		    new JoystickDevice(l_fd, l_type, l_id.vendor, l_id.product);
 		break;
@@ -220,13 +220,13 @@ EventDevice::Open(unsigned int evdev_id, int mask)
 	/*
 	 * TODO(gamaral) Implement
 	 */
-	case MouseType:
+	case Mouse:
 #ifndef MARSHMALLOW_EVDEV_KEYBOARD
-	case KeyboardType:
+	case Keyboard:
 #endif
 #ifndef MARSHMALLOW_EVDEV_JOYSTICK
-	case GamepadType:
-	case JoystickType:
+	case Gamepad:
+	case Joystick:
 #endif
 	default:
 		MMWARNING("Event device ignored: "
@@ -263,7 +263,7 @@ EventDevice::close(void)
 		"TYPE[ " << m_type << "]");
 	m_name[0] = '\0';
 	m_id = 0;
-	m_type = UnknownType;
+	m_type = Unknown;
 }
 
 bool
@@ -275,18 +275,18 @@ EventDevice::processEvents(void)
 
 	while (read(m_fd, &l_event, l_event_size) == l_event_size) {
 		switch (m_type) {
-		case KeyboardType:
+		case Keyboard:
 			if (l_event.type != EV_KEY)
 				continue;
 			else break;
 
-		case MouseType:
+		case Mouse:
 			if (l_event.type != EV_KEY && l_event.type != EV_REL)
 				continue;
 			else break;
 
-		case GamepadType:
-		case JoystickType:
+		case Gamepad:
+		case Joystick:
 			if (l_event.type != EV_KEY && l_event.type != EV_ABS)
 				continue;
 			else break;

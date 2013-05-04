@@ -68,7 +68,7 @@ buffer_readonly_test(void)
 	    strncmp(l_scratch, s_content, 4));
 
 	l_bytes_read = l_buffer.seek(1, Core::BufferIO::Current);
-	ASSERT_TRUE("Core::BufferIO::seek() 1 BYTE FROM CURRENT", l_bytes_read);
+	ASSERT_TRUE("Core::BufferIO::seek() 1 BYTE FROM CURRENT", l_bytes_read != 0);
 
 	memset(l_scratch, 0, l_scratch_size);
 	l_bytes_read = l_buffer.read(l_scratch, 2);
@@ -77,7 +77,7 @@ buffer_readonly_test(void)
 	    strncmp(l_scratch, &s_content[5], 2));
 
 	l_bytes_read = l_buffer.seek(-6, Core::BufferIO::End);
-	ASSERT_TRUE("Core::BufferIO::seek() -6 BYTES FROM END", l_bytes_read);
+	ASSERT_TRUE("Core::BufferIO::seek() -6 BYTES FROM END", l_bytes_read != 0);
 
 	memset(l_scratch, 0, l_scratch_size);
 	l_bytes_read = l_buffer.read(l_scratch, 6);
@@ -110,14 +110,14 @@ buffer_write_test(void)
 	ASSERT_ZERO("Core::BufferIO::write() CONFIRM DATA OK", strcmp(l_scratch, "thiss"));
 
 	l_bytes_written = l_buffer.seek(-1, Core::BufferIO::Current);
-	ASSERT_TRUE("Core::BufferIO::seek() -1 FROM CURRENT", l_bytes_written);
+	ASSERT_TRUE("Core::BufferIO::seek() -1 FROM CURRENT", l_bytes_written != 0);
 
 	l_bytes_written = l_buffer.write(" ", 1);
 	ASSERT_EQUAL("Core::BufferIO::write() 1 BYTE", 1, l_bytes_written);
 	ASSERT_ZERO("Core::BufferIO::write() CONFIRM DATA OK", strcmp(l_scratch, "this "));
 
 	l_bytes_written = l_buffer.seek(-11, Core::BufferIO::End);
-	ASSERT_TRUE("Core::BufferIO::seek() -11 BYTES FROM END", l_bytes_written);
+	ASSERT_TRUE("Core::BufferIO::seek() -11 BYTES FROM END", l_bytes_written != 0);
 
 	l_bytes_written = l_buffer.write("is a test!", 10);
 	ASSERT_EQUAL("Core::BufferIO::write() 10 BYTES", 10, l_bytes_written);

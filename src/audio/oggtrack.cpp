@@ -85,7 +85,7 @@ OVSeek(void *data, ogg_int64_t offset, int origin)
 		break;
 	}
 
-	const bool l_result = dio->seek(offset, l_seek);
+	const bool l_result = (dio->seek(long(offset), l_seek) != 0);
 
 	return(l_result ? 0 : -1);
 }

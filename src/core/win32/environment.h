@@ -51,6 +51,8 @@
 #define MMTIME     int
 #define MMTIME_MAX INT_MAX
 #define MMUID      uint32_t
+typedef SIZE_T     size_t;
+typedef SSIZE_T    ssize_t;
 
 /******************************************************************** defines */
 

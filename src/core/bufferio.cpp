@@ -46,24 +46,22 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Core { /******************************************** Core Namespace */
-namespace { /************************************ Core::<anonymous> Namespace */
-
-	enum BufferIOFlags
-	{
-		bioEOF  = (1 << 0),
-		bioFREE = (1 << 1)
-	};
-
-} /********************************************** Core::<anonymous> Namespace */
 
 struct BufferIO::Private
 {
+	enum Flags
+	{
+		ReachedEOF = (1 << 0),
+		FreeBuffer = (1 << 1),
+		None       = 0
+	};
+
 	int            mode;
 	long           cursor;
 	long           size;
+	int            flags;
 	uint8_t       *buffer;
 	const uint8_t *const_buffer;
-	uint8_t        flags;
 };
 
 BufferIO::BufferIO(void *b, size_t s)
@@ -76,7 +74,7 @@ BufferIO::BufferIO(void *b, size_t s)
 	PIMPL->mode = ReadWrite;
 	PIMPL->cursor = 0;
 	PIMPL->size = long(s);
-	PIMPL->flags = 0;
+	PIMPL->flags = Private::None;
 }
 
 BufferIO::BufferIO(const void *cb, size_t s)
@@ -89,7 +87,7 @@ BufferIO::BufferIO(const void *cb, size_t s)
 	PIMPL->mode = ReadOnly;
 	PIMPL->cursor = 0;
 	PIMPL->size = long(s);
-	PIMPL->flags = 0;
+	PIMPL->flags = Private::None;
 }
 
 BufferIO::BufferIO(IDataIO *source)
@@ -135,7 +133,7 @@ BufferIO::BufferIO(IDataIO *source)
 	PIMPL->mode = ReadWrite;
 	PIMPL->cursor = 0;
 	PIMPL->size = l_size;
-	PIMPL->flags = bioFREE;
+	PIMPL->flags = Private::FreeBuffer;
 
 	if (!source->seek(l_cursor, Set))
 		MMERROR("Failed to return source DIO to original position.");
@@ -152,7 +150,7 @@ BufferIO::BufferIO(const BufferIO &source)
 	PIMPL->mode = ReadWrite;
 	PIMPL->cursor = 0;
 	PIMPL->size = source.PIMPL->size;
-	PIMPL->flags = bioFREE;
+	PIMPL->flags = Private::FreeBuffer;
 }
 
 BufferIO::~BufferIO(void)
@@ -178,7 +176,7 @@ BufferIO::open(int)
 void
 BufferIO::close(void)
 {
-	if (PIMPL->flags & bioFREE)
+	if (PIMPL->flags & Private::FreeBuffer)
 		delete[] PIMPL->buffer;
 
 	PIMPL->buffer = 0;
@@ -204,7 +202,7 @@ BufferIO::isOpen(void) const
 bool
 BufferIO::atEOF(void) const
 {
-	return(PIMPL->flags & bioEOF);
+	return(PIMPL->flags & Private::ReachedEOF);
 }
 
 size_t
@@ -215,15 +213,15 @@ BufferIO::read(void *b, size_t bs) const
 	if (!PIMPL->const_buffer &&
 	    (PIMPL->cursor >= 0 || PIMPL->cursor >= PIMPL->size)) return(0);
 
-	size_t l_rcount =
-	    (PIMPL->cursor + long(bs) < PIMPL->size ?  bs : size_t(PIMPL->size - PIMPL->cursor));
+	long l_rcount =
+	    PIMPL->cursor + long(bs) < PIMPL->size ?  long(bs) : PIMPL->size - PIMPL->cursor;
 
 	memcpy(b, PIMPL->const_buffer + PIMPL->cursor, l_rcount);
 	PIMPL->cursor += l_rcount;
 
 	/* set end-of-file flag */
 	if (bs > l_rcount)
-		PIMPL->flags |= bioEOF;
+		PIMPL->flags |= Private::ReachedEOF;
 
 	return(l_rcount);
 }
@@ -235,15 +233,15 @@ BufferIO::write(const void *b, size_t bs)
 
 	if (!PIMPL->buffer && PIMPL->cursor >= 0) return(0);
 
-	size_t l_wcount =
-	    (PIMPL->cursor + long(bs) < PIMPL->size ? bs : size_t(PIMPL->size - PIMPL->cursor));
+	long l_wcount =
+	    PIMPL->cursor + long(bs) < PIMPL->size ? long(bs) : PIMPL->size - PIMPL->cursor;
 
 	memcpy(PIMPL->buffer + PIMPL->cursor, b, l_wcount);
 	PIMPL->cursor += l_wcount;
 
 	/* set end-of-file flag */
 	if (bs > l_wcount)
-		PIMPL->flags |= bioEOF;
+		PIMPL->flags |= Private::ReachedEOF;
 
 	return(l_wcount);
 }
@@ -274,7 +272,7 @@ BufferIO::seek(long o, Seek on) const
 		return(false);
 
 	/* reset end-of-file flag */
-	PIMPL->flags &= uint8_t(~bioEOF);
+	PIMPL->flags &= ~Private::ReachedEOF;
 
 	PIMPL->cursor = l_cursor;
 	return(true);

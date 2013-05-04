@@ -55,12 +55,12 @@ namespace EVDEV { /**************************** Input::Linux::EVDEV Namespace */
 
 	enum Type
 	{
-		UnknownType  = 0,
-		GamepadType  = (1 << 0),
-		JoystickType = (1 << 1),
-		KeyboardType = (1 << 2),
-		MouseType    = (1 << 3),
-		AnyType      = ~(0)
+		Gamepad  = (1 << 0),
+		Joystick = (1 << 1),
+		Keyboard = (1 << 2),
+		Mouse    = (1 << 3),
+		Unknown  = 0,
+		Any      = ~(0)
 	};
 
 } /******************************************** Input::Linux::EVDEV Namespace */

@@ -45,8 +45,8 @@
 #include <cassert>
 #include <list>
 
+#include "core/identifier.h"
 #include "core/logger.h"
-#include "core/type.h"
 
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"
@@ -245,7 +245,7 @@ Qt4Backend::Initialize(void)
 	/*
 	 * Initial Background Color (IMPORTANT)
 	 */
-	Painter::SetBackgroundColor(Color::Black);
+	Painter::SetBackgroundColor(Color::Black());
 
 	return(true);
 }

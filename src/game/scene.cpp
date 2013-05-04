@@ -55,7 +55,7 @@ struct Scene::Private
 {
 	Private(const Core::Identifier &i)
 	    : layers()
-	    , bgcolor(Graphics::Color::Black)
+	    , bgcolor(Graphics::Color::Black())
 	    , id(i)
 	    , active(false)
 	{}

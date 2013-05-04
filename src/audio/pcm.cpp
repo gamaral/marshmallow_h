@@ -135,7 +135,7 @@ PCM::close(void)
 bool
 PCM::isOpen(void) const
 {
-	return(PIMPL->handle);
+	return(PIMPL->handle != 0);
 }
 
 bool
