@@ -195,7 +195,7 @@ Player::Private::tick(void)
 
 	const size_t l_frames_available =
 	    MMMIN(pcm->framesMax(), pcm->framesAvailable());
-	if (!l_frames_available)
+	if (0 == l_frames_available)
 		return;
 	
 	const size_t l_buffer_max = l_frames_available * pcm->frameSize();

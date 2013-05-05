@@ -39,7 +39,6 @@
  */
 
 #include "core/logger.h"
-#include "core/shared.h"
 
 #include "event/eventmanager.h"
 #include "event/keyboardevent.h"

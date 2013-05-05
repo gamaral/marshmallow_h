@@ -366,6 +366,9 @@ BounceColliderComponent::BounceColliderComponent(const Core::Identifier &i,
 bool
 BounceColliderComponent::collision(ColliderComponent &c, float d, const CollisionData &data)
 {
+	MMUNUSED(c);
+	MMUNUSED(d);
+
 	const Math::Vector2 &l_vel = movement()->velocity();
 
 	switch(body()) {

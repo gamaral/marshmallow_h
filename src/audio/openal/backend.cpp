@@ -54,7 +54,7 @@
 
 #include "game/config.h"
 
-#define OPENAL_BUFFERS_MAX 3
+#define OPENAL_BUFFERS_MAX 2
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
@@ -115,7 +115,7 @@ struct PCM::Handle
 	ALenum  format;
 	ALsizei rate;
 	ALuint  buffers[OPENAL_BUFFERS_MAX];
-	uint8_t available;
+	int     available;
 	uint8_t bytes_per_frame;
 	size_t buffer_size;
 };
@@ -159,12 +159,9 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 	l_handle->format = l_format;
 	l_handle->rate = ALsizei(sample_rate);
 	l_handle->bytes_per_frame = uint8_t((bit_depth/8) * channels);
-	l_handle->available = uint8_t(~0);
+	l_handle->available = ~0;
 
-	l_handle->buffer_size =
-	    (sample_rate/MARSHMALLOW_ENGINE_FRAMERATE)
-	        * l_handle->bytes_per_frame
-	        * OPENAL_BUFFERS_MAX;
+	l_handle->buffer_size = sample_rate * l_handle->bytes_per_frame; /* one second */
 	
 	alGenBuffers(OPENAL_BUFFERS_MAX, l_handle->buffers);
 
@@ -214,7 +211,7 @@ PCM::Write(Handle *pcm_handle, const char *buffer, size_t frames)
 		if (alGetError() == AL_NO_ERROR) {
 			for (int i = 0; i < OPENAL_BUFFERS_MAX; ++i)
 				if (pcm_handle->buffers[i] == l_processed) {
-					pcm_handle->available |= static_cast<uint8_t>(1 << i);
+					pcm_handle->available |= (1 << i);
 					l_buffer = i;
 					break;
 				}
@@ -253,8 +250,8 @@ PCM::Write(Handle *pcm_handle, const char *buffer, size_t frames)
 		return(false);
 	}
 
-	pcm_handle->available &= static_cast<uint8_t>(~(1 << l_buffer));
-
+	pcm_handle->available ^= (1 << l_buffer);
+	
 	if (l_state == AL_STOPPED ||
 	   (l_state == AL_INITIAL && l_buffer_size < pcm_handle->buffer_size))
 		alSourcePlay(pcm_handle->source);
@@ -288,7 +285,7 @@ PCM::AvailableFrames(Handle *pcm_handle)
 	ALint l_processed(0);
 	alGetSourcei(pcm_handle->source, AL_BUFFERS_PROCESSED, &l_processed);
 	if (alGetError() != AL_NO_ERROR) {
-		MMERROR("alGetSourcei(AL_SOURCE_STATE) failed!");
+		MMERROR("alGetSourcei(AL_BUFFERS_PROCESSED) failed!");
 		return(0);
 	}
 	else if (l_processed > 0)

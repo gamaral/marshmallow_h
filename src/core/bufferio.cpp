@@ -220,7 +220,7 @@ BufferIO::read(void *b, size_t bs) const
 	PIMPL->cursor += l_rcount;
 
 	/* set end-of-file flag */
-	if (bs > l_rcount)
+	if (long(bs) > l_rcount)
 		PIMPL->flags |= Private::ReachedEOF;
 
 	return(l_rcount);
@@ -240,7 +240,7 @@ BufferIO::write(const void *b, size_t bs)
 	PIMPL->cursor += l_wcount;
 
 	/* set end-of-file flag */
-	if (bs > l_wcount)
+	if (long(bs) > l_wcount)
 		PIMPL->flags |= Private::ReachedEOF;
 
 	return(l_wcount);
