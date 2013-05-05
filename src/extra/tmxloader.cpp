@@ -515,7 +515,7 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 			Game::RenderComponent *l_render = new Game::RenderComponent("render", l_entity);
 
 			Graphics::IVertexData *l_vdata =
-			    Graphics::Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
+			    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 			l_vdata->set(0, -l_object_hrsize.width,  l_object_hrsize.height);
 			l_vdata->set(1, -l_object_hrsize.width, -l_object_hrsize.height);
 			l_vdata->set(2,  l_object_hrsize.width,  l_object_hrsize.height);
@@ -543,7 +543,7 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 
 		/* create size component */
 		Game::SizeComponent *l_size = new Game::SizeComponent("size", l_entity);
-		l_size->size() = l_object_rsize;
+		l_size->set(l_object_rsize);
 		l_entity->pushComponent(l_size);
 
 		/* object properties */
@@ -618,7 +618,7 @@ TMXLoader::Private::processTileset(TinyXML::XMLElement &e)
 #endif
 
 	Graphics::ITextureData *l_texture =
-	    Graphics::Backend::Factory::CreateTextureData();
+	    Graphics::Factory::CreateTextureData();
 	if (!l_texture->load(l_source)) {
 		MMERROR("Failed to load tileset texture.");
 		return(false);

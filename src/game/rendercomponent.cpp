@@ -97,7 +97,7 @@ RenderComponent::update(float)
 {
 	if (!PIMPL->position)
 		PIMPL->position = static_cast<PositionComponent *>
-		    (entity()->getComponentType("Game::PositionComponent"));
+		    (entity()->getComponentType(Game::PositionComponent::Type()));
 }
 
 void

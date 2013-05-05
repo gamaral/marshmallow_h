@@ -63,8 +63,23 @@ namespace Game { /******************************************** Game Namespace */
 
 		enum BodyType {
 			Box = 0,
-			Capsule,
 			Sphere
+		};
+
+		/*! @brief Game Collision Data */
+		union CollisionData
+		{
+			struct {
+				float left;
+				float right;
+				float top;
+				float bottom;
+			} box;
+
+			struct {
+				float penetration2;
+				float padding[3];
+			} sphere;
 		};
 
 	public:
@@ -79,15 +94,15 @@ namespace Game { /******************************************** Game Namespace */
 		bool bullet(void) const;
 		void setBullet(bool bullet);
 
-		int body(void) const;
-		void setBody(int body);
+		BodyType body(void) const;
+		void setBody(BodyType body);
 
 		int bulletResolution(void) const;
 		void setBulletResolution(int resolution);
 
 		float radius2(void) const;
 
-		bool isColliding(ColliderComponent& collider, float delta, CollisionData *data = 0) const;
+		bool isColliding(ColliderComponent &collider, float delta, CollisionData *data = 0) const;
 
 	public: /* virtual */
 
@@ -135,21 +150,6 @@ namespace Game { /******************************************** Game Namespace */
 	public: /* static */
 
 		static const Core::Type & Type(void);
-	};
-
-	/*! @brief Game Collision Data */
-	union CollisionData
-	{
-		struct {
-			float penetration2;
-		} sphere;
-
-		struct {
-			float left;
-			float right;
-			float top;
-			float bottom;
-		} rect;
 	};
 
 } /*********************************************************** Game Namespace */

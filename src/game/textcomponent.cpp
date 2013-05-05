@@ -106,7 +106,7 @@ TextComponent::Private::rebuild(void)
 	 *       changes.
 	 */
 	Graphics::IVertexData *l_vdata =
-	    Graphics::Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
+	    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 	{
 		float l_hwidth  =
 		    (static_cast<float>(tileset->tileSize().width)  / 2.f) * scale;

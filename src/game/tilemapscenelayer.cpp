@@ -321,7 +321,7 @@ TilemapSceneLayer::attachTileset(uint32_t o, Graphics::ITileset *ts)
 {
 	PIMPL->tilesets[o] = ts;
 	PIMPL->vertexes[o] =
-	    Graphics::Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
+	    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 	PIMPL->recalculateVertexData(o);
 }
 

@@ -73,7 +73,7 @@ namespace Game { /******************************************** Game Namespace */
 
 		const ColliderList & colliders(void) const;
 
-	public: /* virtual */
+	public: /* reimp */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }

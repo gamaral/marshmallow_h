@@ -96,7 +96,7 @@ struct Entity::Private
 Entity::Private::~Private()
 {
 	/* free components */
-	while (components.size() > 0) {
+	while (!components.empty()) {
 		delete components.back();
 		components.pop_back();
 	}
@@ -197,7 +197,6 @@ Entity::Entity(const Core::Identifier &i, Game::EntitySceneLayer *l)
 
 Entity::~Entity(void)
 {
-	PIMPL->components.clear();
 	PIMPL_DESTROY;
 }
 

@@ -44,7 +44,6 @@
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
-namespace Backend { /**************************** Graphics::Backend Namespace */
 
 ITextureCoordinateData *
 Factory::CreateTextureCoordinateData(uint16_t c)
@@ -64,7 +63,6 @@ Factory::CreateVertexData(uint16_t c)
 	return(new Dummy::VertexData(c));
 }
 
-} /********************************************** Graphics::Backend Namespace */
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 

@@ -95,6 +95,10 @@ struct Mesh::Private
 
 	~Private(void);
 
+	inline void setTextureCoordinateData(ITextureCoordinateData *tc);
+	inline void setTextureData(ITextureData *td);
+	inline void setVertexData(IVertexData *vd);
+
 	Color color;
 	ITextureCoordinateData *tcdata;
 	ITextureData *tdata;
@@ -106,17 +110,33 @@ struct Mesh::Private
 
 Mesh::Private::~Private(void)
 {
+	setTextureCoordinateData(0);
+	setTextureData(0);
+	setVertexData(0);
+}
+
+void
+Mesh::Private::setTextureCoordinateData(ITextureCoordinateData *tc)
+{
 	if (flags & TextureCoordinateFree)
 		delete tcdata;
-	tcdata = 0;
+	tcdata = tc;
+}
 
+void
+Mesh::Private::setTextureData(ITextureData *td)
+{
 	if (flags & TextureDataFree)
 		delete tdata;
-	tdata = 0;
+	tdata = td;
+}
 
+void
+Mesh::Private::setVertexData(IVertexData *vd)
+{
 	if (flags & VertexDataFree)
 		delete vdata;
-	vdata = 0;
+	vdata = vd;
 }
 
 Mesh::Mesh(ITextureCoordinateData *tc, ITextureData *t, IVertexData *v, int f)
@@ -151,19 +171,20 @@ Mesh::setScale(float x, float y)
 void
 Mesh::setTextureCoordinateData(ITextureCoordinateData *tc)
 {
-	PIMPL->tcdata = tc;
+	PIMPL->setTextureCoordinateData(tc);
 }
 
 void
 Mesh::setTextureData(ITextureData *td)
 {
-	PIMPL->tdata = td;
+	
+	PIMPL->setTextureData(td);
 }
 
 void
 Mesh::setVertexData(IVertexData *vd)
 {
-	PIMPL->vdata = vd;
+	PIMPL->setVertexData(vd);
 }
 
 ITextureCoordinateData *

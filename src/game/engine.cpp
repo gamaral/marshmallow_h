@@ -283,20 +283,20 @@ Engine::run(void)
 	}
 
 #define MILLISECONDS_PER_SECOND 1000
-	const MMTIME l_tick_target = MILLISECONDS_PER_SECOND / PIMPL->fps;
-	const MMTIME l_tick_fast_target = (l_tick_target * 2) / 3;
+	const MMTIME l_render_target = MILLISECONDS_PER_SECOND / PIMPL->fps;
+	MMTIME l_delta = 0;
+	MMTIME l_render = 0;
 	MMTIME l_second = 0;
-	MMTIME l_tock = 0;
 	MMTIME l_tick;
+	MMTIME l_update = l_render_target / 2; /* offset by 1/2 */
 
 	/* start */
-	bool l_wait  = false;
 	PIMPL->valid   = true;
 	PIMPL->running = true;
 
 	tick(.0f);
 	update(.0f);
-	l_tick = NOW() - l_tick_target;
+	l_tick = NOW() - l_render_target;
 
 	/*
 	 * Game Loop
@@ -306,18 +306,16 @@ Engine::run(void)
 
 #if MARSHMALLOW_DEBUG
 		/* detect breakpoint */
-		if (PIMPL->delta_time > MILLISECONDS_PER_SECOND) {
+		if (l_delta > MILLISECONDS_PER_SECOND) {
 			MMWARNING("Abnormally long time between ticks, debugger breakpoint?");
-			PIMPL->delta_time = l_tick_target;
+			l_delta = l_render_target;
 		}
 #endif
 
 		/* update dt counters */
-		l_tock   += PIMPL->delta_time;
-		l_second += PIMPL->delta_time;
-
-		/* wait if no vsync or cpu/gpu too fast */
-		l_wait |= (PIMPL->delta_time <= l_tick_fast_target);
+		l_render += l_delta;
+		l_second += l_delta;
+		l_update += l_delta;
 
 		/*
 		 * Second
@@ -325,31 +323,35 @@ Engine::run(void)
 		if (l_second >= MILLISECONDS_PER_SECOND) {
 			second();
 
-			l_wait = (PIMPL->delta_time <= (l_tick_fast_target));
 			PIMPL->frame_rate = 0;
 
 			/* reset second */
-			l_second = 0;
+			l_second -= MILLISECONDS_PER_SECOND;
 		}
 
 		/*
-		 * Tock
+		 * Update
 		 */
-		if (l_tock >= l_tick_target || !l_wait) {
-			/*
-			 * Update
-			 */
-			update(static_cast<float>(l_tick_target) / MILLISECONDS_PER_SECOND);
+		if (l_update >= l_render_target) {
 
-			/*
-			 * Render
-			 */
+			update(float(l_render_target) / MILLISECONDS_PER_SECOND);
+			l_update %= l_render_target;
+		}
+
+		/*
+		 * Render
+		 */
+		if (l_render >= l_render_target) {
+
 			render();
 			PIMPL->frame_rate++;
-
-			/* reset tock */
-			l_tock= 0;
+			l_render %= l_render_target;
 		}
+
+		/*
+		 * Tick
+		 */
+		tick(float(l_delta) / MILLISECONDS_PER_SECOND);
 
 		/*
 		 * Sleep
@@ -358,14 +360,10 @@ Engine::run(void)
 		 * but it might be worth it for sub 20% CPU usage (very battery
 		 * friendly).
 		 */
-		if (l_wait) Platform::Sleep(Graphics::Backend::Active() ? PIMPL->sleep : l_tick_fast_target);
+		Platform::Sleep(Graphics::Backend::Active() ? PIMPL->sleep : l_render_target);
 
-		/*
-		 * Tick
-		 */
-		tick(static_cast<float>(PIMPL->delta_time) / MILLISECONDS_PER_SECOND);
-
-		PIMPL->delta_time = NOW() - l_tick;
+		l_delta = NOW() - l_tick;
+		PIMPL->delta_time = l_delta;
 	}
 
 	/*

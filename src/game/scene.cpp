@@ -80,6 +80,9 @@ struct Scene::Private
 	inline Game::ISceneLayer *
 	getLayerType(const Core::Type &type) const;
 
+	inline void render(void);
+	inline void update(float d);
+
 	SceneLayerList layers;
 	Graphics::Color bgcolor;
 	const Core::Identifier &id;
@@ -164,6 +167,55 @@ Scene::Private::getLayerType(const Core::Type &t) const
 	}
 
 	return(0);
+}
+
+void
+Scene::Private::render(void)
+{
+	if (layers.empty()) return;
+
+	SceneLayerList::const_iterator l_i;
+	SceneLayerList::const_iterator l_b = layers.begin();
+	SceneLayerList::const_iterator l_c = --layers.end();
+
+	for (l_i = l_b; l_i != l_c; ++l_i)
+		if ((*l_i)->flags() & ISceneLayer::RenderBlock)
+			break;
+
+	bool l_finished = false;
+	do {
+		(*l_i)->render();
+
+		if (l_i == l_b) l_finished = true;
+		else l_i--;
+	} while(!l_finished);
+}
+
+void
+Scene::Private::update(float d)
+{
+	if (layers.empty()) return;
+
+	SceneLayerList::const_iterator l_i;
+	SceneLayerList::const_iterator l_b = layers.begin();
+	const SceneLayerList::const_iterator l_c = --layers.end();
+
+	for (l_i = l_b; l_i != l_c; ++l_i)
+		if ((*l_i)->flags() & ISceneLayer::UpdateBlock)
+			break;
+
+	/* TODO: polish later if possible */
+	bool l_finished = false;
+	do {
+		ISceneLayer *l_slayer = (*l_i);
+
+		if (l_i == l_b) l_finished = true;
+		else l_i--;
+
+		if (l_slayer->isZombie())
+			layers.remove(l_slayer);
+		else l_slayer->update(d);
+	} while(!l_finished);
 }
 
 Scene::Scene(const Core::Identifier &i)
@@ -266,50 +318,13 @@ Scene::deactivate(void)
 void
 Scene::render(void)
 {
-	if (PIMPL->layers.empty()) return;
-
-	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_b = PIMPL->layers.begin();
-	SceneLayerList::const_iterator l_c = --PIMPL->layers.end();
-
-	for (l_i = l_b; l_i != l_c; ++l_i)
-		if ((*l_i)->flags() & ISceneLayer::RenderBlock)
-			break;
-
-	bool l_finished = false;
-	do {
-		(*l_i)->render();
-
-		if (l_i == l_b) l_finished = true;
-		else l_i--;
-	} while(!l_finished);
+	PIMPL->render();
 }
 
 void
 Scene::update(float d)
 {
-	if (PIMPL->layers.empty()) return;
-
-	SceneLayerList::const_iterator l_i;
-	SceneLayerList::const_iterator l_b = PIMPL->layers.begin();
-	const SceneLayerList::const_iterator l_c = --PIMPL->layers.end();
-
-	for (l_i = l_b; l_i != l_c; ++l_i)
-		if ((*l_i)->flags() & ISceneLayer::UpdateBlock)
-			break;
-
-	/* TODO: polish later if possible */
-	bool l_finished = false;
-	do {
-		ISceneLayer *l_slayer = (*l_i);
-
-		if (l_i == l_b) l_finished = true;
-		else l_i--;
-
-		if (l_slayer->isZombie())
-			PIMPL->layers.remove(l_slayer);
-		else l_slayer->update(d);
-	} while(!l_finished);
+	PIMPL->update(d);
 }
 
 const Core::Type &

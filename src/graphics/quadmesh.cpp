@@ -52,9 +52,9 @@ QuadMesh::QuadMesh(const Math::Vector2 &tl,
                    const Math::Vector2 &bl,
                    const Math::Vector2 &br,
                    const Math::Vector2 &tr)
-    : Mesh(Backend::Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
-           Backend::Factory::CreateTextureData(),
-           Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES))
+    : Mesh(Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
+           Factory::CreateTextureData(),
+           Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES))
 {
 	setVertex(0, tl);
 	setTextureCoordinate(0, 0, 0);
@@ -67,9 +67,9 @@ QuadMesh::QuadMesh(const Math::Vector2 &tl,
 }
 
 QuadMesh::QuadMesh(const Math::Rect2  &r)
-    : Mesh(Backend::Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
-           Backend::Factory::CreateTextureData(),
-           Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES),
+    : Mesh(Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
+           Factory::CreateTextureData(),
+           Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES),
            TextureCoordinateFree|TextureDataFree|VertexDataFree)
 {
 	setVertex(0, r.topLeft());
@@ -83,9 +83,9 @@ QuadMesh::QuadMesh(const Math::Rect2  &r)
 }
 
 QuadMesh::QuadMesh(const Math::Size2f &s)
-    : Mesh(Backend::Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
-           Backend::Factory::CreateTextureData(),
-           Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES),
+    : Mesh(Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
+           Factory::CreateTextureData(),
+           Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES),
            TextureCoordinateFree|TextureDataFree|VertexDataFree)
 {
 	/* half size */
@@ -103,9 +103,9 @@ QuadMesh::QuadMesh(const Math::Size2f &s)
 }
 
 QuadMesh::QuadMesh(float width, float height)
-    : Mesh(Backend::Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
-           Backend::Factory::CreateTextureData(),
-           Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES),
+    : Mesh(Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
+           Factory::CreateTextureData(),
+           Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES),
            TextureCoordinateFree|TextureDataFree|VertexDataFree)
 {
 	/* half size */
@@ -123,9 +123,9 @@ QuadMesh::QuadMesh(float width, float height)
 }
 
 QuadMesh::QuadMesh(void)
-    : Mesh(Backend::Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
-           Backend::Factory::CreateTextureData(),
-           Backend::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES),
+    : Mesh(Factory::CreateTextureCoordinateData(MARSHMALLOW_QUAD_VERTEXES),
+           Factory::CreateTextureData(),
+           Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES),
            TextureCoordinateFree|TextureDataFree|VertexDataFree)
 {
 	setTextureCoordinate(0, 0, 0);

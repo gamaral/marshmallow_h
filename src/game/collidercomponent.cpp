@@ -51,10 +51,12 @@
 #include "game/positioncomponent.h"
 #include "game/sizecomponent.h"
 
+#include <cstdio>
+
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 
-#define DELTA_STEPS 32
+#define DELTA_STEPS 8
 
 struct ColliderComponent::Private
 {
@@ -68,7 +70,10 @@ struct ColliderComponent::Private
 	    , bullet_resolution(DELTA_STEPS)
 	    , active(true)
 	    , bullet(false)
+	    , init(false)
 	{}
+
+	~Private(void);
 
 	inline bool
 	isColliding(ColliderComponent &c, float d, CollisionData *data) const;
@@ -84,12 +89,17 @@ struct ColliderComponent::Private
 	MovementComponent   *movement;
 	PositionComponent   *position;
 	SizeComponent       *size;
-	int  body;
+	BodyType body;
 	int  bullet_resolution;
 	bool active;
 	bool bullet;
 	bool init;
 };
+
+ColliderComponent::Private::~Private(void)
+{
+	if (layer) layer->deregisterCollider(&component);
+}
 
 bool
 ColliderComponent::Private::isColliding(ColliderComponent &cc, float d, CollisionData *data) const
@@ -101,16 +111,6 @@ ColliderComponent::Private::isColliding(ColliderComponent &cc, float d, Collisio
 		const Math::Point2 &l_pos_b = c.position->position();
 
 		switch(body) {
-		case Sphere: {
-			float l_distance2 = l_pos_b.difference(l_pos_a).magnitude2();
-			l_distance2 -= c.radius2() + radius2();
-
-			if (l_distance2 < 0) {
-				if (data)
-					data->sphere.penetration2 = l_distance2;
-				return(true);
-			}
-			} break;
 
 		case Box: {
 			const Math::Size2f l_size_a = size->size() / 2.f;
@@ -125,19 +125,30 @@ ColliderComponent::Private::isColliding(ColliderComponent &cc, float d, Collisio
 			const float b =
 			    (l_pos_a.y + l_size_a.height) - (l_pos_b.y - l_size_b.height);
 
-			if (data) {
-				data->rect.left = l;
-				data->rect.right = r;
-				data->rect.top = t;
-				data->rect.bottom = b;
-			}
-
-			if (l > 0 && r > 0 && t > 0 && b > 0)
+			if (l > 0 && r > 0 && t > 0 && b > 0) {
+				if (data) {
+					data->box.left = l;
+					data->box.right = r;
+					data->box.top = t;
+					data->box.bottom = b;
+				}
 				return(true);
-			} break;
+			}
+		} break;
 
-		case Capsule:
-		default: return(false);
+		case Sphere: {
+			float l_distance2 = l_pos_b.difference(l_pos_a).magnitude2();
+			l_distance2 -= c.radius2() + radius2();
+
+			if (l_distance2 < 0) {
+				if (data) data->sphere.penetration2 = l_distance2;
+				return(true);
+			}
+		} break;
+
+		default:
+			MMWARNING("Unknown collider body type encountered!");
+			return(false);
 		}
 	}
 
@@ -160,37 +171,41 @@ ColliderComponent::Private::radius2(void) const
 void
 ColliderComponent::Private::update(float d)
 {
-	if (!movement) {
-		movement = static_cast<MovementComponent *>
-		    (component.entity()->getComponentType("Game::MovementComponent"));
-	}
+	if (!active) return;
 
-	if (!position) {
-		position = static_cast<PositionComponent *>
-		    (component.entity()->getComponentType("Game::PositionComponent"));
-	}
-
-	if (!size) {
-		size = static_cast<SizeComponent *>
-		    (component.entity()->getComponentType("Game::SizeComponent"));
-	}
-
-	if (!init && !layer && position && size) {
-		layer = static_cast<CollisionSceneLayer *>
-		    (component.entity()->layer()->scene()->getLayerType("Game::CollisionSceneLayer"));
-
-		if (!layer) {
-			MMWARNING("Collider component used with no collision scene layer!");
-			return;
+	if (!init) {
+		if (!movement) {
+			movement = static_cast<MovementComponent *>
+			    (component.entity()->getComponentType(Game::MovementComponent::Type()));
 		}
 
-		/* register as collider */
-		layer->registerCollider(&component);
+		if (!position) {
+			position = static_cast<PositionComponent *>
+			    (component.entity()->getComponentType(Game::PositionComponent::Type()));
+		}
 
-		init = true;
+		if (!size) {
+			size = static_cast<SizeComponent *>
+			    (component.entity()->getComponentType(Game::SizeComponent::Type()));
+		}
+
+		if (!layer) {
+			layer = static_cast<CollisionSceneLayer *>
+			    (component.entity()->layer()->scene()->getLayerType(Game::CollisionSceneLayer::Type()));
+
+			if (!layer) {
+				MMWARNING("Collider component used with no collision scene layer!");
+				return;
+			}
+
+			/* register as collider */
+			layer->registerCollider(&component);
+		}
+
+		init = (layer != 0 && position != 0 && size != 0 );
 	}
 
-	if (active && init && movement && size && position) {
+	if (init) {
 		ColliderList::const_iterator l_i;
 		ColliderList::const_iterator l_c = layer->colliders().end();
 
@@ -202,7 +217,7 @@ ColliderComponent::Private::update(float d)
 
 			if (bullet) {
 				int l_steps = bullet_resolution;
-				const float l_delta_step = d / static_cast<float>(l_steps);
+				const float l_delta_step = d / float(l_steps);
 				float l_bullet_delta = 0;
 
 				for(int i = 1; i < l_steps; ++i) {
@@ -237,22 +252,52 @@ ColliderComponent::~ColliderComponent(void)
 	PIMPL_DESTROY;
 }
 
-int
-ColliderComponent::body(void) const
-{
-	return(PIMPL->body);
-}
-
 bool
 ColliderComponent::active(void) const
 {
 	return(PIMPL->active);
 }
 
+void
+ColliderComponent::setActive(bool a)
+{
+	PIMPL->active = a;
+}
+
 bool
 ColliderComponent::bullet(void) const
 {
 	return(PIMPL->bullet);
+}
+
+void
+ColliderComponent::setBullet(bool b)
+{
+	PIMPL->bullet = b;
+}
+
+ColliderComponent::BodyType
+ColliderComponent::body(void) const
+{
+	return(PIMPL->body);
+}
+
+void
+ColliderComponent::setBody(BodyType b)
+{
+	PIMPL->body = b;
+}
+
+int
+ColliderComponent::bulletResolution(void) const
+{
+	return(PIMPL->bullet_resolution);
+}
+
+void
+ColliderComponent::setBulletResolution(int r)
+{
+	PIMPL->bullet_resolution = r;
 }
 
 float
@@ -321,15 +366,53 @@ BounceColliderComponent::BounceColliderComponent(const Core::Identifier &i,
 bool
 BounceColliderComponent::collision(ColliderComponent &c, float d, const CollisionData &data)
 {
-	MMUNUSED(c);
-	MMUNUSED(d);
-	MMUNUSED(data);
-
 	const Math::Vector2 &l_vel = movement()->velocity();
-	const float l_mag = l_vel.magnitude();
-	const Math::Vector2 l_normal = l_vel.normalized(l_mag);
-	Math::Vector2 l_pvel = (l_normal * (2.f * l_normal.dot(l_vel * -1.f)) + l_vel);
-	movement()->velocity() = l_pvel.normalize(l_pvel.magnitude()) * l_mag;
+
+	switch(body()) {
+
+	case Box: {
+		float l_vel_x = l_vel.x;
+		float l_vel_y = l_vel.y;
+
+		if (l_vel.x > 0 && data.box.right < data.box.left
+		                && data.box.right < data.box.top
+		                && data.box.right < data.box.bottom) {
+			l_vel_x *= -1;
+			position()->translateX(-data.box.right);
+		}
+		else if (l_vel.x < 0 && data.box.left < data.box.right
+		                     && data.box.left < data.box.top
+		                     && data.box.left < data.box.bottom) {
+			l_vel_x *= -1;
+			position()->translateX(data.box.left);
+		}
+		else if (l_vel.y > 0 && data.box.bottom < data.box.top
+		                     && data.box.bottom < data.box.left
+		                     && data.box.bottom < data.box.right) {
+			l_vel_y *= -1;
+			position()->translateY(-data.box.bottom);
+		}
+		else if (l_vel.y < 0 && data.box.top < data.box.bottom
+		                     && data.box.top < data.box.left
+		                     && data.box.top < data.box.right) {
+			l_vel_y *= -1;
+			position()->translateY(data.box.top);
+		}
+			
+		movement()->setVelocity(l_vel_x, l_vel_y);
+	} break;
+
+	case Sphere: {
+		const float l_mag = l_vel.magnitude();
+		const Math::Vector2 l_normal = l_vel.normalized(l_mag);
+		Math::Vector2 l_pvel = (l_normal * (2.f * l_normal.dot(l_vel * -1.f)) + l_vel);
+		movement()->setVelocity(l_pvel.normalize(l_pvel.magnitude()) * l_mag);
+	} break;
+
+	default:
+		MMWARNING("Unknown collider body type encountered!");
+		return(false);
+	};
 
 	return(true);
 }

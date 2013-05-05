@@ -79,10 +79,22 @@ PositionComponent::setPosition(float x, float y)
 	PIMPL->position.y = y;
 }
 
+float
+PositionComponent::positionX(void) const
+{
+	return(PIMPL->position.x);
+}
+
 void
 PositionComponent::setPositionX(float x)
 {
 	PIMPL->position.x = x;
+}
+
+float
+PositionComponent::positionY(void) const
+{
+	return(PIMPL->position.y);
 }
 
 void

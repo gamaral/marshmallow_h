@@ -185,7 +185,7 @@ Tileset::getTextureCoordinateData(uint16_t i)
 		/* create new entry */
 #define TILECOORDINATES 4
 		ITextureCoordinateData *l_data =
-		    Backend::Factory::CreateTextureCoordinateData(TILECOORDINATES);
+		    Factory::CreateTextureCoordinateData(TILECOORDINATES);
 
 		/* calculate row and column */
 

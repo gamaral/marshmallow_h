@@ -55,12 +55,12 @@ namespace Game { /******************************************** Game Namespace */
 struct EntitySceneLayer::Private
 {
 	Private()
-	    : visiblility_testing(true)
+	    : visiblility_testing(false)
 	{}
 
 	~Private();
 
-	inline void
+	inline Game::IEntity *
 	removeEntity(const Core::Identifier &identifier);
 
 	inline Game::IEntity *
@@ -79,25 +79,30 @@ struct EntitySceneLayer::Private
 EntitySceneLayer::Private::~Private()
 {
 	/* free entities */
-	while (entities.size() > 0) {
+	while (!entities.empty()) {
 		delete entities.back();
 		entities.pop_back();
 	}
 }
 
-void
+Game::IEntity *
 EntitySceneLayer::Private::removeEntity(const Core::Identifier &i)
 {
+	Game::IEntity *l_entity = 0;
+
 	EntityList::const_iterator l_i;
 	EntityList::const_iterator l_c = entities.end();
 
 	/* maybe replace later with a map if required */
 	for (l_i = entities.begin(); l_i != l_c; ++l_i) {
 		if ((*l_i)->id() == i) {
+			l_entity = *l_i;
 			entities.remove(*l_i);
-			return;
+			break;
 		}
 	}
+
+	return(l_entity);
 }
 
 Game::IEntity *
@@ -132,14 +137,14 @@ EntitySceneLayer::Private::render(void)
 				continue;
 
 			PositionComponent *l_positionComponent = static_cast<PositionComponent *>
-			    (l_entity->getComponentType("Game::PositionComponent"));
+			    (l_entity->getComponentType(Game::PositionComponent::Type()));
 			if (!l_positionComponent) {
 				l_entity->render();
 				continue;
 			}
 
 			SizeComponent *l_sizeComponent = static_cast<SizeComponent *>
-			    (l_entity->getComponentType("Game::SizeComponent"));
+			    (l_entity->getComponentType(Game::SizeComponent::Type()));
 			if (l_sizeComponent) {
 				const Math::Size2f &l_size =
 				    l_sizeComponent->size();
@@ -184,8 +189,6 @@ EntitySceneLayer::EntitySceneLayer(const Core::Identifier &i,
 
 EntitySceneLayer::~EntitySceneLayer(void)
 {
-	PIMPL->entities.clear();
-
 	PIMPL_DESTROY;
 }
 
@@ -195,10 +198,10 @@ EntitySceneLayer::addEntity(Game::IEntity *e)
 	PIMPL->entities.push_back(e);
 }
 
-void
+Game::IEntity *
 EntitySceneLayer::removeEntity(const Core::Identifier &i)
 {
-	PIMPL->removeEntity(i);
+	return(PIMPL->removeEntity(i));
 }
 
 void

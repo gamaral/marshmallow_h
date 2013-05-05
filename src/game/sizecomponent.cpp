@@ -61,10 +61,46 @@ SizeComponent::~SizeComponent(void)
 	PIMPL_DESTROY;
 }
 
-Math::Size2f &
-SizeComponent::size(void)
+const Math::Size2f &
+SizeComponent::size(void) const
 {
 	return(PIMPL->size);
+}
+
+void
+SizeComponent::set(const Math::Size2f &s)
+{
+	PIMPL->size = s;
+}
+
+void
+SizeComponent::set(float w, float h)
+{
+	PIMPL->size.set(w, h);
+}
+
+float
+SizeComponent::width(void) const
+{
+	return(PIMPL->size.width);
+}
+
+void
+SizeComponent::setWidth(float v)
+{
+	PIMPL->size.width = v;
+}
+
+float
+SizeComponent::height(void) const
+{
+	return(PIMPL->size.height);
+}
+
+void
+SizeComponent::setHeight(float v)
+{
+	PIMPL->size.height = v;
 }
 
 const Core::Type &

@@ -64,10 +64,19 @@ namespace Game { /******************************************** Game Namespace */
 		                  Game::IEntity *entity);
 		virtual ~MovementComponent(void);
 
-		Math::Vector2 & acceleration(void);
-		Math::Pair & limitX(void);
-		Math::Pair & limitY(void);
-		Math::Vector2 & velocity(void);
+		const Math::Vector2 & acceleration(void) const;
+		void setAcceleration(const Math::Vector2 &accel);
+		void setAcceleration(float x, float y);
+
+		const Math::Pair & limitX(void) const;
+		void setLimitX(const Math::Pair &limit);
+
+		const Math::Pair & limitY(void) const;
+		void setLimitY(const Math::Pair &limit);
+
+		const Math::Vector2 & velocity(void) const;
+		void setVelocity(const Math::Vector2 &velocity);
+		void setVelocity(float x, float y);
 
 		Math::Point2 simulate(float d) const;
 

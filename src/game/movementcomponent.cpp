@@ -56,12 +56,43 @@ struct MovementComponent::Private
 	    , position(0)
 	{}
 
+	inline void update(float d);
+
 	Math::Vector2 acceleration;
 	Math::Vector2 velocity;
 	Math::Pair limit_x;
 	Math::Pair limit_y;
 	PositionComponent *position;
 };
+
+void
+MovementComponent::Private::update(float d)
+{
+	if (!position) {
+		MMDEBUG("Game::PositionComponent not found!");
+		return;
+	}
+
+	/* update velocity */
+
+	velocity += acceleration * d;
+
+	/* check limit */
+
+	if (limit_x.first()  > -1 && velocity.x < -limit_x.first())
+		velocity.x = -limit_x.first();
+	if (limit_x.second() > -1 && velocity.x >  limit_x.second())
+		velocity.x =  limit_x.second();
+
+	if (limit_y.first()  > -1 && velocity.y < -limit_y.first())
+		velocity.y = -limit_y.first();
+	if (limit_y.second() > -1 && velocity.y >  limit_y.second())
+		velocity.y =  limit_y.second();
+
+	/* update position */
+
+	position->translate(velocity * d);
+}
 
 MovementComponent::MovementComponent(const Core::Identifier &i, Game::IEntity *e)
     : Component(i, e)
@@ -74,28 +105,64 @@ MovementComponent::~MovementComponent(void)
 	PIMPL_DESTROY;
 }
 
-Math::Vector2 &
-MovementComponent::acceleration(void)
+const Math::Vector2 &
+MovementComponent::acceleration(void) const
 {
 	return(PIMPL->acceleration);
 }
 
-Math::Pair &
-MovementComponent::limitX(void)
+void
+MovementComponent::setAcceleration(const Math::Vector2 &a)
+{
+	PIMPL->acceleration = a;
+}
+		
+void
+MovementComponent::setAcceleration(float x, float y)
+{
+	PIMPL->acceleration.set(x, y);
+}
+
+const Math::Pair &
+MovementComponent::limitX(void) const
 {
 	return(PIMPL->limit_x);
 }
 
-Math::Pair &
-MovementComponent::limitY(void)
+void
+MovementComponent::setLimitX(const Math::Pair &l)
+{
+	PIMPL->limit_x = l;
+}
+
+const Math::Pair &
+MovementComponent::limitY(void) const
 {
 	return(PIMPL->limit_y);
 }
 
-Math::Vector2 &
-MovementComponent::velocity(void)
+void
+MovementComponent::setLimitY(const Math::Pair &l)
+{
+	PIMPL->limit_y = l;
+}
+
+const Math::Vector2 &
+MovementComponent::velocity(void) const
 {
 	return(PIMPL->velocity);
+}
+
+void
+MovementComponent::setVelocity(const Math::Vector2 &v)
+{
+	PIMPL->velocity = v;
+}
+
+void
+MovementComponent::setVelocity(float x, float y)
+{
+	PIMPL->velocity.set(x, y);
 }
 
 Math::Point2
@@ -112,32 +179,10 @@ MovementComponent::update(float d)
 {
 	if (!PIMPL->position) {
 		PIMPL->position = static_cast<PositionComponent *>
-		    (entity()->getComponentType("Game::PositionComponent"));
+		    (entity()->getComponentType(Game::PositionComponent::Type()));
 	}
 
-	const Math::Pair &l_limit_x = PIMPL->limit_x;
-	const Math::Pair &l_limit_y = PIMPL->limit_y;
-	Math::Vector2 &l_velocity = PIMPL->velocity;
-
-	/* update velocity */
-
-	l_velocity += PIMPL->acceleration * d;
-
-	/* check limit */
-
-	if (l_limit_x.first()  > -1 && l_velocity.x < -l_limit_x.first())
-		l_velocity.x = -l_limit_x.first();
-	if (l_limit_x.second() > -1 && l_velocity.x >  l_limit_x.second())
-		l_velocity.x =  l_limit_x.second();
-
-	if (l_limit_y.first()  > -1 && l_velocity.y < -l_limit_y.first())
-		l_velocity.y = -l_limit_y.first();
-	if (l_limit_y.second() > -1 && l_velocity.y >  l_limit_y.second())
-		l_velocity.y =  l_limit_y.second();
-
-	/* update position */
-
-	PIMPL->position->translate(l_velocity * d);
+	PIMPL->update(d);
 }
 
 const Core::Type &

@@ -61,7 +61,15 @@ namespace Game { /******************************************** Game Namespace */
 		SizeComponent(const Core::Identifier &i, Game::IEntity *entity);
 		virtual ~SizeComponent(void);
 
-		Math::Size2f & size(void);
+		const Math::Size2f & size(void) const;
+		void set(const Math::Size2f &size);
+		void set(float width, float height);
+
+		float width(void) const;
+		void setWidth(float value);
+
+		float height(void) const;
+		void setHeight(float value);
 
 	public: /* reimp */
 

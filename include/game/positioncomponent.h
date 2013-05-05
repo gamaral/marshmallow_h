@@ -62,7 +62,11 @@ namespace Game { /******************************************** Game Namespace */
 		const Math::Point2 & position(void) const;
 		void setPosition(const Math::Point2 &pos);
 		void setPosition(float x, float y);
+
+		float positionX(void) const;
 		void setPositionX(float x);
+
+		float positionY(void) const;
 		void setPositionY(float y);
 
 		void translate(const Math::Vector2 &relative);

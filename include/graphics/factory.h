@@ -53,8 +53,7 @@ namespace Graphics { /************************************ Graphics Namespace */
 	struct ITextureData;
 	struct IVertexData;
 
-namespace Backend { /**************************** Graphics::Backend Namespace */
-namespace Factory { /******************* Graphics::Backend::Factory Namespace */
+namespace Factory { /**************************** Graphics::Factory Namespace */
 
 	MARSHMALLOW_GRAPHICS_EXPORT
 	ITextureCoordinateData * CreateTextureCoordinateData(uint16_t count);
@@ -65,8 +64,7 @@ namespace Factory { /******************* Graphics::Backend::Factory Namespace */
 	MARSHMALLOW_GRAPHICS_EXPORT
 	IVertexData * CreateVertexData(uint16_t count);
 
-} /************************************* Graphics::Backend::Factory Namespace */
-} /********************************************** Graphics::Backend Namespace */
+} /********************************************** Graphics::Factory Namespace */
 } /******************************************************* Graphics Namespace */
 MARSHMALLOW_NAMESPACE_END
 

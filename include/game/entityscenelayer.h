@@ -65,7 +65,7 @@ namespace Game { /******************************************** Game Namespace */
 		virtual ~EntitySceneLayer(void);
 
 		void addEntity(Game::IEntity *entity);
-		void removeEntity(const Core::Identifier &identifier);
+		Game::IEntity * removeEntity(const Core::Identifier &identifier);
 		void removeEntity(Game::IEntity *entity);
 		Game::IEntity * getEntity(const Core::Identifier &identifier) const;
 		const EntityList & getEntities(void) const;

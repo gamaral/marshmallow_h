@@ -50,7 +50,8 @@ struct SceneLayer::Private
 	    : id(i)
 	    , scene(s)
 	    , flags(f)
-	    , killed(false) {}
+	    , killed(false)
+	{}
 
 	Core::Identifier id;
 	Game::IScene *scene;
