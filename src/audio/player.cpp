@@ -199,12 +199,14 @@ Player::Private::tick(void)
 		mix = new char[pcm->framesMax() * pcm->frameSize()];
 	}
 
-	const size_t l_frames_available =
-	    MMMIN(pcm->framesMax(), pcm->framesAvailable());
-	if (0 == l_frames_available)
+	const size_t l_frames_max = pcm->framesMax();
+	const size_t l_frames_available = pcm->framesAvailable();
+
+	const size_t l_frames = MMMIN(l_frames_max, l_frames_available);
+	if (0 == l_frames)
 		return;
 	
-	const size_t l_buffer_max = l_frames_available * pcm->frameSize();
+	const size_t l_buffer_max = l_frames * pcm->frameSize();
 	memset(mix, 0, l_buffer_max);
 
 	PlaylistMap::iterator l_i;
@@ -270,7 +272,7 @@ Player::Private::tick(void)
 		while(l_read < l_buffer_max);
 	}
 	
-	if (!pcm->write(mix, l_frames_available))
+	if (!pcm->write(mix, l_frames))
 		MMERROR("Failed to write to PCM device!");
 }
 

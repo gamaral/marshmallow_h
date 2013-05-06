@@ -115,7 +115,6 @@ struct PCM::Handle
 	ALenum  format;
 	ALsizei rate;
 	ALuint  buffers[OPENAL_BUFFERS_MAX];
-	size_t  buffer_size;
 	size_t  buffer_frames;
 	int     available;
 	uint8_t bytes_per_frame;
@@ -163,7 +162,6 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 	l_handle->available = ~0;
 
 	l_handle->buffer_frames = sample_rate / OPENAL_BUFFERS_MAX; 
-	l_handle->buffer_size = l_handle->buffer_frames * l_handle->bytes_per_frame;
 	
 	alGenBuffers(OPENAL_BUFFERS_MAX, l_handle->buffers);
 
@@ -230,8 +228,7 @@ PCM::Write(Handle *pcm_handle, const char *buffer, size_t frames)
 		}
 
 		if (-1 == l_buffer) {
-			if (l_state == AL_INITIAL)
-				alSourcePlay(pcm_handle->source);
+			MMERROR("Failed to find an available buffer!");
 			return(false);
 		}
 	}
@@ -254,9 +251,18 @@ PCM::Write(Handle *pcm_handle, const char *buffer, size_t frames)
 
 	pcm_handle->available ^= (1 << l_buffer);
 	
-	if (l_state == AL_STOPPED ||
-	   (l_state == AL_INITIAL && l_buffer_size < pcm_handle->buffer_size))
-		alSourcePlay(pcm_handle->source);
+	if (l_state == AL_INITIAL) {
+		ALint l_queued(0);
+		alGetSourcei(pcm_handle->source, AL_BUFFERS_QUEUED, &l_queued);
+		if (alGetError() != AL_NO_ERROR)
+			MMERROR("alGetSourcei(AL_BUFFERS_QUEUED) failed!");
+		else if (l_queued >= OPENAL_BUFFERS_MAX) 
+			alSourcePlay(pcm_handle->source);
+	}
+	else if (l_state == AL_STOPPED) {
+		MMERROR("OpenAL has stopped!");
+		alSourceRewind(pcm_handle->source);
+	}
 
 	return(true);
 }
@@ -281,8 +287,16 @@ PCM::AvailableFrames(Handle *pcm_handle)
 		MMERROR("alGetSourcei(AL_SOURCE_STATE) failed!");
 		return(0);
 	}
-	else if (l_state == AL_INITIAL)
-		return(MaxFrames(pcm_handle));
+
+	if (l_state == AL_INITIAL) {
+		ALint l_queued(0);
+		alGetSourcei(pcm_handle->source, AL_BUFFERS_QUEUED, &l_queued);
+		if (alGetError() != AL_NO_ERROR) {
+			MMERROR("alGetSourcei(AL_BUFFERS_QUEUED) failed!");
+			return(0);
+		}
+		return(l_queued < OPENAL_BUFFERS_MAX ? MaxFrames(pcm_handle) : 0);
+	}
 
 	ALint l_processed(0);
 	alGetSourcei(pcm_handle->source, AL_BUFFERS_PROCESSED, &l_processed);
@@ -290,10 +304,7 @@ PCM::AvailableFrames(Handle *pcm_handle)
 		MMERROR("alGetSourcei(AL_BUFFERS_PROCESSED) failed!");
 		return(0);
 	}
-	else if (l_processed > 0)
-		return(MaxFrames(pcm_handle));
-
-	return(0);
+	return(l_processed > 0 ? MaxFrames(pcm_handle) : 0);
 }
 
 } /************************************************* Audio::Backend Namespace */
