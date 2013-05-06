@@ -106,50 +106,52 @@ ColliderComponent::Private::isColliding(ColliderComponent &cc, float d, Collisio
 {
 	ColliderComponent::Private &c = *cc.PIMPL;
 
-	if (movement && c.position) {
-		const Math::Point2 l_pos_a = movement->simulate(d);
-		const Math::Point2 &l_pos_b = c.position->position();
+	if (!movement || !c.position)
+		return(false);
 
-		switch(body) {
+	const Math::Point2 l_pos_a = movement->simulate(d);
+	const Math::Point2 &l_pos_b = c.position->position();
 
-		case Box: {
-			const Math::Size2f l_size_a = size->size() / 2.f;
-			const Math::Size2f l_size_b = c.size->size() / 2.f;
+	switch(body) {
 
-			const float l =
-			    (l_pos_a.x + l_size_a.width)  - (l_pos_b.x - l_size_b.width);
-			const float r =
-			    (l_pos_b.x + l_size_b.width)  - (l_pos_a.x - l_size_a.width);
-			const float t =
-			    (l_pos_b.y + l_size_b.height) - (l_pos_a.y - l_size_a.height);
-			const float b =
-			    (l_pos_a.y + l_size_a.height) - (l_pos_b.y - l_size_b.height);
+	case Box: {
+		const Math::Size2f l_size_a = size->size() / 2.f;
+		const Math::Size2f l_size_b = c.size->size() / 2.f;
 
-			if (l > 0 && r > 0 && t > 0 && b > 0) {
-				if (data) {
-					data->box.left = l;
-					data->box.right = r;
-					data->box.top = t;
-					data->box.bottom = b;
-				}
-				return(true);
-			}
-		} break;
+		const float l =
+		    (l_pos_a.x + l_size_a.width) - (l_pos_b.x - l_size_b.width);
+		if (l <= 0) return(false);
 
-		case Sphere: {
-			float l_distance2 = l_pos_b.difference(l_pos_a).magnitude2();
-			l_distance2 -= c.radius2() + radius2();
+		const float r =
+		    (l_pos_b.x + l_size_b.width) - (l_pos_a.x - l_size_a.width);
+		if (r <= 0) return(false);
 
-			if (l_distance2 < 0) {
-				if (data) data->sphere.penetration2 = l_distance2;
-				return(true);
-			}
-		} break;
+		const float t =
+		    (l_pos_b.y + l_size_b.height) - (l_pos_a.y - l_size_a.height);
+		if (t <= 0) return(false);
 
-		default:
-			MMWARNING("Unknown collider body type encountered!");
-			return(false);
+		const float b =
+		    (l_pos_a.y + l_size_a.height) - (l_pos_b.y - l_size_b.height);
+		if (b <= 0) return(false);
+
+		if (data) {
+			data->box.left = l;
+			data->box.right = r;
+			data->box.top = t;
+			data->box.bottom = b;
 		}
+	} return(true);
+
+	case Sphere: {
+		float l_distance2 = l_pos_b.difference(l_pos_a).magnitude2();
+		l_distance2 -= c.radius2() + radius2();
+		if (l_distance2 >= 0) return(false);
+		
+		if (data) data->sphere.penetration2 = l_distance2;
+	} return(true);
+
+	default: MMWARNING("Unknown collider body type encountered!");
+		 break;
 	}
 
 	return(false);

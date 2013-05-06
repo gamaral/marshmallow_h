@@ -444,8 +444,10 @@ VCBackend::CreateGLContext(void)
 
 	/* vsync */
 
-	if (eglSwapInterval(egl_dpy, dpy.vsync) != EGL_TRUE)
+	if (eglSwapInterval(egl_dpy, dpy.vsync) != EGL_TRUE) {
 		MMERROR("EGL: Swap interval request was ignored!");
+		dpy.vsync = 1; /* standard default */
+	}
 
 	/* clear error state */
 

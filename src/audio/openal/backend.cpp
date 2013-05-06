@@ -54,7 +54,7 @@
 
 #include "game/config.h"
 
-#define OPENAL_BUFFERS_MAX 2
+#define OPENAL_BUFFERS_MAX 3
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
@@ -115,9 +115,10 @@ struct PCM::Handle
 	ALenum  format;
 	ALsizei rate;
 	ALuint  buffers[OPENAL_BUFFERS_MAX];
+	size_t  buffer_size;
+	size_t  buffer_frames;
 	int     available;
 	uint8_t bytes_per_frame;
-	size_t buffer_size;
 };
 
 PCM::Handle *
@@ -161,7 +162,8 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 	l_handle->bytes_per_frame = uint8_t((bit_depth/8) * channels);
 	l_handle->available = ~0;
 
-	l_handle->buffer_size = sample_rate * l_handle->bytes_per_frame; /* one second */
+	l_handle->buffer_frames = sample_rate / OPENAL_BUFFERS_MAX; 
+	l_handle->buffer_size = l_handle->buffer_frames * l_handle->bytes_per_frame;
 	
 	alGenBuffers(OPENAL_BUFFERS_MAX, l_handle->buffers);
 
@@ -263,7 +265,7 @@ size_t
 PCM::MaxFrames(Handle *pcm_handle)
 {
 	assert(pcm_handle && "Tried to use invalid PCM device!");
-	return(pcm_handle->buffer_size / pcm_handle->bytes_per_frame);
+	return(pcm_handle->buffer_frames);
 }
 
 size_t

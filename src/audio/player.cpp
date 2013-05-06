@@ -55,10 +55,16 @@ MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
 namespace { /*********************************** Audio::<anonymous> Namespace */
 
+	static inline int16_t
+	Mixer(int16_t a, int16_t b, float gain)
+	{
+		return(int16_t(MMRANGE(-(1<<15), a + int(b * gain), (1<<15)-1)));
+	}
+
 	static inline char
 	Mixer(char a, char b, float gain)
 	{
-		return(char(MMRANGE(CHAR_MIN, a + int(b * gain), CHAR_MAX)));
+		return(char(MMRANGE(-(1<<7), a + int(b * gain), (1<<7)-1)));
 	}
 
 } /********************************************* Audio::<anonymous> Namespace */
@@ -215,11 +221,23 @@ Player::Private::tick(void)
 			    l_buffer_max - l_offset);
 
 			/* mix */
-			for (size_t l_bi = l_offset; l_bi < l_read; ++l_bi)
-				mix[l_bi] =
-				    Mixer(mix[l_bi],
-				          buffer[l_bi],
-				          l_track_i.second.second);
+			switch (l_track->depth()) {
+
+			case 16: for (size_t l_bi = (l_offset / 2); l_bi < (l_read / 2); ++l_bi)
+					reinterpret_cast<int16_t *>(mix)[l_bi] =
+					    Mixer(reinterpret_cast<int16_t *>(mix)[l_bi],
+						  reinterpret_cast<int16_t *>(buffer)[l_bi],
+						  l_track_i.second.second);
+				break;
+
+			default: for (size_t l_bi = l_offset; l_bi < l_read; ++l_bi)
+					mix[l_bi] =
+					    Mixer(mix[l_bi],
+						  buffer[l_bi],
+						  l_track_i.second.second);
+				break;
+
+			}
 			l_offset = l_read;
 
 			/*

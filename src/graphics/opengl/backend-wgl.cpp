@@ -401,8 +401,10 @@ WGLBackend::CreateWGLContext(void)
 	if (Extensions::wglSwapIntervalEXT) {
 		Extensions::wglSwapIntervalEXT(dpy.vsync);
 		if (Extensions::wglGetSwapIntervalEXT
-		    && dpy.vsync != Extensions::wglGetSwapIntervalEXT())
+		    && dpy.vsync != Extensions::wglGetSwapIntervalEXT()) {
 			MMERROR("WGL: Swap interval request was ignored!");
+			dpy.vsync = Extensions::wglGetSwapIntervalEXT();
+		}
 	}
 
 	return(true);

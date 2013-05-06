@@ -54,8 +54,8 @@ namespace Graphics { /************************************ Graphics Namespace */
 namespace Dummy { /******************************** Graphics::Dummy Namespace */
 namespace { /************************* Graphics::Dummy::<anonymous> Namespace */
 
-Graphics::Display s_dpy;
-bool              s_active;
+	static Graphics::Display s_dpy;
+	static bool              s_active;
 
 } /*********************************** Graphics::Dummy::<anonymous> Namespace */
 } /************************************************ Graphics::Dummy Namespace */
@@ -133,23 +133,26 @@ Backend::Tick(float)
 void
 Backend::Finish(void)
 {
+	using namespace Dummy;
+
 	/* simulated slow swap */
-	Core::Platform::Sleep(1000/MARSHMALLOW_ENGINE_FRAMERATE);
+	if (s_dpy.vsync > 0)
+		Core::Platform::Sleep((1000 * s_dpy.vsync)/MARSHMALLOW_ENGINE_FRAMERATE);
+	else 
+		Core::Platform::Sleep(500/MARSHMALLOW_ENGINE_FRAMERATE);
+
 	Painter::Reset();
 }
 
 const Graphics::Display &
 Backend::Display(void)
 {
-	using namespace Dummy;
-	return(s_dpy);
+	return(Dummy::s_dpy);
 }
 
 const Math::Size2f &
 Backend::Size(void)
 {
-	using namespace Dummy;
-
 	const static Math::Size2f s_size(MARSHMALLOW_GRAPHICS_WIDTH,
 	                                 MARSHMALLOW_GRAPHICS_HEIGHT);
 	return(s_size);

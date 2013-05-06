@@ -788,8 +788,10 @@ X11Backend::CreateEGLContext(void)
 
 	/* vsync */
 
-	if (eglSwapInterval(egl_dpy, dpy.vsync) != EGL_TRUE)
+	if (eglSwapInterval(egl_dpy, dpy.vsync) != EGL_TRUE) {
 		MMERROR("EGL: Swap interval request was ignored!");
+		dpy.vsync = 1; /* standard default */
+	}
 
 	/* clear error state */
 
@@ -861,8 +863,10 @@ X11Backend::CreateGLXContext(void)
 	if (Extensions::glXSwapIntervalMESA) {
 		Extensions::glXSwapIntervalMESA(dpy.vsync);
 		if (Extensions::glXGetSwapIntervalMESA
-		    && dpy.vsync != Extensions::glXGetSwapIntervalMESA())
+		    && dpy.vsync != Extensions::glXGetSwapIntervalMESA()) {
 			MMERROR("X11: Swap interval request was ignored!");
+			dpy.vsync = Extensions::glXGetSwapIntervalMESA();
+		}
 	}
 	else if (Extensions::glxSwapInterval)
 		Extensions::glxSwapInterval(dpy.vsync);
