@@ -65,8 +65,12 @@ namespace Game { /******************************************** Game Namespace */
 		virtual ~MovementComponent(void);
 
 		const Math::Vector2 & acceleration(void) const;
+		float accelerationX(void) const;
+		float accelerationY(void) const;
 		void setAcceleration(const Math::Vector2 &accel);
 		void setAcceleration(float x, float y);
+		void setAccelerationX(float x);
+		void setAccelerationY(float y);
 
 		const Math::Pair & limitX(void) const;
 		void setLimitX(const Math::Pair &limit);
@@ -75,8 +79,12 @@ namespace Game { /******************************************** Game Namespace */
 		void setLimitY(const Math::Pair &limit);
 
 		const Math::Vector2 & velocity(void) const;
+		float velocityX(void) const;
+		float velocityY(void) const;
 		void setVelocity(const Math::Vector2 &velocity);
 		void setVelocity(float x, float y);
+		void setVelocityX(float x);
+		void setVelocityY(float y);
 
 		Math::Point2 simulate(float d) const;
 

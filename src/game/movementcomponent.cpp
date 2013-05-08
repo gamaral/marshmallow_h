@@ -111,6 +111,18 @@ MovementComponent::acceleration(void) const
 	return(PIMPL->acceleration);
 }
 
+float
+MovementComponent::accelerationX(void) const
+{
+	return(PIMPL->acceleration.x);
+}
+
+float
+MovementComponent::accelerationY(void) const
+{
+	return(PIMPL->acceleration.x);
+}
+
 void
 MovementComponent::setAcceleration(const Math::Vector2 &a)
 {
@@ -121,6 +133,18 @@ void
 MovementComponent::setAcceleration(float x, float y)
 {
 	PIMPL->acceleration.set(x, y);
+}
+
+void
+MovementComponent::setAccelerationX(float x)
+{
+	PIMPL->acceleration.x = x;
+}
+
+void
+MovementComponent::setAccelerationY(float y)
+{
+	PIMPL->acceleration.y = y;
 }
 
 const Math::Pair &
@@ -153,6 +177,18 @@ MovementComponent::velocity(void) const
 	return(PIMPL->velocity);
 }
 
+float
+MovementComponent::velocityX(void) const
+{
+	return(PIMPL->velocity.x);
+}
+
+float
+MovementComponent::velocityY(void) const
+{
+	return(PIMPL->velocity.y);
+}
+
 void
 MovementComponent::setVelocity(const Math::Vector2 &v)
 {
@@ -163,6 +199,18 @@ void
 MovementComponent::setVelocity(float x, float y)
 {
 	PIMPL->velocity.set(x, y);
+}
+
+void
+MovementComponent::setVelocityX(float x)
+{
+	PIMPL->velocity.x = x;
+}
+
+void
+MovementComponent::setVelocityY(float y)
+{
+	PIMPL->velocity.y = y;
 }
 
 Math::Point2
