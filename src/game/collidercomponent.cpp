@@ -173,27 +173,25 @@ ColliderComponent::Private::radius2(void) const
 void
 ColliderComponent::Private::update(float d)
 {
-	if (!active) return;
-
 	if (!init) {
 		if (!movement) {
 			movement = static_cast<MovementComponent *>
-			    (component.entity()->getComponentType(Game::MovementComponent::Type()));
+			    (component.entity()->getComponentType(MovementComponent::Type()));
 		}
 
 		if (!position) {
 			position = static_cast<PositionComponent *>
-			    (component.entity()->getComponentType(Game::PositionComponent::Type()));
+			    (component.entity()->getComponentType(PositionComponent::Type()));
 		}
 
 		if (!size) {
 			size = static_cast<SizeComponent *>
-			    (component.entity()->getComponentType(Game::SizeComponent::Type()));
+			    (component.entity()->getComponentType(SizeComponent::Type()));
 		}
 
 		if (!layer) {
 			layer = static_cast<CollisionSceneLayer *>
-			    (component.entity()->layer()->scene()->getLayerType(Game::CollisionSceneLayer::Type()));
+			    (component.entity()->layer()->scene()->getLayerType(CollisionSceneLayer::Type()));
 
 			if (!layer) {
 				MMWARNING("Collider component used with no collision scene layer!");
@@ -204,36 +202,39 @@ ColliderComponent::Private::update(float d)
 			layer->registerCollider(&component);
 		}
 
+		/*
+		 * Movement component is not required, no movement = static collider
+		 */
 		init = (layer != 0 && position != 0 && size != 0 );
 	}
 
-	if (init) {
-		ColliderList::const_iterator l_i;
-		ColliderList::const_iterator l_c = layer->colliders().end();
+	if (!active || !init) return;
 
-		for (l_i = layer->colliders().begin(); l_i != l_c; ++l_i) {
-			if (*l_i == &component) continue;
+	ColliderList::const_iterator l_i;
+	ColliderList::const_iterator l_c = layer->colliders().end();
 
-			ColliderComponent *l_collider = *l_i;
-			CollisionData data;
+	for (l_i = layer->colliders().begin(); l_i != l_c; ++l_i) {
+		if (*l_i == &component) continue;
 
-			if (bullet) {
-				int l_steps = bullet_resolution;
-				const float l_delta_step = d / float(l_steps);
-				float l_bullet_delta = 0;
+		ColliderComponent *l_collider = *l_i;
+		CollisionData data;
 
-				for(int i = 1; i < l_steps; ++i) {
-					if (component.isColliding(*l_collider, l_bullet_delta += l_delta_step, &data)) {
-						component.collision(*l_collider, l_bullet_delta, data);
-						continue;
-					}
+		if (bullet) {
+			int l_steps = bullet_resolution;
+			const float l_delta_step = d / float(l_steps);
+			float l_bullet_delta = 0;
+
+			for(int i = 1; i < l_steps; ++i) {
+				if (component.isColliding(*l_collider, l_bullet_delta += l_delta_step, &data)) {
+					component.collision(*l_collider, l_bullet_delta, data);
+					continue;
 				}
 			}
-			else {
-				if (component.isColliding(*l_collider, d, &data))
-					component.collision(*l_collider, d, data);
-				continue;
-			}
+		}
+		else {
+			if (component.isColliding(*l_collider, d, &data))
+				component.collision(*l_collider, d, data);
+			continue;
 		}
 	}
 }
@@ -247,10 +248,6 @@ ColliderComponent::ColliderComponent(const Core::Identifier &i,
 
 ColliderComponent::~ColliderComponent(void)
 {
-	/* deregister as collider */
-	if (PIMPL->layer)
-		PIMPL->layer->deregisterCollider(this);
-
 	PIMPL_DESTROY;
 }
 
@@ -379,21 +376,22 @@ BounceColliderComponent::collision(ColliderComponent &c, float d, const Collisio
 		float l_vel_x = l_vel.x;
 		float l_vel_y = l_vel.y;
 
-		if (l_vel.x > 0 && data.box.right < data.box.left
-		                && data.box.right < data.box.top
-		                && data.box.right < data.box.bottom) {
+		if (l_vel.x > 0 && data.box.left < data.box.right
+		                && data.box.left < data.box.top
+		                && data.box.left < data.box.bottom) {
 			l_vel_x *= -1;
-			position()->translateX(-data.box.right);
+			position()->translateX(-data.box.left);
 		}
-		else if (l_vel.x < 0 && data.box.left < data.box.right
-		                     && data.box.left < data.box.top
-		                     && data.box.left < data.box.bottom) {
+		else if (l_vel.x < 0 && data.box.right < data.box.left
+		                     && data.box.right < data.box.top
+		                     && data.box.right < data.box.bottom) {
 			l_vel_x *= -1;
-			position()->translateX(data.box.left);
+			position()->translateX(data.box.right);
 		}
-		else if (l_vel.y > 0 && data.box.bottom < data.box.top
-		                     && data.box.bottom < data.box.left
-		                     && data.box.bottom < data.box.right) {
+
+		if (l_vel.y > 0 && data.box.bottom < data.box.top
+		                && data.box.bottom < data.box.left
+		                && data.box.bottom < data.box.right) {
 			l_vel_y *= -1;
 			position()->translateY(-data.box.bottom);
 		}
