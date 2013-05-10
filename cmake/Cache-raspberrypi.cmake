@@ -26,10 +26,12 @@ set(MARSHMALLOW_CONTRIB_LIBVORBIS   OFF  CACHE BOOL   "")
 set(MARSHMALLOW_CONTRIB_ZLIB        OFF  CACHE BOOL   "")
 
 # CMAKE
-#set(CMAKE_C_FLAGS "-mfpu=vfp -mfloat-abi=hard"   CACHE STRING "")
-set(CMAKE_C_FLAGS_RELEASE "-fomit-frame-pointer"                    CACHE STRING "")
-#set(CMAKE_CXX_FLAGS "-mfpu=vfp -mfloat-abi=hard" CACHE STRING "")
-set(CMAKE_CXX_FLAGS_RELEASE "-fomit-frame-pointer"                  CACHE STRING "")
+#set(CMAKE_C_FLAGS           "-mfpu=vfp -mfloat-abi=hard" CACHE STRING "")
+#set(CMAKE_C_FLAGS           "-mhard-float"               CACHE STRING "")
+#set(CMAKE_C_FLAGS_RELEASE   "-fomit-frame-pointer"       CACHE STRING "")
+#set(CMAKE_CXX_FLAGS         "-mfpu=vfp -mfloat-abi=hard" CACHE STRING "")
+#set(CMAKE_CXX_FLAGS         "-mhard-float"               CACHE STRING "")
+#set(CMAKE_CXX_FLAGS_RELEASE "-fomit-frame-pointer"       CACHE STRING "")
 
 set(CMAKE_FIND_ROOT_PATH   "/opt/vc"           CACHE INTERNAL "")
 set(CMAKE_SKIP_BUILD_RPATH  FALSE              CACHE INTERNAL "")
