@@ -64,10 +64,7 @@ struct Entity::Private
 	~Private();
 
 	inline void
-	pushComponent(Game::IComponent *component);
-
-	inline Game::IComponent *
-	popComponent(void);
+	addComponent(Game::IComponent *component);
 
 	inline void
 	removeComponent(Game::IComponent *component);
@@ -103,17 +100,9 @@ Entity::Private::~Private()
 }
 
 void
-Entity::Private::pushComponent(IComponent *c)
+Entity::Private::addComponent(IComponent *c)
 {
-	components.push_front(c);
-}
-
-IComponent *
-Entity::Private::popComponent(void)
-{
-	IComponent *l_component = components.front();
-	components.pop_front();
-	return(l_component);
+	components.push_back(c);
 }
 
 void
@@ -213,15 +202,9 @@ Entity::layer(void) const
 }
 
 void
-Entity::pushComponent(IComponent *c)
+Entity::addComponent(IComponent *c)
 {
-	PIMPL->pushComponent(c);
-}
-
-IComponent *
-Entity::popComponent(void)
-{
-	return(PIMPL->popComponent());
+	PIMPL->addComponent(c);
 }
 
 void

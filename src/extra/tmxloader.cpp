@@ -508,7 +508,7 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 
 			Game::TilesetComponent *l_tscomponent = new Game::TilesetComponent("tileset", l_entity);
 			l_tscomponent->setTileset(l_tileset);
-			l_entity->pushComponent(l_tscomponent);
+			l_entity->addComponent(l_tscomponent);
 
 			/* generate tile mesh */
 
@@ -527,7 +527,7 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 			l_render->setMesh(new Graphics::QuadMesh
 			    (l_tdata, l_tileset->textureData(), l_vdata, Graphics::QuadMesh::None));
 
-			l_entity->pushComponent(l_render);
+			l_entity->addComponent(l_render);
 		}
 
 		/* create position component */
@@ -539,12 +539,12 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 		l_pos_component->translate(l_object_hrsize.width,
 		                          -l_object_hrsize.height);
 
-		l_entity->pushComponent(l_pos_component);
+		l_entity->addComponent(l_pos_component);
 
 		/* create size component */
 		Game::SizeComponent *l_size = new Game::SizeComponent("size", l_entity);
 		l_size->set(l_object_rsize);
-		l_entity->pushComponent(l_size);
+		l_entity->addComponent(l_size);
 
 		/* object properties */
 		TinyXML::XMLElement *l_properties = l_object->FirstChildElement(TMXPROPERTIES_NODE);
@@ -563,7 +563,7 @@ TMXLoader::Private::processObjectGroup(TinyXML::XMLElement &e)
 				l_pcomponent->set(l_pname, l_value);
 			} while ((l_property = l_property->NextSiblingElement(TMXPROPERTIES_PROPERTY_NODE)));
 
-			l_entity->pushComponent(l_pcomponent);
+			l_entity->addComponent(l_pcomponent);
 		}
 
 		/* add entity to layer */

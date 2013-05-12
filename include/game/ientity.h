@@ -70,9 +70,7 @@ namespace Game { /******************************************** Game Namespace */
 		/*! @brief Parent Game Layer */
 		virtual EntitySceneLayer * layer(void) const = 0;
 
-		virtual void pushComponent(Game::IComponent *component) = 0;
-		virtual Game::IComponent * popComponent(void) = 0;
-
+		virtual void addComponent(Game::IComponent *component) = 0;
 		virtual void removeComponent(Game::IComponent *component) = 0;
 		virtual Game::IComponent * removeComponent(const Core::Identifier &identifier) = 0;
 

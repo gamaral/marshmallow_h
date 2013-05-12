@@ -388,10 +388,9 @@ BounceColliderComponent::collision(ColliderComponent &c, float d, const Collisio
 			l_vel_x *= -1;
 			position()->translateX(data.box.right);
 		}
-
-		if (l_vel.y > 0 && data.box.bottom < data.box.top
-		                && data.box.bottom < data.box.left
-		                && data.box.bottom < data.box.right) {
+		else if (l_vel.y > 0 && data.box.bottom < data.box.top
+		                     && data.box.bottom < data.box.left
+		                     && data.box.bottom < data.box.right) {
 			l_vel_y *= -1;
 			position()->translateY(-data.box.bottom);
 		}
