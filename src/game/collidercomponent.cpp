@@ -52,6 +52,7 @@
 #include "game/sizecomponent.h"
 
 #include <cstdio>
+#include <cstring>
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
@@ -110,7 +111,8 @@ ColliderComponent::Private::isColliding(ColliderComponent &cc, float d, Collisio
 		return(false);
 
 	const Math::Point2 l_pos_a = movement->simulate(d);
-	const Math::Point2 &l_pos_b = c.position->position();
+	const Math::Point2 l_pos_b =
+	    (c.movement ? c.movement->simulate(d) : c.position->position());
 
 	switch(body) {
 
@@ -217,23 +219,28 @@ ColliderComponent::Private::update(float d)
 		if (*l_i == &component) continue;
 
 		ColliderComponent *l_collider = *l_i;
-		CollisionData data;
+		CollisionData data[2];
+		memset(&data, 0, sizeof(data));
 
 		if (bullet) {
 			int l_steps = bullet_resolution;
 			const float l_delta_step = d / float(l_steps);
 			float l_bullet_delta = 0;
 
-			for(int i = 1; i < l_steps; ++i) {
-				if (component.isColliding(*l_collider, l_bullet_delta += l_delta_step, &data)) {
-					component.collision(*l_collider, l_bullet_delta, data);
-					continue;
+			for(int i = 1; i < l_steps; ++i)
+				if (component.isColliding(*l_collider, l_bullet_delta += l_delta_step, &data[0])) {
+					l_collider->isColliding(component, l_bullet_delta, &data[1]);
+					component.collision(*l_collider, l_bullet_delta, data[0]);
+					l_collider->collision(component, l_bullet_delta, data[1]);
+					break;
 				}
-			}
 		}
 		else {
-			if (component.isColliding(*l_collider, d, &data))
-				component.collision(*l_collider, d, data);
+			if (component.isColliding(*l_collider, d, &data[0])) {
+				l_collider->isColliding(component, d, &data[1]);
+				component.collision(*l_collider, d, data[0]);
+				l_collider->collision(component, d, data[1]);
+			}
 			continue;
 		}
 	}
@@ -368,6 +375,11 @@ BounceColliderComponent::collision(ColliderComponent &c, float d, const Collisio
 	MMUNUSED(c);
 	MMUNUSED(d);
 
+	/*
+	 * We can't bounce if we can't move
+	 */
+	if (!movement()) return(false);
+
 	const Math::Vector2 &l_vel = movement()->velocity();
 
 	switch(body()) {
@@ -376,25 +388,27 @@ BounceColliderComponent::collision(ColliderComponent &c, float d, const Collisio
 		float l_vel_x = l_vel.x;
 		float l_vel_y = l_vel.y;
 
-		if (l_vel.x > 0 && data.box.left < data.box.right
+		if (l_vel_x == 0 && l_vel_y == 0) break;
+
+		if (l_vel_x > 0 && data.box.left < data.box.right
 		                && data.box.left < data.box.top
 		                && data.box.left < data.box.bottom) {
 			l_vel_x *= -1;
 			position()->translateX(-data.box.left);
 		}
-		else if (l_vel.x < 0 && data.box.right < data.box.left
+		else if (l_vel_x < 0 && data.box.right < data.box.left
 		                     && data.box.right < data.box.top
 		                     && data.box.right < data.box.bottom) {
 			l_vel_x *= -1;
 			position()->translateX(data.box.right);
 		}
-		else if (l_vel.y > 0 && data.box.bottom < data.box.top
+		else if (l_vel_y > 0 && data.box.bottom < data.box.top
 		                     && data.box.bottom < data.box.left
 		                     && data.box.bottom < data.box.right) {
 			l_vel_y *= -1;
 			position()->translateY(-data.box.bottom);
 		}
-		else if (l_vel.y < 0 && data.box.top < data.box.bottom
+		else if (l_vel_y < 0 && data.box.top < data.box.bottom
 		                     && data.box.top < data.box.left
 		                     && data.box.top < data.box.right) {
 			l_vel_y *= -1;
