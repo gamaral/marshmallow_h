@@ -40,6 +40,7 @@
 
 #include "game/icomponent.h"
 #include "game/iengine.h"
+#include "game/ienginefeature.h"
 #include "game/ientity.h"
 #include "game/ifactory.h"
 #include "game/iscene.h"
@@ -51,6 +52,8 @@ namespace Game { /******************************************** Game Namespace */
 	IComponent::~IComponent(void) {}
 
 	IEngine::~IEngine(void) {}
+
+	IEngineFeature::~IEngineFeature(void) {}
 
 	IEntity::~IEntity(void) {}
 

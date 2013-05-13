@@ -46,6 +46,8 @@
 #include "event/renderevent.h"
 #include "event/updateevent.h"
 
+#include "graphics/backend_p.h"
+
 #include "game/factory.h"
 #include "game/iscene.h"
 
@@ -66,7 +68,7 @@ struct SceneManager::Private
 	{}
 
 	SceneStack stack;
-	IScene *active;
+	IScene    *active;
 };
 
 SceneManager::SceneManager(void)
@@ -141,7 +143,8 @@ SceneManager::render(void)
 void
 SceneManager::update(float d)
 {
-	if (PIMPL->active) PIMPL->active->update(d);
+	if (PIMPL->active && Graphics::Backend::Active())
+		PIMPL->active->update(d);
 }
 
 bool

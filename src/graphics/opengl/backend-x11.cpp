@@ -865,7 +865,7 @@ X11Backend::CreateGLXContext(void)
 		if (Extensions::glXGetSwapIntervalMESA
 		    && dpy.vsync != Extensions::glXGetSwapIntervalMESA()) {
 			MMERROR("X11: Swap interval request was ignored!");
-			dpy.vsync = Extensions::glXGetSwapIntervalMESA();
+			dpy.vsync = uint8_t(Extensions::glXGetSwapIntervalMESA());
 		}
 	}
 	else if (Extensions::glxSwapInterval)

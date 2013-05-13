@@ -1,0 +1,7 @@
+#!/bin/sh
+
+rm -rf marshmallow_demos
+cmake -DCMAKE_INSTALL_PREFIX=marshmallow_demos -DCOMPONENT=runtime    -P cmake_install.cmake
+cmake -DCMAKE_INSTALL_PREFIX=marshmallow_demos -DCOMPONENT=deployment -P cmake_install.cmake
+cmake -DCMAKE_INSTALL_PREFIX=marshmallow_demos -DCOMPONENT=demos      -P cmake_install.cmake
+

@@ -51,8 +51,7 @@ namespace { /************************************ Game::<anonymous> Namespace */
 bool
 Backend::Pause(void)
 {
-	assert(s_instance && s_instance->isValid()
-	    && "No valid engine instance!");
+	assert(s_instance && "No valid engine instance!");
 
 	if (s_instance->isSuspended())
 		s_instance->resume();
@@ -65,24 +64,21 @@ Backend::Pause(void)
 void
 Backend::Suspend(void)
 {
-	assert(s_instance && s_instance->isValid()
-	    && "No valid engine instance!");
+	assert(s_instance && "No valid engine instance!");
 	s_instance->suspend();
 }
 
 void
 Backend::Resume(void)
 {
-	assert(s_instance && s_instance->isValid()
-	    && "No valid engine instance!");
+	assert(s_instance && "No valid engine instance!");
 	s_instance->resume();
 }
 
 void
 Backend::Stop(int exit_code)
 {
-	assert(s_instance && s_instance->isValid()
-	    && "No valid engine instance!");
+	assert(s_instance && "No valid engine instance!");
 	s_instance->stop(exit_code);
 }
 

@@ -41,13 +41,11 @@
 #ifndef MARSHMALLOW_GAME_IENGINE_H
 #define MARSHMALLOW_GAME_IENGINE_H 1
 
-#include <core/irenderable.h>
-#include <core/iserializable.h>
-#include <core/iupdateable.h>
-
-#include <event/ieventlistener.h>
-
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace Core { /******************************************** Core Namespace */
+	class Type;
+} /*********************************************************** Core Namespace */
+
 namespace Event { /****************************************** Event Namespace */
 	class EventManager;
 } /********************************************************** Event Namespace */
@@ -55,14 +53,12 @@ namespace Event { /****************************************** Event Namespace */
 namespace Game { /******************************************** Game Namespace */
 
 	class SceneManager;
+	struct IEngineFeature;
 	struct IFactory;
 
 	/*! @brief Game Engine Interface */
 	struct MARSHMALLOW_GAME_EXPORT
-	IEngine : public Core::IRenderable
-	        , public Core::IUpdateable
-	        , public Core::ISerializable
-	        , public Event::IEventListener
+	IEngine
 	{
 		virtual ~IEngine(void);
 
@@ -88,6 +84,11 @@ namespace Game { /******************************************** Game Namespace */
 		virtual void resume(void) = 0;
 
 		/*!
+		 * @brief Returns true if engine is suspended
+		 */
+		virtual bool isSuspended(void) const = 0;
+
+		/*!
 		 * @brief Event Manager
 		 */
 		virtual Event::EventManager * eventManager(void) const = 0;
@@ -98,22 +99,34 @@ namespace Game { /******************************************** Game Namespace */
 		virtual Game::SceneManager * sceneManager(void) const = 0;
 
 		/*!
-		 * @brief Factory
+		 * @brief Game Factory
 		 */
 		virtual Game::IFactory * factory(void) const = 0;
 
-		virtual bool initialize(void) = 0;
-		virtual void finalize(void) = 0;
+		/*
+		 * Features
+		 */
 
 		/*!
-		 * @brief Returns true if engine is suspended
+		 * @brief Add engine feature
 		 */
-		virtual bool isSuspended(void) const = 0;
+		virtual void addFeature(Game::IEngineFeature *feature) = 0;
 
 		/*!
-		 * @brief Returns true if engine is valid
+		 * @brief Remove engine feature
 		 */
-		virtual bool isValid(void) const = 0;
+		virtual void removeFeature(Game::IEngineFeature *feature) = 0;
+
+		/*!
+		 * @brief Remove engine feature of a certain type
+		 */
+		virtual Game::IEngineFeature * removeFeature(const Core::Type &type) = 0;
+
+		/*!
+		 * @brief Get engine feature of a certain type
+		 * @return Engine feature pointer or null if the feature was not found
+		 */
+		virtual Game::IEngineFeature * getFeature(const Core::Type &type) = 0;
 	};
 
 } /*********************************************************** Game Namespace */
