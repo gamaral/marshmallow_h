@@ -92,20 +92,24 @@ namespace Math { /******************************************** Math Namespace */
 		    { return(x != .0f || y != .0f); }
 
 		inline Vector2 & operator*=(float rhs);
-		inline Vector2 & operator-=(float rhs);
 		inline Vector2 & operator+=(float rhs);
+		inline Vector2 & operator-=(float rhs);
+		inline Vector2 & operator/=(float rhs);
 
 		inline Vector2 & operator*=(const Vector2 &rhs);
 		inline Vector2 & operator+=(const Vector2 &rhs);
 		inline Vector2 & operator-=(const Vector2 &rhs);
+		inline Vector2 & operator/=(const Vector2 &rhs);
 
 		inline Vector2 operator*(float rhs) const;
 		inline Vector2 operator+(float rhs) const;
 		inline Vector2 operator-(float rhs) const;
+		inline Vector2 operator/(float rhs) const;
 
 		inline Vector2 operator*(const Vector2 &rhs) const;
 		inline Vector2 operator+(const Vector2 &rhs) const;
 		inline Vector2 operator-(const Vector2 &rhs) const;
+		inline Vector2 operator/(const Vector2 &rhs) const;
 
 	public: /* static */
 
@@ -137,15 +141,17 @@ namespace Math { /******************************************** Math Namespace */
 	Vector2
 	Vector2::normalized(float m) const
 	{
-		return(Vector2(m != .0f ? x / m : .0f,
-		               m != .0f ? y / m : .0f));
+		if (m == .0f)
+			return(Vector2(.0f, .0f));
+		return(Vector2(x / m, y / m));
 	}
 
 	Vector2 &
 	Vector2::normalize(float m)
 	{
-		if (m != 0) x /= m, y /= m;
-		else x = y = .0f;
+		if (m == .0f)
+			x = y = .0f;
+		x /= m, y /= m;
 
 		return(*this);
 	}
@@ -196,6 +202,13 @@ namespace Math { /******************************************** Math Namespace */
 	}
 
 	Vector2 &
+	Vector2::operator/=(float rhs)
+	{
+		x /= rhs, y /= rhs;
+		return(*this);
+	}
+
+	Vector2 &
 	Vector2::operator*=(const Vector2 &rhs)
 	{
 		x *= rhs.x, y *= rhs.y;
@@ -213,6 +226,13 @@ namespace Math { /******************************************** Math Namespace */
 	Vector2::operator-=(const Vector2 &rhs)
 	{
 		x -= rhs.x, y -= rhs.y;
+		return(*this);
+	}
+
+	Vector2 &
+	Vector2::operator/=(const Vector2 &rhs)
+	{
+		x /= rhs.x, y /= rhs.y;
 		return(*this);
 	}
 
@@ -235,6 +255,12 @@ namespace Math { /******************************************** Math Namespace */
 	}
 
 	Vector2
+	Vector2::operator/(float rhs) const
+	{
+		return(Vector2(x / rhs, y / rhs));
+	}
+
+	Vector2
 	Vector2::operator*(const Vector2 &rhs) const
 	{
 		return(Vector2(x * rhs.x, y * rhs.y));
@@ -250,6 +276,12 @@ namespace Math { /******************************************** Math Namespace */
 	Vector2::operator-(const Vector2 &rhs) const
 	{
 		return(Vector2(x - rhs.x, y - rhs.y));
+	}
+
+	Vector2
+	Vector2::operator/(const Vector2 &rhs) const
+	{
+		return(Vector2(x / rhs.x, y / rhs.y));
 	}
 
 } /*********************************************************** Math Namespace */

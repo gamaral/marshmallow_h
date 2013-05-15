@@ -66,10 +66,24 @@ namespace Game { /******************************************** Game Namespace */
 			Sphere
 		};
 
+		enum Flags {
+			Static    = 0,
+			Active    = (1 << 0),
+			Bullet    = (1 << 1),
+			LockXAxis = (1 << 2),
+			LockYAxis = (1 << 3)
+		};
+
 		/*! @brief Game Collision Data */
 		union CollisionData
 		{
 			struct {
+				float x;
+				float y;
+			} velocity;
+
+			struct {
+				float velocity[2];
 				float left;
 				float right;
 				float top;
@@ -77,8 +91,8 @@ namespace Game { /******************************************** Game Namespace */
 			} box;
 
 			struct {
+				float velocity[2];
 				float penetration2;
-				float padding[3];
 			} sphere;
 		};
 
@@ -88,46 +102,86 @@ namespace Game { /******************************************** Game Namespace */
 		                  Game::IEntity *entity);
 		virtual ~ColliderComponent(void);
 
+		BodyType body(void) const;
+		void setBody(BodyType body);
+
+		int flags(void) const;
+		bool hasFlag(ColliderComponent::Flags flag) const;
+		void clearFlag(ColliderComponent::Flags flag);
+		void setFlag(ColliderComponent::Flags flag);
+
 		bool active(void) const;
 		void setActive(bool active);
 
 		bool bullet(void) const;
 		void setBullet(bool bullet);
 
-		BodyType body(void) const;
-		void setBody(BodyType body);
-
 		int bulletResolution(void) const;
 		void setBulletResolution(int resolution);
 
 		float radius2(void) const;
 
-		bool isColliding(ColliderComponent &collider, float delta, CollisionData *data = 0) const;
-
-	public: /* virtual */
+	public: /* reimp */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }
 
 		VIRTUAL void update(float delta);
 
-	public: /* static */
-
-		static const Core::Type & Type(void);
-
 	protected:
-	
+
+		bool isColliding(ColliderComponent &collider,
+		                 float delta,
+		                 CollisionData *data = 0) const;
+
 		Game::CollisionSceneLayer * layer(void) const;
 		Game::MovementComponent * movement(void) const;
 		Game::PositionComponent * position(void) const;
 		Game::SizeComponent * size(void) const;
 
+	protected: /* virtual */
+	
 		virtual bool collision(ColliderComponent &collider,
 		                       float delta,
 		                       const CollisionData &data);
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
 	};
 
-	/*! @brief Game Bounce Collider Component Class */
+	/*! @brief Game Simple Collider Component Class
+	 *  
+	 *  This inverts velocity on collision, nothing more, nothing less.
+	 */
+	class MARSHMALLOW_GAME_EXPORT
+	SimpleColliderComponent : public ColliderComponent
+	{
+		NO_ASSIGN_COPY(SimpleColliderComponent);
+	public:
+
+		SimpleColliderComponent(const Core::Identifier &identifier,
+		                        Game::IEntity *entity);
+		virtual ~SimpleColliderComponent(void) {};
+
+	public: /* reimp */
+
+		VIRTUAL const Core::Type & type(void) const
+		    { return(Type()); }
+
+	protected:
+	
+		VIRTUAL bool collision(ColliderComponent &collider, float delta, const CollisionData &data);
+
+	public: /* static */
+
+		static const Core::Type & Type(void);
+	};
+
+	/*! @brief Game Bounce Collider Component Class
+	 *
+	 *  This is a bit closer to reality compared to simple collider.
+	 */
 	class MARSHMALLOW_GAME_EXPORT
 	BounceColliderComponent : public ColliderComponent
 	{
@@ -138,7 +192,7 @@ namespace Game { /******************************************** Game Namespace */
 		                        Game::IEntity *entity);
 		virtual ~BounceColliderComponent(void) {};
 
-	public: /* virtual */
+	public: /* reimp */
 
 		VIRTUAL const Core::Type & type(void) const
 		    { return(Type()); }

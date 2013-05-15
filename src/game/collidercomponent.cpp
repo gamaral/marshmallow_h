@@ -69,8 +69,7 @@ struct ColliderComponent::Private
 	    , size(0)
 	    , body(Box)
 	    , bullet_resolution(DELTA_STEPS)
-	    , active(true)
-	    , bullet(false)
+	    , flags(Active)
 	    , init(false)
 	{}
 
@@ -78,6 +77,9 @@ struct ColliderComponent::Private
 
 	inline bool
 	isColliding(ColliderComponent &c, float d, CollisionData *data) const;
+
+	inline bool
+	hasFlag(ColliderComponent::Flags flag) const;
 
 	inline float
 	radius2(void) const;
@@ -92,8 +94,7 @@ struct ColliderComponent::Private
 	SizeComponent       *size;
 	BodyType body;
 	int  bullet_resolution;
-	bool active;
-	bool bullet;
+	int  flags;
 	bool init;
 };
 
@@ -112,7 +113,7 @@ ColliderComponent::Private::isColliding(ColliderComponent &cc, float d, Collisio
 
 	const Math::Point2 l_pos_a = movement->simulate(d);
 	const Math::Point2 l_pos_b =
-	    (c.movement ? c.movement->simulate(d) : c.position->position());
+	    (c.movement != 0 ? c.movement->simulate(d) : c.position->position());
 
 	switch(body) {
 
@@ -137,10 +138,18 @@ ColliderComponent::Private::isColliding(ColliderComponent &cc, float d, Collisio
 		if (b <= 0) return(false);
 
 		if (data) {
+			data->velocity.x = -movement->velocityX();
+			data->velocity.y = -movement->velocityX();
+			if (c.movement != 0) {
+				data->velocity.x += c.movement->velocityX();
+				data->velocity.y += c.movement->velocityY();
+			}
+
 			data->box.left = l;
 			data->box.right = r;
 			data->box.top = t;
 			data->box.bottom = b;
+
 		}
 	} return(true);
 
@@ -149,7 +158,16 @@ ColliderComponent::Private::isColliding(ColliderComponent &cc, float d, Collisio
 		l_distance2 -= c.radius2() + radius2();
 		if (l_distance2 >= 0) return(false);
 		
-		if (data) data->sphere.penetration2 = l_distance2;
+		if (data) { 
+			data->velocity.x = -movement->velocityX();
+			data->velocity.y = -movement->velocityX();
+			if (c.movement != 0) {
+				data->velocity.x += c.movement->velocityX();
+				data->velocity.y += c.movement->velocityY();
+			}
+
+			data->sphere.penetration2 = l_distance2;
+		}
 	} return(true);
 
 	default: MMWARNING("Unknown collider body type encountered!");
@@ -159,14 +177,20 @@ ColliderComponent::Private::isColliding(ColliderComponent &cc, float d, Collisio
 	return(false);
 }
 
+bool
+ColliderComponent::Private::hasFlag(ColliderComponent::Flags flag) const
+{
+	return((flags & flag) == flag);
+}
+
 float
 ColliderComponent::Private::radius2(void) const
 {
 	float l_radius2 = 0;
 	if (size) {
 		const Math::Size2f &l_size = size->size();
-		l_radius2 = powf(l_size.width  / 2.f, 2) +
-		            powf(l_size.height / 2.f, 2);
+		l_radius2 = powf(l_size.width  / 2.f, 2)
+		          + powf(l_size.height / 2.f, 2);
 	}
 	else MMWARNING("Collider component found no size component!");
 	return(l_radius2);
@@ -210,7 +234,7 @@ ColliderComponent::Private::update(float d)
 		init = (layer != 0 && position != 0 && size != 0 );
 	}
 
-	if (!active || !init) return;
+	if (!init || !hasFlag(Active)) return;
 
 	ColliderList::const_iterator l_i;
 	ColliderList::const_iterator l_c = layer->colliders().end();
@@ -222,26 +246,26 @@ ColliderComponent::Private::update(float d)
 		CollisionData data[2];
 		memset(&data, 0, sizeof(data));
 
-		if (bullet) {
+		if (hasFlag(Bullet)) {
 			int l_steps = bullet_resolution;
 			const float l_delta_step = d / float(l_steps);
 			float l_bullet_delta = 0;
 
-			for(int i = 1; i < l_steps; ++i)
+			for(int i = 1; i < l_steps; ++i) {
 				if (component.isColliding(*l_collider, l_bullet_delta += l_delta_step, &data[0])) {
 					l_collider->isColliding(component, l_bullet_delta, &data[1]);
-					component.collision(*l_collider, l_bullet_delta, data[0]);
 					l_collider->collision(component, l_bullet_delta, data[1]);
+					component.collision(*l_collider, l_bullet_delta, data[0]);
 					break;
 				}
+			}
 		}
 		else {
 			if (component.isColliding(*l_collider, d, &data[0])) {
 				l_collider->isColliding(component, d, &data[1]);
-				component.collision(*l_collider, d, data[0]);
 				l_collider->collision(component, d, data[1]);
+				component.collision(*l_collider, d, data[0]);
 			}
-			continue;
 		}
 	}
 }
@@ -258,30 +282,6 @@ ColliderComponent::~ColliderComponent(void)
 	PIMPL_DESTROY;
 }
 
-bool
-ColliderComponent::active(void) const
-{
-	return(PIMPL->active);
-}
-
-void
-ColliderComponent::setActive(bool a)
-{
-	PIMPL->active = a;
-}
-
-bool
-ColliderComponent::bullet(void) const
-{
-	return(PIMPL->bullet);
-}
-
-void
-ColliderComponent::setBullet(bool b)
-{
-	PIMPL->bullet = b;
-}
-
 ColliderComponent::BodyType
 ColliderComponent::body(void) const
 {
@@ -292,6 +292,56 @@ void
 ColliderComponent::setBody(BodyType b)
 {
 	PIMPL->body = b;
+}
+
+int
+ColliderComponent::flags(void) const
+{
+	return(PIMPL->flags);
+}
+
+bool
+ColliderComponent::hasFlag(ColliderComponent::Flags flag) const
+{
+	return((PIMPL->flags & flag) == flag);
+}
+
+void
+ColliderComponent::clearFlag(ColliderComponent::Flags flag)
+{
+	PIMPL->flags &= ~flag;
+}
+
+void
+ColliderComponent::setFlag(ColliderComponent::Flags flag)
+{
+	PIMPL->flags |= flag;
+}
+
+bool
+ColliderComponent::active(void) const
+{
+	return(PIMPL->hasFlag(Active));
+}
+
+void
+ColliderComponent::setActive(bool a)
+{
+	if (a) setFlag(Active);
+	else clearFlag(Active);
+}
+
+bool
+ColliderComponent::bullet(void) const
+{
+	return(PIMPL->hasFlag(Bullet));
+}
+
+void
+ColliderComponent::setBullet(bool b)
+{
+	if (b) setFlag(Bullet);
+	else clearFlag(Bullet);
 }
 
 int
@@ -312,16 +362,16 @@ ColliderComponent::radius2(void) const
 	return(PIMPL->radius2());
 }
 
-bool
-ColliderComponent::isColliding(ColliderComponent &c, float d, CollisionData *data) const
-{
-	return(PIMPL->isColliding(c, d, data));
-}
-
 void
 ColliderComponent::update(float d)
 {
 	PIMPL->update(d);
+}
+
+bool
+ColliderComponent::isColliding(ColliderComponent &c, float d, CollisionData *data) const
+{
+	return(PIMPL->isColliding(c, d, data));
 }
 
 Game::CollisionSceneLayer *
@@ -361,6 +411,89 @@ ColliderComponent::Type(void)
 	return(s_type);
 }
 
+/************************************************** SimpleColliderComponent */
+
+SimpleColliderComponent::SimpleColliderComponent(const Core::Identifier &i,
+                                                 Game::IEntity *e)
+    : ColliderComponent(i, e)
+{
+}
+
+bool
+SimpleColliderComponent::collision(ColliderComponent &c, float d, const CollisionData &data)
+{
+	MMUNUSED(c);
+	MMUNUSED(d);
+
+	/*
+	 * We can't bounce if we can't move
+	 */
+	if (!active() || !movement()) return(false);
+
+	Math::Vector2 l_vel = movement()->velocity();
+
+	switch(body()) {
+
+	case Box: {
+		if (l_vel.x == 0 && l_vel.y == 0)
+			break;
+		else if (l_vel.x > 0 && !hasFlag(LockXAxis)
+		                     && data.box.left < data.box.right
+		                     && data.box.left < data.box.top
+		                     && data.box.left < data.box.bottom) {
+			l_vel.x *= -1;
+			position()->translateX(-data.box.left);
+		}
+		else if (l_vel.x < 0 && !hasFlag(LockXAxis)
+		                     && data.box.right < data.box.left
+		                     && data.box.right < data.box.top
+		                     && data.box.right < data.box.bottom) {
+			l_vel.x *= -1;
+			position()->translateX(data.box.right);
+		}
+		else if (l_vel.y > 0 && !hasFlag(LockYAxis)
+		                     && data.box.bottom < data.box.top
+		                     && data.box.bottom < data.box.left
+		                     && data.box.bottom < data.box.right) {
+			l_vel.y *= -1;
+			position()->translateY(-data.box.bottom);
+		}
+		else if (l_vel.y < 0 && !hasFlag(LockYAxis)
+		                     && data.box.top < data.box.bottom
+		                     && data.box.top < data.box.left
+		                     && data.box.top < data.box.right) {
+			l_vel.y *= -1;
+			position()->translateY(data.box.top);
+		}
+		else break;
+			
+		movement()->setVelocity(l_vel);
+	} break;
+
+	/* TODO: FIX */
+	case Sphere: {
+		const float l_mag = l_vel.magnitude();
+		const Math::Vector2 l_normal = l_vel.normalized(l_mag);
+		Math::Vector2 l_pvel = (l_normal * (2.f * l_normal.dot(l_vel * -1.f)) + l_vel);
+		movement()->setVelocity(l_pvel.normalize(l_pvel.magnitude()) * l_mag);
+	} break;
+
+	default:
+		MMWARNING("Unknown collider body type encountered!");
+		return(false);
+	};
+
+	return(true);
+}
+
+const Core::Type &
+SimpleColliderComponent::Type(void)
+{
+	static const Core::Type s_type("Game::SimpleColliderComponent");
+	return(s_type);
+}
+
+
 /************************************************** BounceColliderComponent */
 
 BounceColliderComponent::BounceColliderComponent(const Core::Identifier &i,
@@ -378,46 +511,110 @@ BounceColliderComponent::collision(ColliderComponent &c, float d, const Collisio
 	/*
 	 * We can't bounce if we can't move
 	 */
-	if (!movement()) return(false);
+	if (!active() || !movement()) return(false);
 
-	const Math::Vector2 &l_vel = movement()->velocity();
+	Math::Vector2 l_vel = movement()->velocity();
 
 	switch(body()) {
 
 	case Box: {
-		float l_vel_x = l_vel.x;
-		float l_vel_y = l_vel.y;
-
-		if (l_vel_x == 0 && l_vel_y == 0) break;
-
-		if (l_vel_x > 0 && data.box.left < data.box.right
+		/*
+		 * We hit something's left while moving right
+		 */
+		if (l_vel.x > 0 && !hasFlag(LockXAxis)
+		                && data.box.left < data.box.right
 		                && data.box.left < data.box.top
 		                && data.box.left < data.box.bottom) {
-			l_vel_x *= -1;
+			l_vel.x -= data.velocity.x / 2.f;
+			l_vel.x /= -2.f;
 			position()->translateX(-data.box.left);
 		}
-		else if (l_vel_x < 0 && data.box.right < data.box.left
+
+		/*
+		 * We hit something's right while moving left
+		 */
+		else if (l_vel.x < 0 && !hasFlag(LockXAxis)
+		                     && data.box.right < data.box.left
 		                     && data.box.right < data.box.top
 		                     && data.box.right < data.box.bottom) {
-			l_vel_x *= -1;
+			l_vel.x -= data.velocity.x / 2.f;
+			l_vel.x /= -2.f;
 			position()->translateX(data.box.right);
 		}
-		else if (l_vel_y > 0 && data.box.bottom < data.box.top
+
+		/*
+		 * We hit something's bottom while moving up
+		 */
+		else if (l_vel.y > 0 && !hasFlag(LockYAxis)
+		                     && data.box.bottom < data.box.top
 		                     && data.box.bottom < data.box.left
 		                     && data.box.bottom < data.box.right) {
-			l_vel_y *= -1;
+			l_vel.y -= data.velocity.y / 2.f;
+			l_vel.y /= -2.f;
 			position()->translateY(-data.box.bottom);
 		}
-		else if (l_vel_y < 0 && data.box.top < data.box.bottom
+
+		/*
+		 * We hit somethings top while moving down
+		 */
+		else if (l_vel.y < 0 && !hasFlag(LockYAxis)
+		                     && data.box.top < data.box.bottom
 		                     && data.box.top < data.box.left
 		                     && data.box.top < data.box.right) {
-			l_vel_y *= -1;
+			l_vel.y -= data.velocity.y / 2.f;
+			l_vel.y /= -2.f;
 			position()->translateY(data.box.top);
 		}
+
+		/*
+		 * Something's right hit us while moving right (pushed)
+		 */
+		else if (l_vel.x >= 0 && !hasFlag(LockXAxis)
+		                      && data.box.right < data.box.left
+		                      && data.box.right < data.box.top
+		                      && data.box.right < data.box.bottom) {
+			l_vel.x += data.velocity.x / 2.f;
+			position()->translateX(data.box.right);
+		}
+
+		/*
+		 * Something's left hit us while moving left (pushed)
+		 */
+		else if (l_vel.x <= 0 && !hasFlag(LockXAxis)
+		                      && data.box.left < data.box.right
+		                      && data.box.left < data.box.top
+		                      && data.box.left < data.box.bottom) {
+			l_vel.x += data.velocity.x / 2.f;
+			position()->translateX(-data.box.left);
+		}
+
+		/*
+		 * Something's top hit us while moving up (pushed)
+		 */
+		else if (l_vel.y >= 0 && !hasFlag(LockYAxis)
+		                      && data.box.top < data.box.bottom
+		                      && data.box.top < data.box.left
+		                      && data.box.top < data.box.right) {
+			l_vel.y += data.velocity.y / 2.f;
+			position()->translateY(data.box.top);
+		}
+
+		/*
+		 * Something's bottom hit us while moving down (pushed)
+		 */
+		else if (l_vel.y <= 0 && !hasFlag(LockYAxis)
+		                      && data.box.bottom < data.box.top
+		                      && data.box.bottom < data.box.left
+		                      && data.box.bottom < data.box.right) {
+			l_vel.y += data.velocity.y / 2.f;
+			position()->translateY(-data.box.bottom);
+		}
+		else break;
 			
-		movement()->setVelocity(l_vel_x, l_vel_y);
+		movement()->setVelocity(l_vel);
 	} break;
 
+	/* TODO: FIX */
 	case Sphere: {
 		const float l_mag = l_vel.magnitude();
 		const Math::Vector2 l_normal = l_vel.normalized(l_mag);
