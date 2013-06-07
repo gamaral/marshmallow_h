@@ -67,8 +67,6 @@ namespace Game { /******************************************** Game Namespace */
 		TextComponent(const Core::Identifier &i, Game::IEntity *entity);
 		virtual ~TextComponent(void);
 
-		Graphics::ITileset * tileset(void);
-
 		const std::string & text(void) const;
 		void setText(const std::string &text);
 

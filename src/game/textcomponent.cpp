@@ -54,7 +54,9 @@
 
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
+#include "game/tilesetcomponent.h"
 
+#include <cassert>
 #include <string>
 #include <vector>
 
@@ -67,9 +69,11 @@ namespace Game { /******************************************** Game Namespace */
 struct TextComponent::Private
 {
 	Private(void)
-	    : scale(1.f)
+	    : position(0)
+	    , tileset(0)
+	    , scale(1.f)
 	    , tile_offset(0)
-	    , invalidated(false)
+	    , invalidated(true)
 	{}
 
 	void rebuild(void);
@@ -78,7 +82,7 @@ struct TextComponent::Private
 	std::vector<Graphics::IMesh *> mesh;
 
 	PositionComponent *position;
-	Graphics::ITileset *tileset;
+	TilesetComponent *tileset;
 
 	Graphics::Color color;
 
@@ -100,6 +104,8 @@ TextComponent::Private::rebuild(void)
 		return;
 	}
 
+	Graphics::ITileset *l_ts = tileset->tileset();
+
 	/* create vertex data */
 
 	/* TODO: this needs to be kept around, only replaced when font size
@@ -109,9 +115,9 @@ TextComponent::Private::rebuild(void)
 	    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 	{
 		float l_hwidth  =
-		    (static_cast<float>(tileset->tileSize().width)  / 2.f) * scale;
+		    (static_cast<float>(l_ts->tileSize().width)  / 2.f) * scale;
 		float l_hheight =
-		    (static_cast<float>(tileset->tileSize().height) / 2.f) * scale;
+		    (static_cast<float>(l_ts->tileSize().height) / 2.f) * scale;
 
 		l_vdata->set(0, -l_hwidth,  l_hheight);
 		l_vdata->set(1, -l_hwidth, -l_hheight);
@@ -130,11 +136,11 @@ TextComponent::Private::rebuild(void)
 		l_char = text[i];
 		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
 			Graphics::ITextureCoordinateData *l_tdata =
-				tileset->getTextureCoordinateData(static_cast<uint16_t>
+				l_ts->getTextureCoordinateData(static_cast<uint16_t>
 				    (tile_offset + (l_char - MIN_CHAR)));
 
 			mesh[i] = new Graphics::QuadMesh(l_tdata,
-			                                 tileset->textureData(),
+			                                 l_ts->textureData(),
 			                                 l_vdata,
 			                                 Graphics::QuadMesh::None);
 		}
@@ -154,6 +160,12 @@ TextComponent::Private::render(void)
 		return;
 	}
 
+	/*
+	 * We should be holding a valid tileset by this point.
+	 */
+	assert(tileset && "Invalid tileset! We shouldn't have gotten this far.");
+	Graphics::ITileset *l_ts = tileset->tileset();
+
 	/* render characters */
 
 	/* TODO: find line-breaks to determine line length for center
@@ -172,7 +184,7 @@ TextComponent::Private::render(void)
 			l_mesh->setColor(color);
 			Graphics::Painter::Draw(*l_mesh, l_point);
 			l_point.x +=
-			    static_cast<float>(tileset->tileSize().width) * scale;
+			    static_cast<float>(l_ts->tileSize().width) * scale;
 		}
 
 		/* handle line break */
@@ -180,12 +192,12 @@ TextComponent::Private::render(void)
 			l_point.x =
 			    position->position().x;
 			l_point.y +=
-			    static_cast<float>(tileset->tileSize().height) * -scale;
+			    static_cast<float>(l_ts->tileSize().height) * -scale;
 		}
 
 		/* skip unknown character */
 		else l_point.x +=
-		    static_cast<float>(tileset->tileSize().width) * scale;
+		    static_cast<float>(l_ts->tileSize().width) * scale;
 	}
 }
 
@@ -200,12 +212,6 @@ TextComponent::TextComponent(const Core::Identifier &i, Game::IEntity *e)
 TextComponent::~TextComponent(void)
 {
 	PIMPL_DESTROY;
-}
-
-Graphics::ITileset *
-TextComponent::tileset(void)
-{
-	return(PIMPL->tileset);
 }
 
 const std::string &
@@ -269,7 +275,11 @@ TextComponent::update(float delta)
 
 	if (!PIMPL->position)
 	    PIMPL->position = static_cast<PositionComponent *>
-	        (entity()->getComponentType("Game::PositionComponent"));
+	        (entity()->getComponentType(PositionComponent::Type()));
+
+	if (!PIMPL->tileset)
+	    PIMPL->tileset = static_cast<TilesetComponent *>
+	        (entity()->getComponentType(TilesetComponent::Type()));
 
 	if (PIMPL->invalidated)
 	    PIMPL->rebuild();
