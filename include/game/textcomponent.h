@@ -64,11 +64,23 @@ namespace Game { /******************************************** Game Namespace */
 		NO_ASSIGN_COPY(TextComponent);
 	public:
 
+		enum Alignment
+		{
+			Left,
+			Center,
+			Right
+		};
+
+	public:
+
 		TextComponent(const Core::Identifier &i, Game::IEntity *entity);
 		virtual ~TextComponent(void);
 
 		const std::string & text(void) const;
 		void setText(const std::string &text);
+
+		Alignment alignment(void) const;
+		void setAlignment(Alignment alignment);
 
 		const Graphics::Color & color(void) const;
 		void setColor(const Graphics::Color &color);

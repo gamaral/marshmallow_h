@@ -64,6 +64,25 @@
 #define MAX_CHAR 126
 
 MARSHMALLOW_NAMESPACE_BEGIN
+namespace { /************************************ Game::<anonymous> Namespace */
+
+	static float
+	GetLineLength(const std::string &str, size_t offset)
+	{
+		float curlen = 0;
+		const size_t c = str.length();
+
+		for (size_t i = offset; i < c; ++i) {
+			if ('\n' == str[i])
+				return(curlen);
+			else ++curlen;
+		}
+
+		return(curlen);
+	}
+
+} /********************************************** Game::<anonymous> Namespace */
+
 namespace Game { /******************************************** Game Namespace */
 
 struct TextComponent::Private
@@ -71,6 +90,7 @@ struct TextComponent::Private
 	Private(void)
 	    : position(0)
 	    , tileset(0)
+	    , alignment(Center)
 	    , scale(1.f)
 	    , tile_offset(0)
 	    , invalidated(true)
@@ -87,6 +107,7 @@ struct TextComponent::Private
 	Graphics::Color color;
 
 	std::string text;
+	Alignment alignment;
 
 	float scale;
 	uint16_t tile_offset;
@@ -114,18 +135,16 @@ TextComponent::Private::rebuild(void)
 	Graphics::IVertexData *l_vdata =
 	    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
 	{
-		float l_hwidth  =
-		    (static_cast<float>(l_ts->tileSize().width)  / 2.f) * scale;
-		float l_hheight =
-		    (static_cast<float>(l_ts->tileSize().height) / 2.f) * scale;
+		float l_width  = float(l_ts->tileSize().width)  * scale;
+		float l_height = float(l_ts->tileSize().height) * scale;
 
-		l_vdata->set(0, -l_hwidth,  l_hheight);
-		l_vdata->set(1, -l_hwidth, -l_hheight);
-		l_vdata->set(2,  l_hwidth,  l_hheight);
-		l_vdata->set(3,  l_hwidth, -l_hheight);
+		l_vdata->set(0, 0,       0);
+		l_vdata->set(1, 0,       -l_height);
+		l_vdata->set(2, l_width, 0);
+		l_vdata->set(3, l_width, -l_height);
 	}
 
-	/* render characters */
+	/* create characters */
 
 	/* TODO: find line-breaks to determine line length for center
 	 *       alignment, also add right alignment.
@@ -168,13 +187,22 @@ TextComponent::Private::render(void)
 
 	/* render characters */
 
-	/* TODO: find line-breaks to determine line length for center
-	 *       alignment, also add right alignment.
-	 */
 	char l_char;
-	Math::Point2 l_point(position->position());
+	const float l_char_size = float(l_ts->tileSize().width) * scale;
 	const size_t l_text_count = text.size();
-	for (unsigned int i = 0; i < l_text_count; ++i) {
+
+	Math::Point2 l_point(position->position());
+	switch(alignment) {
+	case Left: break;
+	case Center:
+		l_point.x -= (l_char_size * GetLineLength(text, 0)) / 2.f;
+	break;
+	case Right:
+		l_point.x -= l_char_size * GetLineLength(text, 0);
+	break;
+	}
+
+	for (size_t i = 0; i < l_text_count; ++i) {
 		l_char = text[i];
 
 		/* render valid characters */
@@ -183,21 +211,31 @@ TextComponent::Private::render(void)
 			    static_cast<Graphics::QuadMesh *>(mesh[i]);
 			l_mesh->setColor(color);
 			Graphics::Painter::Draw(*l_mesh, l_point);
-			l_point.x +=
-			    static_cast<float>(l_ts->tileSize().width) * scale;
+			l_point.x += l_char_size;
 		}
 
 		/* handle line break */
 		else if ('\n' == l_char) {
-			l_point.x =
-			    position->position().x;
+			l_point.x = position->position().x;
+
+			switch(alignment) {
+			case Left: break;
+			case Center:
+				l_point.x -=
+				    (l_char_size * GetLineLength(text, i + 1)) / 2.f;
+			break;
+			case Right:
+				l_point.x -=
+				    l_char_size * GetLineLength(text, i + 1);
+			break;
+			};
+
 			l_point.y +=
-			    static_cast<float>(l_ts->tileSize().height) * -scale;
+			    float(l_ts->tileSize().height) * -scale;
 		}
 
 		/* skip unknown character */
-		else l_point.x +=
-		    static_cast<float>(l_ts->tileSize().width) * scale;
+		else l_point.x += l_char_size;
 	}
 }
 
@@ -224,6 +262,20 @@ const Graphics::Color &
 TextComponent::color(void) const
 {
 	return(PIMPL->color);
+}
+
+TextComponent::Alignment
+TextComponent::alignment(void) const
+{
+	return(PIMPL->alignment);
+}
+
+void
+TextComponent::setAlignment(Alignment a)
+{
+	PIMPL->alignment = a;
+	PIMPL->invalidated = true;
+	PIMPL->rebuild();
 }
 
 void
