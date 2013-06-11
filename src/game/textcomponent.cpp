@@ -88,7 +88,8 @@ namespace Game { /******************************************** Game Namespace */
 struct TextComponent::Private
 {
 	Private(void)
-	    : position(0)
+	    : vdata(0)
+	    , position(0)
 	    , tileset(0)
 	    , alignment(Center)
 	    , scale(1.f)
@@ -96,10 +97,17 @@ struct TextComponent::Private
 	    , invalidated(true)
 	{}
 
-	void rebuild(void);
-	void render(void);
+	~Private(void);
 
-	std::vector<Graphics::IMesh *> mesh;
+	inline void clearCache(void);
+	inline void clearVertexData(void);
+	inline void rebuildCache(void);
+	inline void rebuildVertexData(void);
+	inline void render(void);
+
+	typedef std::vector<Graphics::IMesh *> MeshCache;
+	MeshCache mesh;
+	Graphics::IVertexData *vdata;
 
 	PositionComponent *position;
 	TilesetComponent *tileset;
@@ -114,43 +122,50 @@ struct TextComponent::Private
 	bool invalidated;
 };
 
-void
-TextComponent::Private::rebuild(void)
+TextComponent::Private::~Private(void)
 {
-	mesh.clear();
-	mesh.resize(text.size());
+	clearCache();
+	delete vdata, vdata = 0;
+}
 
+void
+TextComponent::Private::clearCache(void)
+{
+	MeshCache::iterator l_i;
+	const MeshCache::const_iterator l_c = mesh.end();
+	for (l_i = mesh.begin(); l_i != l_c; ++l_i)
+		delete *l_i, *l_i = 0;
+}
+
+void
+TextComponent::Private::clearVertexData(void)
+{
+	delete vdata, vdata = 0;
+}
+
+void
+TextComponent::Private::rebuildCache(void)
+{
 	if (!tileset) {
 		MMWARNING("No tileset assigned.");
 		return;
 	}
 
+	/* build vertex data if needed */
+
+	if (!vdata) rebuildVertexData();
+
+	/* clear previous cache */
+
+	clearCache();
+
+	/* create characters cache */
+
 	Graphics::ITileset *l_ts = tileset->tileset();
 
-	/* create vertex data */
-
-	/* TODO: this needs to be kept around, only replaced when font size
-	 *       changes.
-	 */
-	Graphics::IVertexData *l_vdata =
-	    Graphics::Factory::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
-	{
-		float l_width  = float(l_ts->tileSize().width)  * scale;
-		float l_height = float(l_ts->tileSize().height) * scale;
-
-		l_vdata->set(0, 0,       0);
-		l_vdata->set(1, 0,       -l_height);
-		l_vdata->set(2, l_width, 0);
-		l_vdata->set(3, l_width, -l_height);
-	}
-
-	/* create characters */
-
-	/* TODO: find line-breaks to determine line length for center
-	 *       alignment, also add right alignment.
-	 */
 	char l_char;
 	const size_t l_text_count = text.size();
+	mesh.resize(l_text_count);
 	for (uint16_t i = 0; i < l_text_count; ++i) {
 		l_char = text[i];
 		if (MIN_CHAR <= l_char && MAX_CHAR >= l_char) {
@@ -160,12 +175,31 @@ TextComponent::Private::rebuild(void)
 
 			mesh[i] = new Graphics::QuadMesh(l_tdata,
 			                                 l_ts->textureData(),
-			                                 l_vdata,
+			                                 vdata,
 			                                 Graphics::QuadMesh::None);
 		}
 	}
 
 	invalidated = false;
+}
+
+void
+TextComponent::Private::rebuildVertexData(void)
+{
+	assert(tileset && "No tileset assigned!");
+
+	const Graphics::ITileset *l_ts = tileset->tileset();
+
+	delete vdata, vdata = Graphics::Factory
+	    ::CreateVertexData(MARSHMALLOW_QUAD_VERTEXES);
+
+	float l_width  = float(l_ts->tileSize().width)  * scale;
+	float l_height = float(l_ts->tileSize().height) * scale;
+
+	vdata->set(0, 0,       0);
+	vdata->set(1, 0,       -l_height);
+	vdata->set(2, l_width, 0);
+	vdata->set(3, l_width, -l_height);
 }
 
 void
@@ -275,7 +309,6 @@ TextComponent::setAlignment(Alignment a)
 {
 	PIMPL->alignment = a;
 	PIMPL->invalidated = true;
-	PIMPL->rebuild();
 }
 
 void
@@ -283,7 +316,6 @@ TextComponent::setText(const std::string &t)
 {
 	PIMPL->text = t;
 	PIMPL->invalidated = true;
-	PIMPL->rebuild();
 }
 
 void
@@ -303,7 +335,7 @@ TextComponent::setScale(float s)
 {
 	PIMPL->scale = s;
 	PIMPL->invalidated = true;
-	PIMPL->rebuild();
+	PIMPL->clearVertexData();
 }
 
 uint16_t
@@ -317,7 +349,7 @@ TextComponent::setTileOffset(uint16_t o)
 {
 	PIMPL->tile_offset = o;
 	PIMPL->invalidated = true;
-	PIMPL->rebuild();
+	PIMPL->rebuildCache();
 }
 
 void
@@ -334,7 +366,7 @@ TextComponent::update(float delta)
 	        (entity()->getComponentType(TilesetComponent::Type()));
 
 	if (PIMPL->invalidated)
-	    PIMPL->rebuild();
+	    PIMPL->rebuildCache();
 }
 
 void
