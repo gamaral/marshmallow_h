@@ -83,6 +83,7 @@ struct Player::Private
 	inline bool play(const Core::Identifier &id, int playlist, float gain);
 	inline void stop(const Core::Identifier &id);
 	inline bool isPlaying(const Core::Identifier &id) const;
+	inline void rewind(const Core::Identifier &id);
 
 	typedef std::map<MMUID, ITrack *> TrackMap;
 	TrackMap tracks;
@@ -171,6 +172,7 @@ Player::Private::play(const Core::Identifier &id, int iterations, float gain)
 	}
 	else {
 		playlist[id] = std::make_pair(iterations, gain);
+		rewind(id);
 		return(true);
 	}
 }
@@ -187,6 +189,14 @@ bool
 Player::Private::isPlaying(const Core::Identifier &id) const
 {
 	return(playlist.find(id) != playlist.end());
+}
+
+void
+Player::Private::rewind(const Core::Identifier &id)
+{
+	TrackMap::iterator l_i = tracks.find(id);
+	if (l_i != tracks.end())
+		l_i->second->rewind();
 }
 
 void
@@ -322,6 +332,12 @@ bool
 Player::isPlaying(const Core::Identifier &id) const
 {
 	return(PIMPL->isPlaying(id));
+}
+
+void
+Player::rewind(const Core::Identifier &id)
+{
+	PIMPL->rewind(id);
 }
 
 void

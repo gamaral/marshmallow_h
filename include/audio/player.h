@@ -79,6 +79,8 @@ namespace Audio { /****************************************** Audio Namespace */
 		void stop(const Core::Identifier &id);
 		bool isPlaying(const Core::Identifier &id) const;
 
+		void rewind(const Core::Identifier &id);
+
 		void tick(void);
 	};
 
