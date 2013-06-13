@@ -329,7 +329,9 @@ Engine::Private::run(void)
 	MMTIME l_render = 0;
 	MMTIME l_second = 0;
 	MMTIME l_tick;
+#ifdef MARSHMALLOW_ENGINE_FIXEDTIMESTEP
 	MMTIME l_update = l_render_target / 2; /* offset by 1/2 */
+#endif
 
 	/* start */
 	running = true;
@@ -365,13 +367,22 @@ Engine::Private::run(void)
 		}
 
 		/*
+		 * Variable TimeStep Update
+		 */
+#ifdef MARSHMALLOW_ENGINE_VARIABLETIMESTEP
+		update(float(l_delta) / MILLISECONDS_PER_SECOND);
+#endif
+
+		/*
 		 * VSync
 		 */
 		if (l_display.vsync > 0) {
 			/*
-			 * Update
+			 * Fixed TimeStep Update
 			 */
-			update(float(l_delta) / MILLISECONDS_PER_SECOND);
+#ifdef MARSHMALLOW_ENGINE_FIXEDTIMESTEP
+			update(float(l_render_target) / MILLISECONDS_PER_SECOND);
+#endif
 
 			/*
 			 * Render
@@ -391,13 +402,15 @@ Engine::Private::run(void)
 		 */
 		else {
 			/*
-			 * Update
+			 * Fixed TimeStep Update
 			 */
+#ifdef MARSHMALLOW_ENGINE_FIXEDTIMESTEP
 			l_update += l_delta;
 			if (l_update >= l_render_target) {
 				update(float(l_render_target) / MILLISECONDS_PER_SECOND);
 				l_update %= l_render_target;
 			}
+#endif
 
 			/*
 			 * Render
