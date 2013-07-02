@@ -63,6 +63,7 @@ Backend::Initialize(void)
 void
 Backend::Finalize(void)
 {
+	snd_config_update_free_global();
 }
 
 void
