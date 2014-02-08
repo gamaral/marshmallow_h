@@ -44,6 +44,7 @@
 #include <core/environment.h>
 #include <core/namespace.h>
 
+#include <math/float.h>
 #include <math/vector2.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -62,7 +63,7 @@ namespace Math { /******************************************** Math Namespace */
 		float x, y;
 
 	public:
-		inline Point2(float x = 0.f, float y = 0.f);
+		inline Point2(float x = .0f, float y = .0f);
 		inline explicit Point2(float *data);
 
 		inline Point2 & set(float x, float y);
@@ -71,7 +72,7 @@ namespace Math { /******************************************** Math Namespace */
 	public: /* operators */
 
 		inline bool operator==(const Point2 &rhs) const
-		    { return(x == rhs.x && y == rhs.y); }
+		    { return(Float(x) == rhs.x && Float(y) == rhs.y); }
 
 		inline float & operator[](int i)
 		    { return(i % MAX ? y : x); }
@@ -80,7 +81,8 @@ namespace Math { /******************************************** Math Namespace */
 		    { return(i % MAX ? y : x); }
 
 		inline operator bool(void) const
-		    { return(x != .0f || y != .0f); }
+		    { return(Float(x) != Float::Zero() ||
+		             Float(y) != Float::Zero()); }
 
 		inline operator Vector2(void) const;
 
@@ -111,7 +113,7 @@ namespace Math { /******************************************** Math Namespace */
 	public: /* static */
 
 		static const Point2 & Zero(void)
-		    { static Point2 s_zero(0.f, 0.f);
+		    { static Point2 s_zero(.0f, .0f);
 		      return(s_zero); }
 
 		static const Point2 & One(void)

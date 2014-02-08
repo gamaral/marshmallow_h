@@ -38,6 +38,8 @@
  * @author Guillermo A. Amaral B. (gamaral) <g@maral.me>
  */
 
+#include "math/float.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Math { /******************************************** Math Namespace */
 
@@ -47,11 +49,16 @@ Tuple2::Tuple2(float ax, float ay)
 	m_value[1] = ay;
 }
 
+Tuple2::operator bool(void) const
+{
+	return(Float(m_value[0]) || Float(m_value[1]));
+}
+
 bool
 Tuple2::operator==(const Tuple2 &rhs) const
 {
-	return(m_value[0] == rhs.m_value[0]
-	    && m_value[1] == rhs.m_value[1]);
+	return(Float(m_value[0]) == rhs.m_value[0]
+	    && Float(m_value[1]) == rhs.m_value[1]);
 }
 
 Tuple2 &

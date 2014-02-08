@@ -41,6 +41,7 @@
 #include "core/logger.h"
 #include "core/type.h"
 
+#include "math/float.h"
 #include "math/size2.h"
 
 #include "game/collisionscenelayer.h"
@@ -435,7 +436,8 @@ SimpleColliderComponent::collision(ColliderComponent &c, float d, const Collisio
 	switch(body()) {
 
 	case Box: {
-		if (l_vel.x == 0 && l_vel.y == 0)
+		if (Math::Float(l_vel.x) == Math::Float::Zero() &&
+		    Math::Float(l_vel.y) == Math::Float::Zero())
 			break;
 		else if (l_vel.x > 0 && !hasFlag(LockXAxis)
 		                     && data.box.left < data.box.right

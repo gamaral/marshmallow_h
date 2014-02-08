@@ -55,7 +55,7 @@ namespace Math { /******************************************** Math Namespace */
 		float m_value[2];
 	public:
 
-		Tuple2(float first = 0.f, float second = 0.f);
+		Tuple2(float first = .0f, float second = .0f);
 
 		const float & first(void) const
 		    { return(m_value[0]); }
@@ -75,8 +75,7 @@ namespace Math { /******************************************** Math Namespace */
 		const float & operator[](int i) const
 		    { return(m_value[i % 2]); }
 
-		operator bool(void) const
-		    { return(m_value[0] != .0f || m_value[1] != .0f); }
+		operator bool(void) const;
 
 		Tuple2 & operator*=(float rhs);
 		Tuple2 & operator-=(float rhs);
@@ -97,7 +96,7 @@ namespace Math { /******************************************** Math Namespace */
 	public: /* static */
 
 		static const Tuple2 & Zero(void)
-		    { static Tuple2 s_zero(0.f, 0.f);
+		    { static Tuple2 s_zero(.0f, .0f);
 		      return(s_zero); }
 
 		static const Tuple2 & One(void)

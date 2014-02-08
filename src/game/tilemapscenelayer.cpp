@@ -50,6 +50,8 @@
 #include "graphics/quadmesh.h"
 #include "graphics/transform.h"
 
+#include "math/float.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Game { /******************************************** Game Namespace */
 namespace { /************************************ Game::<anonymous> Namespace */
@@ -141,7 +143,7 @@ TilemapSceneLayer::Private::render(void)
 	/* calculate visible row and column range */
 
 	const Graphics::Transform &l_camera = Graphics::Camera::Transform();
-	const bool  l_camera_rotated = l_camera.rotation() != 0;
+	const bool  l_camera_rotated = Math::Float(l_camera.rotation()) != Math::Float::Zero();
 	const float l_camera_x = l_camera.translation().x + translate.x;
 	const float l_camera_y = l_camera.translation().y + translate.y;
 

@@ -40,6 +40,8 @@
 
 #include <cstring>
 
+#include "math/float.h"
+
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Math { /******************************************** Math Namespace */
 
@@ -54,7 +56,7 @@ Matrix4::identity(void)
 {
 	m_value[m12] = m_value[m13] = m_value[m14] = m_value[m21] =
 	m_value[m23] = m_value[m24] = m_value[m31] = m_value[m32] =
-	m_value[m34] = m_value[m41] = m_value[m42] = m_value[m43] = 0.f;
+	m_value[m34] = m_value[m41] = m_value[m42] = m_value[m43] = .0f;
 
 	m_value[m11] = m_value[m22] = m_value[m33] = m_value[m44] = 1.f;
 }
@@ -62,17 +64,25 @@ Matrix4::identity(void)
 bool
 Matrix4::operator==(const Matrix4 &rhs) const
 {
-	return((m_value[m11] == rhs.m_value[m11]) && (m_value[m12] == rhs.m_value[m12]) &&
-	       (m_value[m13] == rhs.m_value[m13]) && (m_value[m14] == rhs.m_value[m14]) &&
+	return((Float(m_value[m11]) == rhs.m_value[m11]) &&
+	       (Float(m_value[m12]) == rhs.m_value[m12]) &&
+	       (Float(m_value[m13]) == rhs.m_value[m13]) &&
+	       (Float(m_value[m14]) == rhs.m_value[m14]) &&
 
-	       (m_value[m21] == rhs.m_value[m21]) && (m_value[m22] == rhs.m_value[m22]) &&
-	       (m_value[m23] == rhs.m_value[m23]) && (m_value[m24] == rhs.m_value[m24]) &&
+	       (Float(m_value[m21]) == rhs.m_value[m21]) &&
+	       (Float(m_value[m22]) == rhs.m_value[m22]) &&
+	       (Float(m_value[m23]) == rhs.m_value[m23]) &&
+	       (Float(m_value[m24]) == rhs.m_value[m24]) &&
 
-	       (m_value[m31] == rhs.m_value[m31]) && (m_value[m32] == rhs.m_value[m32]) &&
-	       (m_value[m33] == rhs.m_value[m33]) && (m_value[m34] == rhs.m_value[m34]) &&
+	       (Float(m_value[m31]) == rhs.m_value[m31]) &&
+	       (Float(m_value[m32]) == rhs.m_value[m32]) &&
+	       (Float(m_value[m33]) == rhs.m_value[m33]) &&
+	       (Float(m_value[m34]) == rhs.m_value[m34]) &&
 
-	       (m_value[m41] == rhs.m_value[m41]) && (m_value[m42] == rhs.m_value[m42]) &&
-	       (m_value[m43] == rhs.m_value[m43]) && (m_value[m44] == rhs.m_value[m44]));
+	       (Float(m_value[m41]) == rhs.m_value[m41]) &&
+	       (Float(m_value[m42]) == rhs.m_value[m42]) &&
+	       (Float(m_value[m43]) == rhs.m_value[m43]) &&
+	       (Float(m_value[m44]) == rhs.m_value[m44]));
 }
 
 Matrix4

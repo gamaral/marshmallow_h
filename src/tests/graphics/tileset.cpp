@@ -34,6 +34,7 @@
 
 #include "core/identifier.h"
 
+#include "math/float.h"
 #include "math/size2.h"
 
 #include "graphics/dummy/texturedata.h"
@@ -67,30 +68,30 @@ tileset_fixed_test(void)
 	tcd = l_tileset.getTextureCoordinateData(0);
 	tcd->get(0, l_u, l_v);
 	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 0 TEST 0",
-	    (l_u == .0f) && (l_v == .0f));
+	    (Math::Float(l_u) == .0f) && (Math::Float(l_v) == .0f));
 	tcd->get(1, l_u, l_v);
 	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 0 TEST 1",
-	    (l_u == .0f) && (l_v == .125f));
+	    (Math::Float(l_u) == .0f) && (Math::Float(l_v) == .125f));
 	tcd->get(2, l_u, l_v);
 	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 0 TEST 2",
-	    (l_u == .125f) && (l_v == .0f));
+	    (Math::Float(l_u) == .125f) && (Math::Float(l_v) == .0f));
 	tcd->get(3, l_u, l_v);
 	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 0 TEST 3",
-	    (l_u == .125f) && (l_v == .125f));
+	    (Math::Float(l_u) == .125f) && (Math::Float(l_v) == .125f));
 
 	tcd = l_tileset.getTextureCoordinateData(63);
 	tcd->get(0, l_u, l_v);
 	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 63 TEST 0",
-	    (l_u == .875f) && (l_v == .875f));
+	    (Math::Float(l_u) == .875f) && (Math::Float(l_v) == .875f));
 	tcd->get(1, l_u, l_v);
 	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 63 TEST 1",
-	    (l_u == .875f) && (l_v == 1.f));
+	    (Math::Float(l_u) == .875f) && (Math::Float(l_v) == 1.f));
 	tcd->get(2, l_u, l_v);
 	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 63 TEST 2",
-	    (l_u == 1.f) && (l_v == .875f));
+	    (Math::Float(l_u) == 1.f) && (Math::Float(l_v) == .875f));
 	tcd->get(3, l_u, l_v);
 	ASSERT_TRUE("TILESET 128-16 FIXED INDEX 63 TEST 3",
-	    (l_u == 1.f) && (l_v == 1.f));
+	    (Math::Float(l_u) == 1.f) && (Math::Float(l_v) == 1.f));
 }
 
 TESTS_BEGIN

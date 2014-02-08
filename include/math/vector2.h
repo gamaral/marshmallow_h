@@ -44,6 +44,8 @@
 #include <core/environment.h>
 #include <core/namespace.h>
 
+#include <math/float.h>
+
 #include <cmath>
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -64,7 +66,7 @@ namespace Math { /******************************************** Math Namespace */
 
 		inline Vector2(float x, float y);
 		inline explicit Vector2(float *data);
-		inline explicit Vector2(float value = 0.f);
+		inline explicit Vector2(float value = .0f);
 
 		inline Vector2 & set(float x, float y);
 
@@ -80,7 +82,7 @@ namespace Math { /******************************************** Math Namespace */
 	public: /* operators */
 
 		inline bool operator==(const Vector2 &rhs) const
-		    { return(x == rhs.x && y == rhs.y); }
+		    { return(Float(x) == rhs.x && Float(y) == rhs.y); }
 
 		inline float & operator[](int i)
 		    { return(i % MAX ? y : x); }
@@ -89,7 +91,7 @@ namespace Math { /******************************************** Math Namespace */
 		    { return(i % MAX ? y : x); }
 
 		inline operator bool(void) const
-		    { return(x != .0f || y != .0f); }
+		    { return(Float(x) != Float::Zero() || Float(y) != Float::Zero()); }
 
 		inline Vector2 & operator*=(float rhs);
 		inline Vector2 & operator+=(float rhs);
@@ -114,7 +116,7 @@ namespace Math { /******************************************** Math Namespace */
 	public: /* static */
 
 		static const Vector2 & Zero(void)
-		    { static Vector2 s_zero(0.f, 0.f);
+		    { static Vector2 s_zero(.0f, .0f);
 		      return(s_zero); }
 
 		static const Vector2 & Identity(void)
@@ -141,7 +143,7 @@ namespace Math { /******************************************** Math Namespace */
 	Vector2
 	Vector2::normalized(float m) const
 	{
-		if (m == .0f)
+		if (Float(m) == Float::Zero())
 			return(Vector2(.0f, .0f));
 		return(Vector2(x / m, y / m));
 	}
@@ -149,7 +151,7 @@ namespace Math { /******************************************** Math Namespace */
 	Vector2 &
 	Vector2::normalize(float m)
 	{
-		if (m == .0f)
+		if (Float(m) == Float::Zero())
 			x = y = .0f;
 		x /= m, y /= m;
 
