@@ -51,6 +51,8 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
 
+#undef HAVE_CLOCK_GETTIME
+
 /******************************************************************************/
 
 namespace
@@ -85,15 +87,13 @@ Platform::Sleep(MMTIME timeout)
 {
 	if (timeout <= 0) return;
 
-	MMVERBOSE("Sleeping for " << timeout << " milliseconds.");
+	MMVERBOSE("Sleeping for " << timeout << " seconds.");
 
 	struct timespec l_ts;
-#define MILLISECONDS_PER_SECOND 1000
-	l_ts.tv_sec = timeout / MILLISECONDS_PER_SECOND;
-#define NANOSECONDS_PER_MILLISECOND 1000000
-	l_ts.tv_nsec = static_cast<long int>
-	    ((timeout % MILLISECONDS_PER_SECOND)
-	        * NANOSECONDS_PER_MILLISECOND);
+	l_ts.tv_sec = static_cast<__time_t>(trunc(timeout));
+#define NANOSECONDS_PER_SECOND 1000000000
+	l_ts.tv_nsec = static_cast<__syscall_slong_t>
+	    ((timeout - float(l_ts.tv_sec)) * NANOSECONDS_PER_SECOND);
 	nanosleep(&l_ts, 0);
 }
 
@@ -110,13 +110,13 @@ Platform::TimeStamp(void)
 #ifdef HAVE_CLOCK_GETTIME
 	struct timespec time;
 	clock_gettime(CLOCK_MONOTONIC, &time);
-	out = static_cast<MMTIME>((time.tv_sec - s_start_time.tv_sec) * 1000)
-	    + int((time.tv_nsec - s_start_time.tv_nsec) / 1000000);
+	out = static_cast<MMTIME>(time.tv_sec - s_start_time.tv_sec)
+	    + ((time.tv_nsec - s_start_time.tv_nsec) / 1000000000.);
 #else
 	struct timeval time;
 	gettimeofday(&time, 0);
-	out = static_cast<MMTIME>(((time.tv_sec - s_start_time.tv_sec) * 1000)
-	    + int((time.tv_usec - s_start_time.tv_usec) / 1000));
+	out = static_cast<MMTIME>(time.tv_sec - s_start_time.tv_sec)
+	    + ((time.tv_usec - s_start_time.tv_usec) / 1000000.);
 #endif
 	return(out);
 }

@@ -149,11 +149,11 @@ audio_player_tick_test(void)
 
 	while (player.isPlaying(s_sample_track)) {
 		player.tick();
-		Core::Platform::Sleep(1000/MARSHMALLOW_ENGINE_FRAMERATE);
+		Core::Platform::Sleep(1./MARSHMALLOW_ENGINE_FRAMERATE);
 	}
 	
 	/* wait for pcm to flush */
-	Core::Platform::Sleep(500);
+	Core::Platform::Sleep(.5);
 
 	player.eject(s_sample_track);
 	delete player.eject(s_sample_track2);

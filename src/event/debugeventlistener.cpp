@@ -76,7 +76,7 @@ DebugEventListener::handleEvent(const IEvent &e)
 	if (PIMPL->filestream.is_open())
 		PIMPL->filestream
 		    << Core::Platform::TimeStampToTimeData(e.timeStamp()).string
-		    << ": MS " << e.timeStamp()
+		    << ": TimeStamp " << e.timeStamp()
 		    << ": Event " << static_cast<const void *>(&e)
 		    << ": Type (" << e.type().uid() << ")" << e.type().str().c_str()
 		    << std::endl;

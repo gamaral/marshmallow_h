@@ -47,7 +47,7 @@
 
 #include "game/config.h"
 
-#define WRITE_TIMEOUT_MS 8
+#define WRITE_TIMEOUT 0.004
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
@@ -138,7 +138,7 @@ PCM::Write(Handle *pcm_handle, const char *buffer, size_t frames)
 	MMUNUSED(buffer);
 	MMUNUSED(frames);
 
-	if (NOW() - pcm_handle->last_write < WRITE_TIMEOUT_MS)
+	if (NOW() - pcm_handle->last_write < WRITE_TIMEOUT)
 		return(false);
 
 	MMVERBOSE("Wrote " << frames << " frames into imaginary PCM device.");
@@ -161,7 +161,7 @@ PCM::AvailableFrames(Handle *pcm_handle)
 	assert(IsBackendInitialized() && "Audio backend finalized!");
 	assert(pcm_handle && "Tried to use invalid PCM device!");
 
-	if (NOW() - pcm_handle->last_write >= WRITE_TIMEOUT_MS)
+	if (NOW() - pcm_handle->last_write >= WRITE_TIMEOUT)
 		return(pcm_handle->frames);
 	return(0);
 }

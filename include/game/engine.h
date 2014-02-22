@@ -97,7 +97,7 @@ namespace Game { /******************************************** Game Namespace */
 		/*!
 		 * @brief Time that has elapsed since last tick
 		 */
-		MMTIME deltaTime(void) const;
+		float deltaTime(void) const;
 
 		/*!
 		 * @brief Actual frame rate achieved

@@ -58,6 +58,7 @@
 #include "game/scenemanager.h"
 
 #include <cassert>
+#include <cmath>
 #include <cstdio>
 #include <list>
 
@@ -149,7 +150,7 @@ struct Engine::Private
 	Event::EventManager *event_manager;
 	Game::IFactory      *factory;
 	Game::SceneManager  *scene_manager;
-	MMTIME delta_time;
+	float  delta_time;
 	int    exit_code;
 	int    frame_rate;
 	bool   running;
@@ -251,9 +252,6 @@ Engine::Private::render(void)
 {
 	using namespace Event;
 
-	if (!Graphics::Backend::Active() || suspended)
-		return;
-
 	/*
 	 * Prepare for rendering
 	 */
@@ -285,15 +283,14 @@ Engine::Private::second(void)
 void
 Engine::Private::update(float d)
 {
-	Graphics::Backend::Tick(d);
+	Graphics::Backend::Tick(delta_time);
 
 	/*
 	 * Tick engine features
 	 */
 	const EngineFeatureList::const_iterator l_e = features.end();
-	for (EngineFeatureList::const_iterator l_i = features.begin();
-	     l_i != l_e;
-	     ++l_i)
+	EngineFeatureList::const_iterator l_i;
+	for (l_i = features.begin(); l_i != l_e; ++l_i)
 		(*l_i)->tick(d);
 
 	/*
@@ -323,15 +320,10 @@ Engine::Private::run(void)
 		return(-1);
 	}
 
-#define MILLISECONDS_PER_SECOND 1000
-	const MMTIME l_render_target = MILLISECONDS_PER_SECOND / MARSHMALLOW_ENGINE_FRAMERATE;
-	MMTIME l_delta = 0;
-	MMTIME l_render = 0;
-	MMTIME l_second = 0;
+	const float l_render_target = 1.f / MARSHMALLOW_ENGINE_FRAMERATE;
+	float l_render = .0;
+	float l_second = .0;
 	MMTIME l_tick;
-#ifdef MARSHMALLOW_ENGINE_FIXEDTIMESTEP
-	MMTIME l_update = l_render_target / 2; /* offset by 1/2 */
-#endif
 
 	/* start */
 	running = true;
@@ -347,89 +339,59 @@ Engine::Private::run(void)
 	 * Game Loop
 	 */
 	while (running) {
-		l_tick = NOW();
+		const MMTIME l_now = NOW();
+		delta_time = float(l_now - l_tick);
+		l_tick = l_now;
 
-#if MARSHMALLOW_DEBUG
-		/* detect breakpoint */
-		if (l_delta > MILLISECONDS_PER_SECOND) {
-			MMWARNING("Abnormally long time between ticks, resetting!");
-			l_delta = l_render_target;
+		/* handle abnormally long delta time */
+#define DELTA_TIME_LONG_WAIT 0.25
+		if (delta_time > DELTA_TIME_LONG_WAIT) {
+			MMWARNING("Abnormally long time between ticks, reseting!");
+			delta_time = l_render_target;
 		}
-#endif
+
 		/*
 		 * Second
 		 */
-		l_second += l_delta;
-		if (l_second >= MILLISECONDS_PER_SECOND) {
+		l_second += delta_time;
+		if (l_second >= 1.f) {
 			second();
 			frame_rate = 0;
-			l_second %= MILLISECONDS_PER_SECOND;
+			l_second -= truncf(l_second);
 		}
 
 		/*
-		 * Variable TimeStep Update
+		 * Rendering
 		 */
-#ifdef MARSHMALLOW_ENGINE_VARIABLETIMESTEP
-		update(float(l_delta) / MILLISECONDS_PER_SECOND);
-#endif
 
-		/*
-		 * VSync
-		 */
+		// vsync
 		if (l_display.vsync > 0) {
-			/*
-			 * Fixed TimeStep Update
-			 */
-#ifdef MARSHMALLOW_ENGINE_FIXEDTIMESTEP
-			update(float(l_render_target) / MILLISECONDS_PER_SECOND);
-#endif
-
-			/*
-			 * Render
-			 */
 			render();
 			frame_rate++;
-
-			/*
-			 * Sleep only when graphics backend is inactive.
-			 */
-			if (!Graphics::Backend::Active())
-				Platform::Sleep(l_render_target);
 		}
 
-		/*
-		 * Non-VSync
-		 */
+		// no-vsync
 		else {
-			/*
-			 * Fixed TimeStep Update
-			 */
-#ifdef MARSHMALLOW_ENGINE_FIXEDTIMESTEP
-			l_update += l_delta;
-			if (l_update >= l_render_target) {
-				update(float(l_render_target) / MILLISECONDS_PER_SECOND);
-				l_update %= l_render_target;
-			}
-#endif
-
-			/*
-			 * Render
-			 */
-			l_render += l_delta;
+			l_render += delta_time;
 			if (l_render >= l_render_target) {
 				render();
 				frame_rate++;
-				l_render %= l_render_target;
+				while (l_render >= l_render_target)
+					l_render -= l_render_target;
 			}
-
-			/*
-			 * Sleep only when graphics backend is inactive.
-			 */
-			Platform::Sleep((Graphics::Backend::Active() ? 1 : l_render_target));
 		}
 
-		l_delta = NOW() - l_tick;
-		delta_time = l_delta;
+		/*
+		 * Update
+		 */
+		update(delta_time);
+
+		/*
+		 * Sleep only when graphics backend is inactive or when engine
+		 * is suspended.
+		 */
+		if (!Graphics::Backend::Active() || suspended)
+			Platform::Sleep(DELTA_TIME_LONG_WAIT/2);
 	}
 
 	/*
@@ -520,7 +482,7 @@ Engine::setFactory(Game::IFactory *f)
 	PIMPL->factory = f;
 }
 
-MMTIME
+float
 Engine::deltaTime(void) const
 {
 	return(PIMPL->delta_time);

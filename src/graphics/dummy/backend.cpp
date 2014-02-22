@@ -137,9 +137,9 @@ Backend::Finish(void)
 
 	/* simulated slow swap */
 	if (s_dpy.vsync > 0)
-		Core::Platform::Sleep((1000 * s_dpy.vsync)/MARSHMALLOW_ENGINE_FRAMERATE);
+		Core::Platform::Sleep(double(s_dpy.vsync)/MARSHMALLOW_ENGINE_FRAMERATE);
 	else 
-		Core::Platform::Sleep(500/MARSHMALLOW_ENGINE_FRAMERATE);
+		Core::Platform::Sleep(.5/MARSHMALLOW_ENGINE_FRAMERATE);
 
 	Painter::Reset();
 }

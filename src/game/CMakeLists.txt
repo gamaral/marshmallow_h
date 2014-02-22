@@ -1,7 +1,6 @@
 ###################################################################### OPTIONS #
 
 set(MARSHMALLOW_ENGINE_FRAMERATE "60" CACHE STRING "Default engine frame rate (FPS)")
-set(MARSHMALLOW_ENGINE_FIXEDTIMESTEP OFF CACHE BOOL "Use fixed timestep")
 
 ################################################################################
 

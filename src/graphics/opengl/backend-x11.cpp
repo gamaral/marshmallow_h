@@ -599,7 +599,6 @@ X11Backend::CreateX11Window(void)
 	    xvinfo.visual,
 	    l_mask,
 	    &l_swattr);
-	XMapWindow(xdpy, xwindow);
 
 	/* set size hints */
 
@@ -875,7 +874,7 @@ X11Backend::CreateGLXContext(void)
 		glXQueryDrawable(xdpy, l_drawable, GLX_SWAP_INTERVAL_EXT, &l_swap);
 		if (l_swap != dpy.vsync) {
 			MMERROR("X11: Swap interval request was ignored!");
-			dpy.vsync = l_swap;
+			dpy.vsync = uint8_t(l_swap);
 		}
 	}
 	else if (Extensions::glXSwapIntervalSGI) {

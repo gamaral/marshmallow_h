@@ -42,6 +42,7 @@
 #include "core/logger.h"
 #include "core/type.h"
 
+#include "game/config.h"
 #include "game/ientity.h"
 #include "game/positioncomponent.h"
 
@@ -54,6 +55,7 @@ struct MovementComponent::Private
 	    : limit_x(-1.f, -1.f)
 	    , limit_y(-1.f, -1.f)
 	    , position(0)
+	    , accomulator(.0f)
 	{}
 
 	inline void update(float d);
@@ -63,11 +65,19 @@ struct MovementComponent::Private
 	Math::Pair limit_x;
 	Math::Pair limit_y;
 	PositionComponent *position;
+	float accomulator;
 };
 
 void
 MovementComponent::Private::update(float d)
 {
+	static const float step(1.f/MARSHMALLOW_ENGINE_FRAMERATE);
+
+	accomulator += d;
+	if (accomulator < step)
+		return;
+	accomulator -= step;
+
 	if (!position) {
 		MMDEBUG("Game::PositionComponent not found!");
 		return;
@@ -75,7 +85,7 @@ MovementComponent::Private::update(float d)
 
 	/* update velocity */
 
-	velocity += acceleration * d;
+	velocity += acceleration * step;
 
 	/* check limit */
 
@@ -91,7 +101,7 @@ MovementComponent::Private::update(float d)
 
 	/* update position */
 
-	position->translate(velocity * d);
+	position->translate(velocity * step);
 }
 
 MovementComponent::MovementComponent(const Core::Identifier &i, Game::IEntity *e)

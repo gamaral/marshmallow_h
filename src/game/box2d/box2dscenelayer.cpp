@@ -52,11 +52,13 @@ namespace Game { /******************************************** Game Namespace */
 struct Box2DSceneLayer::Private
 {
 	Private()
-	    : world(b2Vec2(0.f, -10.f))
+	    : world(b2Vec2(.0f, -10.f))
+	    , accomulator(.0f)
 	{}
 
 	Graphics::Transform transform;
 	b2World world;
+	float accomulator;
 };
 
 Box2DSceneLayer::Box2DSceneLayer(const Core::Identifier &i, Game::IScene *s)
@@ -73,8 +75,15 @@ Box2DSceneLayer::~Box2DSceneLayer(void)
 void
 Box2DSceneLayer::update(float d)
 {
+	static const float step(1.f/MARSHMALLOW_ENGINE_FRAMERATE);
+
+	accomulator += d;
+	if (accomulator < step)
+		return;
+	accomulator -= step;
+
 	PIMPL->world.Step
-	    (static_cast<float>(d),
+	    (step,
 #define VELOCITY_ITERATIONS 10
 	     VELOCITY_ITERATIONS,
 #define POSITION_ITERATIONS 8

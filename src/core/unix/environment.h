@@ -48,8 +48,7 @@
 
 /********************************************************************** types */
 
-#define MMTIME     int
-#define MMTIME_MAX INT_MAX
+#define MMTIME     double
 #define MMUID      uint32_t
 
 /******************************************************************** defines */
