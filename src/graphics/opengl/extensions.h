@@ -148,8 +148,12 @@ namespace Extensions { /************** Graphics::OpenGL::Extensions Namespace */
 	extern PFNGLXGETSWAPINTERVALMESAPROC glXGetSwapIntervalMESA;
 #endif
 
+#if defined(GLX_EXT_swap_control)
+	extern PFNGLXSWAPINTERVALEXTPROC glXSwapIntervalEXT;
+#endif
+
 #if defined(GLX_SGI_swap_control)
-	extern PFNGLXSWAPINTERVALSGIPROC glxSwapInterval;
+	extern PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI;
 #endif
 
 #if defined(WGL_EXT_swap_control)

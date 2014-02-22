@@ -121,8 +121,12 @@ PFNGLGENERATEMIPMAPPROC glGenerateMipmap = 0;
 	PFNGLXGETSWAPINTERVALMESAPROC glXGetSwapIntervalMESA = 0;
 #endif
 
+#if defined(GLX_EXT_swap_control)
+	PFNGLXSWAPINTERVALEXTPROC glXSwapIntervalEXT = 0;
+#endif
+
 #if defined(GLX_SGI_swap_control)
-	PFNGLXSWAPINTERVALSGIPROC glxSwapInterval = 0;
+	PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI = 0;
 #endif
 
 #if defined(WGL_EXT_swap_control)
@@ -267,8 +271,6 @@ Extensions::Initialize(const char *extensions)
 	glGenerateMipmap = reinterpret_cast<PFNGLGENERATEMIPMAPPROC>(&::glGenerateMipmap);
 #endif
 
-
-
 #if defined(GLX_MESA_swap_control)
 	glXSwapIntervalMESA = reinterpret_cast<PFNGLXSWAPINTERVALMESAPROC>
 	    (glGetProcAddress("glXSwapIntervalMESA"));
@@ -276,8 +278,13 @@ Extensions::Initialize(const char *extensions)
 	    (glGetProcAddress("glXGetSwapIntervalMESA"));
 #endif
 
+#if defined(GLX_EXT_swap_control)
+	glXSwapIntervalEXT = reinterpret_cast<PFNGLXSWAPINTERVALEXTPROC>
+	    (glGetProcAddress("glXSwapIntervalEXT"));
+#endif
+
 #if defined(GLX_SGI_swap_control)
-	glxSwapInterval = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>
+	glXSwapIntervalSGI = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>
 	    (glGetProcAddress("glXSwapIntervalSGI"));
 #endif
 
@@ -336,8 +343,12 @@ Extensions::Finalize(void)
 	glXGetSwapIntervalMESA = 0;
 #endif
 
+#if defined(GLX_EXT_swap_control)
+	glXSwapIntervalEXT = 0;
+#endif
+
 #if defined(GLX_SGI_swap_control)
-	glxSwapInterval = 0;
+	glXSwapIntervalSGI = 0;
 #endif
 
 #if defined(WGL_EXT_swap_control)

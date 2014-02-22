@@ -599,6 +599,7 @@ X11Backend::CreateX11Window(void)
 	    xvinfo.visual,
 	    l_mask,
 	    &l_swattr);
+	XMapWindow(xdpy, xwindow);
 
 	/* set size hints */
 
@@ -860,16 +861,36 @@ X11Backend::CreateGLXContext(void)
 	
 	/* vsync */
 
-	if (Extensions::glXSwapIntervalMESA) {
-		Extensions::glXSwapIntervalMESA(dpy.vsync);
-		if (Extensions::glXGetSwapIntervalMESA
+	if (Extensions::glXSwapIntervalEXT) {
+		unsigned int l_swap(dpy.vsync);
+		unsigned int l_max_swap(dpy.vsync);
+		GLXDrawable l_drawable = glXGetCurrentDrawable();
+		glXQueryDrawable(xdpy, l_drawable, GLX_MAX_SWAP_INTERVAL_EXT, &l_max_swap);
+		if (l_swap > l_max_swap) {
+			MMERROR("X11: Desired swap interval is too high! Setting to maximum.");
+			l_swap = l_max_swap;
+		}
+
+		Extensions::glXSwapIntervalEXT(xdpy, l_drawable, l_swap);
+		glXQueryDrawable(xdpy, l_drawable, GLX_SWAP_INTERVAL_EXT, &l_swap);
+		if (l_swap != dpy.vsync) {
+			MMERROR("X11: Swap interval request was ignored!");
+			dpy.vsync = l_swap;
+		}
+	}
+	else if (Extensions::glXSwapIntervalSGI) {
+		if (Extensions::glXSwapIntervalSGI(dpy.vsync) != 0)
+			MMERROR("X11: Swap interval request was ignored!");
+	}
+	else if (Extensions::glXSwapIntervalMESA) {
+		if (Extensions::glXSwapIntervalMESA(dpy.vsync) != 0)
+			MMERROR("X11: Swap interval request was ignored!");
+		else if (Extensions::glXGetSwapIntervalMESA
 		    && dpy.vsync != Extensions::glXGetSwapIntervalMESA()) {
 			MMERROR("X11: Swap interval request was ignored!");
 			dpy.vsync = uint8_t(Extensions::glXGetSwapIntervalMESA());
 		}
 	}
-	else if (Extensions::glxSwapInterval)
-		Extensions::glxSwapInterval(dpy.vsync);
 
 	return(true);
 }
