@@ -44,6 +44,8 @@
 
 #include "graphics/transform.h"
 
+#include "game/config.h"
+
 #include <Box2D/Box2D.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -77,10 +79,10 @@ Box2DSceneLayer::update(float d)
 {
 	static const float step(1.f/MARSHMALLOW_ENGINE_FRAMERATE);
 
-	accomulator += d;
-	if (accomulator < step)
+	PIMPL->accomulator += d;
+	if (PIMPL->accomulator < step)
 		return;
-	accomulator -= step;
+	PIMPL->accomulator -= step;
 
 	PIMPL->world.Step
 	    (step,
