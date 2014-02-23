@@ -4,7 +4,7 @@ set(MARSHMALLOW_GRAPHICS_TITLE  "Marshmallow Engine" CACHE STRING "Build Title")
 set(MARSHMALLOW_GRAPHICS_WIDTH  "720" CACHE STRING "Native viewport width")
 set(MARSHMALLOW_GRAPHICS_HEIGHT "480" CACHE STRING "Native viewport height")
 set(MARSHMALLOW_GRAPHICS_DEPTH  "24"  CACHE STRING "Default viewport depth")
-set(MARSHMALLOW_GRAPHICS_VSYNC  "1"   CACHE STRING "Default swap interval (0 = OFF)")
+set(MARSHMALLOW_GRAPHICS_VSYNC  "0"   CACHE STRING "Default swap interval (0 = OFF)")
 
 option(MARSHMALLOW_GRAPHICS_FULLSCREEN "Viewport default fullscreen mode"      OFF)
 option(MARSHMALLOW_GRAPHICS_LOCK_WIDTH "Use width for aspect ratio resolution" OFF)
