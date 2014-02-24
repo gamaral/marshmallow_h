@@ -41,8 +41,6 @@
 #include "audio/player.h"
 #include "audio/wavetrack.h"
 
-#include "game/config.h"
-
 #include "tests/common.h"
 
 /*!
@@ -149,7 +147,7 @@ audio_player_tick_test(void)
 
 	while (player.isPlaying(s_sample_track)) {
 		player.tick();
-		Core::Platform::Sleep(1./MARSHMALLOW_ENGINE_FRAMERATE);
+		Core::Platform::Sleep(1./60.);
 	}
 	
 	/* wait for pcm to flush */

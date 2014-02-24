@@ -108,7 +108,7 @@ namespace WGLBackend {
 		sfW32Valid      = sfW32Class|sfW32Window,
 		sfGLValid       = sfGLContext|sfGLCurrent,
 		sfValid         = sfW32Valid|sfGLValid,
-		sfActive        = sfReady|sfValid|sfExposed|sfFocused
+		sfActive        = sfReady|sfValid|sfExposed
 	};
 
 	/******************* MARSHMALLOW */

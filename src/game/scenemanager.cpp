@@ -48,6 +48,7 @@
 
 #include "graphics/backend_p.h"
 
+#include "game/engine.h"
 #include "game/factory.h"
 #include "game/iscene.h"
 
@@ -143,7 +144,8 @@ SceneManager::render(void)
 void
 SceneManager::update(float d)
 {
-	if (PIMPL->active && Graphics::Backend::Active())
+	if (PIMPL->active &&
+	    !Game::Engine::Instance()->isSuspended())
 		PIMPL->active->update(d);
 }
 

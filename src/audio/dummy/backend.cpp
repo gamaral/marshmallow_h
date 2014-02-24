@@ -45,8 +45,6 @@
 #include "core/logger.h"
 #include "core/platform.h"
 
-#include "game/config.h"
-
 #define WRITE_TIMEOUT 0.004
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -110,7 +108,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 	PCM::Handle *l_handle(new Handle);
 
 	l_handle->bytes_per_frame = uint8_t((bit_depth/8) * channels);
-	l_handle->frames = (sample_rate/MARSHMALLOW_ENGINE_FRAMERATE);
+	l_handle->frames = sample_rate / 4 /* periods */;
 	l_handle->last_write = NOW();
 
 	MMDEBUG("Dummy PCM device opened.");

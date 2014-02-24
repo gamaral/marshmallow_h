@@ -44,8 +44,6 @@
 
 #include "graphics/transform.h"
 
-#include "game/config.h"
-
 #include <Box2D/Box2D.h>
 
 MARSHMALLOW_NAMESPACE_BEGIN
@@ -55,12 +53,12 @@ struct Box2DSceneLayer::Private
 {
 	Private()
 	    : world(b2Vec2(.0f, -10.f))
-	    , accomulator(.0f)
+	    , accumulator(.0f)
 	{}
 
 	Graphics::Transform transform;
 	b2World world;
-	float accomulator;
+	float accumulator;
 };
 
 Box2DSceneLayer::Box2DSceneLayer(const Core::Identifier &i, Game::IScene *s)
@@ -77,20 +75,20 @@ Box2DSceneLayer::~Box2DSceneLayer(void)
 void
 Box2DSceneLayer::update(float d)
 {
-	static const float step(1.f/MARSHMALLOW_ENGINE_FRAMERATE);
+	static const float step(1.f/60.f);
 
-	PIMPL->accomulator += d;
-	if (PIMPL->accomulator < step)
-		return;
-	PIMPL->accomulator -= step;
+	PIMPL->accumulator += d;
+	while (PIMPL->accumulator >= step) {
+		PIMPL->accumulator -= step;
 
-	PIMPL->world.Step
-	    (step,
-#define VELOCITY_ITERATIONS 10
-	     VELOCITY_ITERATIONS,
-#define POSITION_ITERATIONS 8
-	     POSITION_ITERATIONS);
-	PIMPL->world.ClearForces();
+		PIMPL->world.Step
+		    (step,
+#define VELOCITY_ITERATIONS 8
+		     VELOCITY_ITERATIONS,
+#define POSITION_ITERATIONS 3
+		     POSITION_ITERATIONS);
+		PIMPL->world.ClearForces();
+	}
 }
 
 Math::Vector2

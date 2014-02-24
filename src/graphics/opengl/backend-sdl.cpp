@@ -102,7 +102,7 @@ namespace SDLBackend {
 
 		sfTerminated    = (1 << 7),
 		sfValid         = sfSDLInit|sfSDLSurface,
-		sfActive        = sfReady|sfValid|sfExposed|sfFocused
+		sfActive        = sfReady|sfValid|sfExposed
 	};
 	/******************* MARSHMALLOW */
 	Display           dpy;

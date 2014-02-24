@@ -109,7 +109,7 @@ namespace Qt4Backend {
 
 		sfTerminated    = (1 << 7),
 		sfValid         = sfApplication|sfWidget,
-		sfActive        = sfReady|sfValid|sfExposed|sfFocused
+		sfActive        = sfReady|sfValid|sfExposed
 	};
 	/******************* MARSHMALLOW */
 	Display           dpy;

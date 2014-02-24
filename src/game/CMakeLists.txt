@@ -1,6 +1,6 @@
 ###################################################################### OPTIONS #
 
-set(MARSHMALLOW_ENGINE_FRAMERATE "60" CACHE STRING "Default engine frame rate (FPS)")
+set(MARSHMALLOW_ENGINE_FRAME_RATE_MAX "120" CACHE STRING "Default engine max frame rate (FPS)")
 
 ################################################################################
 

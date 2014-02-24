@@ -47,9 +47,8 @@
 #include "core/identifier.h"
 #include "core/logger.h"
 
-#include "game/config.h"
-
 #define ALSA_DEFAULT_DEVICE "default"
+#define ALSA_DEFAULT_PERIODS 4; // frames in between each interrupt [2-8]
 
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Audio { /****************************************** Audio Namespace */
@@ -128,7 +127,7 @@ PCM::Open(uint32_t sample_rate, uint8_t bit_depth, uint8_t channels)
 	snd_pcm_hw_params_set_format(l_handle.device, l_params, l_format);
 	snd_pcm_hw_params_set_rate_resample(l_handle.device, l_params, 1);
 
-	unsigned int l_periods = MARSHMALLOW_ENGINE_FRAMERATE/10;
+	unsigned int l_periods = ALSA_DEFAULT_PERIODS;
 	snd_pcm_hw_params_set_periods_near(l_handle.device, l_params, &l_periods, 0);
 
 	unsigned int l_rate = sample_rate;

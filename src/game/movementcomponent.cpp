@@ -55,7 +55,7 @@ struct MovementComponent::Private
 	    : limit_x(-1.f, -1.f)
 	    , limit_y(-1.f, -1.f)
 	    , position(0)
-	    , accomulator(.0f)
+	    , accumulator(.0f)
 	{}
 
 	inline void update(float d);
@@ -65,43 +65,43 @@ struct MovementComponent::Private
 	Math::Pair limit_x;
 	Math::Pair limit_y;
 	PositionComponent *position;
-	float accomulator;
+	float accumulator;
 };
 
 void
 MovementComponent::Private::update(float d)
 {
-	static const float step(1.f/MARSHMALLOW_ENGINE_FRAMERATE);
-
-	accomulator += d;
-	if (accomulator < step)
-		return;
-	accomulator -= step;
+	static const float step(1.f/60.f);
 
 	if (!position) {
 		MMDEBUG("Game::PositionComponent not found!");
 		return;
 	}
 
-	/* update velocity */
+	accumulator += d;
+	while (accumulator >= step) {
+		accumulator -= step;
 
-	velocity += acceleration * step;
+		/* update velocity */
 
-	/* check limit */
+		velocity += acceleration * step;
 
-	if (limit_x.first()  > -1 && velocity.x < -limit_x.first())
-		velocity.x = -limit_x.first();
-	if (limit_x.second() > -1 && velocity.x >  limit_x.second())
-		velocity.x =  limit_x.second();
+		/* check limit */
 
-	if (limit_y.first()  > -1 && velocity.y < -limit_y.first())
-		velocity.y = -limit_y.first();
-	if (limit_y.second() > -1 && velocity.y >  limit_y.second())
-		velocity.y =  limit_y.second();
+		if (limit_x.first()  > -1 && velocity.x < -limit_x.first())
+			velocity.x = -limit_x.first();
+		if (limit_x.second() > -1 && velocity.x >  limit_x.second())
+			velocity.x =  limit_x.second();
 
-	/* update position */
+		if (limit_y.first()  > -1 && velocity.y < -limit_y.first())
+			velocity.y = -limit_y.first();
+		if (limit_y.second() > -1 && velocity.y >  limit_y.second())
+			velocity.y =  limit_y.second();
 
-	position->translate(velocity * step);
+		/* update position */
+
+		position->translate(velocity * step);
+	}
 }
 
 MovementComponent::MovementComponent(const Core::Identifier &i, Game::IEntity *e)

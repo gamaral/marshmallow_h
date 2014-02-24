@@ -90,19 +90,26 @@ namespace Game { /******************************************** Game Namespace */
 		void setFactory(Game::IFactory *factory);
 
 		/*!
-		 * @brief Target frames per second
-		 */
-		int fps(void) const;
-
-		/*!
 		 * @brief Time that has elapsed since last tick
 		 */
 		float deltaTime(void) const;
 
 		/*!
-		 * @brief Actual frame rate achieved
+		 * @brief Actual frames per second achieved
 		 */
-		int frameRate(void);
+		unsigned short frameRate(void) const;
+
+		/*!
+		 * @brief Maximum frame rate allowed
+		 */
+		unsigned short frameRateMax(void) const;
+
+		/*!
+		 * @brief Set maximum frame rate allowed
+		 *
+		 * Setting rate to zero will disable rate limiting.
+		 */
+		void setFrameRateMax(unsigned short rate);
 
 	public: /* virtual */
 

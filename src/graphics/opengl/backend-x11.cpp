@@ -135,7 +135,7 @@ namespace X11Backend {
 		sfGLValid       = sfGLContext|sfGLCurrent,
 #endif
 		sfValid         = sfX11Valid|sfGLValid,
-		sfActive        = sfReady|sfValid|sfExposed|sfFocused
+		sfActive        = sfReady|sfValid|sfExposed
 	};
 
 	/******************* MARSHMALLOW */
@@ -659,7 +659,6 @@ X11Backend::ProcessX11Events(void)
 
 		case FocusIn:
 			MMDEBUG("Backend focus.");
-
 			flags |= sfFocused;
 			break;
 

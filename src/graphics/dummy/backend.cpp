@@ -47,8 +47,6 @@
 #include "graphics/display.h"
 #include "graphics/painter_p.h"
 
-#include "game/config.h"
-
 MARSHMALLOW_NAMESPACE_BEGIN
 namespace Graphics { /************************************ Graphics Namespace */
 namespace Dummy { /******************************** Graphics::Dummy Namespace */
@@ -137,9 +135,9 @@ Backend::Finish(void)
 
 	/* simulated slow swap */
 	if (s_dpy.vsync > 0)
-		Core::Platform::Sleep(double(s_dpy.vsync)/MARSHMALLOW_ENGINE_FRAMERATE);
+		Core::Platform::Sleep(double(s_dpy.vsync)/60.);
 	else 
-		Core::Platform::Sleep(.5/MARSHMALLOW_ENGINE_FRAMERATE);
+		Core::Platform::Sleep(.5/60.);
 
 	Painter::Reset();
 }

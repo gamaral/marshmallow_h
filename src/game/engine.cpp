@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2013, Guillermo A. Amaral B. (gamaral) <g@maral.me>
+ * Copyright (c) 2011-2014, Guillermo A. Amaral B. (gamaral) <g@maral.me>
  * All rights reserved.
  *
  * This file is part of Marshmallow Game Engine.
@@ -109,6 +109,7 @@ struct Engine::Private
 	    , delta_time(0)
 	    , exit_code(0)
 	    , frame_rate(0)
+	    , frame_rate_max(MARSHMALLOW_ENGINE_FRAME_RATE_MAX)
 	    , running(false)
 	    , suspended(false)
 	{}
@@ -135,7 +136,7 @@ struct Engine::Private
 
 	inline void
 	addFeature(Game::IEngineFeature *feature);
-	
+
 	inline void
 	removeFeature(Game::IEngineFeature *feature);
 	
@@ -145,14 +146,19 @@ struct Engine::Private
 	inline Game::IEngineFeature *
 	getFeature(const Core::Type &type);
 
+	inline void
+	recalculateRenderTarget();
+
 	EngineFeatureList    features;
 	Engine              *_interface;
 	Event::EventManager *event_manager;
 	Game::IFactory      *factory;
 	Game::SceneManager  *scene_manager;
+	float  render_target;
 	float  delta_time;
 	int    exit_code;
-	int    frame_rate;
+	unsigned short frame_rate;
+	unsigned short frame_rate_max;
 	bool   running;
 	bool   suspended;
 
@@ -271,13 +277,20 @@ Engine::Private::render(void)
 	 * Clean up and buffer swap
 	 */
 	Graphics::Backend::Finish();
+
+	// increase frame rate counter
+	++frame_rate;
 }
 
 void
 Engine::Private::second(void)
 {
 	MMDEBUG("FPS=" << frame_rate);
+
 	_interface->second();
+
+	// reset frame_rate counter
+	frame_rate = 0;
 }
 
 void
@@ -320,16 +333,9 @@ Engine::Private::run(void)
 		return(-1);
 	}
 
-	const float l_render_target = 1.f / MARSHMALLOW_ENGINE_FRAMERATE;
 	float l_render = .0;
 	float l_second = .0;
 	MMTIME l_tick;
-
-	/* start */
-	running = true;
-
-	update(.0f);
-	l_tick = NOW() - l_render_target;
 
 	const Graphics::Display &l_display =
 		Graphics::Backend::Display();
@@ -338,16 +344,22 @@ Engine::Private::run(void)
 	/*
 	 * Game Loop
 	 */
+
+	/* start */
+	running = true;
+	recalculateRenderTarget();
+	l_tick = NOW() - render_target;
+
 	while (running) {
 		const MMTIME l_now = NOW();
 		delta_time = float(l_now - l_tick);
 		l_tick = l_now;
 
 		/* handle abnormally long delta time */
-#define DELTA_TIME_LONG_WAIT 0.25
+#define DELTA_TIME_LONG_WAIT .125f
 		if (delta_time > DELTA_TIME_LONG_WAIT) {
-			MMWARNING("Abnormally long time between ticks, reseting!");
-			delta_time = l_render_target;
+			MMWARNING("Abnormally long time between ticks, resetting!");
+			delta_time = render_target;
 		}
 
 		/*
@@ -356,29 +368,7 @@ Engine::Private::run(void)
 		l_second += delta_time;
 		if (l_second >= 1.f) {
 			second();
-			frame_rate = 0;
 			l_second -= truncf(l_second);
-		}
-
-		/*
-		 * Rendering
-		 */
-
-		// vsync
-		if (l_display.vsync > 0) {
-			render();
-			frame_rate++;
-		}
-
-		// no-vsync
-		else {
-			l_render += delta_time;
-			if (l_render >= l_render_target) {
-				render();
-				frame_rate++;
-				while (l_render >= l_render_target)
-					l_render -= l_render_target;
-			}
 		}
 
 		/*
@@ -387,11 +377,30 @@ Engine::Private::run(void)
 		update(delta_time);
 
 		/*
-		 * Sleep only when graphics backend is inactive or when engine
-		 * is suspended.
+		 * Rendering
 		 */
-		if (!Graphics::Backend::Active() || suspended)
-			Platform::Sleep(DELTA_TIME_LONG_WAIT/2);
+		if (Graphics::Backend::Active()) {
+			// render if within rate limit
+			if (l_display.vsync == 0 && frame_rate_max > 0) {
+				l_render += delta_time;
+				if (l_render >= render_target) {
+					render();
+
+					// flush accumulator
+					do l_render -= render_target;
+					while (l_render >= render_target);
+				}
+			}
+
+			// render directly
+			else render();
+		}
+
+		/*
+		 * Sleep only when engine is suspended
+		 */
+		if (_interface->isSuspended())
+			Platform::Sleep(render_target * 2);
 	}
 
 	/*
@@ -438,6 +447,12 @@ Engine::Private::getFeature(const Core::Type &t)
 	return(l_i != l_e ? *l_i : 0);
 }
 
+void
+Engine::Private::recalculateRenderTarget()
+{
+	render_target = 1.f/(frame_rate_max ? frame_rate_max : 60.f);
+}
+
 Engine::Engine(void)
     : PIMPL_CREATE_X(this)
 {
@@ -460,7 +475,7 @@ Engine::~Engine(void)
 bool
 Engine::isSuspended(void) const
 {
-	return(PIMPL->suspended);
+	return(PIMPL->suspended || !Graphics::Backend::Active());
 }
 
 void
@@ -488,10 +503,21 @@ Engine::deltaTime(void) const
 	return(PIMPL->delta_time);
 }
 
-int
-Engine::frameRate(void)
+unsigned short
+Engine::frameRate(void) const
 {
 	return(PIMPL->frame_rate);
+}
+
+unsigned short Engine::frameRateMax(void) const
+{
+	return(PIMPL->frame_rate_max);
+}
+
+void Engine::setFrameRateMax(unsigned short rate)
+{
+	PIMPL->frame_rate_max = rate;
+	PIMPL->recalculateRenderTarget();
 }
 
 int
