@@ -51,8 +51,6 @@
 MARSHMALLOW_NAMESPACE_USE
 using namespace Core;
 
-#undef HAVE_CLOCK_GETTIME
-
 /******************************************************************************/
 
 namespace
@@ -92,7 +90,7 @@ Platform::Sleep(MMTIME timeout)
 	struct timespec l_ts;
 	l_ts.tv_sec = static_cast<__time_t>(trunc(timeout));
 #define NANOSECONDS_PER_SECOND 1000000000
-	l_ts.tv_nsec = static_cast<__syscall_slong_t>
+	l_ts.tv_nsec = static_cast<long>
 	    ((timeout - float(l_ts.tv_sec)) * NANOSECONDS_PER_SECOND);
 	nanosleep(&l_ts, 0);
 }

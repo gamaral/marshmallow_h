@@ -104,6 +104,28 @@ find_library(BCM_HOST_vchiq_arm_LIBRARY vchiq_arm
 )
 list(APPEND BCM_HOST_LIBRARIES ${BCM_HOST_vchiq_arm_LIBRARY})
 
+find_library(BCM_HOST_vchostif_LIBRARY vchostif
+	HINTS $ENV{BCM_HOSTDIR}
+	PATH_SUFFIXES lib
+	PATHS /usr/local
+	      /usr
+	      /opt/vc
+	      /opt/local
+	      /opt
+)
+list(APPEND BCM_HOST_LIBRARIES ${BCM_HOST_vchostif_LIBRARY})
+
+find_library(BCM_HOST_khrn_client_LIBRARY khrn_client
+	HINTS $ENV{BCM_HOSTDIR}
+	PATH_SUFFIXES lib
+	PATHS /usr/local
+	      /usr
+	      /opt/vc
+	      /opt/local
+	      /opt
+)
+list(APPEND BCM_HOST_LIBRARIES ${BCM_HOST_khrn_client_LIBRARY})
+
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(BCM_HOST DEFAULT_MSG
 	BCM_HOST_INCLUDE_DIR
@@ -111,6 +133,8 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(BCM_HOST DEFAULT_MSG
 	BCM_HOST_PTHREADS_INCLUDE_DIR
 	BCM_HOST_vchiq_arm_LIBRARY
 	BCM_HOST_vcos_LIBRARY
+	BCM_HOST_vchostif_LIBRARY
+	BCM_HOST_khrn_client_LIBRARY
 )
 mark_as_advanced(
 	BCM_HOST_INCLUDE_DIR
