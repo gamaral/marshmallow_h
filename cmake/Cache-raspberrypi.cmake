@@ -20,11 +20,6 @@ set(MARSHMALLOW_OPENGL_EGL          ON   CACHE BOOL   "")
 set(MARSHMALLOW_OPENGL_ES2          ON   CACHE BOOL   "")
 set(MARSHMALLOW_OPENGL_VC           ON   CACHE BOOL   "")
 
-set(MARSHMALLOW_CONTRIB_LIBOGG      OFF  CACHE BOOL   "")
-set(MARSHMALLOW_CONTRIB_LIBPNG      OFF  CACHE BOOL   "")
-set(MARSHMALLOW_CONTRIB_LIBVORBIS   OFF  CACHE BOOL   "")
-set(MARSHMALLOW_CONTRIB_ZLIB        OFF  CACHE BOOL   "")
-
 # CMAKE
 #set(CMAKE_C_FLAGS           "-mfpu=vfp -mfloat-abi=hard" CACHE STRING "")
 #set(CMAKE_C_FLAGS           "-mhard-float"               CACHE STRING "")

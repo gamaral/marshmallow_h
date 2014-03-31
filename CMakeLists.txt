@@ -68,7 +68,7 @@ add_subdirectory(src)
 ####################################################################### TARGET #
 
 if(EXISTS ${PROJECT_SOURCE_DIR}/target/CMakeLists.txt)
-	add_subdirectory(target)	
+	add_subdirectory(target)
 elseif(EXISTS ${PROJECT_SOURCE_DIR}/demos/CMakeLists.txt)
 	add_subdirectory(demos)
 else()

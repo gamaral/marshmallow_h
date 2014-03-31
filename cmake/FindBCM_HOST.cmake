@@ -82,7 +82,7 @@ find_library(BCM_HOST_LIBRARY bcm_host
 )
 list(APPEND BCM_HOST_LIBRARIES ${BCM_HOST_LIBRARY})
 
-find_library(BCM_HOST_vcos_LIBRARY vcos
+find_library(BCM_HOST_khrn_client_LIBRARY khrn_client
 	HINTS $ENV{BCM_HOSTDIR}
 	PATH_SUFFIXES lib
 	PATHS /usr/local
@@ -91,7 +91,18 @@ find_library(BCM_HOST_vcos_LIBRARY vcos
 	      /opt/local
 	      /opt
 )
-list(APPEND BCM_HOST_LIBRARIES ${BCM_HOST_vcos_LIBRARY})
+list(APPEND BCM_HOST_LIBRARIES ${BCM_HOST_khrn_client_LIBRARY})
+
+find_library(BCM_HOST_vcfiled_check_LIBRARY vcfiled_check
+	HINTS $ENV{BCM_HOSTDIR}
+	PATH_SUFFIXES lib
+	PATHS /usr/local
+	      /usr
+	      /opt/vc
+	      /opt/local
+	      /opt
+)
+list(APPEND BCM_HOST_LIBRARIES ${BCM_HOST_vcfiled_check_LIBRARY})
 
 find_library(BCM_HOST_vchiq_arm_LIBRARY vchiq_arm
 	HINTS $ENV{BCM_HOSTDIR}
@@ -115,7 +126,7 @@ find_library(BCM_HOST_vchostif_LIBRARY vchostif
 )
 list(APPEND BCM_HOST_LIBRARIES ${BCM_HOST_vchostif_LIBRARY})
 
-find_library(BCM_HOST_khrn_client_LIBRARY khrn_client
+find_library(BCM_HOST_vcos_LIBRARY vcos
 	HINTS $ENV{BCM_HOSTDIR}
 	PATH_SUFFIXES lib
 	PATHS /usr/local
@@ -124,23 +135,29 @@ find_library(BCM_HOST_khrn_client_LIBRARY khrn_client
 	      /opt/local
 	      /opt
 )
-list(APPEND BCM_HOST_LIBRARIES ${BCM_HOST_khrn_client_LIBRARY})
+list(APPEND BCM_HOST_LIBRARIES ${BCM_HOST_vcos_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(BCM_HOST DEFAULT_MSG
 	BCM_HOST_INCLUDE_DIR
 	BCM_HOST_LIBRARY
 	BCM_HOST_PTHREADS_INCLUDE_DIR
-	BCM_HOST_vchiq_arm_LIBRARY
-	BCM_HOST_vcos_LIBRARY
-	BCM_HOST_vchostif_LIBRARY
 	BCM_HOST_khrn_client_LIBRARY
+	BCM_HOST_vcfiled_check_LIBRARY
+	BCM_HOST_vchiq_arm_LIBRARY
+	BCM_HOST_vchostif_LIBRARY
+	BCM_HOST_vcos_LIBRARY
 )
+
 mark_as_advanced(
 	BCM_HOST_INCLUDE_DIR
 	BCM_HOST_INCLUDE_DIRS
 	BCM_HOST_LIBRARIES
 	BCM_HOST_LIBRARY
 	BCM_HOST_PTHREADS_INCLUDE_DIR
+	BCM_HOST_khrn_client_LIBRARY
+	BCM_HOST_vcfiled_check_LIBRARY
 	BCM_HOST_vchiq_arm_LIBRARY
-	BCM_HOST_vcos_LIBRARY)
+	BCM_HOST_vchostif_LIBRARY
+	BCM_HOST_vcos_LIBRARY
+)

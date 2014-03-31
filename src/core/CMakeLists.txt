@@ -46,6 +46,9 @@ if (UNIX)
 	# rt
 	if(HAVE_CLOCK_GETTIME)
 		list(APPEND MARSHMALLOW_CORE_LIBS "rt")
+
+		find_package(Threads REQUIRED)
+		list(APPEND MARSHMALLOW_CORE_LIBS ${CMAKE_THREAD_LIBS_INIT})
 	endif()
 endif()
 
