@@ -70,6 +70,7 @@
 #ifdef MARSHMALLOW_OPENGL_EGL
 #  include <EGL/egl.h>
 #else
+#  include <GL/glext.h>
 #  include <GL/glx.h>
 #endif
 #include "extensions.h"
