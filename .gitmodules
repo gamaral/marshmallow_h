@@ -3,11 +3,10 @@
 	url = git://github.com/gamaral/marshmallow_demos.git
 [submodule "contrib/box2d/code"]
 	path = contrib/box2d/code
-	url = git://github.com/gamaral/Box2D.git
-	branch = gamaral
+	url = git://github.com/erincatto/Box2D.git
 [submodule "contrib/tinyxml2/code"]
 	path = contrib/tinyxml2/code
-	url = git://github.com/gamaral/tinyxml2.git
+	url = git://github.com/leethomason/tinyxml2.git
 [submodule "contrib/libpng/code"]
 	path = contrib/libpng/code
 	url = git://libpng.git.sourceforge.net/gitroot/libpng/libpng
