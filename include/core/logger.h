@@ -47,7 +47,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#define MMLOG(type, x) std::cerr << __FILE__ << ":" << __LINE__ << " ["type"]" << std::endl \
+#define MMLOG(type, x) std::cerr << __FILE__ << ":" << __LINE__ << " [" << type << "]" << std::endl \
                                  << "\t" << MMFUNCTION << ": " << x << std::endl
 
 #define MMFATAL(x) MMLOG("FATAL", x), exit(-1)

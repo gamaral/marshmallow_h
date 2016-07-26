@@ -25,7 +25,7 @@ if(BUILD_UNIT_TESTS)
 endif(BUILD_UNIT_TESTS)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-	set(CMAKE_CXX_FLAGS "-fno-rtti -fno-exceptions -ffast-math ${CMAKE_CXX_FLAGS}")
+	set(CMAKE_CXX_FLAGS "-std=c++11 -fno-rtti -fno-exceptions -ffast-math ${CMAKE_CXX_FLAGS}")
 	set(CMAKE_CXX_FLAGS_RELEASE "-fomit-frame-pointer ${CMAKE_CXX_FLAGS_RELEASE}")
 	set(CMAKE_C_FLAGS "-ffast-math ${CMAKE_C_FLAGS}")
 	set(CMAKE_C_FLAGS_RELEASE "-fomit-frame-pointer ${CMAKE_C_FLAGS_RELEASE}")
@@ -93,4 +93,3 @@ if(NOT MARSHMALLOW_LIBRARY_ONLY AND UNIX)
 	                    WORLD_READ WORLD_EXECUTE
 	        COMPONENT deployment)
 endif()
-
